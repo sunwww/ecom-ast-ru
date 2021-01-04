@@ -175,7 +175,7 @@ select e.id, e.lastname||' '||e.firstname||' '||coalesce(e.middlename,'')||' '||
         left join vocmedservice vms on vms.id=ems.medservice_id
  where ${searchWhereSql} ${fileTypeSql} ${addGroupFldSql}
  and (e.isDeleted is null or e.isDeleted='0')
- group by e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate
+ group by e.id, e.lastname, e.firstname, e.middlename, e.startDate, e.finishDate, e.billNumber, e.billDate
         , e.departmentName, ksg.code, ksg.name, e.historyNumber, e.cost, vbt.code,vbt.name, rslt.code,rslt.name,e.doNotSend,e.birthdate,e.isdefect,e.servicestream
   order by ${orderBySql} "/>
         <msh:hideException>

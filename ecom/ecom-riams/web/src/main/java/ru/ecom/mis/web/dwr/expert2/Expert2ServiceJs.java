@@ -71,7 +71,7 @@ public class Expert2ServiceJs {
             Injection.find(aRequest).getService(IWebQueryService.class)
                     .executeUpdateNativeSql("update e2entry set smocode = '" + insuranceCode + "' where listentry_id=" + aListEntryId + " and (smocode is null or smocode='')" +
                             " and (isDeleted is null or e.isDeleted='0') " +
-                            " and (isForeign is null or isForeign ");
+                            " and (isForeign is null or isForeign is false) ");
             return "Страховая компания заменена на "+insuranceCode;
         } else {
             return "Я не понял что мне делать!";
