@@ -375,7 +375,6 @@ public class Expert2ServiceJs {
         sql.append(" and billNumber='").append(oldBillNumber == null ? "" : oldBillNumber).append("'").append(" and (isDeleted is null or isDeleted='0')");
         Injection.find(request).getService(IWebQueryService.class)
                 .executeUpdateNativeSql(sql.toString());
-        return;
     }
 
     public void cleanAllErrorsByList(Long entryListId, HttpServletRequest request) throws NamingException {
