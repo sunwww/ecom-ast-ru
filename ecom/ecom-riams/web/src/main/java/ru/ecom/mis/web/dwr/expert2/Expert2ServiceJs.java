@@ -72,7 +72,7 @@ public class Expert2ServiceJs {
                     .executeUpdateNativeSql("update e2entry set smocode = '" + insuranceCode + "' where listentry_id=" + aListEntryId + " and (smocode is null or smocode='')" +
                             " and (isDeleted is null or e.isDeleted='0') " +
                             " and (isForeign is null or isForeign ");
-            return "Страховая компания заменена на "+insuranceCode;
+            return "Страховая компания заменена на " + insuranceCode;
         } else {
             return "Я не понял что мне делать!";
         }
@@ -343,16 +343,16 @@ public class Expert2ServiceJs {
         Injection.find(aRequest).getService(IExpert2Service.class).makeCheckEntry(aEntryId, forceUpdateKsg);
     }
 
-    public boolean saveBillDateAndNumber(Long listEntryId, String entryType, String serviceStream, String oldBillNumber, String oldBillDateTo, String billNumber
+    public void saveBillDateAndNumber(Long listEntryId, String entryType, String serviceStream, String oldBillNumber, String oldBillDateTo, String billNumber
             , String billDate, String isForeign, String comment, String fileType, String addGroupField, HttpServletRequest request) throws NamingException, ParseException {
-        if (isNullOrEmpty(entryType) || isNotEmpty(serviceStream)) {
-            return false;
+        if (isNullOrEmpty(entryType) || isNullOrEmpty(serviceStream)) {
+            return;
         }
 
         StringBuilder sql = new StringBuilder();
         if (isNullOrEmpty(billNumber)) { //Удалить информацию о номере счета.
             if (isNullOrEmpty(oldBillDateTo) || isNullOrEmpty(oldBillNumber)) {
-                return false;
+                return;
             }
             sql.append("update e2entry set bill_id=null, billNumber='', billDate=null");
         } else {
@@ -375,7 +375,7 @@ public class Expert2ServiceJs {
         sql.append(" and billNumber='").append(oldBillNumber == null ? "" : oldBillNumber).append("'").append(" and (isDeleted is null or isDeleted='0')");
         Injection.find(request).getService(IWebQueryService.class)
                 .executeUpdateNativeSql(sql.toString());
-        return true;
+        return;
     }
 
     public void cleanAllErrorsByList(Long entryListId, HttpServletRequest request) throws NamingException {
