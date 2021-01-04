@@ -265,7 +265,7 @@ public class E2EntryForm extends IdEntityForm {
     private String theAddressReal ;
 
     /** Тип паспорта (ДУЛ) */
-    private Long thePassportType ;
+    private String thePassportType ;
     /** Серия паспорта */
     private String thePassportSeries ;
     /** Номер паспорта */
@@ -456,8 +456,8 @@ public class E2EntryForm extends IdEntityForm {
 
     @Comment("Тип паспорта (ДУЛ)")
     @Persist
-    public Long getPassportType() {return thePassportType;}
-    public void setPassportType(Long aPassportType) {thePassportType = aPassportType;}
+    public String getPassportType() {return thePassportType;}
+    public void setPassportType(String aPassportType) {thePassportType = aPassportType;}
 
     @Comment("Серия паспорта")
     @Persist
