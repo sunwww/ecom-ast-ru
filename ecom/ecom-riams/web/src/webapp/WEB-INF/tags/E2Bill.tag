@@ -78,8 +78,8 @@ function save${name}BillNumber() {
     var isForeign=dt[5].split("=")[1];
     var fileType=dt[7].split("=")[1];
     var addGroupFld = dt[8].split("=")[1];
-    Expert2Service.saveBillDateAndNumber(${param.id},type,serviceStream,oldBillNumber, oldBillDate,newBillNumber,newBillDate,isForeign,newBillComment, fileType, addGroupFld, {
-        callback: function (a) {
+    Expert2Service.saveBillDateAndNumber(${param.id}, type, serviceStream, oldBillNumber, oldBillDate, newBillNumber, newBillDate, isForeign, newBillComment, fileType, addGroupFld, {
+        callback: function () {
             cancel${name}BillNumber();
             window.location.reload();
         }

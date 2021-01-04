@@ -6,122 +6,115 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <build.plugins.plugin.version>1</build.plugins.plugin.version>
+        <libdir>C:/Users/vtsybulin/IdeaProjects/MedOS_libs</libdir>
+        <jdk.version>1.8</jdk.version>
+        <pvsstudio.version>7.06.37377</pvsstudio.version>
+        <kotlin.version>1.3.72</kotlin.version>
         <junit.jupiter.version>5.0.2</junit.jupiter.version>
         <junit-platform-runner.version>1.3.1</junit-platform-runner.version>
 
     </properties>
-    <parent>
-        <groupId>ru.ecom</groupId>
-        <artifactId>pom</artifactId>
-        <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom/pom.xml</relativePath>
-    </parent>
 
+    <groupId>ru.ecom</groupId>
     <artifactId>msh</artifactId>
-    <version>RELEASE</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>taglibs</groupId>
-            <artifactId>standard</artifactId>
-            <version>1.1.2</version>
-        </dependency>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>pvsstudio-maven-repo</id>
+            <url>http://files.viva64.com/java/pvsstudio-maven-repository/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
-        <!-- JSTL -->
+    <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
             <version>1.1.2</version>
         </dependency>
-
         <dependency>
-            <groupId>uk.ltd.getahead</groupId>
-            <artifactId>dwr</artifactId>
-            <version>3.0.2-RELEASE</version>
-            <systemPath>${libdir}/dwr/dwr.jar</systemPath>
-            <scope>system</scope>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
         </dependency>
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.8.5</version>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.2</version>
         </dependency>
         <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>rs</artifactId>
-            <systemPath>${libdir}/jersey/javax.ws.rs-api-2.1.jar</systemPath>
-            <scope>system</scope>
-            <version>RELEASE</version>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-core</artifactId>
+            <version>2.5.22</version>
         </dependency>
         <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-servlet</artifactId>
-            <systemPath>${libdir}/gwt/gwt-servlet.jar</systemPath>
-            <scope>system</scope>
-            <version>RELEASE</version>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts-taglib</artifactId>
+            <version>1.3.10</version>
         </dependency>
         <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-dev</artifactId>
-            <systemPath>${libdir}/gwt/gwt-dev-linux.jar</systemPath>
-            <scope>system</scope>
-            <version>RELEASE</version>
+            <groupId>ecs</groupId>
+            <artifactId>ecs</artifactId>
+            <version>1.4.2</version>
         </dependency>
         <dependency>
-            <groupId>org.apache</groupId>
-            <artifactId>axis</artifactId>
-            <systemPath>${libdir}/axis/axis.jar</systemPath>
-            <scope>system</scope>
-            <version>RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>ru.ecom</groupId>
-            <artifactId>gwt-idemode</artifactId>
-            <systemPath>${libdir}/ecom/gwt/idemode/ecom-gwt-idemode.jar</systemPath>
-            <scope>system</scope>
-            <version>RELEASE</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ru.ecom</groupId>
-            <artifactId>gwt-document</artifactId>
-            <systemPath>${libdir}/ecom/gwt/document/ecom-gwt-document.jar</systemPath>
-            <scope>system</scope>
-            <version>RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>ru.ecom</groupId>
-            <artifactId>gwt-clazz</artifactId>
-            <systemPath>${libdir}/ecom/gwt/clazz/ecom-gwt-clazz.jar</systemPath>
-            <scope>system</scope>
-            <version>RELEASE</version>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
-            <artifactId>websocket</artifactId>
-            <systemPath>${libdir}/javax/javax.websocket-api-1.1.jar</systemPath>
-            <scope>system</scope>
-            <version>RELEASE</version>
+            <artifactId>javaee-api</artifactId>
+            <version>8.0</version>
         </dependency>
         <dependency>
-            <groupId>com.sun.media</groupId>
-            <artifactId>imageioimpl</artifactId>
-            <systemPath>${libdir}/image/jai_imageio.jar</systemPath>
-            <scope>system</scope>
-            <version>RELEASE</version>
+            <groupId>tomcat</groupId>
+            <artifactId>jasper-runtime</artifactId>
+            <version>5.5.23</version>
         </dependency>
         <dependency>
-            <groupId>ru.ecom</groupId>
-            <artifactId>report</artifactId>
-            <systemPath>${libdir}/ecom/report/ecom-report.jar</systemPath>
-            <scope>system</scope>
-            <version>1</version>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>1.1.3</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>5.1.5.RELEASE</version>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20180130</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.6.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -160,15 +153,12 @@
 
     <build>
         <finalName>msh-maven</finalName>
-        <sourceDirectory>src/main/java</sourceDirectory>
 
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
         </resources>
-
-
 
         <plugins>
             <plugin>
@@ -177,36 +167,29 @@
                 <version>3.1.1</version>
 
             </plugin>
-            <!--            <plugin>
-                             <groupId>com.pvsstudio</groupId>
-                             <artifactId>pvsstudio-maven-plugin</artifactId>
-                             <version>7.03.32667</version>
-                             <configuration>
-                                 <analyzer>
-                                     <outputType>text</outputType>
-                                     <outputFile>pvs-output.txt</outputFile>
-                                 </analyzer>
-                             </configuration>
-                             <executions>
-                                 <execution>
-                                     <phase>compile</phase>
-                                     <goals>
-                                         <goal>pvsAnalyze</goal>
-                                     </goals>
-                                 </execution>
-                             </executions>
-                         </plugin> -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <groupId>com.pvsstudio</groupId>
+                <artifactId>pvsstudio-maven-plugin</artifactId>
+                <version>${pvsstudio.version}</version>
                 <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
+                    <analyzer>
+                        <outputType>text</outputType>
+                        <outputFile>pvs-output.txt</outputFile>
+                    </analyzer>
                 </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>pvsAnalyze</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <version>3.2.0</version>
                 <configuration>
                     <webXml>src/webapp/WEB-INF/web.xml</webXml>
                 </configuration>
@@ -215,6 +198,59 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmTarget>1.8</jvmTarget>
+                    <sourceDirs>
+                        <source>src/main/java</source>
+                        <source>src/main/resources</source>
+                    </sourceDirs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>testCompile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

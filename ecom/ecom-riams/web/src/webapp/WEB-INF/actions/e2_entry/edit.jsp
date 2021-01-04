@@ -480,15 +480,6 @@ where cancer.entry_id=${param.id}"/>
                         });
                     }
 
-                    function getEntryJson() {
-                        Expert2Service.getEntryJson(${param.id}, {
-                            callback: function (js) {
-                                console.log(js);
-                                alert(js);
-                            }
-                        });
-                    }
-
                     function gotoMedcase() {
                         window.open('entitySubclassView-mis_medCase.do?id=' + $('externalId').value);
                     }
@@ -630,8 +621,6 @@ where cancer.entry_id=${param.id}"/>
                               roles="/Policy/E2"/>
                 <msh:sideLink action="/javascript:makeSosud()" name="Сделать сосудистым случаем" roles="/Policy/E2"/>
                 <msh:sideLink action="/javascript:splitLongCase()" name="Расклеить обращение" roles="/Policy/E2/Admin"/>
-                <msh:sideLink action="/javascript:getEntryJson()" name="тест - получить случай json"
-                              roles="/Policy/E2/Admin"/>
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
     </tiles:put>
