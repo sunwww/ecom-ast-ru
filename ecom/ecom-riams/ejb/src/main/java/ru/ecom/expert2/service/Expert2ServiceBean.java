@@ -2673,7 +2673,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
 
         if (isTrue(ksg.getIsCovid19())) codes.add("18");
-        if (aEntry.getDopKritKSG().equals("IT25")) codes.add("19"); //крайнетяжелое состояние - доп крит
+        if (aEntry.getDopKritKSG().equals("IT25") && ksg.getCode().startsWith("st12")) codes.add("19"); //крайнетяжелое состояние - доп крит
 
         //Пришло время сохранять все сложности пациента
         if (!codes.isEmpty()) {
