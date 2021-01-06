@@ -2673,7 +2673,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
 
         if (isTrue(ksg.getIsCovid19())) codes.add("18");
-        if (aEntry.getDopKritKSG().equals("IT25")) codes.add("19"); //крайнетяжелое состояние - доп крит
+        if (aEntry.getDopKritKSG().equals("IT25") && ksg.getCode().startsWith("st12")) codes.add("19"); //крайнетяжелое состояние - доп крит
 
         //Пришло время сохранять все сложности пациента
         if (!codes.isEmpty()) {
@@ -3467,7 +3467,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             if (isTrue(aEntry.getIsRehabBed()) && "7".equals(aEntry.getDepartmentType())) { //реабилитация в стационаре при пол-ке
                 v008Code = "13";
             } else if (aEntry.getSubType() != null && aEntry.getSubType().getCode().equals("POLDAYTIMEHOSP")) {
-                v008Code = aEntry.getMedHelpProfile().getProfileK().equals("97") ? "12" : "13";
+                v008Code = /*aEntry.getMedHelpProfile().getProfileK().equals("97") ? "12" : */"13";
             } else {
                 v008Code = vmpCase ? "32" : "31";
             }
