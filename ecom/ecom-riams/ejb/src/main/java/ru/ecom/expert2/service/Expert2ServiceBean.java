@@ -3467,7 +3467,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             if (isTrue(aEntry.getIsRehabBed()) && "7".equals(aEntry.getDepartmentType())) { //реабилитация в стационаре при пол-ке
                 v008Code = "13";
             } else if (aEntry.getSubType() != null && aEntry.getSubType().getCode().equals("POLDAYTIMEHOSP")) {
-                v008Code = aEntry.getMedHelpProfile().getProfileK().equals("97") ? "12" : "13";
+                v008Code = /*aEntry.getMedHelpProfile().getProfileK().equals("97") ? "12" : */"13";
             } else {
                 v008Code = vmpCase ? "32" : "31";
             }
