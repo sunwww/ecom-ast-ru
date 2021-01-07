@@ -82,8 +82,7 @@
 	        <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-mis_diagnosis" name="Удалить" roles="/Policy/Mis/MedCase/Diagnosis/Delete" />
         </msh:sideMenu>
         <msh:sideMenu title="Добавить">
-	        <msh:sideLink key="ALT+3"
-	          action="/entityEdit-mis_diagnosis" name="Диагноз &larr;"
+	        <msh:sideLink key="ALT+3" name="Диагноз &larr;"
 	         action="/javascript:goNewDiagnosis('.do')" 
 	         roles="/Policy/Mis/MedCase/Diagnosis/Create" />
         </msh:sideMenu>
