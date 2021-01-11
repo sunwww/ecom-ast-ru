@@ -3,9 +3,13 @@ package ru.ecom.expert2;
 import ru.ecom.expert2.domain.E2CoefficientPatientDifficultyEntryLink;
 import ru.ecom.expert2.domain.E2Entry;
 import ru.ecom.expert2.domain.voc.E2Enumerator;
-import ru.nuzmsh.util.StringUtil;
 
 import java.util.List;
+
+import static ru.nuzmsh.util.BooleanUtils.isTrue;
+import static ru.nuzmsh.util.CollectionUtil.isNotEmpty;
+import static ru.nuzmsh.util.StringUtil.isNotEmpty;
+import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
 
 public class Expert2FondUtil {
 
@@ -28,7 +32,7 @@ public class Expert2FondUtil {
     /**
      * Считаем признак "особые случай " */ //Реализовано
     public static String calculateFondOsSluch(E2Entry aEntry) {
-        /**
+        /*
          * Указываются все имевшиеся особые случаи.
          1 – медицинская помощь оказана новорожденному ребенку до государственной регистрации рождения при многоплодных родах;
          2 – в документе, удостоверяющем личность пациента /родителя (представителя) пациента, отсутствует отчество.
@@ -39,21 +43,21 @@ public class Expert2FondUtil {
 
          */
         StringBuilder ret= new StringBuilder();
-        if (!StringUtil.isNullOrEmpty(aEntry.getKinsmanLastname()) && aEntry.getMultiplyBirth()!=null && aEntry.getMultiplyBirth()) {
+        if (isNotEmpty(aEntry.getKinsmanLastname()) && isTrue(aEntry.getMultiplyBirth())) {
             ret.append("1;");
         }
-        if (StringUtil.isNullOrEmpty(aEntry.getKinsmanMiddlename()) && StringUtil.isNullOrEmpty(aEntry.getMiddlename())) {
+        if (isNullOrEmpty(aEntry.getKinsmanMiddlename()) && isNullOrEmpty(aEntry.getMiddlename())) {
             ret.append("2;");
         }
-        if (aEntry.getIsCriminalMessage()!=null && aEntry.getIsCriminalMessage()) {
+        if (isTrue(aEntry.getIsCriminalMessage())) {
             ret.append("9;");
         }
-        if (aEntry.getMedicalAbort()!=null && aEntry.getMedicalAbort()) {
+        if (isTrue(aEntry.getMedicalAbort())) {
             ret.append("10;");
         }
         if (aEntry.getEntryType().equals(E2Enumerator.HOSPITALTYPE)||aEntry.getEntryType().equals(E2Enumerator.VMPTYPE)) { //Только для стац
             List<E2CoefficientPatientDifficultyEntryLink> list = aEntry.getPatientDifficulty();
-            if (list!=null && !list.isEmpty()) {
+            if (isNotEmpty(list)) {
                 for (E2CoefficientPatientDifficultyEntryLink diff: list) {
                     if (diff.getDifficulty().getCode().equals("11")) {
                         ret.append("21;22;");

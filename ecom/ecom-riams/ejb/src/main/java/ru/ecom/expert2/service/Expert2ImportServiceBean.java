@@ -287,21 +287,24 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 if ("3.0".equals(ver)) {
                     throw new IllegalStateException("Импорт в старом формате более не поддерживается!");
                 }
-                List<Element> zaps = root.getChildren("ZAP");
+
                 Element schet = root.getChild("SCHET");
-                String nSchet = schet.getChildText("NSCHET");
-                String dSchet = schet.getChildText("DSCHET");
+                String billNumber = schet.getChildText("NSCHET");
+                String billDateString = schet.getChildText("DSCHET");
                 SimpleDateFormat fromFormat = new SimpleDateFormat("yyyy-MM-dd");
-                SimpleDateFormat toFormat = new SimpleDateFormat("dd.MM.yyyy");
-                java.sql.Date billDate = new java.sql.Date(fromFormat.parse(dSchet).getTime());
-                E2Bill bill = manager.find(E2Bill.class, expertService.getBillIdByDateAndNumber(nSchet, toFormat.format(billDate)));
-                bill.setStatus(getActualVocByCode(VocE2BillStatus.class, null, "code='PAID'"));
+                java.sql.Date billDate = new java.sql.Date(fromFormat.parse(billDateString).getTime());
+                E2Bill bill = expertService.getBillEntryByDateAndNumber(billNumber, billDate, null);
+                if (bill == null) {
+                    throw new IllegalStateException("Невозможно определить счет с №"+billNumber+" от "+billDateString);
+                }
+                E2Bill savedBill = manager.find(E2Bill.class, bill.getId());
+                savedBill.setStatus(getActualVocByCode(VocE2BillStatus.class, null, "code='PAID'"));
 
                 int i = 0;
+                List<Element> zaps = root.getChildren("ZAP");
                 if (isMonitorCancel(monitor, "Найдено записей для импорта: " + zaps.size())) return;
 
                 BigDecimal totalSum = BigDecimal.ZERO;
-
                 for (Element zap : zaps) {
                     i++;
                     if (i % 100 == 0 && isMonitorCancel(monitor, "Загружено записей: " + i)) break;
@@ -322,9 +325,9 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                             isComplexCase = true;
                         }
                         manager.createNativeQuery("delete from E2EntrySanction where entry_id=:entryId").setParameter("entryId", entryId).executeUpdate();
-                        entry.setBillNumber(nSchet);
+                        entry.setBillNumber(billNumber);
                         entry.setBillDate(billDate);
-                        entry.setBill(bill);
+                        entry.setBill(savedBill);
 
                         //Расчет цены случая ФОМС
                         Element commentCalc = sl.getChild("D_COMMENT_CALC");
@@ -342,7 +345,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                         }
 
                         //Добавляем сведения о санкциях
-                        if (zsl.getChild("SANK_IT") != null && !zsl.getChildText("SANK_IT").equals("0.00")) { //
+                        if (zsl.getChild("SANK_IT") != null && !zsl.getChildText("SANK_IT").equals("0.00")) {
                             List<Element> sanks = zsl.getChildren("SANK");
                             ArrayList<String> sanks1 = new ArrayList<>();
                             for (Element sank : sanks) {
@@ -369,15 +372,15 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                             entry.setAddGroupFld("МУР");
                         } else {
                             entry.setAttachedLpu("");
-                            entry.setAddGroupFld("");
+//                            entry.setAddGroupFld("");
                         }
                         manager.persist(entry);
                     }
                 }
-                LOG.info("По счету №" + bill.getBillNumber() + " сумма = " + totalSum);
-                monitor.setText("По счету №" + bill.getBillNumber() + " сумма = " + totalSum);
-                bill.setSum(totalSum);
-                manager.persist(bill);
+                LOG.info("По счету №" + savedBill.getBillNumber() + " сумма = " + totalSum);
+                monitor.setText("По счету №" + savedBill.getBillNumber() + " сумма = " + totalSum);
+                savedBill.setSum(totalSum);
+                manager.persist(savedBill);
                 LOG.info("Обновление MP закончено!");
             }
         } catch (Exception e) {

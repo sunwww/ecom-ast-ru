@@ -99,9 +99,13 @@
     //Удаление
     function deleteIdentityPatient${name}(identityPatientId) {
         HospitalMedCaseService.deleteIdentityPatient(identityPatientId, {
-                callback: function() {
-                    the${name}Dialog.hide() ;
-                    reload${name}();
+                callback: function(res) {
+                    if (res)
+                        showToastMessage(res,null,true,true,3000);
+                    else {
+                        the${name}Dialog.hide() ;
+                        reload${name}();
+                    }
                 }
             }
         );

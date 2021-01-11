@@ -77,7 +77,7 @@
                         sexWoman + "' then 54 else 59 end ";
                 request.setAttribute("reportInfo", "А.1. Взрослые трудоспособного возраста с 16 лет");
             } else if ("10".equals(typeAge)) {
-                age = " between 18 and case when p.sex_id='" +
+                age = ageSql +  " between 18 and case when p.sex_id='" +
                         sexWoman + "' then 54 else 59 end ";
                 request.setAttribute("reportInfo", "А.1. Взрослые трудоспособного возраста с 18 лет");
             } else {
