@@ -23,8 +23,8 @@ import ru.nuzmsh.forms.validator.validators.Required;
 
 @EntityForm
 @EntityFormPersistance(clazz= BloodTransfusion.class)
-@Comment("Протокол трансфузий")
-@WebTrail(comment = "Протокол трансфузий", nameProperties= "id", view="entityParentView-trans_blood.do",list = "entityParentList-trans_transfusion.do")
+@Comment("Протокол трансфузии")
+@WebTrail(comment = "Протокол трансфузии", nameProperties= "id", view="entityParentView-trans_blood.do",list = "entityParentList-trans_transfusion.do")
 @Parent(property="medCase", parentForm= MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Transfusion/Blood")
 @AViewInterceptors(
@@ -64,14 +64,6 @@ public class BloodTransfusionForm extends TransfusionForm{
 	public Long getPreparationRhesusFactor() {return thePreparationRhesusFactor;}
 	public void setPreparationRhesusFactor(Long aPreparationRhesusFactor) {thePreparationRhesusFactor = aPreparationRhesusFactor;}
 
-	/** Донор */
-	@Comment("Донор")
-	@Persist @Required
-	public String getDonor() {return theDonor;}
-	public void setDonor(String aDonor) {theDonor = aDonor;}
-
-	/** Донор */
-	private String theDonor;
 	/** Препарат крови */
 	private Long theBloodPreparation;
 	/** Группа крови пациента */
@@ -99,15 +91,6 @@ public class BloodTransfusionForm extends TransfusionForm{
 	private Long thePrepBloodGroupCheck;
 	/** Проверка группы крови пациента */
 	private Long thePatBloodGroupCheck;
-	
-	/** Макроскопическая оценка крови */
-	@Comment("Макроскопическая оценка крови")
-	@Persist @Required
-	public Long getMacroBall() {return theMacroBall;}
-	public void setMacroBall(Long aMacroBall) {theMacroBall = aMacroBall;}
-
-	/** Макроскопическая оценка крови */
-	private Long theMacroBall;
 	
 	/** Наблюдение сразу после переливания */
 	@Comment("Наблюдение сразу после переливания")
@@ -141,6 +124,13 @@ public class BloodTransfusionForm extends TransfusionForm{
 	public TransfusionReagentForm getReagentForm2() {return theReagentForm2;}
 	public void setReagentForm2(TransfusionReagentForm aReagentForm2) {theReagentForm2 = aReagentForm2;}
 
+	/** Реактив 3 */
+	@Comment("Реактив 3")
+	public TransfusionReagentForm getReagentForm3() {return theReagentForm3;}
+	public void setReagentForm3(TransfusionReagentForm aReagentForm3) {theReagentForm3 = aReagentForm3;}
+
+	/** Реактив 3 */
+	private TransfusionReagentForm theReagentForm3 = new TransfusionReagentForm();
 	/** Реактив 2 */
 	private TransfusionReagentForm theReagentForm2 = new TransfusionReagentForm();
 	/** Реактив 1 */
@@ -206,6 +196,22 @@ public class BloodTransfusionForm extends TransfusionForm{
 	public String getLamentBT() {return theLamentBT;}
 	public void setLamentBT(String aLamentBT) {theLamentBT = aLamentBT;}
 
+	/** Совместимость биопробы */
+	@Comment("Совместимость биопробы")
+	@Persist @Required
+	public Long getBioProbeCompatibility() {return theBioProbeCompatibility;}
+	public void setBioProbeCompatibility(Long aBioProbeCompatibility) {theBioProbeCompatibility = aBioProbeCompatibility;}
+
+	/** Организация, осуществившая инд. подбор */
+	@Comment("Организация, осуществившая инд. подбор")
+	@Persist @Required
+	public Long getIndOrg() {return theIndOrg;}
+	public void setIndOrg(Long aIndOrg) {theIndOrg = aIndOrg;}
+	/** Организация, осуществившая инд. подбор */
+	private Long theIndOrg;
+
+	/** Совместимость биопробы */
+	private Long theBioProbeCompatibility;
 	/** Жалобы */
 	private String theLamentBT;
 	/** Тяжелый боьлной */
@@ -347,6 +353,29 @@ public class BloodTransfusionForm extends TransfusionForm{
 	@Persist
 	public Boolean getWasUrineColorChanged() {return theWasUrineColorChanged;}
 	public void setWasUrineColorChanged(Boolean aWasUrineColorChanged) {theWasUrineColorChanged=aWasUrineColorChanged;}
+
+	/** 3. Реактив по инд. совместимости */
+	@Comment("3. Реактив по инд. совместимости")
+	@Persist
+	public String getReagentPT3() {return theReagentPT3;}
+	public void setReagentPT3(String aReagentPT3) {theReagentPT3 = aReagentPT3;}
+
+	/** 3. Серия реактива по инд. совместимости */
+	@Comment("3. Серия реактива по инд. совместимости")
+	@Persist
+	public String getReagentSeriesPT3() {return theReagentSeriesPT3;}
+	public void setReagentSeriesPT3(String aReagentSeriesPT3) {theReagentSeriesPT3 = aReagentSeriesPT3;}
+
+	/** 3. Срок годности */
+	@Comment("3. Срок годности")
+	@Persist @DateString @DoDateString
+	public String getReagentExpDatePT3() {return theReagentExpDatePT3;}
+	public void setReagentExpDatePT3(String aReagentExpDatePT3) {theReagentExpDatePT3 = aReagentExpDatePT3;}
+
+	@Persist @DateString @DoDateString @Required
+	public String getDateResearch() {return theDateResearch;}
+	public void setDateResearch(String aDateResearch) {theDateResearch = aDateResearch;}
+
 	/** Справочник процедур в биологической пробе при переливаниях */
 	private Long theBloodBioProbProcedure;
 	/** Кровотечение усилилось или нет без видимой причины (при переливании под наркозом или в коме)*/
@@ -357,6 +386,93 @@ public class BloodTransfusionForm extends TransfusionForm{
 	private Boolean theWasPulseIncreased;
 	/** Цвет мочи изменился или нет без видимой причины (при переливании под наркозом или в коме)*/
 	private Boolean theWasUrineColorChanged;
+	/** 3. Срок годности */
+	private String theReagentExpDatePT3;
+	/** 3. Серия реактива по инд. совместимости */
+	private String theReagentSeriesPT3;
+	/** 3. Реактив по инд. совместимости */
+	private String theReagentPT3;
+	/** Дата исследования */
+	private String theDateResearch;
+
+	/** Фенотип донора */
+	@Comment("Фенотип донора")
+	@Persist
+	public String getPhenotypeDon() {return thePhenotypeDon;}
+	public void setPhenotypeDon(String aPhenotypeDon) {thePhenotypeDon = aPhenotypeDon;}
+
+	/** Фенотип донора C */
+	@Comment("Фенотип донора C")
+	@Persist
+	public Boolean getPhenotypeDonC() {return thePhenotypeDonC;}
+	public void setPhenotypeDonC(Boolean aPhenotypeDonC) {thePhenotypeDonC = aPhenotypeDonC;}
+
+	/** Фенотип донора с */
+	@Comment("Фенотип донора с")
+	@Persist
+	public Boolean getPhenotypeDonc1() {return thePhenotypeDonc1;}
+	public void setPhenotypeDonc1(Boolean aPhenotypeDonc1) {thePhenotypeDonc1 = aPhenotypeDonc1;}
+
+	/** Фенотип донора Е */
+	@Comment("Фенотип донора Е")
+	@Persist
+	public Boolean getPhenotypeDonD() {return thePhenotypeDonD;}
+	public void setPhenotypeDonD(Boolean aPhenotypeDonD) {thePhenotypeDonD = aPhenotypeDonD;}
+
+	/** Фенотип донора e */
+	@Comment("Фенотип донора e")
+	@Persist
+	public Boolean getPhenotypeDonE() {return thePhenotypeDonE;}
+	public void setPhenotypeDonE(Boolean aPhenotypeDonE) {thePhenotypeDonE = aPhenotypeDonE;}
+
+	/** Фенотип донора E */
+	@Comment("Фенотип донора E")
+	@Persist
+	public Boolean getPhenotypeDone1() {return thePhenotypeDone1;}
+	public void setPhenotypeDone1(Boolean aPhenotypeDone1) {thePhenotypeDone1 = aPhenotypeDone1;}
+
+	/** Фенотип донора не определялся */
+	@Comment("Фенотип донора не определялся")
+	@Persist
+	public Boolean getPhenotypeDonNone() {return thePhenotypeDonNone;}
+	public void setPhenotypeDonNone(Boolean aPhenotypeDonNone) {thePhenotypeDonNone = aPhenotypeDonNone;}
+
+	/** Заключение совместимо/нет */
+	@Comment("Заключение совместимо/нет")
+	@Persist @Required
+	public Long getConclusion() {return theConclusion;}
+	public void setConclusion(Long aConclusion) {theConclusion = aConclusion;}
+
+	/** Совместимость на плоскости */
+	@Comment("Совместимость на плоскости")
+	@Persist @Required
+	public Long getPlaneCompatibility() {return thePlaneCompatibility;}
+	public void setPlaneCompatibility(Long aPlaneCompatibility) {thePlaneCompatibility = aPlaneCompatibility;}
+
+	/** Основные симптомы */
+	@Comment("Основные симптомы")
+	@Persist
+	public String getMainSymptoms() {return theMainSymptoms;}
+	public void setMainSymptoms(String aMainSymptoms) {theMainSymptoms = aMainSymptoms;}
+
+	/** Заключение совместимо/нет */
+	private Long theConclusion;
+	/** Заключение совместимо/нет */
+	private Long thePlaneCompatibility;
+	/** Фенотип донора E */
+	private Boolean thePhenotypeDone1;
+	/** Фенотип донора e */
+	private Boolean thePhenotypeDonE;
+	/** Фенотип донора Е */
+	private Boolean thePhenotypeDonD;
+	/** Фенотип донора с */
+	private Boolean thePhenotypeDonc1;
+	/** Фенотип донора C */
+	private Boolean thePhenotypeDonC;
+	/** Фенотип донора не определялся*/
+	private Boolean thePhenotypeDonNone;
+	/** Фенотип донора */
+	private String thePhenotypeDon;
+	/** Основные симптомы */
+	private String theMainSymptoms;
 }
-//lastrelease milamesher 30.03.2018 #95
-//added fields

@@ -14,21 +14,7 @@ function onPreDelete(aId, aCtx) {
 /**
  * При создании
  */
-//milamesher 30.03.2018 no requirements so i need to check reagents #95
-function checkReagentsAndChecks(aForm, aEntity) {
-    if (!aEntity.getBloodPreparation().getCode().equals("PLAZMA") &&
-		!aEntity.getBloodPreparation().getCode().equals("KRIO") &&
-		!aEntity.getBloodPreparation().getCode().equals("TROMB") &&
-        (aForm.getReagentForm1().getReagent()=='0' || aForm.getReagentForm1().getSeries()=='' ||  aForm.getReagentForm1().getExpirationDate()==''
-            || aForm.getReagentForm2().getReagent()=='0' || aForm.getReagentForm2().getSeries()==''
-            ||  aForm.getReagentForm2().getExpirationDate()=='' ))
-        throw "Не вся информация по реактивам заполнена!";
-    if (!aEntity.getBloodPreparation().getCode().equals("PLAZMA") && !aEntity.getBloodPreparation().getCode().equals("TROMB") && !aEntity.getBloodPreparation().getCode().equals("KRIO")
-        && (aForm.getPatBloodGroupCheck()=='0'))
-        throw "Не вся информация по контрольным проверкам заполнена! Группа крови реципиента обязательна для заполнения!";
-}
 function onCreate(aForm, aEntity, aContext) {
-    checkReagentsAndChecks(aForm, aEntity);
 	saveAdditionData(aForm,aEntity,aContext) ;
 }
 
@@ -43,7 +29,6 @@ function onPreSave(aForm,aEntity, aCtx) {
  * При сохранении
  */
 function onSave(aForm, aEntity, aCtx) {
-    checkReagentsAndChecks(aForm, aEntity);
 	aCtx.manager.persist(aEntity) ;
 	saveAdditionData(aForm,aEntity,aCtx) ;
 }
@@ -62,6 +47,7 @@ function saveAdditionData(aForm,aEntity,aCtx) {
 	// Реактивы
 	saveReagent(aEntity, aCtx.manager, aForm.getReagentForm1(), '1');
 	saveReagent(aEntity, aCtx.manager, aForm.getReagentForm2(), '2');
+	saveReagent(aEntity, aCtx.manager, aForm.getReagentForm3(), '3');
 	saveArray(aEntity, aCtx.manager,aForm.getComplications()
 			,Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocTransfusionReaction
 			,[]
@@ -126,8 +112,6 @@ function saveArrayForm(aEntity,aManager, aForm,aMainCmd,aObjNewClass, aAddCmd,
 }
 function saveArray(aEntity,aManager, aIdString,aClazz,aMainCmd, aAddCmd,
 		 aTableSql) {
-	//var obj = new Packages.org.json.JSONObject(aJsonString) ;
-	//var ar = obj.getJSONArray("childs");
 	if (aIdString!=null && aIdString!="" && aIdString!="null") {
 		var ids = aIdString.split(",") ;
 		
@@ -137,7 +121,6 @@ function saveArray(aEntity,aManager, aIdString,aClazz,aMainCmd, aAddCmd,
 		for (var i = 0; i < ids.length; i++) {
 			var jsId = ids[i].trim();
 			if (jsId!=null && jsId!="" || jsId=="0") {
-				//System.out.println("    id="+jsonId) ;
 				
 				var jsonId=java.lang.Long.valueOf(jsId) ;
 				
@@ -149,9 +132,7 @@ function saveArray(aEntity,aManager, aIdString,aClazz,aMainCmd, aAddCmd,
 					
 					for (var j=0;j<aAddCmd.length;j++) {
 						eval(aAddCmd[j]) ;
-						//if (j>3)throw ""+aAddCmd[j] ;
 					}
-					//throw ""+objS ;
 					aManager.persist(objNew) ;
 					
 				}
@@ -159,7 +140,6 @@ function saveArray(aEntity,aManager, aIdString,aClazz,aMainCmd, aAddCmd,
 		}
 		
 		sql = "delete "+aTableSql+" not in ("+aIdString+") " ;
-		//throw sql ;
 		aManager.createNativeQuery(sql).executeUpdate();
 	} else {
 		sql = "delete "+aTableSql+" !='0' " ;
