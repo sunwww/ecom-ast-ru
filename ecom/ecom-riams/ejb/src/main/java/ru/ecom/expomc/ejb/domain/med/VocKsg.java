@@ -4,9 +4,7 @@ import ru.ecom.ejb.domain.simple.VocIdCodeName;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  *  КСГ 
@@ -14,6 +12,10 @@ import javax.persistence.Table;
 @Entity
 @Comment("КСГ")
 @Table(schema="SQLUser")
+@NamedQueries({
+		@NamedQuery( name="VocKsg.findByCodeAndYear"
+				, query="from VocKsg where code=:code and year=:year")
+})
 public class VocKsg extends VocIdCodeName {
 
 	/** Группа КСГ */
