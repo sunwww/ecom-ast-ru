@@ -1428,7 +1428,7 @@ function recordPatient(medCase,aCtx) {
 	//3. Возраст (полных лет, для детей: до 1 года - месяцев, до 1 месяца - дней)
 	getAge("pat.age",patient.birthday,medCase.dateStart,aCtx.manager) ;
 	//4. Постоянное место жительства: город, село и адрес
-	getAddress("pat.address",patient.address,patient) ;
+	map.put("pat.address",patient.address) ;
 	map.put("pat.addressReal",patient.addressReal) ;
 	map.put("pat.addressReg",patient.addressRegistration) ;
 	//Дом, корпус
@@ -2186,24 +2186,6 @@ function getAge(aKey,aBirthday,aDate,aManager,aType) {
 function toBeOrNotToBe(aKey,aValue) {
 	map.put(aKey,(aValue!=null && aValue==true)? "Да": "Нет") ;
 }
-function getAddress(aKey, aAddress,aPat) {
-	if (aAddress!=null) {
-		if (aAddress.addressIsCity!=null && aAddress.addressIsCity==true) {
-			map.put(aKey+".CityOrVillage","город") ;
-		} else {
-			if (aAddress.addressIsVillage!=null && aAddress.addressIsVillage==true) {
-				map.put(aKey+".CityOrVillage","село") ;
-			} else {
-				map.put(aKey+".CityOrVillage","город, село (нужное подчеркнуть)") ;
-			}
-		}
-		//map.put(aKey+".info",aAddress.getAddressInfo(aPat.houseNumber, aPat.houseBuilding, aPat.flatNumber)) ;
-	}else{
-		map.put(aKey+".CityOrVillage","город, село (нужное подчеркнуть)") ;
-	}
-	map.put(aKey+".info",aPat.getAddressRegistration()) ;
-	map.put(aKey+".real",aPat.getAddressReal()) ;
-}
 
 function getDiagnos(aKey,aDiag) {
 	if (aDiag!=null) {
@@ -2896,4 +2878,46 @@ function printCovidAllDepartments(aCtx, aParams) {
 	}
 	map.put("patients", patients);
 	return map;
+}
+
+function printPregCard(aCtx, aParams) {
+	var slsId=aParams.get("id") ;
+	var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
+		, new java.lang.Long(slsId)) ;
+
+	map.put("statCard",medCase.statisticStub.code) ;
+	var patient = medCase.patient;
+	var birthday = ''+patient.birthday;
+	map.put("year",birthday.substring(0,4));
+	map.put("month",birthday.substring(5,7));
+	map.put("num",birthday.substring(8,10));
+
+	var dateStart = ''+medCase.dateStart;
+	var yearH = dateStart.substring(0,4);
+	var monthH = dateStart.substring(5,7);
+	var numH = dateStart.substring(8,10);
+	map.put("yearH",yearH);
+	map.put("monthH",monthH);
+	map.put("numH",numH);
+
+	var currentDate = new java.util.Date() ;
+	var FORMAT = new java.text.SimpleDateFormat("число dd месяц MM год yyyy") ;
+	map.put("currentDate",FORMAT.format(currentDate)) ;
+
+	var agreeTime = 'число ' + numH + " месяц " + monthH + " год " + yearH + ' время  ' + medCase.entranceTime;
+	map.put("agreeTime",agreeTime) ;
+
+	recordPatient(medCase,aCtx) ;
+
+	var listPolicy = aCtx.manager.createQuery("from MedPolicy where patient=:pat and (actualDateTo is null or actualDateTo>=current_date)")
+		.setParameter("pat",patient).setMaxResults(1).getResultList() ;
+	if (listPolicy.size()>0) {
+		map.put("strax",listPolicy.get(0)) ;
+	} else {
+		map.put("strax",null) ;
+	}
+	map.put("pat.marriageStatus",patient.marriageStatus);
+	map.put("pat.address",patient.address);
+	map.put("pat.phone",patient.phone);
+	return map ;
 }

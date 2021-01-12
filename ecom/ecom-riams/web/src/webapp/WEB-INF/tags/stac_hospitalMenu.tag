@@ -201,6 +201,9 @@ a#${currentAction}, #side ul li a#${currentAction}, #side ul li a#${currentActio
      <mis:sideLinkForWoman roles="/Policy/Mis/Pregnancy/History/View" classByObject="MedCase" id="${param.id}"
      	action='/javascript:initSelectPrinter("print-preghistory.do?s=HospitalPrintService&amp;m=printPregHistoryByMC&id=${param.id}",1)' 
      	name="Истории родов" title="Печать истории родов"/>
+	<mis:sideLinkForWoman roles="/Policy/Mis/Pregnancy/History/View" classByObject="MedCase" id="${param.id}"
+						  action='/javascript:initSelectPrinter("print-medCardPregn.do?s=HospitalPrintService&amp;m=printPregCard&id=${param.id}",1)'
+						  name="Мед. карты при беременности" title="Печать мед. карты беременной"/>
 </msh:sideMenu>
 <msh:sideMenu>
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/Show,/Policy/Mis/MedCase/Stac/Ssl/Discharge/Edit"
