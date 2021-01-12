@@ -94,4 +94,12 @@ public class GrouperKSGPosition extends BaseEntity {
     /** Дополнительный признак */
     private String theDopPriznak ;
 
+    /** Код КСГ (для упрощения импорта) */
+    @Comment("Код КСГ (для упрощения импорта)")
+    public String getKsgCode() {return theKsgCode;}
+    public void setKsgCode(String aKsgCode) {theKsgCode = aKsgCode;}
+    /** Код КСГ (для упрощения импорта) */
+    private String theKsgCode;
+
+
 }
