@@ -1428,7 +1428,7 @@ function recordPatient(medCase,aCtx) {
 	//3. Возраст (полных лет, для детей: до 1 года - месяцев, до 1 месяца - дней)
 	getAge("pat.age",patient.birthday,medCase.dateStart,aCtx.manager) ;
 	//4. Постоянное место жительства: город, село и адрес
-	map.put("pat.address",patient.address) ;
+	getAddress("pat.address",patient.address,patient) ;
 	map.put("pat.addressReal",patient.addressReal) ;
 	map.put("pat.addressReg",patient.addressRegistration) ;
 	//Дом, корпус
@@ -2186,6 +2186,24 @@ function getAge(aKey,aBirthday,aDate,aManager,aType) {
 function toBeOrNotToBe(aKey,aValue) {
 	map.put(aKey,(aValue!=null && aValue==true)? "Да": "Нет") ;
 }
+function getAddress(aKey, aAddress,aPat) {
+	if (aAddress!=null) {
+		if (aAddress.addressIsCity!=null && aAddress.addressIsCity==true) {
+			map.put(aKey+".CityOrVillage","город") ;
+		} else {
+			if (aAddress.addressIsVillage!=null && aAddress.addressIsVillage==true) {
+				map.put(aKey+".CityOrVillage","село") ;
+			} else {
+				map.put(aKey+".CityOrVillage","город, село (нужное подчеркнуть)") ;
+			}
+		}
+		//map.put(aKey+".info",aAddress.getAddressInfo(aPat.houseNumber, aPat.houseBuilding, aPat.flatNumber)) ;
+	}else{
+		map.put(aKey+".CityOrVillage","город, село (нужное подчеркнуть)") ;
+	}
+	map.put(aKey+".info",aPat.getAddressRegistration()) ;
+	map.put(aKey+".real",aPat.getAddressReal()) ;
+}
 
 function getDiagnos(aKey,aDiag) {
 	if (aDiag!=null) {
@@ -2919,5 +2937,8 @@ function printPregCard(aCtx, aParams) {
 	map.put("pat.marriageStatus",patient.marriageStatus);
 	map.put("pat.address",patient.address);
 	map.put("pat.phone",patient.phone);
+	map.put("sls.whosRefer",medCase.orderLpu) ;
+	map.put("sls.departmentDirection",medCase.department) ;
+	recordMedCaseDefaultInfo(medCase,aCtx);
 	return map ;
 }
