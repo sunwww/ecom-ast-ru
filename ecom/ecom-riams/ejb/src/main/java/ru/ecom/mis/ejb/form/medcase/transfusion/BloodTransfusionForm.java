@@ -372,7 +372,7 @@ public class BloodTransfusionForm extends TransfusionForm{
 	public String getReagentExpDatePT3() {return theReagentExpDatePT3;}
 	public void setReagentExpDatePT3(String aReagentExpDatePT3) {theReagentExpDatePT3 = aReagentExpDatePT3;}
 
-	@Persist @DateString @DoDateString @Required
+	@Persist @DateString @DoDateString
 	public String getDateResearch() {return theDateResearch;}
 	public void setDateResearch(String aDateResearch) {theDateResearch = aDateResearch;}
 
@@ -439,7 +439,7 @@ public class BloodTransfusionForm extends TransfusionForm{
 
 	/** Заключение совместимо/нет */
 	@Comment("Заключение совместимо/нет")
-	@Persist @Required
+	@Persist
 	public Long getConclusion() {return theConclusion;}
 	public void setConclusion(Long aConclusion) {theConclusion = aConclusion;}
 

@@ -228,6 +228,18 @@
     eventutil.addEventListener($('phenotypeDonD'), 'click', phenotype) ;
     eventutil.addEventListener($('phenotypeDonNone'), 'click', phenotype) ;
 
+    //если индивидуальный подбор не проводился
+    indOrgAutocomplete.addOnChangeCallback(function() {
+        if ($('indOrg').value && $('indOrg').value!=8) {
+            $('dateResearch').className += " required";$('dateResearch').removeAttribute("disabled");
+            $('conclusionName').className += " required";$('conclusionName').removeAttribute("disabled");}
+        else {
+            $('dateResearch').setAttribute("disabled","true");
+            $('dateResearch').value="";
+            $('dateResearch').className=$('dateResearch').className.replace(new RegExp("required","g"),"");$('conclusionName').setAttribute("disabled","true");
+            $('conclusionName').value="";
+            $('conclusionName').className=$('conclusionName').className.replace(new RegExp("required","g"),"");}});
+
   	function phenotype() {
   		$('phenotype').value="C"+check("phenotypeC")+"c"+check("phenotypec1")+"D"+check("phenotypeD")+"E"+check("phenotypeE")+"e"+check("phenotypee1") + "Не опр"+check("phenotypeNone");
   		$('phenotypeReadOnly').value=$('phenotype').value ;
@@ -264,6 +276,12 @@
                 msg+=' серия реагента '+i + "; ";
             if (!$('reagentForm'+i+'.expirationDate').value)
                 msg+=' срок годности реагента '+i + "; ";
+        }
+        if ($('indOrg').value && $('indOrg').value!=8) {
+            if ($('dateResearch').value=="")
+                msg+=' дата исследования инд. подбора ; ';
+            if ($('conclusionName').value=="")
+                msg+=' заключение инд. подбора ; ';
         }
         btn.value='Создание...';
         if (msg) {
