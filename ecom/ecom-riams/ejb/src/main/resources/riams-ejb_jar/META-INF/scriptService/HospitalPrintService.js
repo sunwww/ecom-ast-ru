@@ -466,23 +466,29 @@ function printBloodTransfusionInfo(aCtx,aParams) {
 		map.put("reactionLast"," не были") ;
 	}
 	//Совместима ли биопроба
-	if (trans.getBioProbeCompatibility()!=null && trans.getBioProbeCompatibility().getCode()!=null && trans.getBioProbeCompatibility().getCode().equals("1")) {
-		map.put("biologicTest"," совместимо") ;
-	} else {
-		map.put("biologicTest"," несовместимо") ;
+	if (trans.getBioProbeCompatibility()!=null && trans.getBioProbeCompatibility().getCode()!=null) {
+		if (trans.getBioProbeCompatibility().getCode().equals("1"))
+			map.put("biologicTest"," совместимо") ;
+		else if (trans.getBioProbeCompatibility().getCode().equals("2"))
+			map.put("biologicTest"," несовместимо") ;
 	}
+
 	//Заключение
-	if (trans.getConclusion()!=null && trans.getConclusion().getCode()!=null && trans.getConclusion().getCode().equals("1")) {
-		map.put("concTest"," совместимо") ;
-	} else {
-		map.put("concTest"," несовместимо") ;
+	if (trans.getConclusion()!=null && trans.getConclusion().getCode()!=null) {
+		if (trans.getConclusion().getCode().equals("1"))
+			map.put("concTest"," совместимо") ;
+		else if (trans.getConclusion().getCode().equals("2"))
+			map.put("concTest"," несовместимо") ;
 	}
+
 	//На плоскости
-	if (trans.getPlaneCompatibility()!=null && trans.getPlaneCompatibility().getCode()!=null && trans.getPlaneCompatibility().getCode().equals("1")) {
-		map.put("planeTest"," совместимо") ;
-	} else {
-		map.put("planeTest"," несовместимо") ;
+	if (trans.getPlaneCompatibility()!=null && trans.getPlaneCompatibility().getCode()!=null) {
+		if (trans.getPlaneCompatibility().getCode().equals("1"))
+			map.put("planeTest"," совместимо") ;
+		 else if (trans.getPlaneCompatibility().getCode().equals("2"))
+			map.put("planeTest"," несовместимо") ;
 	}
+
 	//Реагенты
 	var listR = aCtx.manager.createNativeQuery("select vtr.name as vtrn,tr.series as ser,to_char(tr.expirationDate,'dd.mm.yyyy') as exp from TransfusionReagent tr left join VocTransfusionReagent vtr on vtr.id=tr.reagent_id where tr.transfusion_id='"+id+"' order by tr.numberReagent").getResultList();
 	for (var i=0; i<3; i++) {
@@ -1428,7 +1434,7 @@ function recordPatient(medCase,aCtx) {
 	//3. Возраст (полных лет, для детей: до 1 года - месяцев, до 1 месяца - дней)
 	getAge("pat.age",patient.birthday,medCase.dateStart,aCtx.manager) ;
 	//4. Постоянное место жительства: город, село и адрес
-	map.put("pat.address",patient.address) ;
+	getAddress("pat.address",patient.address,patient) ;
 	map.put("pat.addressReal",patient.addressReal) ;
 	map.put("pat.addressReg",patient.addressRegistration) ;
 	//Дом, корпус
@@ -2186,6 +2192,24 @@ function getAge(aKey,aBirthday,aDate,aManager,aType) {
 function toBeOrNotToBe(aKey,aValue) {
 	map.put(aKey,(aValue!=null && aValue==true)? "Да": "Нет") ;
 }
+function getAddress(aKey, aAddress,aPat) {
+	if (aAddress!=null) {
+		if (aAddress.addressIsCity!=null && aAddress.addressIsCity==true) {
+			map.put(aKey+".CityOrVillage","город") ;
+		} else {
+			if (aAddress.addressIsVillage!=null && aAddress.addressIsVillage==true) {
+				map.put(aKey+".CityOrVillage","село") ;
+			} else {
+				map.put(aKey+".CityOrVillage","город, село (нужное подчеркнуть)") ;
+			}
+		}
+		//map.put(aKey+".info",aAddress.getAddressInfo(aPat.houseNumber, aPat.houseBuilding, aPat.flatNumber)) ;
+	}else{
+		map.put(aKey+".CityOrVillage","город, село (нужное подчеркнуть)") ;
+	}
+	map.put(aKey+".info",aPat.getAddressRegistration()) ;
+	map.put(aKey+".real",aPat.getAddressReal()) ;
+}
 
 function getDiagnos(aKey,aDiag) {
 	if (aDiag!=null) {
@@ -2919,5 +2943,8 @@ function printPregCard(aCtx, aParams) {
 	map.put("pat.marriageStatus",patient.marriageStatus);
 	map.put("pat.address",patient.address);
 	map.put("pat.phone",patient.phone);
+	map.put("sls.whosRefer",medCase.orderLpu) ;
+	map.put("sls.departmentDirection",medCase.department) ;
+	recordMedCaseDefaultInfo(medCase,aCtx);
 	return map ;
 }
