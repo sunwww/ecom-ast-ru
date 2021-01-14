@@ -466,23 +466,29 @@ function printBloodTransfusionInfo(aCtx,aParams) {
 		map.put("reactionLast"," не были") ;
 	}
 	//Совместима ли биопроба
-	if (trans.getBioProbeCompatibility()!=null && trans.getBioProbeCompatibility().getCode()!=null && trans.getBioProbeCompatibility().getCode().equals("1")) {
-		map.put("biologicTest"," совместимо") ;
-	} else {
-		map.put("biologicTest"," несовместимо") ;
+	if (trans.getBioProbeCompatibility()!=null && trans.getBioProbeCompatibility().getCode()!=null) {
+		if (trans.getBioProbeCompatibility().getCode().equals("1"))
+			map.put("biologicTest"," совместимо") ;
+		else if (trans.getBioProbeCompatibility().getCode().equals("2"))
+			map.put("biologicTest"," несовместимо") ;
 	}
+
 	//Заключение
-	if (trans.getConclusion()!=null && trans.getConclusion().getCode()!=null && trans.getConclusion().getCode().equals("1")) {
-		map.put("concTest"," совместимо") ;
-	} else {
-		map.put("concTest"," несовместимо") ;
+	if (trans.getConclusion()!=null && trans.getConclusion().getCode()!=null) {
+		if (trans.getConclusion().getCode().equals("1"))
+			map.put("concTest"," совместимо") ;
+		else if (trans.getConclusion().getCode().equals("2"))
+			map.put("concTest"," несовместимо") ;
 	}
+
 	//На плоскости
-	if (trans.getPlaneCompatibility()!=null && trans.getPlaneCompatibility().getCode()!=null && trans.getPlaneCompatibility().getCode().equals("1")) {
-		map.put("planeTest"," совместимо") ;
-	} else {
-		map.put("planeTest"," несовместимо") ;
+	if (trans.getPlaneCompatibility()!=null && trans.getPlaneCompatibility().getCode()!=null) {
+		if (trans.getPlaneCompatibility().getCode().equals("1"))
+			map.put("planeTest"," совместимо") ;
+		 else if (trans.getPlaneCompatibility().getCode().equals("2"))
+			map.put("planeTest"," несовместимо") ;
 	}
+
 	//Реагенты
 	var listR = aCtx.manager.createNativeQuery("select vtr.name as vtrn,tr.series as ser,to_char(tr.expirationDate,'dd.mm.yyyy') as exp from TransfusionReagent tr left join VocTransfusionReagent vtr on vtr.id=tr.reagent_id where tr.transfusion_id='"+id+"' order by tr.numberReagent").getResultList();
 	for (var i=0; i<3; i++) {

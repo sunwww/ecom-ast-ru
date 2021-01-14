@@ -445,7 +445,7 @@ public class BloodTransfusionForm extends TransfusionForm{
 
 	/** Совместимость на плоскости */
 	@Comment("Совместимость на плоскости")
-	@Persist @Required
+	@Persist
 	public Long getPlaneCompatibility() {return thePlaneCompatibility;}
 	public void setPlaneCompatibility(Long aPlaneCompatibility) {thePlaneCompatibility = aPlaneCompatibility;}
 
