@@ -466,23 +466,29 @@ function printBloodTransfusionInfo(aCtx,aParams) {
 		map.put("reactionLast"," не были") ;
 	}
 	//Совместима ли биопроба
-	if (trans.getBioProbeCompatibility()!=null && trans.getBioProbeCompatibility().getCode()!=null && trans.getBioProbeCompatibility().getCode().equals("1")) {
-		map.put("biologicTest"," совместимо") ;
-	} else {
-		map.put("biologicTest"," несовместимо") ;
+	if (trans.getBioProbeCompatibility()!=null && trans.getBioProbeCompatibility().getCode()!=null) {
+		if (trans.getBioProbeCompatibility().getCode().equals("1"))
+			map.put("biologicTest"," совместимо") ;
+		else if (trans.getBioProbeCompatibility().getCode().equals("2"))
+			map.put("biologicTest"," несовместимо") ;
 	}
+
 	//Заключение
-	if (trans.getConclusion()!=null && trans.getConclusion().getCode()!=null && trans.getConclusion().getCode().equals("1")) {
-		map.put("concTest"," совместимо") ;
-	} else {
-		map.put("concTest"," несовместимо") ;
+	if (trans.getConclusion()!=null && trans.getConclusion().getCode()!=null) {
+		if (trans.getConclusion().getCode().equals("1"))
+			map.put("concTest"," совместимо") ;
+		else if (trans.getConclusion().getCode().equals("2"))
+			map.put("concTest"," несовместимо") ;
 	}
+
 	//На плоскости
-	if (trans.getPlaneCompatibility()!=null && trans.getPlaneCompatibility().getCode()!=null && trans.getPlaneCompatibility().getCode().equals("1")) {
-		map.put("planeTest"," совместимо") ;
-	} else {
-		map.put("planeTest"," несовместимо") ;
+	if (trans.getPlaneCompatibility()!=null && trans.getPlaneCompatibility().getCode()!=null) {
+		if (trans.getPlaneCompatibility().getCode().equals("1"))
+			map.put("planeTest"," совместимо") ;
+		 else if (trans.getPlaneCompatibility().getCode().equals("2"))
+			map.put("planeTest"," несовместимо") ;
 	}
+
 	//Реагенты
 	var listR = aCtx.manager.createNativeQuery("select vtr.name as vtrn,tr.series as ser,to_char(tr.expirationDate,'dd.mm.yyyy') as exp from TransfusionReagent tr left join VocTransfusionReagent vtr on vtr.id=tr.reagent_id where tr.transfusion_id='"+id+"' order by tr.numberReagent").getResultList();
 	for (var i=0; i<3; i++) {
@@ -2896,4 +2902,49 @@ function printCovidAllDepartments(aCtx, aParams) {
 	}
 	map.put("patients", patients);
 	return map;
+}
+
+function printPregCard(aCtx, aParams) {
+	var slsId=aParams.get("id") ;
+	var medCase = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase
+		, new java.lang.Long(slsId)) ;
+
+	map.put("statCard",medCase.statisticStub.code) ;
+	var patient = medCase.patient;
+	var birthday = ''+patient.birthday;
+	map.put("year",birthday.substring(0,4));
+	map.put("month",birthday.substring(5,7));
+	map.put("num",birthday.substring(8,10));
+
+	var dateStart = ''+medCase.dateStart;
+	var yearH = dateStart.substring(0,4);
+	var monthH = dateStart.substring(5,7);
+	var numH = dateStart.substring(8,10);
+	map.put("yearH",yearH);
+	map.put("monthH",monthH);
+	map.put("numH",numH);
+
+	var currentDate = new java.util.Date() ;
+	var FORMAT = new java.text.SimpleDateFormat("число dd месяц MM год yyyy") ;
+	map.put("currentDate",FORMAT.format(currentDate)) ;
+
+	var agreeTime = 'число ' + numH + " месяц " + monthH + " год " + yearH + ' время  ' + medCase.entranceTime;
+	map.put("agreeTime",agreeTime) ;
+
+	recordPatient(medCase,aCtx) ;
+
+	var listPolicy = aCtx.manager.createQuery("from MedPolicy where patient=:pat and (actualDateTo is null or actualDateTo>=current_date)")
+		.setParameter("pat",patient).setMaxResults(1).getResultList() ;
+	if (listPolicy.size()>0) {
+		map.put("strax",listPolicy.get(0)) ;
+	} else {
+		map.put("strax",null) ;
+	}
+	map.put("pat.marriageStatus",patient.marriageStatus);
+	map.put("pat.address",patient.address);
+	map.put("pat.phone",patient.phone);
+	map.put("sls.whosRefer",medCase.orderLpu) ;
+	map.put("sls.departmentDirection",medCase.department) ;
+	recordMedCaseDefaultInfo(medCase,aCtx);
+	return map ;
 }

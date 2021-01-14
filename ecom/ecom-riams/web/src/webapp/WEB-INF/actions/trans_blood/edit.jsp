@@ -228,6 +228,60 @@
     eventutil.addEventListener($('phenotypeDonD'), 'click', phenotype) ;
     eventutil.addEventListener($('phenotypeDonNone'), 'click', phenotype) ;
 
+    //если поле prop имеет значение из vals или не имеет значение из notVals, все поля в req сделать обязательными
+    //если другое значение - убрать обязательность, снимать значения не надо
+    var masReq = [{prop: 'bloodPreparation', vals:[1,2,3,4,5,6,7,8,9,10,11], notVals: [], req: [{field: 'planeCompatibilityName', cmnt: 'проверка на плоскости'}]}];
+
+
+    //ф-я настраивает обязательность полей req в masReq
+    function checkMasReq() {
+        for (var i=0; i<masReq.length; i++) {
+            var el = masReq[i];
+            if ($(el.prop).value!='' && (el.vals.length>0 && el.vals.indexOf(+$(el.prop).value)!=-1 || el.notVals.length>0 && el.notVals.indexOf(+$(el.prop).value)==-1)) {
+                el.req.forEach(function (reqMasEl) {
+                    $(reqMasEl.field).className += " required"
+                });}
+            else {
+                el.req.map(function (reqMasEl) {
+                    $(reqMasEl.field).className = $(reqMasEl.field).className.replace(new RegExp("required", "g"), "");
+                    //$(fieldName).value = '';
+                });
+            }
+        }
+    }
+
+    bloodPreparationAutocomplete.addOnChangeCallback(function() {
+        checkMasReq() ;
+    }) ;
+
+    //ф-я проверяет заполнение masReq
+    function checkSaveMasReq() {
+        var msg = '';
+        for (var i = 0; i < masReq.length; i++) {
+            var el = masReq[i];
+            if ($(el.prop).value != '' && (el.vals.length > 0 && el.vals.indexOf(+$(el.prop).value) != -1 || el.notVals.length > 0 && el.notVals.indexOf(+$(el.prop).value) == -1)) {
+                el.req.forEach(function (reqMasEl) {
+                    if ($(reqMasEl.field).value == '') {
+                        msg += ' ' + reqMasEl.cmnt + ';';
+                    }
+                });
+            }
+        }
+        return msg;
+    }
+
+    //если индивидуальный подбор не проводился
+    indOrgAutocomplete.addOnChangeCallback(function() {
+        if ($('indOrg').value && $('indOrg').value!=8) {
+            $('dateResearch').className += " required";$('dateResearch').removeAttribute("disabled");
+            $('conclusionName').className += " required";$('conclusionName').removeAttribute("disabled");}
+        else {
+            $('dateResearch').setAttribute("disabled","true");
+            $('dateResearch').value="";
+            $('dateResearch').className=$('dateResearch').className.replace(new RegExp("required","g"),"");$('conclusionName').setAttribute("disabled","true");
+            $('conclusionName').value="";
+            $('conclusionName').className=$('conclusionName').className.replace(new RegExp("required","g"),"");}});
+
   	function phenotype() {
   		$('phenotype').value="C"+check("phenotypeC")+"c"+check("phenotypec1")+"D"+check("phenotypeD")+"E"+check("phenotypeE")+"e"+check("phenotypee1") + "Не опр"+check("phenotypeNone");
   		$('phenotypeReadOnly').value=$('phenotype').value ;
@@ -265,6 +319,13 @@
             if (!$('reagentForm'+i+'.expirationDate').value)
                 msg+=' срок годности реагента '+i + "; ";
         }
+        if ($('indOrg').value && $('indOrg').value!=8) {
+            if ($('dateResearch').value=="")
+                msg+=' дата исследования инд. подбора ; ';
+            if ($('conclusionName').value=="")
+                msg+=' заключение инд. подбора ; ';
+        }
+        msg += checkSaveMasReq();
         btn.value='Создание...';
         if (msg) {
             showToastMessage("Заполните обязательные поля: " + msg,null,true,true,5000);
