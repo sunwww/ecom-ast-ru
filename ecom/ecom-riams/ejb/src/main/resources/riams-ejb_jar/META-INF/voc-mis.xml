@@ -13,7 +13,7 @@
 	<voc id="vocClassificationCriterionActual" type="NativeVocService">
 		<NativeVocService
                 from="VocClassificationCriterion as voc"
-                names="voc.name"
+                names="voc.code ||' '|| voc.name"
                 nameId="voc.id"
                 queried ="(voc.name like :query)"
                 queryAppend="isNoActual is null or isNoActual is false"
