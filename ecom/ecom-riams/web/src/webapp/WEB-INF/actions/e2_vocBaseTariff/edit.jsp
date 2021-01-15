@@ -56,7 +56,6 @@
         <script type="text/javascript">
             function createNewOne() {
                 let date = prompt("Введите дату начала действия",getCurrentDate());
-                alert(date);
                 let cost = prompt("Введите новую цену",$('value').value);
                 if (date && cost) {
                     let url = "entitySaveGoView-e2_vocBaseTariff.do";
