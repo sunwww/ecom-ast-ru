@@ -19,7 +19,7 @@
             <msh:panel>
                 <msh:separator colSpan="8" label="Общие"/>
                 <msh:row>
-                    <msh:textField property="year" label="Год КСГ">
+                    <msh:textField property="year" label="Год КСГ"/>
                     <msh:autoComplete property="group" vocName="vocKsgGroup" fieldColSpan="3" size="100" viewOnlyField="true"/>
                 </msh:row>
                 <msh:row>
