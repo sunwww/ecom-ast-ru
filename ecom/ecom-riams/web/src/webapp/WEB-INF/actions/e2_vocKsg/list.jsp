@@ -21,7 +21,7 @@
         request.setAttribute("yearSql","where ksg.year="+(year!=null && !"".equals(year) ? "'"+year+"'" : "cast(to_char(current_date,'yyyy') as int)"));
             %>
         <ecom:webQuery name="entryList" nativeSql="select ksg.id
-            ,ksg.code||' '||ksg.name as ksg
+            ,ksg.code||' '||ksg.name ||' ('||ksg.year||' год)' as ksg
             ,ksg.kz as kz
             , ksg.profile
             ,vbst.name
