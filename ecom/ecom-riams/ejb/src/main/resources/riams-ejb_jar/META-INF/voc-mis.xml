@@ -15,7 +15,7 @@
                 from="VocClassificationCriterion as voc"
                 names="voc.code ||' '|| voc.name"
                 nameId="voc.id"
-                queried ="(voc.name like :query)"
+				queried ="((upper(voc.code) like upper(:query) or upper(voc.name) like upper(:query)))"
                 queryAppend="isNoActual is null or isNoActual is false"
 		/>
 	</voc>
@@ -37,6 +37,17 @@
 				queried ="(voc.name like :query)"
 		/>
 	</voc>
+
+	<voc id="vocTypeProtocolMaternity" type="NativeVocService">
+		<NativeVocService
+				from="vocTypeProtocol voc"
+				names="voc.name"
+				nameId="voc.id"
+				queried ="(voc.name like :query)"
+				queryAppend="voc.isForMaternity is true"
+		/>
+	</voc>
+
 	<voc id="vocTicketQueue" type="NativeVocService">
 		<NativeVocService
 				from="VocQueue as voc"

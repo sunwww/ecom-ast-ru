@@ -10,4 +10,10 @@ import javax.persistence.Table;
 @Comment("Справочник тяжестей заболевания в оценке ковида")
 @Table(schema = "SQLUser")
 public class VocSost extends VocBaseEntity {
+    /** Код ОМС */
+    @Comment("Код ОМС")
+    public String getOmcCode() {return theOmcCode;}
+    public void setOmcCode(String aOmcCode) {theOmcCode = aOmcCode;}
+    /** Код ОМС */
+    private String theOmcCode;
 }

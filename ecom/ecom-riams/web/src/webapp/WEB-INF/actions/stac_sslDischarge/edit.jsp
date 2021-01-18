@@ -483,8 +483,12 @@
                             }
                         });
                 }
-                else
+                else {
+                    alert("Внимание! При сохранении предварительной выписки дата и время выписки сохраняться НЕ БУДУТ!");
+                    $('dateFinish').value='';
+                    $('dischargeTime').value='';
                     saveNext(aPrefix);
+                }
             }
 
             function saveNext(aPrefix) {

@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -19,6 +19,7 @@
             <msh:panel>
                 <msh:separator colSpan="8" label="Общие"/>
                 <msh:row>
+                    <msh:textField property="year" label="Год КСГ"/>
                     <msh:autoComplete property="group" vocName="vocKsgGroup" fieldColSpan="3" size="100" viewOnlyField="true"/>
                 </msh:row>
                 <msh:row>
@@ -60,6 +61,21 @@
             </msh:table>
         </msh:section>
 
+        <ecom:webQuery name="ksgPositionList" nativeSql="
+        select p.code, p.mainMkb, p.anothermkb , p.servicecode , p.doppriznak , p.sex, p.duration from grouperksgposition p where ksgvalue_id =${param.id}
+  order by id desc "/>
+        <msh:section title='Группировщик по КСГ '>
+            <msh:table name="ksgPositionList" printToExcelButton="в excel" action="/javascript:void()" idField="1" >
+                <msh:tableColumn property="1" columnName="Код" />
+                <msh:tableColumn property="2" columnName="Основной диагноз" />
+                <msh:tableColumn property="3" columnName="Сопут диагноз" />
+                <msh:tableColumn property="4" columnName="Услуга" />
+                <msh:tableColumn property="5" columnName="доп критерий" />
+                <msh:tableColumn property="6" columnName="Пол" />
+                <msh:tableColumn property="7" columnName="Длительность" />
+            </msh:table>
+        </msh:section>
+
     </tiles:put>
 
 
@@ -73,11 +89,8 @@
     </tiles:put>
     <tiles:put name="javascript" type="string">
         <msh:ifFormTypeIsView formName="e2_vocKsgForm">
-            <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
             <script type="text/javascript">
-                function addHistoryNumberToList() {
 
-                }
 
             </script>
 

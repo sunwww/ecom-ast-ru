@@ -64,8 +64,8 @@ public class VisitProtocolForm extends ProtocolForm {
 	/** Параметры шаблона */
 	private String theParams;
 
-	/** ВИзит */
-	@Comment("ВИзит")
+	/** Визит */
+	@Comment("Визит")
 	@Persist
 	public Long getMedCase() {return theMedCase;}
 	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
@@ -119,7 +119,7 @@ public class VisitProtocolForm extends ProtocolForm {
 	private String theTypeInfo;
 	/** Тип протокола */
 	private Long theType;
-	/** ВИзит */
+	/** Визит */
 	private Long theMedCase;
 	/** Дата редактирования */
 	@Comment("Дата редактирования")

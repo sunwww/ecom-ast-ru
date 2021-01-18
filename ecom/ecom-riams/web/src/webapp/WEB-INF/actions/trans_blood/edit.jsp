@@ -230,7 +230,7 @@
 
     //если поле prop имеет значение из vals или не имеет значение из notVals, все поля в req сделать обязательными
     //если другое значение - убрать обязательность, снимать значения не надо
-    var masReq = [{prop: 'bloodPreparation', vals:[1,2,3,4,5,6,7,8,9,10,11], notVals: [], req: [{field: 'planeCompatibilityName', cmnt: 'проверка на плоскости'}]}];
+    var masReq = [{prop: 'bloodPreparation', vals:[1,2,3,4,5,6,10,11], notVals: [], req: [{field: 'planeCompatibilityName', cmnt: 'проверка на плоскости'}]}];
 
 
     //ф-я настраивает обязательность полей req в masReq

@@ -141,6 +141,29 @@ function onPreSave(aForm,aEntity, aCtx) {
 					
 				}
 			}
+		/*if (stat) {
+			cal1 = java.util.Calendar.getInstance() ;
+			cal2 = java.util.Calendar.getInstance() ;
+			cal2.setTime(dateCur) ;
+			cal1.setTime(dateFinish) ;
+
+			if (cal1.get(java.util.Calendar.YEAR)==cal2.get(java.util.Calendar.YEAR) &&
+				cal1.get(java.util.Calendar.MONTH)==cal2.get(java.util.Calendar.MONTH) &&
+				cal1.get(java.util.Calendar.DATE)==cal2.get(java.util.Calendar.DATE)
+			) {
+
+			} else{
+				var param = new java.util.HashMap() ;
+				param.put("obj","DischargeMedCase") ;
+				param.put("permission" ,"backdate") ;
+				param.put("id", aForm.id) ;
+				var check=aCtx.serviceInvoke("WorkerService", "checkPermission", param)+"";
+
+				if (+check==0) {
+					throw "У Вас стоит ограничение на дату выписки. Вы можете выписывать только текущим числом!";
+				}
+			}
+		}*/
 	}
 	//Проставить в карте коронавируса Дату,результат госпитализации и основной выписной диагноз
 	setCovidDateResultHospAndMkb(aForm,aEntity, aCtx);

@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
@@ -30,7 +30,7 @@
     left join VocE2BaseTariffType vocTariff on vocTariff.id=t.type_id
     left join Voce2VidSluch vs on vs.id=t.vidsluch_id
     where t.dtype='VocE2BaseTariff'
-    order by t.startDate desc, vocTariff.name
+    order by t.startDate desc, vocTariff.name limit 25
     " />
                 <msh:table  name="tariffList" action="entityView-e2_vocBaseTariff.do" idField="1" disableKeySupport="true" styleRow="8">
                     <msh:tableColumn columnName="Тип тарифа" property="6" />

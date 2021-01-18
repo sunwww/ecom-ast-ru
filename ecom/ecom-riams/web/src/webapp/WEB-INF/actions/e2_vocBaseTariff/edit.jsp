@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -56,7 +56,6 @@
         <script type="text/javascript">
             function createNewOne() {
                 let date = prompt("Введите дату начала действия",getCurrentDate());
-                alert(date);
                 let cost = prompt("Введите новую цену",$('value').value);
                 if (date && cost) {
                     let url = "entitySaveGoView-e2_vocBaseTariff.do";

@@ -308,6 +308,7 @@ function printContractByAccrual(aCtx, aParams) {
 		allcost = allcost + sumi ;
 		discount = +obj[8] ;
 	}
+	map.put("accountNumber",pid) ;
 	map.put("allcostNoDiscount", parseInt(allcost1));
 	map.put("allcostNoDiscountS", parseSymRub(allcost1));
 	map.put("serv",servisec) ;
