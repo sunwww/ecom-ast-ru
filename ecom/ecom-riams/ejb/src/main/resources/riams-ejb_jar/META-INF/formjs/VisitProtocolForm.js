@@ -64,7 +64,7 @@ function onPreCreate(aForm, aCtx) {
             + " and d.dateRegistration=cast('" + dat + "' as date) and d.timeRegistration=cast('" + aForm.timeRegistration + "' as TIME) "
         )
             .getResultList();
-        errorThrow(protocols, "В базе уже существует заключение созданное Вами в это время");
+        errorThrow(protocols, "В базе уже существует заключение, созданное Вами в это время");
 
     }
     checkCreateDiagnosis(aForm, aCtx);

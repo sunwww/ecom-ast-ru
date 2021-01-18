@@ -37,6 +37,17 @@
 				queried ="(voc.name like :query)"
 		/>
 	</voc>
+
+	<voc id="vocTypeProtocolMaternity" type="NativeVocService">
+		<NativeVocService
+				from="vocTypeProtocol voc"
+				names="voc.name"
+				nameId="voc.id"
+				queried ="(voc.name like :query)"
+				queryAppend="voc.isForMaternity is true"
+		/>
+	</voc>
+
 	<voc id="vocTicketQueue" type="NativeVocService">
 		<NativeVocService
 				from="VocQueue as voc"

@@ -46,4 +46,12 @@ public class VocTypeProtocol extends VocBaseEntity {
 
 	/** Префикс к файлу */
 	private String thePrefixPrint;
+
+	/** Для роддома*/
+	@Comment("Для роддома")
+	public Boolean getIsForMaternity() {return theIsForMaternity;}
+	public void setIsForMaternity(Boolean aIsForMaternity) {theIsForMaternity = aIsForMaternity;}
+
+	/** Для роддома */
+	private Boolean theIsForMaternity;
 }

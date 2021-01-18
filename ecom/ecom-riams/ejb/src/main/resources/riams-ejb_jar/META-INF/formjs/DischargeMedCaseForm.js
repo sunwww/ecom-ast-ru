@@ -141,7 +141,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 					
 				}
 			}
-		if (stat) {
+		/*if (stat) {
 			cal1 = java.util.Calendar.getInstance() ;
 			cal2 = java.util.Calendar.getInstance() ;
 			cal2.setTime(dateCur) ;
@@ -163,7 +163,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 					throw "У Вас стоит ограничение на дату выписки. Вы можете выписывать только текущим числом!";
 				}
 			}
-		}
+		}*/
 	}
 	//Проставить в карте коронавируса Дату,результат госпитализации и основной выписной диагноз
 	setCovidDateResultHospAndMkb(aForm,aEntity, aCtx);
