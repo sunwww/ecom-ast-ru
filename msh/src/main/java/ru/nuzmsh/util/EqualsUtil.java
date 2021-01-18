@@ -22,6 +22,10 @@ public class EqualsUtil {
         return false;
     }
 
+    public static boolean isEquals(Object source, Object target) {
+        return source !=null && source.equals(target);
+    }
+
     /**
      * Вернет true, если любой из элементов - нулл
      * @param objects Объекты
