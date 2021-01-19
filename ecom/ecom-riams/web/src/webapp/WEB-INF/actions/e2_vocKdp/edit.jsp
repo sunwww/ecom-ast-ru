@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -47,7 +47,7 @@
             <msh:separator colSpan="8" label="Привязать койки"/>
             <msh:autoComplete label="Добавить услугу к КДП" size="100" property="medServiceAdd" vocName="vocMedServiceActual"/>
             <input type="button" onclick="addNewMedService()" value="Добавить услугу">
-            <input type="textarea" name="tst" id="tst" cols="30" rows="10"></textarea>
+            <input type="textarea" name="tst" id="tst" cols="30" rows="10">
         </msh:ifFormTypeIsView>
     </tiles:put>
 
@@ -62,6 +62,7 @@
     </tiles:put>
     <tiles:put name="javascript" type="string">
         <msh:ifFormTypeIsView formName="e2_vocKdpForm">
+<%--suppress HtmlUnknownTarget --%>
             <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
             <script type="text/javascript">
                 alert('НЕ используется!!!!');

@@ -26,6 +26,7 @@ import ru.ecom.mis.ejb.service.disability.DisabilityServiceBean;
 import ru.ecom.oncological.ejb.domain.*;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.date.AgeUtil;
+import ru.nuzmsh.util.EqualsUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
 import javax.annotation.EJB;
@@ -2699,7 +2700,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
 
         if (isTrue(ksg.getIsCovid19())) codes.add("18");
-        if (aEntry.getDopKritKSG().equals("IT25") && ksg.getCode().startsWith("st12"))
+        if (isEquals(aEntry.getDopKritKSG(),"IT25") && ksg.getCode().startsWith("st12"))
             codes.add("19"); //крайнетяжелое состояние - доп крит
 
         //Пришло время сохранять все сложности пациента
