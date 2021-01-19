@@ -116,7 +116,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 		;
 	}
 	if (stat) {
-		
+
 
 		var cal1 = java.util.Calendar.getInstance() ;
 		var cal2 = java.util.Calendar.getInstance() ;
@@ -141,15 +141,24 @@ function onPreSave(aForm,aEntity, aCtx) {
 					
 				}
 			}
-		/*if (stat) {
+		if (stat) {
+			var result = getObject(aCtx,+aForm.result,Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationResult); //результат госпит
+
 			cal1 = java.util.Calendar.getInstance() ;
 			cal2 = java.util.Calendar.getInstance() ;
-			cal2.setTime(dateCur) ;
+			var yCal = java.util.Calendar.getInstance() ;
+			var yesterday = new java.sql.Date(new java.util.Date().getTime() - 24 * 60 * 60 * 1000);  //завтра
+			cal2.setTime(dateCur) ; //тек дата
 			cal1.setTime(dateFinish) ;
+			yCal.setTime(yesterday);
 
 			if (cal1.get(java.util.Calendar.YEAR)==cal2.get(java.util.Calendar.YEAR) &&
 				cal1.get(java.util.Calendar.MONTH)==cal2.get(java.util.Calendar.MONTH) &&
 				cal1.get(java.util.Calendar.DATE)==cal2.get(java.util.Calendar.DATE)
+				|| (result!=null && result.code=="11" && cal1.get(java.util.Calendar.YEAR)==yCal.get(java.util.Calendar.YEAR) &&
+					cal1.get(java.util.Calendar.MONTH)==yCal.get(java.util.Calendar.MONTH) &&
+					cal1.get(java.util.Calendar.DATE)==yCal.get(java.util.Calendar.DATE)
+				)
 			) {
 
 			} else{
@@ -160,10 +169,10 @@ function onPreSave(aForm,aEntity, aCtx) {
 				var check=aCtx.serviceInvoke("WorkerService", "checkPermission", param)+"";
 
 				if (+check==0) {
-					throw "У Вас стоит ограничение на дату выписки. Вы можете выписывать только текущим числом!";
+					throw "У Вас стоит ограничение на дату выписки. Вы можете выписывать только текущим числом либо умерших - вчерашней датой!";
 				}
 			}
-		}*/
+		}
 	}
 	//Проставить в карте коронавируса Дату,результат госпитализации и основной выписной диагноз
 	setCovidDateResultHospAndMkb(aForm,aEntity, aCtx);
