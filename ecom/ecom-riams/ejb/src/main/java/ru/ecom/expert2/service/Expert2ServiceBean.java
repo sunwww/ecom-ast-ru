@@ -55,6 +55,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ru.ecom.expert2.domain.voc.E2Enumerator.ALLTIMEHOSP;
+import static ru.ecom.expert2.domain.voc.E2Enumerator.DAYTIMEHOSP;
 import static ru.nuzmsh.util.BooleanUtils.isNotTrue;
 import static ru.nuzmsh.util.BooleanUtils.isTrue;
 import static ru.nuzmsh.util.CollectionUtil.isEmpty;
@@ -1470,12 +1472,12 @@ public class Expert2ServiceBean implements IExpert2Service {
                     code = "STAC_VMP";
                     fileType = "T";
                 } else if (entry.getBedSubType().equals("1")) {
-                    code = (isTrue(entry.getIsRehabBed()) ? "REHAB_" : "") + "ALLTIMEHOSP";
+                    code = (isTrue(entry.getIsRehabBed()) ? "REHAB_" : "") + ALLTIMEHOSP;
                 } else if (entry.getBedSubType().equals("2")) {
                     //departmentType = 7 - Дневной стационар при АПУ
                     //departmentType = 8 - Дневной стационар на дому
                     code = (isTrue(entry.getIsRehabBed()) ? "REHAB_" : "") + ("7".equals(entry.getDepartmentType()) ? "POL"
-                            : "8".equals(entry.getDepartmentType()) ? "HOME" : "") + "DAYTIMEHOSP";
+                            : "8".equals(entry.getDepartmentType()) ? "HOME" : "") + DAYTIMEHOSP;
                 } else if (entry.getBedSubType().equals("3")) { // первично стац на дому делаем правильным
                     entry.setDepartmentType("8");
                     entry.setBedSubType("2");
@@ -2440,12 +2442,12 @@ public class Expert2ServiceBean implements IExpert2Service {
             if (isNotLogicalNull(aEntry.getVMPKind())) { //Если в СЛО есть ВМП, цена = ВМП
                 return aEntry.getCost();
             }
-            String tariffCode = aEntry.getSubType().getTariffCode().getCode();
+            String tariffCode = aEntry.getSubType().getTariffCodeString();
             key = HOSPITALTYPE + "#" + tariffCode + "#" + mmYYYY;
 //            sqlAdd = "stacType_id=" + bedSubType + " and vidSluch_id=" + aEntry.getVidSluch().getId();
             sqlAdd = " type.code='" + tariffCode + "'";
         } else if (isOneOf(entryType, POLYCLINICTYPE, KDPTYPE)) {
-            String tariffCode = aEntry.getSubType() != null ? aEntry.getSubType().getTariffCode().getCode() : "_NULLENTRYSUBTYPE_";
+            String tariffCode = aEntry.getSubType() != null ? aEntry.getSubType().getTariffCodeString() : "_NULLENTRYSUBTYPE_";
             key = POLYCLINICTYPE + "#" + tariffCode + "#" + aEntry.getVidSluch().getId() + "#" + mmYYYY;
             sqlAdd = " type.code='" + tariffCode + "'";
         } else {
@@ -2479,7 +2481,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
         String key;
         if ("2".equals(bedSubTypeCode)) { //Для дневного стационара возвращаем жестко зашитый коэффициент
-            key = E2Enumerator.DAYTIMEHOSP;
+            key = DAYTIMEHOSP;
             if (!cusmoMap.containsKey(key)) {
                 cusmoMap.put(key, new BigDecimal(getExpertConfigValue("DAYTIMEHOSP_CUSMO")));
             }
@@ -2792,7 +2794,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     private void calculatePolyclinicEntryPrice(E2Entry aEntry) {
         BigDecimal one = BigDecimal.ONE;
         VocE2EntrySubType subType = aEntry.getSubType();
-        String tariffCode = subType.getTariffCode().getCode();
+        String tariffCode = subType.getTariffCodeString();
         if (tariffCode == null) { /*LOG.warn("Cant calc polyclinic tariff: "+aEntry.getId()+"<>"+subType.getId()+""+subType.getCode());*/
             return;
         }
