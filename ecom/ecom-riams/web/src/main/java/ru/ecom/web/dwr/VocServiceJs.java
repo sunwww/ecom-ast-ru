@@ -310,4 +310,16 @@ public class VocServiceJs {
 		Collection<WebQueryResult> list = service.executeNativeSql("select * from setWfConsDischarged(to_date('"+date+"','dd.mm.yyyy'),'" + username + "')");
 		return list.iterator().next()!=null? list.iterator().next().get1().toString() : "error";
 	}
+
+	/**
+	 * Обновить СЛО по 2012
+	 *
+	 * @param aRequest HttpServletRequest
+	 * @return String Сообщение
+	 */
+	public String setUpdate2012(HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> list = service.executeNativeSql("select * from update2012()");
+		return list.iterator().next()!=null? list.iterator().next().get1().toString() : "error";
+	}
 }

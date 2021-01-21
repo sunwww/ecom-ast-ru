@@ -98,6 +98,9 @@
 							<li>
 								<msh:link roles="/Policy/Mis/MedCase/Stac/Ssl/ConsultJournal" action="/javascript:setWfConsDischarged()" >Отмена консультаций выписанных пациентов</msh:link>
 							</li>
+							<li>
+								<msh:link roles="/Policy/Mis/MedCase/Stac/Ssl/ConsultJournal" action="/javascript:setUpdate2012()" >Обновить СЛО за 2012 год</msh:link>
+							</li>
 
 						</ul>
 					</div>
@@ -287,22 +290,32 @@
 					});
 				}
 
-			//Проставить до выбранной даты отмену консультаций, если она не выполнена, а пациент уже выписан (с причиной "Выписан") #227
-			function setWfConsDischarged() {
-				var date = prompt('Введите дату. Все невыполненные консультации до выбранной даты выписанных пациентов будут отменены с причиной "Выписан": ',getCurrentDate());
-				if (date!=null && date!='' && date!='dd.mm.yyyy' && checkDate(date)) {
-					showToastMessage('Выполняется, займёт какое-то время. Результат можно увидеть в Журнале консультаций',null,true,false,3000);
-					VocService.setWfConsDischarged(date, {
+				//обновить СЛО за 2012 год
+				function setUpdate2012() {
+					showToastMessage('Выполняется, займёт какое-то время. Если не нужен ответ от БД, можно закрывать окно.',null,true,false,3000);
+					VocService.setUpdate2012({
 						callback: function (res) {
 							showToastMessage(res,null,true,false,3000);
 						}
 					});
 				}
-				else if (date==null)
-					return;
-				else if (!checkDate(date))
-					showToastMessage("Некорректная дата " + date,null,true,true,3000);
-			}
+
+				//Проставить до выбранной даты отмену консультаций, если она не выполнена, а пациент уже выписан (с причиной "Выписан") #227
+				function setWfConsDischarged() {
+					var date = prompt('Введите дату. Все невыполненные консультации до выбранной даты выписанных пациентов будут отменены с причиной "Выписан": ',getCurrentDate());
+					if (date!=null && date!='' && date!='dd.mm.yyyy' && checkDate(date)) {
+						showToastMessage('Выполняется, займёт какое-то время. Результат можно увидеть в Журнале консультаций',null,true,false,3000);
+						VocService.setWfConsDischarged(date, {
+							callback: function (res) {
+								showToastMessage(res,null,true,false,3000);
+							}
+						});
+					}
+					else if (date==null)
+						return;
+					else if (!checkDate(date))
+						showToastMessage("Некорректная дата " + date,null,true,true,3000);
+				}
 			</msh:ifInRole>
 		</script>
 	</tiles:put>

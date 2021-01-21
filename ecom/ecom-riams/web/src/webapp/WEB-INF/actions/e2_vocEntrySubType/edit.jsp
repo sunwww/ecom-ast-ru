@@ -17,7 +17,7 @@
                     </msh:row><msh:row>
                     <msh:textField property="name" size="100"/>
             </msh:row><msh:row>
-                    <msh:textField property="tariffCode" size="100"/>
+                    <msh:autoComplete property="tariffCode" vocName="vocE2BaseTariffType" size="100"/>
             </msh:row><msh:row>
                 </msh:row>
                <msh:row>
