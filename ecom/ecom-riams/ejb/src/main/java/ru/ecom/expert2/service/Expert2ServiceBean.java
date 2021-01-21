@@ -2440,14 +2440,14 @@ public class Expert2ServiceBean implements IExpert2Service {
             if (isNotLogicalNull(aEntry.getVMPKind())) { //Если в СЛО есть ВМП, цена = ВМП
                 return aEntry.getCost();
             }
-            String bedSubType = aEntry.getBedSubType();
-            key = HOSPITALTYPE + "#" + bedSubType + "#" + mmYYYY;
-            sqlAdd = "stacType_id=" + bedSubType + " and vidSluch_id=" + aEntry.getVidSluch().getId();
-
+            String tariffCode = aEntry.getSubType().getTariffCode().getCode();
+            key = HOSPITALTYPE + "#" + tariffCode + "#" + mmYYYY;
+//            sqlAdd = "stacType_id=" + bedSubType + " and vidSluch_id=" + aEntry.getVidSluch().getId();
+            sqlAdd = " type.code='" + tariffCode + "'";
         } else if (isOneOf(entryType, POLYCLINICTYPE, KDPTYPE)) {
-            String tariffCode = aEntry.getSubType() != null ? aEntry.getSubType().getTariffCode() : "_NULLENTRYSUBTYPE_";
+            String tariffCode = aEntry.getSubType() != null ? aEntry.getSubType().getTariffCode().getCode() : "_NULLENTRYSUBTYPE_";
             key = POLYCLINICTYPE + "#" + tariffCode + "#" + aEntry.getVidSluch().getId() + "#" + mmYYYY;
-            sqlAdd = " type.code='" + tariffCode + "' and vidSluch_id=" + aEntry.getVidSluch().getId();
+            sqlAdd = " type.code='" + tariffCode + "'";
         } else {
             LOG.error("Не могу расчитать тариф для записи с типом: CANT_CALC_TARIFF_" + entryType);
             key = "__";
@@ -2456,9 +2456,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
         if (!tariffMap.containsKey(key)) {
             VocE2BaseTariff tariff = getActualVocByClassName(VocE2BaseTariff.class, aEntry.getFinishDate(), sqlAdd);
-            if (tariff == null) {
-                // throw new IllegalStateException("Не удалось найти тариф по случаю с ИД = " + aEntry.getId()+". Необходимо установить тариф с кодом: "+key);
-            } else {
+            if (tariff != null) {
                 tariffMap.put(key, tariff.getValue());
             }
         }
@@ -2794,7 +2792,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     private void calculatePolyclinicEntryPrice(E2Entry aEntry) {
         BigDecimal one = BigDecimal.ONE;
         VocE2EntrySubType subType = aEntry.getSubType();
-        String tariffCode = subType.getTariffCode();
+        String tariffCode = subType.getTariffCode().getCode();
         if (tariffCode == null) { /*LOG.warn("Cant calc polyclinic tariff: "+aEntry.getId()+"<>"+subType.getId()+""+subType.getCode());*/
             return;
         }
@@ -2810,7 +2808,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
         key = isTrue(aEntry.getIsEmergency()) ? "KZ#EMERGENCY##" : "KZ#" + profileId + "#" + tariffCode;
 
-        String sql = "profile_id=" + profileId + " and entryType.tariffCode='" + tariffCode + "'";
+        String sql = "profile_id=" + profileId + " and entryType.tariffCode.code='" + tariffCode + "'";
         if (!polyclinicCasePrice.containsKey(key)) {
             coefficient = getActualVocByClassName(VocE2PolyclinicCoefficient.class, aEntry.getFinishDate(), sql);
             if (coefficient == null) {

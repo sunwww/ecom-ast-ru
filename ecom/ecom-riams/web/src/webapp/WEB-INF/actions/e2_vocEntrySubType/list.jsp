@@ -21,7 +21,7 @@
 
         <msh:hideException>
             <msh:section title='Результат поиска'>
-                <ecom:webQuery name="tariffList" nativeSql="select voc.id, voc.code||' '||coalesce(voc.name,'') as name,voc.tariffCode, usl.code||' '||usl.name as uslName
+                <ecom:webQuery name="tariffList" nativeSql="select voc.id, voc.code||' '||coalesce(voc.name,'') as name,vocT.code, usl.code||' '||usl.name as uslName
                 ,case when voc.isArchival='1' then 'color:red' end as f5_color
                 ,vvs.code||' '||vvs.name
                 ,v025.code||' '||v025.name as а7_visitPurpose
@@ -29,6 +29,7 @@
     left join VocE2VidSluch vvs on vvs.id=voc.vidSluch_id
     left join VocE2FondV006 usl on usl.id=voc.uslok_id
     left join VocE2FondV025 v025 on v025.id=voc.visitPurpose_id
+    left join Voce2BaseTariffCode vocT on vocT.id=voc.tariffCode_id
     order by voc.code
     " />
                 <msh:table  name="tariffList" action="entityView-e2_vocEntrySubType.do" idField="1" disableKeySupport="true" styleRow="5">

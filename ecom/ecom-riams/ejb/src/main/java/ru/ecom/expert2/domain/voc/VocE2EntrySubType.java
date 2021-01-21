@@ -14,10 +14,13 @@ import javax.persistence.OneToOne;
 public class VocE2EntrySubType extends VocBaseEntity {
     /** Код для определения тарифа */
     @Comment("Код для определения тарифа")
-    public String getTariffCode() {return theTariffCode;}
-    public void setTariffCode(String aTariffCode) {theTariffCode = aTariffCode;}
+    @OneToOne
+    public VocE2BaseTariffType getTariffCode() {return theTariffCode;}
+    public void setTariffCode(VocE2BaseTariffType aTariffCode) {theTariffCode = aTariffCode;}
     /** Код для определения тарифа */
-    private String theTariffCode ;
+    private VocE2BaseTariffType theTariffCode ;
+
+
 
     /** Условия оказания мед. помощи для подачи */
     @Comment("Условия оказания мед. помощи для подачи")

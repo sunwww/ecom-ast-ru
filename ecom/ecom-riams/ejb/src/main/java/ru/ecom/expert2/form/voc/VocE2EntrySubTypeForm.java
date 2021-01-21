@@ -35,10 +35,10 @@ public class VocE2EntrySubTypeForm extends IdEntityForm {
     /** Код для определения тарифа */
     @Comment("Код для определения тарифа")
     @Persist
-    public String getTariffCode() {return theTariffCode;}
-    public void setTariffCode(String aTariffCode) {theTariffCode = aTariffCode;}
+    public Long getTariffCode() {return theTariffCode;}
+    public void setTariffCode(Long aTariffCode) {theTariffCode = aTariffCode;}
     /** Код для определения тарифа */
-    private String theTariffCode ;
+    private Long theTariffCode ;
 
     /** Условия оказания мед. помощи для подачи */
     @Comment("Условия оказания мед. помощи для подачи")
