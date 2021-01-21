@@ -29,7 +29,7 @@
     left join VocE2VidSluch vvs on vvs.id=voc.vidSluch_id
     left join VocE2FondV006 usl on usl.id=voc.uslok_id
     left join VocE2FondV025 v025 on v025.id=voc.visitPurpose_id
-    left join Voce2BaseTariffCode vocT on vocT.id=voc.tariffCode_id
+    left join voce2basetarifftype vocT on vocT.id=voc.tariffCode_id
     order by voc.code
     " />
                 <msh:table  name="tariffList" action="entityView-e2_vocEntrySubType.do" idField="1" disableKeySupport="true" styleRow="5">
