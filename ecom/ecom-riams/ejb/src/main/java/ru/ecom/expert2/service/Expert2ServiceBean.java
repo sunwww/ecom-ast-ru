@@ -26,7 +26,6 @@ import ru.ecom.mis.ejb.service.disability.DisabilityServiceBean;
 import ru.ecom.oncological.ejb.domain.*;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.date.AgeUtil;
-import ru.nuzmsh.util.EqualsUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
 import javax.annotation.EJB;
@@ -61,8 +60,7 @@ import static ru.nuzmsh.util.BooleanUtils.isNotTrue;
 import static ru.nuzmsh.util.BooleanUtils.isTrue;
 import static ru.nuzmsh.util.CollectionUtil.isEmpty;
 import static ru.nuzmsh.util.CollectionUtil.isNotEmpty;
-import static ru.nuzmsh.util.EqualsUtil.isAnyIsNull;
-import static ru.nuzmsh.util.EqualsUtil.isOneOf;
+import static ru.nuzmsh.util.EqualsUtil.*;
 import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
 
 @Stateless
