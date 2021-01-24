@@ -15,17 +15,12 @@
                 <msh:row>
                     <msh:autoComplete property="type" vocName="vocE2BaseTariffType" size="100"/>
                 </msh:row>
-                <msh:row>
-                    <msh:autoComplete  property="vidSluch" vocName="vocE2VidSluch" size="100"/>
-                </msh:row>
                <msh:row>
                    <msh:textField property="startDate"/>
                    <msh:textField property="finishDate"/>
                    </msh:row><msh:row>
                    <msh:textField label="Значение тарифа" property="value"/>
-            </msh:row><msh:row>
-                   <msh:autoComplete label="Тип коек" property="stacType" vocName="vocBedSubType" size="100"/>
-            </msh:row>
+             </msh:row>
                 <msh:submitCancelButtonsRow colSpan="4" />
             </msh:panel>
         </msh:form>
