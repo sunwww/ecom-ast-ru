@@ -26,7 +26,6 @@ import ru.ecom.mis.ejb.service.disability.DisabilityServiceBean;
 import ru.ecom.oncological.ejb.domain.*;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.date.AgeUtil;
-import ru.nuzmsh.util.EqualsUtil;
 import ru.nuzmsh.util.format.DateFormat;
 
 import javax.annotation.EJB;
@@ -64,7 +63,6 @@ import static ru.nuzmsh.util.CollectionUtil.isNotEmpty;
 import static ru.nuzmsh.util.EqualsUtil.isAnyIsNull;
 import static ru.nuzmsh.util.EqualsUtil.isOneOf;
 import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
-import static ru.nuzmsh.util.EqualsUtil.isEquals;
 
 @Stateless
 @Local(IExpert2Service.class)
@@ -2168,7 +2166,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                         sb.append(",");
                     }
                     sb.append("'").append(d).append("'");
-                    if ((d.startsWith("C") && Integer.parseInt(d.substring(1, 3)) < 81) || (d.startsWith("D") && Integer.parseInt(d.substring(1, 3)) < 9)) {
+                    if ((d.startsWith("C") && Integer.parseInt(d.substring(1, 3)) < 97) || (d.startsWith("D") && Integer.parseInt(d.substring(1, 3)) < 10)) {
                         cancerDiagnosis = d;
                     } else if (d.startsWith("C")) {
                         findCDiagnosis = true;
@@ -2177,8 +2175,13 @@ public class Expert2ServiceBean implements IExpert2Service {
                 if (isCancer) {
                     if (cancerDiagnosis != null) { //Костыль по нахождению Д в интервале, TODO переделать на нормальное нахождение диагноза в интервале
                         if (cancerDiagnosis.startsWith("C")) {
-                            cancerDiagnosisSql = " or (gkp.mainMkb='C00-C80' or gpk.mainMkb='C81-C96') or gkp.mainmkb='C.'";
-                            cancerDiagnosis = "C00-C80";
+                            if (Integer.parseInt(cancerDiagnosis.substring(1, 3)) < 81) {
+                                cancerDiagnosisSql = " or gkp.mainMkb='C00-C80' or gkp.mainmkb='C.'";
+                                cancerDiagnosis = "C00-C80";
+                            } else {
+                                cancerDiagnosisSql = " or gkp.mainMkb='C81-C96' or gkp.mainmkb='C.'";
+                                cancerDiagnosis = "C81-C96";
+                            }
                         } else {
                             cancerDiagnosisSql = "or (gkp.mainMkb='D00-D09' or gkp.mainMkb='D45-D47')";
                             cancerDiagnosis = "D00-D09";
@@ -2209,9 +2212,9 @@ public class Expert2ServiceBean implements IExpert2Service {
                 serviceSql.append(" and (gkp.servicecode is null or gkp.servicecode='')");
             }
             sql.append(serviceSql);
-            //    LOG.info("sql for best KSG = "+sql.toString());
+//                LOG.info("sql for best KSG = "+sql.toString());
             List<BigInteger> results;
-            String key = mainDiagnosis.hashCode() + "#SQL#" + sql.toString().hashCode(); //bedType+"#"+aEntry.getMainMkb()+"#"+(dopmkb!=null?dopmkb:"");
+            String key = mainDiagnosis.hashCode() + "#SQL#" + sql.toString().hashCode();
             if (!ksgMap.containsKey(key)) {
                 //     LOG.info(key+" not found new sql ="+sql);
                 LocalDate date = entry.getFinishDate().toLocalDate();
