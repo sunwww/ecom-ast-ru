@@ -64,6 +64,7 @@ import static ru.nuzmsh.util.CollectionUtil.isNotEmpty;
 import static ru.nuzmsh.util.EqualsUtil.isAnyIsNull;
 import static ru.nuzmsh.util.EqualsUtil.isOneOf;
 import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
+import static ru.nuzmsh.util.EqualsUtil.isEquals;
 
 @Stateless
 @Local(IExpert2Service.class)
