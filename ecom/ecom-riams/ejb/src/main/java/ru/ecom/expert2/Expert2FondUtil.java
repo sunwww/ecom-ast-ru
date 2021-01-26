@@ -8,6 +8,7 @@ import java.util.List;
 
 import static ru.nuzmsh.util.BooleanUtils.isTrue;
 import static ru.nuzmsh.util.CollectionUtil.isNotEmpty;
+import static ru.nuzmsh.util.EqualsUtil.isOneOf;
 import static ru.nuzmsh.util.StringUtil.isNotEmpty;
 import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
 
@@ -55,7 +56,7 @@ public class Expert2FondUtil {
         if (isTrue(aEntry.getMedicalAbort())) {
             ret.append("10;");
         }
-        if (aEntry.getEntryType().equals(E2Enumerator.HOSPITALTYPE)||aEntry.getEntryType().equals(E2Enumerator.VMPTYPE)) { //Только для стац
+        if (isOneOf(aEntry.getEntryType(),E2Enumerator.HOSPITALTYPE,E2Enumerator.VMPTYPE)) { //Только для стац
             List<E2CoefficientPatientDifficultyEntryLink> list = aEntry.getPatientDifficulty();
             if (isNotEmpty(list)) {
                 for (E2CoefficientPatientDifficultyEntryLink diff: list) {

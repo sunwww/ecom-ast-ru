@@ -2239,7 +2239,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             List<GrouperKSGPosition> justServicePositions = new ArrayList<>(); //24.09.18 * Если нашли дорогие позиции КСГ, но выбраи более дешевое КСГ, сохраним информацию для эксперта Аношкина
             for (BigInteger o : results) {
                 GrouperKSGPosition ksgPosition = manager.find(GrouperKSGPosition.class, o.longValue());
-                VocKsg ksg = getKsgValue(ksgPosition);
+                VocKsg ksg = ksgPosition.getKSGValue();
                 weight = 0; //Вес найденного КСГ
                 if (isNotLogicalNull(ksgPosition.getDopPriznak()) && ksgPosition.getDopPriznak().equals(entry.getDopKritKSG())) {
                     weight = 6;
@@ -2253,7 +2253,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 if (mainDiagnosis.contains(ksgPosition.getMainMKB())) {
                     weight++;
                     if (isLogicalNull(ksgPosition.getServiceCode())) { //Находим терапевтичесое КСГ
-                        therapicKsgPosition = therapicKsgPosition != null && getKsgValue(therapicKsgPosition).getKZ() > getKsgValue(ksgPosition).getKZ() ? therapicKsgPosition : ksgPosition;
+                        therapicKsgPosition = therapicKsgPosition != null && therapicKsgPosition.getKSGValue().getKZ() > ksgPosition.getKSGValue().getKZ() ? therapicKsgPosition : ksgPosition;
                     }
 
                 } else if (isNotLogicalNull(ksgPosition.getMainMKB()) && isCancer && ("C.".equals(ksgPosition.getMainMKB()) || (cancerDiagnosis != null && cancerDiagnosis.equals(ksgPosition.getMainMKB())))) {
@@ -2265,7 +2265,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
                 if (serviceCodes.contains(ksgPosition.getServiceCode())) {
                     weight++;
-                    surgicalKsgPosition = surgicalKsgPosition != null && getKsgValue(surgicalKsgPosition).getKZ() > getKsgValue(ksgPosition).getKZ() ? surgicalKsgPosition : ksgPosition;
+                    surgicalKsgPosition = surgicalKsgPosition != null && surgicalKsgPosition.getKSGValue().getKZ() > ksgPosition.getKSGValue().getKZ() ? surgicalKsgPosition : ksgPosition;
                     //Если коронарография и у нас есть диагноз, берем дешевое КСГ! 09-02-2018
                     if ("A16.12.033".equals(ksgPosition.getServiceCode())) {
                         if (mainDiagnosis.contains(ksgPosition.getMainMKB())) {
@@ -2307,7 +2307,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
 
             if (pos != null) {
-                VocKsg ksg = getKsgValue(pos);
+                VocKsg ksg = pos.getKSGValue();
                 entry.setKsgPosition(pos);
                 if (isNotLogicalNull(pos.getMainMKB())) entry.setMainMkb(pos.getMainMKB());
                 if (isNotLogicalNull(pos.getServiceCode())) entry.setMainService(pos.getServiceCode());
@@ -2316,7 +2316,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 if (!justServicePositions.isEmpty()) {
                     StringBuilder err = new StringBuilder("Предполагаемые КСГ: ");
                     for (GrouperKSGPosition k : justServicePositions) {
-                        err.append(getKsgValue(k).getCode()).append(" КЗ=").append(getKsgValue(k).getKZ()).append("; ");
+                        err.append(k.getKSGValue().getCode()).append(" КЗ=").append(k.getKSGValue().getKZ()).append("; ");
                     }
                     manager.persist(new E2EntryError(entry, "MAYBE_OTHER_KSG", err.toString()));
                 }
@@ -2351,37 +2351,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                 : calendarDays < 11 ? 2
                 : calendarDays < 21 ? 3
                 : calendarDays < 31 ? 4 : 0;
-    }
-
-    /**
-     * Каждый год одно и тоже, пора автоматизировать
-     *
-     * @param ksgPosition позиция
-     * @return КСГ
-     */
-    private VocKsg getKsgValue(GrouperKSGPosition ksgPosition) {
-        return ksgPosition.getKSGValue() == null ? findAndSaveKsgByPosition(ksgPosition) : ksgPosition.getKSGValue();
-    }
-
-    /**
-     * Каждый год одно и тоже, пора автоматизировать
-     *
-     * @param ksgPosition Позиция группировщика
-     * @return КСГ - имеющаяся или созданная
-     */
-    private VocKsg findAndSaveKsgByPosition(GrouperKSGPosition ksgPosition) {
-        VocKsg ksg = null;
-        try {
-            ksg = (VocKsg) manager.createNamedQuery("VocKsg.findByCodeAndYear")
-                    .setParameter("code", ksgPosition.getKsgCode())
-                    .setParameter("year", ksgPosition.getKSGGrouper().getYear()).getResultList().get(0);
-            ksgPosition.setKSGValue(ksg);
-            manager.persist(ksgPosition);
-        } catch (Exception e) {
-            LOG.warn("can't find ksg by code " + ksgPosition.getKsgCode());
-        }
-        return ksg;
-
     }
 
     /**
