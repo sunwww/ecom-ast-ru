@@ -2562,9 +2562,17 @@ public class Expert2ServiceBean implements IExpert2Service {
                         LOG.error(err);
                         manager.persist(new E2EntryError(aEntry, "NO_COST"));
                     } else {
-                        String costFormula = "Тариф=" + tarif + ", КЗ=" + kz + ", КУксг=" + kuksg + ", КУСмо=" + cusmo + ", КМ=" + km + ", КСЛП=" + kslp + ", Кпр=" + kpr;
+                        String costFormula;
+                        BigDecimal totalCoefficient;
+                        if (ksg.getDoctorCost() == null) {
+                            costFormula = "Тариф=" + tarif + ", КЗ=" + kz + ", КУксг=" + kuksg + ", КУСмо=" + cusmo + ", КМ=" + km + ", КСЛП=" + kslp + ", Кпр=" + kpr;
+                            totalCoefficient = kz.multiply(kuksg).multiply(cusmo).multiply(kslp).multiply(km).multiply(kpr).setScale(12, RoundingMode.HALF_UP); //Округляем до 2х знаков
+                        } else {
+                            costFormula = "Тариф=" + tarif + ", КЗ=" + kz +", Кзп="+ksg.getDoctorCost()+ ", КУксг=" + kuksg + ", КУСмо=" + cusmo + ", КМ=" + km + ", КСЛП=" + kslp + ", Кпр=" + kpr;
+                            BigDecimal doctorCost = BigDecimal.valueOf(ksg.getDoctorCost());
+                            totalCoefficient = kz.multiply(BigDecimal.ONE.subtract(doctorCost)).add(doctorCost).multiply(kuksg).multiply(cusmo).multiply(kslp).multiply(km).multiply(kpr).setScale(12, RoundingMode.HALF_UP); //Округляем до 2х знаков
+                        }
                         aEntry.setCostFormulaString(costFormula);
-                        BigDecimal totalCoefficient = kz.multiply(kuksg).multiply(cusmo).multiply(kslp).multiply(km).multiply(kpr).setScale(12, RoundingMode.HALF_UP); //Округляем до 2х знаков
                         BigDecimal cost = tarif.multiply(totalCoefficient).setScale(2, RoundingMode.HALF_UP);
                         aEntry.setBaseTarif(tarif);
                         aEntry.setTotalCoefficient(totalCoefficient);

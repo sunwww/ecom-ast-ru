@@ -79,4 +79,10 @@ public class VocKsg extends VocIdCodeName {
 	private Boolean theIsCovid19 ;
 
 
+	@Comment("Доля ЗП врача в КСГ")
+	public Double getDoctorCost() { return theDoctorCost;}
+	public void setDoctorCost(Double aDoctorCost) {theDoctorCost = aDoctorCost;}
+	private Double theDoctorCost;
+
+
 }
