@@ -4,9 +4,11 @@ import ru.ecom.ejb.domain.simple.VocIdCodeName;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 /**
  *  КСГ 
@@ -80,9 +82,10 @@ public class VocKsg extends VocIdCodeName {
 
 
 	@Comment("Доля ЗП врача в КСГ")
-	public Double getDoctorCost() { return theDoctorCost;}
-	public void setDoctorCost(Double aDoctorCost) {theDoctorCost = aDoctorCost;}
-	private Double theDoctorCost;
+	@Column(precision = 5, scale = 2)
+	public BigDecimal getDoctorCost() { return theDoctorCost;}
+	public void setDoctorCost(BigDecimal aDoctorCost) {theDoctorCost = aDoctorCost;}
+	private BigDecimal theDoctorCost;
 
 
 }
