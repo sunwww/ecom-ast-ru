@@ -2569,7 +2569,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                             totalCoefficient = kz.multiply(kuksg).multiply(cusmo).multiply(kslp).multiply(km).multiply(kpr).setScale(12, RoundingMode.HALF_UP); //Округляем до 2х знаков
                         } else {
                             costFormula = "Тариф=" + tarif + ", КЗ=" + kz +", Кзп="+ksg.getDoctorCost()+ ", КУксг=" + kuksg + ", КУСмо=" + cusmo + ", КМ=" + km + ", КСЛП=" + kslp + ", Кпр=" + kpr;
-                            totalCoefficient = kz.multiply(BigDecimal.ONE.subtract(ksg.getDoctorCost())).add(ksg.getDoctorCost()).multiply(kuksg).multiply(cusmo).multiply(kslp).multiply(km).multiply(kpr).setScale(12, RoundingMode.HALF_UP); //Округляем до 2х знаков
+                            totalCoefficient = kz.multiply((BigDecimal.ONE.subtract(ksg.getDoctorCost()))
+                                    .add(ksg.getDoctorCost()).multiply(kuksg).multiply(cusmo).multiply(kslp).multiply(km).multiply(kpr)).setScale(12, RoundingMode.HALF_UP); //Округляем до 2х знаков
                         }
                         aEntry.setCostFormulaString(costFormula);
                         BigDecimal cost = tarif.multiply(totalCoefficient).setScale(2, RoundingMode.HALF_UP);
@@ -2819,11 +2820,11 @@ public class Expert2ServiceBean implements IExpert2Service {
 
         key = isTrue(aEntry.getIsEmergency()) ? "KZ#EMERGENCY##" : "KZ#" + profileId + "#" + tariffCode;
 
-        String sql = "profile_id=" + profileId + " and entryType.tariffCode.code='" + tariffCode + "'";
+        String sql = "profile_id=" + profileId + " and tariffType.code='" + tariffCode + "'";
         if (!polyclinicCasePrice.containsKey(key)) {
             coefficient = getActualVocByClassName(VocE2PolyclinicCoefficient.class, aEntry.getFinishDate(), sql);
             if (coefficient == null) {
-                LOG.warn("НЕ смоег найти коэффициента: " + sql);
+                LOG.warn("НЕ смог найти коэффициента: " + sql);
             }
             polyclinicCasePrice.put(key, coefficient);
         } else {
@@ -2834,7 +2835,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         //Находим Кп/Кпд
         sql = "profile_id=" + profileId;
         if (isTrue(aEntry.getIsMobilePolyclinic())) {
-            sql += " and entryType is null and isMobilePolyclinic='1'";
+            sql += " and isMobilePolyclinic='1'";
             key = "KP#" + sql;
             if (!polyclinicCasePrice.containsKey(key)) {
                 coefficient = getActualVocByClassName(VocE2PolyclinicCoefficient.class, aEntry.getFinishDate(), sql);

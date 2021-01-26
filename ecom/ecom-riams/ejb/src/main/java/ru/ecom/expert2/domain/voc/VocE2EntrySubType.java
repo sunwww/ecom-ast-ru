@@ -18,24 +18,11 @@ public class VocE2EntrySubType extends VocBaseEntity {
      */
     @Comment("Код для определения тарифа")
     @OneToOne
-    public VocE2BaseTariffType getTariffCode() {
-        return theTariffCode;
-    }
-
+    public VocE2BaseTariffType getTariffCode() {return theTariffCode;}
     public void setTariffCode(VocE2BaseTariffType aTariffCode) {
         theTariffCode = aTariffCode;
     }
-
-    /**
-     * Код для определения тарифа
-     */
     private VocE2BaseTariffType theTariffCode;
-
-    @Transient
-    public String getTariffCodeString() {
-        return theTariffCode == null ? null : theTariffCode.getCode();
-    }
-
 
     /**
      * Условия оказания мед. помощи для подачи
@@ -168,11 +155,9 @@ public class VocE2EntrySubType extends VocBaseEntity {
     public String getFileType() {
         return theFileType;
     }
-
     public void setFileType(String aFileType) {
         theFileType = aFileType;
     }
-
     private String theFileType;
 
     /**
@@ -182,10 +167,12 @@ public class VocE2EntrySubType extends VocBaseEntity {
     public String getBillProperty() {
         return theBillProperty;
     }
-
     public void setBillProperty(String aBillProperty) {
         theBillProperty = aBillProperty;
     }
-
     private String theBillProperty;
+
+    @Transient
+    public String getTariffCodeString() {return theTariffCode == null ? null : theTariffCode.getCode();}
+
 }

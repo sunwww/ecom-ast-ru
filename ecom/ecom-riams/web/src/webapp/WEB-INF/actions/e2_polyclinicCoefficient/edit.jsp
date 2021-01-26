@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -19,7 +19,7 @@
             <msh:panel>
                 <msh:separator colSpan="8" label="Общие"/>
               <msh:row>
-                   <msh:autoComplete property="entryType" vocName="vocE2EntrySubType" size="100"/>
+                   <msh:autoComplete property="tariffType" vocName="vocE2BaseTariffType" size="100"/>
                 </msh:row>
                 <msh:row>
                     <msh:textField property="startDate"/>
