@@ -82,7 +82,7 @@ public class VocKsg extends VocIdCodeName {
 
 
 	@Comment("Доля ЗП врача в КСГ")
-	@Column(precision = 5, scale = 2)
+	@Column(precision = 7, scale = 4)
 	public BigDecimal getDoctorCost() { return theDoctorCost;}
 	public void setDoctorCost(BigDecimal aDoctorCost) {theDoctorCost = aDoctorCost;}
 	private BigDecimal theDoctorCost;
