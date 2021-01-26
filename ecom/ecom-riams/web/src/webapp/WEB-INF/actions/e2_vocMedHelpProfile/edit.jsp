@@ -29,15 +29,17 @@
             </msh:panel>
         </msh:form>
         <ecom:webQuery name="polyclinicCoefficientList" nativeSql="select coef.id, coef.startDate,coef.finishDate,coef.value, coalesce(vest.name,'')  as а5_entryType
-             ,coef.isdiagnosticSpo as isKdo, coef.isConsultation as f7_isCons
+             ,coef.isdiagnosticSpo as f6_isKdo, coef.isConsultation as f7_isCons
              ,case when coef.finishDate<current_date then 'color:red' else '' end as f8_styleRow
+             ,coef.ismobilepolyclinic  as f9_isMobile
              from VocCoefficient coef
              left join VocE2BaseTariffType vest on vest.id=coef.tarifftype_id
-             where coef.dtype='VocE2PolyclinicCoefficient' and coef.profile_id=${param.id}"/>
+             where coef.dtype='VocE2PolyclinicCoefficient' and coef.profile_id=${param.id} order by coef.startDate desc" />
         <msh:table idField="1" name="polyclinicCoefficientList" action="entityParentEdit-e2_polyclinicCoefficient.do" noDataMessage="Нет коэфцициентов" styleRow="8">
             <msh:tableColumn columnName="Тип тарифа" property="5"/>
             <msh:tableColumn columnName="КДО" property="6"/>
             <msh:tableColumn columnName="Консультативное" property="7"/>
+            <msh:tableColumn columnName="Мобильная пол-ка" property="9"/>
             <msh:tableColumn columnName="Тариф" property="4"/>
             <msh:tableColumn columnName="Дата начала действия" property="2"/>
             <msh:tableColumn columnName="Дата окончания действия" property="3"/>
