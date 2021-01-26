@@ -17,7 +17,6 @@
 
     <tiles:put name='body' type='string'>
 <%
-    //String entryType = request.getParameter("entryType");
     String orderBy = request.getParameter("orderBy");
     String filter = request.getParameter("filter");
     StringBuilder filterSql= new StringBuilder();
@@ -57,9 +56,6 @@
     String listId=request.getParameter("id");
     String billDate = request.getParameter("billDate");
     StringBuilder sqlAdd = new StringBuilder();
-    //if (entryType!=null&&!entryType.equals("")) {sqlAdd.append(" and e.entryType='").append(entryType).append("'");}
-    //if (serviceStream!=null&&!serviceStream.equals("")) {sqlAdd.append(" and e.serviceStream='").append(serviceStream).append("'");}
-   // if (billNumber!=null&&!billDate.equals("")) {sqlAdd.append(" and e.billNumber='").append(billNumber).append("'");}
     if (billDate!=null&&!billDate.equals("")) {sqlAdd.append(" and e.billDate=to_date('").append(billDate).append("','dd.MM.yyyy')");}
     if (orderBy==null||orderBy.equals("")) {
       orderBy = "e.lastname, e.firstname, e.middlename"  ;

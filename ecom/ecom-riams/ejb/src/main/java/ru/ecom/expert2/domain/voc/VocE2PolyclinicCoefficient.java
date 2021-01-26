@@ -8,16 +8,6 @@ import javax.persistence.OneToOne;
 @Entity
 /** Поправочные коэффициенты для поликлиники*/
 public class VocE2PolyclinicCoefficient extends VocCoefficient {
-
-    /** Тип случая */
-    @Comment("Тип случая")
-    @OneToOne
-    @Deprecated
-    public VocE2EntrySubType getEntryType() {return theEntryType;}
-    public void setEntryType(VocE2EntrySubType aEntryType) {theEntryType = aEntryType;}
-    /** Тип случая */
-    private VocE2EntrySubType theEntryType ;
-
     /**
      * Код для определения тарифа
      */
