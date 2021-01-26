@@ -23,13 +23,16 @@ public class VocE2PolyclinicCoefficientForm extends VocCoefficientForm {
     /** Медицинская специальность */
     private Long theProfile ;
 
-    /** Тип случая */
-    @Comment("Тип случая")
-    @Persist @Deprecated
-    public Long getEntryType() {return theEntryType;}
-    public void setEntryType(Long aEntryType) {theEntryType = aEntryType;}
-    /** Тип случая */
-    private Long theEntryType ;
+    /**
+     * Код для определения тарифа
+     */
+    @Comment("Код для определения тарифа")
+    @Persist
+    public Long getTariffType() {return theTariffType;}
+    public void setTariffType(Long aTariffType) {
+        theTariffType = aTariffType;
+    }
+    private Long theTariffType;
 
     /** Коэффициент для мобильной поликлиники */
     @Comment("Коэффициент для мобильной поликлиники")

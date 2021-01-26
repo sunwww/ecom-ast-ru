@@ -15,10 +15,10 @@
         <msh:form action="/entitySaveGoView-e2_polyclinicCoefficient.do" defaultField="value">
             <msh:hidden property="id" />
             <msh:hidden property="saveType" />
-            <msh:hidden property="profile"/>
             <msh:panel>
                 <msh:separator colSpan="8" label="Общие"/>
               <msh:row>
+                  <msh:autoComplete property="profile" vocName="vocE2MedHelpProfile" viewOnlyField="true" />
                    <msh:autoComplete property="tariffType" vocName="vocE2BaseTariffType" size="100"/>
                 </msh:row>
                 <msh:row>
@@ -47,18 +47,6 @@
                 <msh:sideLink key="ALT+2" params="id" action="/entityEdit-e2_polyclinicCoefficient" name="Изменить" roles="/Policy/E2/Edit" />
                 <msh:sideLink key="ALT+2" params="id" action="/entityPrepareDelete-e2_polyclinicCoefficient" name="Удалить" roles="/Policy/E2/Delete" />
             </msh:sideMenu>
-        </msh:ifFormTypeIsView>
-    </tiles:put>
-    <tiles:put name="javascript" type="string">
-        <msh:ifFormTypeIsView formName="e2_polyclinicCoefficientForm">
-            <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
-            <script type="text/javascript">
-                function addHistoryNumberToList() {
-
-                }
-
-            </script>
-
         </msh:ifFormTypeIsView>
     </tiles:put>
 </tiles:insert>
