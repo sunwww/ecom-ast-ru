@@ -2212,7 +2212,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 serviceSql.append(" and (gkp.servicecode is null or gkp.servicecode='')");
             }
             sql.append(serviceSql);
-//                LOG.info("sql for best KSG = "+sql.toString());
+            //    LOG.info("sql for best KSG = "+sql.toString());
             List<BigInteger> results;
             String key = mainDiagnosis.hashCode() + "#SQL#" + sql.toString().hashCode();
             if (!ksgMap.containsKey(key)) {
@@ -2233,8 +2233,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             int weight;
             GrouperKSGPosition pos = null;
             boolean duration = entry.getCalendarDays() <= 3;
-            //длительность 4-7 дней = 2 , 8-10 дней = 3
-            int ksgDuration = entry.getCalendarDays() > 3 && entry.getCalendarDays() < 8 ? 2 : (entry.getCalendarDays() > 7 && entry.getCalendarDays() < 11 ? 3 : 0);
+            int ksgDuration = getKsgDuration(entry.getCalendarDays());
             GrouperKSGPosition therapicKsgPosition = null;
             GrouperKSGPosition surgicalKsgPosition = null;
             GrouperKSGPosition cancerKsgPosition = null;
@@ -2337,6 +2336,22 @@ public class Expert2ServiceBean implements IExpert2Service {
             return null;
         }
 
+    }
+
+    /**
+     * 1 - до трех дней (включительно)
+     * 2 - 4-10 дней
+     * 3 - 11-20 дней
+     * 4 - 21-30 дней
+     *
+     * @param calendarDays
+     * @return
+     */
+    private int getKsgDuration(Long calendarDays) {
+        return calendarDays < 4 ? 1
+                : calendarDays < 11 ? 2
+                : calendarDays < 21 ? 3
+                : calendarDays < 31 ? 4 : 0;
     }
 
     /**
@@ -2732,16 +2747,14 @@ public class Expert2ServiceBean implements IExpert2Service {
 //                    if ("9".equals(link.getDifficulty().getCode())) {
 //                        tooLongCoeff = link.getValue();
 //                    } else {
-                        if (first) {
-                            ret = link.getValue();
-                            first = false;
-                        } else {
-                            ret = ret.add(link.getValue()).subtract(one);
-                        }
+                    if (first) {
+                        ret = link.getValue();
+                        first = false;
+                    } else {
+                        ret = ret.add(link.getValue()).subtract(one);
+                    }
 //                    }
                 }
-
-
 
                 if (ret.compareTo(MAX_KSLP_COEFF) > 0) { //если коэфф без длит > 1.8 - коэфф = 1.8+коэф по сверхдлит. операции.
                     ret = MAX_KSLP_COEFF;//.add(tooLongCoeff).subtract(one);
