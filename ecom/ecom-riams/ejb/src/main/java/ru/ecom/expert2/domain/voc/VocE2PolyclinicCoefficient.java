@@ -18,6 +18,17 @@ public class VocE2PolyclinicCoefficient extends VocCoefficient {
     /** Тип случая */
     private VocE2EntrySubType theEntryType ;
 
+    /**
+     * Код для определения тарифа
+     */
+    @Comment("Код для определения тарифа")
+    @OneToOne
+    public VocE2BaseTariffType getTariffType() {return theTariffType;}
+    public void setTariffType(VocE2BaseTariffType aTariffType) {
+        theTariffType = aTariffType;
+    }
+    private VocE2BaseTariffType theTariffType;
+
     /** Коэффициент для мобильной поликлиники */
     @Comment("Коэффициент для мобильной поликлиники")
     public Boolean getIsMobilePolyclinic() {return theIsMobilePolyclinic;}

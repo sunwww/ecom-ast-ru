@@ -81,4 +81,11 @@ public class VocKsg extends VocIdCodeName {
 	private Boolean theIsCovid19 ;
 
 
+	@Comment("Доля ЗП врача в КСГ")
+	@Column(precision = 7, scale = 4)
+	public BigDecimal getDoctorCost() { return theDoctorCost;}
+	public void setDoctorCost(BigDecimal aDoctorCost) {theDoctorCost = aDoctorCost;}
+	private BigDecimal theDoctorCost;
+
+
 }
