@@ -15,7 +15,7 @@
     	String type=request.getParameter("type") ;
     	String leftJoinSql = " left join medcase servmc on servmc.parent_id=aslo.id ";
     	if ("1".equals(type)) {
-    		request.setAttribute("filterAdd","slo.id='"+request.getParameter("id")+"' and aslo.dtype='DepartmentMedCase'") ;
+    		request.setAttribute("filterAdd","slo.id='"+request.getParameter("id")+"' and aslo.dtype='DepartmentMedCase' and (vtp.isformaternity is null or vtp.isformaternity is false)") ;
     		request.setAttribute("title","дневники") ;
 			leftJoinSql = " left join medcase servmc on servmc.id=d.servicemedcase_id ";
     	} else if ("2".equals(type)) {
@@ -33,7 +33,11 @@
     	} else if ("4".equals(type)) {
     		request.setAttribute("filterAdd","slo.id='"+request.getParameter("id")+"' and aslo.dtype='DepartmentMedCase'") ;
     		request.setAttribute("title","дневники") ;
-    	} else {
+    	} else if ("6".equals(type)) {
+		request.setAttribute("filterAdd","slo.id='"+request.getParameter("id")+"' and aslo.dtype='DepartmentMedCase' and vtp.isformaternity is true") ;
+		request.setAttribute("title","карты берем.") ;
+		leftJoinSql = " left join medcase servmc on servmc.id=d.servicemedcase_id ";
+		} else {
     		List l = ActionUtil.getListObjFromNativeQuery("select sls.dtype,sls.patient_id,to_char(sls.datestart,'dd.mm.yyyy') as dat1,to_char(coalesce(sls.datefinish,current_date),'dd.mm.yyyy') as dat2 from medcase slo left join medcase sls on sls.id=slo.parent_id where slo.id="+request.getParameter("id")+" and slo.dtype='DepartmentMedCase'", request) ;
     		if (!l.isEmpty()) {
     			Object[] obj = (Object[])l.get(0) ;
