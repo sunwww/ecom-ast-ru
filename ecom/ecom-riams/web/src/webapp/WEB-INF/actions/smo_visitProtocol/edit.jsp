@@ -256,7 +256,15 @@ horizontalFill="true" />
 				initSelectPrinter("print-protocol"+prefix+".do?m=printProtocol&s=HospitalPrintService&id=${param.id}",1);
 			}
 		});
-	}
+	}<msh:ifFormTypeAreViewOrEdit formName="smo_visitProtocolForm">
+		if ($('typeReadOnly') && $('typeReadOnly').value.indexOf('preg')!=-1)
+			<msh:ifFormTypeIsView formName="smo_visitProtocolForm">
+				window.location.href = 'entityParentView-pregProtocol.do?id=${param.id}';
+			</msh:ifFormTypeIsView>
+			<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
+				window.location.href = 'entityParentView-pregProtocol.do?id=${param.id}';
+			</msh:ifFormTypeIsNotView>
+	</msh:ifFormTypeAreViewOrEdit>
 </script>
 
 		<msh:ifFormTypeIsNotView formName="smo_visitProtocolForm">
