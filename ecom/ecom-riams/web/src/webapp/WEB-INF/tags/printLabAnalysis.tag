@@ -48,24 +48,23 @@
         ContractService.getLabAnalysisExtra(
             ID, {
                 callback: function(res) {
-                    //alert(res);
-                    if (res!="##") {
-                        var all = res.split('!') ;
+                    if (res!=null && res!='[]') {
+                        var aResult = JSON.parse(res);
                         var table = document.getElementById('table1');
                         table.innerHTML="<tr><th align=\"center\" width=\"850\">Услуга</th><th align=\"center\" width=\"150\">Печатать?  <input type=\"checkbox\" checked id=\"allChb${name}\" onclick=\"javascript:checkAllChanged${name}CloseDocument()\"/></th></tr>";
-                        for (var i=0; i<all.length-1; i++) {
-                            var result=all[i].split('#');
+                        for (var i=0; i<aResult.length; i++) {
                             var tr = document.createElement('tr');
                             var td1 = document.createElement('td');
                             var td2 = document.createElement('td');
-                            td1.innerHTML = result[0];td2.innerHTML = "<input type=\"checkbox\" checked id="+ result[1]+" name="+result[0]+">";
+                            td1.innerHTML = aResult[i].name;
+                            td2.innerHTML = "<input type=\"checkbox\" checked id="+ aResult[i].id +" name="+aResult[i].name+">";
                             td1.align = "center"; td2.align = "center";
                             tr.appendChild(td1);tr.appendChild(td2);
                             table.appendChild(tr);
                         }
                         the${name}CloseDisDocumentDialog.show() ;
                     }
-                    else alert("Дополнительных лабораторных анализов для печати не найдено!");
+                    else showToastMessage("Дополнительных лабораторных анализов для печати не найдено!",null,true,false,3000);
                 }
             }
         );
