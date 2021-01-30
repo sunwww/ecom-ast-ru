@@ -49,7 +49,7 @@ public class WebQueryTag extends AbstractGuidSimpleSupportTag {
         try {
         if (!StringUtil.isNullOrEmpty(theNameFldSql)) {
 				request.setAttribute(theNameFldSql, (StringUtil.isNullOrEmpty(theNativeSql) 
-						? theHql : theNativeSql).replaceAll("\n", " ")) ;
+						? theHql : theNativeSql).replace("\n", " ")) ;
 		}
         } catch(Exception e) {
         	throw new IllegalStateException("Ошибка сохранения запроса в свойство "+theNameFldSql+": "+e.getMessage(),e) ;

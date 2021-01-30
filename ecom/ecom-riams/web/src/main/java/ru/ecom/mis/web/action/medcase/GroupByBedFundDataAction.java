@@ -51,15 +51,12 @@ public class GroupByBedFundDataAction extends BaseAction {
 		}		
 		
 		if (typePat.equals("2")) {
-			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
 			aRequest.setAttribute("add", HospitalLibrary.getSqlForPatient(true, true, "m.Datestart", "p", "pvss", "pmp","ok")) ;
 			aRequest.setAttribute("infoTypePat", " (по иногородним)") ;
 		} else if (typePat.equals("1")){
-			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
 			aRequest.setAttribute("add", HospitalLibrary.getSqlForPatient(true, false, "m.Datestart", "p", "pvss", "pmp","ok")) ;
 			aRequest.setAttribute("infoTypePat", " (по региональным)") ;
 		} else if (typePat.equals("3")){
-			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
 			aRequest.setAttribute("add", HospitalLibrary.getSqlGringo(true, "ok")) ;
 			aRequest.setAttribute("infoTypePat", "Поиск по иностранцам") ;
 		} else {
@@ -72,7 +69,7 @@ public class GroupByBedFundDataAction extends BaseAction {
 		if (!bedFund.contains(",")) {
 			aRequest.setAttribute("bedFund", " and m.bedfund_id="+bedFund);
 		} else {
-			aRequest.setAttribute("bedFund", " and (m.bedfund_id="+bedFund.replaceAll(",", " or m.bedfund_id=")+")") ;
+			aRequest.setAttribute("bedFund", " and (m.bedfund_id="+bedFund.replace(",", " or m.bedfund_id=")+")") ;
 		}
 		String dateInfo = "поступления" ;
 		if (dateType.equals("m.dateFinish")) {

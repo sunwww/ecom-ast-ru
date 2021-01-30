@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 @Deprecated
 public class JaasUpdateDynamicPolicyAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
- //  	Injection.find(aRequest).getService(IAddressPointService.class).refresh();
     	return aMapping.findForward(SUCCESS);
     }
 }

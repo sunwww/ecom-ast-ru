@@ -37,7 +37,7 @@ public class ScheduleTasks {
                               @QueryParam("id") String id,
                               @QueryParam("name") String name,
                               @QueryParam("link") String link,
-                              @QueryParam("time") String time) throws InterruptedException, JSONException {
+                              @QueryParam("time") String time) {
 
         ApiUtil.init(aRequest,aToken);
         return startThread(id,name,link,time);
@@ -47,7 +47,7 @@ public class ScheduleTasks {
     @Path("/showTasks")
     @Produces("application/json;charset=UTF-8")
     public String showTasks(@Context HttpServletRequest aRequest,
-                                    @WebParam(name="token") String aToken) throws InterruptedException, JSONException {
+                                    @WebParam(name="token") String aToken) {
 
         ApiUtil.init(aRequest,aToken);
         return showTasks();
@@ -58,7 +58,7 @@ public class ScheduleTasks {
     @Produces("application/json;charset=UTF-8")
     public String shutdown(@Context HttpServletRequest aRequest,
                            @WebParam(name="token") String aToken,
-                           @QueryParam("id") String id) throws InterruptedException, JSONException {
+                           @QueryParam("id") String id) {
 
         ApiUtil.init(aRequest,aToken);
 
@@ -74,21 +74,20 @@ public class ScheduleTasks {
     }
 
 
-    private String startThread(String id,String name,String link,String atTime) throws JSONException {
+    private String startThread(String id,String name,String link,String atTime) {
 
         String[] times = atTime.split(":");
         link = link.replace("*","&");
 
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         Task task = new Task(Long.valueOf(id) ,name,link,atTime);
-        scheduledExecutorService.scheduleAtFixedRate(task, timeInit(times[0],times[1],times[2]), 24*60*60, TimeUnit.SECONDS);
+        scheduledExecutorService.scheduleAtFixedRate(task, timeInit(times[0],times[1],times[2]), 24*60*60L, TimeUnit.SECONDS);
         map.put(scheduledExecutorService,task);
 
         return new JSONObject().put(name,"isStart").toString();
     }
 
-    public HashMap<ScheduledExecutorService,Task> startThread(Long id,String name,String link,String atTime)
-            throws JSONException {
+    public HashMap<ScheduledExecutorService,Task> startThread(Long id,String name,String link,String atTime){
 
         startThread(id.toString(),name,link,atTime);
         return map;
@@ -112,7 +111,7 @@ public class ScheduleTasks {
         return duration.getSeconds();
     }
 
-    private String showTasks() throws JSONException {
+    private String showTasks() {
         JSONArray jsonArray = new JSONArray();
 
         for (Map.Entry entry : map.entrySet()) {

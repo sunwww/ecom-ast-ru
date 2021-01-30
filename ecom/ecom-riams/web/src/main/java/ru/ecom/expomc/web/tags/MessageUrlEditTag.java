@@ -9,7 +9,6 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import ru.ecom.expomc.ejb.domain.impdoc.IUrlEditable;
-import ru.ecom.expomc.web.actions.checkproperty.CheckPropertyListAction;
 
 
 public class MessageUrlEditTag extends SimpleTagSupport {

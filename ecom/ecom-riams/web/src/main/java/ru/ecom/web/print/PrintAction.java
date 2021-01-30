@@ -29,11 +29,11 @@ public class PrintAction extends BaseAction {
 		String ispRepBase = aRequest.getParameter("isReportBase") ;
 		String servJs = aRequest.getParameter("s") ;
 		String methodJs = aRequest.getParameter("m") ;
-		if (ispRepBase!=null &&ispRepBase.toUpperCase().equals("TRUE") 
+		if ("TRUE".equalsIgnoreCase(ispRepBase)
 	        		&& RolesHelper.checkRoles("/Policy/Config/IsReportBase",aRequest) 
 	        		&& servJs!=null && servJs.equals("PrintService")) {
 	        	appName = Injection.getWebName(aRequest, null) ;
-	        	appName = appName.substring(0,1)+"rep"+appName.substring(1) ;
+	        	appName = appName.charAt(0)+"rep"+appName.substring(1) ;
 	        } else {
 	        	appName = Injection.getWebName(aRequest, null) ;
 	        }
@@ -41,7 +41,6 @@ public class PrintAction extends BaseAction {
 	    TreeMap<String, String> map = new TreeMap<>();
         Enumeration en = aRequest.getParameterNames() ;
         boolean isMultyId = !(aRequest.getParameter("multy") == null || aRequest.getParameter("multy").equals("")) ;
-        //aRequest.getParameterValues("id").length ;
         String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
         StringBuilder sql = new StringBuilder() ;
         sql.append("select ce.name,ce.id,case when ce.isTxtFile='1' then '1' else null end as istxtfile,ce.commandPrintTxt from WorkFunction wf left join SecUser su on su.id=wf.secUser_id left join CopyingEquipment ce on ce.id=wf.copyingEquipmentDefault_id where su.login='").append(login).append("' and ce.id is not null") ;

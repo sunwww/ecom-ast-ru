@@ -155,7 +155,7 @@ public class SideLinkForWomanTag extends AbstractGuidSimpleSupportTag {
 				SideMenuTag.removeMustHidden(thePageContext) ;
 	        	String prm = getParams() ;
 	            String action = getAction().substring(1) ;
-	            StringBuffer sb = new StringBuffer(action) ;
+	            StringBuilder sb = new StringBuilder(action) ;
 	            if (!action.contains("javascript")) {
 	            	if(action.contains(".do")) {
 		                if(action.indexOf('?')>=0) {
@@ -165,9 +165,8 @@ public class SideLinkForWomanTag extends AbstractGuidSimpleSupportTag {
 		                sb.append(".do?") ;
 		            }
 	            } else {
-	            	sb=new StringBuffer("javascript:void(0)");
+	            	sb=new StringBuilder("javascript:void(0)");
 	            }
-	//        StringBuffer sb = new StringBuffer(getAction().substring(1) + ".do?");
 	            boolean canPrint = true;
 	            if (prm!=null && !prm.equals("")) {
 	            	
@@ -279,10 +278,6 @@ public class SideLinkForWomanTag extends AbstractGuidSimpleSupportTag {
 
     }
 
-    private boolean isInToolBar() {
-        return getParent() instanceof ToolbarTag ;
-    }
-    
     /**
      * GUID
      * @jsp.attribute   description = "GUID"

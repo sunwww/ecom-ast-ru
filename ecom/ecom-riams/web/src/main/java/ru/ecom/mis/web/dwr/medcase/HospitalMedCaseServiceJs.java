@@ -1217,7 +1217,7 @@ public class HospitalMedCaseServiceJs {
 	 * @return Boolean - true - в течение календарного дня, false - нет
 	 */
 	public Boolean deleteDischargeCheck(Long hmcId, HttpServletRequest aRequest) throws JspException, NamingException {
-		Boolean canDelete = checkDeleteDischargeAdmin(aRequest) ||  //админ
+		boolean canDelete = checkDeleteDischargeAdmin(aRequest) ||  //админ
 				(!checkMisLpuCovid(hmcId,aRequest) && checkDischargeThisDay(hmcId,aRequest) //неинфекционное и в течение одного каленарного дня
 						&& (RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/DeleteDischargeOneDay",aRequest) //роль для удаления
 						|| checkUserIsALastSloTreatDoctor(hmcId,aRequest))) //лечащий врач
@@ -1522,7 +1522,7 @@ public class HospitalMedCaseServiceJs {
 		}
 		if (!id.equals("")) {
 			sql.append("insert into ")
-					.append(aSlsOrPat ? "medcase_coloridentitypatient(medcase_id, " : "patient_coloridentitypatient(patient_id, ")
+					.append(Boolean.TRUE.equals(aSlsOrPat) ? "medcase_coloridentitypatient(medcase_id, " : "patient_coloridentitypatient(patient_id, ")
 					.append(" colorsidentity_id) values(")
 					.append(aSlsOrPatId).append(",").append(id).append(")");
 			service.executeUpdateNativeSql(sql.toString());

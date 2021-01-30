@@ -29,7 +29,7 @@ public class TestSqlAction extends BaseAction {
 
         IExportFormatService service = Injection.find(aRequest).getService(IExportFormatService.class);
         service.setMaxRecords(500);
-        String xresult = service.getResultSet(new Long(aRequest.getParameter("id")));
+        String xresult = service.getResultSet(Long.valueOf(aRequest.getParameter("id")));
         aRequest.setAttribute("xresult",xresult);
         return aMapping.findForward(SUCCESS);
     }

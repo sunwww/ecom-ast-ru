@@ -17,11 +17,10 @@ public class AdmissionJournalSearchAction extends BaseAction {
         }
         
         String typeDate =ActionUtil.updateParameter("AdmissionJournalSearch","typeDate","1", aRequest) ;
-    	String typeDate1 =ActionUtil.updateParameter("AdmissionJournalSearch","typeDate1","2", aRequest) ;
+		ActionUtil.updateParameter("AdmissionJournalSearch", "typeDate1", "2", aRequest);
 		String typeEmergency =ActionUtil.updateParameter("AdmissionJournalSearch","typeEmergency","3", aRequest) ;
-		String typeView =ActionUtil.updateParameter("AdmissionJournalSearch","typeView","1", aRequest) ;
-		String typeView1 =ActionUtil.updateParameter("AdmissionJournalSearch","typeView1","1", aRequest) ;
-		//String emer= request.getParameter("emergancyIs") ;
+		ActionUtil.updateParameter("AdmissionJournalSearch", "typeView", "1", aRequest);
+		ActionUtil.updateParameter("AdmissionJournalSearch", "typeView1", "1", aRequest);
 		if (form!=null && form.getDateBegin()!=null && !form.getDateBegin().equals("")) {
 			if ("1".equals(typeEmergency)) {
 				aRequest.setAttribute("emerIs"," and m.emergency='1'") ;

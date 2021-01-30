@@ -17,23 +17,20 @@ public class GroupByBedFundListAction  extends BaseAction {
 		String typePat =ActionUtil.updateParameter("GroupByBedFund","typePatient","4", aRequest) ;
 		ActionUtil.updateParameter("GroupByBedFund","period","2", aRequest) ;
 		String typeDate = ActionUtil.updateParameter("GroupByBedFund","typeDate","2", aRequest) ;
-		String typeSwod = ActionUtil.updateParameter("GroupByBedFund","typeSwod","1", aRequest) ;
-		String typeStatus = ActionUtil.updateParameter("GroupByBedFund","typeStatus","2", aRequest) ;
-		String typeView = ActionUtil.updateParameter("GroupByBedFund","typeView","2", aRequest) ;
-		String typeMKB = ActionUtil.updateParameter("DiagnosisBySlo","typeMKB","4", aRequest) ;
+		ActionUtil.updateParameter("GroupByBedFund", "typeSwod", "1", aRequest);
+		ActionUtil.updateParameter("GroupByBedFund", "typeStatus", "2", aRequest);
+		ActionUtil.updateParameter("GroupByBedFund", "typeView", "2", aRequest);
+		ActionUtil.updateParameter("DiagnosisBySlo", "typeMKB", "4", aRequest);
 		
 		//SimpleDateFormat FORMAT_2 = new SimpleDateFormat("yyyy") ;
     	
 		if (typePat.equals("2")) {
-			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
 			aRequest.setAttribute("add", HospitalLibrary.getSqlForPatient(true, true, "m.Datestart", "p", "pvss", "pmp","ok")) ;
 			aRequest.setAttribute("infoTypePat", "Поиск по иногородним") ;
 		} else if (typePat.equals("1")){
-			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
 			aRequest.setAttribute("add", HospitalLibrary.getSqlForPatient(true, false, "m.Datestart", "p", "pvss", "pmp","ok")) ;
 			aRequest.setAttribute("infoTypePat", "Поиск по региональным") ;
 		} else if (typePat.equals("3")){
-			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
 			aRequest.setAttribute("add", HospitalLibrary.getSqlGringo(true, "ok")) ;
 			aRequest.setAttribute("infoTypePat", "Поиск по иностранцам") ;
 		} else {

@@ -1,6 +1,5 @@
 package ru.ecom.mis.web.dwr.covid;
 
-import org.apache.log4j.Logger;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.web.util.Injection;
@@ -14,7 +13,6 @@ import java.util.Collection;
  * Created by milamesher on 18.09.2020.
  */
 public class CovidServiceJs {
-    private static final Logger LOG = Logger.getLogger(CovidServiceJs.class);
 
     /**
      * Получить все значения из json.

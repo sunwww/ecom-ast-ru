@@ -31,7 +31,7 @@ import java.util.List;
 
 public class WorkCalendarServiceJs {
 
-    private static final Logger LOG = Logger.getLogger(WorkCalendarServiceJs.class) ;
+    private static final Logger LOG = Logger.getLogger(WorkCalendarServiceJs.class);
 
     public String getActualReserves(HttpServletRequest aRequest) throws NamingException {
         String sql = "select id, name, code from VocServiceReserveType";
@@ -41,7 +41,7 @@ public class WorkCalendarServiceJs {
     /**
      * Возвращаем/создаем первое свободное время по рабочей функции и дню
      */
-    public String getFreeCalendarTimeForWorkFunction(Long aWorkFunctionId, String aCalendarDay, HttpServletRequest aRequest) throws NamingException, ParseException, JSONException {
+    public String getFreeCalendarTimeForWorkFunction(Long aWorkFunctionId, String aCalendarDay, HttpServletRequest aRequest) throws NamingException, ParseException {
         String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
         return Injection.find(aRequest).getService(IWorkCalendarService.class).getFreeCalendarTimeForWorkFunction(aWorkFunctionId, aCalendarDay, username);
     }
@@ -83,11 +83,11 @@ public class WorkCalendarServiceJs {
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 
-        String workcalendarId ;
+        String workcalendarId;
         Collection<WebQueryResult> list = service.executeNativeSql("select id from workcalendar where workfunction_id=" + workFunctionId);
         if (list.isEmpty()) {
-            LOG.error("Нет календаря у рабочей функции "+workFunctionId);
-            return "Нет календаря у рабочей функции"+workFunctionId;
+            LOG.error("Нет календаря у рабочей функции " + workFunctionId);
+            return "Нет календаря у рабочей функции" + workFunctionId;
         } else {
             WebQueryResult w = list.iterator().next();
             workcalendarId = w.get1().toString();
@@ -636,7 +636,7 @@ public class WorkCalendarServiceJs {
                 " left join Patient prepat on prepat.id=wct.prepatient_id" +
                 " left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id" +
                 " left join VocServiceStream vss on vss.id=wct.serviceStream_id" +
-                " where wct.workCalendarDay_id=" +aWorkCalendarDay+
+                " where wct.workCalendarDay_id=" + aWorkCalendarDay +
                 " and (wct.isDeleted is null or wct.isDeleted='0') order by wct.timeFrom";
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         return service.executeSqlGetJson(sql);
@@ -650,9 +650,9 @@ public class WorkCalendarServiceJs {
         sql.append(" prepat.lastname ||coalesce(' ('||prepat.patientSync||')',' ('||prepat.id||')')");
         sql.append(",wct.prepatientInfo)");
         sql.append(" as fio, vsrt.background,vsrt.colorText,vss.id as vssid,vss.name as vssname from WorkCalendarTime wct ")
-            .append(" left join Patient prepat on prepat.id=wct.prepatient_id ")
-            .append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
-            .append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id ")
+                .append(" left join Patient prepat on prepat.id=wct.prepatient_id ")
+                .append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
+                .append(" left join VocServiceStream vss on vss.id=wct.serviceStream_id ")
                 .append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ");
         sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is null and (wct.rest is null or wct.rest='0') and (wct.prepatient_id is not null or (wct.prepatientinfo is not null and wct.prepatientinfo!='')) order by wct.timeFrom");
         Collection<WebQueryResult> list = service.executeNativeSql(sql.toString(), 50);
@@ -688,9 +688,9 @@ public class WorkCalendarServiceJs {
         sql.append(",pc.lastname ||coalesce(' ('||pc.patientSync||')',' ('||pc.id||')') as camepat");
         sql.append(",vsrt.background,vsrt.colorText");
         sql.append(" from WorkCalendarTime wct left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id left join MedCase m on m.id=wct.medCase_id")
-            .append(" left join Patient pc on pc.id=m.patient_id left join Patient prepat on prepat.id=wct.prepatient_id where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ")
-            .append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is not null and (wct.prepatient_id is not null and m.patient_id!=wct.prepatient_id")
-            .append(" or (wct.prepatientinfo is not null and wct.prepatientinfo!='' and wct.prepatientinfo not like pc.lastname||' %'))  order by wct.timeFrom");
+                .append(" left join Patient pc on pc.id=m.patient_id left join Patient prepat on prepat.id=wct.prepatient_id where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ")
+                .append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is not null and (wct.prepatient_id is not null and m.patient_id!=wct.prepatient_id")
+                .append(" or (wct.prepatientinfo is not null and wct.prepatientinfo!='' and wct.prepatientinfo not like pc.lastname||' %'))  order by wct.timeFrom");
 
         list = service.executeNativeSql(sql.toString(), 50);
 
@@ -1295,19 +1295,45 @@ public class WorkCalendarServiceJs {
     private String getMonth(int aMonth, boolean aFullname) {
         String month;
         switch (aMonth) {
-            case 1:	month=aFullname?"Январь":"01" ;	break;
-            case 2:	month=aFullname?"Февраль":"02" ;break;
-            case 3:	month=aFullname?"Март":"03" ;break;
-            case 4:	month=aFullname?"Апрель":"04" ;	break;
-            case 5: month=aFullname?"Май":"05" ;break;
-            case 6:	month=aFullname?"Июнь":"06" ;break;
-            case 7:	month=aFullname?"Июль":"07" ;break;
-            case 8:	month=aFullname?"Август":"08" ;break;
-            case 9:	month=aFullname?"Сентябрь":"09" ;break;
-            case 10:month=aFullname?"Октябрь":"10" ;break;
-            case 11:month=aFullname?"Ноябрь":"11" ;	break;
-            case 12:month=aFullname?"Декабрь":"12" ;break;
-            default:month = aFullname?"":""+aMonth ;break;
+            case 1:
+                month = aFullname ? "Январь" : "01";
+                break;
+            case 2:
+                month = aFullname ? "Февраль" : "02";
+                break;
+            case 3:
+                month = aFullname ? "Март" : "03";
+                break;
+            case 4:
+                month = aFullname ? "Апрель" : "04";
+                break;
+            case 5:
+                month = aFullname ? "Май" : "05";
+                break;
+            case 6:
+                month = aFullname ? "Июнь" : "06";
+                break;
+            case 7:
+                month = aFullname ? "Июль" : "07";
+                break;
+            case 8:
+                month = aFullname ? "Август" : "08";
+                break;
+            case 9:
+                month = aFullname ? "Сентябрь" : "09";
+                break;
+            case 10:
+                month = aFullname ? "Октябрь" : "10";
+                break;
+            case 11:
+                month = aFullname ? "Ноябрь" : "11";
+                break;
+            case 12:
+                month = aFullname ? "Декабрь" : "12";
+                break;
+            default:
+                month = aFullname ? "" : "" + aMonth;
+                break;
         }
         return month;
     }
@@ -1335,7 +1361,7 @@ public class WorkCalendarServiceJs {
     }
 
     //TODO доделать
-    public String getTimesByWorkCalendarDay(Long aWorkCalendar, Long aWorkCalendarDay, Long aVocWorkFunction, HttpServletRequest aRequest) throws NamingException, JspException {
+    public String getTimesByWorkCalendarDay(Long aWorkCalendarDay, Long aVocWorkFunction, HttpServletRequest aRequest) throws NamingException, JspException {
         StringBuilder sql = new StringBuilder();
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         boolean isRemoteUser = remoteUser(service, aRequest);
@@ -1396,11 +1422,6 @@ public class WorkCalendarServiceJs {
         if (isRemoteUser) {
             sql.append(" and (vsrt.isViewRemoteUser is null or vsrt.isViewRemoteUser='0') ");
         }
-        //	sql.append(" group by vis.id,wct.id,pat.id,prepat.id,su.id,su1.id,vsrt.id,vss.id");
-
-		/*if (isRemoteUser) {
-			sql.append(",sw.lpu_id,notViewRetomeUser1,notViewRetomeUser2");
-		}*/
         sql.append(" order by wct.timeFrom");
         StringBuilder res = new StringBuilder();
         Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
@@ -1451,7 +1472,6 @@ public class WorkCalendarServiceJs {
                     if (wqr.get4() != null) { // Если визит уже оформлен
                         String prelastname = "" + wqr.get8();
                         String lastname = "" + wqr.get9();
-                        //if (wqr.get13()!=null) lastname=lastname+" ("+wqr.get13()+")" ;
                         res.append("<li id='liTimePre' class='").append(wqr.get11() != null ? wqr.get11() : "").append("'").append(wqr.get19() != null ? " title='" + wqr.get19().toString() + "' " : "").append(">");
                         String add = "";
                         if (!prelastname.startsWith(lastname)) {
@@ -1488,8 +1508,6 @@ public class WorkCalendarServiceJs {
                     if (reserve) {
                         res.append("<li id='liTime' style='color:").append(wqr.get15()).append("; background:").append(wqr.get16()).append("' ondblclick=\"this.childNodes[1].checked='checked';step6Finish('").append(wqr.get1()).append("')\" onclick=\"this.childNodes[1].checked='checked';step6();\">");
 
-                        //res.append("<li id='liReserve' style='color:").append(wqr.get15()).append("; background:").append(wqr.get16()).append("'>") ;
-                        //res.append(wqr.get2()).append(" ") ;
                         res.append(" <input class='radio' type='radio' name='rdTime' id='rdTime' ");
                         res.append(" value='").append(aWorkCalendarDay).append("#").append(wqr.get1()).append("#").append(wqr.get2()).append("'>");
                         if (RolesHelper.checkRoles("/Policy/Mis/Worker/WorkCalendar/DeleteTime", aRequest)) {
@@ -1514,7 +1532,6 @@ public class WorkCalendarServiceJs {
                         .append(wqr.get10()).append("\", event); return false ;' ondblclick='javascript:goToPage(\"entityView-mis_patient.do\",\"")
                         .append(wqr.get10()).append("\")'><img src=\"/skin/images/main/view1.png\" alt=\"Просмотр записи\" title=\"Просмотр записи\" height=\"16\" width=\"16\"></a>");
             }
-            //res.append(" (").append(wqr.get3()).append(" из ").append(wqr.get5()).append(")") ;
             String prelastname = "";
             String lastname = "";
             if (wqr.get4() != null) {
@@ -1522,7 +1539,7 @@ public class WorkCalendarServiceJs {
                 lastname = wqr.get9() != null ? "" + wqr.get9() : "";
             }
             if (!isRemoteUser) {
-                String msg = (wqr.get19() != null ? wqr.get19().toString() : "") +(!prelastname.startsWith(lastname) && !prelastname.equals("") ? " вместо " + prelastname : "");
+                String msg = (wqr.get19() != null ? wqr.get19().toString() : "") + (!prelastname.startsWith(lastname) && !prelastname.equals("") ? " вместо " + prelastname : "");
                 res.append("<input type=\"button\" value=\"...\" onclick=\"showToastMessage('").append(msg.equals("") ? "Нет данных." : msg).append("',null,true);\"/>");
             }
 
@@ -1533,7 +1550,6 @@ public class WorkCalendarServiceJs {
             }
         }
         res.append("</ul></li></ul>");
-        //res.append("<button>Выбрать</button>");
         return res.toString();
     }
 
@@ -1555,14 +1571,12 @@ public class WorkCalendarServiceJs {
         IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class);
         String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
         return service.preRecordByPatient(username, aTime, aPatInfo, aPatientId, preWayOfRecord);
-        //return "Сохранено" ;
     }
 
     public String deletePreRecord(Long aTime, HttpServletRequest aRequest) throws NamingException {
         IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class);
         String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
         return service.deletePreRecord(username, aTime);
-        //return "Удалено" ;
     }
 
     // Получить минимальное и максимальное время приема за день по специалисту
@@ -1579,7 +1593,6 @@ public class WorkCalendarServiceJs {
             , HttpServletRequest aRequest) throws NamingException, ParseException {
         IWorkCalendarService service = Injection.find(aRequest).getService(IWorkCalendarService.class);
         return service.getTimesBySpecAndDate(aDate, aSpecialist, aCountVisits, aBeginTime, aEndTime);
-        //return "" ;
     }
 
     public String addNewTimeBySpecialist(String aDate
@@ -1647,13 +1660,6 @@ public class WorkCalendarServiceJs {
         return "Добавлено";
     }
 
-
-    public String getInfoDay(String aDate, HttpServletRequest aRequest) {
-        //IPolyclinicMedCaseService service = Injection.find(aRequest).getService(IPolyclinicMedCaseService.class) ;
-        return aDate;
-
-    }
-
     public Long getSecUser(HttpServletRequest aRequest) throws NamingException {
         IPolyclinicMedCaseService service = Injection.find(aRequest).getService(IPolyclinicMedCaseService.class);
         return service.getSecUser();
@@ -1662,11 +1668,6 @@ public class WorkCalendarServiceJs {
     public Long getWorkFunction(HttpServletRequest aRequest) throws NamingException {
         IPolyclinicMedCaseService service = Injection.find(aRequest).getService(IPolyclinicMedCaseService.class);
         return service.getWorkFunction();
-    }
-
-    public Long getWorkFunctionBySecUser(Long aSecUser, HttpServletRequest aRequest) throws NamingException {
-        IPolyclinicMedCaseService service = Injection.find(aRequest).getService(IPolyclinicMedCaseService.class);
-        return service.getWorkFunction(aSecUser);
     }
 
     public Long getWorkCalendar(Long aWorkFunction, HttpServletRequest aRequest) throws NamingException {
@@ -1681,9 +1682,6 @@ public class WorkCalendarServiceJs {
 
     }
 
-    public Long getCurrentCalendarDay(HttpServletRequest aRequest) {
-        return (Long) aRequest.getSession().getAttribute("smo_visit.currentCalendarDay");
-    }
 
     public String getTableHeaderByDayAndFunction(String aDateStart, String aDateFinish, Long aWidthSpec, Long aWidthDate, HttpServletRequest aRequest) throws Exception {
         Date dateStart = DateFormat.parseSqlDate(aDateStart);
@@ -1705,11 +1703,9 @@ public class WorkCalendarServiceJs {
                 .append(width)
                 .append("px'> </div>");
         calnext.setTime(dateStart);
-        int i = 0;
         while (
                 calnext.getTime().getTime() < calstop.getTime().getTime()
         ) {
-            i++;
             width = width + aWidthDate + 6;
             tr.append("<td class=\"x-grid-hd \"><div class='x-grid-hd-date'>");
             tr.append(FORMAT_1.format(calnext.getTime()));
@@ -1736,12 +1732,9 @@ public class WorkCalendarServiceJs {
         calstop.setTime(dateFinish);
         calstop.add(Calendar.DATE, 1);
         Calendar calcurrent = Calendar.getInstance();
-        //Date datestop = dateFinish.setDate(dateFinish.getDay()+1) ;
         Long idspec = null;
         String spec = "";
         StringBuilder tr = new StringBuilder();
-        //SimpleDateFormat FORMAT_1 = new SimpleDateFormat("dd.MM.yyyy");
-        //SimpleDateFormat FORMAT_2 = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat FORMAT_2 = new SimpleDateFormat("dd.MM.yyyy");
         calnext.setTime(dateStart);
         int j = 0;
@@ -1769,7 +1762,6 @@ public class WorkCalendarServiceJs {
                             .append("</div>")
                             .append("</td>");
 
-//tr.append("<td class=\"x-grid-hd-date\"><div class='x-grid-col x-grid-cell-inner'>-</div></td>");
                     calnext.add(Calendar.DATE, 1);
                 }
 
@@ -1789,7 +1781,6 @@ public class WorkCalendarServiceJs {
                 }
                 tr.append(">");
                 tr.append("<td class=\"x-grid-col \"><div class='x-grid-hd-spec'>");
-                //tr.append(row.getSpecialist()) ;
                 tr.append(spec);
                 tr.append("</div></td>");
 
@@ -1804,7 +1795,6 @@ public class WorkCalendarServiceJs {
                         .append("(\"").append(row.getSpecialistId()).append("\"")
                         .append(",\"").append(row.getCalendarDayId()).append("\"")
                         .append(",\"").append(row.getTimeMin()).append("\"")
-                        //.append(",\"").append(row.getSpecialist()).append("\"")
                         .append(",\"").append(spec).append("\"")
                         .append(",\"").append(FORMAT_2.format(row.getDate().getTime())).append("\"")
                         .append(",\"").append(1).append("\"")
@@ -1817,7 +1807,6 @@ public class WorkCalendarServiceJs {
                         .append("(\"").append(row.getSpecialistId()).append("\"")
                         .append(",\"").append(row.getCalendarDayId()).append("\"")
                         .append(",\"").append(row.getTimeMax()).append("\"")
-                        //.append(",\"").append(row.getSpecialist()).append("\"")
                         .append(",\"").append(spec).append("\"")
                         .append(",\"").append(FORMAT_2.format(row.getDate().getTime())).append("\"")
                         .append(",\"").append(0).append("\"")
@@ -1837,7 +1826,6 @@ public class WorkCalendarServiceJs {
                             .append("-")
                             .append("</div>")
                             .append("</td>");
-//tr.append("<td class=\"x-grid-hd-date\"><div class='x-grid-col x-grid-cell-inner'>-</div></td>");
                     calnext.add(Calendar.DATE, 1);
                 }
                 if (calcurrent.getTime().getTime() == calnext.getTime().getTime()) {
@@ -1847,7 +1835,6 @@ public class WorkCalendarServiceJs {
                             .append("(\"").append(row.getSpecialistId()).append("\"")
                             .append(",\"").append(row.getCalendarDayId()).append("\"")
                             .append(",\"").append(row.getTimeMin()).append("\"")
-                            //.append(",\"").append(row.getSpecialist()).append("\"")
                             .append(",\"").append(spec).append("\"")
                             .append(",\"").append(FORMAT_2.format(row.getDate().getTime())).append("\"")
                             .append(",\"").append(1).append("\"")
@@ -1860,7 +1847,6 @@ public class WorkCalendarServiceJs {
                             .append("(\"").append(row.getSpecialistId()).append("\"")
                             .append(",\"").append(row.getCalendarDayId()).append("\"")
                             .append(",\"").append(row.getTimeMax()).append("\"")
-                            //.append(",\"").append(row.getSpecialist()).append("\"")
                             .append(",\"").append(spec).append("\"")
                             .append(",\"").append(FORMAT_2.format(row.getDate().getTime())).append("\"")
                             .append(",\"").append(0).append("\"")
@@ -1886,7 +1872,6 @@ public class WorkCalendarServiceJs {
                         .append("</div>")
                         .append("</td>");
 
-//tr.append("<td class=\"x-grid-hd-date\"><div class='x-grid-col x-grid-cell-inner'>-</div></td>");
                 calnext.add(Calendar.DATE, 1);
             }
         } else {

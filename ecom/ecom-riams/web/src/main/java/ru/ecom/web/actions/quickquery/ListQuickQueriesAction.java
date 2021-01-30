@@ -18,7 +18,6 @@ public class ListQuickQueriesAction extends BaseAction {
 			HttpServletRequest aRequest, HttpServletResponse aResponse)
 			throws Exception {
 		
-		String key = aRequest.getParameter("id") ; 
 		IQuickQueryService service = Injection.find(aRequest).getService(
 				IQuickQueryService.class);
 		aRequest.setAttribute("map", service.listQuickQueries()) ;

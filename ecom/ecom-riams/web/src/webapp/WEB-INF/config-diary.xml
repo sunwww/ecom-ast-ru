@@ -35,13 +35,6 @@
     </global-forwards>
 
     <action-mappings>
-        <action path='/stat_protocolSearch' type='ru.ecom.diary.web.action.protocol.ProtocolSearchRedirectAction'
-                name=''
-                validate='false'
-                scope="request"
-                >
-            <forward name="success" redirect="true" path="/WEB-INF/actions/stat_protocol/list.jsp" />
-        </action>
         <action path='/smo_diary_parameterEdit' type='ru.ecom.diary.web.action.protocol.smo.ProtocolEditAction'
                 name='diary_parameterForm'
                 validate='false'

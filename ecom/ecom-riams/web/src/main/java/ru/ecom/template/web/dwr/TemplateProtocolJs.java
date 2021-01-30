@@ -112,12 +112,6 @@ public class TemplateProtocolJs {
 		}
 		return ret.length()>0?ret.toString():"";
 	}
-/*	public String saveParametersByProtocol (Long aSmoId,Long aProtocolId, String aParams, HttpServletRequest aRequest) throws NamingException {
-		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		ITemplateProtocolService service = Injection.find(aRequest).getService(ITemplateProtocolService.class);
-		
-		return service.saveParametersByProtocol(aSmoId,aProtocolId, aParams, username);
-	}*/
 	public String getTemplateDisableEdit (Long aTemplateId, HttpServletRequest aRequest) throws NamingException {
 		if (aTemplateId==null||aTemplateId.equals(0L)) return "0";
 		
@@ -225,8 +219,6 @@ public class TemplateProtocolJs {
 		js.put("workFunction",wfId);
 		js.put("workFunctionName",wfName);
 		JSONArray params = new JSONArray();
-			boolean firstPassed = false ;
-			boolean firstError = false ;
 			String[][] props = {{"1","id"},{"2","name"},{"3","shortname"}
 			,{"4","type"},{"5","min"},{"6","nmin"},{"7","max"},{"8","nmax"}
 			,{"9","minbd"},{"10","nminbd"},{"11","maxbd"},{"12","nmaxbd"}

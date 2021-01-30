@@ -464,15 +464,6 @@ ecom_tree_autocomplete.Autocomplete = function() {
             theNameField.setAttribute("autocomplete", "off");
         } catch (e) {
         }
-        // For minimize traffic check Editabled before insert or edit value
-        //try {
-        //    VocEditService.isVocEditabled(theVocKey, {
-        //       callback: function(aEditabled) {
-        //            if(aEditabled) view.setEditabled(true) ;
-        //        }
-        //    } ) ;
-        //} catch (e) {
-        //}
     }
 
     /* Получение фокуса*/

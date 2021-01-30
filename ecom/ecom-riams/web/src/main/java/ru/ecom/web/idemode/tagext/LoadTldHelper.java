@@ -124,7 +124,7 @@ public class LoadTldHelper {
 	}
 	
 	private boolean toBoolean(String aStr) {
-		return !StringUtil.isNullOrEmpty(aStr) ? Boolean.parseBoolean(aStr) : false ;  
+		return !StringUtil.isNullOrEmpty(aStr) && Boolean.parseBoolean(aStr);
 	}
 	
 }

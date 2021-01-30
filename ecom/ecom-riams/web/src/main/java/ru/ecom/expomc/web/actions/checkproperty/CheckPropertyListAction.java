@@ -15,11 +15,12 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CheckPropertyListAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
-    	list(aRequest) ;
-        return aMapping.findForward(SUCCESS) ;
+        list(aRequest);
+        return aMapping.findForward(SUCCESS);
     }
+
     public static void list(HttpServletRequest aRequest) throws Exception {
-        ICheckService service = Injection.find(aRequest).getService(ICheckService.class) ;
+        ICheckService service = Injection.find(aRequest).getService(ICheckService.class);
         aRequest.setAttribute("list", service.listProperties(getLongId(aRequest, "Идентификатор проверки")));
     }
 }

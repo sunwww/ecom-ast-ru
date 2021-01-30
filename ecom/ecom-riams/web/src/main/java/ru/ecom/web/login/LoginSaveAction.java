@@ -109,7 +109,7 @@ public class LoginSaveAction extends LoginExitAction {
         if(StringUtil.isNullOrEmpty(form.getNext())) {
             return aMapping.findForward(SUCCESS) ;
         } else {
-            String next = form.getNext() ; //.substring(form.getNext().indexOf('/',2)) ;
+            String next = form.getNext() ;
             try {
                 next = new StringSafeEncode().decode(next);
                 next = next.substring(next.indexOf('/',2)) ;
@@ -127,29 +127,20 @@ public class LoginSaveAction extends LoginExitAction {
                     String[] paramM=param.split("&") ;
                     StringBuilder res = new StringBuilder() ;
                     res.append("<form method='post' action='").append(path).append("'>");
-                    //ArrayList<WebQueryResult> list = new ArrayList<WebQueryResult>() ;
 					for (String val : paramM) {
 						String valN = val.substring(0, val.indexOf('='));
 						String valV = val.substring(val.indexOf('=') + 1);
 						String valV1 = URLDecoder.decode(valV, "utf-8");
-						//WebQueryResult wqr = new WebQueryResult() ;
-						//wqr.set1(valN) ;
-						//wqr.set2(valV) ;
-						//wqr.set3(valV1) ;
 						res.append("<textarea name='").append(valN).append("' >");
 						res.append(valV1.trim());
 						res.append("</textarea>");
 						res.append(valN).append("=");
 						res.append(valV1);
-						//list.add(wqr) ;
 
 					}
                     res.append("Загрузка...");
-                    //System.out.print(res) ;
                     res.append("</form>");
-                    //StringBuilder resS = new StringBuilder() ;
                     aRequest.setAttribute("textScript","<script type='text/javascript'>document.forms[0].submit() ;</script>") ;
-                    //aRequest.setAttribute("listParam", list) ;
                     aRequest.setAttribute("textParam", res) ;
 
                     aRequest.setAttribute("path", path.replaceFirst("/", "")) ;
@@ -173,7 +164,6 @@ public class LoginSaveAction extends LoginExitAction {
 		sqlA.append(" and ((validitydate is null and readDate is null) or validitydate>=current_date) and (isEmergency is null or isEmergency='0')");
 	
 		Collection<WebQueryResult> list1 =service.executeNativeSql(sqlA.toString()) ;
-		//StringBuilder res = new StringBuilder() ;
 		if (!list1.isEmpty()) {
 	    	for (WebQueryResult wqr:list1) {
 	    		Long id = ConvertSql.parseLong(wqr.get1()) ;
@@ -248,9 +238,7 @@ public class LoginSaveAction extends LoginExitAction {
     			for (WebQueryResult wqr:list) {
     				res1.append(wqr.get1()).append(" кол-во пациентов: ").append(wqr.get2()).append("<br>") ;
     			}
-    			//System.out.println("get id message") ;
     			Long id=serviceLogin.createSystemMessage("Не заполнялись данные по пациентам более "+cntDays+" дней:", res1.toString(), aUsername) ;
-    			//System.out.println("id="+id) ;
     			UserMessage.addMessage(aRequest,id,"Не заполнялись данные по пациентам более "+cntDays+" дней:", res1.toString(),"stac_report_cases_not_filled.do?typeIsOtherDocFromLpu=2") ;
     		}
     	}
@@ -306,9 +294,7 @@ public class LoginSaveAction extends LoginExitAction {
 		    		res1.append("; необходимо сегодня делать направление: ").append(wqr.get3()).append(" ") ;
 		    		res1.append("; просрочены сроки подачи на ВК: ").append(wqr.get4()).append("<br>") ;
 		    	}
-		    	//System.out.println("get id message") ;
 		    	Long id=serviceLogin.createSystemMessage("Длительность лечения пациентов более 13 дней (для безработных 28 дн):", res1.toString(), aUsername) ;
-		    	//System.out.println("id="+id) ;
 		    	UserMessage.addMessage(aRequest,id,"Направления на ВК:", res1.toString(),"stac_report_direct_medical_commission.do") ;
 	    	}
 	    	
@@ -345,7 +331,6 @@ public class LoginSaveAction extends LoginExitAction {
   		    		res1.append(wqr.get1()).append(" кол-во пациентов: ").append(wqr.get2()).append(" лежат более 3х дней: ").append(wqr.get3()).append("<br>") ;
   		    	}
   		    	Long id=serviceLogin.createSystemMessage("Без полисные:", res1.toString(), aUsername) ;
-  		    	//System.out.println(res1.toString()) ;
   		    	UserMessage.addMessage(aRequest,id,"Без полисные:", res1.toString(),"stac_receivedWithoutPolicy_list.do") ;
   	    	}
     	}
@@ -358,12 +343,10 @@ public class LoginSaveAction extends LoginExitAction {
         	cal.add(Calendar.DAY_OF_MONTH, -2) ;
         	String dateTo = FORMAT_1.format(cal.getTime()) ;
         	cal.add(Calendar.MONTH, -1) ;
-        //	Date prev = cal.getTime() ;
         	String dateFrom = FORMAT_1.format(cal.getTime()) ;
         	StringBuilder sql = new StringBuilder() ;
     		if (!RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Journal/ShowInfoAllDepartments", aRequest)) {
-;
-            	
+
     			sql.append("select ml.name,count(distinct m.id) as cntAll");
     			sql.append(" from MedCase  m ");
     			sql.append(" left join MedCase d on d.parent_id=m.id and d.dtype='DepartmentMedCase'");

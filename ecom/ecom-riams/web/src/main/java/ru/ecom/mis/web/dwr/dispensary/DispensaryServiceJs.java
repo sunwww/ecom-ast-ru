@@ -1,6 +1,5 @@
 package ru.ecom.mis.web.dwr.dispensary;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import ru.ecom.mis.ejb.service.patient.IPatientService;
 import ru.ecom.web.util.Injection;
@@ -12,7 +11,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 public class DispensaryServiceJs {
-    public String exportDispendaryCards(String aJson, HttpServletRequest aRequst) throws NamingException, JSONException, ParseException {
+    public String exportDispendaryCards(String aJson, HttpServletRequest aRequst) throws NamingException, ParseException {
         Date dateFrom, dateTo, dateChangedFrom;
         JSONObject object = new JSONObject(aJson);
 

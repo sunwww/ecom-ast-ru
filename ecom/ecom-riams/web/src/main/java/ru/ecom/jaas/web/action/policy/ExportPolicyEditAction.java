@@ -11,13 +11,12 @@ import ru.nuzmsh.web.struts.BaseAction;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class ExportPolicyEditAction extends BaseAction{
+public class ExportPolicyEditAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
-        ISecRoleService service = (ISecRoleService) Injection.find(aRequest).getService("SecRoleService") ;
-        CheckNode root = service.loadPolicies() ;
-//        CheckNodesUtil.removeUnchecked(root);
+        ISecRoleService service = (ISecRoleService) Injection.find(aRequest).getService("SecRoleService");
+        CheckNode root = service.loadPolicies();
         aRequest.setAttribute("policies", root);
 
-        return aMapping.findForward(SUCCESS) ;
+        return aMapping.findForward(SUCCESS);
     }
 }

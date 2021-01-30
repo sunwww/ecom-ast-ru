@@ -42,7 +42,7 @@ public class FondCheck {
                         @QueryParam("dateStart") String dateStart,
                         @QueryParam("dateEnd") String dateEnd
                         ) throws ParserConfigurationException,
-            SAXException, IOException, JSONException, NamingException {
+            SAXException, IOException, NamingException {
 
         if(dateStart==null || dateStart.equals("")) dateStart=getDate(-7);
         if(dateEnd==null || dateEnd.equals("")) dateEnd=getDate(0);
@@ -75,7 +75,7 @@ public class FondCheck {
                         @QueryParam("firstname") String firstname,
                         @QueryParam("middlename") String middlename,
                         @QueryParam("birthday") String birthday) throws ParserConfigurationException,
-            SAXException, IOException, JSONException, NamingException {
+            SAXException, IOException, NamingException {
 
         ApiUtil.init(aRequest,aToken);
         return FondCheckUtil.check(snils,series,number,type,lastname,firstname,middlename,birthday);
@@ -106,7 +106,7 @@ public class FondCheck {
                        @QueryParam("firstname") String firstname,
                        @QueryParam("middlename") String middlename,
                        @QueryParam("birthday") String birthday) throws ParserConfigurationException,
-            SAXException, IOException, JSONException, NamingException {
+            SAXException, IOException, NamingException {
 
         ApiUtil.init(aRequest,aToken);
 
@@ -128,7 +128,7 @@ public class FondCheck {
                                 @WebParam(name="token") String aToken,
                                 @QueryParam("patient_id") String patient_id,
                                 @QueryParam("limit") String limit) throws ParserConfigurationException,
-            SAXException, IOException, JSONException, NamingException {
+            SAXException, IOException, NamingException {
 
         ApiUtil.init(aRequest,aToken);
 
@@ -255,7 +255,7 @@ public class FondCheck {
                                      @WebParam(name="token") String aToken,
                                      @QueryParam("dateStart") String dateStart
     ) throws ParserConfigurationException,
-            SAXException, IOException, JSONException, NamingException {
+            SAXException, IOException, NamingException {
         if(dateStart==null || dateStart.equals("")) dateStart=getDate(1);
         ApiUtil.init(aRequest,aToken);
         return String.valueOf(FondCheckUtil.syncRecordTomorrow(aRequest,dateStart));

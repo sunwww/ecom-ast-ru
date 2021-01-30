@@ -450,7 +450,7 @@ public class ApiLoginResource {
 
     @GET
     @Path("getChildCount")
-    public String getChildCount(@Context HttpServletRequest aRequest, @QueryParam("token") String token, @QueryParam("date") String aDate) throws NamingException, JSONException {
+    public String getChildCount(@Context HttpServletRequest aRequest, @QueryParam("token") String token, @QueryParam("date") String aDate) throws NamingException {
         ApiUtil.login(token,aRequest);
         String tmpDate;
         SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");

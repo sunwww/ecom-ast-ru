@@ -38,15 +38,15 @@ public class ServiceRegister {
         LOG.info("Registering " + aServiceClass.getSimpleName() + "...");
         Local local = (Local) aServiceClass.getAnnotation(Local.class);
         if (local != null) {
-            register(aServiceClass, "local", local.value(), theLocalProxyCreator, true);
+            register(aServiceClass, "local", local.value(), theLocalProxyCreator);
         }
         Remote remote = (Remote) aServiceClass.getAnnotation(Remote.class);
         if (remote != null) {
-            register(aServiceClass, "remote", remote.value(), theRemoteProxyCreator, false);
+            register(aServiceClass, "remote", remote.value(), theRemoteProxyCreator);
         }
     }
 
-    private void register(Class aServiceClass, String aSuffix, Class[] aInterfaceClass, IProxyCreator aProxyCreator, boolean aCanRegistInterfaces) throws NamingException {
+    private void register(Class aServiceClass, String aSuffix, Class[] aInterfaceClass, IProxyCreator aProxyCreator) throws NamingException {
         String jndiParent = createServiceJndi(aServiceClass);
         boolean isJndiParentRegistered = false;
 
@@ -83,11 +83,7 @@ public class ServiceRegister {
     }
 
     private String createServiceJndi(Class aServiceClass) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(theAppname);
-        sb.append("/");
-        sb.append(aServiceClass.getSimpleName());
-        return sb.toString();
+        return theAppname +"/" +aServiceClass.getSimpleName();
     }
 
 

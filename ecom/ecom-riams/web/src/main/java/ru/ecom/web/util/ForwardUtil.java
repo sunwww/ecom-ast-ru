@@ -35,7 +35,7 @@ public class ForwardUtil {
     	if(parent==null) {
     		throw new IllegalArgumentException("Нет аннотации Parent у класса "+form.getClass()) ;
     	}
-    	Class parentForm = ParentUtil.getParentFormClass((Class<IEntityForm>) form.getClass()) ; //parent.parentForm() ;
+    	Class parentForm = ParentUtil.getParentFormClass((Class<IEntityForm>) form.getClass()) ;
     	if(parentForm==null || parentForm.equals(Void.class)) {
     		throw new IllegalArgumentException("Не заполнен атрибут parentForm в аннотации Parent у класса "+form.getClass()) ;
     	}

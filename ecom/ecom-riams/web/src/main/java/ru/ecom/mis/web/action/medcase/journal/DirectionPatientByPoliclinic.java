@@ -246,41 +246,48 @@ public class DirectionPatientByPoliclinic extends BaseAction {
 		StringBuilder sql = new StringBuilder() ;
 		String group;
 		String order;
-		if (aGroupBy.equals("2")) {
-			//LPU
-			group = "lpu.id,lpu.name" ;
-			order = "lpu.name" ;
-		} else if (aGroupBy.equals("3")) {
-			//doctor
-			group = "wf.id,vwf.name,wp.lastname,wp.firstname,wp.middlename" ;
-			order = "vwf.name,wp.lastname,wp.firstname,wp.middlename" ;
-		} else if (aGroupBy.equals("4")) {
-			//vocWorkFunction
-			group = "vwf.id,vwf.name" ;
-			order = "vwf.name" ;
-		} else if (aGroupBy.equals("5")) {
-			//vocWorkFunction
-			group= "t.serviceStream_id,vss.name" ;
-			order = "vss.name" ;
-		} else if (aGroupBy.equals("6")) {
-			//vocWorkFunction
-			group= "t.workPlaceType_id,vwpt.name" ;
-			order = "vwpt.name" ;
-		} else if (aGroupBy.equals("7")) {
-			group= "t.orderLpu_id,olpu.name" ;
-			order = "olpu.name" ;
-		} else if (aGroupBy.equals("8")) {
-			group = "owf.id,ovwf.name,owp.lastname,owp.firstname,owp.middlename" ;
-			order = "ovwf.name,owp.lastname,owp.firstname,owp.middlename" ;
-		} else if (aGroupBy.equals("9")) {
-			group = "wcd.calendarDate" ;
-			order = "wcd.calendarDate" ;
-		} else{
-			//date
-			//group = "t.dateStart" ;
-			//order = "t.dateStart" ;
-			group = aTypeDate ;
-			order = aTypeDate ;
+		switch (aGroupBy) {
+			case "2":
+				//LPU
+				group = "lpu.id,lpu.name";
+				order = "lpu.name";
+				break;
+			case "3":
+				//doctor
+				group = "wf.id,vwf.name,wp.lastname,wp.firstname,wp.middlename";
+				order = "vwf.name,wp.lastname,wp.firstname,wp.middlename";
+				break;
+			case "4":
+				//vocWorkFunction
+				group = "vwf.id,vwf.name";
+				order = "vwf.name";
+				break;
+			case "5":
+				//vocWorkFunction
+				group = "t.serviceStream_id,vss.name";
+				order = "vss.name";
+				break;
+			case "6":
+				//vocWorkFunction
+				group = "t.workPlaceType_id,vwpt.name";
+				order = "vwpt.name";
+				break;
+			case "7":
+				group = "t.orderLpu_id,olpu.name";
+				order = "olpu.name";
+				break;
+			case "8":
+				group = "owf.id,ovwf.name,owp.lastname,owp.firstname,owp.middlename";
+				order = "ovwf.name,owp.lastname,owp.firstname,owp.middlename";
+				break;
+			case "9":
+				group = "wcd.calendarDate";
+				order = "wcd.calendarDate";
+				break;
+			default:
+				group = aTypeDate;
+				order = aTypeDate;
+				break;
 		}
 		
 		sql.append("from WorkCalendarDay wcd")
