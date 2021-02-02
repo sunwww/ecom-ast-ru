@@ -1,7 +1,6 @@
 package ru.ecom.api;
 
 import com.google.gson.GsonBuilder;
-import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import ru.ecom.api.entity.JsonCustomMessage;
 import ru.ecom.api.util.ApiUtil;
@@ -25,11 +24,10 @@ import java.util.GregorianCalendar;
 
 @Path("/customMessage")
 public class CustomMessageResource {
-    private static final Logger LOG = Logger.getLogger(CustomMessageResource.class);
 
     /**
      * Отправка пользовательских сообщений пользователям медоса
-     * */
+     */
     @POST
     @Path("/sendMessage/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -39,7 +37,7 @@ public class CustomMessageResource {
         LoginInfo loginInfo = LoginInfo.find(aRequest.getSession());
 
         JSONObject errors = checkMessage(message);
-        if (errors!=null) return errors.toString();
+        if (errors != null) return errors.toString();
         String[] recipients;
         if (Boolean.TRUE.equals(message.getSendAllUsers())) {
             IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
@@ -54,42 +52,43 @@ public class CustomMessageResource {
         customMessage.setUsername(loginInfo.getUsername());
         customMessage.setMessageUrl(message.getMessageUrl());
         Integer minutes = message.getValidityMinutes();
-        if (minutes!=null && minutes>0) { //продолжительность  активности сообщения.
+        if (minutes != null && minutes > 0) { //продолжительность  активности сообщения.
             Calendar cal = new GregorianCalendar();
             cal.setTimeInMillis(System.currentTimeMillis());
-            cal.add(Calendar.MINUTE,minutes);
+            cal.add(Calendar.MINUTE, minutes);
             customMessage.setValidityDate(new Date(cal.getTimeInMillis()));
             customMessage.setValidityTime(new Time(cal.getTimeInMillis()));
-        } else if (message.getValidityDate()!=null) {
+        } else if (message.getValidityDate() != null) {
             customMessage.setValidityDate(new Date(message.getValidityDate().getTime()));
             customMessage.setValidityTime(new Time(message.getValidityDate().getTime()));
         }
         IApiService service = Injection.find(aRequest).getService(IApiService.class);
-        int i=0;
-        for (String username: recipients) {
+        int i = 0;
+        for (String username : recipients) {
             CustomMessage cm = new CustomMessage(customMessage);
             cm.setRecipient(username);
             service.persistEntity(cm);
             i++;
         }
-        return okJson("good").put("cntMessages",i).toString();
+        return okJson("good").put("cntMessages", i).toString();
     }
 
     private JSONObject okJson(String txt) {
-        return new JSONObject().put("status","ok").put("someText",txt==null? "ok" : txt);
+        return new JSONObject().put("status", "ok").put("someText", txt == null ? "ok" : txt);
     }
+
     private JSONObject errorJson(String errorCode, String errorName) {
-        return new JSONObject().put("status","error").put("errorCode",errorCode).put("errorName",errorName);
+        return new JSONObject().put("status", "error").put("errorCode", errorCode).put("errorName", errorName);
     }
 
     private JSONObject checkMessage(JsonCustomMessage message) {
         StringBuilder err = new StringBuilder();
-        if (!Boolean.TRUE.equals(message.getSendAllUsers()) && (message.getRecipients()==null || message.getRecipients().length==0)) {
+        if (!Boolean.TRUE.equals(message.getSendAllUsers()) && (message.getRecipients() == null || message.getRecipients().length == 0)) {
             err.append("Необходимо указать получателей сообщения;");
         }
         if (StringUtil.isNullOrEmpty(message.getMessageText())) {
             err.append("Необходимо заполнить текст сообщения;");
         }
-        return err.length()==0 ? null : errorJson("FLK",err.toString());
+        return err.length() == 0 ? null : errorJson("FLK", err.toString());
     }
 }

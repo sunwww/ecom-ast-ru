@@ -29,14 +29,11 @@ public class ParameterSaveAction extends AbstractEntityAction {
 
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
 
-    	//System.out.println(1);
     	IEntityForm form = castEntityForm(aForm, aMapping) ;
     	IEntityFormService service = find(aRequest).getEntityFormService();
         BaseValidatorForm validatorForm = (BaseValidatorForm) aForm ;
         ActionErrors errors = validatorForm.validate(aMapping, aRequest) ;
         
-        //System.out.println(2);
-    	System.out.println(errors);
     	try {
     		IParameterService service1 = Injection.find(aRequest).getService(IParameterService.class) ;
     		ParameterForm parForm = (ParameterForm) aForm ;
@@ -47,12 +44,10 @@ public class ParameterSaveAction extends AbstractEntityAction {
 			aRequest.setAttribute("paramform","");
 			aRequest.setAttribute("paramscript","");
 		}
-    	//System.out.println(3);
-		
+
         if (errors!=null && !errors.isEmpty()) {
         	return aMapping.findForward("success_file") ;
         }
-        //System.out.println(4);
         IEntityForm formAdapted = form;
         if(isMap(form)) {
         	formAdapted = new MapEntityForm() ;
@@ -61,20 +56,16 @@ public class ParameterSaveAction extends AbstractEntityAction {
         	BeanUtils.copyProperties(formAdapted, form) ;
         }
         
-        long id ;
         if(validatorForm.isTypeCreate()) {
-                id = service.create(formAdapted);
+                service.create(formAdapted);
                 new InfoMessage(aRequest, "Создано новое") ;
         } else {
             service.save(formAdapted);
-            id = (Long)PropertyUtil.getPropertyValue(form, "id") ;
+            PropertyUtil.getPropertyValue(form, "id") ;
             new InfoMessage(aRequest, "Сохранено") ;
         }
-       // return ForwardUtil.createIdRedirectForward(aMapping.findForward(SUCCESS), id) ;
-        return ForwardUtil.createGoParentForward((ActionForm)castEntityForm(aForm, aMapping), aMapping, aRequest, theStrutsFormUtil, theStrutsConfigUtil);
+        return ForwardUtil.createGoParentForward((ActionForm)castEntityForm(aForm, aMapping), aMapping, aRequest, new StrutsFormUtil(), new StrutsConfigUtil());
         
-        //return ForwardUtil.createIdRedirectForward(aMapping.findForward(SUCCESS), 1) ;
     }
-    StrutsConfigUtil theStrutsConfigUtil = new StrutsConfigUtil();
-    StrutsFormUtil theStrutsFormUtil = new StrutsFormUtil();
+
 }

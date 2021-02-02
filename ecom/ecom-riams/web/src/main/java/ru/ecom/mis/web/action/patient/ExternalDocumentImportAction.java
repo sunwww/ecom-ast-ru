@@ -189,7 +189,7 @@ public class ExternalDocumentImportAction extends BaseAction {
 		
 		if (aFileMainName!=null) {
 			String cmd=aService.getDir("image.resize", "convert_ORIGFILE_NEWFILE") ;
-			cmd = cmd.replaceAll("_", " ");
+			cmd = cmd.replace("_", " ");
 			cmd = cmd.replace("ORIGFILE", aFileMainName) ;
 			cmd = cmd.replace("NEWFILE", aFileName) ;
 			String run=aService.run(cmd) ;

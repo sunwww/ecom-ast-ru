@@ -34,16 +34,11 @@ public class Injection {
         theWebName = aWebName;
         KEY = Injection.class.getName() + aWebName;
         Properties env = new Properties();
-        // java.naming.factory.initial
         env.put(Context.INITIAL_CONTEXT_FACTORY,
                 !isNullOrEmpty(aInitialContextFactory)
                         ? aInitialContextFactory
                         : "org.jboss.security.jndi.LoginInitialContextFactory");
-//                        : "org.jboss.security.jndi.JndiLoginInitialContextFactory");
-//                , "org.jnp.interfaces.NamingContextFactory") ;
-        // java.naming.factory.url.pkgs
         env.put(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
-        // java.naming.provider.url
         env.put(Context.PROVIDER_URL, aProviderUrl);
 
         env.put(Context.SECURITY_PROTOCOL, aSecurityProtocol);

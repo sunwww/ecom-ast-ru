@@ -15,24 +15,6 @@ import ru.nuzmsh.util.PropertyUtil;
  */
 public class ImportDataViewHelper {
 
-
-//    public static void print(Object aEntity, JspWriter out) throws IOException, IllegalAccessException, InvocationTargetException {
-//        if(aCollection==null) {
-//            out.println("Нет данных") ;
-//        } else {
-//            out.println("<table class='tabview sel tableArrow' border='1'>") ;
-//            boolean isFirst = true ;
-//            for (Object obj : aCollection) {
-//                if(isFirst) {
-//                    printHeader(obj,out);
-//                }
-//                printRow(obj, out) ;
-//                isFirst = false ;
-//            }
-//            out.println("</table>") ;
-//        }
-//    }
-
 	public static void printTableHeader(JspWriter out) throws IOException {
         out.println("<table border='1' class='tabview sel tableArrow'>");
         out.println("<tr><th>Поле</th><th>Комментарий</th><th>Значение</th></tr>");
@@ -75,19 +57,6 @@ public class ImportDataViewHelper {
     	}
     }
     
-    private static void printHeader(Object aObj, JspWriter out) throws IOException {
-        Class clazz = aObj.getClass();
-        out.println("<tr>");
-        for (Method method : clazz.getMethods()) {
-            if(accept(method)) {
-                out.println("<th>") ;
-                out.println(method.getAnnotation(Comment.class).value()) ;
-                out.println("</th>") ;
-            }
-        }
-        out.println("</tr>");
-    }
-
     private static boolean accept(Method aMethod) {
         return aMethod.getAnnotation(Comment.class)!=null ;
     }

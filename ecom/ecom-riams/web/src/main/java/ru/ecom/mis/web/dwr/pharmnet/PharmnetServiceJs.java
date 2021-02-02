@@ -24,7 +24,7 @@ public class PharmnetServiceJs {
 
     /**Создание списания*/
     public Integer createOutcome(String aJson, String medcase, String username, HttpServletRequest aRequest)
-            throws JSONException, NamingException {
+            throws NamingException {
         JSONObject obj = new JSONObject(aJson);
         JSONArray params = obj.getJSONArray("array");
 
@@ -44,11 +44,10 @@ public class PharmnetServiceJs {
 
     /**Создание комплекта*/
     public Integer createComplectRow(String regid, String complectId, String count, HttpServletRequest request)
-            throws JSONException, NamingException {
+            throws NamingException {
         IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
         StringBuilder sql = new StringBuilder();
         sql.append("insert into pharmnetcomplectrow  (regid,complectid_id,count) VALUES  (").append(regid).append(",").append(complectId).append(",").append(count).append(")");
-        //System.out.println(sql.toString());
         service.executeUpdateNativeSql(sql.toString());
         return 1;
     }
@@ -94,7 +93,7 @@ public class PharmnetServiceJs {
             GoodsLeaveEntity goodsOut = new GoodsLeaveEntity();
             goodsOut.setSeria(String.valueOf(wqr.get1()));
             String s = (String) wqr.get2();
-            goodsOut.setQntOst(Float.valueOf(s) * Float.valueOf(count));
+            goodsOut.setQntOst(Float.parseFloat(s) * Float.parseFloat(count));
             goodsOut.setRegId((Integer) wqr.get3());
             goodsOuts.add(goodsOut);
         }

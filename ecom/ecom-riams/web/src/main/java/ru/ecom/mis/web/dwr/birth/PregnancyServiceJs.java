@@ -179,7 +179,7 @@ public class PregnancyServiceJs {
 	 * @param aSlsId HospitalMedCase.id
 	 * @return true - да, false - нет
 	 */
-	private Boolean getIfICanEditNosologyCard(Long aSlsId, HttpServletRequest aRequest) throws NamingException {
+	private boolean getIfICantEditNosologyCard(Long aSlsId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		Collection<WebQueryResult> list = service.executeNativeSql("select case when hmc.datefinish is not null or" +
 				" (select count(dmc.id) from medcase dmc" +
@@ -189,7 +189,7 @@ public class PregnancyServiceJs {
 				" then '0' else '1' end" +
 				" from medcase hmc" +
 				" where hmc.id="+aSlsId);
-		return list.isEmpty() || list.iterator().next().get1().equals("0")? false:true;
+		return list.isEmpty() || list.iterator().next().get1().equals("0");
 	}
 
 	/**
@@ -222,7 +222,7 @@ public class PregnancyServiceJs {
 			JSONObject o = new JSONObject() ;
 			o.put("vocID",w.get1())
 					.put("vocName", w.get2());
-			if (!getIfICanEditNosologyCard(aSlsId,aRequest))
+			if (getIfICantEditNosologyCard(aSlsId, aRequest))
 				o.put("disabled",1); //уже нельзя редактировать
 			res.put(o);
 		}
@@ -262,7 +262,7 @@ public class PregnancyServiceJs {
 				o.put("vocID", w.get1())
 						.put("vocName", w.get2())
 						.put("checked", 1);
-				if (!getIfICanEditNosologyCard(aSlsId, aRequest))
+				if (getIfICantEditNosologyCard(aSlsId, aRequest))
 					o.put("disabled", 1); //уже нельзя редактировать
 				res.put(o);
 			}

@@ -1,8 +1,5 @@
 package ru.ecom.diary.ejb.service.protocol;
 
-import java.util.List;
-
-import ru.ecom.diary.ejb.form.DiaryForm;
 import ru.ecom.diary.ejb.service.protocol.tree.CheckNode;
 
 /**
@@ -13,13 +10,13 @@ import ru.ecom.diary.ejb.service.protocol.tree.CheckNode;
  * To change this template use File | Settings | File Templates.
  */
 public interface IDiaryService {
-    public List<DiaryForm> findProtocol(long aSloId) ;
-    
-    public CheckNode loadParametersByMedService(long aMedServiceId) ;
-    public CheckNode loadParametersByMedService(long aMedServiceId, String aUsername) ;
-    public CheckNode loadParametersByMedService(long aMedServiceId, String aUsername, String aField) ;
-    
-    public void saveParametersByTemplateProtocol(String aIdFieldName,long aProtocolId, long[] aAdds, long[] aRemoves) ;
-    public void saveParametersByTemplateProtocol(long aProtocolId, long[] aAdds, long[] aRemoves) ;
-    public List<Object[]> loadParameterTableByMedService(long aTemplateId) ; 
+
+    CheckNode loadParametersByMedService(long aMedServiceId);
+
+    CheckNode loadParametersByMedService(long aMedServiceId, String aUsername);
+
+    CheckNode loadParametersByMedService(long aMedServiceId, String aUsername, String aField);
+
+    void saveParametersByTemplateProtocol(String aIdFieldName, long aProtocolId, long[] aAdds, long[] aRemoves);
+
 }

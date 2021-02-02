@@ -13,7 +13,7 @@ import java.rmi.RemoteException;
 public class VocEditServiceJs {
     
 	public String createVocValue(HttpServletRequest aRequest, String aVocKey
-            , String aId, String aName, String aParentId) throws NamingException, RemoteException, CreateException {
+            , String aId, String aName, String aParentId) throws NamingException {
     	VocValue value = new VocValue(aId, aName) ;
     	VocAdditional add = new VocAdditional(aParentId) ; 
     	Object id =  Injection.find(aRequest).getService(IVocEditService.class)
@@ -21,13 +21,4 @@ public class VocEditServiceJs {
     	return id!=null ? id.toString() : null ;
     }
 
-    public void changeVocValue(HttpServletRequest aRequest, String aVocKey
-            , String aId, String aName) throws NamingException, RemoteException, CreateException {
-        throw new IllegalStateException("Пока не реализовано") ;
-    }
-
-    public boolean isVocEditabled(HttpServletRequest aRequest, String aVocKey) throws NamingException, RemoteException, CreateException {
-        //return Injection.find(aRequest).getService(IVocEditService.class).isVocEditabled(aVocKey) ;
-    	return false ;
-    }
 }

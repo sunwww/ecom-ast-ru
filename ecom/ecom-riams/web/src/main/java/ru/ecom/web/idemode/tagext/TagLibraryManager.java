@@ -5,10 +5,7 @@ import ru.nuzmsh.util.PropertyUtil;
 import javax.servlet.jsp.tagext.TagAttributeInfo;
 import javax.servlet.jsp.tagext.TagInfo;
 import javax.servlet.jsp.tagext.TagLibraryInfo;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -89,19 +86,18 @@ public class TagLibraryManager {
 	}
 		
 	public void addTld(File aFile, String aPrefix) throws FileNotFoundException {
-		FileInputStream in = new FileInputStream(aFile) ;
-		try {
+		try (FileInputStream in = new FileInputStream(aFile)) {
 			TagLibraryInfo info = theLoadTldHelper.loadTld(in) ;
 			theLibraries.put(aPrefix, info) ;
-		} finally {
-			try { in.close() ; } catch (Exception e) {}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
 	public static void main(String[] args) throws Exception {
 		TagLibraryManager manager = new TagLibraryManager() ;
 		manager.addTld(ru.nuzmsh.web.tags.AbstractFieldTag.class, "msh");
-		TagInfo tag = manager.getTagInfo("msh", "table");
+		manager.getTagInfo("msh", "table");
 	}
 	
 	private final HashMap<String, TagLibraryInfo> theLibraries = new HashMap<>();

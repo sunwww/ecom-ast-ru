@@ -60,13 +60,13 @@ public class TicketQueueResource {
     }
 
     /** Получаем следующий талон в очереди*/
-    public QueueTicket requireNextTicketInQueue(@Context HttpServletRequest aRequest, @QueryParam("token") String token, @QueryParam("queue") Long aQueueId) throws NamingException, JSONException {
+    public QueueTicket requireNextTicketInQueue(@Context HttpServletRequest aRequest, @QueryParam("token") String token, @QueryParam("queue") Long aQueueId) throws NamingException {
         if (token!=null) {throw new IllegalAccessError("В этом случае токен передавать запрещено");}
         String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
         IQueueService queueService = Injection.find(aRequest).getService(IQueueService.class);
         return  queueService.getFirstTicketInQueue(aQueueId,username);
     }
-    public String requireNextTicketInQueueJson(@Context HttpServletRequest aRequest, @QueryParam("token") String token, @QueryParam("queue") Long aQueueId) throws NamingException, JSONException {
+    public String requireNextTicketInQueueJson(@Context HttpServletRequest aRequest, @QueryParam("token") String token, @QueryParam("queue") Long aQueueId) throws NamingException {
         QueueTicket ticket = requireNextTicketInQueue(aRequest,token,aQueueId);
         JSONObject ret  =new JSONObject();
         if (ticket!=null) {

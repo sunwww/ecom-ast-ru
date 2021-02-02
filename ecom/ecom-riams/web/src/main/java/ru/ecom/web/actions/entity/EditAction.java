@@ -32,6 +32,4 @@ public class EditAction extends AbstractEntityAction {
 
         return aMapping.findForward(SUCCESS) ;
     }
-
-    private StrutsFormUtil theStrutsFormUtil = new StrutsFormUtil();
 }

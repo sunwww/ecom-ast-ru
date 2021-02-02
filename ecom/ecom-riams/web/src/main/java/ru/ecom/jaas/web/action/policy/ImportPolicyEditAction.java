@@ -10,12 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 public class ImportPolicyEditAction  extends BaseAction{
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
-      /*
-    	ISecRoleService service = (ISecRoleService) Injection.find(aRequest).getService("SecRoleService") ;
-        CheckNode root = service.loadPolicies() ;
-//        CheckNodesUtil.removeUnchecked(root);
-        aRequest.setAttribute("policies", root);
-*/
         return aMapping.findForward(SUCCESS) ;
     }
 }

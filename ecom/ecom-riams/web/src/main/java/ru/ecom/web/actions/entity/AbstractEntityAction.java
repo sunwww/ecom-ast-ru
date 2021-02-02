@@ -31,10 +31,7 @@ public abstract class AbstractEntityAction extends BaseAction {
     }
 
 	protected String getFormClassname(ActionMapping aMapping) {
-		String clazz = "$$map$$" + aMapping.getName();
-		if (CAN_DEBUG)
-			LOG.debug("getFormClassname: clazz = " + clazz);
-		return clazz;
+		return "$$map$$" + aMapping.getName();
 	}
 
 	public static boolean isMap(String aClassname) {
@@ -48,6 +45,4 @@ public abstract class AbstractEntityAction extends BaseAction {
 
 		return isCast;
 	}
-    
-    //private final StrutsFormUtil theStrutsFormUtil = new StrutsFormUtil();
 }

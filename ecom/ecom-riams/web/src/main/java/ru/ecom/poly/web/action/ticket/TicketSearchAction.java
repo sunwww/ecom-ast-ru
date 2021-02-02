@@ -21,7 +21,6 @@ public class TicketSearchAction extends BaseAction {
 
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
         SearchForm form = (SearchForm) aForm;
-        //form.validate(aMapping, aRequest);
         ITicketService service = Injection.find(aRequest).getService(ITicketService.class);
         aRequest.setAttribute("list", service.findTicketsByNumber(form.getNumberTicket() ));
 

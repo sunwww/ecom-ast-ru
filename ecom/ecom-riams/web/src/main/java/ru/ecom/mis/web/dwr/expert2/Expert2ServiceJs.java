@@ -271,12 +271,17 @@ public class Expert2ServiceJs {
             case "MEDSERVICE_REPLACE_STRING":
                 try {
                     WebQueryResult wqr = getConfigString(fldName, request);
-                    String[] replaceString = wqr.get1().toString().split(";");
-                    for (String p : replaceString) {
-                        String[] pair = p.trim().split(":");
-                        String stringFrom = pair[0].trim();
-                        String stringTo = pair[1].trim();
-                        replaceFieldByError(entryListId, errorCode, fldName.equals("SNILS_REPLACE_STRING") ? "SNILS_DOCTOR" : "MEDSERVICE_CODE", stringFrom, stringTo, request);
+                    String[] replaceString;
+                    if (wqr != null) {
+                        replaceString = wqr.get1().toString().split(";");
+                        for (String p : replaceString) {
+                            String[] pair = p.trim().split(":");
+                            String stringFrom = pair[0].trim();
+                            String stringTo = pair[1].trim();
+                            replaceFieldByError(entryListId, errorCode, fldName.equals("SNILS_REPLACE_STRING") ? "SNILS_DOCTOR" : "MEDSERVICE_CODE", stringFrom, stringTo, request);
+                        }
+                    } else {
+                        replaceString=new String[0];
                     }
                     return fldName + " заменены: " + Arrays.toString(replaceString);
                 } catch (Exception e) {
@@ -284,10 +289,10 @@ public class Expert2ServiceJs {
                 }
             case "DEPARTMENT_BY_SERVICE":
                 WebQueryResult wqr = getConfigString(fldName, request); //profileCode:depCode, profileCode:depCode
-                if (wqr!=null) {
+                if (wqr != null) {
                     String con = wqr.get1().toString();
                     String[] configs = con.split(",");
-                    for (String config: configs) {
+                    for (String config : configs) {
                         String[] pair = config.trim().split(":");
                         String profileCode = pair[0];
                         String departmentCode = pair[1];
@@ -296,10 +301,10 @@ public class Expert2ServiceJs {
                                 entryListId + " and medhelpprofile_id=(select max(id) from voce2medhelpprofile where code ='" +
                                 profileCode + "')");
                     }
-                    return "Всё заменено согласно настройкам: "+con;
+                    return "Всё заменено согласно настройкам: " + con;
                 }
 
-                return "Не найдено настройки с именем "+fldName;
+                return "Не найдено настройки с именем " + fldName;
             default:
                 return "BAD_FIELD_NAME!";
         }
@@ -342,7 +347,7 @@ public class Expert2ServiceJs {
             Date finalDate = null;
             try {
                 finalDate = new Date(format.parse(finalBillDate).getTime());
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             service.makeMPFIle(entryListId, type, finalBillNumber, finalDate, entryId, calcAllListEntry, monitorId, version, fileType);
         }).start();
@@ -405,7 +410,7 @@ public class Expert2ServiceJs {
         Injection.find(request).getService(IWebQueryService.class)
                 .executeUpdateNativeSql("update entrymedservice set serviceDate=to_date('" + serviceDate + "','dd.MM.yyyy') where id=" + medServiceId);
     }
-    
+
     private WebQueryResult getConfigString(String configValue, HttpServletRequest request) throws NamingException {
         Collection<WebQueryResult> list = Injection.find(request).getService(IWebQueryService.class)
                 .executeNativeSql("select value from Expert2Config where code='" + configValue + "'");

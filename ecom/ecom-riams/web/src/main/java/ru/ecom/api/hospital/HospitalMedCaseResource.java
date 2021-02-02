@@ -21,16 +21,7 @@ public class HospitalMedCaseResource {
     public JSONObject getClosedMedcases (@QueryParam("finishDateFrom") String aFinishDateFrom
         ,@QueryParam("finishDateTo") String aFinishDateTo
     ) {
-        JSONObject ret = new JSONObject();
-
-
-        return ret;
+        return new JSONObject();
     }
 
-    private JSONObject getOkJson() {
-        return new JSONObject().put("status","ok");
-    }
-    private JSONObject getErrorJson(String aErrorCode, String aErrorName) {
-        return new JSONObject().put("status","error").put("errorNama",aErrorName!=null ? aErrorName : "").put("errorCode",aErrorCode!=null ? aErrorCode : "");
-    }
 }

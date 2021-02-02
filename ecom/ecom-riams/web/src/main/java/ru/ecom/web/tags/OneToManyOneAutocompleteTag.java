@@ -30,11 +30,11 @@ import java.lang.reflect.Method;
  */
 public class OneToManyOneAutocompleteTag extends AbstractGuidSimpleSupportTag {
 
-	public String getJson(Object aParentForm, String aProperty) throws JSONException, IllegalAccessException,  InvocationTargetException {
+	public String getJson(Object aParentForm, String aProperty) throws IllegalAccessException,  InvocationTargetException {
         return (String) PropertyUtil.getPropertyValue(aParentForm,  aProperty) ;
     }
 
-	public String getJson(Object aParentForm, String aProperty, String aVocName,PageContext aCtx) throws JSONException, IllegalAccessException, InvocationTargetException {
+	public String getJson(Object aParentForm, String aProperty, String aVocName,PageContext aCtx) throws IllegalAccessException, InvocationTargetException {
         String value = (String) PropertyUtil.getPropertyValue(aParentForm,  aProperty) ;
 
     	if(value!=null && !value.equals("null") && !value.equals("")) {
@@ -43,7 +43,6 @@ public class OneToManyOneAutocompleteTag extends AbstractGuidSimpleSupportTag {
 	        StringBuilder  jsonNew = new StringBuilder("{\"childs\":[");
 	        JSONArray jsonArray = jsonObjOld.getJSONArray("childs") ;
 	        
-	        //alert(theFieldName.value) ;
 	        for (int i = 0; i < jsonArray.length(); i++) {
 	        	
 	        	JSONObject child = jsonArray.getJSONObject(i);

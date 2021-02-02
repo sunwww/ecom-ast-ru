@@ -18,20 +18,18 @@ import java.util.StringTokenizer;
  */
 public class CheckPropertyEditAction extends BaseAction {
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
-        ICheckService service = Injection.find(aRequest).getService(ICheckService.class) ;
+        ICheckService service = Injection.find(aRequest).getService(ICheckService.class);
         StringTokenizer st = new StringTokenizer(aRequest.getParameter("id"), ",");
-        long checkId = Long.parseLong(st.nextToken()) ;
-        String property = st.nextToken() ;
+        long checkId = Long.parseLong(st.nextToken());
+        String property = st.nextToken();
         CheckPropertyForm form = service.loadForm(checkId, property);
-        if(property.equals("property")) {
+        if (property.equals("property")) {
             form.setVocName("importDocumentPropertiesByCheck");
-        } else if(property.equals("document")) {
+        } else if (property.equals("document")) {
             form.setVocName("importDocument");
         }
         BeanUtils.copyProperties(aForm, form);
 
-        //aRequest.setAttribute("propertyName", property);
-
-        return aMapping.findForward(SUCCESS) ;
+        return aMapping.findForward(SUCCESS);
     }
 }

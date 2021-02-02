@@ -243,19 +243,13 @@ public class EntityWebTrailTag extends AbstractGuidSimpleSupportTag {
         sb.append("</a>") ;
         if (aListShortAction!=null && !aListShortAction.equals("")) {
         	sb.append("<a class='a_instance_message' href='javascript:void(0)' onclick='getDefinition(\"").append(aListShortAction);
-            //aSb.append(" class='a_instance_message' onmouseover='getDefinition(\"").append(aDefaultShortAction);
         	if (aListShortAction.indexOf('?')<0) {sb.append("?id=") ;} else {sb.append("&id=");}
         	sb.append(aId);
         	sb.append("\", event); return false ;' ");
-            //sb.append("onmouseout='hideMessage()'") ;
         	sb.append(" ondblclick='javascript:goToPage(") ;
         	sb.append("\"").append(aListShortAction).append("\",\"").append(aId).append("\"") ;
         	sb.append(")'><img src='/skin/images/main/view1.png' alt='Просмотр записи' title='Просмотр записи' height='16' width='16'/></a>");
         }
-        //sb.append("<a href='") ;
-        //sb.append(aListAction) ;
-        //sb.append("?id=") ;
-        //sb.append(aId);
     	sb.append("</span> » ") ;
     	aSb.insert(0,sb);
     }

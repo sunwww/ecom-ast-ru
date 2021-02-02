@@ -35,7 +35,7 @@ public class DisabilitySign {
     public String exportDisabilityDocument(@Context HttpServletRequest aRequest,
                                            @WebParam(name = "token") String aToken,
                                            @QueryParam("disDoc") String disDoc)
-            throws SQLException, NamingException, JSONException {
+            throws SQLException, NamingException {
 
         ApiUtil.init(aRequest, aToken);
         DisabilityServiceJs serviceJs = new DisabilityServiceJs();
@@ -64,14 +64,13 @@ public class DisabilitySign {
             disabilitySign.setElnNumber(get(jparse, "ELN"));
             disabilitySign.setSignatureType(get(jparse, "SignatureType"));
             disabilitySign.setСreateUsername(usename);
-
-            if (get(jparse, "AnotherId") != null && !get(jparse, "AnotherId").equals("")) {
-                disabilitySign.setExternalId(Long.valueOf(get(jparse, "AnotherId")));
+            String something = get(jparse, "AnotherId");
+            if (something !=null && !something.equals("")){
+                disabilitySign.setExternalId(Long.valueOf(something));
             }
 
             try {
-                IApiService service = Injection.find(aRequest).getService(IApiService.class);
-                service.persistEntity(disabilitySign);
+                Injection.find(aRequest).getService(IApiService.class).persistEntity(disabilitySign);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -88,7 +87,7 @@ public class DisabilitySign {
                           @QueryParam("disRecId") String disabilityRecordId,
                           @QueryParam("docType") String docType,
                           @QueryParam("username") String username,
-                          @Context HttpServletResponse response) throws NamingException, SQLException, JSONException {
+                          @Context HttpServletResponse response) throws NamingException, SQLException {
 
         ApiUtil.init(request, token);
         IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
@@ -159,10 +158,8 @@ public class DisabilitySign {
     }
 
     private String get(JsonObject obj, String name) {
-        if (obj!=null && obj.has(name)) {
-            if (obj.get(name) != null && !obj.get(name).getAsString().equals("")) {
-                return obj.get(name).getAsString();
-            }
+        if (obj != null && obj.has(name) && obj.get(name) != null && !obj.get(name).getAsString().equals("")) {
+            return obj.get(name).getAsString();
         }
         return null;
     }

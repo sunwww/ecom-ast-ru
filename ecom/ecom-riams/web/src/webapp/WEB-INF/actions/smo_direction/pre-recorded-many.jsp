@@ -495,7 +495,7 @@ ul.listTimes li.first {
   				
   	  			spDay = aSp0+"#"+aSp1+"#"+aSp2 ;
   	  			WorkCalendarService.getTimesByWorkCalendarDay(
-  						aSp0,aSp1,aVocWorkFunction,
+  						aSp1,aVocWorkFunction,
   						
   				     {
   							callback: function(aResult) {

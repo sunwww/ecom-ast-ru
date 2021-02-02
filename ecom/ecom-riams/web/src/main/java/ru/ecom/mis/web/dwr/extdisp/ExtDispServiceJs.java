@@ -221,25 +221,6 @@ public class ExtDispServiceJs {
 		return cal.get(java.util.Calendar.DAY_OF_WEEK)== Calendar.SUNDAY;
 	}
 
-	@Deprecated //Переделали
-	private boolean isAfterDispPeriod(String aDate, Long aDispCardId, HttpServletRequest aRequest) throws NamingException {
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		String str = "select count(edc.id) from extdispcard edc" +
-				" where edc.id=" +aDispCardId+
-				" and to_date('"+aDate+"','dd.MM.yyyy') > edc.finishdate";
-		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
-		return Long.parseLong(wqr.iterator().next().get1().toString())>0;
-	}
-
-	@Deprecated //Переделали
-	private boolean isInDispPeriod(String aDate, Long aDispCardId, HttpServletRequest aRequest) throws NamingException {
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-		String str = "select count(edc.id) from extdispcard edc" +
-				" where edc.id=" +aDispCardId+
-				" and to_date('"+aDate+"','dd.MM.yyyy') between edc.startdate and edc.finishdate";
-		Collection<WebQueryResult> wqr = service.executeNativeSql(str);
-		return Long.parseLong(wqr.iterator().next().get1().toString())>0;
-	}
 	private boolean existDoublesStac(String aDate, Long aPatientId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		String str = "select count(sls.id) from medcase sls" +

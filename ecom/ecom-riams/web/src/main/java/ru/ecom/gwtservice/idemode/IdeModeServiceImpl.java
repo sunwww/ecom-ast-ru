@@ -172,7 +172,6 @@ public class IdeModeServiceImpl extends RemoteServiceServlet implements
 	}
 
 	private String getPrefix(String aFullTagName) {
-		//System.out.println(10) ;
 		return new StringTokenizer(aFullTagName, ": \t").nextToken();
 	}
 
@@ -181,7 +180,6 @@ public class IdeModeServiceImpl extends RemoteServiceServlet implements
 	private final JspFileHelper theJspFileHelper;
 
 	public List listFormProperties(String aFormClass) {
-		//System.out.println(11) ;
 		try {
 			ArrayList<String[]> list = new ArrayList<>();
 			Class clazz = Thread.currentThread().getContextClassLoader()
@@ -195,7 +193,7 @@ public class IdeModeServiceImpl extends RemoteServiceServlet implements
 							comment != null ? comment.value() : name });
 				}
 			}
-			Collections.sort(list, new StringArrayComparator()) ;
+			list.sort(new StringArrayComparator());
 			return list;
 		} catch (Exception e) {
 			throw new IllegalStateException("Ошибка: " + e.getMessage(), e);
@@ -203,7 +201,6 @@ public class IdeModeServiceImpl extends RemoteServiceServlet implements
 	}
 
 	private boolean isInternalFormMethod(Method aMethod) {
-		//System.out.println(12) ;
 		String m = aMethod.getName();
 		return m.equals("getClass") || m.equals("getSaveType")
 				|| m.equals("isTypeCreate")
@@ -228,7 +225,6 @@ public class IdeModeServiceImpl extends RemoteServiceServlet implements
 
 	public static class StringArrayComparator implements Comparator<String[]> {
 		public int compare(String[] s1, String[] s2) {
-			//System.out.println(13) ;
 			int ret = 0 ;
 			if(s1!=null && s2!=null && s1.length>1 && s2.length>1 && s1[1]!=null) {
 				ret = s1[1].compareTo(s2[1]);
