@@ -2241,13 +2241,12 @@ public class Expert2ServiceBean implements IExpert2Service {
                 GrouperKSGPosition ksgPosition = manager.find(GrouperKSGPosition.class, o.longValue());
                 VocKsg ksg = ksgPosition.getKSGValue();
                 weight = 0; //Вес найденного КСГ
-                if (isNotLogicalNull(ksgPosition.getDopPriznak()) && ksgPosition.getDopPriznak().equals(entry.getDopKritKSG())) {
+                if (isEquals(ksgPosition.getDopPriznak(), entry.getDopKritKSG())) {
                     weight = 6;
                 } else if (isNotLogicalNull(ksgPosition.getDopPriznak())) {
                     continue;
                 }
-                if (isNotLogicalNull(ksgPosition.getSex()) && ksgPosition.getSex().equals(entry.getSex())) {
-                } else if (isNotLogicalNull(ksgPosition.getSex())) {
+                if (!isEquals(ksgPosition.getSex(), entry.getSex()) && isNotLogicalNull(ksgPosition.getSex())) {
                     continue;
                 }
                 if (mainDiagnosis.contains(ksgPosition.getMainMKB())) {
@@ -2256,9 +2255,12 @@ public class Expert2ServiceBean implements IExpert2Service {
                         therapicKsgPosition = therapicKsgPosition != null && therapicKsgPosition.getKSGValue().getKZ() > ksgPosition.getKSGValue().getKZ() ? therapicKsgPosition : ksgPosition;
                     }
 
-                } else if (isNotLogicalNull(ksgPosition.getMainMKB()) && isCancer && ("C.".equals(ksgPosition.getMainMKB()) || (cancerDiagnosis != null && cancerDiagnosis.equals(ksgPosition.getMainMKB())))) {
+                } else if (isCancer && isOneOf(ksgPosition.getMainMKB(), "C.", cancerDiagnosis)) {
                     cancerKsgPosition = ksgPosition;
-                    weight++; /*weight=5;*/
+                    weight++;
+                    if (isEquals(ksgPosition.getMainMKB(), cancerDiagnosis)) {
+                        weight++; //проверить TODO
+                    }
                 } else if (isNotLogicalNull(ksgPosition.getMainMKB())) {
                     continue;
                 }
@@ -2283,7 +2285,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
                 if (ksgPosition.getDuration() != null && duration) {
                     weight = 6;
-                } else if (ksgPosition.getDuration() != null && ksgPosition.getDuration().equals(ksgDuration)) {
+                } else if (isEquals(ksgPosition.getDuration(), ksgDuration)) {
                     //подходит
                 } else if (ksgPosition.getDuration() != null) {
                     continue;
@@ -2536,7 +2538,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                             costFormula = "Тариф=" + tarif + ", КЗ=" + kz + ", КУксг=" + kuksg + ", КУСмо=" + cusmo + ", КМ=" + km + ", КСЛП=" + kslp + ", Кпр=" + kpr;
                             totalCoefficient = kz.multiply(kuksg).multiply(cusmo).multiply(kslp).multiply(km).multiply(kpr).setScale(12, RoundingMode.HALF_UP); //Округляем до 2х знаков
                         } else {
-                            costFormula = "Тариф=" + tarif + ", КЗ=" + kz +", Кзп="+ksg.getDoctorCost()+ ", КУксг=" + kuksg + ", КУСмо=" + cusmo + ", КМ=" + km + ", КСЛП=" + kslp + ", Кпр=" + kpr;
+                            costFormula = "Тариф=" + tarif + ", КЗ=" + kz + ", Кзп=" + ksg.getDoctorCost() + ", КУксг=" + kuksg + ", КУСмо=" + cusmo + ", КМ=" + km + ", КСЛП=" + kslp + ", Кпр=" + kpr;
                             totalCoefficient = kz.multiply((BigDecimal.ONE.subtract(ksg.getDoctorCost()))
                                     .add(ksg.getDoctorCost()).multiply(kuksg).multiply(cusmo).multiply(kslp).multiply(km).multiply(kpr)).setScale(12, RoundingMode.HALF_UP); //Округляем до 2х знаков
                         }
