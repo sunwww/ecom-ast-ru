@@ -2165,7 +2165,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                         sb.append(",");
                     }
                     sb.append("'").append(d).append("'");
-                    if ((d.startsWith("C") && Integer.parseInt(d.substring(1, 3)) < 97) || (d.startsWith("D") && Integer.parseInt(d.substring(1, 3)) < 10)) {
+                    int mkbNum = Integer.parseInt(d.substring(1, 3));
+                    if ((d.startsWith("C") && mkbNum < 97) || (d.startsWith("D") && (mkbNum < 10 || mkbNum>44 && mkbNum<48))) {
                         cancerDiagnosis = d;
                     } else if (d.startsWith("C")) {
                         findCDiagnosis = true;
@@ -2173,8 +2174,9 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
                 if (isCancer) {
                     if (cancerDiagnosis != null) { //Костыль по нахождению Д в интервале, TODO переделать на нормальное нахождение диагноза в интервале
+                        int mkbNumCancer = Integer.parseInt(cancerDiagnosis.substring(1, 3));
                         if (cancerDiagnosis.startsWith("C")) {
-                            if (Integer.parseInt(cancerDiagnosis.substring(1, 3)) < 81) {
+                            if (mkbNumCancer < 81) {
                                 cancerDiagnosisSql = " or gkp.mainMkb='C00-C80' or gkp.mainmkb='C.'";
                                 cancerDiagnosis = "C00-C80";
                             } else {
@@ -2182,8 +2184,13 @@ public class Expert2ServiceBean implements IExpert2Service {
                                 cancerDiagnosis = "C81-C96";
                             }
                         } else {
-                            cancerDiagnosisSql = "or (gkp.mainMkb='D00-D09' or gkp.mainMkb='D45-D47')";
-                            cancerDiagnosis = "D00-D09";
+                            if (mkbNumCancer<10) { // D00-D09
+                                cancerDiagnosisSql = "or gkp.mainMkb='D00-D09'";
+                                cancerDiagnosis = "D00-D09";
+                            } else { //D45-D47
+                                cancerDiagnosisSql = "or gkp.mainMkb='D45-D47'";
+                                cancerDiagnosis = "D45-D47";
+                            }
                         }
 
                     } else if (findCDiagnosis) {
@@ -3334,7 +3341,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         if (isDeadCase || isPatientLike || isOtherLpu || isLpuLike) { //не стандартная выписка
             isPrerSluch = true;
         } else if (aEntry.getCalendarDays() < 4) {  //Если плановая выписки и длительность случая менее 4 дней. //28-02-2018 4 целых дня.
-            isPrerSluch = ksg == null || isTrue(ksg.getIsFullPayment());
+            isPrerSluch = ksg == null || isNotTrue(ksg.getIsFullPayment());
         } else {
             isPrerSluch = false;
         }
@@ -3561,7 +3568,8 @@ public class Expert2ServiceBean implements IExpert2Service {
         String code;
         switch (entry.getDoctorWorkfunction()) {
             case "49": //педиатр
-            case "97": //терапевт
+            case "97": //терапевт (не очень, но оставим)
+            case "76": // терапия
                 code = "12"; //первичная МСП
                 break;
             case "206": //фельдшер
