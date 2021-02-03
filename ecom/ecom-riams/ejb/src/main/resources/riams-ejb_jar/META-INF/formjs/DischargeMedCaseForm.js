@@ -43,6 +43,17 @@ function totalDenialToEditDischargeAfter(aForm, aCtx) {
 		throw "Изменение выписки невозможно, т.к. пациент уже выписан! Обратитесь в КЭО.";
 }
 
+//были ли инфекционные сло в слс
+function checkMisLpuCovid(hmcId, aCtx) {
+	var query = " select vbt.id from medcase sls" +
+		" left join medcase sloAll on sloAll.parent_id=sls.id and sloAll.dtype='DepartmentMedCase'" +
+		" left join Mislpu dep on dep.id=sloAll.department_id" +
+		" left join bedfund as bf on bf.id=sloAll.bedfund_id" +
+		" left join vocbedtype vbt on vbt.id=bf.bedType_id"  +
+		" where vbt.code='14' and sls.id=" + hmcId;
+	return !aCtx.manager.createNativeQuery(query).getResultList().isEmpty();
+}
+
 function onPreSave(aForm,aEntity, aCtx) {
 	if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Discharge/DotCheckDatesTimesAdmin"))
 		totalDenialToEditDischargeAfter(aForm, aCtx);
@@ -152,10 +163,11 @@ function onPreSave(aForm,aEntity, aCtx) {
 			cal1.setTime(dateFinish) ;
 			yCal.setTime(yesterday);
 
+
 			if (cal1.get(java.util.Calendar.YEAR)==cal2.get(java.util.Calendar.YEAR) &&
 				cal1.get(java.util.Calendar.MONTH)==cal2.get(java.util.Calendar.MONTH) &&
 				cal1.get(java.util.Calendar.DATE)==cal2.get(java.util.Calendar.DATE)
-				|| (result!=null && result.code=="11" && cal1.get(java.util.Calendar.YEAR)==yCal.get(java.util.Calendar.YEAR) &&
+				|| ((!checkMisLpuCovid(aForm.id, aCtx) || result!=null && result.code=="11") && cal1.get(java.util.Calendar.YEAR)==yCal.get(java.util.Calendar.YEAR) &&
 					cal1.get(java.util.Calendar.MONTH)==yCal.get(java.util.Calendar.MONTH) &&
 					cal1.get(java.util.Calendar.DATE)==yCal.get(java.util.Calendar.DATE)
 				)
@@ -169,7 +181,8 @@ function onPreSave(aForm,aEntity, aCtx) {
 				var check=aCtx.serviceInvoke("WorkerService", "checkPermission", param)+"";
 
 				if (+check==0) {
-					throw "У Вас стоит ограничение на дату выписки. Вы можете выписывать только текущим числом либо умерших - вчерашней датой!";
+					throw "У Вас стоит ограничение на дату выписки. Можно выписывать текущим числом любых пациентов " +
+					"или вчерашней датой умерших/пациентов не инфекционных отделений!";
 				}
 			}
 		}

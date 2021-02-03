@@ -24,63 +24,66 @@ public class WorkCalendarAction extends BaseAction {
         Date beginDate = DateFormat.parseSqlDate(beginDateS) ;
         Date finishDate = DateFormat.parseSqlDate(finishDateS) ;
         if (functionJournal!=null && !functionJournal.equals("")) {
-        	if  (functionJournal.equals("autogenerate")) {
-        		Long afterDays = null;
-        		Long cntDays = null ;
-        		if (aRequest.getParameter("afterDays")!=null) afterDays=ConvertSql.parseLong(aRequest.getParameter("afterDays"));
-        		if (aRequest.getParameter("cntDays")!=null) cntDays=ConvertSql.parseLong(aRequest.getParameter("cntDays"));
-        		service.autoGenerateCalendar(afterDays,cntDays) ;
-        		 return new ActionForward("/js-mis_worker-autogenerate.do");
-        	} else if  (functionJournal.equals("generate")) {
-        		serviceGenerateDo(service, lpuId, JaasUtil.convertToLongs(aRequest.getParameterValues("id")), beginDate, finishDate) ;
-        	} else if (functionJournal.equals("addBusyPattern")) {
-        		Long pattern = Long.parseLong(aRequest.getParameter("pattern")) ;
-        		serviceAddBusyPatternDo(service,lpuId, JaasUtil.convertToLongs(aRequest.getParameterValues("id")),beginDate,finishDate,pattern);
-        	} else if (functionJournal.equals("deleteFreeTime")) {
-        		serviceDeleteFreeTimeDo(service, lpuId, JaasUtil.convertToLongs(aRequest.getParameterValues("id")), beginDate, finishDate) ;
-        	} else if (functionJournal.equals("addNotWorking")) {
-        		Long busy = Long.parseLong(aRequest.getParameter("busy")) ;
-        		serviceAddNotBusyPatternDo(service,lpuId, JaasUtil.convertToLongs(aRequest.getParameterValues("id")),beginDate,finishDate,busy);
-        	} else if (functionJournal.equals("deleteNoAppearance")) {
-        		serviceDeleteNoAppearanceDo(service,lpuId, JaasUtil.convertToLongs(aRequest.getParameterValues("id")),beginDate,finishDate);
-        	} else if (functionJournal.equals("moveDate")) {
-        		java.sql.Date dateCur = new java.sql.Date(new java.util.Date().getTime()) ;
-        		if (dateCur.getTime()>beginDate.getTime()) throw new IllegalArgumentException("дата начала должна быть больше текущей") ;
-        		if (dateCur.getTime()>finishDate.getTime()) throw new IllegalArgumentException("дата окончания должна быть больше текущей") ;
-        		serviceMoveDateDo(service, lpuId, JaasUtil.convertToLongs(aRequest.getParameterValues("id")), beginDate, finishDate) ;
-        	}
+			switch (functionJournal) {
+				case "autogenerate":
+					Long afterDays = null;
+					Long cntDays = null;
+					if (aRequest.getParameter("afterDays") != null)
+						afterDays = ConvertSql.parseLong(aRequest.getParameter("afterDays"));
+					if (aRequest.getParameter("cntDays") != null)
+						cntDays = ConvertSql.parseLong(aRequest.getParameter("cntDays"));
+					service.autoGenerateCalendar(afterDays, cntDays);
+					return new ActionForward("/js-mis_worker-autogenerate.do");
+				case "generate":
+					serviceGenerateDo(service, JaasUtil.convertToLongs(aRequest.getParameterValues("id")), beginDate, finishDate);
+					break;
+				case "addBusyPattern":
+					Long pattern = Long.parseLong(aRequest.getParameter("pattern"));
+					serviceAddBusyPatternDo(service, JaasUtil.convertToLongs(aRequest.getParameterValues("id")), beginDate, finishDate, pattern);
+					break;
+				case "deleteFreeTime":
+					serviceDeleteFreeTimeDo(service, JaasUtil.convertToLongs(aRequest.getParameterValues("id")), beginDate, finishDate);
+					break;
+				case "addNotWorking":
+					Long busy = Long.parseLong(aRequest.getParameter("busy"));
+					serviceAddNotBusyPatternDo(service, JaasUtil.convertToLongs(aRequest.getParameterValues("id")), beginDate, finishDate, busy);
+					break;
+				case "moveDate":
+					Date dateCur = new Date(new java.util.Date().getTime());
+					if (dateCur.getTime() > beginDate.getTime())
+						throw new IllegalArgumentException("дата начала должна быть больше текущей");
+					if (dateCur.getTime() > finishDate.getTime())
+						throw new IllegalArgumentException("дата окончания должна быть больше текущей");
+					serviceMoveDateDo(service, JaasUtil.convertToLongs(aRequest.getParameterValues("id")), beginDate, finishDate);
+					break;
+			}
         }
         return new ActionForward(aMapping.findForward(SUCCESS).getPath()
         		+"?id="+lpuId+"&beginDate="+beginDateS+"&finishDate="+finishDateS+"&tmp="+Math.random(), true) ;
     }
 
-    void serviceAddNotBusyPatternDo(IWorkCalendarService aService, long aLpuId, long[] aFunctions,Date aBeginDate,Date aFinishDate, Long aReason) {
+    void serviceAddNotBusyPatternDo(IWorkCalendarService aService, long[] aFunctions, Date aBeginDate, Date aFinishDate, Long aReason) {
     	for (long func:aFunctions) {
     		aService.addNotBusyPattern(func, aBeginDate, aFinishDate,aReason);
     	}
     }
-    void serviceMoveDateDo(IWorkCalendarService aService, long aLpuId, long[] aFunctions,Date aBeginDate,Date aFinishDate) {
+    void serviceMoveDateDo(IWorkCalendarService aService, long[] aFunctions, Date aBeginDate, Date aFinishDate) {
     	for (long func:aFunctions) {
     		aService.moveDate(func, aBeginDate, aFinishDate);
     	}
     }
-    void serviceDeleteFreeTimeDo(IWorkCalendarService aService, long aLpuId, long[] aFunctions,Date aBeginDate,Date aFinishDate) {
+    void serviceDeleteFreeTimeDo(IWorkCalendarService aService, long[] aFunctions, Date aBeginDate, Date aFinishDate) {
     	for (long func:aFunctions) {
     		aService.deleteEmptyCalendarDays(func, aBeginDate, aFinishDate);
     	}
     }
-    void serviceDeleteNoAppearanceDo(IWorkCalendarService aService, long aLpuId, long[] aFunctions,Date aBeginDate,Date aFinishDate) {
-    	/*for (long func:aFunctions) {
-    		//TODO доделать удаление не явок
-    		//aService.deleteEmptyCalendarDays(func, aBeginDate, aFinishDate);
-    	}*/
-    }
-    void serviceGenerateDo(IWorkCalendarService aService, long aLpuId, long[] aFunctions,Date aBeginDate,Date aFinishDate) {
+
+    void serviceGenerateDo(IWorkCalendarService aService, long[] aFunctions, Date aBeginDate, Date aFinishDate) {
     	for (long func:aFunctions) {
     		aService.generateCalendarByWorkFunction(func, aBeginDate, aFinishDate);
     	}
     }
-    void serviceAddBusyPatternDo(IWorkCalendarService aService, long aLpuId, long[] aFunctions,Date aBeginDate,Date aFinishDate, Long aPattern) {
+    void serviceAddBusyPatternDo(IWorkCalendarService aService, long[] aFunctions, Date aBeginDate, Date aFinishDate, Long aPattern) {
     	for (long func:aFunctions) {
     		aService.addBusyPatternByWorkFunction(func, aBeginDate, aFinishDate, aPattern);
     	}

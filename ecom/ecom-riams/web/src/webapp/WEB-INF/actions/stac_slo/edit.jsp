@@ -85,6 +85,7 @@
                 <msh:sideLink action="/javascript:notWatchThisPatient()" name="НЕ наблюдать пациента на дежурстве" title="НЕ наблюдать пациента на дежурстве" roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
                 <msh:sideLink roles="/Policy/Mis/Pregnancy/CardiacScreening/Create" name="Кардио-скрининг нов. (I этап)" action="/entityParentPrepareCreate-stac_screeningCardiacFirst" params="id" title="Добавить кардио-скрининг нов. (I этап)"/>
                 <msh:sideLink roles="/Policy/Mis/Pregnancy/CardiacScreening/Create" name="Кардио-скрининг нов. (II этап)" action="/entityParentPrepareCreate-stac_screeningCardiacSecond" params="id" title="Добавить кардио-скрининг нов. (II этап)"/>
+                <msh:sideLink roles="/Policy/Mis/MedCase/Protocol" name="Протокол берем./родов" action="/entityParentPrepareCreate-pregProtocol" params="id" title="Добавить протокол берем./родов"/>
             </msh:sideMenu>
             <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
                 <msh:sideMenu title="Показать">
@@ -404,6 +405,7 @@
                                         <button onclick="getDefinition('js-stac_slo-list_protocols.do?id=${param.id}&type=2&short=Page',1,'divprotocolslo${param.id}')">Лаб.исслед.</button>
                                         <button onclick="getDefinition('js-stac_slo-list_protocols.do?id=${param.id}&type=3&short=Page',1,'divprotocolslo${param.id}')">Диаг.исслед.</button>
                                         <button onclick="getDefinition('js-stac_slo-list_protocols.do?id=${param.id}&type=4&short=Page',1,'divprotocolslo${param.id}')">Заголовки</button>
+                                        <button onclick="getDefinition('js-stac_slo-list_protocols.do?id=${param.id}&type=6&short=Page',1,'divprotocolslo${param.id}')">Карты берем.</button>
                                         <button onclick="getDefinition('js-stac_slo-list_protocols.do?id=${param.id}&short=Page',1,'divprotocolslo${param.id}')">Все</button>
                                     </td>
                                 </tr>

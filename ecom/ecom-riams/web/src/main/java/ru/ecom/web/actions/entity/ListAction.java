@@ -1,7 +1,6 @@
 package ru.ecom.web.actions.entity;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -11,7 +10,6 @@ import ru.ecom.web.util.EntityInjection;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -20,51 +18,35 @@ import java.util.Collection;
  */
 public class ListAction extends AbstractEntityAction {
 
-	private static final Logger LOG = Logger.getLogger(ListAction.class);
 
-	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
+    public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm,
+                                   HttpServletRequest aRequest, HttpServletResponse aResponse)
+            throws Exception {
 
-	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm,
-			HttpServletRequest aRequest, HttpServletResponse aResponse)
-			throws Exception {
-		
-		IEntityForm form = castEntityForm(aForm, aMapping);
-		IEntityFormService service = EntityInjection.find(aRequest)
-				.getEntityFormService();
-		
-		boolean isMap = isMap(form);
-		Collection list = isMap 
-				? service.listAll(getFormClassname(aMapping)) 
-				: service.listAll(form.getClass());
+        IEntityForm form = castEntityForm(aForm, aMapping);
+        IEntityFormService service = EntityInjection.find(aRequest)
+                .getEntityFormService();
 
-		aRequest.setAttribute("list"
-				, isMap ? transormCollection(list, form.getClass()) : list);
+        boolean isMap = isMap(form);
+        Collection list = isMap
+                ? service.listAll(getFormClassname(aMapping))
+                : service.listAll(form.getClass());
 
-		return aMapping.findForward(SUCCESS);
-	}
+        aRequest.setAttribute("list"
+                , isMap ? transormCollection(list, form.getClass()) : list);
 
-	public static Collection transormCollection(Collection aCol, Class aClass) throws Exception {
-		ArrayList list = new ArrayList(aCol.size()) ; 
-		for(Object obj : aCol) {
-			Object dest = aClass.newInstance();
-			BeanUtils.copyProperties(dest, obj);
-			list.add(dest);
-		}
-		return list ;
-	}
-	
-	private void dumpCollection(Collection aObject) {
-		for (Object o : aObject) {
-			dump(o);
-		}
-	}
+        return aMapping.findForward(SUCCESS);
+    }
 
-	private void dump(Object aObject) {
-		for (Method m : aObject.getClass().getMethods()) {
-			if (CAN_DEBUG)
-				LOG.debug("dump: m = " + m);
-		}
-	}
+    public static Collection transormCollection(Collection aCol, Class aClass) throws Exception {
+        ArrayList list = new ArrayList(aCol.size());
+        for (Object obj : aCol) {
+            Object dest = aClass.newInstance();
+            BeanUtils.copyProperties(dest, obj);
+            list.add(dest);
+        }
+        return list;
+    }
 
 
 }

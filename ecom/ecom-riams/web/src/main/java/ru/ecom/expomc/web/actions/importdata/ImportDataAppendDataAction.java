@@ -17,9 +17,6 @@ public class ImportDataAppendDataAction extends BaseAction {
 
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
         IImportDataService service = Injection.find(aRequest).getService(IImportDataService.class);
-
-        //super.getStringArray(aRequest, aParamName, aParameterTitle)
-        //aRequest.setAttribute("list", service.listAll(Long.parseLong(aRequest.getParameter("id"))));
         service.join(getLongArray(aRequest, "id", "Импортированные данные")) ;
         return aMapping.findForward(SUCCESS) ;
     }

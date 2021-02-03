@@ -34,7 +34,7 @@ public class DepartmentSearchAction extends BaseAction {
 	    	aRequest.setAttribute("department",lpu) ;
 	        String lpuinfo = service.getWorkingLpuInfo(lpu) ;
 	        aRequest.setAttribute("departmentInfo",lpuinfo) ;
-	        if (form.getDischargeIs()!=null && Boolean.TRUE==form.getDischargeIs()) {
+	        if (Boolean.TRUE.equals(form.getDischargeIs())) {
 	        	aRequest.setAttribute("dateSearch","dateFinish") ;
 	        	aRequest.setAttribute("infoSearch"," Поиск по дате выписки") ;
 	        } else {

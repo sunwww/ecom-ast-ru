@@ -11,32 +11,29 @@ import ru.nuzmsh.web.tags.helper.RolesHelper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class TicketStatByUserAction  extends BaseAction {
+public class TicketStatByUserAction extends BaseAction {
 
-	@Override
-	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
-		//ITicketService service = Injection.find(aRequest).getService(ITicketService.class);
-		//String idString = aRequest.getParameter("id") ;
-		//AdmissionJournalForm form = (AdmissionJournalForm) aForm ;
-		String dateChange =ActionUtil.updateParameter("TicketStatByUser","dateChange","1", aRequest) ;
-		ActionUtil.updateParameter("TicketStatByUser","period","2", aRequest) ;
-		if (dateChange.equals("2")) {
-			aRequest.setAttribute("dateSearch", "\"date\"") ;
-			aRequest.setAttribute("dateSearch1", "date") ;
-		}else {
-			aRequest.setAttribute("dateSearch", "dateCreate") ;
-			aRequest.setAttribute("dateSearch1", "dateCreate") ;
-		}
-		if (RolesHelper.checkRoles("/Policy/Poly/Ticket/ShowInfoAllUsers", aRequest)) {
-			aRequest.setAttribute("add", "") ;
-		} else {
-			if (aRequest.getSession(true)!=null) {
-				aRequest.setAttribute("add", "and  usernameCreate='"+LoginInfo.find(aRequest.getSession(true)).getUsername()+"'") ;
-			} else {
-				aRequest.setAttribute("add", "and  usernameCreate is null") ;
-			}
-		}
-		return aMapping.findForward(SUCCESS);
-	}
+    @Override
+    public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
+        String dateChange = ActionUtil.updateParameter("TicketStatByUser", "dateChange", "1", aRequest);
+        ActionUtil.updateParameter("TicketStatByUser", "period", "2", aRequest);
+        if (dateChange.equals("2")) {
+            aRequest.setAttribute("dateSearch", "\"date\"");
+            aRequest.setAttribute("dateSearch1", "date");
+        } else {
+            aRequest.setAttribute("dateSearch", "dateCreate");
+            aRequest.setAttribute("dateSearch1", "dateCreate");
+        }
+        if (RolesHelper.checkRoles("/Policy/Poly/Ticket/ShowInfoAllUsers", aRequest)) {
+            aRequest.setAttribute("add", "");
+        } else {
+            if (aRequest.getSession(true) != null) {
+                aRequest.setAttribute("add", "and  usernameCreate='" + LoginInfo.find(aRequest.getSession(true)).getUsername() + "'");
+            } else {
+                aRequest.setAttribute("add", "and  usernameCreate is null");
+            }
+        }
+        return aMapping.findForward(SUCCESS);
+    }
 
 }

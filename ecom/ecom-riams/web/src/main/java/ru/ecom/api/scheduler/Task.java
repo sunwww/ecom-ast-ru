@@ -29,7 +29,7 @@ public class Task implements Runnable {
         return id;
     }
 
-    public String getServiceInfo() throws JSONException {
+    public String getServiceInfo() {
         return new JSONObject()
                 .put("id",String.valueOf(id))
                 .put("serviceName",serviceName)

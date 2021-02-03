@@ -149,7 +149,6 @@ public class PrescriptionServiceJs {
 
 	private void createAnnulMessage (Long aAnnulJournalRecordId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		StringBuilder sql ;
 		List<Object[]> list = service.executeNativeSqlGetObj("select mc.id" +
 				" ,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio" +
 				" ,ms.name" +
@@ -173,11 +172,10 @@ public class PrescriptionServiceJs {
 			String username=""+obj[5] ;
 
 			for (int i=0;i<2;i++) { //экстренное и плановое сообщение
-				StringBuilder msgText=new StringBuilder();
-				msgText.append("Результаты исследования ''").append(obj[2]).append("'' пациента ''").append(obj[1]).append("'' были аннулированы сотрудником ")
-						.append(obj[3]).append(" ").append(obj[4]).append(". Причина: ").append(obj[6]).append("'");
 				IPrescriptionService bean = Injection.find(aRequest).getService(IPrescriptionService.class);
-				bean.sendMessageCurrentDate(msgText.toString(),"Аннулирование результатов исследования",username
+				String msgText = "Результаты исследования ''" + obj[2] + "'' пациента ''" + obj[1] + "'' были аннулированы сотрудником " +
+						obj[3] + " " + obj[4] + ". Причина: " + obj[6] + "'";
+				bean.sendMessageCurrentDate(msgText,"Аннулирование результатов исследования",username
 						,obj[7].toString(),"entityParentView-stac_slo.do?id="+obj[0].toString(),i<1);
 			}
 
@@ -1186,16 +1184,15 @@ public class PrescriptionServiceJs {
 	 * @param aRequest HttpServletRequest
 	 * @return Boolean true - разрешён, false - нет
 	 */
-	private Boolean checkMaterialPcrIntake(String aDate, String materialPcr, HttpServletRequest aRequest) throws NamingException {
+	private boolean checkMaterialPcrIntake(String aDate, String materialPcr, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		StringBuilder req = new StringBuilder();
-		req.append("select p.id")
-				.append(" from prescription p ")
-				.append(" left join medservice ms on ms.id=p.medservice_id")
-				.append(" left join vocservicesubtype vsst on vsst.id=ms.servicesubtype_id")
-				.append(" where vsst.code='COVID' and p.materialpcrid='").append(materialPcr).append("'")
-				.append(" and p.intakedate=to_date('").append(aDate).append("','dd.mm.yyyy')");
-		return service.executeNativeSql(req.toString()).isEmpty();
+		String req = "select p.id" +
+				" from prescription p " +
+				" left join medservice ms on ms.id=p.medservice_id" +
+				" left join vocservicesubtype vsst on vsst.id=ms.servicesubtype_id" +
+				" where vsst.code='COVID' and p.materialpcrid='" + materialPcr + "'" +
+				" and p.intakedate=to_date('" + aDate + "','dd.mm.yyyy')";
+		return service.executeNativeSql(req).isEmpty();
 	}
 
 	private String intakeServiceWithBarcode(String aListPrescript,String aDate,String aTime, String aBarcode, String materialPcr, HttpServletRequest aRequest) throws NamingException, ParseException {
@@ -1229,7 +1226,7 @@ public class PrescriptionServiceJs {
 		if (aBarcode!=null&&!aBarcode.equals("")) {
 			sql.append(",barcodeNumber='").append(aBarcode).append("' ");
 		}
-		if (materialPcr!=null && !materialPcr.equals("")) {
+		if (!materialPcr.equals("")) {
 			sql.append(",materialpcrid='").append(materialPcr).append("' ");
 		}
 			sql.append(" where id in (").append(aListPrescript).append(")");

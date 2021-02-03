@@ -17,17 +17,12 @@ public class EntitySubclassEditAction extends AbstractEntityAction {
         IEntityFormService service = EntityInjection.find(aRequest).getEntityFormService();
         Long id = Long.parseLong(aRequest.getParameter("id")) ;
         String name ;
-       // try {
 	        IEntityForm loadedForm = service.loadBySubclass(form.getClass(), id) ;
 	        name = theStrutsConfigUtil.findFormNameByClass(loadedForm.getClass(), aRequest) ;
-        //} catch (Exception e) {
-        //	name = theStrutsConfigUtil.findFormNameByClass(form.getClass(), aRequest) ;
-        //}
-        StringBuilder sb = new StringBuilder("/entityEdit-");
-        sb.append(name, 0, name.length()-"Form".length()) ;
-        sb.append(".do?id=") ;
-        sb.append(id) ;
-        return new ActionForward(sb.toString(), true);
+        String sb = "/entityEdit-" + name.substring(0, name.length() - "Form".length()) +
+                ".do?id=" +
+                id;
+        return new ActionForward(sb, true);
     }
 
     private final StrutsConfigUtil theStrutsConfigUtil = new StrutsConfigUtil() ;

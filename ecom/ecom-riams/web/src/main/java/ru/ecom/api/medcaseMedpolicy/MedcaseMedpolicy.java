@@ -39,7 +39,7 @@ public class MedcaseMedpolicy {
     public String syncMedcaseMedpolic(@Context HttpServletRequest aRequest, @WebParam(name="token") String aToken,
                                       @QueryParam("limit") Integer limit,
                                       @QueryParam("startDate") String startDate,
-                                      @QueryParam("finishDate") String finishDate) throws NamingException, JSONException {
+                                      @QueryParam("finishDate") String finishDate) throws NamingException {
 
         ApiUtil.init(aRequest,aToken);
         String limitSql = limit!=null && limit>0 ? "limit "+limit : "";

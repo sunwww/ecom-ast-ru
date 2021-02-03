@@ -576,7 +576,7 @@
                 $('rowStep6day').innerHTML='за <b>'+aSp2+'</b>';
                 spDay = aSp0+"#"+aSp1+"#"+aSp2 ;
                 WorkCalendarService.getTimesByWorkCalendarDay(
-                    aSp0,aSp1,null,
+                    aSp1,null,
 
                     {
                         callback: function(aResult) {

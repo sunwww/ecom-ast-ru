@@ -20,10 +20,9 @@ public class FormatRedirectToImportAction extends BaseAction  {
         IParentEntityFormService service = EntityInjection.find(aRequest).getParentEntityFormService() ;
         FormatForm form = service.load(FormatForm.class, id) ;
 
-        ActionForward forward = new ActionForward(
+        return new ActionForward(
                 aMapping.findForward(SUCCESS).getPath()+"?id="+form.getDocument()+"&format="+id, true
         );
-        return forward;
 
     }
 }

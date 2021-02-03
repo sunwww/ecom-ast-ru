@@ -1,6 +1,5 @@
 package ru.ecom.web.servlet;
 
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import ru.ecom.web.util.EntityInjection;
@@ -21,10 +20,6 @@ import java.util.LinkedList;
  */
 public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
 
-    private static final Logger LOG = Logger.getLogger(SimpleVocAutocompleteServlet.class);
-    private static final boolean CAN_TRACE = LOG.isDebugEnabled();
-
-
     protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
         doPost(httpServletRequest, httpServletResponse);
     }
@@ -36,7 +31,7 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
 
     public void printFindByQuery(HttpServletRequest aRequest, String aQuery, int aCount, PrintWriter aOut) throws Exception {
         printResult(EntityInjection.find(aRequest).getVocService().findVocValueByQuery
-                (getVocName(aRequest), aQuery, aCount, VocAdditionalUtil.create(aRequest)), aOut,"json".equalsIgnoreCase(aRequest.getParameter("type")));
+                (getVocName(aRequest), aQuery, aCount, VocAdditionalUtil.create(aRequest)), aOut, "json".equalsIgnoreCase(aRequest.getParameter("type")));
     }
 
     public void printNext(HttpServletRequest aRequest, String aId, int aCount, PrintWriter aOut) throws Exception {
@@ -51,27 +46,27 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
                     lastId = vocValue.getId();
                 }
             }
-            if (vocs!=null && vocs.size() < aCount && !StringUtil.isNullOrEmpty(lastId)) {
+            if (vocs != null && vocs.size() < aCount && !StringUtil.isNullOrEmpty(lastId)) {
                 Collection<VocValue> addVocs = EntityInjection.find(aRequest).getVocService().findVocValuePrevious
                         (getVocName(aRequest), lastId, aCount - vocs.size(), VocAdditionalUtil.create(aRequest));
 
                 HashMap<String, VocValue> hash = new HashMap<>();
                 for (VocValue vocValue : addVocs) {
-                    hash.put(vocValue.getId(), vocValue) ;
+                    hash.put(vocValue.getId(), vocValue);
                 }
 
 
                 LinkedList<VocValue> ret = new LinkedList<>(addVocs);
                 for (VocValue vocValue : vocs) {
-                    String id = vocValue.getId() ;
-                    if(id!=null && hash.get(id)==null) {
-                        hash.put(id, vocValue) ;
-                        ret.add(vocValue) ;
+                    String id = vocValue.getId();
+                    if (id != null && hash.get(id) == null) {
+                        hash.put(id, vocValue);
+                        ret.add(vocValue);
                     }
                 }
-                printResult(ret, aOut,isJson);
+                printResult(ret, aOut, isJson);
             } else {
-                printResult(vocs, aOut,isJson);
+                printResult(vocs, aOut, isJson);
             }
         } else {
             printResult(vocs, aOut, isJson);
@@ -101,12 +96,12 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
                         firstPassed = true;
                     }
                 }
-                printResult(ret, aOut,isJson);
+                printResult(ret, aOut, isJson);
             } else {
-                printResult(vocs, aOut,isJson);
+                printResult(vocs, aOut, isJson);
             }
         } else {
-            printResult(vocs, aOut,isJson);
+            printResult(vocs, aOut, isJson);
         }
     }
 
@@ -115,18 +110,17 @@ public class SimpleVocAutocompleteServlet extends AbstractAutocompleteServlet {
         int COUNT = 10;
         int i = 0;
         if (isJson) {
-            JSONObject result = new JSONObject();
             JSONArray arr = new JSONArray();
 
             for (Object o : aCol) {
                 VocValue value = (VocValue) o;
                 JSONObject v = new JSONObject();
-                v.put("id",value.getId());
-                v.put("text",value.getName());
+                v.put("id", value.getId());
+                v.put("text", value.getName());
                 arr.put(v);
                 if (i++ > COUNT) break;
             }
-            aOut.print("\"results\":"+arr);
+            aOut.print("\"results\":" + arr);
         } else {
             for (Object o : aCol) {
                 VocValue value = (VocValue) o;

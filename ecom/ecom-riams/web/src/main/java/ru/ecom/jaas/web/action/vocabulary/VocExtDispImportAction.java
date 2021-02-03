@@ -34,11 +34,9 @@ public class VocExtDispImportAction extends BaseAction {
 			try (InputStream in = form.getFile().getInputStream()) {
 				Document doc = new SAXBuilder().build(in);
 				Element parConfigElement = doc.getRootElement();
-				// Long i =Long.valueOf(1) ;
 				for (Object o : parConfigElement.getChildren()) {
 					Element parElement = (Element) o;
 					if ("services".equals(parElement.getName())) {
-						System.out.println("Услуги");
 						for (Object parPol : parElement.getChildren()) {
 							Element polElement = (Element) parPol;
 							if ("service".equals(polElement.getName())) {
@@ -50,11 +48,9 @@ public class VocExtDispImportAction extends BaseAction {
 								wqr.set4(polElement.getAttributeValue("workFunctionCode"));
 								wqr.set5(polElement.getAttributeValue("orphCode"));
 								listServices.add(wqr);
-								System.out.println("\t услуга [" + code + "]");
 							}
 						}
 					} else if ("risks".equals(parElement.getName())) {
-						System.out.println("Риски");
 						for (Object parPol : parElement.getChildren()) {
 							Element polElement = (Element) parPol;
 							if ("risk".equals(polElement.getName())) {
@@ -63,11 +59,9 @@ public class VocExtDispImportAction extends BaseAction {
 								wqr.set1(code);
 								wqr.set2(polElement.getAttributeValue("name"));
 								listRisks.add(wqr);
-								System.out.println("\t риск [" + code + "]");
 							}
 						}
 					} else if ("vocExtDisps".equals(parElement.getName())) {
-						System.out.println("Виды диспансеризации");
 						for (Object vedObj : parElement.getChildren()) {
 							Element vedElement = (Element) vedObj;
 							WebQueryResult wqrVed = new WebQueryResult();
@@ -80,11 +74,9 @@ public class VocExtDispImportAction extends BaseAction {
 							final List<WebQueryResult> listAge = new LinkedList<>();
 							final List<WebQueryResult> listHealth = new LinkedList<>();
 							final List<WebQueryResult> listPlan = new LinkedList<>();
-							System.out.println("ved [code" + codeVed + "]");
 							for (Object parPol : vedElement.getChildren()) {
 								Element polElement = (Element) parPol;
 								if ("ageGroupReports".equals(polElement.getName())) {
-									System.out.println("Возрастные группы для отчета");
 									for (Object parGroup : polElement.getChildren()) {
 										Element groupElement = (Element) parGroup;
 										if ("ageGroup".equals(groupElement.getName())) {
@@ -93,11 +85,9 @@ public class VocExtDispImportAction extends BaseAction {
 											wqr.set1(code);
 											wqr.set2(groupElement.getAttributeValue("name"));
 											listAgeReport.add(wqr);
-											System.out.println("\t услуга [" + code + "]");
 										}
 									}
 								} else if ("ageGroups".equals(polElement.getName())) {
-									System.out.println("Возрастные группы");
 									for (Object parGroup : polElement.getChildren()) {
 										Element groupElement = (Element) parGroup;
 										if ("ageGroup".equals(groupElement.getName())) {
@@ -107,11 +97,9 @@ public class VocExtDispImportAction extends BaseAction {
 											wqr.set2(groupElement.getAttributeValue("name"));
 											wqr.set3(groupElement.getAttributeValue("reportGroup"));
 											listAge.add(wqr);
-											System.out.println("\t  возрастная группа [" + code + "]");
 										}
 									}
 								} else if ("healthGroups".equals(polElement.getName())) {
-									System.out.println("Группы здоровья");
 									for (Object parGroup : polElement.getChildren()) {
 										Element groupElement = (Element) parGroup;
 										if ("healthGroup".equals(groupElement.getName())) {
@@ -120,11 +108,9 @@ public class VocExtDispImportAction extends BaseAction {
 											wqr.set1(code);
 											wqr.set2(groupElement.getAttributeValue("name"));
 											listHealth.add(wqr);
-											System.out.println("\t  группа здоровья [" + code + "]");
 										}
 									}
 								} else if ("plan".equals(polElement.getName())) {
-									System.out.println("План по услугам");
 									for (Object parGroup : polElement.getChildren()) {
 										Element groupElement = (Element) parGroup;
 										if ("str".equals(groupElement.getName())) {
@@ -134,7 +120,6 @@ public class VocExtDispImportAction extends BaseAction {
 											wqr.set2(groupElement.getAttributeValue("sex"));
 											wqr.set3(groupElement.getAttributeValue("age"));
 											listPlan.add(wqr);
-											System.out.println("\t  план [" + code + "]");
 										}
 									}
 								}

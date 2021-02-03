@@ -1,6 +1,7 @@
 package ru.ecom.mis.web.dwr.contract;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -1038,22 +1039,23 @@ public class ContractServiceJs {
 	 * @return String дополнительные шаблоны
 	 */
 	public String getLabAnalysisExtra(String aMedServiceId, HttpServletRequest aRequest) throws NamingException {
-		StringBuilder res=new StringBuilder();
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select ms.code||' '||ms.name,ms.id\n" +
-				"from VocLabAnalysisExtraPrint vlaep\n" +
-				"left join medservice ms on ms.code=vlaep.medservice\n" +
-				"left join pricemedservice pms on pms.medservice_id=ms.id\n" +
-				"left join ContractAccountMedService cams on cams.medservice_id=pms.id\n" +
-				"left join ContractAccount ca on cams.account_id=ca.id\n" +
-				"left join medcontract mc on ca.contract_id=mc.id\n" +
-				"where mc.id="+ aMedServiceId;
+		String sql = "select ms.code||' '||ms.name,ms.id" +
+				" from VocLabAnalysisExtraPrint vlaep" +
+				" left join medservice ms on ms.code=vlaep.medservice" +
+				" left join pricemedservice pms on pms.medservice_id=ms.id" +
+				" left join ContractAccountMedService cams on cams.medservice_id=pms.id" +
+				" left join ContractAccount ca on cams.account_id=ca.id" +
+				" left join medcontract mc on ca.contract_id=mc.id" +
+				" where mc.id="+ aMedServiceId;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql);
-		if (!list.isEmpty()) {
-			for (WebQueryResult w : list) {
-				res.append(w.get1()).append("#").append(w.get2()).append("!");
-			}
-		} else res.append("##");
+		JSONArray res = new JSONArray() ;
+		for (WebQueryResult w : list) {
+			JSONObject o = new JSONObject() ;
+			o.put("name", w.get1())
+					.put("id", w.get2());
+			res.put(o);
+		}
 		return res.toString();
 	}
 

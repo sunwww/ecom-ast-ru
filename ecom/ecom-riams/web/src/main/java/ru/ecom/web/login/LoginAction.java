@@ -20,22 +20,20 @@ public class LoginAction extends BaseAction {
             , HttpServletRequest aRequest
             , HttpServletResponse aResponse) throws Exception {
 
-        HttpSession session = aRequest.getSession(true) ;
-        if(session!=null) {
-            LoginInfo loginInfo = LoginInfo.find(session) ;
-            if(loginInfo!=null) {
-                LoginForm form = (LoginForm) aForm ;
+        HttpSession session = aRequest.getSession(true);
+        if (session != null) {
+            LoginInfo loginInfo = LoginInfo.find(session);
+            if (loginInfo != null) {
+                LoginForm form = (LoginForm) aForm;
                 form.setUsername(loginInfo.getUsername());
             }
         }
-        if (aRequest.getParameter("next")==null) {
-        	if (aRequest.getAttribute("next")!=null) {
-        		LoginForm form = (LoginForm) aForm ;
-        		form.setNext((String)aRequest.getAttribute("next")) ;
-        	}
+        if (aRequest.getParameter("next") == null && aRequest.getAttribute("next") != null) {
+            LoginForm form = (LoginForm) aForm;
+            form.setNext((String) aRequest.getAttribute("next"));
         }
-        
-        return aMapping.findForward(SUCCESS) ;
+
+        return aMapping.findForward(SUCCESS);
     }
 
 }

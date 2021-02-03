@@ -19,12 +19,6 @@ public class TemplateViewAction extends EditAction {
 		super.myExecute(aMapping, aForm, aRequest, aResponse) ;
 	    TemplateProtocolForm form = (TemplateProtocolForm) aForm ;
 	    form.setTypeViewOnly();
-	
-	    //IDiaryService service = (IDiaryService) Injection.find(aRequest).getService("DiaryService") ;
-	    //CheckNode root = service.loadParametersByMedService(getLongId(aRequest, "Идентификатор роли")) ;
-	    //CheckNodesUtil.removeUnchecked(root);
-	    //aRequest.setAttribute("params", root);
-	
 	    return aMapping.findForward(SUCCESS) ;
     }
     public static void getParams(HttpServletRequest aRequest) throws NamingException {

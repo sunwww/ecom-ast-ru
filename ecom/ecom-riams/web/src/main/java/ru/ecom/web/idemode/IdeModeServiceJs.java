@@ -36,8 +36,6 @@ public class IdeModeServiceJs {
 		
 		
 		msg.getValues().putAll(values);
-//		for(Map.Entry<String, String> entry : values.entrySet()) {
-//		}
 		return msg ;
 	}
 	

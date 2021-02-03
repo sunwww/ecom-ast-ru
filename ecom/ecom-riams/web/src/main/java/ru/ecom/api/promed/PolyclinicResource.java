@@ -19,7 +19,6 @@ import java.text.SimpleDateFormat;
 @Path("/promed")
 public class PolyclinicResource {
 
-    private static final Logger LOG = Logger.getLogger(PolyclinicResource.class);
     @GET
     @Path("getPolyclinicCase")
     @Produces(MediaType.APPLICATION_JSON)

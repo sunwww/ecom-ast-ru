@@ -141,8 +141,7 @@
                     {
                         callback: function(prefix) {
                             if (prefix==null) prefix="" ;
-                            //TODO
-                            initSelectPrinter("print-protocolEdkc"+prefix+".do?m=printPregProtocol&s=HospitalPrintService&id=${param.id}",1)
+                            initSelectPrinter("print-"+'preg'+$('type').value+prefix+".do?m=printPregProtocol&s=HospitalPrintService&id=${param.id}",1);
 
                         }
                     }

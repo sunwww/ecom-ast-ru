@@ -3,9 +3,6 @@ package ru.ecom.mis.web.action.medcase.journal;
 
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
-import ru.nuzmsh.forms.validator.transforms.DoDateString;
-import ru.nuzmsh.forms.validator.validators.DateString;
-
 
 public class DirectoryEntryForm extends BaseValidatorForm{
     

@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -44,7 +44,7 @@
         <msh:separator colSpan="4" label="Необходимые услуги по возрасту"/>
         <msh:section>
             <ecom:webQuery name="medServices" nativeSql="
-            select ms.id, ms.medservice||' '||coalesce(vms.name,'') as name, case when ms.isRequired='1' then true else false end as isReq
+            select ms.id, ms.medservice||' '||coalesce(vms.name,'') as name, ms.isRequired='1' as isReq
             from ExtDispPriceMedService ms
             left join vocmedservice vms on vms.code=ms.medservice and vms.finishDate is null
             where ms.price_id=${param.id} order by ms.medservice" />
@@ -65,15 +65,6 @@
                 <msh:sideLink key="ALT+2" params="id" action="/entityEdit-e2_extDispPrice" name="Изменить" roles="/Policy/E2/Edit" />
                 <msh:sideLink key="ALT+2" params="id" action="/entityParentPrepareCreate-e2_extDispPriceMedService" name="Добавить услугу" roles="/Policy/E2/Create" />
             </msh:sideMenu>
-        </msh:ifFormTypeIsView>
-    </tiles:put>
-    <tiles:put name="javascript" type="string">
-        <msh:ifFormTypeIsView formName="e2_extDispPriceForm">
-            <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
-            <script type="text/javascript">
-
-             </script>
-
         </msh:ifFormTypeIsView>
     </tiles:put>
 </tiles:insert>

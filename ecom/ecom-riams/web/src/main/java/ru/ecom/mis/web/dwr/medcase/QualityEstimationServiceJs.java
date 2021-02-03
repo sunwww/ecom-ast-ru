@@ -87,7 +87,7 @@ public class QualityEstimationServiceJs {
 			.append(" left join patient p on p.id=smo.patient_id ")
 			.append("where smo.id='").append(aSmo).append("'") ;
 		List<Object[]> list = service.executeNativeSqlGetObj(sql.toString()) ;
-		if (list.size()>0) {
+		if (!list.isEmpty()) {
 			Object[] row = list.get(0) ;
 			ret.append(row[0]!=null?row[0]:"")
 			.append("#").append(row[1]!=null?row[1]:"")
@@ -111,7 +111,7 @@ public class QualityEstimationServiceJs {
 		if (aSlo==null||aSlo.equals(0L)||aSlo.equals(aSmo)){
 			sql.append("select id, id from medcase slo where parent_id=").append(aSmo).append(" and dtype='DepartmentMedCase'  order by datestart desc");
 			List<Object[]> slos = service.executeNativeSqlGetObj(sql.toString()) ;
-			if (slos.size()>0){
+			if (!slos.isEmpty()){
 				aSlo = Long.valueOf(slos.get(0)[0].toString());
 			}
 			sql.setLength(0);
@@ -343,7 +343,7 @@ public class QualityEstimationServiceJs {
 					String[] mcodes = (w.get3() != null ? w.get3().toString().replaceAll("'","") : "").split(",");
 					o.put("crit",w.get2())
 							.put("mark",w.get4());
-					Boolean flag=false;
+					boolean flag=false;
 					for (int i=0; i<mcodes.length && !flag; i++)
                         if (listServicies.indexOf(mcodes[i])!=-1) flag=true;
 					if (flag) o.put("automark","Да");
@@ -760,14 +760,14 @@ public class QualityEstimationServiceJs {
         List<Object[]> list = service.executeNativeSqlGetObj(sql.toString()) ;
         //если есть соп. диагнозы, то необходимо, чтобы были все
 		//если нет соп., то достаточно одного
-		Boolean existsConc=false, yesMain=false, yesConc=false;
+		boolean existsConc=false, yesMain=false, yesConc=false;
 		for (Object[] o: list) {
-			Boolean isConc = o[1]!=null? Boolean.valueOf(o[1].toString()) : false;
+			boolean isConc = o[1]!=null &&  Boolean.TRUE.equals(Boolean.valueOf(o[1].toString()));
 			if (isConc) existsConc=isConc;
 		}
         for (Object[] o: list) {
             Long id = Long.valueOf(o[0].toString());
-            Boolean isConc = o[1]!=null? Boolean.valueOf(o[1].toString()) : false;
+            boolean isConc = o[1]!=null &&  Boolean.TRUE.equals(Boolean.valueOf(o[1].toString()));
 
             StringBuilder sql2 = new StringBuilder();
             sql2.append(" select ds.id from diagnosis ds")

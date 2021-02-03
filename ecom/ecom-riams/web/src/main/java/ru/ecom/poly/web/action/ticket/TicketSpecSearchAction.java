@@ -25,7 +25,6 @@ public class TicketSpecSearchAction extends BaseAction {
 
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
         SearchForm form = (SearchForm) aForm;
-        //form.validate(aMapping, aRequest);
         ITicketService service = Injection.find(aRequest).getService(ITicketService.class);
         if (RolesHelper.checkRoles("/Policy/Poly/Ticket/IsDoctorEdit", aRequest)) {
         	IWorkerService servWorker = Injection.find(aRequest).getService(IWorkerService.class) ;
@@ -33,12 +32,10 @@ public class TicketSpecSearchAction extends BaseAction {
         	if (form.getDateFilter() == null || form.getDateFilter().equals("")) {
         		form.setDateFilter(DateFormat.formatToDate(new Date())) ;
         		form.setDoctor(doctor) ;
-        		//System.out.println(3) ;
         	}
         	aRequest.setAttribute("listDirect", service.findAllWorkerTickets(doctor, form.getDateFilter(),0));
         	aRequest.setAttribute("listAccepted", service.findAllWorkerTickets(doctor, form.getDateFilter(),1));
         } else {
-        	//System.out.println(4) ;
         	aRequest.setAttribute("listDirect", service.findAllSpecialistTickets(form.getDoctor(), form.getDateFilter(),0));
         	aRequest.setAttribute("listAccepted", service.findAllSpecialistTickets(form.getDoctor(), form.getDateFilter(),1));
         }

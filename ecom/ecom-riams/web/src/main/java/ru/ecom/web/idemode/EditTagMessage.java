@@ -2,6 +2,7 @@ package ru.ecom.web.idemode;
 
 import javax.servlet.jsp.tagext.TagInfo;
 import java.util.HashMap;
+import java.util.Map;
 
 public class EditTagMessage {
 
@@ -19,13 +20,9 @@ public class EditTagMessage {
 	}
 
 	/** Значения */
-	public HashMap<String,String> getValues() {
+	public Map<String,String> getValues() {
 		return theValues;
 	}
-
-//	public void setValues(HashMap<String,Object> aValues) {
-//		theValues = aValues;
-//	}
 
 	/** Значения */
 	private final HashMap<String,String> theValues = new HashMap<>();

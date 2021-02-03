@@ -31,7 +31,7 @@ public class VocEntityServlet extends HttpServlet {
 		Enumeration en = aRequest.getParameterNames() ;
 		while(en.hasMoreElements()) {
 			String key = (String) en.nextElement() ;
-			LOG.info(key+" = "+aRequest.getParameter(key)); ;
+			LOG.info(key+" = "+aRequest.getParameter(key));
 		}
 		 
 		PrintWriter out = aResponse.getWriter();

@@ -24,7 +24,7 @@ public class EntityInjection {
         return INSTANCE ;
     }
 
-    private EntityInjection() throws NamingException {
+    private EntityInjection() {
     }
 
 

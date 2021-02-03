@@ -9,20 +9,21 @@ package ru.ecom.jaas.web.action;
  */
 public class JaasUtil {
 
-	public static long[] convertToLongs(String[] aStr) {
-		long[] ar = new long[aStr.length] ;
-		for (int i = 0; i < aStr.length; i++) {
-			String s = aStr[i];
-			ar[i] = Long.parseLong(s) ;
-		}
-		return ar ;
-	}
+    public static long[] convertToLongs(String[] aStr) {
+        long[] ar = new long[aStr.length];
+        for (int i = 0; i < aStr.length; i++) {
+            String s = aStr[i];
+            ar[i] = Long.parseLong(s);
+        }
+        return ar;
+    }
+
     public static String convertToString(String[] aStr) {
-        StringBuilder ret = new StringBuilder() ;
+        StringBuilder ret = new StringBuilder();
         for (String s : aStr) {
             ret.append(",").append(s);
         }
-        return ret.length()>0? ret.substring(1):"" ;
+        return ret.length() > 0 ? ret.substring(1) : "";
     }
 
 }

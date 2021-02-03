@@ -2948,3 +2948,52 @@ function printPregCard(aCtx, aParams) {
 	recordMedCaseDefaultInfo(medCase,aCtx);
 	return map ;
 }
+
+function getAllParametersByTemplatwPreg(aCtx, protId) {
+	return aCtx.manager.createNativeQuery("select p.id as p1id,p.type as t" +
+		", case when p.type in ('3','5','8')  then pf.valueText" +
+		" when p.type ='4' then case when pf.valuetext is null or pf.valuetext='' then replace(''||round(pf.valueBD,cast(p.cntdecimal as int)),'.',',') else pf.valuetext end " +
+		" when p.type ='1' then to_char(round(pf.valueBD,case when p.cntdecimal is null then 0 else cast(p.cntdecimal as int) end),'fm99990') " +
+		" when p.type ='6' then pf.ListValues " +
+		" when p.type ='7' then ''||pf.valueVoc_id " +
+		" when p.type='2' then ''||pf.valueVoc_id end as val" +
+		" ,vv.name as uval" +
+		" ,case when p.type='7' then pf.valueText else '' end as addVal" +
+		",(select list(cast(udall.id as varchar)) from uservalue udall where  udall.domain_id=ud.id) as listAllVals" +
+		" from FormInputProtocol pf" +
+		" left join Diary d on pf.docProtocol_id = d.id" +
+		" left join parameter p on p.id=pf.parameter_id" +
+		" left join userValue vv on vv.id=pf.valueVoc_id" +
+		" left join userDomain ud on ud.id=vv.domain_id or ud.id=p.valuedomain_id" +
+		" where d.id=" + protId +
+		" order by pf.position").getResultList();
+}
+
+function printPregProtocol(aCtx, aParams) {
+	var protId = new java.lang.Long(aParams.get("id"));
+	var resultParams = getAllParametersByTemplatwPreg(aCtx,protId);
+	for (var i=0; i<resultParams.size();i++){
+		var p = resultParams.get(i);
+// 1 val
+// 2 uval
+// 3 val
+// 4 val
+// 7 uval+addval
+		var id = p[0];
+		var type = +p[1];
+		var val = p[2];
+		var uval = p[3];
+		var addval = p[4];
+
+		if (val==null) val='';
+		if (uval==null) uval='';
+		if (addval==null) addval='';
+
+		if (uval)
+			map.put('p'+id,uval);
+		else
+			map.put('p'+id,val);
+		map.put("pAdd"+id,addval);
+	}
+	return map ;
+}

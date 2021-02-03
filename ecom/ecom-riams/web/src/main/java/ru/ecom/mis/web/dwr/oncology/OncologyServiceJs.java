@@ -104,7 +104,7 @@ public class OncologyServiceJs {
      */
     public String checkSLO(Long slsId, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        if (!checkIsOMC(slsId,aRequest)) return "1";
+        if (checkIsNoOMC(slsId, aRequest)) return "1";
         Collection<WebQueryResult> res = service.executeNativeSql("select id from oncologycase where medcase_id=" + slsId);
         return res.isEmpty() ? "0" : "1";
     }
@@ -116,12 +116,12 @@ public class OncologyServiceJs {
      * @return Boolean ОМС ли
      * @throws NamingException
      */
-    private Boolean checkIsOMC(Long slsId, HttpServletRequest aRequest) throws NamingException {
+    private boolean checkIsNoOMC(Long slsId, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         Collection<WebQueryResult> isOmc = service.executeNativeSql("select mc.id " +
                 " from medcase mc left join vocservicestream vss on mc.servicestream_id=vss.id" +
                 " where mc.id=" + slsId+" and vss.code='OBLIGATORYINSURANCE'");
-        return !isOmc.isEmpty();
+        return isOmc.isEmpty();
     }
     /**
      * Проверить СПО на необходимость наличия онк. формы.
@@ -134,7 +134,7 @@ public class OncologyServiceJs {
     public Boolean checkSPO(Long slsId, HttpServletRequest aRequest) throws NamingException {
 
        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        if (!checkIsOMC(slsId,aRequest)) return false;
+        if (checkIsNoOMC(slsId, aRequest)) return false;
        Collection<WebQueryResult> res = service.executeNativeSql("select mc.id from medcase mc" +
                " left join oncologycase o on o.medcase_id=mc.id" +
                " left join vocIdc10 mkb on mkb.id=mc.idc10_id" +
@@ -244,7 +244,7 @@ public class OncologyServiceJs {
      * @return String OncologyCase.id из insertDirection
      * @throws NamingException
      */
-    public String editDirectionsByCase(String caseId,String json,String mkb,HttpServletRequest aRequest) throws JSONException, NamingException {
+    public String editDirectionsByCase(String caseId,String json,String mkb,HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         service.executeUpdateNativeSql("delete from oncologydirection where oncologycase_id="+caseId);
         return insertDirection(json,caseId,mkb,aRequest);
@@ -388,7 +388,7 @@ public class OncologyServiceJs {
      * @return String Выборка в json
      * @throws NamingException,SQLException
      */
-    public String getVocInJson(String voc,Boolean isCode,Boolean groupByCode,HttpServletRequest aRequest) throws NamingException, SQLException {
+    public String getVocInJson(String voc,Boolean isCode,Boolean groupByCode,HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         String sql= isCode ? "select code as id,name from " : "select id,name from ";
         String tmpOrder= groupByCode ? "  order by cast(code as integer)" : "";
@@ -446,7 +446,7 @@ public class OncologyServiceJs {
     public String checkDiagnosisOnkoForm(Long slsId, String concludingMkb, HttpServletRequest aRequest) throws NamingException {
         //Если есть хотя бы одна форма с основным выписным, то всё ок
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        if (!checkIsOMC(slsId,aRequest)) return "";
+        if (checkIsNoOMC(slsId, aRequest)) return "";
         String res = "";
         if (concludingMkb.equals("")) return res;
         try {
@@ -560,7 +560,7 @@ public class OncologyServiceJs {
      * @param caseId OncologyCase.id
      * @throws NamingException
      */
-    public void deleteDirectionsByCase(String caseId,HttpServletRequest aRequest) throws JSONException, NamingException {
+    public void deleteDirectionsByCase(String caseId,HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         service.executeUpdateNativeSql("delete from oncologydirection where oncologycase_id="+caseId);
         service.executeUpdateNativeSql("delete from oncologycase where id="+caseId);
@@ -572,7 +572,7 @@ public class OncologyServiceJs {
      * @param caseId OncologyCase.id
      * @throws NamingException
      */
-    public void deleteAllByCase(String caseId,HttpServletRequest aRequest) throws JSONException, NamingException {
+    public void deleteAllByCase(String caseId,HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         service.executeUpdateNativeSql("delete from oncologycontra where oncologycase_id="+caseId);
         service.executeUpdateNativeSql("delete from oncologydiagnostic where oncologycase_id="+caseId) ;
@@ -587,7 +587,7 @@ public class OncologyServiceJs {
      * @param caseId OncologyCase.id
      * @throws NamingException
      */
-    public String checkIsOncoNeedChange(String caseId, String ds, HttpServletRequest aRequest) throws JSONException, NamingException {
+    public String checkIsOncoNeedChange(String caseId, String ds, HttpServletRequest aRequest) throws NamingException {
         //есть вариант проще - проверять только основные цифры в диагнозе, например
         //C83.1 на C83.2 - актуализировать не надо, т.к. 83 совпадает
         //но в справочниках есть и значения с уточнением, например C44.3 и т.д.

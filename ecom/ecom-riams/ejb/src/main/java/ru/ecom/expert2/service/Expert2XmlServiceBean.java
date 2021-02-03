@@ -47,6 +47,7 @@ import java.util.List;
 import static ru.nuzmsh.util.BooleanUtils.isNotTrue;
 import static ru.nuzmsh.util.BooleanUtils.isTrue;
 import static ru.nuzmsh.util.CollectionUtil.isEmpty;
+import static ru.nuzmsh.util.CollectionUtil.isNotEmpty;
 import static ru.nuzmsh.util.EqualsUtil.isAnyIsNull;
 import static ru.nuzmsh.util.EqualsUtil.isOneOf;
 
@@ -1261,11 +1262,11 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         List<String> otherDiagnosis = findDiagnosisCodes(list, null, "3"); // Сопутствующие
         List<String> heavyDiagnosis = findDiagnosisCodes(list, null, "4"); // Осложнения
         List<String> napravitDiagnosis = findDiagnosisCodes(list, "1,2", "3"); // Направительные
-        if (!napravitDiagnosis.isEmpty()) {
+        if (isNotEmpty(napravitDiagnosis)) {
             add(element, "DS0", napravitDiagnosis.get(0));
         }
 
-        if (CollectionUtil.isNotEmpty(mainDiagnosisList)) {
+        if (isNotEmpty(mainDiagnosisList)) {
             EntryDiagnosis ds = mainDiagnosisList.get(0);
             String mainMkb = ds.getMkb().getCode();
             add(element, "DS1", mainMkb);
@@ -1273,7 +1274,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             if (isNotNull(ds.getDopMkb())) {
                 otherDiagnosis.add(0, ds.getDopMkb());
             }
-            if (!otherDiagnosis.isEmpty()) {
+            if (isNotEmpty(otherDiagnosis)) {
                 //Нашли диабет поставили его на первое место!
                 for (String d : otherDiagnosis) {
                     if (d.startsWith("E")) { //Нашли диабет поставили его на первое место!
@@ -1288,12 +1289,12 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 add(element, "DS2", otherDiagnosis.get(0));
 
             }
-            if (!heavyDiagnosis.isEmpty()) {
+            if (isNotEmpty(heavyDiagnosis)) {
                 if (exchangeCovidDs && mainMkb.startsWith("U07")) { //если ковид - он - ослжнение, а осложнение - главный
                     element.removeChild("DS2");
                     element.getChild("DS1").setText(heavyDiagnosis.get(0));
                     add(element, "DS2", mainMkb);
-                    if (!otherDiagnosis.isEmpty()) add(element, "DS2", otherDiagnosis.get(0));
+                    if (isNotEmpty(otherDiagnosis)) add(element, "DS2", otherDiagnosis.get(0));
                 } else {
                     add(element, "DS3", heavyDiagnosis.get(0));
                 }

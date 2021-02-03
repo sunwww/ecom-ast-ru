@@ -188,7 +188,6 @@ public class FondWebService {
                                 String numPol;
                                 String sk = el.getChildText("sk");
                                 String dpp = upDate(el.getChildText("datapp"));
-                                String dpe = upDate(el.getChildText("datape"));
                                 String ddosr = upDate(el.getChildText("d_dosrochno"));
                                 if (pol.length > 2) {
                                     serPol = pol[0] + " " + pol[1];
@@ -249,7 +248,8 @@ public class FondWebService {
                         root = doc.getRootElement();
                         list_cur = root.getChildren("cur1");
                         String kladr = null, house = null, houseBuilding = null, flat = null, okato = null, street = null;
-                        for (Element el : list_cur) {
+                        if (list_cur.isEmpty()) {
+                            Element el = list_cur.get(0);
                             String hn = el.getChildText("house");
                             String hb = el.getChildText("section");
                             String fn = el.getChildText("apartment");
@@ -260,8 +260,6 @@ public class FondWebService {
                             house = hn;
                             houseBuilding = hb;
                             flat = fn;
-                            break;
-
                         }
                         in.close();
                         try {

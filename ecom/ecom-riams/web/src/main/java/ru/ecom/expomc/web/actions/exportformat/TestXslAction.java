@@ -28,7 +28,7 @@ public class TestXslAction extends BaseAction {
         IExportFormatService service = Injection.find(aRequest).getService(IExportFormatService.class);
         String xresult;
         service.setMaxRecords(500);
-        xresult = service.getTransformedXml(new Long(aRequest.getParameter("id")));
+        xresult = service.getTransformedXml(Long.valueOf(aRequest.getParameter("id")));
         aRequest.setAttribute("xresult",xresult);
         return aMapping.findForward(SUCCESS);
     }

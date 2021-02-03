@@ -15,7 +15,6 @@ public class TicketBySpecialistDataAction  extends BaseAction {
 
 	@Override
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
-		//ITicketService service = Injection.find(aRequest).getService(ITicketService.class);
 		IWorkerService service = Injection.find(aRequest).getService(IWorkerService.class) ;
 		String idString = aRequest.getParameter("id") ;
 		int ind1 = idString.indexOf(':');
@@ -23,23 +22,26 @@ public class TicketBySpecialistDataAction  extends BaseAction {
 		String date =idString.substring(0,ind1) ;
 		String typePat = idString.substring(ind1+1,ind2) ;
 
-		//System.out.println(date) ;
-		//System.out.println(typePat) ;
-		if (typePat.equals("2")) {
-			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
-			aRequest.setAttribute("add", HospitalLibrary.getSqlForPatient(true, true, "t.date", "p", "pvss", "pmp","ok")) ;
-			aRequest.setAttribute("infoTypePat", " (по иногородним)") ;
-		} else if (typePat.equals("1")){
-			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
-			aRequest.setAttribute("add", HospitalLibrary.getSqlForPatient(true, false, "t.date", "p", "pvss", "pmp","ok")) ;
-			aRequest.setAttribute("infoTypePat", " (по региональным)") ;
-		} else if (typePat.equals("3")){
-			//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
-			aRequest.setAttribute("add", HospitalLibrary.getSqlGringo(true, "ok")) ;
-			aRequest.setAttribute("infoTypePat", "Поиск по иностранцам") ;
-		} else {
-			aRequest.setAttribute("add", "") ;
-			aRequest.setAttribute("infoTypePat", " (по всем)") ;
+		switch (typePat) {
+			case "2":
+				//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)>0") ;
+				aRequest.setAttribute("add", HospitalLibrary.getSqlForPatient(true, true, "t.date", "p", "pvss", "pmp", "ok"));
+				aRequest.setAttribute("infoTypePat", " (по иногородним)");
+				break;
+			case "1":
+				//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
+				aRequest.setAttribute("add", HospitalLibrary.getSqlForPatient(true, false, "t.date", "p", "pvss", "pmp", "ok"));
+				aRequest.setAttribute("infoTypePat", " (по региональным)");
+				break;
+			case "3":
+				//aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.patient_id,m.dateStart)=0") ;
+				aRequest.setAttribute("add", HospitalLibrary.getSqlGringo(true, "ok"));
+				aRequest.setAttribute("infoTypePat", "Поиск по иностранцам");
+				break;
+			default:
+				aRequest.setAttribute("add", "");
+				aRequest.setAttribute("infoTypePat", " (по всем)");
+				break;
 		}
 		String spec ;
 		if (date.indexOf('.')>0) {
@@ -51,24 +53,10 @@ public class TicketBySpecialistDataAction  extends BaseAction {
 			spec = idString.substring(ind2+1,ind3) ;
 			String begin= idString.substring(ind3+1,ind4) ;
 			String end = idString.substring(ind4+1);
-			//System.out.println(spec) ;
 			aRequest.setAttribute("mkb", date);
 			aRequest.setAttribute("type", typePat) ;
 			aRequest.setAttribute("dateBegin", begin);
 			aRequest.setAttribute("dateEnd", end) ;
-		/*
-			if (typePat.equals("2")) {
-				aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.person_id,t.date)>0") ;
-				aRequest.setAttribute("infoTypePat", "Поиск по иногородним") ;
-			} else if (typePat.equals("1")){
-				aRequest.setAttribute("add", "and $$isForeignPatient^ZExpCheck(m.person_id,t.date)=0") ;
-				aRequest.setAttribute("infoTypePat", "Поиск по региональным") ;
-			} else {
-				aRequest.setAttribute("add", "") ;
-				aRequest.setAttribute("infoTypePat", "Поиск по всем") ;
-			}
-		}
-		*/
 		}
 		aRequest.setAttribute("spec", spec) ;
 		try{
