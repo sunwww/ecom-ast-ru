@@ -105,7 +105,7 @@ public class PrescriptionServiceJs {
 				String pres = r.get3().toString();
 				String services = r.get4().toString();
 				String prescriptionList = r.get2().toString()+"#"+r.get1().toString()+"#"+pres+"#"+services;
-				
+
 				checkTransferService(prescriptionList, aRequest);
 				setDefaultDiary(pres, services, aRequest);
 				Collection<WebQueryResult > list2 = wqs.executeNativeSql("select coalesce(vsst.name,'---') as f5vsstname" + " ,coalesce(ssSls.code,ssslo.code,'POL'||pl.medCase_id) as f3codemed" + " ,pat.lastname ||' '|| pat.firstname ||' '|| pat.middlename as fio" + " ,to_char(pat.birthday,'dd.mm.yyyy') ||' г.р.' as f9birthday" + " ,list(case when vst.code='LABSURVEY' " + " then ms.code||coalesce('('||ms.additionCode||')','')||' '||ms.name||coalesce(vpt.shortname,'') else null end) as f10medServicies" + " from prescription p" + " left join medservice ms on ms.id=p.medservice_id" + " left join medservice msGr on msGr.id=ms.parent_id" + " left join workfunctionservice wfs on wfs.medservice_id=msGr.id" + " left join workfunction gwf on gwf.id=wfs.workfunction_id" + " left join PrescriptionList pl on pl.id=p.prescriptionList_id" + " left join MedCase slo on slo.id=pl.medCase_id" + " left join MedCase sls on sls.id=slo.parent_id" + " left join VocServiceSubType vsst on vsst.id=ms.serviceSubType_id" + " left join StatisticStub ssSls on ssSls.id=sls.statisticstub_id" + " left join StatisticStub ssSlo on ssSlo.id=slo.statisticstub_id" + " left join Patient pat on pat.id=slo.patient_id" + " left join VocServiceType vst on vst.id=ms.serviceType_id" + " left join VocPrescriptType vpt on vpt.id=p.prescriptType_id" + " where p.barcodeNumber='" + aBarcodeNumber.trim() + "' and gwf.isDefaultLabCabinet='1'" + " group by gwf.id, msGr.id, p.transferDate,ssSls.code,ssslo.code,pl.medCase_id,vsst.name," + " pat.lastname,pat.firstname,pat.middlename,pat.birthday");
@@ -245,9 +245,9 @@ public class PrescriptionServiceJs {
 		if (aReason==null) {aReason="";}
 		String sql = "insert into AdminChangeJournal (cType, prescription, medcase, createDate, createTime, createUsername, annulReason, annulWorkFunction, prescriptWorkFunction, annulRecord) " +
 				"values ('UN_PRESCRIPT',"+aPrescription+", "+aMedCase+", current_date, current_time, '"+aUsername+"', '"+aReason+"',"+aCancelWf+", (select prescriptspecial_id from prescription where id = "+aPrescription+")" +
-						",(select record from diary where medcase_id="+aMedCase+"))";	
+						",(select record from diary where medcase_id="+aMedCase+"))";
 		wqs.executeUpdateNativeSql(sql);
-				
+
 	}
 
 	/**
@@ -319,12 +319,12 @@ public class PrescriptionServiceJs {
 		return annulEmptyPrescription(null,null,aPresctiptionId,aReason,aRequest);
 	}
 
-	public String createVisitByPrescription(Long aPrescriptListId, Long aWorkFunctionPlanId,  
+	public String createVisitByPrescription(Long aPrescriptListId, Long aWorkFunctionPlanId,
 		Long aDatePlanId, Long aTimePlanId, Long aMedServiceId,Long aCountDays, Long aGuaranteeId, HttpServletRequest aRequest )throws NamingException {
 		if (aTimePlanId==null || aTimePlanId.equals(0L)) {return "";}
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		
+
 		Long patientId = getPatientIdByPrescriptionList(aPrescriptListId,aRequest);
 		//Если время занято - не записываем на него
 		if (wqs.executeNativeSql("select wct.id from workcalendartime wct left join medcase mc on mc.id =wct.medcase_id " +
@@ -351,8 +351,8 @@ public class PrescriptionServiceJs {
 					+" and wct.prescription is null"
 					+" and wct.prepatient_id is null"
 					+" and wct.prepatientinfo is null");
-			
-			
+
+
 			 for(WebQueryResult  r : l) {
 				 aTimePlanId = Long.parseLong(r.get1().toString());
 				 aDatePlanId = Long.parseLong(r.get2().toString());
@@ -367,7 +367,7 @@ public class PrescriptionServiceJs {
 	}
 
 	/**
-	 * Получение списка предварительных записей на услуги по пациенту 
+	 * Получение списка предварительных записей на услуги по пациенту
 	 */
 	public String getDirections (Long aId, String aIdType, String aDateFrom, String aServiceType, HttpServletRequest aRequest ) throws NamingException {
 		//medserviceId:mcName:cabinetID:cabinetName:wctID, WCDName
@@ -428,7 +428,7 @@ public class PrescriptionServiceJs {
 		}
 		return ret.toString();
 	}
-	
+
 	private boolean isSLSClosed(Long aMedCaseId, HttpServletRequest aRequest) throws NamingException {
 		String sql = "select case when mc.dtype='HospitalMedCase' then" +
 			"   case when mc.datefinish is not null and mc.dischargetime is not null then 1 else 0 end" +
@@ -473,7 +473,7 @@ public class PrescriptionServiceJs {
     public String listProtocolsByUsername(String aFunctionTemp, HttpServletRequest aRequest) throws NamingException {
 		StringBuilder sql = new StringBuilder() ;
 		String login = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
-		sql.append("select pl.id as tid,case when su.login!='").append(login).append("' then '(общ) ' else '' end || pl.name as ttile") ; 
+		sql.append("select pl.id as tid,case when su.login!='").append(login).append("' then '(общ) ' else '' end || pl.name as ttile") ;
 		sql.append(" from PrescriptionList pl");
 		sql.append(" left join SecUser su on pl.createusername=su.login");
 		sql.append(" left join PrescriptionList_secgroup tg on pl.id=tg.prescriptionList_id");
@@ -482,8 +482,8 @@ public class PrescriptionServiceJs {
 		sql.append(" where pl.dtype='PrescriptListTemplate' and su.login='").append(login).append("' or gsu.login='").append(login).append("'");
 		sql.append(" group by pl.id,pl.name,su.login");
 		sql.append(" order by pl.name") ;
-		
-		
+
+
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		StringBuilder res = new StringBuilder() ;
 		Collection<WebQueryResult> list = service.executeNativeSql(sql.toString());
@@ -492,7 +492,7 @@ public class PrescriptionServiceJs {
 		res.append("<tr><td colspan='1' valign='top'>") ;
 		res.append("<h2>Список своих шаблонов</h2>") ;
 		res.append("</td></tr><tr><td valign='top'>") ;
-		
+
 		res.append("<ul>");
 		for (WebQueryResult wqr:list) {
 			res.append("<li class='liTemp' onclick=\"").append(aFunctionTemp).append("('")
@@ -521,7 +521,7 @@ public class PrescriptionServiceJs {
 	public String addPrescriptionToList (Long aPrescriptList, Long aMedService, Long aDepartment, Long aCabinet,String dType, HttpServletRequest aRequest) throws NamingException {
 		return addPrescriptionToListWCT (aPrescriptList, aMedService, aDepartment, aCabinet, dType,null,null,"", aRequest);
 	}
-	
+
 	/**
 	 * Создаем назначение. Если на это время есть предварительное направление, то заменяем его на назначение
 	 * @param aPrescriptList - лист назначений
@@ -610,7 +610,7 @@ public class PrescriptionServiceJs {
 				.append(",transferUsername=coalesce(transferUsername,'").append(username).append("')")
 				.append(",cancelUsername='").append(username).append("'").append(sqlAnnul).append(" where id in (").append(aPrescripts).append(")");
 		service.executeUpdateNativeSql(sql.toString()) ;
-		
+
 		sql = new StringBuilder() ;
 		sql.append("update medcase set datestart = current_date, noactuality='1' where id in (select medcase_id from prescription where id in (").append(aPrescripts).append("))");
 		service.executeUpdateNativeSql(sql.toString()) ;
@@ -804,17 +804,17 @@ public class PrescriptionServiceJs {
 		service.executeUpdateNativeSql("update Prescription set cancelReason_id=null, cancelReasonText=null, cancelDate=null, "
 				+"cancelTime=null, cancelUsername=null where id in ("+aPrescripts+")") ;
 	}
-	
-	/**Возвращает ID листа назначений, если он существует в заданном Medcase 
-	 * 
+
+	/**Возвращает ID листа назначений, если он существует в заданном Medcase
+	 *
 	 * UPD 11.2015 - Если ЛН не существует, то создает его
-	 * 	
+	 *
 	 * @param aMedcase - ИД СЛО
 	 * @param aRequest -
 	 * @return - ИД листа назначений
 	 * @throws NamingException
 	 */
-		
+
 	public String isPrescriptListExists(Long aMedcase, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
 		String req = "Select pl.id from prescriptionlist pl where pl.medcase_id='"+aMedcase+"' order by id ";
@@ -866,7 +866,7 @@ public class PrescriptionServiceJs {
 	}
 
 	/**
-	 * Проверка назначений на наличие дублей (имеются назначения на такие же 
+	 * Проверка назначений на наличие дублей (имеются назначения на такие же
 	 * исследования в том же СЛО, в котором создается назначение)
 	 * **** upd 12.12.2014 - Поиск осуществляется во всех СЛО, которые относятся к тому же СЛС, что и указаное СЛО.
 	 */
@@ -899,9 +899,9 @@ public class PrescriptionServiceJs {
 		}
 		return res.length()>0 ? res.substring(0,res.length()-1) : "";
 	}
-	
+
 	/*
-	 * Проверяем полученные исследования на соответствие типу листа назначения 
+	 * Проверяем полученные исследования на соответствие типу листа назначения
 	 * и возвращаем те, которые соответствуют типу ЛН.
 	 */
 	public String getPresLabTypes(String aPresIDs, Long aPrescriptListType, HttpServletRequest aRequest) throws NamingException {
@@ -987,7 +987,7 @@ public class PrescriptionServiceJs {
 		Collection<WebQueryResult> l = service.executeNativeSql(sql.toString()) ;
 		StringBuilder ret = new StringBuilder() ;
 		ret.append("<table>") ;
-		for (WebQueryResult wqr:l) {			
+		for (WebQueryResult wqr:l) {
 			ret.append("<tr>") ;
 			ret.append("<td onclick=\"cancel").append(aPrefixMethod).append("InLab('").append(aPrescript).append("','").append(wqr.get1()).append("','").append(wqr.get3() != null ? "1" : "0").append("');\" colspan=\"4\">");
     		ret.append("	<input name=\"typeDefect\" value=\"5\" type=\"radio\">").append(wqr.get2());
@@ -1034,7 +1034,7 @@ public class PrescriptionServiceJs {
 		}
 		ret.append("<tr>") ;
 		ret.append("<td onclick=\"this.childNodes[1].checked=\'checked\';\" colspan=\"4\">");
-		ret.append("	<input name=\"btnOk\" value=\"Принять\" type=\"button\" onclick=\"transferInLabCheck('").append(listCab).append("')\"/>" ); 
+		ret.append("	<input name=\"btnOk\" value=\"Принять\" type=\"button\" onclick=\"transferInLabCheck('").append(listCab).append("')\"/>" );
 		ret.append("</td>") ;
 		ret.append("</tr>") ;
 		ret.append("</table></form>") ;
@@ -1043,7 +1043,7 @@ public class PrescriptionServiceJs {
 
 	public void checkLabAnalyzed(Long aPrescript,HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
-		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ; 
+		String username = LoginInfo.find(aRequest.getSession(true)).getUsername() ;
 		service.checkLabAnalyzed(aPrescript,username) ;
 	}
 
@@ -1086,7 +1086,7 @@ public class PrescriptionServiceJs {
 				Long pid = Long.parseLong(res.get1().toString());
 				String msid = res.get2().toString();
 				Long templateId = Long.parseLong(res.get3().toString());
-						
+
 				sql = new StringBuilder() ;
 				sql.append("select p.id as p1id,p.name as p2name") ;
 				sql.append(" , p.shortname as p3shortname,p.type as p4type") ;
@@ -1110,7 +1110,7 @@ public class PrescriptionServiceJs {
 				sql.append(" where pres.id='").append(pid).append("' and tp.medservice_id='").append(msid).append("' and tp.id='").append(templateId).append("' ");
 				sql.append(" order by pf.position") ;
 				Collection<WebQueryResult> lwqr = service.executeNativeSql(sql.toString()) ;
-				
+
 				sb.setLength(0);
 				sb.append("{");
 				sb.append("\"workFunction\":\"").append(workFunctionId).append("\",");
@@ -1131,7 +1131,7 @@ public class PrescriptionServiceJs {
 				,{"18","idEnter"},{"19","value"},{"20","valueVoc"}
 				} ;
 				for(WebQueryResult wqr : lwqr) {
-					
+
 					StringBuilder par = new StringBuilder() ;
 					par.append("{") ;
 					boolean isFirtMethod = false ;
@@ -1145,9 +1145,9 @@ public class PrescriptionServiceJs {
 							String strValue = value!=null?value.toString():"";
 							if(isFirtMethod) par.append(", ") ;else isFirtMethod=true;
 							par.append("\"").append(prop[1]).append("\":\"").append(str(strValue)).append("\"") ;
-							
+
 						}
-						
+
 					} catch (Exception e) {
 						throw new IllegalStateException(e);
 					}
@@ -1173,7 +1173,7 @@ public class PrescriptionServiceJs {
 
 	public String intakeService(String aListPrescript,String aDate,String aTime, String materialPcr,HttpServletRequest aRequest) throws NamingException, ParseException {
 		return intakeServiceWithBarcode(aListPrescript, aDate, aTime, null,materialPcr, aRequest);
-				
+
 	}
 
 	/**
@@ -1245,12 +1245,12 @@ public class PrescriptionServiceJs {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		return service.checkMedCaseEmergency(aIdTemplateList, idType) ;
 	}
-	
+
 	public String getPrescriptionTypes(boolean isEmergency, HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		return service.getPrescriptionTypes(isEmergency) ;
 	}
-	
+
 	public String getLabListFromTemplate(Long aIdTemplateList, Long aPrescriptTypeId, HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		StringBuilder sb = new StringBuilder();
@@ -1269,13 +1269,13 @@ public class PrescriptionServiceJs {
 		}
 		return ret;
 	}
-	
+
 	public String savePrescription(Long aIdParent,Long aIdTemplateList, Long aFlag, HttpServletRequest aRequest) throws NamingException {
 		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		if (aFlag==1) return savePrescriptExists(aIdTemplateList,aIdParent, service) ;
 		if (aFlag==2) return savePrescriptNew(aIdTemplateList,aIdParent, service) ;
 		return "" ;
-		
+
 	}
 
 	private String savePrescriptExists(Long aIdTemplateList, Long aIdPrescript, IPrescriptionService service) {
@@ -1286,7 +1286,7 @@ public class PrescriptionServiceJs {
 		} catch (Exception e) {
 			ret = "Ошибка при сохранении  в текущий лист назначений"+e.getMessage() ;
 		}
-		
+
 		return ret ;
 	}
 
@@ -1316,8 +1316,8 @@ public class PrescriptionServiceJs {
 			sql.append(" where tp.medservice_id='").append(aService).append("'") ;
 			sql.append(" group by tp.id,tp.title,ms.id,ms.name") ;
 			Collection<WebQueryResult> lwqr = service.executeNativeSql(sql.toString()) ;
-			
-			
+
+
 			String oldi = "" ;
 			if (lwqr.isEmpty()) {
 				ret.append("0#") ;
@@ -1349,13 +1349,13 @@ public class PrescriptionServiceJs {
 		    		ret.append("	<input name=\"typeTemplate\" id=\"typeTemplate\" value=\"").append(wqr.get1()).append("#").append(wqr.get3()).append("#").append(aSmoId).append("#").append(wqr.get5()).append("\" type=\"radio\" />  ").append(wqr.get4());
 		    		ret.append("</td>") ;
 					ret.append("</tr>") ;
-	
+
 				}
-				
+
 				ret.append("</table></form>") ;
 			}
 		}
-		
+
 		return ret.toString() ;
 	}
 
@@ -1484,8 +1484,8 @@ public class PrescriptionServiceJs {
 			sql.append(" , vd.id as v15did,vd.name as v16dname") ;
 			sql.append(" ,p.cntdecimal as p17cntdecimal") ;
 			sql.append(" , ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid") ;
-			sql.append(" , case when p.type in ('3','5')  then pf.valueText") ; 
-			sql.append(" when p.type ='4' then to_char(round(pf.valueBD,case when p.cntdecimal is null then 0 else cast(p.cntdecimal as int) end),'fm99990.'||repeat('0',cast(p.cntdecimal as int)))"); 
+			sql.append(" , case when p.type in ('3','5')  then pf.valueText") ;
+			sql.append(" when p.type ='4' then to_char(round(pf.valueBD,case when p.cntdecimal is null then 0 else cast(p.cntdecimal as int) end),'fm99990.'||repeat('0',cast(p.cntdecimal as int)))");
 			sql.append(" when p.type ='1' then to_char(round(pf.valueBD,case when p.cntdecimal is null then 0 else cast(p.cntdecimal as int) end),'fm99990') ");
 			sql.append(" when p.type='2' then ''||pf.valueVoc_id end as p19val") ;
 			sql.append(" ,vv.name as d20val4v") ;
@@ -1500,8 +1500,8 @@ public class PrescriptionServiceJs {
 			sql.append(" where d.id='").append(aProtocolId).append("'") ;
 			sql.append(" order by pf.position") ;
 			lwqr = service.executeNativeSql(sql.toString()) ;
-			
-		} 
+
+		}
 		if (lwqr==null || lwqr.isEmpty()) {
 			sql = new StringBuilder() ;
 			sql.append("select p.id as p1id,p.name as p2name") ;
@@ -1534,8 +1534,8 @@ public class PrescriptionServiceJs {
 				wfName = ""+wqr.get2() ;
 			}
 		}
-			
-			
+
+
 		StringBuilder sb = new StringBuilder() ;
 		StringBuilder err = new StringBuilder() ;
 			sb.append("{");
@@ -1553,22 +1553,22 @@ public class PrescriptionServiceJs {
 			,{"18","idEnter"},{"19","value"},{"20","valueVoc"}
 			} ;
 			for(WebQueryResult wqr : lwqr) {
-				
+
 				StringBuilder par = new StringBuilder() ;
 				par.append("{") ;
 				boolean isFirtMethod = false ;
 				boolean isError = String.valueOf(wqr.get4()).equals("2") && wqr.get15()==null ;
 				try {
-					
+
 					for(String[] prop : props) {
 						Object value = PropertyUtil.getPropertyValue(wqr, prop[0]) ;
 						String strValue = value!=null?value.toString():"";
-						
+
 						if(isFirtMethod) par.append(", ") ;else isFirtMethod=true;
 						par.append("\"").append(prop[1]).append("\":\"").append(str(strValue)).append("\"") ;
-						
+
 					}
-					
+
 				} catch (Exception e) {
 					throw new IllegalStateException(e);
 				}
@@ -1587,7 +1587,7 @@ public class PrescriptionServiceJs {
 			sb.append(",\"protocol\":\"").append(aProtocolId).append("\"") ;
 			sb.append("}") ;
 			return sb.toString();
-		
+
 	}
 
 	private String str(String aValue) {
@@ -1608,24 +1608,24 @@ public class PrescriptionServiceJs {
 		return ret;	}
 
 	public Long createTemplateFromList(Long aPrescriptList, String aName, HttpServletRequest aRequest) throws NamingException {
-		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ; 
+		IPrescriptionService service = Injection.find(aRequest).getService(IPrescriptionService.class) ;
 		return service.savePrescriptNew(aPrescriptList, 0L,aName);
 	}
-	
+
 	 public String getInfoAboutPrescription(Long aId, HttpServletRequest aRequest) throws NamingException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		StringBuilder sql = new StringBuilder();
-		
+
 		sql.append("select to_char(p.createdate,'dd.MM.yyyy')||' '||cast(p.createtime as varchar(5))||' '||p.createusername as createInfo ")
 				.append(",to_char(p.intakedate,'dd.MM.yyyy')||' '||cast(p.intaketime as varchar(5)) ||' '|| p.intakeusername as intakeInfo")
 				.append(",to_char(p.transferdate,'dd.MM.yyyy') ||' '||cast(p.transfertime as varchar(5)) ||' '||p.transferusername as transferInfo")
 				.append(",to_char(vis.createdate,'dd.MM.yyyy')||' '||cast(vis.createtime as varchar(5))||' '||vis.username as researchIndo")
 				.append(",to_char(vis.datestart,'dd.MM.yyyy')||' '||cast(vis.timeexecute as varchar(5))||' '||vis.editusername as labDoctorIndo")
 				.append(",to_char(p.canceldate,'dd.MM.yyyy')||' '||cast(p.canceltime as varchar(5))||' '||p.cancelusername ||coalesce(vpcr.name,'')||' '||coalesce(p.cancelreasontext,'')  as cancelInfo").append(" from prescription p " + " left join medcase vis on vis.id=p.medcase_id" + " left join vocprescriptcancelreason vpcr on vpcr.id=p.cancelreason_id" + " where p.id='").append(aId).append("'");
-		
+
 		Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
-		
-		
+
+
 		StringBuilder sb = new StringBuilder();
 		for (WebQueryResult wqr : res) {
 		    sb.append(unnul(wqr.get1())).append("|").append(unnul(wqr.get2())).append("|").append(unnul(wqr.get3())).append("|").append(unnul(wqr.get4())).append("|").append(unnul(wqr.get5())).append("|").append(unnul(wqr.get6()));
@@ -1704,8 +1704,8 @@ public class PrescriptionServiceJs {
 	 * @param aRequest HttpServletRequest
 	 * @return String 0 если нет дублей, -1 - если есть
 	 */
-	public String checkDoublesNextDayCovid(String aMedCase, HttpServletRequest aRequest) throws NamingException {
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+	public String checkDoublesNextDayCovid(String aMedCase, String planStartDate, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		StringBuilder req = new StringBuilder();
 		req.append("select p.id");
 		req.append(" from medcase mc ");
@@ -1717,7 +1717,8 @@ public class PrescriptionServiceJs {
 		req.append(" and ms.id=22347");
 		req.append(" and p.dtype='ServicePrescription'");
 		req.append(" and p.medservice_id is not null");
-		req.append(" and p.canceldate is null  and p.planstartdate=current_date+1");
+		req.append(" and p.canceldate is null  and p.planstartdate=to_date('");
+		req.append(planStartDate).append("','dd.mm.yyyy')");
 		return service.executeNativeSql(req.toString()).isEmpty()?
 				"0" : "-1";
 	}
@@ -1783,6 +1784,25 @@ public class PrescriptionServiceJs {
 			.append(" where vsst.code='COVID' and (p.materialpcrid is null or p.materialpcrid='')")
 			.append(" and p.id='").append(aPrescriptList).append("' ");
 		return service.executeNativeSql(req.toString()).isEmpty()?
+				"0" : "1";
+	}
+
+
+	/**
+	 * Является ли отделение ковидным.
+	 *
+	 * @param plId     PrescriptionList.id
+	 * @param aRequest HttpServletRequest
+	 * @return 1 - ковидное, 0 - не ковидное
+	 */
+	public String checkSloCovid(Long plId, HttpServletRequest aRequest) throws NamingException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+		String query = "select vbt.id from medcase slo" +
+				" left join prescriptionlist pl on pl.medcase_id=slo.id" +
+				" left join bedfund as bf on bf.id=slo.bedfund_id" +
+				" left join vocbedtype vbt on vbt.id=bf.bedType_id" +
+				" where vbt.code='14' and pl.id=" + plId;
+		return service.executeNativeSql(query).isEmpty() ?
 				"0" : "1";
 	}
 }
