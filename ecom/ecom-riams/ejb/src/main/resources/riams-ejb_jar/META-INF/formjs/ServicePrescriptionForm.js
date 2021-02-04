@@ -45,15 +45,32 @@ function onPreCreate(aForm, aCtx) {
 }
 
 //проверка на дубликаты номеров пробирок при анализе на ковид
-function checkDoublesMaterialPCRId(aForm, aEntity, aCtx) {
+function checkDoublesMaterialPCRId(aForm, aEntity, aCtx, planDate) {
 	if (!aCtx.manager.createNativeQuery("select p.id" +
 		" from prescription p " +
 		" left join medservice ms on ms.id = p.medservice_id" +
 		" where p.dtype='ServicePrescription' and ms.id=22347" +
-		" and p.medservice_id is not null and p.canceldate is null and planstartdate=current_date+1" +
+		" and p.medservice_id is not null and p.canceldate is null and planstartdate=to_date('" + planDate + "','yyyy-mm-dd')" +
 		" and p.materialPCRid='" + aForm.materialPCRId + "'").getResultList().isEmpty())
-		throw "Уже есть такой анализ с таким номером пробирки на завтрашний день! Измените номер." +
+		throw "Уже есть такой анализ с таким номером пробирки на день направления! Измените номер." +
 	" <br/><a href='entityParentPrepareCreate-pres_servicePrescription.do?id="+aEntity.prescriptionList.id+"'>"+"Создать назначение заново"+"</a><br/>";
+}
+
+/**
+ * Является ли отделение ковидным.
+ *
+ * @param plId     PrescriptionList.id
+ * @param aRequest HttpServletRequest
+ * @return 1 - ковидное, 0 - не ковидное
+ */
+function checkSloCovid(plId, aCtx)  {
+	var query = "select vbt.id from medcase slo" +
+		" left join prescriptionlist pl on pl.medcase_id=slo.id" +
+		" left join bedfund as bf on bf.id=slo.bedfund_id" +
+		" left join vocbedtype vbt on vbt.id=bf.bedType_id" +
+		" where vbt.code='14' and pl.id=" + plId;
+	return aCtx.manager.createNativeQuery(query).getResultList().isEmpty() ?
+		"0" : "1";
 }
 
 /**
@@ -104,18 +121,22 @@ function onCreate(aForm, aEntity, aCtx) {
 					}
 					if (medService.code=='A26.08.027.999' && aEntity.prescriptionList.medCase!=null //если стационар и ковид
 						&& ((''+ aEntity.prescriptionList.medCase).indexOf('DepartmentMedCase')!=-1 || (''+ aEntity.prescriptionList.medCase).indexOf('HospitalMedCase')!=-1)) {
-						checkDoublesMaterialPCRId(aForm, aEntity, aCtx);
+						checkDoublesMaterialPCRId(aForm, aEntity, aCtx, par2);
 						adMedService.setMaterialPCRId(aForm.materialPCRId);
-						var nextDate = new java.sql.Date(date.getTime() + 24 * 60 * 60 * 1000);
-						adMedService.setIntakeDate(nextDate);
 
-						var FORMAT = new java.text.SimpleDateFormat("hh:mm");
-						adMedService.setIntakeTime(new java.sql.Time(FORMAT.parse('06:00').getTime()));
+						//Только для инфекционных госпиталей
+						if (checkSloCovid(aEntity.prescriptionList.id,aCtx)=='1') {
+							var nextDate = new java.sql.Date(date.getTime() + 24 * 60 * 60 * 1000);
+							adMedService.setIntakeDate(nextDate);
 
-						adMedService.setIntakeUsername(username);
-						if (par3 != null && !par3.equals(java.lang.Long(0))) {
-							var intakeSpecial = manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction, par3);
-							adMedService.setIntakeSpecial(intakeSpecial);
+							var FORMAT = new java.text.SimpleDateFormat("hh:mm");
+							adMedService.setIntakeTime(new java.sql.Time(FORMAT.parse('06:00').getTime()));
+
+							adMedService.setIntakeUsername(username);
+							if (par3 != null && !par3.equals(java.lang.Long(0))) {
+								var intakeSpecial = manager.find(Packages.ru.ecom.mis.ejb.domain.worker.WorkFunction, par3);
+								adMedService.setIntakeSpecial(intakeSpecial);
+							}
 						}
 					}
 

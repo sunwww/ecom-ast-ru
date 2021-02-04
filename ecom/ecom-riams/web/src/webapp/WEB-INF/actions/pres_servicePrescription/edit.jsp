@@ -658,10 +658,16 @@
                         if (jQuery('input[name ="btnChangeDepartment"]')[0]) jQuery('input[name ="btnChangeDepartment"]')[0].disabled = true;
                         if (jQuery('input[name ="btnMakeAnyPrescription"]')[0]) jQuery('input[name ="btnMakeAnyPrescription"]')[0].disabled = true;
                         if ($('medcaseType').value=='HOSPITAL') {
-                            $('labDate').value = getDateAfterOrBeforeCurrent();
-                            $('labDate').disabled = true;
-                            $('materialPCRId').show();
-                            $('materialPCRId').className = 'required';
+                            PrescriptionService.checkSloCovid(${param.id}, {
+                                callback: function (aResult) {
+                                    if (aResult==1) {
+                                        $('labDate').value = getDateAfterOrBeforeCurrent();
+                                        $('labDate').disabled = true;
+                                    }
+                                    $('materialPCRId').show();
+                                    $('materialPCRId').className = 'required';
+                                }
+                            });
                         }
                         else if ($('medcaseType').value=='POLYCLINIC') {
                             $('labDepartment').disabled = true;
@@ -690,13 +696,20 @@
 
                 //Сохранение
                 function save() {
-                    if ($('labServicies').value=='22347' && !$('materialPCRId').value && $('medcaseType').value=='HOSPITAL') {
-                        showToastMessage('Введите номер пробирки!',null,true,true,3000);
-                        $('submitButton').disabled = false;
-                        $('submitButton').value = 'Создать';
+                    if ($('labServicies').value=='22347') {
+                        if (!$('materialPCRId').value && $('medcaseType').value=='HOSPITAL') {
+                            showToastMessage('Введите номер пробирки!',null,true,true,3000);
+                            $('submitButton').disabled = false;
+                            $('submitButton').value = 'Создать';
+                        }
+                        else if (!checkDate($('labDate').value)) {
+                            showToastMessage('Введите корректную дату!',null,true,true,3000);
+                            $('submitButton').disabled = false;
+                            $('submitButton').value = 'Создать';
+                        }
+                        else
+                            checkDoublesNextDayCovid();
                     }
-                    else if  ($('labServicies').value=='22347')
-                        checkDoublesNextDayCovid();
                     else
                         checkDoubles();
                 }
@@ -716,9 +729,9 @@
                 //проверка ковид анализов: можно только один анализ на след. день
                 function checkDoublesNextDayCovid() {
                     if ($('medcaseType').value=='HOSPITAL') {
-                        PrescriptionService.checkDoublesNextDayCovid($('medcaseId').value, {
+                        PrescriptionService.checkDoublesNextDayCovid($('medcaseId').value, $('labDate').value, {
                             callback: function (aResult) {
-                                makeCovidPresc(aResult,'У пациента уже есть такое назначение на следующий день. Дубли запрещены.');
+                                makeCovidPresc(aResult,'У пациента уже есть такое назначение на планируемую дату. Дубли запрещены.');
                             }
                         });
                     }
