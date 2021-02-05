@@ -49,6 +49,10 @@
 				var val = $('param'+fldJson.params[ind].id).value ;
 				var par = fldJson.params[ind] ; 
 				errorutil.HideError($('param'+par.idEnter)) ;
+                if (+par.type==1   && val && isNaN(val)) {
+                    errorutil.ShowFieldError($('param' + par.idEnter), "Указанное значение не является числом!");
+                    isError = true;
+                }
 				if (+par.type==2) {
 					if (+val<1) {val='0' ;} else {
 						par.valueVoc = $('param'+fldJson.params[ind].id+'Name').value ;
@@ -61,7 +65,7 @@
 					var decimalRegexp=/^(-?\d+(\.?\d+)?|\d+)$/g;
 					var cntdecimal = +par.cntdecimal
 					if (val!="") {
-                        if (decimalRegexp.test(val)) {
+                        if (decimalRegexp.test(val) && !isNaN(val)) {
                             if (v.length==2 && v[1].length!=cntdecimal) {
                                 errorutil.ShowFieldError($('param'+par.idEnter),"Необходимо ввести "+cntdecimal+" знаков после запятой") ;
                                 isError= true ;
