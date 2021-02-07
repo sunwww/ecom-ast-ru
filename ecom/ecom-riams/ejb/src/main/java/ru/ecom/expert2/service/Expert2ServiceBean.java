@@ -112,8 +112,8 @@ public class Expert2ServiceBean implements IExpert2Service {
     /**
      * Нахождение актуального управленческого коэффициента по КСГ и дате визита
      */
-    private final HashMap<String, E2KsgCoefficientHistory> ksgCoefficientMap = new HashMap<>();
-    private final HashMap<String, Object> resultMap = new HashMap<>(); //результат госпитализации
+    private static final HashMap<String, E2KsgCoefficientHistory> ksgCoefficientMap = new HashMap<>();
+    private static final HashMap<String, Object> resultMap = new HashMap<>(); //результат госпитализации
     private boolean isCheckIsRunning = false;
     private boolean isConsultativePolyclinic = true;
     private boolean isNeedSplitDayTimeHosp = false;
@@ -2238,7 +2238,6 @@ public class Expert2ServiceBean implements IExpert2Service {
             int maxWeight = 0;
             int weight;
             GrouperKSGPosition pos = null;
-            boolean duration = entry.getCalendarDays() <= 3;
             int ksgDuration = getKsgDuration(entry.getCalendarDays());
             GrouperKSGPosition therapicKsgPosition = null;
             GrouperKSGPosition surgicalKsgPosition = null;
@@ -2290,11 +2289,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 if (ksgPosition.getAge() != null && !ksgAge.contains("" + ksgPosition.getAge())) {
                     continue;
                 }
-                if (ksgPosition.getDuration() != null && duration) {
-                    weight = 6;
-                } else if (isEquals(ksgPosition.getDuration(), ksgDuration)) {
-                    //подходит
-                } else if (ksgPosition.getDuration() != null) {
+                if (ksgPosition.getDuration() != null && !isEquals(ksgPosition.getDuration(), ksgDuration)) {
                     continue;
                 }
                 //st02.012 , st02.013 круче родов и кесарева
@@ -2352,8 +2347,8 @@ public class Expert2ServiceBean implements IExpert2Service {
      * 3 - 11-20 дней
      * 4 - 21-30 дней
      *
-     * @param calendarDays
-     * @return
+     * @param calendarDays кол-во календарных дней госпитализации
+     * @return Длительность КСГ
      */
     private int getKsgDuration(Long calendarDays) {
         return calendarDays < 4 ? 1
@@ -2562,19 +2557,19 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
     }
 
-    public BigDecimal getActualKsgUprCoefficient(VocKsg aKsg, Date aFinishDate) {
+    public BigDecimal getActualKsgUprCoefficient(VocKsg ksg, Date finishDate) {
         E2KsgCoefficientHistory coefficientHistory;
-        String sql = "select id from E2KsgCoefficientHistory where ksg_id=:ksg and to_date('" + aFinishDate + "','yyyy-MM-dd') between startDate and coalesce(finishDate, current_date)";
-        String key = "KSG#" + aKsg.getId() + "#COEFF#" + sql.hashCode();
+        String sql = "select id from E2KsgCoefficientHistory where ksg_id=:ksg and to_date('" + finishDate + "','yyyy-MM-dd') between startDate and coalesce(finishDate, current_date)";
+        String key = "KSG#" + ksg.getId() + "#COEFF#" + finishDate;
         if (ksgCoefficientMap.containsKey(key)) {
             coefficientHistory = ksgCoefficientMap.get(key);
         } else {
-            List<Long> list = manager.createQuery(sql).setParameter("ksg", aKsg.getId()).getResultList();
+            List<Long> list = manager.createQuery(sql).setParameter("ksg", ksg.getId()).getResultList();
             if (list.isEmpty()) {
                 coefficientHistory = new E2KsgCoefficientHistory();
                 coefficientHistory.setValue(BigDecimal.valueOf(1));
             } else if (list.size() > 1) {
-                LOG.error(aKsg.getId() + " найдено _" + list.size() + "_ коэффициентов КСГ(MORE_1_KSG_COEFFICIENT) " + sql);
+                LOG.error(ksg.getId() + " найдено _" + list.size() + "_ коэффициентов КСГ(MORE_1_KSG_COEFFICIENT) " + sql);
                 return null;
             } else {
                 coefficientHistory = manager.find(E2KsgCoefficientHistory.class, list.get(0));
@@ -2665,28 +2660,19 @@ public class Expert2ServiceBean implements IExpert2Service {
         //calc 10
         ArrayList<E2CoefficientPatientDifficultyEntryLink> difficultyEntryLinks = new ArrayList<>();
         long sluchDuration = aEntry.getBedDays() != null ? aEntry.getBedDays() : 1;
-        //isTrue(aEntry.getKsg().getLongKsg()) ? 45 : 30;
-        if (sluchDuration > 70L) { //Если случай лечения больше 30 (45) дней, ищем "10" коэффициент
-           /* BigDecimal value = new BigDecimal(1).add((new BigDecimal(sluchDuration - maxDuration).divide(new BigDecimal(maxDuration), 2, RoundingMode.HALF_UP))
-                    .multiply(BigDecimal.valueOf(aEntry.getReanimationEntry() != null ? 0.4 : 0.25)));
-            link = new E2CoefficientPatientDifficultyEntryLink();
-            link.setEntry(aEntry);
-            link.setDifficulty(getActualVocByClassName(VocE2CoefficientPatientDifficulty.class, null, " code='9'"));
-            link.setValue(value.setScale(2, RoundingMode.HALF_UP));
-            difficultyEntryLinks.add(link);*/
+        if (sluchDuration > 70L) {
             codes.add("10");
         }
-      /*  if (aEntry.getFactorList() != null) {
+        if (aEntry.getFactorList() != null) {
             for (VocE2EntryFactor factor : aEntry.getFactorList()) {
                 String factorCode = factor.getCode();
                 if ("KSLP_INFECT".equals(factorCode)) {
-                    codes.add("12");
-                } else if ("COVID1.7".equals(factorCode)) { //КСЛП 1.7 у всех коронавирусных
-                    codes.add("18");
+                    codes.add("8");
+//                } else if ("COVID1.7".equals(factorCode)) { //КСЛП 1.7 у всех коронавирусных
+//                    codes.add("18");
                 }
             }
         }
-*/
 //        if (isTrue(ksg.getIsCovid19())) codes.add("18");
 //        if (isEquals(aEntry.getDopKritKSG(), "IT25") && ksg.getCode().startsWith("st12"))
 //            codes.add("19"); //крайнетяжелое состояние - доп крит
@@ -3597,6 +3583,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         difficultyHashMap = new HashMap<>();
         polyclinicCasePrice = new HashMap<>();
         bedTypes = new HashMap<>();
+        ksgCoefficientMap.clear();
         //   resultMap = new HashMap<String, Object>(); //результат госпитализации
     }
 
