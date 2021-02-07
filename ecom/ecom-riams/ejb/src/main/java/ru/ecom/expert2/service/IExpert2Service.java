@@ -30,8 +30,8 @@ public interface IExpert2Service {
     void addHospitalMedCaseToList(String aHistoryNumber, Long aListEntryId) throws SQLException, NamingException;
     BigDecimal calculateCusmo(String bedSubTypeCode, Long aDepartmentId, Long aProfileId, Date aDate);
     BigDecimal getActualKsgUprCoefficient(VocKsg aKsg, Date aFinishDate);
-    <T> T getActualVocByClassName(Class aClass, Date aActualDate, String aSqlAdd);
-    <T> T getActualVocBySqlString(Class aClass, String aSql);
+    <T> T getActualVocByClassName(Class<T> aClass, Date aActualDate, String aSqlAdd);
+    <T> T getActualVocBySqlString(Class<T> aClass, String aSql);
     E2Entry cloneEntity(E2Entry aSourceObject);
     BigDecimal calculateResultDifficultyCoefficient(E2Entry aEntry);
     String fixFondAnswerError(Long aListEntryId, String aSanctionCode);
