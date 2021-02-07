@@ -2238,7 +2238,6 @@ public class Expert2ServiceBean implements IExpert2Service {
             int maxWeight = 0;
             int weight;
             GrouperKSGPosition pos = null;
-            boolean duration = entry.getCalendarDays() <= 3;
             int ksgDuration = getKsgDuration(entry.getCalendarDays());
             GrouperKSGPosition therapicKsgPosition = null;
             GrouperKSGPosition surgicalKsgPosition = null;
@@ -2290,11 +2289,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 if (ksgPosition.getAge() != null && !ksgAge.contains("" + ksgPosition.getAge())) {
                     continue;
                 }
-                if (ksgPosition.getDuration() != null && duration) {
-                    weight = 6;
-                } else if (isEquals(ksgPosition.getDuration(), ksgDuration)) {
-                    //подходит
-                } else if (ksgPosition.getDuration() != null) {
+                if (ksgPosition.getDuration() != null && !isEquals(ksgPosition.getDuration(), ksgDuration)) {
                     continue;
                 }
                 //st02.012 , st02.013 круче родов и кесарева
@@ -2352,8 +2347,8 @@ public class Expert2ServiceBean implements IExpert2Service {
      * 3 - 11-20 дней
      * 4 - 21-30 дней
      *
-     * @param calendarDays
-     * @return
+     * @param calendarDays кол-во календарных дней госпитализации
+     * @return Длительность КСГ
      */
     private int getKsgDuration(Long calendarDays) {
         return calendarDays < 4 ? 1
