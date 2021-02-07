@@ -158,10 +158,13 @@ function onPreSave(aForm,aEntity, aCtx) {
 			cal1 = java.util.Calendar.getInstance() ;
 			cal2 = java.util.Calendar.getInstance() ;
 			var yCal = java.util.Calendar.getInstance() ;
-			var yesterday = new java.sql.Date(new java.util.Date().getTime() - 24 * 60 * 60 * 1000);  //завтра
+
+			var daysBefore = getDefaultParameterByConfig('daysDischargeNotCovid',1,aCtx);
+
+			var dayBefore = new java.sql.Date(new java.util.Date().getTime() - 24 * 60 * 60 * 1000 * daysBefore);
 			cal2.setTime(dateCur) ; //тек дата
 			cal1.setTime(dateFinish) ;
-			yCal.setTime(yesterday);
+			yCal.setTime(dayBefore);
 
 
 			if (cal1.get(java.util.Calendar.YEAR)==cal2.get(java.util.Calendar.YEAR) &&
@@ -182,7 +185,7 @@ function onPreSave(aForm,aEntity, aCtx) {
 
 				if (+check==0) {
 					throw "У Вас стоит ограничение на дату выписки. Можно выписывать текущим числом любых пациентов " +
-					"или вчерашней датой умерших/пациентов не инфекционных отделений!";
+					"или в течение заданного в настройках периода умерших/пациентов не инфекционных отделений!";
 				}
 			}
 		}

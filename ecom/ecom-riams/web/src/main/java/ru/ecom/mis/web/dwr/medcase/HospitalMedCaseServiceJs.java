@@ -1170,17 +1170,16 @@ public class HospitalMedCaseServiceJs {
 	}
 
 	/**
-	 * Проставить перед удалением выписки, что это в течение одного календарного дня.
+	 * Проставить перед удалением выписки, что это в течение настроенного количества дней.
 	 *
 	 * @param hmcId HospitalMedCase.id
 	 * @param aRequest HttpServletRequest
 	 * @return Boolean - true - в течение календарного дня, false - нет
 	 */
-	private Boolean checkDischargeThisDay(Long hmcId, HttpServletRequest aRequest) throws NamingException {
+	private Boolean checkDischargeDay(Long hmcId, HttpServletRequest aRequest) throws NamingException, ParseException {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 
 		boolean flag = false;
-		//проверка, что datefinish - текущая дата
 		String query = "select datefinish,dischargetime from medcase where id=" + hmcId;
 		Collection<WebQueryResult> list = service.executeNativeSql(query);
 		String datefinish = "", timedisharge = "";
@@ -1190,9 +1189,21 @@ public class HospitalMedCaseServiceJs {
 			timedisharge = wqr.get2() != null ? wqr.get2().toString() : "";
 		}
 		if (!datefinish.equals("") && timedisharge != null && !timedisharge.equals("")) {
-			Date d = new java.util.Date();
-			String dstr = (new SimpleDateFormat("yyyy-MM-dd")).format(d);
-			flag = (datefinish.equals(dstr));
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			Date now = new java.util.Date();
+			String dateCurrent = simpleDateFormat.format(now);
+
+			String daysStr = getSettingsKeyValueByKey("daysDischargeNotCovid",aRequest);
+			if (daysStr.equals(""))
+				daysStr="1";
+			int days = -Integer.valueOf(daysStr);
+
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(now);
+			cal.add(Calendar.DATE, days);
+			String dateBefore = simpleDateFormat.format(cal.getTime());
+
+			flag = datefinish.equals(dateCurrent) || datefinish.equals(dateBefore);
 		}
 		return flag;
 	}
@@ -1216,9 +1227,9 @@ public class HospitalMedCaseServiceJs {
 	 * @param aRequest HttpServletRequest
 	 * @return Boolean - true - в течение календарного дня, false - нет
 	 */
-	public Boolean deleteDischargeCheck(Long hmcId, HttpServletRequest aRequest) throws JspException, NamingException {
+	public Boolean deleteDischargeCheck(Long hmcId, HttpServletRequest aRequest) throws JspException, NamingException, ParseException {
 		boolean canDelete = checkDeleteDischargeAdmin(aRequest) ||  //админ
-				(!checkMisLpuCovid(hmcId,aRequest) && checkDischargeThisDay(hmcId,aRequest) //неинфекционное и в течение одного каленарного дня
+				(!checkMisLpuCovid(hmcId,aRequest) && checkDischargeDay(hmcId,aRequest) //неинфекционное и в течение одного каленарного дня
 						&& (RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/DeleteDischargeOneDay",aRequest) //роль для удаления
 						|| checkUserIsALastSloTreatDoctor(hmcId,aRequest))) //лечащий врач
 				;
