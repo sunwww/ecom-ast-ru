@@ -182,6 +182,8 @@
                           roles="/Policy/Mis/Pharmacy/Administration" title="Аптека"/>
             <msh:sideLink params="" styleId="mainMenuConfig" action="/riams_config.do" name="Настройки"
                           roles="/Policy/MainMenu/Config" title="Настройки"/>
+            <msh:sideLink params="" styleId="mainMenuConfig" action="/createNewTime.do" name="Расписание"
+                          roles="/Policy/Mis/Worker/WorkCalendar/Pattern/Day/Time/Create" title="Расписание"/>
             <msh:sideLink params="" styleId="mainMenuConfig" action="/http://keo.amokb.ru/keo?" name="НСИ"
                           roles="/Policy/MainMenu/Standards" title="Нормативно-справочная информация"/>
 
