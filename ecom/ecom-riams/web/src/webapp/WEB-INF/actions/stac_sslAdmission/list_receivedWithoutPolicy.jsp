@@ -399,6 +399,39 @@ order by dep.name,vss.name,pat.lastname,pat.firstname,pat.middlename
     </msh:sectionContent>
 
     </msh:section>
+
+      <msh:section>
+          <msh:sectionTitle>Реестр по ОМС не проверенных по базе фонда в ПОЛИКЛИНИКЕ. Период визита с ${param.dateBegin} по ${dateEnd}
+          </msh:sectionTitle>
+          <msh:sectionContent>
+              <ecom:webQuery name="journal_poly" nativeSql="
+select distinct pat.id,pat.lastname||' '||pat.firstname||' '||pat.middlename || ' г.р. '|| pat.birthday as pbirthday
+,to_char(vis.dateStart,'dd.mm.yyyy') as visDateSt
+from medcase vis
+left join patient pat on pat.id=vis.patient_id
+left join patientfond pf on (pf.lastname=pat.lastname and pf.firstname=pat.firstname and pf.middlename=pat.middlename and pf.birthday=pat.birthday)
+left join workcalendartime wct on wct.medcase_id=vis.id
+left join vocservicestream vss on vss.id=vis.servicestream_id
+where vis.datestart between to_date('${param.dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+ and vis.dtype='Visit'
+and (vis.noactuality is null or vis.noactuality=false)
+and vis.id is not null
+and wct.id is not null
+ and (vss.code = 'OBLIGATORYINSURANCE')
+group by pat.id,wct.id,vis.datestart
+having max(pf.id) is null or (max(checkdate)<=current_date-7 and max(checkdate)<=vis.dateStart-7)
+order by to_char(vis.dateStart,'dd.mm.yyyy'),pat.lastname||' '||pat.firstname||' '||pat.middlename || ' г.р. '|| pat.birthday
+" nameFldSql="journal_poly_sql" />
+              <msh:table name="journal_poly" openNewWindow="true"
+                         viewUrl="entityView-mis_patient.do"
+                         action="entityView-mis_patient.do" idField="1" noDataMessage="Не найдено">
+                  <msh:tableColumn columnName="#" property="sn"/>
+                  <msh:tableColumn columnName="Пациент" property="2"/>
+                  <msh:tableColumn columnName="Дата визита" property="3"/>
+              </msh:table>
+          </msh:sectionContent>
+      </msh:section>
+
         <%	}
     if (view.equals("4") || view.equals("7")) {
     	%>
@@ -688,4 +721,3 @@ order by dep.name,vss.name
     </script>
   </tiles:put>
 </tiles:insert>
-

@@ -260,4 +260,21 @@ public class FondCheck {
         ApiUtil.init(aRequest,aToken);
         return String.valueOf(FondCheckUtil.syncRecordTomorrow(aRequest,dateStart));
     }
+
+    /**
+     * Проверка по фонду для пациентов, уже посетивших поликлинику.
+     * @return
+     */
+    @GET
+    @Path("syncRecordDayVisited")
+    @Produces("application/json")
+    public String syncRecordDayVisited(@Context HttpServletRequest aRequest,
+                                     @WebParam(name="token") String aToken,
+                                     @QueryParam("dateVisit") String dateVisit
+    ) throws ParserConfigurationException,
+            SAXException, IOException, NamingException {
+        if(dateVisit==null || dateVisit.equals("")) dateVisit=getDate(1);
+        ApiUtil.init(aRequest,aToken);
+        return String.valueOf(FondCheckUtil.syncRecordDayVisited(aRequest,dateVisit));
+    }
 }
