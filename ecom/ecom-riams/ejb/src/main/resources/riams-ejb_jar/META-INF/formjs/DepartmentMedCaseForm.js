@@ -26,6 +26,23 @@ function onPreCreate(aForm, aContext) {
 	
 }
 
+//проверка на снятие браслетов ИВЛ
+function checkOpenIdentityPatient(slsId, code, aCtx) {
+	var query = "select cip.surgoperation_id from" +
+		" medcase sls" +
+		" left join medcase_coloridentitypatient mcip on mcip.medcase_id=sls.id" +
+		" left join coloridentitypatient cip on cip.id=mcip.colorsidentity_id" +
+		" left join VocColorIdentityPatient vcip on vcip.id=cip.voccoloridentity_id" +
+		" where vcip.code='" + code + "' and cip.finishdate is null and sls.id=" + slsId;
+	var list = aCtx.manager.createNativeQuery(query).getResultList();
+	if (!list.isEmpty()) {
+		var surgId = list.get(0);
+		throw "У пациента есть незакрытый браслет " + code
+		+ "! Перед переводом необходимо поставить дату окончания в операции, связанной с браслетом. <a href='entityParentEdit-stac_surOperation.do?id="+
+		+ surgId + "'>Перейти к операции.</a>";
+	}
+}
+
 /**
  * Перед сохранением
  */
@@ -199,6 +216,8 @@ function onPreSave(aForm,aEntity, aContext) {
 		if (true==lpu.getIsNoOmc() && true==prev.department.getIsNoOmc())
 			throw "Нельзя переводить из одной реанимации в другую реанимацию!";
 	}
+	//Проверить браслеты ИВЛ
+	checkOpenIdentityPatient(aForm.parent, 'ИВЛ', aContext);
 }
 function checkPrescriptionList(aForm, aEntity, aCtx) {
 	var currentDate = new java.sql.Date(new java.util.Date().getTime()) ;

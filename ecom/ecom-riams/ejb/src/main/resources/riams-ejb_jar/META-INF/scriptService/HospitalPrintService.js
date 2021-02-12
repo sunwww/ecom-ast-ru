@@ -2795,6 +2795,7 @@ function printDirectionHIV(aCtx, aParams) {
 function printDirectionCovid(aCtx, aParams) {
     var ret = new java.util.ArrayList() ;
 	var info = new java.lang.String(aParams.get("info"));
+	var depName = new java.lang.String(aParams.get("depName"));
 	var infoMas=info.split('!');
     for (var i=0; i<infoMas.length; i++) {
         var row = infoMas[i].split('--');
@@ -2810,6 +2811,7 @@ function printDirectionCovid(aCtx, aParams) {
                 ret.add(par);
     }
     map.put("listPat",ret) ;
+	map.put("depName",depName) ;
     return map;
 }
 

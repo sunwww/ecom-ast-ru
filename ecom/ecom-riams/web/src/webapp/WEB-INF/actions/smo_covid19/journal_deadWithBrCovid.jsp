@@ -71,7 +71,7 @@ group by  pat.patientinfo,sls.id,m.id
 order by  sls.datefinish
 "
         />
-        <msh:table name="analysisCovidDeadList" action="entityParentView-stac_slo.do" idField="1" openNewWindow="true" printToExcelButton="Сохранить в EXCEL">
+        <msh:table name="analysisCovidDeadList" action="entityParentView-stac_ssl.do" idField="1" openNewWindow="true" printToExcelButton="Сохранить в EXCEL">
             <msh:tableColumn property="sn" columnName="#"/>
             <msh:tableColumn columnName="Пациент" property="2" />
             <msh:tableColumn columnName="Кол-во положительных" property="3" />
