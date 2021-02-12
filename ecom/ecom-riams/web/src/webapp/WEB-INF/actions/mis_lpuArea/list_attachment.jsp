@@ -19,7 +19,7 @@
             ActionUtil.updateParameter("PatientAttachment", "typeCompany", "3", request);
             ActionUtil.updateParameter("PatientAttachment", "typeAreaCheck", "3", request);
             ActionUtil.updateParameter("PatientAttachemnt", "typeDivide", "1", request);
-            ActionUtil.updateParameter("PatientAttachemnt", "typeFile", "xml", request);
+            ActionUtil.updateParameter("PatientAttachemnt", "typeFile", "csv", request);
             ActionUtil.updateParameter("PatientAttachemnt", "typeResult", "file", request);
             ActionUtil.updateParameter("PatientAttachemnt", "typeDispPlan", "ATTACHMENT", request);
 
@@ -183,7 +183,7 @@
                                                                                       id="typeReadLabel">Отображать:</label>
                     </td>
                     <td onclick="this.childNodes[1].checked='checked';$('typeResultDiv').style='';">
-                        <input type="radio" name="typeRead" value="1"> xml (csv) файл (прик. население)
+                        <input type="radio" name="typeRead" value="1"> скачать файл (прик. население)
                     </td>
 
                     <td onclick="this.childNodes[1].checked='checked';$('typeResultDiv').style.display='none';"
@@ -205,7 +205,8 @@
                     <td onclick="this.childNodes[1].checked='checked';">
                         <input type="radio" name="typeFile" value="csv" checked> csv-файл
                     </td>
-
+                </msh:row>
+                <msh:row>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="2">
                         <input type="radio" name="typeResult" value="file"> xml/csv файл
                     </td><td onclick="this.childNodes[1].checked='checked';" colspan="2">
@@ -280,7 +281,7 @@
                     checkFieldUpdate('typeDivide', '${typeDivide}', 1);
                     checkFieldUpdate('typeAreaCheck', '${typeAreaCheck}', 3);
                     checkFieldUpdate('typeResult', '${typeResult}', 'file');
-                    checkFieldUpdate('typeFile', '${typeFile}', 'xml');
+                    checkFieldUpdate('typeFile', '${typeFile}', 'csv');
                     checkFieldUpdate('typeDispPlan', '${typeDispPlan}', 'attachment');
                     $('aView').innerHTML = $('filename').value;
 

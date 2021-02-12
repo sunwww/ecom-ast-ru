@@ -40,7 +40,7 @@ public class AttachmentByLpuAction extends BaseAction {
                 String typeDivide = ActionUtil.updateParameter("PatientAttachment", "typeDivide", "1", request);
                 String typeAreaCheck = ActionUtil.updateParameter("PatientAttachment", "typeAreaCheck", "3", request);
                 String returnType = ActionUtil.updateParameter("PatientAttachment", "typeResult", "file", request); //тип архива (file, prik, zip)
-                String fileType = ActionUtil.updateParameter("PatientAttachment", "fileType", "xml", request); //тип файла (xml, csv)
+                String fileType = ActionUtil.updateParameter("PatientAttachment", "fileType", "csv", request); //тип файла (xml, csv)
                 String typeDispPlan = ActionUtil.updateParameter("PatientAttachment", "typeDispPlan", "ATTACHMENT", request); //По какому алгоритму формировать выгрузку (план либо прикрепления)
                 Date cur = DateFormat.parseDate(form.getPeriod());
                 Calendar cal = Calendar.getInstance();
