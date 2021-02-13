@@ -117,11 +117,6 @@ public class ActionUtil {
         aRequest.setAttribute(aNameSet, col.isEmpty() ? "0" : "" + col.iterator().next().get1());
     }
 
-    public static void getValueByListDef(String aNameGet, String aNameSet, String aDefault, HttpServletRequest aRequest) {
-        Collection<WebQueryResult> col = (Collection<WebQueryResult>) aRequest.getAttribute(aNameGet);
-        aRequest.setAttribute(aNameSet, col.isEmpty() ? aDefault : "" + col.iterator().next().get1());
-    }
-
     public static void getValueBySql(String aSql, String aFieldId, String aFieldName, HttpServletRequest aRequest) {
         IWebQueryService service;
         try {
@@ -260,7 +255,7 @@ public class ActionUtil {
     public static String setParameterFilterSql(String aParameter, String aAttributeName, String aFldId, HttpServletRequest aRequest) {
         if (aAttributeName == null) aAttributeName = aParameter;
         String param = aRequest.getParameter(aParameter);
-        String sql = "";
+        String sql ;
         if ("-1".equals(param)) {
             aRequest.setAttribute(aAttributeName + "SqlId", "'&" + aParameter + "=" + param + "'");
             sql = " and " + aFldId + " is null";
@@ -274,6 +269,7 @@ public class ActionUtil {
         } else {
             aRequest.setAttribute(aAttributeName, "0");
             aRequest.setAttribute(aAttributeName + "SqlId", "''");
+            sql="";
         }
 
         return sql;
@@ -311,16 +307,6 @@ public class ActionUtil {
             aRequest.setAttribute(aAttributeName, "0");
             aRequest.setAttribute(aAttributeName + "SqlId", "''");
         }
-    }
-
-    public static void setGroupSql(String aNameFld, HttpServletRequest aRequest) {
-        aRequest.setAttribute(aNameFld + "Sql", "to_char(v.dateStart,'dd.mm.yyyy')");
-        aRequest.setAttribute(aNameFld + "SqlId", "'&beginDate='||to_char(v.dateStart,'dd.mm.yyyy')||'&finishDate='||to_char(v.dateStart,'dd.mm.yyyy')");
-        aRequest.setAttribute(aNameFld + "Name", "Дата");
-        aRequest.setAttribute(aNameFld + "Group", "v.dateStart");
-        aRequest.setAttribute(aNameFld + "Order", "v.dateStart");
-
-
     }
 
     public static String getDefaultParameterByConfig(String aParameter, String aValueDefault, IWebQueryService aService) {

@@ -8,6 +8,7 @@ import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.service.addresspoint.IAddressPointService;
 import ru.ecom.web.util.ActionUtil;
 import ru.ecom.web.util.Injection;
+import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateFormat;
 import ru.nuzmsh.web.struts.BaseAction;
 
@@ -18,26 +19,29 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
+import static ru.nuzmsh.util.EqualsUtil.isOneOf;
+
 public class AttachmentByLpuAction extends BaseAction {
-    public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
-        AttachmentByLpuForm form = (AttachmentByLpuForm) aForm;
+    public ActionForward myExecute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        AttachmentByLpuForm form = (AttachmentByLpuForm) actionForm;
 
         if (form != null) {
-            ActionErrors erros = form.validate(aMapping, aRequest);
+            ActionErrors errors = form.validate(mapping, request);
 
-            if (erros.isEmpty()) {
-                IAddressPointService service = Injection.find(aRequest).getService(IAddressPointService.class);
-                String typeRead = ActionUtil.updateParameter("PatientAttachment", "typeRead", "1", aRequest);
-                String typeView = ActionUtil.updateParameter("PatientAttachment", "typeView", "1", aRequest);
-                String typeAge = ActionUtil.updateParameter("PatientAttachment", "typeAge", "3", aRequest);
-                String typeAttachment = ActionUtil.updateParameter("PatientAttachment", "typeAttachment", "3", aRequest);
-                String typeDefect = ActionUtil.updateParameter("PatientAttachment", "typeDefect", "3", aRequest);
-                String typeChange = ActionUtil.updateParameter("PatientAttachment", "typeChange", "1", aRequest);
-                String typeCompany = ActionUtil.updateParameter("PatientAttachment", "typeCompany", "3", aRequest);
-                String typeDivide = ActionUtil.updateParameter("PatientAttachment", "typeDivide", "1", aRequest);
-                String typeAreaCheck = ActionUtil.updateParameter("PatientAttachment", "typeAreaCheck", "3", aRequest);
-                String returnType = ActionUtil.updateParameter("PatientAttachment", "typeResult", "xml", aRequest);
-                String typeDispPlan = ActionUtil.updateParameter("PatientAttachment", "typeDispPlan", "ATTACHMENT", aRequest); //По какому алгоритму формировать выгрузку (план либо прикрепления)
+            if (errors.isEmpty()) {
+                IAddressPointService service = Injection.find(request).getService(IAddressPointService.class);
+                String typeRead = ActionUtil.updateParameter("PatientAttachment", "typeRead", "1", request);
+                String typeView = ActionUtil.updateParameter("PatientAttachment", "typeView", "1", request);
+                String typeAge = ActionUtil.updateParameter("PatientAttachment", "typeAge", "3", request);
+                String typeAttachment = ActionUtil.updateParameter("PatientAttachment", "typeAttachment", "3", request);
+                String typeDefect = ActionUtil.updateParameter("PatientAttachment", "typeDefect", "3", request);
+                String typeChange = ActionUtil.updateParameter("PatientAttachment", "typeChange", "1", request);
+                String typeCompany = ActionUtil.updateParameter("PatientAttachment", "typeCompany", "3", request);
+                String typeDivide = ActionUtil.updateParameter("PatientAttachment", "typeDivide", "1", request);
+                String typeAreaCheck = ActionUtil.updateParameter("PatientAttachment", "typeAreaCheck", "3", request);
+                String returnType = ActionUtil.updateParameter("PatientAttachment", "typeResult", "file", request); //тип архива (file, prik, zip)
+                String typeExportFile = ActionUtil.updateParameter("PatientAttachment", "typeExportFile", "xml", request); //тип файла (xml, csv)
+                String typeDispPlan = ActionUtil.updateParameter("PatientAttachment", "typeDispPlan", "ATTACHMENT", request); //По какому алгоритму формировать выгрузку (план либо прикрепления)
                 Date cur = DateFormat.parseDate(form.getPeriod());
                 Calendar cal = Calendar.getInstance();
                 Calendar calTo = Calendar.getInstance();
@@ -47,18 +51,14 @@ public class AttachmentByLpuAction extends BaseAction {
                 SimpleDateFormat format1 = new SimpleDateFormat("yyMM");
                 SimpleDateFormat format3 = new SimpleDateFormat("yyyy-MM-dd");
                 SimpleDateFormat format2 = new SimpleDateFormat("dd.MM.yyyy");
-                String age = null;
                 String prefix = "";
                 StringBuilder sqlAdd = new StringBuilder();
-                if (typeAge != null) {
-                    if (typeAge.equals("1")) {
-                        age = "<=18";
-                    } else if (typeAge.equals("2")) {
-                        age = ">=18";
-                    }
-                    if (typeAge.equals("1") || typeAge.equals("2")) {
-                        sqlAdd.append(" and cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(age);
-                    }
+                if (isOneOf(typeAge, "1", "2")) {
+                    sqlAdd.append(" and cast(to_char(to_date('").append(form.getPeriodTo())
+                            .append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('")
+                            .append(form.getPeriodTo()).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('")
+                            .append(form.getPeriodTo()).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ")
+                            .append(typeAge.equals("1") ? "<=18" : ">=18");
                 }
                 if ("2".equals(typeView)) {
                     prefix = "_no_addresss";
@@ -79,7 +79,7 @@ public class AttachmentByLpuAction extends BaseAction {
                                 " or (lp.dateTo is not null and lp.dateTo<=to_date('").append(form.getPeriodTo()).append("','dd.mm.yyyy')))");
                     }
                 }
-                if (form.getChangedDateFrom() != null && !form.getChangedDateFrom().equals("")) {
+                if (StringUtil.isNotEmpty(form.getChangedDateFrom())) {
                     sqlAdd.append(" and (coalesce(lp.editDate,lp.createDate) >= to_date('").append(form.getChangedDateFrom()).append("','dd.mm.yyyy')  )");
 
                 }
@@ -102,14 +102,14 @@ public class AttachmentByLpuAction extends BaseAction {
                     sqlAdd.append(" and lp.company_id is null ");
                 }
 
-                if ("1".equals(typeRead) || "3".equals(typeRead)) {
+                if (isOneOf(typeRead, "1", "3")) {
                     WebQueryResult fs;
-					boolean bNeedDivide = !"2".equals(typeDivide);
-                    if (typeRead.equals("1")) {
-                        fs = service.exportAll(null, prefix, sqlAdd.toString(), true
+                    boolean needDivide = !"2".equals(typeDivide);
+                    if (typeRead.equals("1")) { //форируем файл по прик населению
+                        fs = service.exportAll(prefix, sqlAdd.toString()
                                 , form.getLpu(), form.getArea(), format2.format(cal.getTime()), format2.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr()
-                                , form.getNumberPackage(), form.getCompany(), bNeedDivide, "1", returnType);
-                    } else {
+                                , form.getNumberPackage(), form.getCompany(), needDivide, "1", typeExportFile, returnType);
+                    } else { //план ДД
                         fs = service.exportExtDispPlanAll(null, prefix, sqlAdd.toString()
                                 , form.getLpu(), form.getArea(), format2.format(cal.getTime()), format2.format(calTo.getTime()), format3.format(calTo.getTime()), form.getNumberReestr()
                                 , form.getNumberPackage(), form.getCompany(), typeDispPlan);
@@ -123,7 +123,7 @@ public class AttachmentByLpuAction extends BaseAction {
                         }
                         form.setFilename(sb.toString());
                         if (def != null && !def.isEmpty()) {
-                            aRequest.setAttribute("defectWQR", def);
+                            request.setAttribute("defectWQR", def);
                         }
                     } else {
                         form.setFilename("---");
@@ -135,10 +135,10 @@ public class AttachmentByLpuAction extends BaseAction {
                             sqlAdd.append(" and lp.area_id=").append(form.getArea());
                         }
                     }
-                    aRequest.setAttribute("sqlAdd", sqlAdd.toString());
+                    request.setAttribute("sqlAdd", sqlAdd.toString());
                 }
             }
         }
-        return aMapping.findForward(SUCCESS);
+        return mapping.findForward(SUCCESS);
     }
 }

@@ -496,14 +496,38 @@ public class FondCheckUtil {
     public static JSONArray syncRecordTomorrow(HttpServletRequest aRequest, String dateStart)
             throws NamingException, ParserConfigurationException, SAXException, IOException {
 
-        String sql = "select distinct pat.id,pat.lastname,pat.firstname,pat.middlename,pat.birthday,pat.snils\n" +
-                "from workcalendartime wct \n" +
-                "left join patient pat on pat.id=wct.prepatient_id \n" +
-                "left join patientfond pf on pf.patient=pat.id  \n" +
-                "left join workcalendarday wcd on wcd.id=wct.workcalendarday_id \n" +
-                "where wcd.calendardate='" + dateStart + "'\n" +
-                "and pat.id is not null and (pf.checkdate is null or pf.checkdate<current_date-7)\n" +
-                "and (wct.isdeleted is null or wct.isdeleted=false)";
+        String sql = " select distinct pat.id,pat.lastname,pat.firstname,pat.middlename,pat.birthday,pat.snils" +
+                " from workcalendartime wct" +
+                " left join patient pat on pat.id=wct.prepatient_id" +
+                " left join patientfond pf on pf.patient=pat.id" +
+                " left join workcalendarday wcd on wcd.id=wct.workcalendarday_id" +
+                " where wcd.calendardate='" + dateStart + "'" +
+                " and pat.id is not null" +
+                " and (wct.isdeleted is null or wct.isdeleted=false)" +
+                " group by pat.id,wct.id" +
+                " having max(checkdate) is null or max(checkdate) <current_date-7";
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        List<Patient> patients = getPatients(service.executeNativeSql(sql));
+        return FondCheckUtil.sync(aRequest, patients);
+    }
+
+    public static JSONArray syncRecordDayVisited(HttpServletRequest aRequest, String dateVisit)
+            throws NamingException, ParserConfigurationException, SAXException, IOException {
+
+        String sql = " select distinct pat.id,pat.lastname,pat.firstname,pat.middlename,pat.birthday,pat.snils" +
+                " from medcase vis" +
+                " left join patient pat on pat.id=vis.patient_id" +
+                " left join patientfond pf on (pf.lastname=pat.lastname and pf.firstname=pat.firstname and pf.middlename=pat.middlename and pf.birthday=pat.birthday)" +
+                " left join workcalendartime wct on wct.medcase_id=vis.id" +
+                " left join vocservicestream vss on vss.id=vis.servicestream_id" +
+                " where vis.datestart=to_date('" + dateVisit + "','dd.mm.yyyy')" +
+                " and vis.dtype='Visit'" +
+                " and (vis.noactuality is null or vis.noactuality=false)" +
+                " and vis.id is not null" +
+                " and wct.id is not null" +
+                " and (vss.code = 'OBLIGATORYINSURANCE')" +
+                " group by pat.id,wct.id,vis.datestart" +
+                " having max(pf.id) is null or (max(checkdate)<=current_date-7 and max(checkdate)<=vis.dateStart-7)";
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         List<Patient> patients = getPatients(service.executeNativeSql(sql));
         return FondCheckUtil.sync(aRequest, patients);

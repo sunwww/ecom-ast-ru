@@ -41,9 +41,6 @@ public class AddressTextListener {
 
     @PreRemove
     public void onRemove(LpuAreaAddressText aText) throws NamingException {
-        synchronized (SYNC) {
-            findService().onRemove(aText);
-        }
     }
 
     private IAddressPointService findService() throws NamingException {

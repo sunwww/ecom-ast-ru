@@ -28,14 +28,17 @@
             ,ksg.isoperation
             ,ksg.longKsg
             ,ksg.isFullPayment
+            , kuksg.value as f9_kuksg
              from VocKsg ksg
              left join vocBedSubType vbst on vbst.id=ksg.bedsubtype_id
+             left join E2KsgCoefficientHistory kuksg on kuksg.ksg_id = ksg.id and (kuksg.finishdate is null or kuksg.finishDate>=current_date)
              ${yearSql}
               order by ksg.year desc, vbst.id, ksg.code "/>
         <msh:section title='Результат поиска'>
             <msh:table  name="entryList" action="entityView-e2_vocKsg.do" idField="1" disableKeySupport="true" styleRow="6">
                 <msh:tableColumn columnName="КСГ" property="2" />
                 <msh:tableColumn columnName="KZ" property="3" />
+                <msh:tableColumn columnName="КУКсг(КС)" property="9"/>
                 <msh:tableColumn columnName="Профиль" property="4" />
                 <msh:tableColumn columnName="Тип коек" property="5" />
                 <msh:tableColumn columnName="Операционное КСГ" property="8" />

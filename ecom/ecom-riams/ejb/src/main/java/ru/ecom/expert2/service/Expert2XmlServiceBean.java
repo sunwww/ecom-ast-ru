@@ -73,6 +73,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     ILocalMonitorService monitorService;
     private @EJB
     IExpert2Service expertService;
+    private final static String EXPORT_DIR ="/rtf/expert2xml/";
 
     /**
      * Экспорт запроса в центральный сегмент
@@ -201,8 +202,8 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         if (!a3) {
             add(z, "FOR_POM", forPom); //форма помощи V014
             if (isNotTrue(entry.getIsEmergency())) {
-                addIfNotNull(z, "NPR_MO", entry.getDirectLpu() != null ? entry.getDirectLpu() : lpuRegNumber); //Направившее ЛПУ
-                addIfNotNull(z, "NPR_DATE", entry.getDirectDate() != null ? entry.getDirectDate() : entry.getStartDate()); //Дата направления на лечение ***
+                addIfNotNull(z, "NPR_MO", coalesce(entry.getDirectLpu(), lpuRegNumber)); //Направившее ЛПУ
+                addIfNotNull(z, "NPR_DATE", coalesce(entry.getDirectDate(), entry.getStartDate())); //Дата направления на лечение ***
             }
         }
 
@@ -247,7 +248,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             * */
         try {
             String entryType = entry.getEntryType();
-            boolean isHosp = false, isVmp = false, isPoliclinic = false, isExtDisp = false, isPoliclinicKdp = false;
             boolean a1, a2, a3, a4;
             switch (fileType) {
                 case "H":
@@ -269,26 +269,48 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     a3 = true;
                     a1 = a2 = a4 = false;
             }
-            boolean isNedonosh = false;
+            boolean isHosp, isVmp, isPoliclinic, isExtDisp, isPoliclinicKdp, isNedonosh;
             switch (entryType) {
                 case HOSPITAL_TYPE:
                     isHosp = true;
+                    isVmp = false;
+                    isPoliclinic = false;
+                    isExtDisp = false;
+                    isPoliclinicKdp = false;
                     isNedonosh = entry.getKsg() != null && ",st17.001,st17.002,st17.003,".contains("," + entry.getKsg().getCode() + ",");
                     break;
                 case VMP_TYPE:
+                    isHosp = false;
                     isVmp = true;
+                    isPoliclinic = false;
+                    isExtDisp = false;
+                    isPoliclinicKdp = false;
                     isNedonosh = isTrue(entry.getIsChild());
                     break;
                 case POLYCLINIC_TYPE:
                 case SERVICE_TYPE:
+                    isHosp = false;
+                    isVmp = false;
                     isPoliclinic = true;
+                    isExtDisp = false;
+                    isPoliclinicKdp = false;
+                    isNedonosh = false;
                     break;
                 case KDP_TYPE:
+                    isHosp = false;
+                    isVmp = false;
                     isPoliclinic = true;
+                    isExtDisp = false;
                     isPoliclinicKdp = true;
+                    isNedonosh = false;
                     break;
                 case EXTDISP_TYPE:
+                    isHosp = false;
+                    isVmp = false;
+                    isPoliclinic = false;
                     isExtDisp = true;
+                    isPoliclinicKdp = false;
+                    isNedonosh = false;
                     break;
                 default:
                     throw new IllegalStateException("UNKNOWN ENTRYTYPE" + entryType);
@@ -314,7 +336,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 add(pat, "SMO_NAM", entry.getInsuranceCompanyName());
             }
             add(pat, "NOVOR", makeNovorString(entry));
-            if (a1 && isNedonosh) { // && novorString.equals("0")) { //11.10.2018 по согласованию с фондом
+            if (a1 && isNedonosh) {
                 add(pat, "VNOV_D", entry.getNewbornWeight() + "");
             }
 
@@ -438,7 +460,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         if (isNotNull(consiliumResult)) { //Консилиум в любом случае если есть ЗНО.
                             Element cons = new Element("CONS");
                             add(cons, "PR_CONS", consiliumResult);
-                            if (isOneOf(consiliumResult,"1","2","3")){
+                            if (isOneOf(consiliumResult, "1", "2", "3")) {
                                 add(cons, "DT_CONS", cancerEntry.getConsiliumDate());
                             }
                             sl.addContent(cons);
@@ -452,7 +474,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                                 manager.persist(new E2EntryError(currentEntry, "NO_CANCERINFO"));
                                 return null;
                             }
-                            String serviceType = cancerEntry.getServiceType() != null ? cancerEntry.getServiceType() : "";
+                            String serviceType = coalesce(cancerEntry.getServiceType(), "");
                             add(onkSl, "DS1_T", cancerEntry.getOccasion());
                             addIfNotNull(onkSl, "STAD", cancerEntry.getStage());
                             addIfNotNull(onkSl, "ONK_T", cancerEntry.getTumor());
@@ -534,8 +556,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(ksgKpg, "BZTSZ", currentEntry.getBaseTarif());
                     add(ksgKpg, "KOEF_D", "1");
                     add(ksgKpg, "KOEF_U", "1");
-                    if (currentEntry.getKsgPosition() != null)
+                    if (currentEntry.getKsgPosition() != null){
                         addIfNotNull(ksgKpg, "CRIT", currentEntry.getKsgPosition().getDopPriznak());
+                    }
                     //DKK2
                     List<E2CoefficientPatientDifficultyEntryLink> difficultyEntryLinks = currentEntry.getPatientDifficulty();
                     if (!difficultyEntryLinks.isEmpty()) {
@@ -544,7 +567,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         for (E2CoefficientPatientDifficultyEntryLink link : difficultyEntryLinks) {
                             Element slKoef = new Element("SL_KOEF");
                             add(slKoef, "IDSL", link.getDifficulty().getCode());
-                            add(slKoef, "Z_SL", link.getValue() != null ? link.getValue() : link.getDifficulty().getValue());
+                            add(slKoef, "Z_SL", coalesce(link.getValue(),link.getDifficulty().getValue()));
                             ksgKpg.addContent(slKoef);
                         }
                     } else {
@@ -552,7 +575,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     }
                     sl.addContent(ksgKpg);
                 }
-                if (isHosp && isTrue(entry.getIsRehabBed())) add(sl, "REAB", "1");
+                if (isHosp && isTrue(entry.getIsRehabBed())) {
+                    add(sl, "REAB", "1");
+                }
                 String prvs = currentEntry.getFondDoctorSpecV021() != null ? currentEntry.getFondDoctorSpecV021().getCode() : "ERROR_" + currentEntry.getDoctorWorkfunction();
                 if (!a3) {
                     add(sl, "PRVS", prvs); //Специальность лечащего врача
@@ -599,7 +624,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     for (E2Entry child : children) {
                         boolean isFoundPriemService = false;
                         String visitService; //находим - есть ли первичный/повторный прием врача или создавать самим
-                        //    uslCnt++;
                         String uslDate = dateToString(child.getStartDate());
                         VocE2MedHelpProfile childProfile = child.getMedHelpProfile();
                         if (childProfile == null) {
@@ -617,13 +641,13 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         }
                         List<EntryMedService> serviceList = child.getMedServices();
                         for (EntryMedService service : serviceList) { //простые услуги в пол-ке
-                            //   uslCnt++;
                             String serviceCode = service.getMedService().getCode();
                             BigDecimal cost = service.getCost();
-                            //      uslSum = uslSum.add(cost);
                             sl.addContent(createUsl(a3, "" + (++uslCnt), lpuRegNumber, childProfile.getCode(), serviceCode, isChild, uslDate, uslDate
                                     , isNotNull(child.getMainMkb()) ? child.getMainMkb() : sl.getChildText("DS1"), "1", spec.getCode(), child.getDoctorSnils(), cost));
-                            if (serviceCode.equals(visitService)) isFoundPriemService = true;
+                            if (serviceCode.equals(visitService)) {
+                                isFoundPriemService = true;
+                            }
                         }
                         isFirst = false;
                         if (visitService != null && !isFoundPriemService) { //не нашли нужную услугу - создадим её сами!
@@ -794,7 +818,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         try {
             if (isCheckIsRunning) {
                 LOG.warn("Формирование чего-то уже запущено, выходим_ALREADY_RAN");
-                // return "Формирование чего-то уже запущено, выходим";
             }
             Date periodDate;
             isCheckIsRunning = true;
@@ -810,7 +833,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     monitor.finish("Необходимо указать номер и дату счета!");
                     return "";
                 }
-                if (isAnyIsNull(listEntry.getCheckDate(),listEntry.getCheckTime())) {
+                if (isAnyIsNull(listEntry.getCheckDate(), listEntry.getCheckTime())) {
                     monitor.finish("Олег, необходимо выполнить проверку перед формированием пакета");
                     return "";
 
@@ -937,7 +960,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     throw new IllegalStateException("Не найден случай с ИД: " + sluchId);
                 }
                 if (i == 0) { //вычисляем тип ДД по первой записи
-                    if (isDisp) dispType = entry.getSubType().getExtDispType().getCode();
+                    if (isDisp) {
+                        dispType = entry.getSubType().getExtDispType().getCode();
+                    }
                     billProperty = entry.getSubType().getBillProperty();
                 }
                 i++;
@@ -1054,15 +1079,16 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
 
             if (needCreateArchive) {
                 archiveName = createArchive(archiveName, new String[]{"H" + fileName + ".xml", "L" + fileName + ".xml"});
-                E2ExportPacketJournal journal = new E2ExportPacketJournal(billNumber, billDate, "/rtf/expert2xml/" + archiveName);
+                E2ExportPacketJournal journal = new E2ExportPacketJournal(billNumber, billDate, EXPORT_DIR + archiveName);
                 manager.persist(journal);
             }
             LOG.info("ALL SEEMS GOOD!");
 
             isCheckIsRunning = false;
-            monitor.setText("/rtf/expert2xml/" + archiveName);
-            monitor.finish("/rtf/expert2xml/" + archiveName);
-            return "/rtf/expert2xml/" + archiveName;
+
+            monitor.setText(EXPORT_DIR + archiveName);
+            monitor.finish(EXPORT_DIR + archiveName);
+            return EXPORT_DIR + archiveName;
         } catch (Exception err) {
             monitor.error("Произошла ошибка: " + err.getMessage(), err);
             LOG.error("ERR = ", err);
@@ -1219,7 +1245,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         return ret.get(0).toString();
     }
 
-    private <T> T getActualVocBySqlString(Class clazz, String sql) {
+    private <T> T getActualVocBySqlString(Class<T> clazz, String sql) {
         List<Object> list = manager.createNativeQuery(sql).getResultList();
         if (list.isEmpty()) {
             LOG.error("Не удалось найти действующее значение справочника " + clazz.getCanonicalName() + " с условием " + sql);
@@ -1285,7 +1311,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 }
 
                 //Удалим диагнозы, совпадающие с основным
-//                otherDiagnosis.removeIf(mainMkb::equals);
                 add(element, "DS2", otherDiagnosis.get(0));
 
             }
@@ -1323,5 +1348,14 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             return true;
         }
         return false;
+    }
+
+    private <T> T coalesce(T... values) {
+        for (T value : values) {
+            if (value != null) {
+                return value;
+            }
+        }
+        return null;
     }
 }
