@@ -18,10 +18,10 @@
             ActionUtil.updateParameter("PatientAttachment", "typeDefect", "3", request);
             ActionUtil.updateParameter("PatientAttachment", "typeCompany", "3", request);
             ActionUtil.updateParameter("PatientAttachment", "typeAreaCheck", "3", request);
-            ActionUtil.updateParameter("PatientAttachemnt", "typeDivide", "1", request);
-            ActionUtil.updateParameter("PatientAttachemnt", "typeFile", "csv", request);
-            ActionUtil.updateParameter("PatientAttachemnt", "typeResult", "file", request);
-            ActionUtil.updateParameter("PatientAttachemnt", "typeDispPlan", "ATTACHMENT", request);
+            ActionUtil.updateParameter("PatientAttachment", "typeDivide", "1", request);
+            ActionUtil.updateParameter("PatientAttachment", "typeFile", "csv", request);
+            ActionUtil.updateParameter("PatientAttachment", "typeResult", "file", request);
+            ActionUtil.updateParameter("PatientAttachment", "typeDispPlan", "ATTACHMENT", request);
 
         %>
 
