@@ -55,7 +55,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     private static final String ZIP = ".zip";
     private static final String XML = ".xml";
     private static final String CSV = ".csv";
-    private static final SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
+    private static final SimpleDateFormat YYYYMMDD = new SimpleDateFormat("dd.MM.yyyy");
 
     private final WebQueryResult res = new WebQueryResult();
     private final Collection<WebQueryResult> errList = new ArrayList<>();
@@ -65,7 +65,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     private @PersistenceContext
     EntityManager entityManager;
 
-  /*  public static void main(String[] args) {
+ /*   public static void main(String[] args) {
         AddressPointServiceBean bean = new AddressPointServiceBean();
         bean.createCsv("d:/java/", "123", bean.makeTest());
     }*/
@@ -421,13 +421,15 @@ public class AddressPointServiceBean implements IAddressPointService {
         return  "\""+String.join("\";\"", PatientAttachmentDto.HEADERS)+"\"";
     }
 
-   /* private List<Object[]> makeTest() {
+ /*   private List<Object[]> makeTest() {
         List<Object[]> list = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             Object[] o = new Object[18];
             for (int j = 0; j < 18; j++) {
+
                 o[j] = "ИВАНОВ_" + i + "_" + j;
             }
+            o[4] = "24.12.1986";
             list.add(o);
         }
         return list;
