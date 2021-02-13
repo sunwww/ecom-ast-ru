@@ -40,7 +40,7 @@ public class AttachmentByLpuAction extends BaseAction {
                 String typeDivide = ActionUtil.updateParameter("PatientAttachment", "typeDivide", "1", request);
                 String typeAreaCheck = ActionUtil.updateParameter("PatientAttachment", "typeAreaCheck", "3", request);
                 String returnType = ActionUtil.updateParameter("PatientAttachment", "typeResult", "file", request); //тип архива (file, prik, zip)
-                String fileType = ActionUtil.updateParameter("PatientAttachment", "fileType", "csv", request); //тип файла (xml, csv)
+                String typeExportFile = ActionUtil.updateParameter("PatientAttachment", "typeExportFile", "xml", request); //тип файла (xml, csv)
                 String typeDispPlan = ActionUtil.updateParameter("PatientAttachment", "typeDispPlan", "ATTACHMENT", request); //По какому алгоритму формировать выгрузку (план либо прикрепления)
                 Date cur = DateFormat.parseDate(form.getPeriod());
                 Calendar cal = Calendar.getInstance();
@@ -108,7 +108,7 @@ public class AttachmentByLpuAction extends BaseAction {
                     if (typeRead.equals("1")) { //форируем файл по прик населению
                         fs = service.exportAll(prefix, sqlAdd.toString()
                                 , form.getLpu(), form.getArea(), format2.format(cal.getTime()), format2.format(calTo.getTime()), format1.format(calTo.getTime()), form.getNumberReestr()
-                                , form.getNumberPackage(), form.getCompany(), needDivide, "1",fileType, returnType);
+                                , form.getNumberPackage(), form.getCompany(), needDivide, "1", typeExportFile, returnType);
                     } else { //план ДД
                         fs = service.exportExtDispPlanAll(null, prefix, sqlAdd.toString()
                                 , form.getLpu(), form.getArea(), format2.format(cal.getTime()), format2.format(calTo.getTime()), format3.format(calTo.getTime()), form.getNumberReestr()

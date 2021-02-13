@@ -19,7 +19,7 @@
             ActionUtil.updateParameter("PatientAttachment", "typeCompany", "3", request);
             ActionUtil.updateParameter("PatientAttachment", "typeAreaCheck", "3", request);
             ActionUtil.updateParameter("PatientAttachment", "typeDivide", "1", request);
-            ActionUtil.updateParameter("PatientAttachment", "typeFile", "csv", request);
+            ActionUtil.updateParameter("PatientAttachment", "typeFile", "xml", request);
             ActionUtil.updateParameter("PatientAttachment", "typeResult", "file", request);
             ActionUtil.updateParameter("PatientAttachment", "typeDispPlan", "ATTACHMENT", request);
 
@@ -200,10 +200,10 @@
                                                                                         id="typeResultLabel">Отображать:</label>
                     </td>
                     <td onclick="this.childNodes[1].checked='checked';">
-                        <input type="radio" name="typeFile" value="xml" checked> xml-файл
+                        <input type="radio" name="typeExportFile" value="xml"> xml-файл
                     </td>
                     <td onclick="this.childNodes[1].checked='checked';">
-                        <input type="radio" name="typeFile" value="csv" checked> csv-файл
+                        <input type="radio" name="typeExportFile" value="csv" checked> csv-файл
                     </td>
                 </msh:row>
                 <msh:row>
@@ -281,7 +281,7 @@
                     checkFieldUpdate('typeDivide', '${typeDivide}', 1);
                     checkFieldUpdate('typeAreaCheck', '${typeAreaCheck}', 3);
                     checkFieldUpdate('typeResult', '${typeResult}', 'file');
-                    checkFieldUpdate('typeFile', '${typeFile}', 'csv');
+                    checkFieldUpdate('typeExportFile', '${typeExportFile}', 'xml');
                     checkFieldUpdate('typeDispPlan', '${typeDispPlan}', 'attachment');
                     $('aView').innerHTML = $('filename').value;
 
@@ -356,7 +356,7 @@
                     }
 
                     function checkFieldUpdate(aField, aValue, aDefaultValue) {
-                        if (jQuery(":radio[name=" + aField + "][value='" + aValue + "']").val()) {
+                        if (jQuery(":radio[name=" + aField + "][value='" + aValue + "']").val() != undefined) {
                             jQuery(":radio[name=" + aField + "][value='" + aValue + "']").prop('checked', true);
                         } else {
                             jQuery(":radio[name=" + aField + "][value='" + aDefaultValue + "']").prop('checked', true);

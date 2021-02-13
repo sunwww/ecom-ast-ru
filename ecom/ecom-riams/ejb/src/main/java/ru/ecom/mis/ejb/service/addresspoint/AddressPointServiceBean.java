@@ -409,7 +409,7 @@ public class AddressPointServiceBean implements IAddressPointService {
      * @param patientList
      */
     private void createCsv(String workDir, String filename, List<Object[]> patientList) {
-        File outFile = new File(workDir + "/" + filename);
+        File outFile = new File(workDir + "/" + filename + CSV);
         try {
             PrintWriter writer = new PrintWriter(outFile, "windows-1251");
             StatefulBeanToCsv<PatientAttachmentDto> beanToCsv = new StatefulBeanToCsvBuilder(writer).withSeparator(';').build();
