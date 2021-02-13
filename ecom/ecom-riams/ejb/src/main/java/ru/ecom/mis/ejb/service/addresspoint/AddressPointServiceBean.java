@@ -36,10 +36,7 @@ import java.io.*;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static ru.nuzmsh.util.EqualsUtil.isEquals;
 import static ru.nuzmsh.util.EqualsUtil.isOneOf;
@@ -366,8 +363,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         return res;
     }
 
-    private String createArchive(String aWorkDir, String archiveName, String[] aFileNames) {
-
+    private void createArchive(String aWorkDir, String archiveName, String[] aFileNames) {
         StringBuilder sb = new StringBuilder();
         sb.append("zip -r -j -9 ").append(aWorkDir).append("/").append(archiveName).append(" ");
         for (String filename : aFileNames) {
@@ -379,23 +375,20 @@ public class AddressPointServiceBean implements IAddressPointService {
                 Runtime.getRuntime().exec("zip -d " + aWorkDir + "/" + archiveName + " *");
             } catch (Exception ignored) {
             }//Не удалось очистить архив, т.к. его нету. Ничего страшного)
-
-
             Runtime.getRuntime().exec(sb.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return archiveName;
     }
 
     private void setExportDate(Long attachmentId) {
         entityManager.createNativeQuery("update lpuattachedbydepartment set exportDate=current_date , defectperiod='' where id=" + attachmentId).executeUpdate();
     }
 
-    private void createFile(String workDir, String filename, String aPeriodByReestr, String aNReestr
+    private void createFile(String workDir, String filename, String aPeriodByReestr, String regNumber
             , List<Object[]> listPat, String[][] aProps, String fileType) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
         if (isEquals(fileType, "xml")) {
-            createXml(workDir, filename, aPeriodByReestr, aNReestr, listPat, aProps, "ZAP");
+            createXml(workDir, filename, aPeriodByReestr, regNumber, listPat, aProps, "ZAP");
         } else if (isEquals(fileType, "csv")) {
             createCsv(workDir, filename, listPat);
         }
@@ -413,6 +406,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         try {
             PrintWriter writer = new PrintWriter(outFile, "windows-1251");
             StatefulBeanToCsv<PatientAttachmentDto> beanToCsv = new StatefulBeanToCsvBuilder(writer).withSeparator(';').build();
+            writer.println(printHeaders());
             for (Object[] pat : patientList) {
                 beanToCsv.write(createPatient(pat));
             }
@@ -421,6 +415,10 @@ public class AddressPointServiceBean implements IAddressPointService {
         } catch (FileNotFoundException | CsvRequiredFieldEmptyException | CsvDataTypeMismatchException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+    }
+
+    private String printHeaders() {
+        return  "\""+String.join("\";\"", PatientAttachmentDto.HEADERS)+"\"";
     }
 
    /* private List<Object[]> makeTest() {
@@ -436,37 +434,37 @@ public class AddressPointServiceBean implements IAddressPointService {
     }*/
 
     private PatientAttachmentDto createPatient(Object[] patObject) {
-        boolean isAttached = isEquals("1", s(patObject[12]));
+        boolean isAttached = isEquals("1", toString(patObject[12]));
         PatientAttachmentDto pat = new PatientAttachmentDto();
         pat.setMedPolicyType("П"); //авось прокатит
-        pat.setLastname(s(patObject[0]));
-        pat.setFirstname(s(patObject[1]));
-        pat.setMiddlename(s(patObject[2]));
-        pat.setBirthDate(d(patObject[4]));
-        pat.setSnils(s(patObject[5]));
-        pat.setPassportType(s(patObject[6]));
+        pat.setLastname(toString(patObject[0]));
+        pat.setFirstname(toString(patObject[1]));
+        pat.setMiddlename(toString(patObject[2]));
+        pat.setBirthDate(toDate(patObject[4]));
+        pat.setSnils(toString(patObject[5]));
+        pat.setPassportType(toString(patObject[6]));
 //        pat.setPassportNumber(s(patObject[7])); +8
 //        pat.setPassportDate(d(patObject[9]));
-        pat.setCommonNumber(s(patObject[10]));
-        pat.setAttachedMetod(s(patObject[11]));
+        pat.setCommonNumber(toString(patObject[10]));
+        pat.setAttachedMethod(toString(patObject[11]));
         if (isAttached) {
-            pat.setAttachedDate(d(patObject[13]));
+            pat.setAttachedDate(toDate(patObject[13]));
         } else {
-            pat.setDettachedDate(d(patObject[13]));
+            pat.setDettachedDate(toDate(patObject[13]));
         }
-        pat.setDepartmentCode(s(patObject[15]));
-        pat.setAreaNumber(s(patObject[16]));
-        pat.setDoctorSnils(s(patObject[17]));
+        pat.setDepartmentCode(toString(patObject[15]));
+        pat.setAreaNumber(toString(patObject[16]));
+        pat.setDoctorSnils(toString(patObject[17]));
         return pat;
     }
 
     //toString
-    private String s(Object o) {
+    private String toString(Object o) {
         return o == null ? null : o.toString();
     }
 
     //toDate
-    private Date d(Object o) {
+    private Date toDate(Object o) {
         try {
             return o == null ? null : new Date(YYYYMMDD.parse(o.toString()).getTime());
         } catch (ParseException e) {
@@ -474,8 +472,8 @@ public class AddressPointServiceBean implements IAddressPointService {
         }
     }
 
-    private void createXml(String workDir, String filename, String aPeriodByReestr, String aNReestr
-            , List<Object[]> listPat, String[][] aProps, String zapName
+    private void createXml(String workDir, String filename, String regPeriod, String regNumber
+            , List<Object[]> listPat, String[][] props, String zapName
     ) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
         XmlDocument xmlDoc = new XmlDocument();
 
@@ -483,20 +481,20 @@ public class AddressPointServiceBean implements IAddressPointService {
         File outFile = new File(workDir + "/" + filename + XML);
         Element title = xmlDoc.newElement(root, "ZGLV", null);
 
-        if (zapName != null && zapName.equals("NPR")) { //Для планирования ДД
+        if ("NPR".equals(zapName)) { //Для планирования ДД
             xmlDoc.newElement(title, "VERSION", "1.0");
-            xmlDoc.newElement(title, "DATA", aPeriodByReestr);
+            xmlDoc.newElement(title, "DATA", regPeriod);
         } else {
-            xmlDoc.newElement(title, "PERIOD", aPeriodByReestr.substring(2, 4));
-            xmlDoc.newElement(title, "N_REESTR", aNReestr);
+            xmlDoc.newElement(title, "PERIOD", regPeriod.substring(2, 4));
+            xmlDoc.newElement(title, "N_REESTR", regNumber);
         }
 
         xmlDoc.newElement(title, "FILENAME", filename);
         int i = 0;
         for (Object[] pat : listPat) {
             int errorZap = 0;
-            for (int j = 0; j < aProps.length; j++) {
-                String[] prop = aProps[j];
+            for (int j = 0; j < props.length; j++) {
+                String[] prop = props[j];
                 if (!checkIsRequiedValueIsNotEmpty(pat[j], prop[3])) {
                     WebQueryResult ress = new WebQueryResult();
                     ress.set1(pat[pat.length - 2]);
@@ -514,8 +512,8 @@ public class AddressPointServiceBean implements IAddressPointService {
             if (errorZap == 0) {
                 Element zap = xmlDoc.newElement(root, zapName, null);
                 xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i));
-                for (int ind = 0; ind < aProps.length; ind++) {
-                    String[] prop = aProps[ind];
+                for (int ind = 0; ind < props.length; ind++) {
+                    String[] prop = props[ind];
                     xmlDoc.newElement(zap, prop[1], XmlUtil.getStringValue(pat[ind]));
                 }
                 if (!"NPR".equals(zapName)) {

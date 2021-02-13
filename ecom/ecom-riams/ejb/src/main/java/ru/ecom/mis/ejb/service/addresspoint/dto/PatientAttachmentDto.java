@@ -7,6 +7,9 @@ import com.opencsv.bean.CsvDate;
 import java.sql.Date;
 
 public class PatientAttachmentDto {
+    public final static String[] HEADERS = {"Тип_ДПФС", "ИД_полиса", "ЕНП", "Фамилия", "Имя", "Отчество", "Дата_рождения"
+            , "Место_рождения", "Тип_УДЛ", "", "Дата_УДЛ", "Орган_УДЛ", "СНИЛС", "ИД_МО","Способ_прикрепления","Тип_прикрепления"
+    ,"Дата_прикрепления","Дата_открепления","ОИД_МО","Код_подразделения","Код_участка","СНИЛС_врача","Категория_врача"};
     @CsvBindByName(column = "Тип_ДПФС")
     @CsvBindByPosition(position = 0)
     String medPolicyType;
@@ -35,7 +38,6 @@ public class PatientAttachmentDto {
     @CsvBindByName(column = "Тип_УДЛ")
     @CsvBindByPosition(position = 8)
     String passportType;
-    @CsvBindByName()
     String passportNumber = null;
     @CsvBindByName(column = " Дата_УДЛ")
     @CsvBindByPosition(position = 9)
@@ -52,7 +54,7 @@ public class PatientAttachmentDto {
     String lpuCode;
     @CsvBindByName(column = "Способ_прикрепления")
     @CsvBindByPosition(position = 13)
-    String attachedMetod;
+    String attachedMethod;
     @CsvBindByName(column = "Тип_прикрепления")
     @CsvBindByPosition(position = 14)
     String attachedType;
@@ -192,12 +194,12 @@ public class PatientAttachmentDto {
         this.lpuCode = lpuCode;
     }
 
-    public String getAttachedMetod() {
-        return attachedMetod;
+    public String getAttachedMethod() {
+        return attachedMethod;
     }
 
-    public void setAttachedMetod(String attachedMetod) {
-        this.attachedMetod = attachedMetod;
+    public void setAttachedMethod(String attachedMethod) {
+        this.attachedMethod = attachedMethod;
     }
 
     public String getAttachedType() {
