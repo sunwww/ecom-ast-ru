@@ -38,48 +38,49 @@ public class PatientAttachmentDto {
     @CsvBindByName(column = "Тип_УДЛ")
     @CsvBindByPosition(position = 8)
     String passportType;
+    @CsvBindByPosition(position = 9)
     String passportNumber = null;
     @CsvBindByName(column = " Дата_УДЛ")
-    @CsvBindByPosition(position = 9)
+    @CsvBindByPosition(position = 10)
     @CsvDate("yyyyMMdd")
     Date passportDate = null;
     @CsvBindByName(column = "Орган_УДЛ")
-    @CsvBindByPosition(position = 10)
+    @CsvBindByPosition(position = 11)
     String passportWhom = null;
     @CsvBindByName(column = "СНИЛС")
-    @CsvBindByPosition(position = 11)
+    @CsvBindByPosition(position = 12)
     String snils = null;
     @CsvBindByName(column = "ИД_МО")
-    @CsvBindByPosition(position = 12)
+    @CsvBindByPosition(position = 13)
     String lpuCode;
     @CsvBindByName(column = "Способ_прикрепления")
-    @CsvBindByPosition(position = 13)
+    @CsvBindByPosition(position = 14)
     String attachedMethod;
     @CsvBindByName(column = "Тип_прикрепления")
-    @CsvBindByPosition(position = 14)
+    @CsvBindByPosition(position = 15)
     String attachedType;
     @CsvBindByName(column = "Дата_прикрепления")
-    @CsvBindByPosition(position = 15)
+    @CsvBindByPosition(position = 16)
     @CsvDate("yyyyMMdd")
     Date attachedDate;
     @CsvBindByName(column = "Дата_открепления")
-    @CsvBindByPosition(position = 16)
+    @CsvBindByPosition(position = 17)
     @CsvDate("yyyyMMdd")
     Date dettachedDate;
     @CsvBindByName(column = "ОИД_МО")
-    @CsvBindByPosition(position = 17)
+    @CsvBindByPosition(position = 18)
     String lpuOid;
     @CsvBindByName(column = "Код_подразделения")
-    @CsvBindByPosition(position = 18)
+    @CsvBindByPosition(position = 19)
     String departmentCode;
     @CsvBindByName(column = "Код_участка")
-    @CsvBindByPosition(position = 19)
+    @CsvBindByPosition(position = 20)
     String areaNumber;
     @CsvBindByName(column = "СНИЛС_врача")
-    @CsvBindByPosition(position = 20)
+    @CsvBindByPosition(position = 21)
     String doctorSnils;
     @CsvBindByName(column = "Категория_врача")
-    @CsvBindByPosition(position = 21)
+    @CsvBindByPosition(position = 22)
     String doctorType = "1"; //врач
 
     public String getMedPolicyType() {
