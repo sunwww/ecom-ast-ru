@@ -21,6 +21,7 @@ import ru.ecom.mis.ejb.service.addresspoint.dto.PatientAttachmentDto;
 import ru.ecom.mis.ejb.service.patient.QueryClauseBuilder;
 import ru.ecom.report.util.XmlDocument;
 import ru.nuzmsh.util.CollectionUtil;
+import ru.nuzmsh.util.format.DateFormat;
 
 import javax.annotation.EJB;
 import javax.ejb.Local;
@@ -35,7 +36,6 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import java.io.*;
 import java.sql.Date;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static ru.nuzmsh.util.EqualsUtil.isEquals;
@@ -55,7 +55,6 @@ public class AddressPointServiceBean implements IAddressPointService {
     private static final String ZIP = ".zip";
     private static final String XML = ".xml";
     private static final String CSV = ".csv";
-    private static final SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 
     private final WebQueryResult res = new WebQueryResult();
     private final Collection<WebQueryResult> errList = new ArrayList<>();
@@ -193,8 +192,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         StringBuilder filenames = new StringBuilder();
         errList.clear();
         boolean lpuCheck = lpuId != null && lpuId > 0;
-        EjbEcomConfig config = EjbEcomConfig.getInstance();
-        String workDir = config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+        String workDir = EjbEcomConfig.getInstance().get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
         String filename;
         StringBuilder sql = new StringBuilder();
         List<Object[]> listPat;
@@ -242,53 +240,57 @@ public class AddressPointServiceBean implements IAddressPointService {
 
         }
         if (needDivide) {
-            StringBuilder sqlGroup = new StringBuilder();
-            sqlGroup.append("select lp.company_id,vri.smocode");
-            sqlGroup.append(" from Patient p");
-            sqlGroup.append(" left join MisLpu ml1 on ml1.id=p.lpu_id");
-            sqlGroup.append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id");
-            sqlGroup.append(" left join MisLpu ml2 on ml2.id=lp.lpu_id");
-            sqlGroup.append(" left join VocAttachedType vat on lp.attachedType_id=vat.id");
-            sqlGroup.append(" left join VocIdentityCard vic on vic.id=p.passportType_id");
-            sqlGroup.append(" left join REG_IC vri on vri.id=lp.company_id");
-            sqlGroup.append(" where ");
+            StringBuilder sqlGroup = new StringBuilder()
+                    .append("select lp.company_id,vri.smocode")
+                    .append(" from Patient p")
+                    .append(" left join MisLpu ml1 on ml1.id=p.lpu_id")
+                    .append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id")
+                    .append(" left join MisLpu ml2 on ml2.id=lp.lpu_id")
+                    .append(" left join VocAttachedType vat on lp.attachedType_id=vat.id")
+                    .append(" left join VocIdentityCard vic on vic.id=p.passportType_id")
+                    .append(" left join REG_IC vri on vri.id=lp.company_id")
+                    .append(" where ");
             if (companyId != null && companyId != 0)
                 sqlGroup.append("lp.company_id='").append(companyId).append("' and ");
             if (lpuCheck)
                 sqlGroup.append(" (p.lpu_id='").append(lpuId).append("' or lp.lpu_id='").append(lpuId).append("' or ml1.parent_id='").append(lpuId).append("' or ml2.parent_id='").append(lpuId).append("') and ");
-            if (lpuCheck && areaId != null && areaId.intValue() > 0)
+            if (lpuCheck && areaId != null && areaId > 0L) {
                 sqlGroup.append(" (p.lpuArea_id='").append(areaId).append("' or lp.area_id='").append(areaId).append("') and ");
-            sqlGroup.append(" p.noActuality is not true and p.deathDate is null ");
-            sqlGroup.append(" ").append(addSql);
-            sqlGroup.append(" group by lp.company_id,vri.smocode");
-            sqlGroup.append(" order by lp.company_id,vri.smocode");
+            }
+            sqlGroup.append(" p.noActuality is not true and p.deathDate is null ")
+                    .append(" ").append(addSql)
+                    .append(" group by lp.company_id,vri.smocode")
+                    .append(" order by lp.company_id,vri.smocode");
             List<Object[]> listComp = entityManager.createNativeQuery(sqlGroup.toString())
                     .setMaxResults(90000).getResultList();
 
-            for (Object[] comp : listComp) {
-                filename = "P" + filenamePrefix + reestrNum + "S" + (comp[1] == null ? "-" : comp[1])
-                        + "_" + periodByReestr + XmlUtil.namePackage(packageNum);
+            for (Object[] company : listComp) {
+                filename = getFilenameForAttachment(filenamePrefix, periodByReestr, reestrNum, packageNum, fileType, company[1]);
+
                 filenames.append("#").append(filename).append(".").append(fileType);
 
                 sql.setLength(0);
-                sql.append("select ").append(fld);
-                sql.append(" ,p.id as pid, lp.id as lpid");
-                sql.append(" from Patient p");
-                sql.append(" left join MisLpu ml1 on ml1.id=p.lpu_id");
-                sql.append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id");
-                sql.append(" left join MisLpu ml2 on ml2.id=lp.lpu_id");
-                sql.append(" left join VocAttachedType vat on lp.attachedType_id=vat.id");
-                sql.append(" left join VocIdentityCard vic on vic.id=p.passportType_id");
-                sql.append(" left join lpuArea la on la.id=lp.area_id");
-                sql.append(" left join mislpu ml3 on ml3.id= la.lpu_id");
-                sql.append(" left join workfunction wf on wf.id=la.workfunction_id");
-                sql.append(" left join worker w on w.id=wf.worker_id");
-                sql.append(" left join patient wp on wp.id=w.person_id");
-
-                sql.append(" where ");
-                sql.append(" lp.company_id");
-                if (comp[0] != null) {
-                    sql.append("=").append(comp[0]);
+                sql.append("select ").append(fld)
+                        .append(", mp.series ||' № '||mp.polnumber as mpNumber")
+                        .append(", case when vmpt.code ='1' then 'С' when vmpt.code ='2' then 'В' when vmpt.code='3' then 'П' else 'ХЗ' end as medpolicytype")
+                        .append(" ,p.id as pid, lp.id as lpid")
+                        .append(" from Patient p")
+                        .append(" left join MisLpu ml1 on ml1.id=p.lpu_id")
+                        .append(" left join LpuAttachedByDepartment lp on lp.patient_id=p.id")
+                        .append(" left join MisLpu ml2 on ml2.id=lp.lpu_id")
+                        .append(" left join VocAttachedType vat on lp.attachedType_id=vat.id")
+                        .append(" left join VocIdentityCard vic on vic.id=p.passportType_id")
+                        .append(" left join lpuArea la on la.id=lp.area_id")
+                        .append(" left join mislpu ml3 on ml3.id= la.lpu_id")
+                        .append(" left join workfunction wf on wf.id=la.workfunction_id")
+                        .append(" left join worker w on w.id=wf.worker_id")
+                        .append(" left join patient wp on wp.id=w.person_id")
+                        .append(" left join medpolicy mp on mp.patient_id=p.id and coalesce(mp.actualdateto, current_date)>=current_date and mp.dtype='MedPolicyOmc'")
+                        .append(" left join vocmedpolicyomc vmpt on vmpt.id=mp.type_id")
+                        .append(" where ")
+                        .append(" lp.company_id");
+                if (company[0] != null) {
+                    sql.append("=").append(company[0]);
                 } else {
                     sql.append(" is null ");
                 }
@@ -299,20 +301,23 @@ public class AddressPointServiceBean implements IAddressPointService {
                 if (lpuCheck && areaId != null && areaId.intValue() > 0) {
                     sql.append(" (p.lpuArea_id='").append(areaId).append("' or lp.area_id='").append(areaId).append("') and ");
                 }
-                sql.append(" p.noActuality is not true and p.deathDate is null ");
-                sql.append(" ").append(addSql);
-                sql.append(" group by p.id, lp.id, ").append(fldGroup);
-                sql.append(" order by p.lastname,p.firstname,p.middlename,p.birthday");
+                sql.append(" p.noActuality is not true and p.deathDate is null ")
+                        .append(" ").append(addSql)
+                        .append(" group by p.id, lp.id, mp.series ,mp.polnumber ,vmpt.code, ").append(fldGroup)
+                        .append(" order by p.lastname,p.firstname,p.middlename,p.birthday");
                 listPat = entityManager.createNativeQuery(sql.toString())
                         .setMaxResults(90000).getResultList();
                 createFile(workDir, filename, periodByReestr, reestrNum, listPat, props, fileType);
 
             }
         } else {
-            filename = "P_" + filenamePrefix + reestrNum + "_" + periodByReestr + XmlUtil.namePackage(packageNum);
+            filename = getFilenameForAttachment(filenamePrefix, periodByReestr, reestrNum, packageNum, fileType, null);
+
             filenames.append("#").append(filename).append(".").append(fileType);
             sql.setLength(0);
             sql.append("select ").append(fld)
+                    .append(", mp.series ||' № '||mp.polnumber as mpNumber")
+                    .append(", case when vmpt.code ='1' then 'С' when vmpt.code ='2' then 'В' when vmpt.code='3' then 'П' else 'ХЗ' end as medpolicytype")
                     .append(" ,p.id as pid, lp.id as lpid")
                     .append(" from Patient p")
                     .append(" left join MisLpu ml1 on ml1.id=p.lpu_id")
@@ -325,6 +330,8 @@ public class AddressPointServiceBean implements IAddressPointService {
                     .append(" left join workfunction wf on wf.id=la.workfunction_id")
                     .append(" left join worker w on w.id=wf.worker_id")
                     .append(" left join patient wp on wp.id=w.person_id")
+                    .append(" left join medpolicy mp on mp.patient_id=p.id and coalesce(mp.actualdateto, current_date)>=current_date and mp.dtype='MedPolicyOmc'")
+                    .append(" left join vocmedpolicyomc vmpt on vmpt.id=mp.type_id")
                     .append(" where ");
             if (companyId != null && companyId != 0) {
                 sql.append("lp.company_id='").append(companyId).append("' and ");
@@ -337,7 +344,7 @@ public class AddressPointServiceBean implements IAddressPointService {
             }
             sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ")
                     .append(addSql)
-                    .append(" group by p.id, lp.id, ").append(fldGroup)
+                    .append(" group by p.id, lp.id, mp.series ,mp.polnumber ,vmpt.code, ").append(fldGroup)
                     .append(" order by p.lastname,p.firstname,p.middlename,p.birthday");
             listPat = entityManager.createNativeQuery(sql.toString())
                     .setMaxResults(90000).getResultList();
@@ -361,6 +368,24 @@ public class AddressPointServiceBean implements IAddressPointService {
 
         res.set1(filenames.length() > 0 ? filenames.substring(1) : "");
         return res;
+    }
+
+    private String getFilenameForAttachment(String filenamePrefix, String periodByReestr, String reestrNum, String packageNum, String fileType, Object smoCode) {
+        String filename;
+        if ("xml".equals(fileType)) {
+            filename = "P" + filenamePrefix + reestrNum + "S" + (smoCode == null ? "-" : smoCode)
+                    + "_" + periodByReestr + XmlUtil.namePackage(packageNum);
+        } else { //csv
+            String currentDate;
+            try {
+                currentDate = DateFormat.formatToLogic(new Date(System.currentTimeMillis()));
+
+            } catch (ParseException e) {
+                currentDate = "";
+            }
+            filename = "MO2" + reestrNum + currentDate + (smoCode == null ? "" : smoCode);
+        }
+        return filename;
     }
 
     private void createArchive(String aWorkDir, String archiveName, String[] aFileNames) {
@@ -418,7 +443,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     }
 
     private String printHeaders() {
-        return  "\""+String.join("\";\"", PatientAttachmentDto.HEADERS)+"\"";
+        return "\"" + String.join("\";\"", PatientAttachmentDto.HEADERS) + "\"";
     }
 
    /* private List<Object[]> makeTest() {
@@ -435,16 +460,17 @@ public class AddressPointServiceBean implements IAddressPointService {
 
     private PatientAttachmentDto createPatient(Object[] patObject) {
         boolean isAttached = isEquals("1", toString(patObject[12]));
+        String policyType = toString(patObject[20]);
         PatientAttachmentDto pat = new PatientAttachmentDto();
-        pat.setMedPolicyType("П"); //авось прокатит
+        pat.setMedPolicyType(policyType);
         pat.setLastname(toString(patObject[0]));
         pat.setFirstname(toString(patObject[1]));
         pat.setMiddlename(toString(patObject[2]));
-        pat.setBirthDate(toDate(patObject[4]));
-        pat.setSnils(toString(patObject[5]));
-        pat.setPassportType(toString(patObject[6]));
-//        pat.setPassportNumber(s(patObject[7])); +8
-//        pat.setPassportDate(d(patObject[9]));
+        pat.setBirthDate(toDate(patObject[3]));
+        pat.setSnils(toString(patObject[4]));
+        pat.setPassportType(toString(patObject[5]));
+        pat.setPassportNumber(toString(patObject[6]) + " " + toString(patObject[7]));
+        pat.setPassportDate(toDate(patObject[8]));
         pat.setCommonNumber(toString(patObject[10]));
         pat.setAttachedMethod(toString(patObject[11]));
         if (isAttached) {
@@ -455,6 +481,9 @@ public class AddressPointServiceBean implements IAddressPointService {
         pat.setDepartmentCode(toString(patObject[15]));
         pat.setAreaNumber(toString(patObject[16]));
         pat.setDoctorSnils(toString(patObject[17]));
+        if (!isEquals("П", policyType)) {
+            pat.setMedPolicyNumber(toString(patObject[19]));
+        }
         return pat;
     }
 
@@ -466,7 +495,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     //toDate
     private Date toDate(Object o) {
         try {
-            return o == null ? null : new Date(YYYYMMDD.parse(o.toString()).getTime());
+            return DateFormat.parseSqlDate(o.toString(), "yyyy-MM-dd");
         } catch (ParseException e) {
             return null;
         }
@@ -492,7 +521,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         xmlDoc.newElement(title, "FILENAME", filename);
         int i = 0;
         for (Object[] pat : listPat) {
-            int errorZap = 0;
+            boolean isError = false;
             for (int j = 0; j < props.length; j++) {
                 String[] prop = props[j];
                 if (!checkIsRequiedValueIsNotEmpty(pat[j], prop[3])) {
@@ -506,10 +535,10 @@ public class AddressPointServiceBean implements IAddressPointService {
                         ress.set3("Пациент - " + pat[0] + " " + pat[1] + " " + pat[2] + ". Неверно заполнено поле \"" + prop[4] + "\" - " + pat[j]);
                     }
                     errList.add(ress);
-                    errorZap = 1;
+                    isError = true;
                 }
             }
-            if (errorZap == 0) {
+            if (!isError) {
                 Element zap = xmlDoc.newElement(root, zapName, null);
                 xmlDoc.newElement(zap, "IDCASE", XmlUtil.getStringValue(++i));
                 for (int ind = 0; ind < props.length; ind++) {
