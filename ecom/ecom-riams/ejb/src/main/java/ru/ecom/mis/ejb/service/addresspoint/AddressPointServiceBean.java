@@ -495,7 +495,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     //toDate
     private Date toDate(Object o) {
         try {
-            return DateFormat.parseSqlDate(o.toString(), "yyyy-MM-dd");
+            return o == null ? null : DateFormat.parseSqlDate(o.toString(), "yyyy-MM-dd");
         } catch (ParseException e) {
             return null;
         }
