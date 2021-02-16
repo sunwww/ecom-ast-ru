@@ -1,11 +1,11 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <project default="all" name="ecom-report" basedir=".">
 
     <property name="appname" value="ecom-report"/>
     <property name='dirname' value="ecom/report"/>
 
-    <import file="../ant-support/property-skeleton.xml" />
+    <property file="../ant-support/config.properties" />
 
     <fileset id="compile.fileset" dir="${libdir}/">
         <include name="msh/msh.jar"/>

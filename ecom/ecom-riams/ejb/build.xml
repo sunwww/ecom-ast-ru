@@ -4,7 +4,7 @@
 	<property name="appname" value="riams" />
 	<property name='dirname' value="ecom/riams" />
 
-	<import file="../../ant-support/property-skeleton.xml" />
+	<property file="../../ant-support/config.properties" />
 
 	<import file="../../ant-support/ejb-skeleton.xml" />
 

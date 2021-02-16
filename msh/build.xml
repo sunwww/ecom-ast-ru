@@ -6,7 +6,7 @@
     <property name='dirname' value="msh"/>
     <property name="build.dir" value="target"/>
 
-    <import file="../ecom/ant-support/property-skeleton.xml" />
+    <property file="../ecom/ant-support/config.properties" />
 
     <target name="all" depends="clean,compile,generate.web,package,deploy" />
 

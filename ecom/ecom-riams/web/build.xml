@@ -3,7 +3,7 @@
 	<property name="appname" value="riams" />
 	<property name='dirname' value="ecom/riams" />
 
-	<import file="../../ant-support/property-skeleton.xml" />
+	<property file="../../ant-support/config.properties" />
 
 	<fileset id='compile.fileset' dir="${libdir}">
 		<include name="ecom/riams/ejb/riams-ejb-api.jar" />

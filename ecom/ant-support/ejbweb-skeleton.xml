@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ejbweb-skeleton" default="all" basedir=".">
+
+    <target name='all'>
+        <echo message='EJB'/>
+        <ant dir='./ejb' target='all' inheritAll="false"/>
+        <echo message='WEB'/>
+        <ant dir='./web' target='all' inheritAll="false"/>
+    </target>
+
+    <target name='ncall'>
+        <echo message='EJB'/>
+        <ant dir='./ejb' target='all' inheritAll="false"/>
+        <echo message='WEB'/>
+        <ant dir='./web' target='ncall' inheritAll="false"/>
+    </target>
+
+    <target name='clean'>
+        <ant dir='./ejb' target='clean' inheritAll="false"/>
+        <ant dir='./web' target='clean' inheritAll="false"/>
+    </target>
+
+
+</project>
