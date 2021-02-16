@@ -258,6 +258,9 @@ public class Expert2ServiceBean implements IExpert2Service {
                     try {
                         getterMethod = PropertyUtil.getGetterMethodIgnoreCase(clazz, fields[i]);
                         methodMap.put(key, getterMethod);
+                        if (getterMethod!=null) {
+                            methodMap.put("SETTER#"+fields[i],PropertyUtil.getSetterMethod(clazz, getterMethod));
+                        }
                     } catch (Exception e) {
                         LOG.warn("Не найдено поле с именем " + fields[i]);
                         methodMap.put(key, null);
