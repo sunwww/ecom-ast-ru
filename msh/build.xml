@@ -30,6 +30,7 @@
 
         <include name="ecom/riams/ejb/riams-ejb-api.jar" />
         <include name="ecom/riams/web/riams-web.jar" />
+        <include name="junit/junit-jupiter-api-5.5.2.jar" />
 
 
     </fileset>
