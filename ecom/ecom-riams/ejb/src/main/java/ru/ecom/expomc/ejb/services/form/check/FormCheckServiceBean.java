@@ -22,7 +22,7 @@ public class FormCheckServiceBean implements IFormCheckService {
 
     public LinkedList<Long> save(ChecksTableForm aForm, long aFormat) {
         Format format = theManager.find(Format.class, aFormat);
-        LinkedList<Long> deleted = new LinkedList<Long>();
+        LinkedList<Long> deleted = new LinkedList<>();
         for (ChecksTableFormRow row : aForm.getChecksTableFormRows()) {
             for (ChecksTableFormRowOn on : row.getOns()) {
                 Long result = saveOn(on, row, format) ;
@@ -120,7 +120,7 @@ public class FormCheckServiceBean implements IFormCheckService {
 
     private Collection<ChecksTableFormRowOn> createOns(String aProperty, Format aFormat) {
         AllowedChecksAllValues allowed = new AllowedChecksAllValues();
-        ArrayList<ChecksTableFormRowOn> ons = new ArrayList<ChecksTableFormRowOn>();
+        ArrayList<ChecksTableFormRowOn> ons = new ArrayList<>();
 
         for (Map.Entry<Long, Class> entry : allowed.getChecksEntries()) {
             Long key = entry.getKey();

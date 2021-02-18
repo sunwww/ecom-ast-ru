@@ -35,11 +35,9 @@ public class BypassServiceBean implements IBypassService {
 
     private static final Logger LOG = Logger.getLogger(BypassServiceBean.class) ;
 
-    //[start] asdfasdf
     public void printByAreaAddress(long aMonitorId, long aLpuAreaAddressTextId, long aFileId) {
         printByClause(aMonitorId, aFileId, "lpuAreaAddressText_id="+aLpuAreaAddressTextId);
     }
-    //[end]
 
     public void printByArea(long aMonitorId, long aLpuAreaId, long aFileId) {
         printByClause(aMonitorId, aFileId, "lpuArea_id="+aLpuAreaId);
@@ -47,20 +45,12 @@ public class BypassServiceBean implements IBypassService {
 
     private void printByClause(long aMonitorId, long aFileId, String aClause) {
 
-//        LpuArea area = theManager.find(LpuArea.class, aLpuAreaId) ;
         IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к экспорту обходного листка");
-
-//        Query query = theManager.createQuery("from Patient where lpuArea = :lpuArea")
-//                .setParameter("lpuArea", area) ;
 
         long count = (Long)theManager.createQuery("select count(*) from Patient where "+aClause).getSingleResult() ;
 
         Query query = theManager.createQuery("from Patient where "+aClause) ;
         Iterator<Patient> iterator = QueryIteratorUtil.iterate(Patient.class, query) ;
-
-//        HSSFWorkbook wb = new HSSFWorkbook();
-//
-//        HSSFSheet sheet = wb.createSheet();
 
         File file = theJbossGetFileLocalService.createFile(aFileId, "reg.xls");
 
@@ -69,7 +59,7 @@ public class BypassServiceBean implements IBypassService {
             Workbook template = Workbook.getWorkbook(JBossConfigUtil.getDataFile("reg.xls")) ;
             WritableWorkbook workbook = Workbook.createWorkbook(file, template);
             WritableSheet sheet = workbook.getSheet(0) ;
-            writeToSheet(monitor, sheet, iterator, createResponse()) ;
+            writeToSheet(monitor, sheet, iterator) ;
             workbook.write();
             workbook.close() ;
             monitor.finish(aMonitorId+"");
@@ -80,15 +70,10 @@ public class BypassServiceBean implements IBypassService {
 
     }
 
-    private void writeToSheet(IMonitor aMonitor, WritableSheet aSheet, Iterator<Patient> aPatients, QueryResponse aResponse) throws WriteException {
+    private void writeToSheet(IMonitor aMonitor, WritableSheet aSheet, Iterator<Patient> aPatients) throws WriteException {
 
         QueryResponse r = createResponse() ;
         int column  ;
-//        for (QueryResponseProperty property : r.getProperties()) {
-//            Label label = new Label(column++, 1, property.getTitle());
-//            aSheet.addCell(label);
-//        }
-
         int rowNumber = 1 ;
         Cell cell = aSheet.getCell(1,2) ;
         CellFormat format = cell.getCellFormat() ;

@@ -18,21 +18,17 @@ public class AbstractChangeLetters extends AbstractChangeStringProperty {
     }
 
     void put(char aSource, char aDest) {
-        theMap.put(aSource, aDest) ;
+        theMap.put(aSource, aDest);
     }
 
     void revert() {
-//        for (Map.Entry<Character, Character> entry : theMap.entrySet()) {
-//            theMap.remove(entry.getKey()) ;
-//            theMap.put(entry.getValue(), entry.getKey()) ;
-//        }
         TreeMap<Character, Character> revert = new TreeMap<>();
         for (Map.Entry<Character, Character> entry : theMap.entrySet()) {
-            revert.put(entry.getKey(), entry.getValue()) ;
+            revert.put(entry.getKey(), entry.getValue());
         }
         theMap.clear();
         for (Map.Entry<Character, Character> entry : revert.entrySet()) {
-            theMap.put(entry.getValue(), entry.getKey()) ;
+            theMap.put(entry.getValue(), entry.getKey());
         }
     }
 
@@ -50,5 +46,5 @@ public class AbstractChangeLetters extends AbstractChangeStringProperty {
 
     }
 
-    private final Map<Character, Character> theMap ;
+    private final Map<Character, Character> theMap;
 }

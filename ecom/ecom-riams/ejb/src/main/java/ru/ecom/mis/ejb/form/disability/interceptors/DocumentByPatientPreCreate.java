@@ -27,7 +27,7 @@ import java.util.List;
     		//Новый период нетрудоспособности должен заводиться с датой последняя дата окончания + 1
 
 			List<DisabilityDocument> list = manager.createQuery("from DisabilityDocument where patient_id = :pat and closeReason_id is null  and (noActuality is null or cast(noActuality as integer)=0)").setParameter("pat", pat.getId()).getResultList() ;
-    		if (list.size()>0) {
+    		if (!list.isEmpty()) {
     			StringBuilder err = new StringBuilder() ;
     			err.append("Невозможно добавить новый случай нетрудоспособности. <br/>В базе имеются не закрытые документы по предыдущему случаю:") ;
     			for (DisabilityDocument doc:list) {
@@ -38,7 +38,6 @@ import java.util.List;
     			}
 				throw new IllegalStateException(err.toString()) ;    				
     		} 
-    		//String vo =  ;
     		form.setJob(pat.getWorks()) ;
     	} else {
     		throw new IllegalStateException("Невозможно добавить случай. Сначала надо определить пациента") ;

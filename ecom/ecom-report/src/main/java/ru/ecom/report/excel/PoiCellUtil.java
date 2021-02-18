@@ -54,11 +54,6 @@ public class PoiCellUtil {
         HSSFCell cell = aRow.getCell((short) aCol);
         Object obj = getCellValue(cell) ;
         return obj!=null ? obj.toString() : null ;
-//        if (cell != null) {
-//            return cell.getStringCellValue();
-//        } else {
-//            return null;
-//        }
     }
 
     public static void setCellValue(HSSFRow aRow, short aColumn, Object aValue) {
@@ -86,7 +81,6 @@ public class PoiCellUtil {
                 cell.setCellValue(aValue.toString());
             }
         } else {
-//            aRow.removeCell(cell);
             cell.setCellValue((String) null);
         }
     }

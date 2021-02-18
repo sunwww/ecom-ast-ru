@@ -100,7 +100,7 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
 	    public String getNameById(String aId, String aVocName, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
 	        String ret = null;
 	        if (aId != null) {
-	            for (VocValue value : listAll(aAdditional, aContext)) {
+	            for (VocValue value : listAll(aContext)) {
 	                if (aId.equals(value.getId())) {
 	                    ret = value.getName();
 	                }
@@ -113,7 +113,7 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
 	        String query = aQuery.toUpperCase();
 	        String findedId = null;
 	        if (!StringUtil.isNullOrEmpty(aQuery)) {
-	            for (VocValue value : listAll(aAdditional, aContext)) {
+	            for (VocValue value : listAll(aContext)) {
 	                String name = value.getName();
 	                String id = value.getId();
 					if (name != null && name.toUpperCase().contains(query)) {
@@ -133,11 +133,10 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
 	        LinkedList<VocValue> ret = new LinkedList<>();
 	        boolean finded = StringUtil.isNullOrEmpty(aId);
 	        LinkedList<VocValue> reverted = new LinkedList<>();
-	        for (VocValue value : listAll(aAdditional, aContext)) {
+	        for (VocValue value : listAll(aContext)) {
 	            reverted.add(0, value);
 	        }
 	        for (VocValue value : reverted) {
-	            //if (CAN_TRACE) LOG.trace("valueProperty = " + value);
 	            if (!finded && value.getId().equals(aId)) {
 	                finded = true;
 	            }
@@ -152,8 +151,7 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
 	    public Collection<VocValue> findVocValueNext(String aVocName, String aId, int aCount, VocAdditional aAdditional, VocContext aContext) {
 	        LinkedList<VocValue> ret = new LinkedList<>();
 	        boolean finded = StringUtil.isNullOrEmpty(aId);
-	        for (VocValue value : listAll(aAdditional, aContext)) {
-	            //if (CAN_TRACE) LOG.trace("valueProperty = " + value);
+	        for (VocValue value : listAll(aContext)) {
 	            if (!finded && value.getId().equals(aId)) {
 	                finded = true;
 	            }
@@ -165,10 +163,7 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
 	        return ret;
 	    }
 
-	    private Collection<VocValue> listAll(VocAdditional aAdditional, VocContext aContext ) {
-	        //AllValueContext ctx = new AllValueContext(
-	        //		aAdditional, aContext.getEntityManager(), aContext.getSessionContext());
-			//LinkedList<VocValue> ret = new LinkedList<VocValue>() ;
+	    private Collection<VocValue> listAll(VocContext aContext) {
 			return loadParameterType(aContext) ;
 	    }    
 

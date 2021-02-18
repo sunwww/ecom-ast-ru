@@ -16,7 +16,7 @@ public class AddressTextListener {
     public static final String SYNC = "ADDRESS_TEXT_LISTENER_SYNCHRONYZE";
 
     @PostPersist
-    public void postPersist(final LpuAreaAddressText aText) throws NamingException {
+    public void postPersist(final LpuAreaAddressText aText) {
         synchronized (SYNC) {
         	new Thread() {
         		public void run() {

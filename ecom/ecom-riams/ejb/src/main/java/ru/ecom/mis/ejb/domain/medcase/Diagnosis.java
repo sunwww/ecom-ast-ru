@@ -415,7 +415,7 @@ public class Diagnosis extends BaseEntity {
 	@Comment("Диагноз информация")
 	@Transient
 	public String getDiagnosisInfo() {
-		StringBuffer buf = new StringBuffer() ;
+		StringBuilder buf = new StringBuilder() ;
 		
 		if (theRegistrationType!=null) {
 			buf.append("Тип: ");

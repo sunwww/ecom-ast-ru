@@ -59,7 +59,7 @@ public class TestReportEngine {
         BshValueGetter getter = new BshValueGetter();
         getter.set("h", generateHolder());
         getter.set("table", new RegistryPrintRenderHolder()) ;
-        e.make(new File("src/test/resources/registry.xls"), new File("test.xls"),getter, 0);
+        e.make(new File("src/test/resources/registry.xls"), new File("test.xls"),getter);
         getter.clear();
         Runtime.getRuntime().exec("oocalc test.xls") ;
 

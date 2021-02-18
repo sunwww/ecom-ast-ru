@@ -9,8 +9,6 @@ import javax.persistence.EntityManager;
  * @author ikouzmin 14.03.2007 11:06:07
  */
 public class DriverManager {
-    private static final Logger LOG = Logger.getLogger(DriverManager.class) ;
-    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
 
     public static IExportFomatDriver getDriver(String driverString, EntityManager theManager, boolean aNative, String query) throws Exception {

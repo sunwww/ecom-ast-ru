@@ -7,8 +7,6 @@ import ru.ecom.mis.ejb.domain.medcase.BloodTransfusion;
 import ru.ecom.mis.ejb.domain.medcase.TransfusionMonitoring;
 import ru.ecom.mis.ejb.domain.medcase.TransfusionReagent;
 import ru.ecom.mis.ejb.form.medcase.transfusion.BloodTransfusionForm;
-import ru.ecom.mis.ejb.form.medcase.transfusion.TransfusionMonitoringForm;
-import ru.ecom.mis.ejb.form.medcase.transfusion.TransfusionReagentForm;
 import ru.nuzmsh.util.PropertyUtil;
 
 import javax.persistence.Entity;
@@ -26,24 +24,24 @@ public class BloodTransfusionViewInterceptor implements IFormInterceptor{
 
 			saveForm(manager,"from TransfusionMonitoring where transfusion_id='"+id+"' and hourAfterTransfusion='"+0+"'"
 					,"getPulseRate,getBloodPressureLower,getBloodPressureTop,getTemperature,getUrineColor,getDiuresis".split(",")
-					,form.getMonitorForm0(),TransfusionMonitoring.class,TransfusionMonitoringForm.class);
+					,form.getMonitorForm0(),TransfusionMonitoring.class);
 			saveForm(manager,"from TransfusionMonitoring where transfusion_id='"+id+"' and hourAfterTransfusion='"+1+"'"
 					,"getPulseRate,getBloodPressureLower,getBloodPressureTop,getTemperature,getUrineColor,getDiuresis".split(",")
-					,form.getMonitorForm1(),TransfusionMonitoring.class,TransfusionMonitoringForm.class);
+					,form.getMonitorForm1(),TransfusionMonitoring.class);
 			saveForm(manager,"from TransfusionMonitoring where transfusion_id='"+id+"' and hourAfterTransfusion='"+2+"'"
 					,"getPulseRate,getBloodPressureLower,getBloodPressureTop,getTemperature,getUrineColor,getDiuresis".split(",")
-					,form.getMonitorForm2(),TransfusionMonitoring.class,TransfusionMonitoringForm.class);
+					,form.getMonitorForm2(),TransfusionMonitoring.class);
 			
 			//Реактивы
 			saveForm(manager,"from TransfusionReagent where transfusion_id='"+id+"' and numberReagent='"+1+"'"
 					,"getReagent,getSeries,getExpirationDate".split(",")
-					,form.getReagentForm1(),TransfusionReagent.class,TransfusionReagentForm.class);
+					,form.getReagentForm1(),TransfusionReagent.class);
 			saveForm(manager,"from TransfusionReagent where transfusion_id='"+id+"' and numberReagent='"+2+"'"
 					,"getReagent,getSeries,getExpirationDate".split(",")
-					,form.getReagentForm2(),TransfusionReagent.class,TransfusionReagentForm.class);
+					,form.getReagentForm2(),TransfusionReagent.class);
 			saveForm(manager,"from TransfusionReagent where transfusion_id='"+id+"' and numberReagent='"+3+"'"
 					,"getReagent,getSeries,getExpirationDate".split(",")
-					,form.getReagentForm3(),TransfusionReagent.class,TransfusionReagentForm.class);
+					,form.getReagentForm3(),TransfusionReagent.class);
 		
 		StringBuilder biolTest = new StringBuilder() ;
 		if (form.getIsIllPatientsBT()!=null && form.getIsIllPatientsBT()) {
@@ -75,7 +73,7 @@ public class BloodTransfusionViewInterceptor implements IFormInterceptor{
 
 
 	}
-	private <E,F> void saveForm(EntityManager aManager, String aAddtionSql,String[] aMethods, F aForm,Class<E> aClassEntity,Class<F> aClassForm)  {
+	private <E,F> void saveForm(EntityManager aManager, String aAddtionSql, String[] aMethods, F aForm, Class<E> aClassEntity)  {
 		
 		List<E> objs = aManager.createQuery(aAddtionSql).setMaxResults(1).getResultList() ;
 		if (!objs.isEmpty()) {

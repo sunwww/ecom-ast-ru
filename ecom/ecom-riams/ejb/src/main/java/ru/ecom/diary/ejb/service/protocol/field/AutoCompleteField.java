@@ -23,31 +23,15 @@ public class AutoCompleteField {
 			, Boolean aHorizontalFill, Boolean aRequired
 			, Boolean aViewOnly , StringBuilder aErrors, String aRowSpan
 			) {
-		//+//<td colspan="3" class="type"><div><input size="1" name="type" value="1" id="type" type="hidden">
-		//+//<input autocomplete="off" title="parameterType" 
-		//name="typeName" value="Числовой (Integer)" id="typeName" size="10" class="autocomplete horizontalFill required" type="text">
-		//<div id="typeDiv"><span></span></div>
-		//+//</div></td>
-		//+//<td colspan="3" class="type"><span>
-		//+//<input title="Числовой (Integer)" class="viewOnly horizontalFill" 
-		//id="typeReadOnly" name="typeReadOnly" size="10" readonly="readonly" value="Числовой (Integer)">
-		//+//<input id="type" value="1" name="type" type="hidden">
-		//+//</span></td>
-		
 
 		StringBuilder field = new StringBuilder() ;
-		//TODO value доделать !!!
-		
-		String value="";
+
+		String value;
 		try {
-			//(IVocService) theInjection.getService("VocValueService") 
-			//VocValueServiceBean bean = new VocValueServiceBean();
-			//value = bean.getNameById(aValue, aVocName, !StringUtil.isNullOrEmpty(aParentId) ? new VocAdditional(aParentId): null);
-			 //IVocService service = (IVocService) EjbInjection.getInstance().getService("/VocValueService","remote");
 			IVocService service =(IVocService) EjbInjection.getInstance().getService("IVocValueService","remote") ;
 			value =  service.getNameById(aValue, aVocName, !StringUtil.isNullOrEmpty(aParentId) ? new VocAdditional(aParentId): null);
 		} catch (Exception e) {
-			
+			value="";
 			e.printStackTrace();
 		}
 		field.append("<td");
