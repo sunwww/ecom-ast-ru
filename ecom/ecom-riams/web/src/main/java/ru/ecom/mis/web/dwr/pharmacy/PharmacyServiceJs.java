@@ -17,20 +17,20 @@ import java.util.Collection;
 
 public class PharmacyServiceJs {
 
-    public void SQLupdate(HttpServletRequest aRequest, String SQLUpdateString){
+    public void SQLupdate(HttpServletRequest aRequest, String SQLUpdateString) {
 
     }
 
-    public Integer endPrescription(Long prescriptionId,String username,HttpServletRequest aRequest) throws NamingException {
+    public Integer endPrescription(Long prescriptionId, String username, HttpServletRequest aRequest) throws NamingException {
         IPharmOperationService service = Injection.find(aRequest).getService(IPharmOperationService.class);
         service.setFunctionEndPrescription();
-        Integer bol=1;
+        Integer bol = 1;
         try {
             IWebQueryService service2 = Injection.find(aRequest).getService(IWebQueryService.class);
-            String sql = "select pharmEndPrescription ("+prescriptionId+",'"+username+"');";
+            String sql = "select pharmEndPrescription (" + prescriptionId + ",'" + username + "');";
 
-            Collection <WebQueryResult> res = service2.executeNativeSql(sql);
-            for (WebQueryResult wqr: res) {
+            Collection<WebQueryResult> res = service2.executeNativeSql(sql);
+            for (WebQueryResult wqr : res) {
                 bol = (Integer) wqr.get1();
             }
         } catch (NamingException e) {

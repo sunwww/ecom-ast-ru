@@ -2,7 +2,6 @@ package ru.ecom.mis.web.dwr.pharmnet;
 
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
@@ -18,17 +17,20 @@ import java.util.List;
 
 /**
  * Сервис Фармнет-аптеки
+ *
  * @author rkurbanov
  */
 public class PharmnetServiceJs {
 
-    /**Создание списания*/
+    /**
+     * Создание списания
+     */
     public Integer createOutcome(String aJson, String medcase, String username, HttpServletRequest aRequest)
             throws NamingException {
         JSONObject obj = new JSONObject(aJson);
         JSONArray params = obj.getJSONArray("array");
 
-        StringBuilder sql ;
+        StringBuilder sql;
 
         for (int i = 0; i < params.length(); i++) {
             JSONObject param = (JSONObject) params.get(i);
@@ -42,7 +44,9 @@ public class PharmnetServiceJs {
         return 1;
     }
 
-    /**Создание комплекта*/
+    /**
+     * Создание комплекта
+     */
     public Integer createComplectRow(String regid, String complectId, String count, HttpServletRequest request)
             throws NamingException {
         IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
@@ -52,19 +56,19 @@ public class PharmnetServiceJs {
         return 1;
     }
 
-    private List<GoodsLeaveEntity> getGoods(String medcaseId,HttpServletRequest aRequest) throws NamingException {
+    private List<GoodsLeaveEntity> getGoods(String medcaseId, HttpServletRequest aRequest) throws NamingException {
 
         Collection<WebQueryResult> goodsl = Injection.find(aRequest)
                 .getService(IWebQueryService.class)
                 .executeNativeSql("select cast(qntost as text),regid from goodsleave  where storageid  =\n" +
-                " (select id from pharmnetstorage where groupworkfuncid  =\n" +
-                " (select group_id from workfunction where id=\n" +
-                " (select workfunctionexecute_id from medcase where id= "+medcaseId+")))\n" +
-                " and nextstate is null and (isend is null or isend = false)");
+                        " (select id from pharmnetstorage where groupworkfuncid  =\n" +
+                        " (select group_id from workfunction where id=\n" +
+                        " (select workfunctionexecute_id from medcase where id= " + medcaseId + ")))\n" +
+                        " and nextstate is null and (isend is null or isend = false)");
 
 
         List<GoodsLeaveEntity> goodsLeaveEntities = new ArrayList<>();
-        for (WebQueryResult wqr: goodsl) {
+        for (WebQueryResult wqr : goodsl) {
             GoodsLeaveEntity goodsLeaveEntity = new GoodsLeaveEntity();
             String temp = (String) wqr.get1();
             goodsLeaveEntity.setQntOst(Float.valueOf(temp));
@@ -74,22 +78,25 @@ public class PharmnetServiceJs {
 
         return goodsLeaveEntities;
     }
-    /**Предварительный просмотр комплекта, что будет списано по услуге*/
-    public String viewComplect(String medserviceId,String count,String medcaseId, HttpServletRequest aRequest) throws NamingException {
 
-        List<GoodsLeaveEntity> goodsLeaves =getGoods(medcaseId,aRequest);
+    /**
+     * Предварительный просмотр комплекта, что будет списано по услуге
+     */
+    public String viewComplect(String medserviceId, String count, String medcaseId, HttpServletRequest aRequest) throws NamingException {
 
-        if(count==null || count.equals("")) count="1";
+        List<GoodsLeaveEntity> goodsLeaves = getGoods(medcaseId, aRequest);
+
+        if (count == null || count.equals("")) count = "1";
         Collection<WebQueryResult> res = Injection.find(aRequest)
                 .getService(IWebQueryService.class)
                 .executeNativeSql("select vg.drug||'('||vg.form||')' as dr, cast(pcr.count as text) as count, pcr.regid from pharmnetcomplectrow pcr \n" +
                         "left join vocgoods vg on vg.regid = pcr.regid\n" +
-                        "where complectid =(select id from pharmnetcomplect  where medservice_id = "+medserviceId+")");
+                        "where complectid =(select id from pharmnetcomplect  where medservice_id = " + medserviceId + ")");
         StringBuilder sql = new StringBuilder();
 
         List<GoodsLeaveEntity> goodsOuts = new ArrayList<>();
 
-        for (WebQueryResult wqr: res) {
+        for (WebQueryResult wqr : res) {
             GoodsLeaveEntity goodsOut = new GoodsLeaveEntity();
             goodsOut.setSeria(String.valueOf(wqr.get1()));
             String s = (String) wqr.get2();
@@ -101,7 +108,7 @@ public class PharmnetServiceJs {
         sql.append("<table class='tabview sel tableArrow' border='1'><tbody><tr>");
         sql.append("<th class='idetag tagnameCol'>Наименование</th><th class='idetag tagnameCol'>Количество</th>" +
                 "<th class='idetag tagnameCol'>Кол-во на скаладе</th><th class='idetag tagnameCol'>Списание</th></tr>");
-        for(GoodsLeaveEntity gout: goodsOuts) {
+        for (GoodsLeaveEntity gout : goodsOuts) {
 
             sql.append("<tr><td>");
             sql.append(gout.getSeria());
@@ -109,16 +116,16 @@ public class PharmnetServiceJs {
             sql.append(gout.getQntOst());
             sql.append("</td><td>");
             boolean a = false;
-            Float c= null;
+            Float c = null;
             for (GoodsLeaveEntity gleave : goodsLeaves) {
-                if(gout.getRegId().equals(gleave.getRegId())){
-                    a=true;
-                    c=gleave.getQntOst();
+                if (gout.getRegId().equals(gleave.getRegId())) {
+                    a = true;
+                    c = gleave.getQntOst();
                     break;
                 }
             }
 
-            if(a) sql.append(c).append("</td><td>+");
+            if (a) sql.append(c).append("</td><td>+");
             else sql.append("-</td><td>-");
         }
         sql.append("</td></tr>");
@@ -133,11 +140,11 @@ public class PharmnetServiceJs {
         Collection<WebQueryResult> res = Injection.find(aRequest)
                 .getService(IWebQueryService.class)
                 .executeNativeSql("select cast(count as text), regid from pharmnetcomplectrow  where complectid =" +
-                        "(select id from pharmnetcomplect  where medservice_id = "+medserviceId+")");
+                        "(select id from pharmnetcomplect  where medservice_id = " + medserviceId + ")");
 
         List<PharmnetComplectRowEntity> pharmnetComplectRowEntityList = new ArrayList<>();
 
-        for (WebQueryResult wqr: res) {
+        for (WebQueryResult wqr : res) {
             PharmnetComplectRowEntity pharmnetComplectRowEntity = new PharmnetComplectRowEntity();
             String temp = (String) wqr.get1();
             pharmnetComplectRowEntity.setCount(Float.valueOf(temp));
@@ -150,13 +157,13 @@ public class PharmnetServiceJs {
                 .executeNativeSql("select id, cast(qntost as text),regid from goodsleave  where storageid  =\n" +
                         "                (select id from pharmnetstorage where groupworkfuncid  =\n" +
                         "                (select group_id from workfunction where id=\n" +
-                        "                (select workfunctionexecute_id from medcase where id= "+medcaseId+")))\n" +
+                        "                (select workfunctionexecute_id from medcase where id= " + medcaseId + ")))\n" +
                         "        and nextstate is null and (isend is null or isend = false)");
 
 
         List<GoodsLeaveEntity> goodsLeaveEntities = new ArrayList<>();
 
-        for (WebQueryResult wqr: goodsl) {
+        for (WebQueryResult wqr : goodsl) {
             GoodsLeaveEntity goodsLeaveEntity = new GoodsLeaveEntity();
             Integer tmp = (Integer) wqr.get1();
             goodsLeaveEntity.setId(tmp);
@@ -167,14 +174,12 @@ public class PharmnetServiceJs {
         }
 
         Float qnt = Float.valueOf(amountMedserv);
-        for(PharmnetComplectRowEntity c:pharmnetComplectRowEntityList ) {
-            for (GoodsLeaveEntity g: goodsLeaveEntities) {
-                if(c.getRegid().equals(g.getRegId())){
+        for (PharmnetComplectRowEntity c : pharmnetComplectRowEntityList) {
+            for (GoodsLeaveEntity g : goodsLeaveEntities) {
+                if (c.getRegid().equals(g.getRegId())) {
 
-                    Float countOut = c.getCount()*qnt;
-                    if((countOut) <= g.getQntOst()){
-
-                        //result.append(c.get)
+                    Float countOut = c.getCount() * qnt;
+                    if ((countOut) <= g.getQntOst()) {
                         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
                         StringBuilder sql = new StringBuilder();
                         sql.append("select PharmnetOutcomebyMedservice (").append(g.getId()).append(",").append(medcaseId).append(",'").append(username).append("',").append(countOut).append(",").append(medserviceId).append(")");
@@ -186,22 +191,24 @@ public class PharmnetServiceJs {
         return "";
     }
 
-    /** получить остаток для инвентаризации */
-    public String getGoodsleave(String goodsLeaveId,HttpServletRequest aRequest) throws NamingException {
+    /**
+     * получить остаток для инвентаризации
+     */
+    public String getGoodsleave(String goodsLeaveId, HttpServletRequest aRequest) throws NamingException {
 
         Collection<WebQueryResult> goodsl = Injection.find(aRequest)
-                .getService(IWebQueryService.class)//gl.qntost ,gl.uqntost,
+                .getService(IWebQueryService.class)
                 .executeNativeSql("select  vg.drug,vg.form," +
                         " cast(gl.qntost as text) as qn," +
                         " cast(gl.uqntost as text) as uqn," +
                         " cast(vg.countinpack as text) as countinpack" +
                         " from goodsleave  gl\n" +
                         " left join vocgoods vg on vg.regid = gl.regid\n" +
-                        " where gl.id="+goodsLeaveId);
+                        " where gl.id=" + goodsLeaveId);
 
         StringBuilder html = new StringBuilder();
         html.append("<table><tbody>");
-        for(WebQueryResult wqr : goodsl){
+        for (WebQueryResult wqr : goodsl) {
             html.append("<input size=\"1\" name=\"department\" value=\"").append(wqr.get5()).append("\" id=\"countinpack\" type=\"hidden\">");
             html.append("<tr> " + "<td colspan=\"1\" class=\"label\"> <label> Наименование: </label></td> " + "<td colspan=\"1\" class=\"label\"> <input class=\"viewOnly\" size=\"50\" value=\"").append(wqr.get1()).append("\" autocomplete=\"off\" readonly=\"readonly\" type=\"text\"></td>").append("</tr> ");
             html.append("<tr> " + "<td colspan=\"1\" class=\"label\"> <label> Форма: </label></td> " + "<td colspan=\"1\" class=\"label\"> <input class=\"viewOnly\" size=\"50\" value=\"").append(wqr.get2()).append("\" autocomplete=\"off\" readonly=\"readonly\" type=\"text\"></td>").append("</tr> ");
@@ -213,8 +220,10 @@ public class PharmnetServiceJs {
     }
 
 
-    /** сохранить результат инвентаризации*/
-    public String saveInvent(String goodleavId,String qcount,String uqount,String username,HttpServletRequest aRequest)
+    /**
+     * сохранить результат инвентаризации
+     */
+    public String saveInvent(String goodleavId, String qcount, String uqount, String username, HttpServletRequest aRequest)
             throws NamingException {
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
@@ -225,14 +234,17 @@ public class PharmnetServiceJs {
         service.executeNativeSql(sql.toString());
         return "";
     }
-    /** получить список для инвентаризации */
-    public String getInventTable(String storId,HttpServletRequest aRequest)
+
+    /**
+     * получить список для инвентаризации
+     */
+    public String getInventTable(String storId, HttpServletRequest aRequest)
             throws NamingException {
         Collection<WebQueryResult> goodsl = Injection.find(aRequest)
                 .getService(IWebQueryService.class)
                 .executeNativeSql("select gl.regid, vg.drug,vg.form, cast(gl.qntost as text),cast(gl.uqntost as text),to_char(gl.srokg,'dd.MM.yyyy') as srok, gl.id from goodsleave gl\n" +
                         "left join vocgoods vg on vg.regid = gl.regid\n" +
-                        "where gl.nextstate is null and gl.storageid = "+storId);
+                        "where gl.nextstate is null and gl.storageid = " + storId);
 
         StringBuilder sql = new StringBuilder();
         sql.append("<table class='tabview sel tableArrow' border='1'><tbody><tr>");
@@ -243,8 +255,8 @@ public class PharmnetServiceJs {
                 "<th class='idetag tagnameCol'>Кол-во упаковок</th>" +
                 "<th class='idetag tagnameCol'>Срок годности</th>" +
                 "</tr>");
-        for (WebQueryResult wqr: goodsl) {
-            String tempId = "onclick=\"showMyPharmInventory('"+wqr.get7()+"')\"";
+        for (WebQueryResult wqr : goodsl) {
+            String tempId = "onclick=\"showMyPharmInventory('" + wqr.get7() + "')\"";
             sql.append("<tr").append(tempId).append("><td ").append(tempId).append(">");
             sql.append(wqr.get1()).append("</td><td ").append(tempId).append(">");
             sql.append(wqr.get2()).append("</td><td ").append(tempId).append(">");
@@ -259,13 +271,14 @@ public class PharmnetServiceJs {
         return sql.toString();
 
     }
-    public String getBalance(String storId,HttpServletRequest aRequest)
+
+    public String getBalance(String storId, HttpServletRequest aRequest)
             throws NamingException {
         Collection<WebQueryResult> goodsl = Injection.find(aRequest)
                 .getService(IWebQueryService.class)
                 .executeNativeSql("select gl.regid, vg.drug,vg.form, cast(gl.qntost as text),cast(gl.uqntost as text),to_char(gl.srokg,'dd.MM.yyyy') as srok from goodsleave gl\n" +
                         "left join vocgoods vg on vg.regid = gl.regid\n" +
-                        "where gl.nextstate and gl.storageid = "+storId);
+                        "where gl.nextstate and gl.storageid = " + storId);
 
         StringBuilder sql = new StringBuilder();
 
@@ -278,7 +291,7 @@ public class PharmnetServiceJs {
                 "<th class='idetag tagnameCol'>Срок годности</th>" +
                 "</tr>");
 
-        for (WebQueryResult wqr: goodsl) {
+        for (WebQueryResult wqr : goodsl) {
 
             sql.append("<tr><td>");
             sql.append(wqr.get1()).append("</td><td>");

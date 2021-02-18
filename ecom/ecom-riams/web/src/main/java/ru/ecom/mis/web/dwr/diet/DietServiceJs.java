@@ -48,7 +48,7 @@ public class DietServiceJs {
         if (aFlag == 1) return savePrescriptExists(aIdTemplate, aIdParent, service);
         if (aFlag == 2) {
             try {
-				Date date = DateFormat.parseSqlDate(aDate);
+                Date date = DateFormat.parseSqlDate(aDate);
                 return saveMenuNew(aIdTemplate, date, aOtd, aPortionAmount, service);
             } catch (ParseException e) {
                 return "Ошибка при создании меню-заказов. Неправильная дата: " + aDate;
@@ -62,7 +62,7 @@ public class DietServiceJs {
             , Long aIdWeekDay, String aDateFrom, String aDateTo, HttpServletRequest aRequest) throws NamingException {
         IDietService service = Injection.find(aRequest).getService(IDietService.class);
         try {
-			Date dateTo = DateFormat.parseSqlDate(aDateTo);
+            Date dateTo = DateFormat.parseSqlDate(aDateTo);
             Date dateFrom = DateFormat.parseSqlDate(aDateFrom);
             service.saveInNewTemplateMenu(aIdTemplateMenu, aIdDiet, aIdServiceStream, aIdWeekDay, dateFrom, dateTo);
         } catch (ParseException e) {

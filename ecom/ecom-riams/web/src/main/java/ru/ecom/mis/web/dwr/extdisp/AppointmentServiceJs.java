@@ -10,15 +10,15 @@ import java.util.Collection;
 
 public class AppointmentServiceJs {
 
-	
-	public String getCodeForVocExtDispAppointment(Long aAppointmentId, HttpServletRequest aRequest) throws NamingException {
-		 IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		 StringBuilder sb = new StringBuilder();
-		 String sql ="select ap.code from VocExtDispAppointment ap where ap.id="+aAppointmentId;
-		 Collection <WebQueryResult> res = service.executeNativeSql(sql);
-		 for (WebQueryResult wqr: res) {
-			sb.append(wqr.get1());
-		 }
-		 return sb.toString();
-	}
+
+    public String getCodeForVocExtDispAppointment(Long aAppointmentId, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        StringBuilder sb = new StringBuilder();
+        String sql = "select ap.code from VocExtDispAppointment ap where ap.id=" + aAppointmentId;
+        Collection<WebQueryResult> res = service.executeNativeSql(sql);
+        for (WebQueryResult wqr : res) {
+            sb.append(wqr.get1());
+        }
+        return sb.toString();
+    }
 }
