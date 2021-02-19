@@ -29,32 +29,34 @@ public class CovidServiceJs {
     /**
      * Получить данные по нарушениям сознания.
      *
-     * @param markId CovidMark.id
+     * @param markId   CovidMark.id
      * @param aRequest HttpServletRequest
      * @return String Признаки тяжёлого состояния
      * @throws NamingException
      */
-    public String getBadSosts(String markId,HttpServletRequest aRequest) throws NamingException {
+    public String getBadSosts(String markId, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         Collection<WebQueryResult> list = service.executeNativeSql(
                 "select list(cast (voc.id as varchar)) from CovidMarkBadSost c" +
-                        " left join vocbadsost voc on voc.id=c.badsost_id where c.covidmark_id="+markId);
-        return list.isEmpty()? "" : list.iterator().next().get1().toString();
+                        " left join vocbadsost voc on voc.id=c.badsost_id where c.covidmark_id=" + markId);
+        return list.isEmpty() ? "" : list.iterator().next().get1().toString();
     }
 
     /**
      * Получить id существующей в СЛС формы оценки тяжести заболевания
+     *
      * @param aMedCaseId Sls.id
      * @return CovidMark.id
      */
     public String getIdIfAlreadyExists(Long aMedCaseId, HttpServletRequest request) throws NamingException {
         IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
         Collection<WebQueryResult> list = service.executeNativeSql("select c.id from covidmark c where medcase_id =" + aMedCaseId + " limit 1");
-        return list.isEmpty()? "" : list.iterator().next().get1().toString();
+        return list.isEmpty() ? "" : list.iterator().next().get1().toString();
     }
 
     /**
      * Получить, нужно ли создавать форму оценки риска (нужно, если выписной U* и формы ещё нет
+     *
      * @param aMedCaseId Sls.id
      * @return 1 - да, 0 - нет
      */
@@ -68,18 +70,19 @@ public class CovidServiceJs {
                 " left join covidmark cv on cv.medcase_id = sls.id" +
                 " where sls.dtype='HospitalMedCase' and reg.code='3' and idc.code like 'U%'" +
                 " and sls.id=" + aMedCaseId + " limit 1");
-        return list.isEmpty()? "" : list.iterator().next().get1().toString() + "#" + list.iterator().next().get2().toString() ;
+        return list.isEmpty() ? "" : list.iterator().next().get1().toString() + "#" + list.iterator().next().get2().toString();
     }
 
 
     /**
      * Получить тяжесть состояние по id
+     *
      * @param sostId VocSost.id
      * @return Vocsost.id
      */
     public String getSostById(Long sostId, HttpServletRequest request) throws NamingException {
         IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
         Collection<WebQueryResult> list = service.executeNativeSql("select name from vocSost where id = " + sostId);
-        return list.isEmpty()? "" : list.iterator().next().get1().toString();
+        return list.isEmpty() ? "" : list.iterator().next().get1().toString();
     }
 }

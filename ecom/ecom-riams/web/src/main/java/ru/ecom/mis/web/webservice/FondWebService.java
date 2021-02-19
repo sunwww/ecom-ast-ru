@@ -182,7 +182,6 @@ public class FondWebService {
                         String companyCode = null, policySeries = null, policyNumber = null, policyDateFrom = null, policyDateTo = null;
                         try {
                             for (Element el : list_cur) {
-                                //System.out.println(result);
                                 String[] pol = el.getChildText("sn_pol").split(" ");
                                 String serPol;
                                 String numPol;

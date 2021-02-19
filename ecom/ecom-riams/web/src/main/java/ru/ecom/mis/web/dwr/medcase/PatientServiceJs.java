@@ -501,8 +501,7 @@ public class PatientServiceJs {
                 .append(type)
                 .append("','")
                 .append(textInfo)
-                .append("')")
-        ;
+                .append("')");
         service.executeUpdateNativeSql(sql.toString());
 
     }

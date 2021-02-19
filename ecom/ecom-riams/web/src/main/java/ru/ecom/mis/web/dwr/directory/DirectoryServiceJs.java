@@ -65,7 +65,6 @@ public class DirectoryServiceJs {
                 IDirectoryService service2 = Injection.find(aRequest).getService(IDirectoryService.class);
                 departid = String.valueOf(service2.setDepartment(buildingId, buildingLevelId, misLpuId));
             }
-            //System.out.println(">>>>ID:"+departid);
         } else return false;
 
         String entryId;
@@ -91,7 +90,6 @@ public class DirectoryServiceJs {
         if (params != null) {
             for (int i = 0; i < params.length(); i++) {
                 JSONObject param = params.getJSONObject(i);
-                //	Long TelNumberIdDel = Long.valueOf((String) param.get("TelNumberIdDel"));
                 if (tick) delIds.append(",");
                 delIds.append(param.getString("TelNumberIdDel"));
                 tick = true;

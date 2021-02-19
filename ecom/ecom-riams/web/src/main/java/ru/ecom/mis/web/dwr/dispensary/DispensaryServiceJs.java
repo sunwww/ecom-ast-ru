@@ -20,6 +20,6 @@ public class DispensaryServiceJs {
         dateChangedFrom = DateFormat.parseDate(object.getString("changedDateFrom"));
         String packetNumber = object.getString("packetNumber");
 
-        return Injection.find(aRequst).getService(IPatientService.class).exportDispensaryCard(dateFrom,dateTo,dateChangedFrom, packetNumber);
+        return Injection.find(aRequst).getService(IPatientService.class).exportDispensaryCard(dateFrom, dateTo, dateChangedFrom, packetNumber);
     }
 }
