@@ -19,7 +19,7 @@ public class RegimeViolationRecordPreCreate implements IParentFormInterceptor{
     	DisabilityDocument doc = manager.find(DisabilityDocument.class, aParentId) ;
     	
     	if (doc!=null) {
-    		if (doc.getIsClose()!=null && doc.getIsClose()==true) {
+    		if (doc.getIsClose()!=null && Boolean.TRUE.equals(doc.getIsClose().toString())) {
     			throw new IllegalStateException("Нельзя добавить нарушение режима в закрытый документ!!!") ;
     		}
     	} else {
