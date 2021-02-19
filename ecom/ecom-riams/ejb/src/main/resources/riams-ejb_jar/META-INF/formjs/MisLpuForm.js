@@ -28,12 +28,10 @@ function onCreate(aForm, aEntity, aCtx) {
 
 }
 function isUnitLpu(aMainLpuId,aChildLpuId,aCtx) {
-	//var mainId = aMainLpu.id ;
 	var child = true ;
 	
-	while (child==true) {
-		if (aChildLpuId==aMainLpuId) return true ;
-		//throw "select top 1 parent_id from MisLpu where id="+aChildLpuId ;
+	while (child===true) {
+		if (aChildLpuId===aMainLpuId) return true ;
 		var idparent = aCtx.manager.createNativeQuery("select parent_id,count(*) from MisLpu where id="+aChildLpuId+" group by parent_id").getSingleResult() ;
 		if (idparent[0]==null) break ;
 		aChildLpuId = 0+ idparent[0] ;
@@ -41,8 +39,3 @@ function isUnitLpu(aMainLpuId,aChildLpuId,aCtx) {
 	}
 	return false ;
 }
-function onPreDelete(aEntityId, aCtx){
-	aCtx.manager.createNativeQuery("delete from RepMisLpuChild where lpu_id=:lpu or childLpu_id=:lpu")
-	.setParameter("lpu", aEntityId).executeUpdate();
-}
-	

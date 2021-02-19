@@ -8,24 +8,27 @@
 
     <tiles:put name="body" type="string">
         <msh:form action="/entitySaveGoView-e2_vocMedHelpProfile.do" defaultField="code">
-            <msh:hidden property="id" />
-            <msh:hidden property="saveType" />
+            <msh:hidden property="id"/>
+            <msh:hidden property="saveType"/>
             <msh:panel>
                 <msh:separator colSpan="8" label="Общие"/>
-               <msh:row>
-                   <msh:textField property="name" size="100"/>
-                   <msh:textField property="code" size="100"/>
-                   </msh:row><msh:row>
-                   <msh:textField property="startDate"/>
-                   <msh:textField property="finishDate"/>
+                <msh:row>
+                    <msh:textField property="name" size="100"/>
+                    <msh:textField property="code" size="100"/>
+                </msh:row><msh:row>
+                <msh:textField property="startDate"/>
+                <msh:textField property="finishDate"/>
             </msh:row><msh:row>
-                   <msh:textField label="ProfilK" property="profileK" size="100"/>
-                   <msh:checkBox property="noActuality"/>
+                <msh:textField label="ProfilK" property="profileK" size="100"/>
+                <msh:checkBox property="noActuality"/>
+            </msh:row>
+                <msh:row>
+                    <msh:textField property="defaultDepartmentCode" size="100"/>
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete vocName="vocE2FondV021" property="medSpecV021" size="100"/>
                 </msh:row>
-                <msh:submitCancelButtonsRow colSpan="4" />
+                <msh:submitCancelButtonsRow colSpan="4"/>
             </msh:panel>
         </msh:form>
         <ecom:webQuery name="polyclinicCoefficientList" nativeSql="select coef.id, coef.startDate,coef.finishDate,coef.value, coalesce(vest.name,'')  as а5_entryType
@@ -34,8 +37,9 @@
              ,coef.ismobilepolyclinic  as f9_isMobile
              from VocCoefficient coef
              left join VocE2BaseTariffType vest on vest.id=coef.tarifftype_id
-             where coef.dtype='VocE2PolyclinicCoefficient' and coef.profile_id=${param.id} order by coef.startDate desc" />
-        <msh:table idField="1" name="polyclinicCoefficientList" action="entityParentEdit-e2_polyclinicCoefficient.do" noDataMessage="Нет коэфцициентов" styleRow="8">
+             where coef.dtype='VocE2PolyclinicCoefficient' and coef.profile_id=${param.id} order by coef.startDate desc"/>
+        <msh:table idField="1" name="polyclinicCoefficientList" action="entityParentEdit-e2_polyclinicCoefficient.do"
+                   noDataMessage="Нет коэфцициентов" styleRow="8">
             <msh:tableColumn columnName="Тип тарифа" property="5"/>
             <msh:tableColumn columnName="КДО" property="6"/>
             <msh:tableColumn columnName="Консультативное" property="7"/>
@@ -46,7 +50,7 @@
         </msh:table>
     </tiles:put>
     <tiles:put name="title" type="string">
-        <ecom:titleTrail mainMenu="Expert2" beginForm="e2_vocMedHelpProfileForm" />
+        <ecom:titleTrail mainMenu="Expert2" beginForm="e2_vocMedHelpProfileForm"/>
     </tiles:put>
     <tiles:put name="javascript" type="string">
         <msh:ifFormTypeIsView formName="e2_vocMedHelpProfileForm">
@@ -58,8 +62,10 @@
     <tiles:put name="side" type="string">
         <msh:ifFormTypeIsView formName="e2_vocMedHelpProfileForm">
             <msh:sideMenu>
-                <msh:sideLink key="ALT+2" params="id" action="/entityEdit-e2_vocMedHelpProfile" name="Изменить" roles="/Policy/E2/Edit" />
-                <msh:sideLink key="ALT+2" params="id" action="/entityParentPrepareCreate-e2_polyclinicCoefficient" name="Добавить поправочные коэффициент(пол-ка)" roles="/Policy/E2/Edit" />
+                <msh:sideLink key="ALT+2" params="id" action="/entityEdit-e2_vocMedHelpProfile" name="Изменить"
+                              roles="/Policy/E2/Edit"/>
+                <msh:sideLink key="ALT+2" params="id" action="/entityParentPrepareCreate-e2_polyclinicCoefficient"
+                              name="Добавить поправочные коэффициент(пол-ка)" roles="/Policy/E2/Edit"/>
             </msh:sideMenu>
             <tags:expertvoc_menu currentAction="main"/>
         </msh:ifFormTypeIsView>

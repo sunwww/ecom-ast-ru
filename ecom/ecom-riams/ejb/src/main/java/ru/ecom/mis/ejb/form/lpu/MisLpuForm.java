@@ -96,6 +96,10 @@ public class MisLpuForm extends IdNameEntityForm {
      */
     private String theHouseNumber;
     /**
+     * Код адреса отделения
+     */
+    private String theDepartmentAddressCode;
+    /**
      * Адрес
      */
     private Long theAddress;
@@ -244,6 +248,16 @@ public class MisLpuForm extends IdNameEntityForm {
      */
     private Boolean theIsForCovid;
 
+    @Comment("Код адреса отделения")
+    @Persist
+    public String getDepartmentAddressCode() {
+        return theDepartmentAddressCode;
+    }
+
+    public void setDepartmentAddressCode(String theDepartmentAddressCode) {
+        this.theDepartmentAddressCode = theDepartmentAddressCode;
+    }
+
     /**
      * Признак мобильной поликлиники
      */
@@ -286,7 +300,6 @@ public class MisLpuForm extends IdNameEntityForm {
     /**
      * Участки
      */
-//    @PersistOneToManyOneProperty(valueProperty="type", parentProperty="lpu")
     public String getAreas() {
         return theAreas;
     }

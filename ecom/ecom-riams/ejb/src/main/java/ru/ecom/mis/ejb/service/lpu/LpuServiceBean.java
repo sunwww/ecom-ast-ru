@@ -166,10 +166,6 @@ public class LpuServiceBean implements ILpuService {
 	@PersistenceContext
     private EntityManager theManager ;
 
-	public void onRemoveLpu(long aLpu) {
-		theManager.createQuery("delete from RepMisLpuChild where lpu_id=:lpu or childLpu_id=:lpu")
-			.setParameter("lpu", aLpu).executeUpdate();
-	}
 	public void createOtherEquipment(long aLpu, long aEquipment) {
 		theManager.createNativeQuery("insert into equipment_mislpu (equipment_id, otherLpu_id) values ( :equipment, :lpu )")
 			.setParameter("lpu", aLpu).setParameter("equipment", aEquipment).executeUpdate();
