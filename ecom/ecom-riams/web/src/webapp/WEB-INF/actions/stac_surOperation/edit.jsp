@@ -457,7 +457,7 @@
                 else if ($('operationDateTo').value != '' && $('operationTimeTo').value == '' ||
                     $('operationDateTo').value == '' && $('operationTimeTo').value != '') {  //если одно из полей не заполнено
                     $('submitButton').disabled = false;
-                    showToastMessage('Нельзя заполнить только дату или только время окончания операции!',null,true,true,3000);
+                    showToastMessage('Нельзя заполнить только дату или только время окончания операции!',null,true,true,6000);
                 }
                 else
                     flag=checkDates(); //если необязатльно, но оба заполнены, проверяем
@@ -483,12 +483,12 @@
                     flag = true;
                 else {
                     $('submitButton').disabled = false;
-                    showToastMessage('Дата и время окончания должны быть больше даты и времени начала!', null, true, true, 3000);
+                    showToastMessage('Дата и время окончания должны быть больше даты и времени начала!', null, true, true, 6000);
                 }
             }
             else {
                 $('submitButton').disabled = false;
-                showToastMessage('Поля дата и время начала и окончания обязательны для заполнения!', null, true, true, 3000);
+                showToastMessage('Поля дата и время начала и окончания обязательны для заполнения!', null, true, true, 6000);
             }
                 return flag;
         }
@@ -522,7 +522,7 @@
                 document.forms["mainForm"].submit();
     	    else  {
                 $('submitButton').disabled = false;
-                showToastMessage('Выберите, проводилась ли периоперационная антибиотикопрофилактика!', null, true, false,3000);
+                showToastMessage('Выберите, проводилась ли периоперационная антибиотикопрофилактика!', null, true, false,6000);
             }
         }
     	function save() {
