@@ -33,7 +33,7 @@ import java.sql.Timestamp;
 )
 @Table(schema="SQLUser")
 public class BedFund extends BaseEntity{
-	
+
 	/** Количество коек */
 	@Comment("Количество коек")
 	public Integer getAmount() {
@@ -46,7 +46,7 @@ public class BedFund extends BaseEntity{
 
 	/** Количество коек */
 	private Integer theAmount;
-	
+
 	/** Тип развертывания-свертывания */
 	@Comment("Тип развертывания-свертывания")
 	@OneToOne
@@ -60,7 +60,7 @@ public class BedFund extends BaseEntity{
 
 	/** Тип развертывания-свертывания */
 	private VocBedReductionType theReductionType;
-	
+
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@OneToOne
@@ -74,7 +74,7 @@ public class BedFund extends BaseEntity{
 
 	/** Поток обслуживания */
 	private VocServiceStream theServiceStream;
-	
+
 	/** Профиль коек */
 	@Comment("Профиль коек")
 	@OneToOne
@@ -88,7 +88,7 @@ public class BedFund extends BaseEntity{
 
 	/** Профиль коек */
 	private VocBedType theBedType;
-	
+
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@ManyToOne
@@ -102,7 +102,7 @@ public class BedFund extends BaseEntity{
 
 	/** ЛПУ */
 	private MisLpu theLpu;
-	
+
 	/** Для детей */
 	@Comment("Для детей")
 	public Boolean getForChild() {
@@ -122,11 +122,6 @@ public class BedFund extends BaseEntity{
 	public String getReductionTypeName() {
 		return theReductionType!=null? theReductionType.getName():"";
 	}
-	
-
-	public void setReductionTypeName(String aReductionTypeName) {
-	
-	}
 
 	/** Поток обслуживания (текст) */
 	@Comment("Поток обслуживания (текст)")
@@ -135,8 +130,6 @@ public class BedFund extends BaseEntity{
 		return theServiceStream!=null?theServiceStream.getName():"";
 	}
 
-	public void setServiceStreamName(String aServiceStreamName) {
-	}
 
 	/** Профиль коек (текст) */
 	@Comment("Профиль коек (текст)")
@@ -145,9 +138,7 @@ public class BedFund extends BaseEntity{
 		return theBedType!=null?theBedType.getName():"";
 	}
 
-	public void setBedTypeName(String aBedTypeName) {
-	}
-	
+
 	/** Тип госпитального обслуживания (текст) */
 	@Comment("Тип госпитального обслуживания (текст)")
 	@Transient
@@ -167,7 +158,7 @@ public class BedFund extends BaseEntity{
 
 	/** Время окончания актуальности */
 	private Timestamp theVTE;
-	
+
 	/** Время начала актуальности */
 	@Comment("Время начала актуальности")
 	public Timestamp getVTS() {
@@ -206,7 +197,7 @@ public class BedFund extends BaseEntity{
 
 	/** Время начала актуальности */
 	private Time theTimeStart;
-	
+
 	/** Дата окончания актуальности */
 	@Comment("Дата окончания актуальности")
 	public Date getDateFinish() {
@@ -219,7 +210,7 @@ public class BedFund extends BaseEntity{
 
 	/** Дата окончания актуальности */
 	private Date theDateFinish;
-	
+
 	/** Время окончания актуальности */
 	@Comment("Время окончания актуальности")
 	public Time getTimeFinish() {
@@ -232,7 +223,7 @@ public class BedFund extends BaseEntity{
 
 	/** Время окончания актуальности */
 	private Time theTimeFinish;
-	
+
 	/** Тип койки */
 	@Comment("Тип койки")
 	@OneToOne
@@ -241,14 +232,14 @@ public class BedFund extends BaseEntity{
 
 	/** Тип койки */
 	private VocBedSubType theBedSubType;
-	
+
 	/** Тип койки (текст) */
 	@Comment("Тип койки (текст)")
 	@Transient
 	public String getBedSubTypeName() {
 		return theBedSubType!=null? theBedSubType.getName():"";
 	}
-	
+
 	/** Без питания */
 	@Comment("Без питания")
 	public Boolean getNoFood() {
@@ -261,7 +252,7 @@ public class BedFund extends BaseEntity{
 
 	/** Без питания */
 	private Boolean theNoFood;
-	
+
 	/** День выписки и день поступления считать разными днями */
 	@Comment("День выписки и день поступления считать разными днями")
 	public Boolean getAddCaseDuration() {return theAddCaseDuration;}
@@ -269,7 +260,7 @@ public class BedFund extends BaseEntity{
 
 	/** День выписки и день поступления считать разными днями */
 	private Boolean theAddCaseDuration;
-	
+
 	/** Реабилитационные */
 	@Comment("Реабилитационные")
 	public Boolean getIsRehab() {return theIsRehab;}
@@ -277,7 +268,7 @@ public class BedFund extends BaseEntity{
 
 	/** Реабилитационные */
 	private Boolean theIsRehab;
-	
+
 	/** По умолчанию снилс врача генерации направлений для 263 приказа */
 	@Comment("По умолчанию снилс врача генерации направлений для 263 приказа")
 	@Deprecated
@@ -286,4 +277,17 @@ public class BedFund extends BaseEntity{
 
 	/** По умолчанию снилс врача генерации направлений для 263 приказа */
 	private String theSnilsDoctorDirect263;
+
+	public String getDepartmentAddressCode() {
+		return theDepartmentAddressCode;
+	}
+
+	public void setDepartmentAddressCode(String aDepartmentAddressCode) {
+		theDepartmentAddressCode = aDepartmentAddressCode;
+	}
+
+	/**
+	 * Код адреса отделения
+	 */
+	private String theDepartmentAddressCode;
 }
