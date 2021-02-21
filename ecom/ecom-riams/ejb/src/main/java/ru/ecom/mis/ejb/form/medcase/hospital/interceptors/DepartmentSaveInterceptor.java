@@ -69,10 +69,6 @@ public class DepartmentSaveInterceptor implements IFormInterceptor {
 		return list.isEmpty() ? null : list.get(0);
     }
 
-	private static boolean isEmpty(Long aLong) {
-		return (aLong == null) || (aLong == 0);
-	}
-
 	public static boolean isDiagnosisAllowed(Long clinicalMkb, Long department, Long aPatient, Long serviceStream, Long diagnosisRegistrationType, Long diagnosisPriority, EntityManager manager) {
 		if (clinicalMkb == null || clinicalMkb.equals(0L)) return true;
 		if (diagnosisRegistrationType == null) {

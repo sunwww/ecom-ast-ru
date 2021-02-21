@@ -85,7 +85,7 @@
                 <msh:sideLink action="/javascript:notWatchThisPatient()" name="НЕ наблюдать пациента на дежурстве" title="НЕ наблюдать пациента на дежурстве" roles="/Policy/Mis/MedCase/Stac/Ssl/View"/>
                 <msh:sideLink roles="/Policy/Mis/Pregnancy/CardiacScreening/Create" name="Кардио-скрининг нов. (I этап)" action="/entityParentPrepareCreate-stac_screeningCardiacFirst" params="id" title="Добавить кардио-скрининг нов. (I этап)"/>
                 <msh:sideLink roles="/Policy/Mis/Pregnancy/CardiacScreening/Create" name="Кардио-скрининг нов. (II этап)" action="/entityParentPrepareCreate-stac_screeningCardiacSecond" params="id" title="Добавить кардио-скрининг нов. (II этап)"/>
-                <msh:sideLink roles="/Policy/Mis/MedCase/Protocol" name="Протокол берем./родов" action="/entityParentPrepareCreate-pregProtocol" params="id" title="Добавить протокол берем./родов"/>
+                <msh:sideLink roles="/Policy/Mis/Pregnancy/ChildBirth/Create" name="Протокол берем./родов" action="/entityParentPrepareCreate-pregProtocol" params="id" title="Добавить протокол берем./родов"/>
             </msh:sideMenu>
             <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
                 <msh:sideMenu title="Показать">

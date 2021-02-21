@@ -14,7 +14,7 @@ public class TicketViewInterceptor implements IFormInterceptor {
 		TicketForm form=(TicketForm)aForm ;
         if (!aContext.getSessionContext().isCallerInRole("/Policy/Poly/Ticket/Reopen") 
         		&& form.getIsTicketClosed()!=null 
-        		&& form.getIsTicketClosed()==true) {
+        		&& Boolean.TRUE.equals(form.getIsTicketClosed().toString())) {
             if (CAN_DEBUG) LOG.debug("Можно открыть талон...") ;
             form.addDisabledField("isTicketClosed");
         }

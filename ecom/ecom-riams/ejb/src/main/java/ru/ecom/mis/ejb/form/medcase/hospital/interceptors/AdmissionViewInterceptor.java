@@ -7,10 +7,9 @@ import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
 import ru.ecom.mis.ejb.form.medcase.hospital.AdmissionMedCaseForm;
 import ru.nuzmsh.forms.response.FormMessage;
+import ru.nuzmsh.forms.validator.BaseValidatorForm;
 
 import java.util.List;
-
-//import IFormInterceptor;
 
 public class AdmissionViewInterceptor implements IFormInterceptor {
 
@@ -20,7 +19,7 @@ public class AdmissionViewInterceptor implements IFormInterceptor {
 		HospitalMedCase medCase = (HospitalMedCase)aEntity ;
 		form.setDischargeEpicrisis(HospitalMedCaseViewInterceptor.getDischargeEpicrisis(medCase.getId(), aContext.getEntityManager())) ;
 		
-		if (!form.isTypeCreate() && form.getSaveType()==form.TYPE_SAVE) {
+		if (!form.isTypeCreate() && form.getSaveType()== BaseValidatorForm.TYPE_SAVE) {
 			try {
 				SecPolicy.checkPolicyEditHour(aContext.getSessionContext(), medCase) ;
 			} catch(Exception e){

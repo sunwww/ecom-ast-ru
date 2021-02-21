@@ -74,11 +74,12 @@ function onPreCreate(aForm, aCtx) {
 
 function checkPeriod(aForm,aCtx) {
 	aManager = aCtx.manager ;
-	var isCreateAnyTime = aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/SurOper/CreateAnyTime") ;
-	if (!isCreateAnyTime) {
-	Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SecPolicy.checkPolicyCreateHour(aCtx.getSessionContext()
-	        , aForm.getOperationDate(), aForm.getOperationTime());
-	}
+	//upd. 19022021 эта проверка не нужна
+	// var isCreateAnyTime = aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/SurOper/CreateAnyTime") ;
+	// if (!isCreateAnyTime) {
+	// Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SecPolicy.checkPolicyCreateHour(aCtx.getSessionContext()
+	//         , aForm.getOperationDate(), aForm.getOperationTime());
+	// }
 	var operDate = Packages.ru.nuzmsh.util.format.DateFormat.parseSqlDate(aForm.operationDate) ;
 	var medCase = aManager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedCase
 			,aForm.medCase) ;

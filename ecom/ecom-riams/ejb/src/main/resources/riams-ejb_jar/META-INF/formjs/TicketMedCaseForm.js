@@ -63,7 +63,6 @@ function onPreDelete(aId, aCtx) {
 	}
 	aCtx.manager.createNativeQuery("delete from Diagnosis where medcase_id="+aId).executeUpdate() ;
 	aCtx.manager.createNativeQuery("delete from Medcase where parent_id="+aId).executeUpdate() ;
-	//aCtx.manager.createNativeQuery("delete from RenderedService where ticket_id='"+aId+"'").executeUpdate() ;
 	aCtx.manager.createNativeQuery("delete from ambulancecard where medcase_id='"+aId+"'").executeUpdate() ;
 	var  l=aCtx.manager.createNativeQuery("select id,parent_id from MedCase where parent_id=(select parent_id from medcase where id="+aId+") and parent_id is not null").getResultList() ;
 	if (l.size()==1) {

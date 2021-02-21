@@ -21,59 +21,117 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @WebTrail(comment = "Справочник профилей медицинской помощи", nameProperties = "id", view = "entityView-e2_vocMedHelpProfile.do")
 @EntityFormSecurityPrefix("/Policy/E2")
 public class VocE2MedHelpProfileForm extends IdEntityForm {
-    /** Дата начала действия */
+    private String theStartDate;
+    private String theFinishDate;
+    private Boolean theNoActuality;
+    private String theProfileK;
+    private String theName;
+    private String theCode;
+    private Long theMedSpecV021;
+    private String theDefaultDepartmentCode;
+
+    /**
+     * Дата начала действия
+     */
     @Comment("Дата начала действия")
-    @Persist @DateString @DoDateString
-    public String getStartDate() {return theStartDate;}
-    public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
-    /** Дата начала действия */
-    private String theStartDate ;
+    @Persist
+    @DateString
+    @DoDateString
+    public String getStartDate() {
+        return theStartDate;
+    }
 
-    /** Дата окончания действия */
+    public void setStartDate(String aStartDate) {
+        theStartDate = aStartDate;
+    }
+
+    /**
+     * Дата окончания действия
+     */
     @Comment("Дата окончания действия")
-    @Persist @DateString @DoDateString
-    public String getFinishDate() {return theFinishDate;}
-    public void setFinishDate(String aFinishDate) {theFinishDate = aFinishDate;}
-    /** Дата окончания действия */
-    private String theFinishDate ;
+    @Persist
+    @DateString
+    @DoDateString
+    public String getFinishDate() {
+        return theFinishDate;
+    }
 
-    /** Архивная запись */
+    public void setFinishDate(String aFinishDate) {
+        theFinishDate = aFinishDate;
+    }
+
+    /**
+     * Архивная запись
+     */
     @Comment("Архивная запись")
     @Persist
-    public Boolean getNoActuality() {return theNoActuality;}
-    public void setNoActuality(Boolean aNoActuality) {theNoActuality = aNoActuality;}
-    /** Архивная запись */
-    private Boolean theNoActuality ;
+    public Boolean getNoActuality() {
+        return theNoActuality;
+    }
 
-    /** Профиль ФОМС */
+    public void setNoActuality(Boolean aNoActuality) {
+        theNoActuality = aNoActuality;
+    }
+
+    /**
+     * Профиль ФОМС
+     */
     @Comment("Профиль ФОМС")
     @Persist
-    public String getProfileK() {return theProfileK;}
-    public void setProfileK(String aProfileK) {theProfileK = aProfileK;}
-    /** Профиль ФОМС */
-    private String theProfileK ;
+    public String getProfileK() {
+        return theProfileK;
+    }
 
-    /** Название */
+    public void setProfileK(String aProfileK) {
+        theProfileK = aProfileK;
+    }
+
+    /**
+     * Название
+     */
     @Comment("Название")
     @Persist
-    public String getName() {return theName;}
-    public void setName(String aName) {theName = aName;}
-    /** Название */
-    private String theName ;
+    public String getName() {
+        return theName;
+    }
 
-    /** Код */
+    public void setName(String aName) {
+        theName = aName;
+    }
+
+    /**
+     * Код
+     */
     @Comment("Код")
     @Persist
-    public String getCode() {return theCode;}
-    public void setCode(String aCode) {theCode = aCode;}
-    /** Код */
-    private String theCode ;
+    public String getCode() {
+        return theCode;
+    }
 
-    /** Мед. специальность V021 по профилю */
+    public void setCode(String aCode) {
+        theCode = aCode;
+    }
+
+    /**
+     * Мед. специальность V021 по профилю
+     */
     @Comment("Мед. специальность V021 по профилю")
     @Persist
-    public Long getMedSpecV021() {return theMedSpecV021;}
-    public void setMedSpecV021(Long aMedSpecV021) {theMedSpecV021 = aMedSpecV021;}
-    /** Мед. специальность по профилю */
-    private Long theMedSpecV021 ;
+    public Long getMedSpecV021() {
+        return theMedSpecV021;
+    }
+
+    public void setMedSpecV021(Long aMedSpecV021) {
+        theMedSpecV021 = aMedSpecV021;
+    }
+
+    @Persist
+    @Comment("Код адреса отделения по умолчанию")
+    public String getDefaultDepartmentCode() {
+        return theDefaultDepartmentCode;
+    }
+
+    public void setDefaultDepartmentCode(String aDefaultDepartmentCode) {
+        theDefaultDepartmentCode = aDefaultDepartmentCode;
+    }
 }

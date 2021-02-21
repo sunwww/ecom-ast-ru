@@ -159,6 +159,8 @@ public class E2EntryForm extends IdEntityForm {
     private String theDepartmentType ;
     /** Код отделения */
     private String theDepartmentCode ;
+    /** Код отделения длинный*/
+    private String theDepartmentAddressCode ;
     /** ФИО врача */
     private String theDoctorName ;
     /** Должность врача */
@@ -633,6 +635,11 @@ public class E2EntryForm extends IdEntityForm {
     @Persist
     public String getDepartmentCode() {return theDepartmentCode;}
     public void setDepartmentCode(String aDepartmentCode) {theDepartmentCode = aDepartmentCode;}
+
+    @Comment("Код отделения длинный")
+    @Persist
+    public String getDepartmentAddressCode() {return theDepartmentAddressCode;}
+    public void setDepartmentAddressCode(String aDepartmentAddressCode) {theDepartmentAddressCode = aDepartmentAddressCode;}
 
     @Comment("ФИО врача")
     @Persist

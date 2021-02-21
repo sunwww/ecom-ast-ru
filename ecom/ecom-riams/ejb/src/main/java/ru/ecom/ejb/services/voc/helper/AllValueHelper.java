@@ -26,54 +26,33 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
     }
 
     public String getNameById(String aId, String aVocName, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
-    	AllValueContext ctx = new AllValueContext(
-        		aAdditional, aContext.getEntityManager(), aContext.getSessionContext());
-    	return theAllValue.getNameById(aId, aVocName, aAdditional, ctx) ;
-        /*String ret = null;
-        if (aId != null) {
-            for (VocValue value : listAll(aAdditional, aContext)) {
-                if (aId.equals(value.getId())) {
-                    ret = value.getName();
-                }
-            }
-        }
-        return ret;*/
+        AllValueContext ctx = new AllValueContext(
+                aAdditional, aContext.getEntityManager(), aContext.getSessionContext());
+        return theAllValue.getNameById(aId, aVocName, aAdditional, ctx);
     }
 
     public Collection<VocValue> findVocValueByQuery(String aVocName, String aQuery, int aCount, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
-    	//AllValueContext ctx = new AllValueContext(
-        //		aAdditional, aContext.getEntityManager(), aContext.getSessionContext());
-    	//return theAllValue.findVocValueByQuery(aVocName, aQuery, aCount, aAdditional, ctx) ;/*
-    	String query = aQuery.toUpperCase();
+        String query = aQuery.toUpperCase();
         String findedId = null;
         boolean finded;
         LinkedList<VocValue> ret = new LinkedList<>();
         if (!StringUtil.isNullOrEmpty(aQuery)) {
-            for (VocValue value : listAll(aAdditional,aContext)) {
-            	finded=false ;
+            for (VocValue value : listAll(aAdditional, aContext)) {
+                finded = false;
                 String name = value.getName();
                 String id = value.getId();
-                if (name != null) {
-                    if (name.toUpperCase().startsWith(query)) {
-                        findedId = id;
-                        finded=true;
-                    }
-                }
-                if (findedId == null) {
-                    if (id != null) {
-                        if (id.toUpperCase().startsWith(query)) {
-                            findedId = id;
-                            finded=true;
-                        }
-                    }
-                }
-                if (name != null && name.toUpperCase().indexOf(query) > -1) {
+
+                if (findedId == null && id != null && id.toUpperCase().startsWith(query)) {
                     findedId = id;
-                    finded=true;
+                    finded = true;
                 }
-                if (id != null && id.toUpperCase().indexOf(query) > -1) {
+                if (name != null && name.toUpperCase().contains(query)) {
                     findedId = id;
-                    finded=true;
+                    finded = true;
+                }
+                if (id != null && id.toUpperCase().contains(query)) {
+                    findedId = id;
+                    finded = true;
                 }
                 if (finded) {
                     ret.add(value);
@@ -81,7 +60,7 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
                 }
             }
         }
-        return ret ;
+        return ret;
     }
 
     public Collection<VocValue> findVocValuePrevious(String aVocName, String aId, int aCount, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
@@ -97,7 +76,7 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
                 finded = true;
             }
             if (finded) {
-                ret.add(0,value);
+                ret.add(0, value);
                 if (ret.size() > aCount) break;
             }
         }
@@ -108,7 +87,6 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
         LinkedList<VocValue> ret = new LinkedList<>();
         boolean finded = StringUtil.isNullOrEmpty(aId);
         for (VocValue value : listAll(aAdditional, aContext)) {
-            if (CAN_TRACE) LOG.info("valueProperty = " + value);
             if (!finded && value.getId().equals(aId)) {
                 finded = true;
             }
@@ -120,9 +98,9 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
         return ret;
     }
 
-    private Collection<VocValue> listAll(VocAdditional aAdditional, VocContext aContext ) {
+    private Collection<VocValue> listAll(VocAdditional aAdditional, VocContext aContext) {
         AllValueContext ctx = new AllValueContext(
-        		aAdditional, aContext.getEntityManager(), aContext.getSessionContext());
+                aAdditional, aContext.getEntityManager(), aContext.getSessionContext());
         return theAllValue.listAll(ctx);
     }
 
@@ -130,7 +108,6 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
 
     }
 
-    
 
     private final IAllValue theAllValue;
 }

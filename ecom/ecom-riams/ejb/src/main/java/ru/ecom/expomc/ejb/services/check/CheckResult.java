@@ -52,37 +52,11 @@ public class CheckResult  {
         theValues.put(aFieldName, aValue) ;
     }
 
-/*
-    private void addLog(int aType, String aMessage) {
-        if (CAN_DEBUG) LOG.debug("aMessage = " + aMessage);
-        theLogs.add(new ResultLog(aType, aMessage)) ;
-    }*/
-    /**
-     * Ход выполнения
-     * @param aMessage
-     */
-    public void debug(String aMessage) {
-        //addLog(MessageLog.DEBUG, aMessage);
-    }
-
-    public void info(String aMessage) {
-       // addLog(MessageLog.INFO, aMessage);
-    }
-
-    public void warn(String aMessage) {
-        //addLog(MessageLog.WARN, aMessage);
-    }
-
-    public void error(String aMessage) {
-        //addLog(MessageLog.ERROR, aMessage);
-    }
-
     public String toString() {
-        String sb = "CheckResult [ accepted = " + theAccepted +
+        return "CheckResult [ accepted = " + theAccepted +
                 ", values = " + theValues +
                 ", logs = " + theLogs +
                 " ]";
-        return sb;
     }
     protected Map<String, Object> getChanged() {
         return theValues;

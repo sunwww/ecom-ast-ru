@@ -100,12 +100,12 @@ public class FinanceServiceBean implements IFinanceService {
                         } else if (ksg != null) {
                             priceKey = ksg.getId() + "#" + sql + "#" + currentMonth.getTime();
                             if (!caseCost.containsKey(priceKey)) {
-                                VocE2BaseTariff tariff = expert2ServiceBean.getActualVocByClassName(VocE2BaseTariff.class, currentMonth, sql);
+                                VocE2BaseTariff tariff = expert2Service.getActualVocByClassName(VocE2BaseTariff.class, currentMonth, sql);
                                 BigDecimal baseTariff = tariff.getValue();
                                 cost = baseTariff
                                         .multiply(BigDecimal.valueOf(ksg.getKZ())
-                                                .multiply(expert2ServiceBean.getActualKsgUprCoefficient(ksg, currentMonth))
-                                                .multiply(expert2ServiceBean.calculateCusmo(monthPlan.getBedSubType().getCode(), monthPlan.getDepartment().getId(), monthPlan.getProfile().getId(), currentMonth)));
+                                                .multiply(expert2Service.getActualKsgUprCoefficient(ksg, currentMonth))
+                                                .multiply(expert2Service.calculateCusmo(monthPlan.getBedSubType().getCode(), monthPlan.getDepartment().getId(), monthPlan.getProfile().getId(), currentMonth)));
                                 cost = cost.setScale(2, RoundingMode.HALF_UP);
                                 caseCost.put(priceKey, cost);
                             } else {
@@ -126,7 +126,7 @@ public class FinanceServiceBean implements IFinanceService {
                         priceKey = "POL#" + monthPlan.getVidSluch().getId() + "#" + currentMonth.getTime();
 
                         if (!caseCost.containsKey(priceKey)) {
-                            cost = expert2ServiceBean.calculatePolyclinicEntryPrice(monthPlan.getVidSluch(), monthPlan.getFinishDate(), monthPlan.getProfile());
+                            cost = expert2Service.calculatePolyclinicEntryPrice(monthPlan.getVidSluch(), monthPlan.getFinishDate(), monthPlan.getProfile());
                             caseCost.put(priceKey, cost);
                         } else {
                             cost = caseCost.get(priceKey);
@@ -142,7 +142,7 @@ public class FinanceServiceBean implements IFinanceService {
                         monthPlan.setCount(count);
                         priceKey = "VMP#" + monthPlan.getMethod().getCode();
                         if (!caseCost.containsKey(priceKey)) {
-                            VocKindHighCare kind = expert2ServiceBean.getActualVocBySqlString(VocKindHighCare.class, "select id from VocKindHighCare where code='" + monthPlan.getMethod().getKindHighCare() + "' " +
+                            VocKindHighCare kind = expert2Service.getActualVocBySqlString(VocKindHighCare.class, "select id from VocKindHighCare where code='" + monthPlan.getMethod().getKindHighCare() + "' " +
                                     "and to_date('" + DateFormat.formatToDate(monthPlan.getFinishDate()) + "','dd.MM.yyyy') between datefrom and coalesce(dateTo,current_date) and serviceStreamCode='OBLIGATORYINSURANCE'");
                             if (kind == null) {
                                 LOG.error("Невозможно найти вид ВМП " + monthPlan.getMethod().getKindHighCare());
@@ -347,5 +347,5 @@ public class FinanceServiceBean implements IFinanceService {
     ILocalMonitorService theMonitorService;
 
     private @EJB
-    IExpert2Service expert2ServiceBean;
+    IExpert2Service expert2Service;
 }

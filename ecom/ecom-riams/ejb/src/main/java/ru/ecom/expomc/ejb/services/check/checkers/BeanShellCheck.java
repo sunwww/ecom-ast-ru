@@ -62,9 +62,7 @@ public class BeanShellCheck implements ICheck {
     }
 
     public Collection<String> getBadProperties() {
-    	LinkedList<String> list = new LinkedList<String>() ;
-    	// FIXME ОПРЕДЕЛЯТЬ автоматически
-    	return list ;
+    	return new LinkedList<>();
 	}
     
     /** Свойство */

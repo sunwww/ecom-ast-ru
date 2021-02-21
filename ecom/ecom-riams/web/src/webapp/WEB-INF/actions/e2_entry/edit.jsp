@@ -169,7 +169,9 @@
                     <msh:textField property="birthOrder" size="30"/>
                 </msh:row><msh:row>
                 <msh:textField property="departmentType" size="30"/>
+            </msh:row><msh:row>
                 <msh:textField property="departmentCode" size="30"/>
+                <msh:textField property="departmentAddressCode" size="30"/>
             </msh:row><msh:row>
                 <msh:textField property="newbornAmount" size="30"/>
                 <msh:checkBox property="multiplyBirth"/>

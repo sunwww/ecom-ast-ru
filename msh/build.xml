@@ -6,7 +6,7 @@
     <property name='dirname' value="msh"/>
     <property name="build.dir" value="target"/>
 
-    <import file="../ecom/ant-support/property-skeleton.xml" />
+    <property file="../ecom/ant-support/config.properties" />
 
     <target name="all" depends="clean,compile,generate.web,package,deploy" />
 
@@ -30,6 +30,7 @@
 
         <include name="ecom/riams/ejb/riams-ejb-api.jar" />
         <include name="ecom/riams/web/riams-web.jar" />
+        <include name="junit/junit-jupiter-api-5.5.2.jar" />
 
 
     </fileset>

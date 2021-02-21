@@ -8,7 +8,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 
-//import ru.ecom.mis.ejb.domain.diet.ChildMealMenuTemplate;
 
 /**
  * Шаблон меню приема пищи

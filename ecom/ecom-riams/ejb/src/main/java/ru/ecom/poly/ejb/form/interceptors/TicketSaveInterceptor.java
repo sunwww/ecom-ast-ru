@@ -16,7 +16,7 @@ public class TicketSaveInterceptor implements IFormInterceptor {
 	public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
 		TicketForm form = (TicketForm)aForm ;
 		Ticket ticket = (Ticket)aEntity ;
-		if (ticket.getStatus()!=Ticket.STATUS_CLOSED && form.getIsTicketClosed()!=null && form.getIsTicketClosed()==true) {
+		if (ticket.getStatus()!=Ticket.STATUS_CLOSED && form.getIsTicketClosed()!=null && Boolean.TRUE.equals(form.getIsTicketClosed().toString())) {
 			if (CAN_DEBUG) LOG.debug("Закрытие талона...") ;
 			ticket.setStatus(Ticket.STATUS_CLOSED) ;
 		} else {

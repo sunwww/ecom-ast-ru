@@ -1023,6 +1023,13 @@ public class E2Entry extends BaseEntity {
     /** Код отделения */
     private String theDepartmentCode ;
 
+    /** Код отделения длинный*/
+    @Comment("Код отделения длинный")
+    public String getDepartmentAddressCode() {return theDepartmentAddressCode;}
+    public void setDepartmentAddressCode(String aDepartmentAddressCode) {theDepartmentAddressCode = aDepartmentAddressCode;}
+    /** Код отделения длинный*/
+    private String theDepartmentAddressCode;
+
     /** ФИО врача */
     @Comment("ФИО врача")
     public String getDoctorName() {return theDoctorName;}

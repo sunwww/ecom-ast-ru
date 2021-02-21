@@ -10,28 +10,29 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 
 public class LpuJs {
-	public String getOtherEquipmentByLpu (String aLpu, HttpServletRequest aRequest) throws NamingException {
-		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
-		String sql = "select e.id, e.name from equipment_mislpu el" +
-				" left join equipment e on e.id=el.equipment_id" +
-				" where el.otherLpu_id="+aLpu;
-		Collection<WebQueryResult> res = service.executeNativeSql(sql);
-		StringBuilder ret = new StringBuilder();
-		if (!res.isEmpty()) {
-			for (WebQueryResult r: res) {
-				ret.append(r.get1().toString()).append(":").append(r.get2().toString()).append("@");
-				}
-		}
-		
-		return ret.length()>0?ret.substring(0,ret.length()-1):"";
-	}
-	public void createOtherEquipment(Long aLpuId, Long aEquipmentId, HttpServletRequest aRequest) throws NamingException{
-		ILpuService service = Injection.find(aRequest).getService(ILpuService.class) ;
-		service.createOtherEquipment(aLpuId, aEquipmentId);
-	}
+    public String getOtherEquipmentByLpu(String aLpu, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        String sql = "select e.id, e.name from equipment_mislpu el" +
+                " left join equipment e on e.id=el.equipment_id" +
+                " where el.otherLpu_id=" + aLpu;
+        Collection<WebQueryResult> res = service.executeNativeSql(sql);
+        StringBuilder ret = new StringBuilder();
+        if (!res.isEmpty()) {
+            for (WebQueryResult r : res) {
+                ret.append(r.get1().toString()).append(":").append(r.get2().toString()).append("@");
+            }
+        }
 
-	public void removeOtherEquipment(Long aLpuId, Long aEquipmentId, HttpServletRequest aRequest) throws NamingException{
-		ILpuService service = Injection.find(aRequest).getService(ILpuService.class) ;
-		service.removeOtherEquipment(aLpuId, aEquipmentId);
-	}
+        return ret.length() > 0 ? ret.substring(0, ret.length() - 1) : "";
+    }
+
+    public void createOtherEquipment(Long aLpuId, Long aEquipmentId, HttpServletRequest aRequest) throws NamingException {
+        ILpuService service = Injection.find(aRequest).getService(ILpuService.class);
+        service.createOtherEquipment(aLpuId, aEquipmentId);
+    }
+
+    public void removeOtherEquipment(Long aLpuId, Long aEquipmentId, HttpServletRequest aRequest) throws NamingException {
+        ILpuService service = Injection.find(aRequest).getService(ILpuService.class);
+        service.removeOtherEquipment(aLpuId, aEquipmentId);
+    }
 }

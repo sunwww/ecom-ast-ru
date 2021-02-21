@@ -32,7 +32,7 @@ import java.util.List;
 @Remote(IApiPolyclinicService.class)
 public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
 
-    private static final Logger LOG = Logger.getLogger(ApiRecordServiceBean.class);
+    private static final Logger LOG = Logger.getLogger(ApiPolyclinicServiceBean.class);
 
     private static final String POLYCLINICID = "EvnPL_NumCard";           //уникальный номер талона
     private static final String ISCASEFINISHED = "EvnPL_IsFinish";        //случай закончен (1 - да, 0 - нет)

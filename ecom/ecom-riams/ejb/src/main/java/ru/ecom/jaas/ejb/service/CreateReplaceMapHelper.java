@@ -49,7 +49,6 @@ public class CreateReplaceMapHelper {
         r("Document","Документ") ;
         r("Areas","Участки") ;
         r("MisLpuDynamic","Список ЛПУ") ;
-//        r("","") ;
 
         r("Admission","Поступление") ;
         r("AllVoc","Справочники") ;
@@ -82,9 +81,6 @@ public class CreateReplaceMapHelper {
         r("CreateStatCardNumberByHand","Создавать новый номер стат. карты вручную") ;
         r("ConfirmAfterAdd","Подтвержение полиса при его создании") ;
         r("AcquirePatient","Брать ФИО, дату рождения, адрес и др. при создании полиса из паспортных данных") ;
-//        r("","") ;
-//        r("","") ;
-//        r("","") ;
 
         return theMap ;
     }
@@ -93,5 +89,5 @@ public class CreateReplaceMapHelper {
         theMap.put(s, s1) ;
     }
 
-    private final Map<String, String> theMap = new TreeMap<String, String>();
+    private final Map<String, String> theMap = new TreeMap<>();
 }

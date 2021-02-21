@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="skin" basedir="." default='all' >
 
-	<!-- <property file="${user.home}/build.properties"/> -->
-	<import file="../ant-support/property-skeleton.xml" />
+	<property file="../ant-support/config.properties" />
 	<target name='all' depends="prepare, shrink">
 		
 	</target>

@@ -331,7 +331,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
         Method[] methods = clazz.getMethods();
         for (Method method : methods) {
             if (method.isAnnotationPresent(PersistManyToManyOneProperty.class)) {
-                boolean isViewable = isEntityMethodDataAvailable(aEntity, aEntity.getClass(), method, aId);
+                boolean isViewable = isEntityMethodDataAvailable(aEntity.getClass(), method, aId);
                 if (isViewable) {
                     String json = (String) method.invoke(aForm);
 
@@ -357,7 +357,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
             try {
                 Method getterIsDeleted = PropertyUtil.getGetterMethod(entityClass, unDeletable.fieldName());
                 Boolean isDeleted = (Boolean) getterIsDeleted.invoke(aEntity);
-                if (Boolean.TRUE == isDeleted) {
+                if (Boolean.TRUE.equals(isDeleted)) {
                     throw new IllegalArgumentException("Этот объект был удален");
                 }
             } catch (InvocationTargetException | IllegalAccessException e) {
@@ -463,22 +463,11 @@ public class AbstractFormServiceBeanHelper implements IFormService {
         return findFormPersistance(aFormClass).clazz();
     }
 
-    private boolean isEntityMethodDataAvailable(Object aEntity, Class aEntityClass, Method method, Object id) throws InstantiationException, IllegalAccessException {
+    private boolean isEntityMethodDataAvailable(Class aEntityClass, Method method, Object id) throws InstantiationException, IllegalAccessException {
         boolean isViewable = true;
 
         if (method.isAnnotationPresent(ADynamicSecurityInterceptor.class)) {
 //			// если нет данных, то не надо закрывать на просмотр
-//			try {
-//				Method setterMethod = aEntityClass.getMethod(method.getName()) ;
-//				Object value = setterMethod.invoke(aEntity) ;
-//				LOG.info(setterMethod.getName()+" = <"+value+">") ;
-//				if(value==null) return true ;
-//				if(value instanceof String && StringUtil.isNullOrEmpty((String)value)) {
-//					return true ;
-//				}
-//			} catch (Exception e1) {
-//				LOG.error(e1) ;
-//			}
 
             // проверка на доступность
             ADynamicSecurityInterceptor interceptor = method.getAnnotation(ADynamicSecurityInterceptor.class);
@@ -511,7 +500,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
             baseValidatorForm = null;
         }
         for (Method method : formClass.getMethods()) {
-            boolean isViewable = isEntityMethodDataAvailable(aEntity, entityClass, method, id);
+            boolean isViewable = isEntityMethodDataAvailable(entityClass, method, id);
             if (!isViewable && baseValidatorForm != null) {
                 String name = PropertyUtil.getPropertyName(method);
                 baseValidatorForm.addPrivateField(name);
@@ -618,11 +607,10 @@ public class AbstractFormServiceBeanHelper implements IFormService {
         Object id = getIdValue(aForm, formClass);
 
         for (Method method : formClass.getMethods()) {
-            boolean isViewable = isEntityMethodDataAvailable(aEntity, entityClass, method, id);
+            boolean isViewable = isEntityMethodDataAvailable(entityClass, method, id);
             if (isViewable) {
                 if (method.isAnnotationPresent(PersistManyToManyOneProperty.class)) {
                     String json = (String) method.invoke(aForm);
-                    // Method entityGetterMethod =
 
                     PersistManyToManyOneProperty pm = method
                             .getAnnotation(PersistManyToManyOneProperty.class);

@@ -20,6 +20,7 @@ import ru.nuzmsh.util.voc.VocValue;
  */
 public class FormatByDocumentAllValues implements IAllValue {
 
+    @Override
     public String getNameById(String aId, String aVocName, VocAdditional aAdditional, AllValueContext aContext) throws VocServiceException {
     	String ret = null;
         if (aId != null) {
@@ -31,8 +32,10 @@ public class FormatByDocumentAllValues implements IAllValue {
         }
         return ret;
     }
+
+    @Override
     public Collection<VocValue> listAll(AllValueContext aContext) {
-        LinkedList<VocValue> ret = new LinkedList<VocValue>();
+        LinkedList<VocValue> ret = new LinkedList<>();
         if(!StringUtil.isNullOrEmpty(aContext.getVocAdditional().getParentId())) {
             ImportDocument doc = aContext.getEntityManager().find(ImportDocument.class, Long.parseLong(aContext.getVocAdditional().getParentId())) ;
             for (Format format : doc.getFormats()) {
@@ -42,6 +45,7 @@ public class FormatByDocumentAllValues implements IAllValue {
         return ret ;
     }
 
+    @Override
     public void destroy() {
 
     }

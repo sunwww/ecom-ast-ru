@@ -486,7 +486,7 @@ public class DisabilityServiceJs {
                 " left join patient pat on pat.id=dc.patient_id" +
                 " where eln.disabilitydocument_id=" + aDocumentId + " and eln.number = dd.number";
         Collection<WebQueryResult> list = service.executeNativeSql(sql);
-        if (list.size()==1) {
+        if (list.size() == 1) {
             WebQueryResult wqr = list.iterator().next();
             IDisabilityService disService = Injection.find(aRequest).getService(IDisabilityService.class);
             String number = wqr.get2().toString();
@@ -495,11 +495,11 @@ public class DisabilityServiceJs {
             if (snils == null || "".equals(snils)) return "У пациента не указан СНИЛС, аннулирование невозможно!";
             ret = disService.annulDisabilityDocument(Long.valueOf(number), aAnnulCode, aAnnulText, snils);
             if (ret != null && !ret.equals("")) { //Если сервис успешно аннулировал запись
-                service.executeUpdateNativeSql("UPDATE electronicdisabilitydocumentnumber SET annuldate=current_date, comment='" + aAnnulText + "', annulreason_id=(SELECT id FROM vocannulreason WHERE code='" + aAnnulCode + "') WHERE id = " + elnId );
-                service.executeUpdateNativeSql("UPDATE disabilitydocument SET noactuality='1', status_id=(select id from VocDisabilityStatus where code='1_ELN')  WHERE id="+ aDocumentId );
+                service.executeUpdateNativeSql("UPDATE electronicdisabilitydocumentnumber SET annuldate=current_date, comment='" + aAnnulText + "', annulreason_id=(SELECT id FROM vocannulreason WHERE code='" + aAnnulCode + "') WHERE id = " + elnId);
+                service.executeUpdateNativeSql("UPDATE disabilitydocument SET noactuality='1', status_id=(select id from VocDisabilityStatus where code='1_ELN')  WHERE id=" + aDocumentId);
             }
         } else {
-            ret = list.size()+": ЭЛН с таким номером не найдено, либо номер ЭЛН != номер документа";
+            ret = list.size() + ": ЭЛН с таким номером не найдено, либо номер ЭЛН != номер документа";
         }
         return ret;
     }
@@ -879,22 +879,22 @@ public class DisabilityServiceJs {
     /**
      * Проверить, есть ли подпись ВК.
      *
-     *@param documentId DisabilityDocument.id
-     * @param aRequest HttpServletRequest
+     * @param documentId DisabilityDocument.id
+     * @param aRequest   HttpServletRequest
      * @return Boolean true если есть ВК
      * @throws NamingException
      */
-    public Boolean getIfDisDocHasVK(Long documentId,HttpServletRequest aRequest) throws NamingException {
+    public Boolean getIfDisDocHasVK(Long documentId, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest, null).getService(IWebQueryService.class);
-        Collection<WebQueryResult> list = service.executeNativeSql("select id from disabilityrecord where disabilitydocument_id="+documentId+" and workfunctionadd_id is not null");
+        Collection<WebQueryResult> list = service.executeNativeSql("select id from disabilityrecord where disabilitydocument_id=" + documentId + " and workfunctionadd_id is not null");
         return !list.isEmpty();
     }
 
     /**
      * Обновить лист нетрудоспособности: ФИО+ДР, место работы, выгружен период/нет, хэш.
      *
-     *@param documentId DisabilityDocument.id
-     * @param aRequest HttpServletRequest
+     * @param documentId DisabilityDocument.id
+     * @param aRequest   HttpServletRequest
      * @return Boolean true если обновлено, false - если не удалось обновить
      * @throws NamingException
      */
@@ -909,17 +909,17 @@ public class DisabilityServiceJs {
                 " from patient p" +
                 " left join disabilitycase dc on p.id=dc.patient_id" +
                 " left join disabilitydocument dd on dc.id=dd.disabilitycase_id" +
-                " where dd.id="+documentId);
-        if (!list.isEmpty() && endpoint!=null && ogrn_lpu!=null) {
-            String eln = list.iterator().next().get1()!=null? list.iterator().next().get1().toString() : "";
-            String snils = list.iterator().next().get2()!=null? list.iterator().next().get2().toString() : "";
-            Map<String,String> params = new HashMap<>();
-            params.put("ogrn",ogrn_lpu);
-            params.put("eln",eln);
-            params.put("snils",snils);
-            String xml = creteGetRequest(endpoint,  "api/import", "application/json", params);
+                " where dd.id=" + documentId);
+        if (!list.isEmpty() && endpoint != null && ogrn_lpu != null) {
+            String eln = list.iterator().next().get1() != null ? list.iterator().next().get1().toString() : "";
+            String snils = list.iterator().next().get2() != null ? list.iterator().next().get2().toString() : "";
+            Map<String, String> params = new HashMap<>();
+            params.put("ogrn", ogrn_lpu);
+            params.put("eln", eln);
+            params.put("snils", snils);
+            String xml = creteGetRequest(endpoint, "api/import", "application/json", params);
 
-            parseDisabilityXML(xml,documentId,aRequest);
+            parseDisabilityXML(xml, documentId, aRequest);
             return true;
         }
         return false;
@@ -928,12 +928,12 @@ public class DisabilityServiceJs {
     /**
      * Распарсить xml с информацией о листке нетрудоспособности и актуализировать данные.
      *
-     * @param xml xml для парсера
+     * @param xml        xml для парсера
      * @param documentId DisabilityDocument.id
-     * @param aRequest HttpServletRequest
+     * @param aRequest   HttpServletRequest
      * @throws NamingException
      */
-    private void parseDisabilityXML(String xml,Long documentId, HttpServletRequest aRequest) throws NamingException, ParserConfigurationException, IOException, SAXException {
+    private void parseDisabilityXML(String xml, Long documentId, HttpServletRequest aRequest) throws NamingException, ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         InputSource is = new InputSource(new StringReader(xml));
@@ -970,8 +970,8 @@ public class DisabilityServiceJs {
             Node period = nodeList.item(i);
 
             NodeList children = period.getChildNodes();
-            String datefrom="",dateto="";
-            for (int j=0; j<children.getLength(); j++) {
+            String datefrom = "", dateto = "";
+            for (int j = 0; j < children.getLength(); j++) {
                 if (children.item(j).getNodeName().equals("ns1:TREAT_DT1"))
                     datefrom = children.item(j).getTextContent();
                 if (children.item(j).getNodeName().equals("ns1:TREAT_DT2"))
@@ -993,7 +993,7 @@ public class DisabilityServiceJs {
      * Получить госпитализацию по ЛН через номер ИБ и год
      *
      * @param aDisDocId DisabilityDocument.id
-     * @param aRequest HttpServletRequest
+     * @param aRequest  HttpServletRequest
      * @return String with result
      * @throws NamingException
      */

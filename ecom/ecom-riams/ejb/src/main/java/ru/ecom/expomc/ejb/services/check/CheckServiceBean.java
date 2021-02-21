@@ -194,7 +194,6 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
             Long count = (Long) countQuery.getSingleResult();
             if (CAN_DEBUG) LOG.debug(" Количество = " + count);
 
-            //Collection data = theManager.createQuery("from "+document.getEntityClassName()+" c where time =:time").setParameter("time", aTime).getResultList();
             monitor = theMonitorService.startMonitor(aMonitorId, "Проверка", count);
             monitor.setText("Удаление старых проверок ...");
             theManager.persist(time);
@@ -214,9 +213,6 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
             Collection<CheckPair> sqlPairs = createIteratorsChecks(document.getChecks(), true);
             executeSqlSupports(entityClass, sqlPairs, aTime, monitor);
 
-//            for (Field field : format.getFields()) {
-//                allowedFields.add(field.getName()) ;
-//            }
             Collection<CheckPair> list = createIteratorsChecks(document.getChecks(), false);
             int i = 0;
             monitor.setText("Другие проверки...");
@@ -229,7 +225,6 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
             Iterator iterator = QueryIteratorUtil.iterate(query);
             while (iterator.hasNext()) {
                 Object entity = iterator.next();
-                // if(CAN_DEBUG) LOG.debug("Checking entity "+entity+" ...") ;
                 if (++i % 10 == 0) {
                     if (monitor.isCancelled()) throw new IllegalMonitorStateException("Прервано пользователем");
                     monitor.advice(10);
@@ -242,7 +237,6 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
                 CheckContext ctx = new CheckContext(format, map, allowedFields, time.getActualDateFrom(), theManager, entity);
 
                 // проверки
-                //Collection<Check> list = document.getChecks();
                 for (CheckPair pair : list) {
                     if (CAN_DEBUG) LOG.debug(" Checking " + pair.check.getName() + " ...");
                     CheckResult result;
@@ -258,14 +252,11 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
                         LOG.error(error, e);
                         result = new CheckResult();
                         result.setAccepted(true);
-                        result.error(error);
-                        // throw new IllegalArgumentException(error, e) ;
-
                     }
 
                     if (result.isAccepted()) {
                         try {
-                            storeResult(entity, time, (Long) PropertyUtil.getPropertyValue(entity, "id"), result, pair.check, map);
+                            storeResult(entity,  result, pair.check, map);
                         } catch (Exception e) {
                             String error = "Ошибка при сохранении результатов: [entity="
                                     + entity
@@ -408,7 +399,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
         theManager.persist(property);
     }
 
-    private void storeResult(Object aEntity, ImportTime aTime, long aData, CheckResult aResult, Check aCheck, Map<String, Object> aOldValues) throws IllegalAccessException, NoSuchMethodException, ParseException, InvocationTargetException {
+    private void storeResult(Object aEntity, CheckResult aResult, Check aCheck, Map<String, Object> aOldValues) throws IllegalAccessException, NoSuchMethodException, ParseException, InvocationTargetException {
 
         if (aCheck.getCheckType() == Check.TYPE_CHANGE) {
             Map<String, Object> map = aResult.getChanged();

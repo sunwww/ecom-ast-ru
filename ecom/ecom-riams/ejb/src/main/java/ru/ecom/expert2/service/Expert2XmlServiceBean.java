@@ -64,6 +64,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     private static final String KDP_TYPE = "POL_KDP";
     private static final String SERVICE_TYPE = "SERVICE";
     private static final String CENTRAL_SEGMENT_DOC = "CENTRAL_SEGMENT";
+    private final static String EXPORT_DIR = "/rtf/expert2xml/";
     private boolean isCheckIsRunning = false;
     private boolean exchangeCovidDs = false;
     private boolean exportDispServiceNoDate = false;
@@ -73,7 +74,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     ILocalMonitorService monitorService;
     private @EJB
     IExpert2Service expertService;
-    private final static String EXPORT_DIR ="/rtf/expert2xml/";
 
     /**
      * Экспорт запроса в центральный сегмент
@@ -402,7 +402,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(sl, "METOD_HMP", currentEntry.getVMPMethod()); // Метод ВМП
                 }
                 add(sl, "LPU_1", currentEntry.getDepartmentCode() != null ? currentEntry.getDepartmentCode() : "30000101");
-                //PODR
+                addIfNotNull(sl, "PODR", currentEntry.getDepartmentAddressCode());
                 if (!a3) add(sl, "PROFIL", profile.getCode()); //Профиль специальностей V002 * 12.12.2018
                 if (isHosp || isVmp) {
                     if (currentEntry.getBedProfile() == null) {
@@ -556,7 +556,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(ksgKpg, "BZTSZ", currentEntry.getBaseTarif());
                     add(ksgKpg, "KOEF_D", "1");
                     add(ksgKpg, "KOEF_U", "1");
-                    if (currentEntry.getKsgPosition() != null){
+                    if (currentEntry.getKsgPosition() != null) {
                         addIfNotNull(ksgKpg, "CRIT", currentEntry.getKsgPosition().getDopPriznak());
                     }
                     //DKK2
@@ -567,7 +567,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         for (E2CoefficientPatientDifficultyEntryLink link : difficultyEntryLinks) {
                             Element slKoef = new Element("SL_KOEF");
                             add(slKoef, "IDSL", link.getDifficulty().getCode());
-                            add(slKoef, "Z_SL", coalesce(link.getValue(),link.getDifficulty().getValue()));
+                            add(slKoef, "Z_SL", coalesce(link.getValue(), link.getDifficulty().getValue()));
                             ksgKpg.addContent(slKoef);
                         }
                     } else {
@@ -1255,7 +1255,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             LOG.error(" с условием " + sql + " найдено несколько действующих значений справочника " + clazz.getCanonicalName());
             return null;
         }
-        return (T) manager.find(clazz, Long.valueOf(list.get(0).toString()));
+        return manager.find(clazz, Long.valueOf(list.get(0).toString()));
 
     }
 
