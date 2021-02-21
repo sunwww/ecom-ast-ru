@@ -17,10 +17,6 @@ public class SimpleChecker implements ICheck {
 
     public CheckResult check(ICheckContext aContext) throws CheckException {
         CheckResult result = new CheckResult() ;
-        result.error("hello");
-        result.info("ifno") ;
-        result.warn("warn");
-        result.debug("debug");
         result.setAccepted(true);
         return result ;
     }

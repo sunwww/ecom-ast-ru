@@ -28,7 +28,7 @@ public class CheckResult  {
     /**
      * Установка значения
      * @param aFieldName
-     * @param aValue
+     * @param aDate
      */
     public void set(String aFieldName, Object aDate) {
         theValues.put(aFieldName, aDate) ;
@@ -70,7 +70,7 @@ public class CheckResult  {
 
     /** Сообщения */
     public ArrayList<ResultLog> getLogs() { return theLogs ; }
-    private TreeMap<String, Object> theValues = new TreeMap<>();
+    private final TreeMap<String, Object> theValues = new TreeMap<>();
 
     /** Сообщения */
     private final ArrayList<ResultLog> theLogs = new ArrayList<>();
