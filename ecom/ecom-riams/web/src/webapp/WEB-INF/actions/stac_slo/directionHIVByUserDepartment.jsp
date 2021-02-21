@@ -174,7 +174,7 @@ left join Mislpu dep on dep.id=sloAll.department_id
                     var row = table.rows[ii];
                     var id=+row.className.replace('datelist','')
                         .replace('selected','').replace(' ','');
-                    if (!isNaN(id) && $(voc+ii).value!='' && $('dateIntake'+ii).value!='' && $('regNum'+ii).value!='') {
+                    if (!isNaN(id) && $(voc+ii).value!='' && $('dateIntake'+ii).value!='') {
                         params=params+id+"-"
                             +$(voc+ii).value+"-"
                             +$('dateIntake'+ii).value+"-"
