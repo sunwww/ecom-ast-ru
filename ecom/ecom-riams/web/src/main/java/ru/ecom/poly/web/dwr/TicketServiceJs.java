@@ -11,6 +11,7 @@ import ru.ecom.mis.ejb.service.worker.IWorkerService;
 import ru.ecom.mis.web.dwr.medcase.HospitalMedCaseServiceJs;
 import ru.ecom.poly.ejb.services.ITicketService;
 import ru.ecom.template.web.dwr.TemplateProtocolJs;
+import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
@@ -726,5 +727,20 @@ public class TicketServiceJs {
             res.put(o);
         }
         return res.toString();
+    }
+
+    /**
+     * Отметить направление оплаченным
+     *
+     * @param aMedCaseId MedCase.id
+     * @return void
+     */
+    public void setMedcasePayed(Long aMedCaseId, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        service.executeUpdateNativeSql("update medcase set isPaid=true where id=" + aMedCaseId);
+        String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
+        String sql = "insert into AdminChangeJournal (cType, createDate, createTime, createUsername, annulRecord) " +
+                "values ('SETMEDCASEPAYED',current_date, current_time, '" + username + "', 'Направление с ИД №" + aMedCaseId + " отмечено оплаченным'); ";
+        service.executeUpdateNativeSql(sql);
     }
 }
