@@ -11,7 +11,6 @@
   </tiles:put>
   <tiles:put name="side" type="string">
     <tags:style_currentMenu currentAction="stac_infectiousMessages" />
-    <tags:mis_journal />
   </tiles:put>
   <tiles:put name="body" type="string">
     <msh:section>

@@ -25,8 +25,10 @@
                 </tr>
 
                 <tr>
-                    <td><input type="button" value='Присвоить' id="${name}Save" onclick='javascript:save${name}BillNumber()'/></td>
-                    <td><input type="button" value='Закрыть' id="${name}Cancel" onclick='javascript:cancel${name}BillNumber()'/></td>
+                    <td><input type="button" value='Присвоить' id="${name}Save"
+                               onclick='javascript:save${name}BillNumber()'/></td>
+                    <td><input type="button" value='Закрыть' id="${name}Cancel"
+                               onclick='javascript:cancel${name}BillNumber()'/></td>
                 </tr>
             </table>
         </form>
@@ -36,54 +38,56 @@
 
 <script type="text/javascript">
 
-var theIs${name}BillDialogInitialized = false ;
-var the${name}BillDialog = new msh.widget.Dialog($('${name}BillDialog')) ;
-var the${name}someData;
-new dateutil.DateField(${name}BillDate) ;
-// Показать
-function show${name}BillDialog(someStuff) {
-    if (someStuff && someStuff!=""){
-        the${name}someData=someStuff;
-        var dt =the${name}someData.split("&");
-        var oldBillDate= dt[2].split("=")[1];
-        var oldBillNumber= dt[3].split("=")[1];
-        var oldBillComment= dt[6].split("=")[1];
-        $('${name}BillNumber').value=oldBillNumber;
-        $('${name}BillDate').value=oldBillDate;
-        $('${name}BillComment').value=oldBillComment;
-    }
-    the${name}BillDialog.show() ;
-}
+    var theIs${name}BillDialogInitialized = false;
+    var the${name}BillDialog = new msh.widget.Dialog($('${name}BillDialog'));
+    var the${name}someData;
+    new dateutil.DateField(${name}BillDate);
 
-// Отмена
-function cancel${name}BillNumber() {
-    the${name}BillDialog.hide() ;
-}
-//Сохранение
-function save${name}BillNumber() {
-    var newBillNumber=$('${name}BillNumber').value;
-    var newBillDate=$('${name}BillDate').value;
-    var newBillComment=$('${name}BillComment').value;
-    if (newBillNumber==''||newBillDate=='') {
-        if (!confirm('Вы хотите очистить информацию о счете?')) {
-            alert('Укажите номер и дату счета');
-            return;
+    // Показать
+    function show${name}BillDialog(someStuff) {
+        if (someStuff && someStuff != "") {
+            the${name}someData = someStuff;
+            var dt = the${name}someData.split("&");
+            var oldBillDate = dt[2].split("=")[1];
+            var oldBillNumber = dt[3].split("=")[1];
+            var oldBillComment = dt[6].split("=")[1];
+            $('${name}BillNumber').value = oldBillNumber;
+            $('${name}BillDate').value = oldBillDate;
+            $('${name}BillComment').value = oldBillComment;
         }
+        the${name}BillDialog.show();
     }
-    var dt =the${name}someData.split("&");
-    var type = dt[1].split("=")[1];
-    var oldBillDate= dt[2].split("=")[1];
-    var oldBillNumber= dt[3].split("=")[1];
-    var serviceStream = dt[4].split("=")[1];
-    var isForeign=dt[5].split("=")[1];
-    var fileType=dt[7].split("=")[1];
-    var addGroupFld = dt[8].split("=")[1];
-    Expert2Service.saveBillDateAndNumber(${param.id}, type, serviceStream, oldBillNumber, oldBillDate, newBillNumber, newBillDate, isForeign, newBillComment, fileType, addGroupFld, {
-        callback: function () {
-            cancel${name}BillNumber();
-            window.location.reload();
-        }
-    })
 
-}
+    // Отмена
+    function cancel${name}BillNumber() {
+        the${name}BillDialog.hide();
+    }
+
+    //Сохранение
+    function save${name}BillNumber() {
+        var newBillNumber = $('${name}BillNumber').value;
+        var newBillDate = $('${name}BillDate').value;
+        var newBillComment = $('${name}BillComment').value;
+        if (newBillNumber == '' || newBillDate == '') {
+            if (!confirm('Вы хотите очистить информацию о счете?')) {
+                alert('Укажите номер и дату счета');
+                return;
+            }
+        }
+        var dt = the${name}someData.split("&");
+        var type = dt[1].split("=")[1];
+        var oldBillDate = dt[2].split("=")[1];
+        var oldBillNumber = dt[3].split("=")[1];
+        var serviceStream = dt[4].split("=")[1];
+        var isForeign = dt[5].split("=")[1];
+        var fileType = dt[7].split("=")[1];
+        var addGroupFld = dt[8].split("=")[1];
+        Expert2Service.saveBillDateAndNumber(${param.id}, type, serviceStream, oldBillNumber, oldBillDate, newBillNumber, newBillDate, isForeign, newBillComment, fileType, addGroupFld, {
+            callback: function () {
+                cancel${name}BillNumber();
+                window.location.reload();
+            }
+        })
+
+    }
 </script>

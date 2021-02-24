@@ -21,11 +21,15 @@
     <div>
         <table width="100%" cellspacing="10" cellpadding="10">
             <tr>
-                <td align="center"><input type="button" value='Копировать' id="${name}Add" onclick='javascript:copy${name}()'/></td>
+                <td align="center"><input type="button" value='Копировать' id="${name}Add"
+                                          onclick='javascript:copy${name}()'/></td>
             </tr>
-            <tr><td></td></tr>
             <tr>
-                <td align="right"><input type="button"  style="font-weight:bold" id="${name}203" value='Закрыть' id="${name}Cancel" onclick='javascript:cancel${name}()'/></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td align="right"><input type="button" style="font-weight:bold" id="${name}203" value='Закрыть'
+                                         id="${name}Cancel" onclick='javascript:cancel${name}()'/></td>
             </tr>
         </table>
     </div>
@@ -33,34 +37,38 @@
 <script type='text/javascript' src='./dwr/interface/WorkCalendarService.js'></script>
 <script type="text/javascript">
     var ID;
-    new dateutil.DateField($('${name}date')) ;
-    new dateutil.DateField($('${name}date2')) ;
+    new dateutil.DateField($('${name}date'));
+    new dateutil.DateField($('${name}date2'));
     $('${name}date').className += " required";
-    var theIs${name}CloseDocumentDialogInitialized = false ;
-    var the${name}CloseDocumentDialog = new msh.widget.Dialog($('${name}CloseDocumentDialog')) ;
+    var theIs${name}CloseDocumentDialogInitialized = false;
+    var the${name}CloseDocumentDialog = new msh.widget.Dialog($('${name}CloseDocumentDialog'));
+
     // Показать
     function show${name}(id) {
-        ID=id;
-        theTableArrow = null ;
+        ID = id;
+        theTableArrow = null;
         the${name}CloseDocumentDialog.show();
     }
+
     // Закрыть
     function cancel${name}() {
-        the${name}CloseDocumentDialog.hide() ;
+        the${name}CloseDocumentDialog.hide();
     }
+
     // Копировать
     function copy${name}() {
-        if ($('${name}date').value!='') {
+        if ($('${name}date').value != '') {
             var dateParts = $('${name}date').value.split(".");
             var oDate = new Date(dateParts[2], (dateParts[1] - 1), dateParts[0]);
-            if ($('${name}date2').value=='') $('${name}date2').value=$('${name}date').value;
+            if ($('${name}date2').value == '') $('${name}date2').value = $('${name}date').value;
             var dateParts2 = $('${name}date2').value.split(".");
             var oDate2 = new Date(dateParts2[2], (dateParts2[1] - 1), dateParts2[0]);
             if (oDate2.getTime() >= oDate.getTime()) {
                 WorkCalendarService.copyDay(ID, $('${name}date').value, $('${name}date2').value, {
                     callback: function (aResult) {
-                        the${name}CloseDocumentDialog.hide() ;
-                        $('${name}date').value='';$('${name}date2').value='';
+                        the${name}CloseDocumentDialog.hide();
+                        $('${name}date').value = '';
+                        $('${name}date2').value = '';
                         showToastMessage(aResult, null, true);
                         updateTable();
                     },
@@ -68,9 +76,7 @@
                         alert("Не удалось скопировать! " + aMessage);
                     }
                 });
-            }
-            else alert('Последняя дата меньше первой!');
-        }
-        else alert('Ввыедите период!');
+            } else alert('Последняя дата меньше первой!');
+        } else alert('Ввыедите период!');
     }
 </script>

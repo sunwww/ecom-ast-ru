@@ -61,9 +61,6 @@
      var the${name}TempDietDialog = new msh.widget.Dialog($('${name}templateDietDialog')) ;
      new dateutil.DateField($('${name}newDateTo')) ;
      new dateutil.DateField($('${name}newDateFrom')) ;
-     
-     //var ${name}Date
-
 
 
      // Показать
@@ -120,13 +117,9 @@
 	                    }
 	                }
 	         ) ;
-	         //Long aIdTemplateMenu, Long aIdDiet, Long aIdServiceStream
-			//,Long aIdWeekDay, String aDateFrom, String aDateTo
          } else {
          	alert(error);
          }
-         //window.document.location.reload()  ;
-         //theTempProtDialog.hide() ;
      }
 
      // инициализация диалогового окна

@@ -8,9 +8,9 @@
 
 <style type="text/css">
     #CloseDisDocument {
-        visibility: hidden ;
-        display: none ;
-        position: absolute ;
+        visibility: hidden;
+        display: none;
+        position: absolute;
     }
 </style>
 <script type="text/javascript" src="./dwr/interface/ContractService.js">/**/</script>
@@ -33,85 +33,91 @@
 
 <script type="text/javascript">
     var ID;
-    var theIs${name}CloseDisDocumentDialogInitialized = false ;
-    var the${name}CloseDisDocumentDialog = new msh.widget.Dialog($('${name}CloseDisDocumentDialog')) ;
+    var theIs${name}CloseDisDocumentDialogInitialized = false;
+    var the${name}CloseDisDocumentDialog = new msh.widget.Dialog($('${name}CloseDisDocumentDialog'));
+
     // Показать
 
     function show${name}CloseDocument(id) {
-        ID=id;
+        ID = id;
         showLabAnalysis();
-        theTableArrow = null ;
+        theTableArrow = null;
     }
+
     function showLabAnalysis() {
         var table2 = document.getElementById('table2');
-        table2.innerHTML="<tr><td></td></tr><tr><td align=\"center\"><input type=\"button\" value=\'Печать\' id=\"${name}Print\" onclick=\'javascript:print${name}CloseDocument()\'/></td><td align=\"center\"><input type=\"button\" value='Закрыть' id=\"${name}Cancel\" onclick='javascript:cancel${name}CloseDocument()'/></td></tr><tr><td></td></tr>";
+        table2.innerHTML = "<tr><td></td></tr><tr><td align=\"center\"><input type=\"button\" value=\'Печать\' id=\"${name}Print\" onclick=\'javascript:print${name}CloseDocument()\'/></td><td align=\"center\"><input type=\"button\" value='Закрыть' id=\"${name}Cancel\" onclick='javascript:cancel${name}CloseDocument()'/></td></tr><tr><td></td></tr>";
         ContractService.getLabAnalysisExtra(
             ID, {
-                callback: function(res) {
-                    if (res!=null && res!='[]') {
+                callback: function (res) {
+                    if (res != null && res != '[]') {
                         var aResult = JSON.parse(res);
                         var table = document.getElementById('table1');
-                        table.innerHTML="<tr><th align=\"center\" width=\"850\">Услуга</th><th align=\"center\" width=\"150\">Печатать?  <input type=\"checkbox\" checked id=\"allChb${name}\" onclick=\"javascript:checkAllChanged${name}CloseDocument()\"/></th></tr>";
-                        for (var i=0; i<aResult.length; i++) {
+                        table.innerHTML = "<tr><th align=\"center\" width=\"850\">Услуга</th><th align=\"center\" width=\"150\">Печатать?  <input type=\"checkbox\" checked id=\"allChb${name}\" onclick=\"javascript:checkAllChanged${name}CloseDocument()\"/></th></tr>";
+                        for (var i = 0; i < aResult.length; i++) {
                             var tr = document.createElement('tr');
                             var td1 = document.createElement('td');
                             var td2 = document.createElement('td');
                             td1.innerHTML = aResult[i].name;
-                            td2.innerHTML = "<input type=\"checkbox\" checked id="+ aResult[i].id +" name="+aResult[i].name+">";
-                            td1.align = "center"; td2.align = "center";
-                            tr.appendChild(td1);tr.appendChild(td2);
+                            td2.innerHTML = "<input type=\"checkbox\" checked id=" + aResult[i].id + " name=" + aResult[i].name + ">";
+                            td1.align = "center";
+                            td2.align = "center";
+                            tr.appendChild(td1);
+                            tr.appendChild(td2);
                             table.appendChild(tr);
                         }
-                        the${name}CloseDisDocumentDialog.show() ;
-                    }
-                    else showToastMessage("Дополнительных лабораторных анализов для печати не найдено!",null,true,false,3000);
+                        the${name}CloseDisDocumentDialog.show();
+                    } else showToastMessage("Дополнительных лабораторных анализов для печати не найдено!", null, true, false, 3000);
                 }
             }
         );
     }
+
     // Отмена
     function cancel${name}CloseDocument() {
-        the${name}CloseDisDocumentDialog.hide() ;
+        the${name}CloseDisDocumentDialog.hide();
     }
+
     // Печать
     function print${name}CloseDocument() {
-        var error="";
+        var error = "";
         var mas = document.getElementsByTagName("input");
-        var masCheckBox=[];
-        var masFileNames=[];
-        for (var i=0; i<mas.length; i++) {
-            if (mas[i].getAttribute("type")=="checkbox" && document.getElementsByTagName("input")[i].form.getAttribute("name")==null
-                && mas[i].checked && mas[i].getAttribute("id")!="allChb${name}")
+        var masCheckBox = [];
+        var masFileNames = [];
+        for (var i = 0; i < mas.length; i++) {
+            if (mas[i].getAttribute("type") == "checkbox" && document.getElementsByTagName("input")[i].form.getAttribute("name") == null
+                && mas[i].checked && mas[i].getAttribute("id") != "allChb${name}")
                 masCheckBox.push(mas[i].getAttribute("id"));
         }
-        if (masCheckBox.length==0) alert("Не выбрано ни одной услуги для печати!");
+        if (masCheckBox.length == 0) alert("Не выбрано ни одной услуги для печати!");
         else {
             ContractService.getAllUserTemplateDocForPrintByService(
                 masCheckBox, {
                     callback: function (res) {
-                        if (res!="") {
-                            var all = res.split('!') ;
-                            for (var i=0; i<all.length-1; i++) {
-                                var result=all[i].split('#');
-                                if (result[1]=="*") error+="Нет шаблона для услуги: " +document.getElementById(result[0]).getAttribute("name") + "!\n";
+                        if (res != "") {
+                            var all = res.split('!');
+                            for (var i = 0; i < all.length - 1; i++) {
+                                var result = all[i].split('#');
+                                if (result[1] == "*") error += "Нет шаблона для услуги: " + document.getElementById(result[0]).getAttribute("name") + "!\n";
                                 else masFileNames.push(result[1]);
                             }
-                            if (error!="") alert(error);
-                            for (var j=0; j<masFileNames.length; j++)
-                                window.open('print-'+masFileNames[j]+'.do?s=CertificatePersonPrintService&m=printLabAnalysisTemplateExtra&id='+ID);
+                            if (error != "") alert(error);
+                            for (var j = 0; j < masFileNames.length; j++)
+                                window.open('print-' + masFileNames[j] + '.do?s=CertificatePersonPrintService&m=printLabAnalysisTemplateExtra&id=' + ID);
                         }
                     }
                 }
             );
-            the${name}CloseDisDocumentDialog.hide() ;
+            the${name}CloseDisDocumentDialog.hide();
         }
     }
+
     // Прочекать
     function checkAllChanged${name}CloseDocument() {
         var mas = document.getElementsByTagName("input");
-        for (var i=0; i<mas.length; i++) {
-            if (mas[i].getAttribute("type")=="checkbox" && document.getElementsByTagName("input")[i].form.getAttribute("name")==null)
-                mas[i].checked=document.getElementById("allChb${name}").checked;
+        for (var i = 0; i < mas.length; i++) {
+            if (mas[i].getAttribute("type") == "checkbox" && document.getElementsByTagName("input")[i].form.getAttribute("name") == null)
+                mas[i].checked = document.getElementById("allChb${name}").checked;
         }
     }
 </script>
