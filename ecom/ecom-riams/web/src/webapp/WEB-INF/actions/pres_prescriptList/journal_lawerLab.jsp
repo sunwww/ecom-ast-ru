@@ -33,8 +33,8 @@
             if (bedType != null && !bedType.equals(""))
                 request.setAttribute("bedType", " and vbt.id=" + bedType);
 
-            String typeVMP = ActionUtil.updateParameter("typeVMP","typeVMP","1", request) ;
-            if (typeVMP!=null && typeVMP.equals("2"))
+            String typeVMP = ActionUtil.updateParameter("typeVMP", "typeVMP", "1", request);
+            if (typeVMP != null && typeVMP.equals("2"))
                 request.setAttribute("typeVMPSql", "  and himc.id is not null ");
             else
                 request.setAttribute("typeVMPSql", "");
@@ -58,15 +58,17 @@
                                       fieldColSpan="5"/>
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete property="serviceStream" fieldColSpan="4" horizontalFill="true" label="Поток обслуживания" vocName="vocServiceStream"/>
+                    <msh:autoComplete property="serviceStream" fieldColSpan="4" horizontalFill="true"
+                                      label="Поток обслуживания" vocName="vocServiceStream"/>
                 </msh:row>
                 <msh:row>
-                    <td class="label" title="ВМП  (typeVMP)" colspan="1"><label for="typeVMPName" id="typeVMPLabel">ВМП:</label></td>
+                    <td class="label" title="ВМП  (typeVMP)" colspan="1"><label for="typeVMPName"
+                                                                                id="typeVMPLabel">ВМП:</label></td>
                     <td onclick="this.childNodes[1].checked='checked';">
-                        <input type="radio" name="typeVMP" value="1">  всё
+                        <input type="radio" name="typeVMP" value="1"> всё
                     </td>
                     <td onclick="this.childNodes[1].checked='checked';">
-                        <input type="radio" name="typeVMP" value="2">  только ВМП
+                        <input type="radio" name="typeVMP" value="2"> только ВМП
                     </td>
                 </msh:row>
                 <msh:row>
@@ -112,8 +114,9 @@ group by ms.code,ms.name"/>
         <% } %>
 
         <script type='text/javascript'>
-            checkFieldUpdate('typeVMP','${typeVMP}',1) ;
-            function checkFieldUpdate(aField,aValue,aDefaultValue) {
+            checkFieldUpdate('typeVMP', '${typeVMP}', 1);
+
+            function checkFieldUpdate(aField, aValue, aDefaultValue) {
                 eval('var chk =  document.forms[0].' + aField);
                 var max = chk.length;
                 aValue = +aValue;
