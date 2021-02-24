@@ -1161,7 +1161,8 @@ public class HospitalMedCaseServiceJs {
      */
     public void setHWeightIMT(Long slsId, int height, int weight, double imt, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        service.executeUpdateNativeSql("update statisticstub set height='" + height + "',weight='" + weight + "',imt='" + imt + "' where medcase_id ='" + slsId + "'");
+        service.executeUpdateNativeSql("update statisticstub set height='" + height + "',weight='" + weight + "',imt='"
+                + imt + "' where medcase_id ='" + slsId + "'");
     }
 
     /**
@@ -1460,12 +1461,12 @@ public class HospitalMedCaseServiceJs {
      */
     public String getMedcaseDtype(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        Collection<WebQueryResult> l = service.executeNativeSql("select case when mc.dtype='HospitalMedCase' then '0'\n" +
-                "else case when mc.dtype='DepartmentMedCase' then '1'\n" +
-                "else case when mc.dtype='Visit' then '2' else '0' end end end\n" +
-                "from assessmentcard  ac\n" +
-                "left join medcase mc on mc.id=ac.medcase_id\n" +
-                "where ac.medcase_id=" + aMedcaseId);
+        Collection<WebQueryResult> l = service.executeNativeSql("select case when mc.dtype='HospitalMedCase' then '0'" +
+                " else case when mc.dtype='DepartmentMedCase' then '1'" +
+                " else case when mc.dtype='Visit' then '2' else '0' end end end" +
+                " from assessmentcard  ac" +
+                " left join medcase mc on mc.id=ac.medcase_id" +
+                " where ac.medcase_id=" + aMedcaseId);
         return l.isEmpty() ? "" : l.iterator().next().get1().toString();
     }
 
@@ -1477,13 +1478,13 @@ public class HospitalMedCaseServiceJs {
      */
     public String getMedcaseDtypeById(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        Collection<WebQueryResult> l = service.executeNativeSql("select case when mc.dtype='HospitalMedCase' then '0'\n" +
-                "else case when mc.dtype='DepartmentMedCase' then '1'\n" +
-                "else case when mc.dtype='Visit' then '2'\n" +
-                "else case when mc.dtype='PolyclinicMedCase' then '3' \n" +
-                "else case when mc.dtype='ShortMedCase' then '4' \n" +
-                "else case when mc.dtype='ServiceMedCase' then '5' else '-1' end end end end end end\n" +
-                "from medcase mc where mc.id=" + aMedcaseId);
+        Collection<WebQueryResult> l = service.executeNativeSql("select case when mc.dtype='HospitalMedCase' then '0'" +
+                " else case when mc.dtype='DepartmentMedCase' then '1'" +
+                " else case when mc.dtype='Visit' then '2'" +
+                " else case when mc.dtype='PolyclinicMedCase' then '3'" +
+                " else case when mc.dtype='ShortMedCase' then '4'" +
+                " else case when mc.dtype='ServiceMedCase' then '5' else '-1' end end end end end end" +
+                " from medcase mc where mc.id=" + aMedcaseId);
         return l.isEmpty() ? "" : l.iterator().next().get1().toString();
     }
 
@@ -1495,9 +1496,9 @@ public class HospitalMedCaseServiceJs {
      */
     public String getSlsCountDays(Long aMedcaseId, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        Collection<WebQueryResult> l = service.executeNativeSql("\n" +
+        Collection<WebQueryResult> l = service.executeNativeSql(
                 "select cast(round((EXTRACT(EPOCH FROM current_timestamp)-(SELECT EXTRACT(EPOCH FROM (mc.datestart + mc.entrancetime))  " +
-                "from medcase mc where id=" + aMedcaseId + "  and deniedhospitalizating_id is null))/3600/24) as int)");
+                        "from medcase mc where id=" + aMedcaseId + "  and deniedhospitalizating_id is null))/3600/24) as int)");
         return (!l.isEmpty() && l.iterator().next().get1() != null) ? l.iterator().next().get1().toString() : "";
     }
 
@@ -1511,12 +1512,12 @@ public class HospitalMedCaseServiceJs {
         JSONObject res = new JSONObject();
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         Collection<WebQueryResult> list = service.executeNativeSql("select cast(round((EXTRACT(EPOCH FROM current_timestamp)" +
-                "-(SELECT EXTRACT(EPOCH FROM (hmc.datestart + hmc.entrancetime))  from medcase hmc where hmc.id=dmc.parent_id ))/3600/24) as int) as t1\n" +
-                ",cast(round((EXTRACT(EPOCH FROM current_timestamp)-(SELECT EXTRACT(EPOCH FROM (dmc.datestart + dmc.entrancetime))  " +
-                "from medcase dmc where dmc.id=" + aMedcaseId + "))/3600/24) as int) as t2\n" +
-                "from medcase dmc\n" +
-                "left join medcase hmc on hmc.id=dmc.parent_id\n" +
-                "where dmc.id=" + aMedcaseId);
+                "-(SELECT EXTRACT(EPOCH FROM (hmc.datestart + hmc.entrancetime))  from medcase hmc where hmc.id=dmc.parent_id ))/3600/24) as int) as t1" +
+                " ,cast(round((EXTRACT(EPOCH FROM current_timestamp)-(SELECT EXTRACT(EPOCH FROM (dmc.datestart + dmc.entrancetime))  " +
+                " from medcase dmc where dmc.id=" + aMedcaseId + "))/3600/24) as int) as t2" +
+                " from medcase dmc" +
+                " left join medcase hmc on hmc.id=dmc.parent_id" +
+                " where dmc.id=" + aMedcaseId);
         if (!list.isEmpty()) {
             WebQueryResult w = list.iterator().next();
             res.put("hmcCnt", w.get1())
@@ -1797,7 +1798,7 @@ public class HospitalMedCaseServiceJs {
     }
 
     /**
-     * Удалить все направления к подозрению на ЗНО. При редактировании подозрения: удалить имеющиеся, добавить новые.
+     * Сохранить данные по доступным местам в госипталях.
      *
      * @param json значения
      * @throws NamingException,JSONException
@@ -1808,14 +1809,13 @@ public class HospitalMedCaseServiceJs {
         JSONObject obj = new JSONObject(json);
         String js = getString(obj, "list");
         JSONArray arr = new JSONArray(js);
-        for (int i = 0; i < arr.length(); i++) {
-            obj = arr.getJSONObject(i);
-            String id = getString(obj, "id");
-            String meno2 = getString(obj, "meno2");
-            String mennoo2 = getString(obj, "mennoo2");
-            String womeno2 = getString(obj, "womeno2");
-            String womennoo2 = getString(obj, "womennoo2");
-
+        arr.forEach(element -> {
+            JSONObject objEl = (JSONObject) element;
+            String id = getString(objEl, "id");
+            String meno2 = getString(objEl, "meno2");
+            String mennoo2 = getString(objEl, "mennoo2");
+            String womeno2 = getString(objEl, "womeno2");
+            String womennoo2 = getString(objEl, "womennoo2");
             StringBuilder sql = new StringBuilder();
             sql.append("UPDATE freehospbed set meno2=").append(meno2)
                     .append(", mennoo2=").append(mennoo2)
@@ -1824,7 +1824,7 @@ public class HospitalMedCaseServiceJs {
                     .append(", editdate=current_date, edittime=current_time, editusername = '").append(login).append("'")
                     .append(" where lpu = ").append(id);
             service.executeUpdateNativeSql(sql.toString());
-        }
+        });
     }
 
     /**
