@@ -2466,6 +2466,14 @@ left join patient wp on wp.id=w.person_id "
         />
     </voc>
 
+	<voc id='secUserLogin' type='EntityVocService'>
+		<EntityVocService
+				entity  = 'ru.ecom.jaas.ejb.domain.SecUser'
+				names   = 'login'
+				queried = 'login, fullname'
+		/>
+	</voc>
+
 	<voc id='secUserEnabledCopy' type='EntityVocService'>
 		<EntityVocService
 				entity  = 'ru.ecom.jaas.ejb.domain.SecUser'

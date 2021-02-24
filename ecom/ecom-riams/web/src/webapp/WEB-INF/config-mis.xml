@@ -1195,6 +1195,14 @@
 			<forward name="success" redirect="false" path="/WEB-INF/actions/stac_ssl/journal_deletedDisch.jsp" />
 		</action>
 
+		<action path='/journal_lawerLab' type='ru.ecom.web.actions.base.ForwardAction'
+				validate='false'
+				name='stac_admissionJournalForm'
+				scope="session"
+		>
+			<forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/journal_lawerLab.jsp" />
+		</action>
+
 		<action path='/journal_analysisUpdate' type='ru.ecom.web.actions.base.ForwardAction'
 				validate='false'
 				name='stac_admissionJournalForm'
