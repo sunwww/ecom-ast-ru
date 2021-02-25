@@ -7,17 +7,14 @@
     </init>
 
     <allow>
-	<!-- Автозаполнение ключа для документа -->
+        <!-- Автозаполнение ключа для документа -->
         <create creator="new" javascript="QualityEstimationService" scope="application">
             <param name="class" value="ru.ecom.mis.web.dwr.medcase.QualityEstimationServiceJs"/>
         </create>
         <create creator="new" javascript="CreateKeyForClassNameService" scope="application">
             <param name="class" value="ru.ecom.expomc.web.dwr.CreateKeyForClassNameServiceJs"/>
         </create>
-
-        
     </allow>
-
     <signatures>
     </signatures>
 
