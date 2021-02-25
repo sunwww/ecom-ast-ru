@@ -8,45 +8,46 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 
 <html:html xhtml="true" locale="true">
- <head>
-   <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 
-<msh:ifInIdeMode>
-   <script type='text/javascript' src='ru.ecom.gwt.idemode.Main/ru.ecom.gwt.idemode.Main.nocache.js'></script>
-   <script type='text/javascript' src='./dwr/interface/IdeModeService-CA113b8ec45f6.js'></script>   
-</msh:ifInIdeMode>
+        <msh:ifInIdeMode>
+            <script type='text/javascript' src='ru.ecom.gwt.idemode.Main/ru.ecom.gwt.idemode.Main.nocache.js'></script>
+            <script type='text/javascript' src='./dwr/interface/IdeModeService-CA113b8ec45f6.js'></script>
+        </msh:ifInIdeMode>
 
-<!-- CSS  -->
-<msh:stylesheet src='/skin/css/css/main/main.css'/>
-<style type="text/css">
-	@import url("/skin/css/css/main/main_fo<%=ru.nuzmsh.web.filter.caching.CacheUniqueUtil.getUniqueId()%>.css") all;
-</style>
-<!--[if IE]>
-	<msh:stylesheet src='/skin/css/css/main/main_ie.css'/>
-<![endif]-->
+        <!-- CSS  -->
+        <msh:stylesheet src='/skin/css/css/main/main.css'/>
+        <style type="text/css">
+            @import url("/skin/css/css/main/main_fo<%=ru.nuzmsh.web.filter.caching.CacheUniqueUtil.getUniqueId()%>.css") all;
+        </style>
+        <msh:stylesheet src='/skin/css/css/main/main_ie.css'/>
 
-<script type="text/javascript">
-try {
-  switch(screen.width) {
-      case 800: document.write("<msh:stylesheet src='/skin/css/css/main/main_800.css'/>") ; break ;
-      case 1024: document.write("<msh:stylesheet src='/skin/css/css/main/main_1024.css'/>") ; break ;
-  }
-} catch (e) {
-}
-</script>
+        <script type="text/javascript">
+            try {
+                switch (screen.width) {
+                    case 800:
+                        document.write("<msh:stylesheet src='/skin/css/css/main/main_800.css'/>");
+                        break;
+                    case 1024:
+                        document.write("<msh:stylesheet src='/skin/css/css/main/main_1024.css'/>");
+                        break;
+                }
+            } catch (e) {
+            }
+        </script>
 
-<msh:javascriptSrc src='/skin/js/engine.js' />
-<msh:javascriptSrc src='./dwr/interface/VocService.js' />
-<msh:javascriptSrc src='./dwr/interface/VocEditService.js' />
-<msh:javascriptSrc src='./dwr/interface/RemoteMonitorService.js' />
-<msh:javascriptSrc src='./dwr/interface/AddressService.js' />
+        <msh:javascriptSrc src='/skin/js/engine.js'/>
+        <msh:javascriptSrc src='./dwr/interface/VocService.js'/>
+        <msh:javascriptSrc src='./dwr/interface/VocEditService.js'/>
+        <msh:javascriptSrc src='./dwr/interface/RemoteMonitorService.js'/>
+        <msh:javascriptSrc src='./dwr/interface/AddressService.js'/>
 
-<!-- Дополнительное определение стиля -->
-<tiles:insert attribute="style" ignore='true'/>
-<!-- Дополнительное определение стиля END -->
+        <!-- Дополнительное определение стиля -->
+        <tiles:insert attribute="style" ignore='true'/>
+        <!-- Дополнительное определение стиля END -->
 
-
- </head>
+    </head>
 
     <body>
 
@@ -57,26 +58,24 @@ try {
         <tiles:insert attribute="body"/>
     </div>
 
-
-
     <msh:javascriptContextWrite/>
 
-
-
-	<!-- Additional Javascript -->
+    <!-- Additional Javascript -->
     <tiles:insert attribute="javascript" ignore='true'/>
     <!-- Additional Javascript END -->
 
-<iframe width=174 height=189 name="gToday:datetime::gfPop1:plugins_time.js" 
-id="gToday:datetime::gfPop1:plugins_time.js" 
-src="/skin/ext/cal/themes/DateTime/ipopeng.htm" 
-scrolling="no" frameborder="0" style="visibility:visible; z-index:999; position:absolute; top:-500px; left:-500px;">
-</iframe>
-<iframe width=174 height=189 name="gToday:normal::gfPop2:plugins.js" 
-id="gToday:normal::gfPop2:plugins.js" 
-src="/skin/ext/cal/themes/Normal/ipopeng.htm" 
-scrolling="no" frameborder="0" style="visibility:visible; z-index:999; position:absolute; top:-500px; left:-500px;">
-</iframe>
+    <iframe width=174 height=189 name="gToday:datetime::gfPop1:plugins_time.js"
+            id="gToday:datetime::gfPop1:plugins_time.js"
+            src="/skin/ext/cal/themes/DateTime/ipopeng.htm"
+            scrolling="no" frameborder="0"
+            style="visibility:visible; z-index:999; position:absolute; top:-500px; left:-500px;">
+    </iframe>
+    <iframe width=174 height=189 name="gToday:normal::gfPop2:plugins.js"
+            id="gToday:normal::gfPop2:plugins.js"
+            src="/skin/ext/cal/themes/Normal/ipopeng.htm"
+            scrolling="no" frameborder="0"
+            style="visibility:visible; z-index:999; position:absolute; top:-500px; left:-500px;">
+    </iframe>
     </body>
 
 </html:html>

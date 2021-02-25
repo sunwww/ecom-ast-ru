@@ -8,10 +8,10 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 
 <html:html xhtml="true" locale="true">
- <head>
-   <meta http-equiv="content-type" content="application/vnd.ms-excel; charset=utf-8"/>
- </head>
-<body>
+    <head>
+        <meta http-equiv="content-type" content="application/vnd.ms-excel; charset=utf-8"/>
+    </head>
+    <body>
     <tiles:insert attribute="body"/>
-</body>
+    </body>
 </html:html>
