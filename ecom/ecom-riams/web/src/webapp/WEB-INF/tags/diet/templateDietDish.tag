@@ -52,75 +52,75 @@
     </div>
 </div>
 <script type='text/javascript' src='./dwr/interface/DietService.js'></script>
-<script type="text/javascript"><!--
-     var theIs${name}TempDietDialogInitialized = false;
-var the${name}TempDietDialog = new msh.widget.Dialog($('${name}templateDietDialog'));
+<script type="text/javascript">
+    var theIs${name}TempDietDialogInitialized = false;
+    var the${name}TempDietDialog = new msh.widget.Dialog($('${name}templateDietDialog'));
 
-// Показать
-function show${name}TemplateDiet() {
+    // Показать
+    function show${name}TemplateDiet() {
 
-    // устанавливается инициализация для диалогового окна
-    if (!theIs${name}TempDietDialogInitialized) {
-        init${name}TemplateDiet();
+        // устанавливается инициализация для диалогового окна
+        if (!theIs${name}TempDietDialogInitialized) {
+            init${name}TemplateDiet();
+        }
+        the${name}TempDietDialog.show();
+        $("${name}templateDiet").focus();
+
     }
-    the${name}TempDietDialog.show();
-    $("${name}templateDiet").focus();
 
-}
-
-// Отмена
-function cancel${name}TemplateDiet() {
-    the${name}TempDietDialog.hide();
-}
-
-// Сохранение данных
-function save${name}TemplateDiet() {
-    var saveIs = 1, error = "";
-    if ($('${name}templateChildMenu').value == 0) {
-        error = "Не выбран шаблон приема пищи!!!";
+    // Отмена
+    function cancel${name}TemplateDiet() {
+        the${name}TempDietDialog.hide();
     }
-    if (saveIs == 1) {
-        DietService.saveMenuExist(
-            '${parentId}', $('${name}templateChildMenu').value
-            , {
-                callback: function (aString) {
-                    alert(aString);
-                    window.document.location.reload();
+
+    // Сохранение данных
+    function save${name}TemplateDiet() {
+        var saveIs = 1, error = "";
+        if ($('${name}templateChildMenu').value == 0) {
+            error = "Не выбран шаблон приема пищи!!!";
+        }
+        if (saveIs == 1) {
+            DietService.saveMenuExist(
+                '${parentId}', $('${name}templateChildMenu').value
+                , {
+                    callback: function (aString) {
+                        alert(aString);
+                        window.document.location.reload();
+                    }
                 }
-            }
-        );
+            );
 
-    } else {
-        alert(error);
+        } else {
+            alert(error);
+        }
     }
-}
 
-// инициализация диалогового окна
-function init${name}TemplateDiet() {
-    $('${name}descriptionMenu').readOnly = true;
-    $('${name}descriptionMenu').value = "";
+    // инициализация диалогового окна
+    function init${name}TemplateDiet() {
+        $('${name}descriptionMenu').readOnly = true;
+        $('${name}descriptionMenu').value = "";
 
-    ${name}templateChildMenuAutocomplete.addOnChangeCallback(function () {
-        DietService.getDescriptionChildMenu($('${name}templateChildMenu').value, {
-            callback: function (aString) {
-                $('${name}descriptionMenu').value = aString;
-            }
+        ${name}templateChildMenuAutocomplete.addOnChangeCallback(function () {
+            DietService.getDescriptionChildMenu($('${name}templateChildMenu').value, {
+                callback: function (aString) {
+                    $('${name}descriptionMenu').value = aString;
+                }
+            });
         });
-    });
 
-    ${name}templateDietAutocomplete.addOnChangeCallback(function () {
-        ${name}templateMenuAutocomplete.setVocId('');
-        ${name}templateChildMenuAutocomplete.setVocId('');
-        $('${name}descriptionMenu').value = "";
-    });
-    ${name}templateMenuAutocomplete.addOnChangeCallback(function () {
-        ${name}templateChildMenuAutocomplete.setVocId('');
-        $('${name}descriptionMenu').value = "";
-    });
+        ${name}templateDietAutocomplete.addOnChangeCallback(function () {
+            ${name}templateMenuAutocomplete.setVocId('');
+            ${name}templateChildMenuAutocomplete.setVocId('');
+            $('${name}descriptionMenu').value = "";
+        });
+        ${name}templateMenuAutocomplete.addOnChangeCallback(function () {
+            ${name}templateChildMenuAutocomplete.setVocId('');
+            $('${name}descriptionMenu').value = "";
+        });
 
-    if ("${record}" == "1" && $('diet')) {
-        ${name}templateDietAutocomplete.setVocId($('diet').value);
+        if ("${record}" == "1" && $('diet')) {
+            ${name}templateDietAutocomplete.setVocId($('diet').value);
+        }
+        theIs${name}TempDietDialogInitialized = true;
     }
-    theIs${name}TempDietDialogInitialized = true;
-}
 </script>

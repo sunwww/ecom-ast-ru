@@ -52,7 +52,7 @@
     </div>
 </div>
 <script type='text/javascript' src='./dwr/interface/DietService.js'></script>
-<script type="text/javascript"><!--
+<script type="text/javascript">
      var theIs${name}TempDietDialogInitialized = false;
 var the${name}TempDietDialog = new msh.widget.Dialog($('${name}templateDietDialog'));
 new dateutil.DateField($('${name}Date'));

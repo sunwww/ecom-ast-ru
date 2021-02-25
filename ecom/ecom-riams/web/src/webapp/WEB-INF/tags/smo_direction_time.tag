@@ -165,8 +165,6 @@
                         <h3 id='${name}H3Title' style="margin-bottom: 5px;">Расписание врачей</h3>
                         <div class="x-grid-container xedit-grid"
                              style="border: 1px solid rgb(153, 187, 232); overflow: hidden; height: window.height-100; position: static; width: screen.width;">
-                            <!--  <div id="${name}load" style="border:1px solid #99bbe8;overflow: hidden;
-		            	 height: 600px;position:relative;left:0;top:0;"> -->
                             <div id="ext-gen39" class="x-grid" hidefocus="false"
                                  style="width:100%; height: window.height-150">
 
@@ -189,7 +187,6 @@
             </div>
         </div>
         <div style="">
-            <%--             <input type="button" value='OK' id='${name}ButtonOk' name='${name}ButtonOk' onclick='save${name}WorkCalendar()'/> --%>
             <input type="button" value='Отменить' id='${name}ButtonCancel' name='${name}ButtonCancel'
                    onclick='cancel${name}WorkCalendar()'/>
         </div>

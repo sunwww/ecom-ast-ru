@@ -53,52 +53,52 @@
     </div>
 </div>
 
-<script type="text/javascript"><!--
-     var theIs${name}CreationAccountDialogInitialized = false;
-var the${name}CreationAccountDialog = new msh.widget.Dialog($('${name}CreationAccountDialog'));
+<script type="text/javascript">
+    var theIs${name}CreationAccountDialogInitialized = false;
+    var the${name}CreationAccountDialog = new msh.widget.Dialog($('${name}CreationAccountDialog'));
 
-// Показать
-function show${name}CreationAccount() {
-    // устанавливается инициализация для диалогового окна
-    if (!theIs${name}CreationAccountDialogInitialized) {
-        init${name}CreationAccountDialog();
+    // Показать
+    function show${name}CreationAccount() {
+        // устанавливается инициализация для диалогового окна
+        if (!theIs${name}CreationAccountDialogInitialized) {
+            init${name}CreationAccountDialog();
+        }
+        the${name}CreationAccountDialog.show();
+        $("${name}AccountNumber").focus();
+
     }
-    the${name}CreationAccountDialog.show();
-    $("${name}AccountNumber").focus();
 
-}
-
-// Отмена
-function cancel${name}CreationAccount() {
-    the${name}CreationAccountDialog.hide();
-}
-
-// Сохранение данных
-function save${name}CreationAccount() {
-    if ($('${name}Date').value.length == 0) {
-        alert("Поле дата является обязательным");
-        $("${name}Date").focus();
-    } else if ($('${name}DateFrom').value.length == 0) {
-        alert("Поле дата является обязательным");
-        $("${name}DateFrom").focus();
-    } else if ($('${name}DateTo').value.length == 0) {
-        alert("Поле дата является обязательным");
-        $("${name}DateFrom").focus();
-    } else {
-        ${functionSave}($('${name}DateFrom').value, $('${name}DateTo').value, $('${name}AccountNumber').value
-            , $('${name}Date').value, ('${name}IsEmpty').checked, ('${name}IsPeresech').checked
-            , $('${name}IsHosp').checked, $('${name}IsPolyc').checked, ('${name}IsDelete').checked);
-        cancel${name}CreationAccount();
+    // Отмена
+    function cancel${name}CreationAccount() {
+        the${name}CreationAccountDialog.hide();
     }
-}
 
-// инициализация диалогового окна
-function init${name}CreationAccountDialog() {
+    // Сохранение данных
+    function save${name}CreationAccount() {
+        if ($('${name}Date').value.length == 0) {
+            alert("Поле дата является обязательным");
+            $("${name}Date").focus();
+        } else if ($('${name}DateFrom').value.length == 0) {
+            alert("Поле дата является обязательным");
+            $("${name}DateFrom").focus();
+        } else if ($('${name}DateTo').value.length == 0) {
+            alert("Поле дата является обязательным");
+            $("${name}DateFrom").focus();
+        } else {
+            ${functionSave}($('${name}DateFrom').value, $('${name}DateTo').value, $('${name}AccountNumber').value
+                , $('${name}Date').value, ('${name}IsEmpty').checked, ('${name}IsPeresech').checked
+                , $('${name}IsHosp').checked, $('${name}IsPolyc').checked, ('${name}IsDelete').checked);
+            cancel${name}CreationAccount();
+        }
+    }
 
-    new dateutil.DateField($('${name}DateFrom'));
-    new dateutil.DateField($('${name}DateTo'));
-    new dateutil.DateField($('${name}Date'));
+    // инициализация диалогового окна
+    function init${name}CreationAccountDialog() {
 
-    theIs${name}CreationAccountDialogInitialized = true;
-}
+        new dateutil.DateField($('${name}DateFrom'));
+        new dateutil.DateField($('${name}DateTo'));
+        new dateutil.DateField($('${name}Date'));
+
+        theIs${name}CreationAccountDialogInitialized = true;
+    }
 </script>

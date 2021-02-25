@@ -37,12 +37,6 @@
             </msh:row>
             <msh:row>
                 <td colspan="8" align="center">
-                    <!--       <input type="button" value='Создать нового пациента' onclick='javascript:next${name}FindPatientByFond()'/>
-          -->
-                    <!--                <input type="button" value='Выделить все'
-                onclick='javascript:checkedAll${name}FindPatientByFond(true)'/> 
-                <input type="button" value='Отменить выделение' 
-                onclick='javascript:checkedAll${name}FindPatientByFond(false)'/>  -->
                     <input type="button" value='Обновить данные'
                            onclick='javascript:update${name}FindPatientByFond()' id="button${name}Update"/>
                     <input type="button" value='Закрыть окно' onclick='javascript:cancel${name}FindPatientByFond()'/>

@@ -30,7 +30,6 @@
                 </msh:panel>
                 <msh:row>
                     <td colspan="6">
-                        <!--  <input type="button" name="${name}butOK" id="${name}butOK" value='OK'  onclick="javascript:save${name}IntakeInfo()"/>  -->
                         <input type="button" value='Закрыть' onclick='javascript:cancel${name}IntakeInfo()'/>
                     </td>
                 </msh:row>
