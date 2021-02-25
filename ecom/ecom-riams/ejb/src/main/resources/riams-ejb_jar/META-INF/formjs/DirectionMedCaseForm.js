@@ -10,7 +10,8 @@ function checks(aCtx, aVisit) {
     if (+aVisit.workFunctionPlan == 0) throw "Нет места направления";
     if (+aVisit.datePlan == 0) throw "Нет даты направления";
     if (+aVisit.timePlan == 0) throw "Нет времени направления";
-    var list = aCtx.manager.createNativeQuery("select vwf.id from workfunction wf left join vocworkfunction vwf on vwf.id=wf.workfunction_id where wf.id='" + (+aVisit.workFunctionPlan) + "' and vwf.isnodiagnosis='1'")
+    var list = aCtx.manager.createNativeQuery("select vwf.id from workfunction wf left join vocworkfunction vwf on vwf.id=wf.workfunction_id where wf.id='"
+        + (+aVisit.workFunctionPlan) + "' and vwf.isnodiagnosis='1' and (wf.isCreateDIrectionWithoutService is null or wf.isCreateDIrectionWithoutService=false)")
         .getResultList();
     var list1 = aCtx.manager.createNativeQuery("select vss.id from vocservicestream vss where vss.id='" + (+aVisit.serviceStream) + "' and vss.code='CHARGED'")
         .getResultList();
@@ -19,7 +20,6 @@ function checks(aCtx, aVisit) {
     ) {
         var obj = new Packages.org.json.JSONObject(aVisit.getMedServices());
         var ar = obj.getJSONArray("childs");
-        //throw ar.length() ;
         if (ar.length() == 0 ||
             (ar.length() == 1 && (+java.lang.String.valueOf(ar.get(0).get("value"))) == 0
             )) {
@@ -39,7 +39,6 @@ function checks(aCtx, aVisit) {
 
 function createOrSave(aForm, aVisit, aCtx) {
     aVisit.timePlan.medCase = aVisit;
-    //aVisit.orderWorker = findLogginedWorker(aCtx) ;
     var workFunc = findLogginedWorkFunction(aCtx);
     aVisit.orderWorkFunction = workFunc;
     if (aVisit.parent != null && aVisit.parent.dateFinish != null) {
