@@ -296,132 +296,134 @@
     }
 
     function showTemplateForm(aTemplateId) {
-        the${name}IntakeInfoDialogInit = true;
-        the${name}TempProtDialog.hide();
-        the${name}IntakeInfoDialog.hide();
-        the${name}IntakeInfoDialog.show();
-        $('${name}IntakeRootPane').innerHTML = "Загрузка...";
+        if (aTemplateId > 0) {
+            the${name}IntakeInfoDialogInit = true;
+            the${name}TempProtDialog.hide();
+            the${name}IntakeInfoDialog.hide();
+            the${name}IntakeInfoDialog.show();
+            $('${name}IntakeRootPane').innerHTML = "Загрузка...";
 
-        TemplateProtocolService.getParameterAndPermissionByTemplate($('id').value, aTemplateId, {
-            callback: function (aResults) {
-                var editable = true;
+            TemplateProtocolService.getParameterAndPermissionByTemplate($('id').value, aTemplateId, {
+                callback: function (aResults) {
+                    var editable = true;
 
-                $('${name}IntakeInfoTitle').innerHTML = "ВВОД ДАННЫХ";
-                if ($('params') && $('params').value != '' && $('templateProtocol').value == aTemplateId) {
-                    fldJson = JSON.parse($('params').value);
-                } else {
-                    fldJson = JSON.parse(aResults);
-                    editable = fldJson.disableEditProtocol == "0";
-                }
-                $('templateProtocol').value = +aTemplateId;
-                var cnt = +fldJson.params.length;
-
-                if (cnt <= 0) {
-                    the${name}IntakeInfoDialog.hide();
-                    if (!editable) {
-                        alert("Отсутствуют параметры для редактирования и стоит запрет на ручное изменение дневника, снимите запрет в шаблоне для редактирования дневника!");
+                    $('${name}IntakeInfoTitle').innerHTML = "ВВОД ДАННЫХ";
+                    if ($('params') && $('params').value != '' && $('templateProtocol').value == aTemplateId) {
+                        fldJson = JSON.parse($('params').value);
+                    } else {
+                        fldJson = JSON.parse(aResults);
+                        editable = fldJson.disableEditProtocol == "0";
                     }
-                    return;
-                }
-                var txt = "<form><table id='tblParamProtocol'>";
-                if (+fldJson.isdoctoredit == 0) {
+                    $('templateProtocol').value = +aTemplateId;
+                    var cnt = +fldJson.params.length;
 
-                    var p = "WF";
-                    var pid = fldJson.workFunction;
-                    var pn = fldJson.workFunctionName;
-                    var param = {
-                        "id": p, "idEnter": p + "Name", "valueVoc": pn, "value": pid
-                        , "vocname": "workFunction", "vocid": ""
-                        , "shortname": "Специалист", "name": "Специалист", "type": "2", "unitname": ""
-                    };
-                    txt += ${name}getFieldTxtByParam(param);
-
-                }
-                for (var ind = 0; ind < cnt; ind++) {
-                    var param = fldJson.params[ind];
-                    txt += ${name}getFieldTxtByParam(param);
-                }
-                txt += "</table></form>";
-
-                $('${name}IntakeRootPane').innerHTML = txt
-                    + "<br><input type=\"button\" id=\"paramOK\" name=\"paramOK\" value=\"Сохранить\" onclick=\"save${name}IntakeInfo()\">"
-                    + "<input type=\"button\" value=\"Отмена\" onclick=\"cancel${name}IntakeInfo()\">";
-                the${name}IntakeInfoDialog.hide();
-                the${name}IntakeInfoDialog.show();
-
-                cancel${name}TemplateProtocol();
-
-
-                if (fldJson.errors.length == 0) {
+                    if (cnt <= 0) {
+                        the${name}IntakeInfoDialog.hide();
+                        if (!editable) {
+                            alert("Отсутствуют параметры для редактирования и стоит запрет на ручное изменение дневника, снимите запрет в шаблоне для редактирования дневника!");
+                        }
+                        return;
+                    }
+                    var txt = "<form><table id='tblParamProtocol'>";
                     if (+fldJson.isdoctoredit == 0) {
+
                         var p = "WF";
                         var pid = fldJson.workFunction;
                         var pn = fldJson.workFunctionName;
-                        eval("param" + p + "Autocomlete = new msh_autocomplete.Autocomplete() ;");
-                        eval("param" + p + "Autocomlete.setUrl('simpleVocAutocomplete/workFunction') ;");
-                        eval("param" + p + "Autocomlete.setIdFieldId('param" + p + "') ;");
-                        eval("param" + p + "Autocomlete.setNameFieldId('param" + p + "Name') ;");
-                        eval("param" + p + "Autocomlete.setDivId('param" + p + "Div') ;");
-                        eval("param" + p + "Autocomlete.setVocKey('workFunction') ;");
-                        eval("param" + p + "Autocomlete.setVocTitle('" + pn + "') ;");
-                        eval("param" + p + "Autocomlete.build() ;");
-                        $("param" + p + "Name").select();
-                        $("param" + p + "Name").focus();
-                        eventutil.addEnterSupport("param" + p + "Name", "param" + fldJson.params[0].idEnter);
+                        var param = {
+                            "id": p, "idEnter": p + "Name", "valueVoc": pn, "value": pid
+                            , "vocname": "workFunction", "vocid": ""
+                            , "shortname": "Специалист", "name": "Специалист", "type": "2", "unitname": ""
+                        };
+                        txt += ${name}getFieldTxtByParam(param);
 
-                    } else {
-                        $("param" + fldJson.params[0].idEnter).select();
-                        $("param" + fldJson.params[0].idEnter).focus();
                     }
-                    for (var ind = 0; ind < fldJson.params.length; ind++) {
+                    for (var ind = 0; ind < cnt; ind++) {
+                        var param = fldJson.params[ind];
+                        txt += ${name}getFieldTxtByParam(param);
+                    }
+                    txt += "</table></form>";
 
-                        var param1 = fldJson.params[ind];
-                        idEnter = param1.idEnter;
-                        if (+param1.type == 7) {
-                            eventutil.addEnterSupport("param" + param1.idEnter, "param" + param1.idEnter.substring(0, param1.idEnter.length - 4) + "AddValue");
-                            param1.idEnter = param1.idEnter.substring(0, param1.idEnter.length - 4) + "AddValue";
-                        } else if (+param1.type == 6) {
-                            for (var iparam = 1; iparam < param1.voc.length - 0; iparam++) {
-                                var next = param1.idEnter.substring(0, param1.idEnter.indexOf("_")) + "_" + param1.voc[iparam].id;
-                                eventutil.addEnterSupport("param" + param1.idEnter, "param" + next);
-                                param1.idEnter = next;
+                    $('${name}IntakeRootPane').innerHTML = txt
+                        + "<br><input type=\"button\" id=\"paramOK\" name=\"paramOK\" value=\"Сохранить\" onclick=\"save${name}IntakeInfo()\">"
+                        + "<input type=\"button\" value=\"Отмена\" onclick=\"cancel${name}IntakeInfo()\">";
+                    the${name}IntakeInfoDialog.hide();
+                    the${name}IntakeInfoDialog.show();
+
+                    cancel${name}TemplateProtocol();
+
+
+                    if (fldJson.errors.length == 0) {
+                        if (+fldJson.isdoctoredit == 0) {
+                            var p = "WF";
+                            var pid = fldJson.workFunction;
+                            var pn = fldJson.workFunctionName;
+                            eval("param" + p + "Autocomlete = new msh_autocomplete.Autocomplete() ;");
+                            eval("param" + p + "Autocomlete.setUrl('simpleVocAutocomplete/workFunction') ;");
+                            eval("param" + p + "Autocomlete.setIdFieldId('param" + p + "') ;");
+                            eval("param" + p + "Autocomlete.setNameFieldId('param" + p + "Name') ;");
+                            eval("param" + p + "Autocomlete.setDivId('param" + p + "Div') ;");
+                            eval("param" + p + "Autocomlete.setVocKey('workFunction') ;");
+                            eval("param" + p + "Autocomlete.setVocTitle('" + pn + "') ;");
+                            eval("param" + p + "Autocomlete.build() ;");
+                            $("param" + p + "Name").select();
+                            $("param" + p + "Name").focus();
+                            eventutil.addEnterSupport("param" + p + "Name", "param" + fldJson.params[0].idEnter);
+
+                        } else {
+                            $("param" + fldJson.params[0].idEnter).select();
+                            $("param" + fldJson.params[0].idEnter).focus();
+                        }
+                        for (var ind = 0; ind < fldJson.params.length; ind++) {
+
+                            var param1 = fldJson.params[ind];
+                            idEnter = param1.idEnter;
+                            if (+param1.type == 7) {
+                                eventutil.addEnterSupport("param" + param1.idEnter, "param" + param1.idEnter.substring(0, param1.idEnter.length - 4) + "AddValue");
+                                param1.idEnter = param1.idEnter.substring(0, param1.idEnter.length - 4) + "AddValue";
+                            } else if (+param1.type == 6) {
+                                for (var iparam = 1; iparam < param1.voc.length - 0; iparam++) {
+                                    var next = param1.idEnter.substring(0, param1.idEnter.indexOf("_")) + "_" + param1.voc[iparam].id;
+                                    eventutil.addEnterSupport("param" + param1.idEnter, "param" + next);
+                                    param1.idEnter = next;
+                                }
+                            }
+
+                            if (ind < cnt - 1) {
+                                var param2 = fldJson.params[ind + 1];
+
+                                eventutil.addEnterSupport("param" + param1.idEnter, "param" + param2.idEnter);
+                            } else {
+                                eventutil.addEnterSupport("param" + param1.idEnter, "paramOK");
+
+                            }
+                            param1.idEnter = idEnter;
+                            if (+param1.type == 2 || +param1.type == 7) {
+                                eval("param" + param1.id + "Autocomlete = new msh_autocomplete.Autocomplete() ;");
+                                eval("param" + param1.id + "Autocomlete.setUrl('simpleVocAutocomplete/userValue') ;");
+                                eval("param" + param1.id + "Autocomlete.setIdFieldId('param" + param1.id + "') ;");
+                                eval("param" + param1.id + "Autocomlete.setNameFieldId('param" + param1.idEnter + "') ;");
+                                eval("param" + param1.id + "Autocomlete.setDivId('param" + param1.id + "Div') ;");
+                                eval("param" + param1.id + "Autocomlete.setVocKey('userValue') ;");
+                                eval("param" + param1.id + "Autocomlete.setVocTitle('" + param1.vocname + "') ;");
+                                eval("param" + param1.id + "Autocomlete.build() ;");
+                                eval("param" + param1.id + "Autocomlete.setParentId('" + param1.vocid + "') ;");
                             }
                         }
-
-                        if (ind < cnt - 1) {
-                            var param2 = fldJson.params[ind + 1];
-
-                            eventutil.addEnterSupport("param" + param1.idEnter, "param" + param2.idEnter);
-                        } else {
-                            eventutil.addEnterSupport("param" + param1.idEnter, "paramOK");
-
+                        if (eval${name}String) {
+                            eval(eval${name}String);
                         }
-                        param1.idEnter = idEnter;
-                        if (+param1.type == 2 || +param1.type == 7) {
-                            eval("param" + param1.id + "Autocomlete = new msh_autocomplete.Autocomplete() ;");
-                            eval("param" + param1.id + "Autocomlete.setUrl('simpleVocAutocomplete/userValue') ;");
-                            eval("param" + param1.id + "Autocomlete.setIdFieldId('param" + param1.id + "') ;");
-                            eval("param" + param1.id + "Autocomlete.setNameFieldId('param" + param1.idEnter + "') ;");
-                            eval("param" + param1.id + "Autocomlete.setDivId('param" + param1.id + "Div') ;");
-                            eval("param" + param1.id + "Autocomlete.setVocKey('userValue') ;");
-                            eval("param" + param1.id + "Autocomlete.setVocTitle('" + param1.vocname + "') ;");
-                            eval("param" + param1.id + "Autocomlete.build() ;");
-                            eval("param" + param1.id + "Autocomlete.setParentId('" + param1.vocid + "') ;");
-                        }
+                    } else {
+                        var txt = "<form name='frmTemplate' id='frmTemplate'>";
+                        txt += "<a target='_blank' href='diary_templateView.do?id=" + fldJson.template + "'>НЕПРАВИЛЬНО ЗАПОЛНЕНЫ ДАННЫЕ ПАРАМЕНТОВ ШАБЛОНА</a>";
+                        txt += "</form>";
+                        $('${name}IntakeRootPane').innerHTML = txt
+                            + "<input type=\"button\" value=\"ОК\" onclick=\"cancelBioIntakeInfo()\">";
                     }
-                    if (eval${name}String) {
-                        eval(eval${name}String);
-                    }
-                } else {
-                    var txt = "<form name='frmTemplate' id='frmTemplate'>";
-                    txt += "<a target='_blank' href='diary_templateView.do?id=" + fldJson.template + "'>НЕПРАВИЛЬНО ЗАПОЛНЕНЫ ДАННЫЕ ПАРАМЕНТОВ ШАБЛОНА</a>";
-                    txt += "</form>";
-                    $('${name}IntakeRootPane').innerHTML = txt
-                        + "<input type=\"button\" value=\"ОК\" onclick=\"cancelBioIntakeInfo()\">";
                 }
-            }
-        });
-
+            });
+        } else
+            showToastMessage("Выберите тип протокола/шаблона!", null, true, true, 5000);
     }
 
 
