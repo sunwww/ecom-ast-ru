@@ -1,9 +1,9 @@
 <vocconfig>
     <voc id='vocOncologyN001' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN001'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyN001'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -18,58 +18,58 @@
 
     <voc id='vocOncologyN002' type='NativeVocService'>
         <NativeVocService
-                from = "VocOncologyN002 voc"
-                nameId= "voc.id"
-                order = "voc.ds"
-                names = "voc.name"
+                from="VocOncologyN002 voc"
+                nameId="voc.id"
+                order="voc.ds"
+                names="voc.name"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
 
     <voc id='vocOncologyN002parent' type='NativeVocService'>
         <NativeVocService
-                from = "voconcologyn002 n002"
+                from="voconcologyn002 n002"
                 parent='case when (select count(*) from voconcologyN002 where ds=:parent and (finishdate is null or finishdate>=current_date))>0 then ds=:parent
                 else case when (select count(*) from voconcologyN002 where ds=substring(:parent from 1 for 3) and (finishdate is null or finishdate>=current_date))>0 then  ds=substring(:parent from 1 for 3)
                 else ds is null  end end'
-                nameId= "n002.id"
-                names = "n002.name"
+                nameId="n002.id"
+                names="n002.name"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
 
     <voc id='vocOncologyN003parent' type='NativeVocService'>
         <NativeVocService
-                from = "voconcologyn003 n003"
+                from="voconcologyn003 n003"
                 parent='case when (select count(*) from voconcologyn003 where ds=:parent and (finishdate is null or finishdate>=current_date))>0 then ds=:parent
                 else case when (select count(*) from voconcologyn003 where ds=substring(:parent from 1 for 3) and (finishdate is null or finishdate>=current_date))>0 then  ds=substring(:parent from 1 for 3)
                 else ds is null  end end'
-                nameId= "n003.id"
-                names = "case when n003.name is not null and n003.name!='' then name else n003.tumorcode end"
+                nameId="n003.id"
+                names="case when n003.name is not null and n003.name!='' then name else n003.tumorcode end"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
 
     <voc id='vocOncologyN004parent' type='NativeVocService'>
         <NativeVocService
-                from = "voconcologyn004 n004"
+                from="voconcologyn004 n004"
                 parent='case when (select count(*) from voconcologyn004 where ds=:parent and (finishdate is null or finishdate>=current_date))>0 then ds=:parent
                 else case when (select count(*) from voconcologyn004 where ds=substring(:parent from 1 for 3) and (finishdate is null or finishdate>=current_date))>0 then  ds=substring(:parent from 1 for 3)
                 else ds is null  end end'
-                nameId= "n004.id"
-                names = "case when n004.name is not null and n004.name!='' then name else n004.noduscode end"
+                nameId="n004.id"
+                names="case when n004.name is not null and n004.name!='' then name else n004.noduscode end"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
 
     <voc id='vocOncologyN005parent' type='NativeVocService'>
         <NativeVocService
-                from = "voconcologyn005 n005"
+                from="voconcologyn005 n005"
                 parent='case when (select count(*) from voconcologyn005 where ds=:parent and (finishdate is null or finishdate>=current_date))>0 then ds=:parent
                 else case when (select count(*) from voconcologyn005 where ds=substring(:parent from 1 for 3) and (finishdate is null or finishdate>=current_date))>0 then  ds=substring(:parent from 1 for 3)
                 else ds is null  end end'
-                nameId= "n005.id"
-                names = "case when n005.name is not null and n005.name!='' then name else n005.metastasiscode end"
+                nameId="n005.id"
+                names="case when n005.name is not null and n005.name!='' then name else n005.metastasiscode end"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -81,7 +81,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or finishdate>=current_date) "
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
 
 
         />
@@ -89,9 +89,9 @@
 
     <voc id='vocOncologyN003' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN003'
-                names   = 'name'
-                queried = 'code,name,tumorCode'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyN003'
+                names='name'
+                queried='code,name,tumorCode'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -102,15 +102,15 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name||' '||voc.tumorCode"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
     <voc id='vocOncologyN004' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN004'
-                names   = 'name'
-                queried = 'code,name,nodusCode'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyN004'
+                names='name'
+                queried='code,name,nodusCode'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -121,27 +121,27 @@
                 order="voc.name"
                 names="voc.code||' '||coalesce(voc.name,'')||' '||coalesce(voc.nodusCode,'')"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
     <voc id='vocOncologyN005' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN005'
-                names   = 'name'
-                queried = 'code,name,metastasisCode'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyN005'
+                names='name'
+                queried='code,name,metastasisCode'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
 
     <voc id='vocOncologyN005byparent' type='NativeVocService'>
         <NativeVocService
-                from = "voconcologyn005 n005"
+                from="voconcologyn005 n005"
                 parent='n005.ds=:parent'
-                nameId= "n005.id"
-                names = "n005.name||' '||metastasisCode"
+                nameId="n005.id"
+                names="n005.name||' '||metastasisCode"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
@@ -152,16 +152,16 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name||' '||voc.metastasisCode"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
 
     <voc id='vocOncologyN006' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN006'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyN006'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -172,15 +172,15 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
     <voc id='vocOncologyN007' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN007'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyN007'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -191,15 +191,15 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
     <voc id='vocOncologyN008' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN008'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyN008'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -210,15 +210,15 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
     <voc id='vocOncologyN009' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN009'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyN009'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -229,15 +229,15 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
     <voc id='vocOncologyN010' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN010'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyN010'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -248,15 +248,15 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
     <voc id='vocOncologyN011' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN011'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyN011'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -267,15 +267,15 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
     <voc id='vocOncologyN012' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN012'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyN012'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -286,15 +286,15 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
     <voc id='vocOncologyN013' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN013'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyN013'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -305,15 +305,15 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
     <voc id='vocOncologyN014' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN014'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyN014'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -324,15 +324,15 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
     <voc id='vocOncologyN015' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN015'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyN015'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -343,15 +343,15 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
     <voc id='vocOncologyN016' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN016'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyN016'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -367,9 +367,9 @@
 
     <voc id='vocOncologyN017' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN017'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyN017'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -380,14 +380,14 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
     <voc id='vocOncologyReasonTreat' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyReasonTreat'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyReasonTreat'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -398,15 +398,15 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
 
     <voc id='vocOncologyConsilium' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyConsilium'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyConsilium'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
@@ -417,7 +417,7 @@
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queryAppend="(finishdate is null or finishdate>=current_date)"
-                queried = "(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
+                queried="(voc.code like upper(:query) or upper(voc.name) like UPPER(:query))"
         />
     </voc>
     <voc id="vocOncologyDiagTypeCode" type="NativeVocService">
@@ -431,48 +431,47 @@
     </voc>
     <voc id='vocOncologyConsilium' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyConsilium'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyConsilium'
+                names='name'
+                queried='code,name'
         />
     </voc>
 
     <voc id='vocOncologyDiagType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyDiagType'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyDiagType'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
 
     <voc id='vocOncologyMethodDiagTreat' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyMethodDiagTreat'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyMethodDiagTreat'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
 
     <voc id='vocOncologyReasonTreat' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyReasonTreat'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyReasonTreat'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
 
     <voc id='vocOncologyTypeDirection' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyTypeDirection'
-                names   = 'name'
-                queried = 'code,name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyTypeDirection'
+                names='name'
+                queried='code,name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
-
 
 
     <voc id="vocOncologyTypeDirectionCode" type="NativeVocService">
@@ -495,9 +494,9 @@
     </voc>
     <voc id='vocOncologyN020' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.oncological.ejb.domain.voc.VocOncologyN020'
-                names   = 'name'
-                queried = 'name'
+                entity='ru.ecom.oncological.ejb.domain.voc.VocOncologyN020'
+                names='name'
+                queried='name'
                 queryAppend="(finishdate is null or finishdate>=current_date)"
         />
     </voc>
