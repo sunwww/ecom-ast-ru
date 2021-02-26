@@ -5,7 +5,9 @@
 <style type="text/css">
     @import url("/skin/css/css/main/main_fo<%=ru.nuzmsh.web.filter.caching.CacheUniqueUtil.getUniqueId()%>.css") all;
 </style>
+<!--[if IE]>
 <msh:stylesheet src='/skin/css/css/main/main_ie.css'/>
+<![endif]-->
 
 <script type="text/javascript">
     try {
