@@ -1,20 +1,23 @@
 /*
  * Перед созданием проверяем, есть ли действующее прикрепление
  */
-function onPreCreate (aForm, aCtx) {
-	makeChecks(aForm, aCtx);
+function onPreCreate(aForm, aCtx) {
+    makeChecks(aForm, aCtx);
 }
+
 /**
  * При создании
  */
 function onCreate(aForm, aEntity, aCtx) {
-	var date = new java.util.Date() ;
-	aEntity.setCreateDate(new java.sql.Date(date.getTime())) ;
-	aEntity.setCreateTime(new java.sql.Time (date.getTime())) ;
-	aEntity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
-	if (aEntity.getDateTo()!=null&&aEntity.getDateTo!='') {
-		aEntity.setNoActuality(true);
-	} else {aEntity.setNoActuality(false);}
+    var date = new java.util.Date();
+    aEntity.setCreateDate(new java.sql.Date(date.getTime()));
+    aEntity.setCreateTime(new java.sql.Time(date.getTime()));
+    aEntity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
+    if (aEntity.getDateTo() != null && aEntity.getDateTo != '') {
+        aEntity.setNoActuality(true);
+    } else {
+        aEntity.setNoActuality(false);
+    }
 }
 
 /**
@@ -22,17 +25,19 @@ function onCreate(aForm, aEntity, aCtx) {
  */
 function onSave(aForm, aEntity, aCtx) {
     makeChecks(aForm, aCtx);
-	var date = new java.util.Date() ;
-	aEntity.setEditDate(new java.sql.Date(date.getTime())) ;
-	aEntity.setEditTime(new java.sql.Time (date.getTime())) ;
-	aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString()) ;
-	if (aEntity.getDateTo()!=null&&aEntity.getDateTo!='') {
-		aEntity.setNoActuality(true);
-	}else {aEntity.setNoActuality(false);}
+    var date = new java.util.Date();
+    aEntity.setEditDate(new java.sql.Date(date.getTime()));
+    aEntity.setEditTime(new java.sql.Time(date.getTime()));
+    aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
+    if (aEntity.getDateTo() != null && aEntity.getDateTo != '') {
+        aEntity.setNoActuality(true);
+    } else {
+        aEntity.setNoActuality(false);
+    }
 }
 
-function makeChecks (aForm, aCtx) {
-	if (aForm.getDateTo()==null||aForm.getDateTo()=="") { //Запрет на дубли прикреплений
+function makeChecks(aForm, aCtx) {
+    if (aForm.getDateTo() == null || aForm.getDateTo() == "") { //Запрет на дубли прикреплений
 
         var list = aCtx.manager.createQuery("from LpuAttachedByDepartment " +
             "where patient_id=:patient and dateTo is null " + (aForm.getId() != null && aForm.getId() > 0 ? " and id!=" + aForm.getId() : ""))
@@ -42,9 +47,9 @@ function makeChecks (aForm, aCtx) {
             throw "Сохранение прикрепления невозможно, у пациента уже есть <a href='entityParentView-mis_lpuAttachedByDepartment.do?id=" + list.get(0).getId() + "'>действующее прикрепление!</a>";
         }
     } else if (aForm.getAttachedType() != null) { //
-		var type = aCtx.manager.createNativeQuery("select list(code) from vocattachedtype where id=" + aForm.getAttachedType()).getResultList().get(0) + "";
-		if (type == "1") {
-			throw "Невозможно открепить пациента в прикреплении по территориальному признаку!";
-		}
-	}
+        var type = aCtx.manager.createNativeQuery("select list(code) from vocattachedtype where id=" + aForm.getAttachedType()).getResultList().get(0) + "";
+        if (type == "1") {
+            throw "Невозможно открепить пациента в прикреплении по территориальному признаку!";
+        }
+    }
 }

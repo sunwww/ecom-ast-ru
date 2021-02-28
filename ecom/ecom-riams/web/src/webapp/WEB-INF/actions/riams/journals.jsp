@@ -443,6 +443,9 @@
 						<li><msh:link  isReport="false" action="journal_deletedDisch.do" roles="/Policy/Mis/MedCase/Stac/Ssl/Delete">
 							Выписки, данные о которых были удалены
 						</msh:link></li>
+						<li><msh:link  isReport="false" action="journal_lawerLab.do" roles="/Policy/Mis/Journal/Prescription/LabSurvey/ViewLawyer">
+							Отчёт для юридического отдела по лаб. назначениям
+						</msh:link></li>
 					</ul>
 					</div>
 				</td>

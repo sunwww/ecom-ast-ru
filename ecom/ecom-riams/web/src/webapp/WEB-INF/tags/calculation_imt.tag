@@ -14,9 +14,9 @@
 <msh:ifInRole roles="${roles}">
     <div id='${name}NewCalculationDialog' class='dialog'>
         <h2>ИМТ</h2>
-        <div class="formula" id="formula${name}"> </div>
+        <div class="formula" id="formula${name}"></div>
         <msh:panel>
-            <label><input  disabled type="checkbox" name="body-mass-index-more-than-25${name}" value="1">
+            <label><input disabled type="checkbox" name="body-mass-index-more-than-25${name}" value="1">
                 Избыточный вес и ожирение (ИМТ &gt; 25 кг/м²)</label>
             <div id="imt-calc${name}">
                 <h4>Расчет ИМТ (Индекс Массы Тела):</h4>
@@ -39,55 +39,57 @@
     </div>
     <style type="text/css">
         #${name}NewCalculation {
-            visibility: hidden ;
-            display: none ;
-            position: absolute ;
+            visibility: hidden;
+            display: none;
+            position: absolute;
         }
     </style>
     <script type="text/javascript" src="./dwr/interface/CalculateService.js"></script>
     <script type="text/javascript">
-        var theIs${name}NewCalculationDialogInitialized = false ;
-        var the${name}NewCalculationDialog = new msh.widget.Dialog($('${name}NewCalculationDialog')) ;
-        var departmentId${name}=0;
-        var calcId${name}=0;
+        var theIs${name}NewCalculationDialogInitialized = false;
+        var the${name}NewCalculationDialog = new msh.widget.Dialog($('${name}NewCalculationDialog'));
+        var departmentId${name} = 0;
+        var calcId${name} = 0;
 
         // инициализация диалогового окна
         function init${name}NewCalculationDialog() {
-            theIs${name}NewCalculationDialogInitialized = true ;
+            theIs${name}NewCalculationDialogInitialized = true;
         }
 
         // Показать
-        function show${name}NewCalculation(id,calcId,create) {
+        function show${name}NewCalculation(id, calcId, create) {
             if (!theIs${name}NewCalculationDialogInitialized) {
-                init${name}NewCalculationDialog() ;
+                init${name}NewCalculationDialog();
             }
-            the${name}NewCalculationDialog.show() ;
+            the${name}NewCalculationDialog.show();
             getIMT${name}(id);
-            departmentId${name}=id;
-            calcId${name}=calcId;
-            document.getElementById("cancel").style.display ="";
+            departmentId${name} = id;
+            calcId${name} = calcId;
+            document.getElementById("cancel").style.display = "";
         }
 
         // Отмена
         function cancel${name}NewCalculation() {
-            the${name}NewCalculationDialog.hide() ;
+            the${name}NewCalculationDialog.hide();
 
         }
+
         // Сохранение данных
         function save${name}NewCalculation() {
-            var prop ;
-            if ("${property}"=="") prop = "record" ;
+            var prop;
+            if ("${property}" == "") prop = "record";
             var record = window.parent.document.getElementById(prop);
-            for (var i=0; i<100; i++)
-                if (window.parent.document.getElementById('fadeEffect')!=null) window.parent.document.getElementById('fadeEffect').hide();
-            var temp='Индекс массы тела: '+document.getElementById('imt-calc-result${name}').innerHTML.replace(' кг/м<sup>2</sup>','');
-            if (record!=null) {
-                record.value+=temp+"\n";
-                showToastMessage("Добавлено к дневнику!",null,true);
-            }
-            else CalculateService.SetCalculateResultCreate(departmentId${name},
+            for (var i = 0; i < 100; i++)
+                if (window.parent.document.getElementById('fadeEffect') != null) window.parent.document.getElementById('fadeEffect').hide();
+            var temp = 'Индекс массы тела: ' + document.getElementById('imt-calc-result${name}').innerHTML.replace(' кг/м<sup>2</sup>', '');
+            if (record != null) {
+                record.value += temp + "\n";
+                showToastMessage("Добавлено к дневнику!", null, true);
+            } else CalculateService.SetCalculateResultCreate(departmentId${name},
                 temp, calcId${name}, '', {
-                    callback: function () {showToastMessage("Вычисление успешно создано!",null,true);}
+                    callback: function () {
+                        showToastMessage("Вычисление успешно создано!", null, true);
+                    }
                 });
             the${name}NewCalculationDialog.hide();
         }
@@ -95,30 +97,32 @@
         //Получить ИМТ (если есть)
         function getIMT${name}(medcaseId) {
             CalculateService.getIMT(medcaseId, {
-                callback : function(aResult) {
-                    if (aResult!='') {
-                        var mas=aResult.split('#');
-                        jQuery('#imt-calc-height${name}').prop( "value", mas[0]);
-                        jQuery('#imt-calc-weight${name}').prop( "value", mas[1]);
+                callback: function (aResult) {
+                    if (aResult != '') {
+                        var mas = aResult.split('#');
+                        jQuery('#imt-calc-height${name}').prop("value", mas[0]);
+                        jQuery('#imt-calc-weight${name}').prop("value", mas[1]);
                         imt${name}();
                     }
                 }
             });
         }
+
         /* Расчет ИМТ */
         jQuery('#imt-calc-height${name}, #imt-calc-weight${name}').on('change paste keyup', function () {
             imt${name}();
         });
+
         function imt${name}() {
             var imtHeight = parseFloat(jQuery('#imt-calc-height${name}').val());
             var imtWeight = parseFloat(jQuery('#imt-calc-weight${name}').val());
             if (imtHeight > 0 && imtWeight > 0) {
-                var imt = imtWeight / ((imtHeight*imtHeight) / 10000);
+                var imt = imtWeight / ((imtHeight * imtHeight) / 10000);
                 jQuery('#imt-calc-result${name}').html(imt.toFixed(2) + ' кг/м<sup>2</sup>');
                 if (imt > 25) {
-                    jQuery('input:checkbox[name="body-mass-index-more-than-25${name}"]').prop( "checked", true );
+                    jQuery('input:checkbox[name="body-mass-index-more-than-25${name}"]').prop("checked", true);
                 } else {
-                    jQuery('input:checkbox[name="body-mass-index-more-than-25${name}"]').prop( "checked", false );
+                    jQuery('input:checkbox[name="body-mass-index-more-than-25${name}"]').prop("checked", false);
                 }
             }
         }

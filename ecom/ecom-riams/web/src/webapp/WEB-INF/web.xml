@@ -40,7 +40,7 @@
         <url-pattern>/null/dwr/*</url-pattern>
     </filter-mapping>
 
-	<!-- Настройка форм -->
+    <!-- Настройка форм -->
     <servlet>
         <servlet-name>formCustomize</servlet-name>
         <servlet-class>ru.nuzmsh.web.struts.forms.customize.FormCustomizeServletConfig</servlet-class>
@@ -52,7 +52,6 @@
     </servlet-mapping>
 
 
-
     <!-- Struts servlet -->
     <servlet>
         <servlet-name>action</servlet-name>
@@ -60,16 +59,16 @@
         <init-param>
             <param-name>config</param-name>
             <param-value>
-            	/WEB-INF/config-ecom.xml
-            	,/WEB-INF/config-exp.xml
-            	,/WEB-INF/config-jaas.xml
-            	,/WEB-INF/config-mis.xml
-            	,/WEB-INF/config-diary.xml
-            	,/WEB-INF/config-poly.xml
-            	,/WEB-INF/config-riams.xml
-            	,/WEB-INF/config-hello.xml
-            	,/WEB-INF/config-stac.xml
-            	,/WEB-INF/config-psychiatry.xml
+                /WEB-INF/config-ecom.xml
+                ,/WEB-INF/config-exp.xml
+                ,/WEB-INF/config-jaas.xml
+                ,/WEB-INF/config-mis.xml
+                ,/WEB-INF/config-diary.xml
+                ,/WEB-INF/config-poly.xml
+                ,/WEB-INF/config-riams.xml
+                ,/WEB-INF/config-hello.xml
+                ,/WEB-INF/config-stac.xml
+                ,/WEB-INF/config-psychiatry.xml
             </param-value>
         </init-param>
         <load-on-startup>2</load-on-startup>
@@ -96,28 +95,28 @@
     <!-- dwr servlet -->
     <servlet>
         <servlet-name>dwr-invoker</servlet-name>
-       <servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
+        <servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
         <init-param>
-        	<param-name>config-ecom</param-name>
-          	<param-value>WEB-INF/dwr-ecom.xml</param-value>
+            <param-name>config-ecom</param-name>
+            <param-value>WEB-INF/dwr-ecom.xml</param-value>
         </init-param>
         <init-param>
-        	<param-name>config-expomc</param-name>
-          	<param-value>WEB-INF/dwr-expomc.xml</param-value>
+            <param-name>config-expomc</param-name>
+            <param-value>WEB-INF/dwr-expomc.xml</param-value>
         </init-param>
         <init-param>
-        	<param-name>config-mis</param-name>
-          	<param-value>WEB-INF/dwr-mis.xml</param-value>
+            <param-name>config-mis</param-name>
+            <param-value>WEB-INF/dwr-mis.xml</param-value>
         </init-param>
         <init-param>
-        	<param-name>config-diary</param-name>
-          	<param-value>WEB-INF/dwr-diary.xml</param-value>
+            <param-name>config-diary</param-name>
+            <param-value>WEB-INF/dwr-diary.xml</param-value>
         </init-param>
         <init-param>
-        	<param-name>config-dwr</param-name>
-          	<param-value>WEB-INF/dwr-jaas.xml</param-value>
+            <param-name>config-dwr</param-name>
+            <param-value>WEB-INF/dwr-jaas.xml</param-value>
         </init-param>
-        
+
         <init-param>
             <param-name>overridePath</param-name>
             <param-value>./dwr</param-value>
@@ -148,7 +147,7 @@
         <load-on-startup>5</load-on-startup>
     </servlet>
 
-	<!-- GWT -->
+    <!-- GWT -->
     <servlet>
         <servlet-name>IdeModeService</servlet-name>
         <servlet-class>ru.ecom.gwtservice.idemode.IdeModeServiceImpl</servlet-class>
@@ -161,7 +160,7 @@
         <url-pattern>/ru.ecom.gwt.idemode.Main/ideModeService</url-pattern>
     </servlet-mapping>
 
-	<!-- GWT ClassCommandService -->
+    <!-- GWT ClassCommandService -->
     <servlet>
         <servlet-name>ClassCommandService</servlet-name>
         <servlet-class>ru.ecom.clazz.ClassCommandServiceImpl</servlet-class>
@@ -173,8 +172,8 @@
         <servlet-name>ClassCommandService</servlet-name>
         <url-pattern>/ru.ecom.gwt.clazz.Main/classCommandService</url-pattern>
     </servlet-mapping>
-	
-	<!-- VocEntityServlet -->
+
+    <!-- VocEntityServlet -->
     <servlet>
         <servlet-name>VocEntityServlet</servlet-name>
         <servlet-class>ru.ecom.web.vocentity.VocEntityServlet</servlet-class>
@@ -229,7 +228,7 @@
         <filter-name>Map</filter-name>
         <servlet-name>IdeModeService</servlet-name>
     </filter-mapping>
-    
+
     <!-- ОБЯЗАТЕЛЬНО: org.jboss.security.ClientLoginModule required multi-threaded="true"; -->
     <!--                                                            ^^^^^^^^^^^^^^^^^^^^^  -->
     <filter-mapping>
@@ -237,15 +236,12 @@
         <servlet-name>dwr-invoker</servlet-name>
     </filter-mapping>
 
-  
-	<!-- Слушатель сессии -->
-	<listener>
-	    <listener-class>ru.ecom.web.servlet.ClearSessionListener</listener-class>
+
+    <!-- Слушатель сессии -->
+    <listener>
+        <listener-class>ru.ecom.web.servlet.ClearSessionListener</listener-class>
     </listener>
 
-
-    
-    
 
     <error-page>
         <error-code>500</error-code>

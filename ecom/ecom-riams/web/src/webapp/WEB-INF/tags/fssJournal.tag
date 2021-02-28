@@ -8,15 +8,15 @@
 
 <style type="text/css">
     #${name}FSSJournal {
-        visibility: hidden ;
-        display: none ;
-        position: absolute ;
+        visibility: hidden;
+        display: none;
+        position: absolute;
     }
 
     #${name}FSSProgress {
-        visibility: hidden ;
-        display: none ;
-        position: absolute ;
+        visibility: hidden;
+        display: none;
+        position: absolute;
     }
 </style>
 
@@ -31,16 +31,18 @@
                     <span id='${name}FSSJournalText'/>
                 </msh:row>
             </msh:panel>
-            <msh:row><td colspan="6">
-                <input type="button" value='Закрыть окно' onclick='javascript:cancel${name}FSSJournal()'/>
-            </td></msh:row>
+            <msh:row>
+                <td colspan="6">
+                    <input type="button" value='Закрыть окно' onclick='javascript:cancel${name}FSSJournal()'/>
+                </td>
+            </msh:row>
         </form>
     </div>
 </div>
 <div id='${name}FSSProgress' class='dialog'>
     <h2>Процесс отправки больничного листа</h2>
     <div class='rootPane'>
-        <div id="${name}FSSProgressResultDiv" />
+        <div id="${name}FSSProgressResultDiv"/>
 
     </div>
     <input type="button" value='Закрыть окно' onclick='javascript:cancel${name}FSSProgress()'/>
@@ -48,52 +50,53 @@
 
 <script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
 <script type="text/javascript">
-    var theIs${name}FSSJournalInitialized = false ;
-    var the${name}FSSJournal = new msh.widget.Dialog($('${name}FSSJournal')) ;
-    var the${name}FSSProgress= new msh.widget.Dialog($('${name}FSSProgress')) ;
+    var theIs${name}FSSJournalInitialized = false;
+    var the${name}FSSJournal = new msh.widget.Dialog($('${name}FSSJournal'));
+    var the${name}FSSProgress = new msh.widget.Dialog($('${name}FSSProgress'));
 
     function show${name}FSSProgress() {
 
         DisabilityService.getIfDisDocHasVK('${documentId}', {
-            callback: function(resultVK) {
-                if ($('anotherLpu').value!='' || resultVK || $('issueDate').value!='' && $('hospitalizedTo').value!=''
-        && $('issueDate').value==$('hospitalizedTo').value!=''
-        || $('issueDate').value=='' || $('hospitalizedTo').value=='') {
-            $('${name}FSSProgressResultDiv').innerHTML="Подождите, идет отправка больничного листа на сервер";
-            the${name}FSSProgress.show();
-            DisabilityService.exportDisabilityDocument('${documentId}', {
-                callback: function(a) {
-                    $('${name}FSSProgressResultDiv').innerHTML=a;
+            callback: function (resultVK) {
+                if ($('anotherLpu').value != '' || resultVK || $('issueDate').value != '' && $('hospitalizedTo').value != ''
+                    && $('issueDate').value == $('hospitalizedTo').value != ''
+                    || $('issueDate').value == '' || $('hospitalizedTo').value == '') {
+                    $('${name}FSSProgressResultDiv').innerHTML = "Подождите, идет отправка больничного листа на сервер";
+                    the${name}FSSProgress.show();
+                    DisabilityService.exportDisabilityDocument('${documentId}', {
+                        callback: function (a) {
+                            $('${name}FSSProgressResultDiv').innerHTML = a;
 
-                }
-            });
-        }
-        else showToastMessage('Проверьте дату выдачи и дату госпитализации! Они непустые, следовательно, должны совпадать!',null,true);
-            }});
+                        }
+                    });
+                } else showToastMessage('Проверьте дату выдачи и дату госпитализации! Они непустые, следовательно, должны совпадать!', null, true);
+            }
+        });
     }
+
     // Показать
     function show${name}FSSJournal() {
         DisabilityService.getExportJournalById('${documentId}', {
             callback: function (res) {
-                if (res!=null) {
-                    $('${name}FSSJournalText').innerHTML = res ;
+                if (res != null) {
+                    $('${name}FSSJournalText').innerHTML = res;
                 } else {
-                    $('${name}FSSJournalText').innerHTML = "ДАННЫЕ ПО ЭКСПОРТУ НЕ НАЙДЕНЫ" ;
+                    $('${name}FSSJournalText').innerHTML = "ДАННЫЕ ПО ЭКСПОРТУ НЕ НАЙДЕНЫ";
                 }
             }
         });
 
-        the${name}FSSJournal.show() ;
+        the${name}FSSJournal.show();
     }
 
     // Отмена
     function cancel${name}FSSJournal() {
-        the${name}FSSJournal.hide() ;
+        the${name}FSSJournal.hide();
         msh.effect.FadeEffect.pushFadeAll();
     }
 
     function cancel${name}FSSProgress() {
-        the${name}FSSProgress.hide() ;
+        the${name}FSSProgress.hide();
         msh.effect.FadeEffect.pushFadeAll();
     }
 </script>

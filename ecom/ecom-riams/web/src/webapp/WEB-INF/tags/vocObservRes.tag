@@ -10,13 +10,14 @@
 
 <div id='${name}Dialog' class='dialog'>
     <h2>Лист наблюдения пациента</h2>
-    <table width="100%" cellspacing="10" cellpadding="10" id="sheetTable${name}" border="1" >
+    <table width="100%" cellspacing="10" cellpadding="10" id="sheetTable${name}" border="1">
     </table>
     <div>
-        <form  id="${name}">
+        <form id="${name}">
             <msh:panel>
                 <msh:row>
-                    <msh:comboBox size='300' horizontalFill="true" property='${name}vocObservationResult' vocName="vocObservationResult" label='Выберите:'/>
+                    <msh:comboBox size='300' horizontalFill="true" property='${name}vocObservationResult'
+                                  vocName="vocObservationResult" label='Выберите:'/>
                 </msh:row>
             </msh:panel>
         </form>
@@ -24,11 +25,15 @@
     <div>
         <table width="100%" cellspacing="10" cellpadding="10">
             <tr>
-                <td align="center"><input type="button" value='Закрыть лист наблюдения' onclick='javascript:closeObservSheet${name}()'/></td>
+                <td align="center"><input type="button" value='Закрыть лист наблюдения'
+                                          onclick='javascript:closeObservSheet${name}()'/></td>
             </tr>
-            <tr><td></td></tr>
             <tr>
-                <td align="right"><input type="button"  style="font-weight:bold" value='Отмена' id="${name}Cancel" onclick=' the${name}Dialog.hide() ;'/></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td align="right"><input type="button" style="font-weight:bold" value='Отмена' id="${name}Cancel"
+                                         onclick=' the${name}Dialog.hide() ;'/></td>
             </tr>
         </table>
     </div>
@@ -36,30 +41,31 @@
 <script type="text/javascript">
     var aPatId${name};
     var loc${name};
-    var the${name}Dialog = new msh.widget.Dialog($('${name}Dialog')) ;
+    var the${name}Dialog = new msh.widget.Dialog($('${name}Dialog'));
 
-    var dtype = window.location.href.indexOf('Pregnant')!=-1? "ObservationSheetPregnant" : "ObservationSheetNewBorn";
+    var dtype = window.location.href.indexOf('Pregnant') != -1 ? "ObservationSheetPregnant" : "ObservationSheetNewBorn";
+
     // Показать
-    function show${name}(id,loc) {
-        aPatId${name}=id;
-        loc${name}=loc;
+    function show${name}(id, loc) {
+        aPatId${name} = id;
+        loc${name} = loc;
         the${name}Dialog.show();
     }
+
     // Закрыть лист наблюдения
     function closeObservSheet${name}() {
-        if ($('${name}vocObservationResult').value!='') {
-        PatientService.closeObservSheet(aPatId${name},$('${name}vocObservationResult').value, dtype, {
-            callback: function(res) {
-                if (res=='1')
-                    //window.location.reload();
-                    window.location.href=loc${name}; //лучше сбросить пациента
-                else
-                    showToastMessage('Не найдено открытых листов наблюдения!',null,true);
-            }
-        });
-        the${name}Dialog.hide() ;
-        }
-        else
-            showToastMessage('Выберите исход наблюдения!',null,true);
+        if ($('${name}vocObservationResult').value != '') {
+            PatientService.closeObservSheet(aPatId${name}, $('${name}vocObservationResult').value, dtype, {
+                callback: function (res) {
+                    if (res == '1')
+                        //window.location.reload();
+                        window.location.href = loc${name}; //лучше сбросить пациента
+                    else
+                        showToastMessage('Не найдено открытых листов наблюдения!', null, true);
+                }
+            });
+            the${name}Dialog.hide();
+        } else
+            showToastMessage('Выберите исход наблюдения!', null, true);
     }
 </script>

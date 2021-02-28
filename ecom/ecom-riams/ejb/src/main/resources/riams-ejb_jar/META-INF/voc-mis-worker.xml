@@ -1,82 +1,82 @@
 <vocconfig>
-<voc id='vocWorkBusyIsNot' type='EntityVocService'>
+    <voc id='vocWorkBusyIsNot' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkBusy'
-                names   = 'name'
-                queried = 'name'
-                queryAppend = 'isWorking = false'
-                />
+                entity='ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkBusy'
+                names='name'
+                queried='name'
+                queryAppend='isWorking = false'
+        />
     </voc>
-	<voc id="workCalendarDayPattern" type="NativeVocService">
-		<NativeVocService
-                from  = ' WorkCalendarDayPattern wcdp'
+    <voc id="workCalendarDayPattern" type="NativeVocService">
+        <NativeVocService
+                from=' WorkCalendarDayPattern wcdp'
                 parent=' wcp.id=:parent'
                 nameId="wcdp.id"
                 queryAppend=""
                 join=" left join WorkCalendarPattern wcp on wcp.lpu_id=wcdp.lpu_id "
                 order=""
-                names   = " wcdp.name "
-	    		queried=" wcdp.name like :query "
-	    		groupBy = "wcdp.id,wcdp.name"
-	    		
-			/>
-	</voc>
-	<voc id="workCalendarDayPatternByLpu" type="NativeVocService">
-		<NativeVocService
-                from  = ' WorkCalendarDayPattern wcdp'
+                names=" wcdp.name "
+                queried=" wcdp.name like :query "
+                groupBy="wcdp.id,wcdp.name"
+
+        />
+    </voc>
+    <voc id="workCalendarDayPatternByLpu" type="NativeVocService">
+        <NativeVocService
+                from=' WorkCalendarDayPattern wcdp'
                 parent=' wcdp.lpu_id=:parent'
                 nameId="wcdp.id"
                 join=""
                 queryAppend=""
                 order=""
-                names   = " wcdp.name "
-	    		queried=" wcdp.name like :query "
-	    		
-			/>
-	</voc>
+                names=" wcdp.name "
+                queried=" wcdp.name like :query "
+
+        />
+    </voc>
     <voc id='vocCombo' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocCombo'
-                 names   = 'name'
-                 queried = 'name'
-                queryConvertType = 'FIRST_UPPER'
-                 />
-     </voc>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.worker.voc.VocCombo'
+                names='name'
+                queried='name'
+                queryConvertType='FIRST_UPPER'
+        />
+    </voc>
 
-     <voc id='vocPost' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocPost'
-                 names   = 'name'
-                 queried = 'name'
-                 />
-     </voc>
+    <voc id='vocPost' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.worker.voc.VocPost'
+                names='name'
+                queried='name'
+        />
+    </voc>
 
-     <voc id='vocCategory' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocCategory'
-                 names   = 'name'
-                 queried = 'name'
-                 />
-     </voc>
+    <voc id='vocCategory' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.worker.voc.VocCategory'
+                names='name'
+                queried='name'
+        />
+    </voc>
 
-	
-	 <!-- Код профиля отделения для стационара или специалиста поликлиники -->
-     <voc id='vocOmcDepType' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocOmcDepType'
-                 names   = 'code,name'
-                 queried = 'code,name'
-                 />
-     </voc>
 
-	 <!-- Врачебная должность по ОМС -->
-     <voc id='vocOmcDoctorPost' type='EntityVocService'>
-         <EntityVocService
-                 entity  = 'ru.ecom.mis.ejb.domain.worker.voc.VocOmcDoctorPost'
-                 names   = 'code,name'
-                 queried = 'code,name'
-                 />
-     </voc>
+    <!-- Код профиля отделения для стационара или специалиста поликлиники -->
+    <voc id='vocOmcDepType' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.worker.voc.VocOmcDepType'
+                names='code,name'
+                queried='code,name'
+        />
+    </voc>
+
+    <!-- Врачебная должность по ОМС -->
+    <voc id='vocOmcDoctorPost' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.worker.voc.VocOmcDoctorPost'
+                names='code,name'
+                queried='code,name'
+        />
+    </voc>
 
     <voc id="vocRegids" type="NativeVocService">
         <NativeVocService
@@ -84,7 +84,7 @@
                 nameId="vg.regid"
                 names="vg.drug||'('||vg.form||')'"
                 queriedSplitCount="2"
-                queried ="(cast(vg.regid as varchar(20))= :querInd) or (vg.drug like :quer1 and vg.form like :quer2)" />
+                queried="(cast(vg.regid as varchar(20))= :querInd) or (vg.drug like :quer1 and vg.form like :quer2)"/>
     </voc>
 
     <voc id="vocPharmnetStorage" type="NativeVocService">
@@ -93,6 +93,6 @@
                 nameId="ph.id"
                 names="vb.branch"
                 join=" left join vocbranch vb on vb.branchid =  ph.branchid"
-                queried ="vb.branch" />
+                queried="vb.branch"/>
     </voc>
 </vocconfig>

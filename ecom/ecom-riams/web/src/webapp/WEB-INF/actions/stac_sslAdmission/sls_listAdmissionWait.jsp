@@ -4,29 +4,33 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true">
 
     <tiles:put name='title' type='string'>
         <msh:title mainMenu="StacJournal">Журнал "время ожидания в приемном отделении"</msh:title>
     </tiles:put>
     <tiles:put name="body" type="string">
-        <% if (request.getParameter("short")==null) {%>
-        <msh:form action="/sls_listAdmissionWait.do" defaultField="department" disableFormDataConfirm="true" method="GET">
+        <% if (request.getParameter("short") == null) {%>
+        <msh:form action="/sls_listAdmissionWait.do" defaultField="department" disableFormDataConfirm="true"
+                  method="GET">
             <msh:panel>
                 <msh:row>
                     <msh:separator label="Основные параметры" colSpan="7"/>
                 </msh:row>
 
                 <msh:row>
-                    <msh:autoComplete property="department" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll" fieldColSpan="7" size="100"/>
+                    <msh:autoComplete property="department" horizontalFill="true" label="Отделение"
+                                      vocName="vocLpuHospOtdAll" fieldColSpan="7" size="100"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="dateBegin" label="Период с" />
-                    <msh:textField property="dateEnd" label="по" />
+                    <msh:textField property="dateBegin" label="Период с"/>
+                    <msh:textField property="dateEnd" label="по"/>
                 </msh:row>
-                <msh:row><td>
-                    <input type="submit" value="Найти">
-                </td></msh:row>
+                <msh:row>
+                    <td>
+                        <input type="submit" value="Найти">
+                    </td>
+                </msh:row>
             </msh:panel>
         </msh:form>
 
@@ -34,19 +38,19 @@
         <%
             }
 
-            String date = request.getParameter("dateBegin") ;
-            if (date!=null && !date.equals(""))  {
-                String dateEnd = request.getParameter("dateEnd") ;
-                String department = request.getParameter("department") ;
+            String date = request.getParameter("dateBegin");
+            if (date != null && !date.equals("")) {
+                String dateEnd = request.getParameter("dateEnd");
+                String department = request.getParameter("department");
 
-                if (department!=null && !department.equals("")) {
-                    request.setAttribute("departmentSql", " and sls.department_id="+department) ;
+                if (department != null && !department.equals("")) {
+                    request.setAttribute("departmentSql", " and sls.department_id=" + department);
                 }
-                if (dateEnd==null||dateEnd.equals("")) {
+                if (dateEnd == null || dateEnd.equals("")) {
                     dateEnd = date;
                 }
-                request.setAttribute("startDate", date) ;
-                request.setAttribute("finishDate", dateEnd) ;
+                request.setAttribute("startDate", date);
+                request.setAttribute("finishDate", dateEnd);
                 String reestr = request.getParameter("reestr");
                 if (!"1".equals(reestr)) {
         %>
@@ -72,7 +76,7 @@ where sls.datestart between to_date('${startDate}','dd.MM.yyyy') and to_date('${
 and sls.deniedhospitalizating_id is not null ${departmentSql}
 group by ml.id, ml.name
 order by ml.name
-        "  />
+        "/>
                 <msh:table name="journal_hosp" printToExcelButton="Сохранить в excel" cellFunction="true"
                            action="sls_listAdmissionWait.do?short=Short" idField="1" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -93,40 +97,40 @@ order by ml.name
         </msh:section>
 
         <% } else { //Реестр пациентов
-                    String wait = request.getParameter("wait")!=null ? request.getParameter("wait") : "";
-                    String waitSql;
-                    switch (wait) {
-                        case "23":
-                            waitSql=" between 120 and 180";
-                            break;
-                        case "34":
-                            waitSql=" between 181 and 240";
-                            break;
-                        case "45":
-                            waitSql=" between 241 and 300";
-                            break;
-                        case "56":
-                            waitSql=" between 301 and 360";
-                            break;
-                        case "67":
-                            waitSql=" between 361 and 420";
-                            break;
-                        case "78":
-                            waitSql=" between 421 and 480";
-                            break;
-                        case "89":
-                            waitSql=" between 481 and 540";
-                            break;
-                        case "910":
-                            waitSql=" between 541 and 600";
-                            break;
-                        case "more_10":
-                            waitSql=" > 600";
-                            break;
-                        default:
-                            waitSql=" >-1";
-                    }
-                    request.setAttribute("waitSql",waitSql);
+            String wait = request.getParameter("wait") != null ? request.getParameter("wait") : "";
+            String waitSql;
+            switch (wait) {
+                case "23":
+                    waitSql = " between 120 and 180";
+                    break;
+                case "34":
+                    waitSql = " between 181 and 240";
+                    break;
+                case "45":
+                    waitSql = " between 241 and 300";
+                    break;
+                case "56":
+                    waitSql = " between 301 and 360";
+                    break;
+                case "67":
+                    waitSql = " between 361 and 420";
+                    break;
+                case "78":
+                    waitSql = " between 421 and 480";
+                    break;
+                case "89":
+                    waitSql = " between 481 and 540";
+                    break;
+                case "910":
+                    waitSql = " between 541 and 600";
+                    break;
+                case "more_10":
+                    waitSql = " > 600";
+                    break;
+                default:
+                    waitSql = " >-1";
+            }
+            request.setAttribute("waitSql", waitSql);
 
         %>
 
@@ -142,7 +146,7 @@ where sls.datestart between to_date('${startDate}','dd.MM.yyyy') and to_date('${
 and sls.deniedhospitalizating_id is not null ${departmentSql}
 and cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) ${waitSql}
 order by ml.name
-        "  />
+        "/>
                 <msh:table name="journal_hosp" printToExcelButton="Сохранить в excel" openNewWindow="true"
                            action="entityParentView-stac_sslAdmission.do" idField="1" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
@@ -153,16 +157,13 @@ order by ml.name
         </msh:section>
 
         <%
-        }
+            }
         } else {%>
         <i>Выберите параметры поиска и нажмите "Найти" </i>
-        <% }   %>
+        <% } %>
 
         <script type='text/javascript'>
-            //checkFieldUpdate('typeDate','${typeDate}',2) ;
-
-
-            function checkFieldUpdate(aField,aValue,aDefault) {
+            function checkFieldUpdate(aField, aValue, aDefault) {
                 eval('var chk =  document.forms[0].' + aField);
                 eval('var aMax =  chk.length');
                 if (aMax > aDefault) {

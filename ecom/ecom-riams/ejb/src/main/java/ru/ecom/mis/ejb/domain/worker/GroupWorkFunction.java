@@ -12,67 +12,125 @@ import java.util.List;
 
 /**
  * Групповая рабочая функция
+ *
  * @author stkacheva, azviagin
  */
 @Entity
 @AIndexes({
-	@AIndex(properties="groupName",table="WorkFunction")
+        @AIndex(properties = "groupName", table = "WorkFunction")
 })
 public class GroupWorkFunction extends WorkFunction {
-	
-	/** Направлять анализы по умолчанию в этот кабинет */
-	@Comment("Направлять анализы по умолчанию в этот кабинет")
-	public Boolean getIsDefaultLabCabinet() {return theIsDefaultLabCabinet;}
-	public void setIsDefaultLabCabinet(Boolean aIsDefaultLabCabinet) {theIsDefaultLabCabinet = aIsDefaultLabCabinet;}
-	/** Направлять анализы по умолчанию в этот кабинет */
-	private Boolean theIsDefaultLabCabinet;
-	
-	/** Есть обслуживающий персонал */
-	@Comment("Есть обслуживающий персонал")
-	public Boolean getHasServiceStuff() {return theHasServiceStuff;}
-	public void setHasServiceStuff(Boolean aHasServiceStuff) {theHasServiceStuff = aHasServiceStuff;}
-	/** Есть обслуживающий персонал */
-	private Boolean theHasServiceStuff;
-	
-	@Transient @Comment("Информация")
-	public String getWorkFunctionInfo() {
-		return getName() + " " + theGroupName;
-	}
-	@Transient
-	public String getWorkerLpuInfo() {
-		return getLpu()!=null ? getLpu().getFullname() :"";
-	}
-	
-	/** Рабочие функции входящие в состав группы */
-	@Comment("Рабочие функции входящие в состав группы")
-	@OneToMany(mappedBy="group")
-	public List<PersonalWorkFunction> getFunctions() {return theFunctions;}
-	public void setFunctions(List<PersonalWorkFunction> aFunctions) {
-		theFunctions = aFunctions;
-	}
-	@Transient
-	public MisLpu getLpuRegister() {
-		return getLpu() ;
-	}
-	
-	@Transient
-	public String getWorkerInfo() {
-		return theGroupName ;
-	}
-	
-	/** Название группы */
-	@Comment("Название группы")
-	public String getGroupName() {return theGroupName;}
-	public void setGroupName(String aGroupName) {theGroupName = aGroupName;}
 
-	/** Название группы */
-	private String theGroupName;
-	
-	@Transient
-	public String getInfo() {
-		return "ГРУППОВАЯ: " + getGroupName();
-	}
-	/** Рабочие функции входящие в состав группы */
-	private List<PersonalWorkFunction> theFunctions;
+    /**
+     * Направлять анализы по умолчанию в этот кабинет
+     */
+    @Comment("Направлять анализы по умолчанию в этот кабинет")
+    public Boolean getIsDefaultLabCabinet() {
+        return theIsDefaultLabCabinet;
+    }
+
+    public void setIsDefaultLabCabinet(Boolean aIsDefaultLabCabinet) {
+        theIsDefaultLabCabinet = aIsDefaultLabCabinet;
+    }
+
+    /**
+     * Направлять анализы по умолчанию в этот кабинет
+     */
+    private Boolean theIsDefaultLabCabinet;
+
+    /**
+     * Есть обслуживающий персонал
+     */
+    @Comment("Есть обслуживающий персонал")
+    public Boolean getHasServiceStuff() {
+        return theHasServiceStuff;
+    }
+
+    public void setHasServiceStuff(Boolean aHasServiceStuff) {
+        theHasServiceStuff = aHasServiceStuff;
+    }
+
+    /**
+     * Есть обслуживающий персонал
+     */
+    private Boolean theHasServiceStuff;
+
+    @Transient
+    @Comment("Информация")
+    public String getWorkFunctionInfo() {
+        return getName() + " " + theGroupName;
+    }
+
+    @Transient
+    public String getWorkerLpuInfo() {
+        return getLpu() != null ? getLpu().getFullname() : "";
+    }
+
+    /**
+     * Рабочие функции входящие в состав группы
+     */
+    @Comment("Рабочие функции входящие в состав группы")
+    @OneToMany(mappedBy = "group")
+    public List<PersonalWorkFunction> getFunctions() {
+        return theFunctions;
+    }
+
+    public void setFunctions(List<PersonalWorkFunction> aFunctions) {
+        theFunctions = aFunctions;
+    }
+
+    @Transient
+    public MisLpu getLpuRegister() {
+        return getLpu();
+    }
+
+    @Transient
+    public String getWorkerInfo() {
+        return theGroupName;
+    }
+
+    /**
+     * Название группы
+     */
+    @Comment("Название группы")
+    public String getGroupName() {
+        return theGroupName;
+    }
+
+    public void setGroupName(String aGroupName) {
+        theGroupName = aGroupName;
+    }
+
+    /**
+     * Название группы
+     */
+    private String theGroupName;
+
+    @Transient
+    public String getInfo() {
+        return "ГРУППОВАЯ: " + getGroupName();
+    }
+
+    /**
+     * Рабочие функции входящие в состав группы
+     */
+    private List<PersonalWorkFunction> theFunctions;
+
+    /**
+     * Разрешено создавать направление без указания услуг
+     */
+    @Comment("Разрешено создавать направление без указания услуг")
+    public Boolean getIsCreateDIrectionWithoutService() {
+        return theIsCreateDIrectionWithoutService;
+    }
+
+    public void setIsCreateDIrectionWithoutService(Boolean aIsCreateDIrectionWithoutService) {
+        theIsCreateDIrectionWithoutService = aIsCreateDIrectionWithoutService;
+    }
+
+    /**
+     * Разрешено создавать направление без указания услуг
+     */
+    private Boolean theIsCreateDIrectionWithoutService = false;
 
 }

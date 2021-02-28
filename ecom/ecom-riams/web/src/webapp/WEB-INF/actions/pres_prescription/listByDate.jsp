@@ -9,9 +9,6 @@
   <tiles:put name="title" type="string">
     <msh:title mainMenu="StacJournal" title="Журнал обращений по стационару"></msh:title>
   </tiles:put>
-  <tiles:put name="side" type="string">
-    	<tags:mis_journal currentAction="pres_prescription"/>
-  </tiles:put>
   <tiles:put name="body" type="string">
     <msh:form action="/stac_journalByHospital.do" defaultField="dischargeIs" disableFormDataConfirm="true" method="GET">
     <msh:panel>

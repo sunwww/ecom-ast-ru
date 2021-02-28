@@ -7,7 +7,6 @@
     </init>
 
     <allow>
-	<!--  -->
         <create creator="new" javascript="RolePoliciesService" scope="application">
             <param name="class" value="ru.ecom.jaas.web.action.role.RolePoliciesServiceJs"/>
         </create>

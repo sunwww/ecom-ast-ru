@@ -5,7 +5,7 @@
 <head>
     <title>Загрузка программы ...</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-    <meta http-equiv="Refresh" content="0; URL=start.do"  />
+    <meta http-equiv="Refresh" content="0; URL=start.do"/>
 
 </head>
 <body>

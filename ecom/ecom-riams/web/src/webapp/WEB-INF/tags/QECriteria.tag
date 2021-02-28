@@ -8,9 +8,9 @@
 
 <style type="text/css">
     #CloseDisDocument {
-        visibility: hidden ;
-        display: none ;
-        position: absolute ;
+        visibility: hidden;
+        display: none;
+        position: absolute;
     }
 </style>
 <script type="text/javascript" src="./dwr/interface/QualityEstimationService.js">/**/</script>
@@ -30,58 +30,66 @@
             </table>
             <div>*Информация рассчитана автоматически.</div>
             <div>**Информация оценки из черновика/экспертной карты.</div>
-            <div><input type="button" value='Черновик экспертной карты заведующего' id="${name}Cancel" onclick='javascript:draft${name}CloseDocument()'/></div>
+            <div><input type="button" value='Черновик экспертной карты заведующего' id="${name}Cancel"
+                        onclick='javascript:draft${name}CloseDocument()'/></div>
         </form>
     </div>
 </div>
 
 <script type="text/javascript">
     var ID;
-    var theIs${name}CloseDisDocumentDialogInitialized = false ;
-    var the${name}CloseDisDocumentDialog = new msh.widget.Dialog($('${name}CloseDisDocumentDialog')) ;
+    var theIs${name}CloseDisDocumentDialogInitialized = false;
+    var the${name}CloseDisDocumentDialog = new msh.widget.Dialog($('${name}CloseDisDocumentDialog'));
+
     // Показать
 
     function show${name}CloseDocument(id) {
-        ID=id;
+        ID = id;
         showCriteriasByDiagnosis();
-        theTableArrow = null ;
+        theTableArrow = null;
     }
+
     function showCriteriasByDiagnosis() {
         var table2 = document.getElementById('table2');
-        table2.innerHTML="<tr><td></td></tr><tr><td align=\"center\"><input type=\"button\" value=\'Закрыть\' id=\"${name}Cancel\" onclick=\'javascript:cancel${name}CloseDocument()\'/></td></tr><tr><td></td></tr>";
+        table2.innerHTML = "<tr><td></td></tr><tr><td align=\"center\"><input type=\"button\" value=\'Закрыть\' id=\"${name}Cancel\" onclick=\'javascript:cancel${name}CloseDocument()\'/></td></tr><tr><td></td></tr>";
         QualityEstimationService.showCriteriasByDiagnosis(
             ID, {
-                callback: function(aResult) {
-                    if (aResult!=null && aResult!='[]') {
+                callback: function (aResult) {
+                    if (aResult != null && aResult != '[]') {
                         var res = JSON.parse(aResult);
                         var table = document.getElementById('table1');
-                        table.innerHTML="<tr><th align=\"center\" width=\"850\">Критерий</th><th align=\"center\" width=\"150\">Выполнен?*</th><th align=\"center\" width=\"150\">Оценка в карте?**</th></tr>";
-                        for (var i=0; i<res.length; i++) {
+                        table.innerHTML = "<tr><th align=\"center\" width=\"850\">Критерий</th><th align=\"center\" width=\"150\">Выполнен?*</th><th align=\"center\" width=\"150\">Оценка в карте?**</th></tr>";
+                        for (var i = 0; i < res.length; i++) {
                             var tr = document.createElement('tr');
                             var td1 = document.createElement('td');
                             var td2 = document.createElement('td');
                             var td3 = document.createElement('td');
-                            td1.innerHTML = res[i].crit;td2.innerHTML = res[i].automark;td3.innerHTML = res[i].mark;
-                            td1.setAttribute("align","center");
-                            td2.setAttribute("align","center");
-                            td3.setAttribute("align","center");
-                            tr.appendChild(td1);tr.appendChild(td2);tr.appendChild(td3);
+                            td1.innerHTML = res[i].crit;
+                            td2.innerHTML = res[i].automark;
+                            td3.innerHTML = res[i].mark;
+                            td1.setAttribute("align", "center");
+                            td2.setAttribute("align", "center");
+                            td3.setAttribute("align", "center");
+                            tr.appendChild(td1);
+                            tr.appendChild(td2);
+                            tr.appendChild(td3);
                             table.appendChild(tr);
                         }
-                        the${name}CloseDisDocumentDialog.show() ;
-                    }
-                    else alert("Для основного клинического диагноза госпитализации не найдено данных по 203 приказу!");
+                        the${name}CloseDisDocumentDialog.show();
+                    } else alert("Для основного клинического диагноза госпитализации не найдено данных по 203 приказу!");
                 }
             }
         );
     }
+
     // Отмена
     function cancel${name}CloseDocument() {
-        the${name}CloseDisDocumentDialog.hide() ;
+        the${name}CloseDisDocumentDialog.hide();
     }
+
     //Создание черновика ЭК
     function draft${name}CloseDocument() {
-        QualityEstimationService.getIfCanCreateNow(ID,null, {
+        QualityEstimationService.getIfCanCreateNow(ID, null, {
             callback: function (res2) {
                 if (res2) { //Выписан позднее дней в настройке/Ещё лежит как обычно
                     QualityEstimationService.createDraftEK(
@@ -94,8 +102,7 @@
                             }
                         }
                     );
-                }
-                else
+                } else
                     alert("Истёк срок с момента выписки пациента, во время которого можно создавать и редактировать экспертные карты (и черновики) по 203 приказу!");
             }
         });
