@@ -7,4 +7,11 @@ public interface IExpert2ImportService {
     void importFlkAnswer(long monitorId, String aFilename, Long aListEntryId);
     void importElmed(long monitorId, String aXmlFilename);
 
+    /**
+     * Проставление кодов отделений в заполнение
+     * @param monitorId
+     * @param fileName
+     * @param entryListId
+     */
+    void importDepartmentAddressCodes(long monitorId, String fileName, Long entryListId);
 }

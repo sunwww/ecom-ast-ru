@@ -38,6 +38,10 @@
                         <input type="button" value="Импорт ошибок ФЛК"
                                onclick="setAction('importFlk','ИМПОРТ ОШИБОК ФЛК')">
                     </td>
+                    <td colspan="2">
+                        <input type="button" value="F100"
+                               onclick="setAction('f100','F100')">
+                    </td>
                 </tr>
                 <tr>
                     <td align="right" width="100">Выберите файл:</td>

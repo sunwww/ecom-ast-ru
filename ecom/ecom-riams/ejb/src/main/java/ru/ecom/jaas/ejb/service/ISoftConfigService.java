@@ -4,4 +4,11 @@ public interface ISoftConfigService {
 	void addConfigDefaults()  ;
 	void saveContextHelp(String aUrl,String aContext) ;
 	String getContextHelp(String aUrl) ;
+
+	/**
+	 * Получить значение системной настройки
+	 * @param key ключ
+	 * @return значение настройки
+	 */
+	String getConfigValue(String key) ;
 }

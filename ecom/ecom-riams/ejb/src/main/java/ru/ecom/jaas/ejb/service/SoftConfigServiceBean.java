@@ -71,6 +71,13 @@ public class SoftConfigServiceBean implements ISoftConfigService {
 		return sb.toString() ;
 		
 	}
+
+	@Override
+	public String getConfigValue(String key) {
+		List<Object[]> l = theManager.createNativeQuery("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key=:key").setParameter("key",key).getResultList();
+		return l.isEmpty() ? null : l.get(0)[1].toString();
+	}
+
 	public void addConfigDefaults() {
 		Map<String,String> defaultConfig = create() ;
 		findOrCreateSoftConfig("data_base_namespace", defaultConfig) ;
