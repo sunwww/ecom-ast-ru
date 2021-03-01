@@ -55,12 +55,9 @@ public class LoginSaveAction extends LoginExitAction {
 		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 		int passwordAge ;
 		try {
-			Integer passwordLifetime = Integer.valueOf(service.executeNativeSql("select sc.KeyValue from SoftConfig sc where sc.key='PASSWORD_CHANGE_PERIOD'").iterator().next().get1().toString());
+			int passwordLifetime = Integer.parseInt(service.executeNativeSql("select sc.KeyValue from SoftConfig sc where sc.key='PASSWORD_CHANGE_PERIOD'").iterator().next().get1().toString());
 			Date passwordStartDate  = DateFormat.parseDate(service.executeNativeSql("select case when su.passwordChangedDate is not null then to_char(su.passwordChangedDate,'dd.MM.yyyy') else to_char(coalesce(su.editdate,su.createdate),'dd.MM.yyyy') end as sudate from secuser su where su.login='"+username+"'").iterator().next().get1().toString());
-			passwordAge= (int)(passwordLifetime - ru.nuzmsh.util.date.AgeUtil.calculateDays(passwordStartDate, null));
-			if (passwordAge<0) {
-				passwordAge = 0;
-			}
+			passwordAge= Math.max((int)(passwordLifetime - ru.nuzmsh.util.date.AgeUtil.calculateDays(passwordStartDate, null)),0);
 		} catch (Exception e){
 			passwordAge = -1;
 		}
