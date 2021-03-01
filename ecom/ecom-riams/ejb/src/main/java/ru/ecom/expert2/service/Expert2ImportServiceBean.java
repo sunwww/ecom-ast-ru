@@ -281,8 +281,13 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 String dir = unZip(aMpFilename);
                 String hFilename = "H" + aMpFilename.substring(aMpFilename.indexOf('M')).replace(".MP", ".XML");
                 File hFile = new File(dir + File.separator + hFilename);
-                Document doc = new SAXBuilder().build(hFile);
-                org.jdom.Element root = doc.getRootElement();
+                Element root ;
+                try {
+                    root = new SAXBuilder().build(hFile).getRootElement();
+                } catch (JDOMException | IOException e) {
+                    LOG.error("can't parse xml "+hFilename+": "+e.getMessage());
+                    return;
+                }
                 String ver = root.getChild("ZGLV").getChildText("VERSION");
                 if ("3.0".equals(ver)) {
                     throw new IllegalStateException("Импорт в старом формате более не поддерживается!");
@@ -398,11 +403,12 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         sb.append("7z e ").append(XMLDIR).append("/").append(zipFile).append(" -o").append(outputDir);
 
         try {
-            Runtime.getRuntime().exec(sb.toString());//arraCmd);
+            Runtime.getRuntime().exec(sb.toString());
             Thread.sleep(5000); //Заснем, чтобы точно всё распаковалось
         } catch (Exception e) {
             LOG.warn("Похоже, у нас Виндовс. Попробуем запустить 7-zip");
-            sb = new StringBuilder().append("\"C:\\Program Files\\7-Zip\\7z.exe\" e ").append(XMLDIR).append("\\").append(zipFile).append(" -o").append(outputDir);
+            sb.setLength(0);
+            sb.append("\"C:\\Program Files\\7-Zip\\7z.exe\" e ").append(XMLDIR).append("\\").append(zipFile).append(" -o").append(outputDir);
             try {
                 LOG.info("sb=" + sb + ", dir=" + outputDir);
                 Runtime.getRuntime().exec(sb.toString());
