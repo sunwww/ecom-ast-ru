@@ -12,7 +12,6 @@
   </tiles:put>
   <tiles:put name="side" type="string">
     <tags:style_currentMenu currentAction="stac_surOperation" />
-    <tags:mis_journal />
   </tiles:put>
   <tiles:put name="body" type="string">
   <%

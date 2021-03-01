@@ -1,15 +1,15 @@
 function onPreCreate(aForm, aCtx) {
-    var date = new java.util.Date() ;
-    aForm.setDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date)) ;
+    var date = new java.util.Date();
+    aForm.setDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
     var login = aCtx.getSessionContext().getCallerPrincipal().getName();
-    aForm.setUsername(login) ;
-    aForm.setTime(new java.sql.Time (date.getTime())) ;
-    if (aForm.editUsername!=null && aForm.editUsername!="" && !aForm.username.equals(aForm.editUsername)) {
-        throw "Не удалось сохранить протокол: <br/><pre>"+aForm.record+"</pre><br/> Попробуйте сохранить протокол еще раз. При возникновении данной ошибки повторно, обращайтесь в службу технической поддержки."+
-        "<br><br> Текущий пользователь: "+aForm.username+", протокол был создан пользователем: "+aForm.editUsername ;
+    aForm.setUsername(login);
+    aForm.setTime(new java.sql.Time(date.getTime()));
+    if (aForm.editUsername != null && aForm.editUsername != "" && !aForm.username.equals(aForm.editUsername)) {
+        throw "Не удалось сохранить протокол: <br/><pre>" + aForm.record + "</pre><br/> Попробуйте сохранить протокол еще раз. При возникновении данной ошибки повторно, обращайтесь в службу технической поддержки." +
+        "<br><br> Текущий пользователь: " + aForm.username + ", протокол был создан пользователем: " + aForm.editUsername;
     }
-    var wfe =aCtx.manager.createNativeQuery("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login=:username")
-        .setParameter("username", login).getResultList() ;
+    var wfe = aCtx.manager.createNativeQuery("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login=:username")
+        .setParameter("username", login).getResultList();
     var wfeid = wfe.isEmpty() ? null : wfe.get(0);
     var wf = java.lang.Long.valueOf(aCtx.serviceInvoke("WorkerService", "findLogginedWorkFunctionListByPoliclinic", wfeid));
     aForm.setSpecialist(wf);
@@ -25,17 +25,19 @@ function onPreCreate(aForm, aCtx) {
         errorThrow(protocols, "В базе уже существует протокол того же типа, созданный Вами в это время");
     }
 }
+
 function onPreSave(aForm, aEntity, aCtx) {
     check(aForm, aCtx);
     var date = new java.util.Date();
     aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
-    aForm.setEditTime(new java.sql.Time (date.getTime())) ;
+    aForm.setEditTime(new java.sql.Time(date.getTime()));
     aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
     var protocols = aCtx.manager.createNativeQuery("select d.id,d.record from Diary d where d.id='" + aEntity.id + "' and d.dtype='Protocol'").getResultList();
     if (protocols.isEmpty()) {
         onPreCreate(aForm, aCtx);
     }
 }
+
 function check(aForm, aCtx) {
     if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/AllowCreateDiaryFutureTime")) {
         // Дата регистрации дневника не должна быть больше текущей даты
@@ -64,17 +66,18 @@ function onCreate(aForm, aEntity, aCtx) {
  */
 function onSave(aForm, aEntity, aCtx) {
     var username = aCtx.getSessionContext().getCallerPrincipal().getName();
-    if (aForm.username!=null && aForm.username!="" && !aForm.username.equals(username)) {
+    if (aForm.username != null && aForm.username != "" && !aForm.username.equals(username)) {
         if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/AllowEditAllProtocols"))
             throw "У Вас стоит ограничение на редактрование данного протокола!" +
             "<br><br> Текущий пользователь: " + username + ", протокол был создан пользователем: " + aForm.username;
         else {
             //регистрация события
-            aCtx.manager.createNativeQuery("insert into ChangeJournal (classname,changedate,changetime,SerializationBefore,objectid) values ('VISITPROTOCOL',current_date,current_time,'"+aForm.username+"- -"+aForm.editUsername+"','"+aForm.id+"')").executeUpdate() ;
+            aCtx.manager.createNativeQuery("insert into ChangeJournal (classname,changedate,changetime,SerializationBefore,objectid) values ('VISITPROTOCOL',current_date,current_time,'" + aForm.username + "- -" + aForm.editUsername + "','" + aForm.id + "')").executeUpdate();
         }
     }
     saveParams(aForm, aEntity, aCtx);
 }
+
 function errorThrow(aList, aError) {
     if (!aList.isEmpty()) {
         var error = ":";

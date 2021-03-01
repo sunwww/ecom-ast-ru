@@ -10,8 +10,8 @@
 
     <style type="text/css">
         #${name}PharmInventory {
-            visibility: hidden ;
-            display: none ;
+            visibility: hidden;
+            display: none;
             position: absolute;
         }
     </style>
@@ -27,48 +27,50 @@
     </div>
     <script type="text/javascript" src="./dwr/interface/PharmnaetService.js"></script>
     <script type="text/javascript">
-        //var str;
-        var the${name}PharmInventoryDialog = new msh.widget.Dialog($('${name}PharmInventoryDialog')) ;
+        var the${name}PharmInventoryDialog = new msh.widget.Dialog($('${name}PharmInventoryDialog'));
 
         var goodleaveId;
+
         // Показать
         function show${name}PharmInventory(id) {
             goodleaveId = id;
             getInfo(id);
         }
 
-        function save${name}PharmInventory(){
+        function save${name}PharmInventory() {
 
             var div = document.getElementById('inventar');
             var vocStorage = document.getElementById('vocStorage');
 
             var ucount = document.getElementById('ucount');
             var qcount = document.getElementById('qcount');
-            var userNames= "${username}";
+            var userNames = "${username}";
 
-            PharmnetService.saveInvent(goodleaveId,qcount.value,ucount.value,userNames, {
+            PharmnetService.saveInvent(goodleaveId, qcount.value, ucount.value, userNames, {
                 callback: function (aResult) {
 
                     PharmnetService.getInventTable(vocStorage.value, {
                         callback: function (aResult) {
-                            div.innerHTML ="";
+                            div.innerHTML = "";
                             div.innerHTML = aResult;
-                        }});
-                }});
+                        }
+                    });
+                }
+            });
 
 
-
-            the${name}PharmInventoryDialog.hide() ;
+            the${name}PharmInventoryDialog.hide();
         }
+
         // Отмена
         function cancel${name}PharmInventory() {
-            the${name}PharmInventoryDialog.hide() ;
+            the${name}PharmInventoryDialog.hide();
         }
 
 
         function getInfo(aGoodleaveId) {
             PharmnetService.getGoodsleave(aGoodleaveId, {
-                callback : function(aResult) {
+                callback: function (aResult) {
 
                     $('${name}PharmInventoryDataDiv').innerHTML = aResult;
                     the${name}PharmInventoryDialog.show();
@@ -77,28 +79,23 @@
         }
 
 
-        var timer = setInterval(function() {
-            if(document.getElementById('ucount')==null){
-                //clearInterval(timer);
-            }else {
+        var timer = setInterval(function () {
+            if (document.getElementById('ucount') == null) {
+            } else {
                 var input = document.getElementById('countinpack');
                 var ucount = document.getElementById('ucount');
                 var qcount = document.getElementById('qcount');
 
                 ucount.oninput = function () {
-                    var t  = (ucount.value * input.value);
-                    document.getElementById('qcount').value =t;//(input.value * qcount.value);
+                    var t = (ucount.value * input.value);
+                    document.getElementById('qcount').value = t;
                 };
 
                 qcount.oninput = function () {
-                    var t  = (qcount.value/input.value);
-                    document.getElementById('ucount').value =t;//(input.value * qcount.value);
+                    var t = (qcount.value / input.value);
+                    document.getElementById('ucount').value = t;
                 };
             }
         }, 100);
-
-
-
-
     </script>
 </msh:ifInRole>

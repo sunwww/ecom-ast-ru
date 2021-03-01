@@ -16,7 +16,6 @@ function printLpuRequisites(aCtx, aLpuId, aFldName) {
     for (var i = 0; i < list.size(); i++) {
         var obj = list.get(i);
         map.put(aFldName + "_" + obj[0], "" + obj[1]);
-        //throw ""+aFldName+"_"+obj[0]+"<>"+map.get(aFldName+"_"+obj[0]);
         map.put(aFldName + "_" + obj[0] + "Name", "" + obj[2]);
     }
 }
@@ -130,10 +129,7 @@ function printInfoByPatient(aPatient, aCtx) {
         sqlD = sqlD + " where pcc.patient_id='" + aPatient.id + "' and vpac.code='Д' and po.lpuAreaPsychCareCard_id is not null";
         sqlD = sqlD + " order by po.startdate";
 
-        //throw sqlD ;
-
         var listD = aCtx.manager.createNativeQuery(sqlD).getResultList();
-        //throw "listD"+listD.size() ;
         var d1 = null;
         var d2 = null;
         var iF = null;

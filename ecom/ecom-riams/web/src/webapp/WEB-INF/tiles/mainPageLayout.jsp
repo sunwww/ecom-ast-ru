@@ -8,24 +8,24 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 
 <html:html xhtml="true" locale="true">
- <head>
-   <title>МедОС</title>
-   <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <head>
+        <title>МедОС</title>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 
 
-<%@ include file="/WEB-INF/tiles/libscache.jsp" %>
-<!-- Дополнительное определение стиля -->
-<tiles:insert attribute="style" ignore='true'/>
-<!-- Дополнительное определение стиля END -->
+        <%@ include file="/WEB-INF/tiles/libscache.jsp" %>
+        <!-- Дополнительное определение стиля -->
+        <tiles:insert attribute="style" ignore='true'/>
+        <!-- Дополнительное определение стиля END -->
 
 
- </head>
+    </head>
 
     <body>
-        <tiles:insert attribute="title" ignore="true"/>
-        <msh:errorMessage/>
-        <msh:infoMessage/>
-        <tiles:insert attribute="body"/>
-   </body>
+    <tiles:insert attribute="title" ignore="true"/>
+    <msh:errorMessage/>
+    <msh:infoMessage/>
+    <tiles:insert attribute="body"/>
+    </body>
 
 </html:html>

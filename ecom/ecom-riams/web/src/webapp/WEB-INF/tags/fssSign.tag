@@ -8,9 +8,9 @@
 
 <style type="text/css">
     #${name}fssSign {
-        visibility: hidden ;
-        display: none ;
-        position: absolute ;
+        visibility: hidden;
+        display: none;
+        position: absolute;
     }
 </style>
 
@@ -38,21 +38,20 @@
 <script type="text/javascript">
 
 
-    var theIs${name}fssSignInitialized = false ;
-    var the${name}fssSign = new msh.widget.Dialog($('${name}fssSign')) ;
+    var theIs${name}fssSignInitialized = false;
+    var the${name}fssSign = new msh.widget.Dialog($('${name}fssSign'));
 
 
     // Показать
-    function show${name}fssSign(recordid,doctype) {
+    function show${name}fssSign(recordid, doctype) {
         the${name}fssSign.show();
         $('${name}fssSignText')
-            .innerHTML="<iframe src='/riams/api/disabilitySign/sendDisabilityRecordJson?disRecId="+recordid+"&docType="+doctype+"&username=${username}' width='600' height='500' ></iframe>";
+            .innerHTML = "<iframe src='/riams/api/disabilitySign/sendDisabilityRecordJson?disRecId=" + recordid + "&docType=" + doctype + "&username=${username}' width='600' height='500' ></iframe>";
     }
 
     // Отмена
     function cancel${name}fssSign() {
-        //theTableArrow = new tablearrow.TableArrow('prolongation') ;
-        the${name}fssSign.hide() ;
+        the${name}fssSign.hide();
         msh.effect.FadeEffect.pushFadeAll();
 
         jQuery("#prolongation").load("entityParentView-dis_document.do?id=${param.id} #prolongation");

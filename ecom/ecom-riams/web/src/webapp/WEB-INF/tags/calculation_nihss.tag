@@ -16,15 +16,15 @@
 
     <style type="text/css">
         #${name}NewCalculation {
-            visibility: hidden ;
-            display: none ;
-            position: absolute ;
+            visibility: hidden;
+            display: none;
+            position: absolute;
         }
     </style>
     <div id='${name}NewCalculationDialog' class='dialog'>
         <h2>Шкала NIHSS</h2>
 
-        <div id="formula${name}" class="formula${name}"> </div>
+        <div id="formula${name}" class="formula${name}"></div>
         <h3>Уровень сознания</h3>
         <select id="ursozn${name}">
             <option>Не изменено</option>
@@ -116,7 +116,7 @@
             <option>Нормальная</option>
             <option>Легкая афазия</option>
             <option>Выраженная афазия</option>
-            <option>Тотальная  афазия</option>
+            <option>Тотальная афазия</option>
         </select>
         <br>
         <h3>Дизартрия</h3>
@@ -147,110 +147,113 @@
     </div>
     <script type="text/javascript" src="./dwr/interface/CalculateService.js"></script>
     <script type="text/javascript">
-        var theIs${name}NewCalculationDialogInitialized = false ;
-        var the${name}NewCalculationDialog = new msh.widget.Dialog($('${name}NewCalculationDialog')) ;
-        var departmentId${name}=0;
-        var calcId${name}=0;
+        var theIs${name}NewCalculationDialogInitialized = false;
+        var the${name}NewCalculationDialog = new msh.widget.Dialog($('${name}NewCalculationDialog'));
+        var departmentId${name} = 0;
+        var calcId${name} = 0;
 
         // инициализация диалогового окна
         function init${name}NewCalculationDialog() {
-            theIs${name}NewCalculationDialogInitialized = true ;
+            theIs${name}NewCalculationDialogInitialized = true;
         }
 
         // Показать
-        function show${name}NewCalculation(id,calcId,create) {
+        function show${name}NewCalculation(id, calcId, create) {
             if (!theIs${name}NewCalculationDialogInitialized) {
-                init${name}NewCalculationDialog() ;
+                init${name}NewCalculationDialog();
             }
-            the${name}NewCalculationDialog.show() ;
-            departmentId${name}=id;
-            calcId${name}=calcId;
-            document.getElementById("cancel").style.display ="";
+            the${name}NewCalculationDialog.show();
+            departmentId${name} = id;
+            calcId${name} = calcId;
+            document.getElementById("cancel").style.display = "";
         }
 
         // Отмена
         function cancel${name}NewCalculation() {
-            the${name}NewCalculationDialog.hide() ;
+            the${name}NewCalculationDialog.hide();
         }
 
         // Сохранение данных
         function save${name}NewCalculation() {
             calculate${name}();
-            var formString=formToString${name}();
-            var res=document.getElementById('formula${name}').innerHTML;
+            var formString = formToString${name}();
+            var res = document.getElementById('formula${name}').innerHTML;
 
-            var resStr='Шкала инсульта NIHSS. Результат: ';
-            resStr+=res+' - ';
-            if (res==0 || res<3) resStr+='состояние удовлетворительное';
-            if (res>=3 && res<=8) resStr+='неврологические нарушения легкой степени';
-            if (res>=9 && res<=12) resStr+='неврологические нарушения средней степени';
-            if (res>=13 && res<=15) resStr+='тяжелые неврологические нарушения';
-            if (res>=16 && res<=34) resStr+='неврологические нарушения крайней степени тяжести';
-            if (res>34) resStr+='кома';
-            if (res<10) resStr+='. Прогнозируется благоприятный исход';
-            if (res>20) resStr+='. Прогнозируется неблагоприятный исход';
-            resStr+='\n';
+            var resStr = 'Шкала инсульта NIHSS. Результат: ';
+            resStr += res + ' - ';
+            if (res == 0 || res < 3) resStr += 'состояние удовлетворительное';
+            if (res >= 3 && res <= 8) resStr += 'неврологические нарушения легкой степени';
+            if (res >= 9 && res <= 12) resStr += 'неврологические нарушения средней степени';
+            if (res >= 13 && res <= 15) resStr += 'тяжелые неврологические нарушения';
+            if (res >= 16 && res <= 34) resStr += 'неврологические нарушения крайней степени тяжести';
+            if (res > 34) resStr += 'кома';
+            if (res < 10) resStr += '. Прогнозируется благоприятный исход';
+            if (res > 20) resStr += '. Прогнозируется неблагоприятный исход';
+            resStr += '\n';
 
-            var prop ;
-            if ("${property}"=="") prop = "record" ;
+            var prop;
+            if ("${property}" == "") prop = "record";
 
             var record = window.parent.document.getElementById(prop);
-            if (record!=null) {
-                record.value+=resStr;
-                showToastMessage("Добавлено к дневнику!",null,true)
-            }
-            else CalculateService.SetCalculateResultCreate(departmentId${name},
+            if (record != null) {
+                record.value += resStr;
+                showToastMessage("Добавлено к дневнику!", null, true)
+            } else CalculateService.SetCalculateResultCreate(departmentId${name},
                 resStr, calcId${name}, formString, {
-                    callback: function () {showToastMessage("Вычисление успешно создано!",null,true);}
+                    callback: function () {
+                        showToastMessage("Вычисление успешно создано!", null, true);
+                    }
                 });
-            for (var i=0; i<100; i++)
-                if (window.parent.document.getElementById('fadeEffect')!=null) window.parent.document.getElementById('fadeEffect').hide();
+            for (var i = 0; i < 100; i++)
+                if (window.parent.document.getElementById('fadeEffect') != null) window.parent.document.getElementById('fadeEffect').hide();
 
             the${name}NewCalculationDialog.hide();
         }
 
         //вычисение результата
-        function calculate${name}(){
-            var res=0;
-            res+=document.getElementById('ursozn${name}').selectedIndex;
-            res+=document.getElementById('otv${name}').selectedIndex;
-            res+=document.getElementById('reakcoms${name}').selectedIndex;
-            res+=document.getElementById('parez${name}').selectedIndex;
-            res+=document.getElementById('polzr${name}').selectedIndex;
-            res+=document.getElementById('pzrezmimich${name}').selectedIndex;
-            res+=document.getElementById('leftup${name}').selectedIndex;
-            res+=document.getElementById('rightup${name}').selectedIndex;
-            res+=document.getElementById('down${name}').selectedIndex;
-            res+=document.getElementById('sense${name}').selectedIndex;
-            res+=document.getElementById('at${name}').selectedIndex;
-            res+=document.getElementById('speech${name}').selectedIndex;
-            res+=document.getElementById('dizart${name}').selectedIndex;
-            res+=document.getElementById('nevnim${name}').selectedIndex;
+        function calculate${name}() {
+            var res = 0;
+            res += document.getElementById('ursozn${name}').selectedIndex;
+            res += document.getElementById('otv${name}').selectedIndex;
+            res += document.getElementById('reakcoms${name}').selectedIndex;
+            res += document.getElementById('parez${name}').selectedIndex;
+            res += document.getElementById('polzr${name}').selectedIndex;
+            res += document.getElementById('pzrezmimich${name}').selectedIndex;
+            res += document.getElementById('leftup${name}').selectedIndex;
+            res += document.getElementById('rightup${name}').selectedIndex;
+            res += document.getElementById('down${name}').selectedIndex;
+            res += document.getElementById('sense${name}').selectedIndex;
+            res += document.getElementById('at${name}').selectedIndex;
+            res += document.getElementById('speech${name}').selectedIndex;
+            res += document.getElementById('dizart${name}').selectedIndex;
+            res += document.getElementById('nevnim${name}').selectedIndex;
             document.getElementById('formula${name}').innerHTML = res;
         }
+
         //Форма в строку
         function formToString${name}() {
-            var formToStirng='Параметр\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tБаллы\n';
-            formToStirng+='Уровень сознания:\t'+selectToString('ursozn${name}');
-            formToStirng+='Ответы на вопросы:\t'+selectToString('otv${name}');
-            formToStirng+='Реакция на команды:\t'+selectToString('reakcoms${name}');
-            formToStirng+='Парез взгляда:\t'+selectToString('parez${name}');
-            formToStirng+='Поля зрения:\t'+selectToString('polzr${name}');
-            formToStirng+='Парез мимической мускулатуры:\t'+selectToString('pzrezmimich${name}');
-            formToStirng+='Двигательные функции левой верхней конечности:\t'+selectToString('leftup${name}');
-            formToStirng+='Двигательные функции правой верхней конечности:\t'+selectToString('rightup${name}');
-            formToStirng+='Двигательные функции нижней конечности:\t'+selectToString('down${name}');
-            formToStirng+='Чувствительность:\t'+selectToString('sense${name}');
-            formToStirng+='Атаксия:\t'+selectToString('at${name}');
-            formToStirng+='Речь:\t'+selectToString('speech${name}');
-            formToStirng+='Дизартрия:\t'+selectToString('dizart${name}');
-            formToStirng+='Невнимательность:\t'+selectToString('nevnim${name}');
+            var formToStirng = 'Параметр\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tБаллы\n';
+            formToStirng += 'Уровень сознания:\t' + selectToString('ursozn${name}');
+            formToStirng += 'Ответы на вопросы:\t' + selectToString('otv${name}');
+            formToStirng += 'Реакция на команды:\t' + selectToString('reakcoms${name}');
+            formToStirng += 'Парез взгляда:\t' + selectToString('parez${name}');
+            formToStirng += 'Поля зрения:\t' + selectToString('polzr${name}');
+            formToStirng += 'Парез мимической мускулатуры:\t' + selectToString('pzrezmimich${name}');
+            formToStirng += 'Двигательные функции левой верхней конечности:\t' + selectToString('leftup${name}');
+            formToStirng += 'Двигательные функции правой верхней конечности:\t' + selectToString('rightup${name}');
+            formToStirng += 'Двигательные функции нижней конечности:\t' + selectToString('down${name}');
+            formToStirng += 'Чувствительность:\t' + selectToString('sense${name}');
+            formToStirng += 'Атаксия:\t' + selectToString('at${name}');
+            formToStirng += 'Речь:\t' + selectToString('speech${name}');
+            formToStirng += 'Дизартрия:\t' + selectToString('dizart${name}');
+            formToStirng += 'Невнимательность:\t' + selectToString('nevnim${name}');
             return formToStirng;
         }
+
         //Список в строку
         function selectToString(name) {
             return document.getElementById(name).options[document.getElementById(name).selectedIndex].innerHTML
-                +'\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t'+(document.getElementById(name).selectedIndex)+'\n';
+                + '\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t' + (document.getElementById(name).selectedIndex) + '\n';
         }
     </script>
 </msh:ifInRole>

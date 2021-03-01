@@ -1,40 +1,42 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+        "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
 
 <struts-config>
 
     <form-beans>
-        <form-bean name="smo_short_spo_streamForm" type="ru.ecom.mis.ejb.form.medcase.poly.PolyclinicFullMedCaseForm" />
+        <form-bean name="smo_short_spo_streamForm" type="ru.ecom.mis.ejb.form.medcase.poly.PolyclinicFullMedCaseForm"/>
 
         <form-bean name="poly_medcardForm" type="ru.ecom.poly.ejb.form.MedcardForm"/>
 
-        <form-bean name="smo_spo_ticket_streamForm" type="ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm" />
-        <form-bean name="smo_ticketForm"      type="ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm" />
-        <form-bean name="smo_short_ticketForm"      type="ru.ecom.mis.ejb.form.medcase.ticket.ShortTicketMedCaseForm" />
+        <form-bean name="smo_spo_ticket_streamForm" type="ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm"/>
+        <form-bean name="smo_ticketForm" type="ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm"/>
+        <form-bean name="smo_short_ticketForm" type="ru.ecom.mis.ejb.form.medcase.ticket.ShortTicketMedCaseForm"/>
 
-        <form-bean name="poly_ticketForm"      type="ru.ecom.poly.ejb.form.TicketForm" />
-        <form-bean name="poly_short_ticketForm"      type="ru.ecom.poly.ejb.form.ShortTicketForm" />
-        <form-bean name="poly_drugPrescriptionForm"      type="ru.ecom.mis.ejb.form.prescription.DrugPrescriptionByTicketForm" />
+        <form-bean name="poly_ticketForm" type="ru.ecom.poly.ejb.form.TicketForm"/>
+        <form-bean name="poly_short_ticketForm" type="ru.ecom.poly.ejb.form.ShortTicketForm"/>
+        <form-bean name="poly_drugPrescriptionForm"
+                   type="ru.ecom.mis.ejb.form.prescription.DrugPrescriptionByTicketForm"/>
 
-        <form-bean name="poly_medcardSearchForm"      type="ru.ecom.poly.web.action.medcard.MedcardSearchForm" />
-        <form-bean name="voc_orgSearchForm"      type="ru.ecom.mis.web.action.patient.VocOrgSearchForm" />
-        <form-bean name="mis_searchForm"      type="ru.ecom.poly.web.action.ticket.SearchForm" />
-        <form-bean name="poly_groupDateForm"      type="ru.ecom.poly.ejb.services.GroupByDate" />
-        <form-bean name="poly_protocolForm"      type="ru.ecom.poly.ejb.form.protocol.ProtocolForm" />
-        <form-bean name="poly_journalBySpecForm"      type="ru.ecom.poly.web.action.ticket.JournalBySpecialistForm" />
-        <form-bean name="extDisp_journalForm"      type="ru.ecom.mis.web.action.patient.ExtDispJournalForm" />
+        <form-bean name="poly_medcardSearchForm" type="ru.ecom.poly.web.action.medcard.MedcardSearchForm"/>
+        <form-bean name="voc_orgSearchForm" type="ru.ecom.mis.web.action.patient.VocOrgSearchForm"/>
+        <form-bean name="mis_searchForm" type="ru.ecom.poly.web.action.ticket.SearchForm"/>
+        <form-bean name="poly_groupDateForm" type="ru.ecom.poly.ejb.services.GroupByDate"/>
+        <form-bean name="poly_protocolForm" type="ru.ecom.poly.ejb.form.protocol.ProtocolForm"/>
+        <form-bean name="poly_journalBySpecForm" type="ru.ecom.poly.web.action.ticket.JournalBySpecialistForm"/>
+        <form-bean name="extDisp_journalForm" type="ru.ecom.mis.web.action.patient.ExtDispJournalForm"/>
 
-        <form-bean name="pharmnet_outcomeForm"      type="ru.ecom.mis.web.action.pharmnet.OutcomeForm" />
-        <form-bean name="pharmnet_adminForm"      type="ru.ecom.mis.web.action.pharmnet.PharmAdminForm" />
-        <form-bean name="pharmnet_balanceForm"      type="ru.ecom.mis.web.action.pharmnet.PharmBalanceForm" />
-        <form-bean name="pharmnet_inventarForm"      type="ru.ecom.mis.web.action.pharmnet.PharmInventarForm" />
+        <form-bean name="pharmnet_outcomeForm" type="ru.ecom.mis.web.action.pharmnet.OutcomeForm"/>
+        <form-bean name="pharmnet_adminForm" type="ru.ecom.mis.web.action.pharmnet.PharmAdminForm"/>
+        <form-bean name="pharmnet_balanceForm" type="ru.ecom.mis.web.action.pharmnet.PharmBalanceForm"/>
+        <form-bean name="pharmnet_inventarForm" type="ru.ecom.mis.web.action.pharmnet.PharmInventarForm"/>
 
 
-        <form-bean name="pharmnet_complectForm"      type="ru.ecom.mis.ejb.form.pharmnet.PharmnetComplectForm" />
-        <form-bean name="pharmnet_complectRowForm"      type="ru.ecom.mis.ejb.form.pharmnet.PharmnetComplectRowForm" />
+        <form-bean name="pharmnet_complectForm" type="ru.ecom.mis.ejb.form.pharmnet.PharmnetComplectForm"/>
+        <form-bean name="pharmnet_complectRowForm" type="ru.ecom.mis.ejb.form.pharmnet.PharmnetComplectRowForm"/>
 
-        <form-bean name="pharmnet_storageForm"      type="ru.ecom.mis.ejb.form.pharmnet.PharmnetStorageForm" />
+        <form-bean name="pharmnet_storageForm" type="ru.ecom.mis.ejb.form.pharmnet.PharmnetStorageForm"/>
     </form-beans>
 
     <global-forwards>
@@ -73,7 +75,7 @@
                 scope="session"
                 input='/WEB-INF/actions/smo_ticket/journal_statByUser.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/journal_statByUser.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/journal_statByUser.jsp"/>
         </action>
 
         <action path='/extDisp_journal_user' type='ru.ecom.web.actions.base.ForwardAction'
@@ -82,7 +84,7 @@
                 scope="session"
                 input='/WEB-INF/actions/extDisp_card/list_by_user.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/extDisp_card/list_by_user.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/extDisp_card/list_by_user.jsp"/>
         </action>
 
         <action path='/smo_journal_openSpo' type='ru.ecom.web.actions.base.ForwardAction'
@@ -90,14 +92,14 @@
                 validate='false'
                 scope="session"
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_spo/journal_openSpo.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_spo/journal_openSpo.jsp"/>
         </action>
         <action path='/smo_journal_closeSpo' type='ru.ecom.web.actions.base.ForwardAction'
                 name='poly_journalBySpecForm'
                 validate='false'
                 scope="session"
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_spo/journal_closeSpo.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_spo/journal_closeSpo.jsp"/>
         </action>
         <action path='/smo_doubleTickets' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
@@ -105,7 +107,7 @@
                 scope="session"
                 input='/WEB-INF/actions/smo_ticket/list_double.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/list_double.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/list_double.jsp"/>
         </action>
         <!--        <action path='/poly_medcardSearch' type='ru.ecom.poly.web.action.medcard.MedcardSearchAction'-->
         <!--                name='poly_medcardSearchForm'-->
@@ -121,7 +123,7 @@
                 scope="session"
                 input='/WEB-INF/actions/poly_medcard/list.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_medcard/list.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_medcard/list.jsp"/>
         </action>
 
         <action path='/voc_orgs' type='ru.ecom.mis.web.action.patient.VocOrgSearchAction'
@@ -130,7 +132,7 @@
                 scope="session"
                 input='/WEB-INF/actions/voc_org/list.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/voc_org/list.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/voc_org/list.jsp"/>
         </action>
 
         <action path='/voc_drugUNs' type='ru.ecom.mis.web.action.patient.VocDrugUNSearchAction'
@@ -138,21 +140,21 @@
                 scope='session'
                 validate='true'
                 input='/WEB-INF/actions/voc_drugUN/list.jsp'>
-            <forward name="success" redirect="false" path="/WEB-INF/actions/voc_drugUN/list.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/voc_drugUN/list.jsp"/>
         </action>
         <action path='/voc_drugLNs' type='ru.ecom.mis.web.action.patient.VocDrugUNSearchAction'
                 name='voc_orgSearchForm'
                 scope='session'
                 validate='true'
                 input='/WEB-INF/actions/voc_drugUN/list.jsp'>
-            <forward name="success" redirect="false" path="/WEB-INF/actions/voc_drugLN/list.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/voc_drugLN/list.jsp"/>
         </action>
         <action path='/voc_drugs' type='ru.ecom.mis.web.action.patient.VocDrugUNSearchAction'
                 name='voc_orgSearchForm'
                 scope='session'
                 validate='true'
                 input='/WEB-INF/actions/voc_drugUN/list.jsp'>
-            <forward name="success" redirect="false" path="/WEB-INF/actions/voc_drug/list.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/voc_drug/list.jsp"/>
         </action>
 
         <action path='/voc_operations' type='ru.ecom.mis.web.action.medcase.VocOperationSearchAction'
@@ -160,15 +162,8 @@
                 scope='session'
                 validate='true'
                 input='/WEB-INF/actions/voc_operation/list.jsp'>
-            <forward name="success" redirect="false" path="/WEB-INF/actions/voc_operation/list.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/voc_operation/list.jsp"/>
         </action>
-        <!--        <action path='/poly_ticketSearch' type='ru.ecom.poly.web.action.ticket.TicketSearchAction'-->
-        <!--                name='mis_searchForm'-->
-        <!--                validate='false'-->
-        <!--                scope="session"-->
-        <!--                >-->
-        <!--            <forward name="success" redirect="true" path="/poly_tickets.do" />-->
-        <!--        </action>-->
 
         <action path='/smo_journal_nonredidentPatient' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
@@ -176,7 +171,7 @@
                 scope="session"
                 input='/WEB-INF/actions/smo_ticket/journal_nonresident.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/journal_nonresident.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/journal_nonresident.jsp"/>
         </action>
         <action path='/smo_journal_visit_by_specialist' type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm'
@@ -184,7 +179,7 @@
                 scope="session"
                 input='/WEB-INF/actions/smo_ticket/journal_specialist.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/journal_specialist.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/journal_specialist.jsp"/>
         </action>
         <action path='/smo_ticketspec' type='ru.ecom.web.actions.base.ForwardAction'
                 name='mis_searchForm'
@@ -192,7 +187,7 @@
                 scope="session"
                 input='/WEB-INF/actions/smo_ticket/listSpec.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/listSpec.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/listSpec.jsp"/>
         </action>
 
         <action path='/smo_ticketsopen' type='ru.ecom.web.actions.base.ForwardAction'
@@ -201,7 +196,7 @@
                 scope="session"
                 input='/WEB-INF/actions/smo_ticket/listOpen.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/listOpen.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_ticket/listOpen.jsp"/>
         </action>
 
 
@@ -211,7 +206,7 @@
                 scope="session"
                 input='/WEB-INF/actions/poly_ticket/listSpec.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/listSpec.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/listSpec.jsp"/>
         </action>
         <action path='/poly_tickets' type='ru.ecom.poly.web.action.ticket.TicketSearchAction'
                 name='mis_searchForm'
@@ -219,7 +214,7 @@
                 scope="session"
                 input='/WEB-INF/actions/poly_ticket/listFindByNumber.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/listFindByNumber.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/listFindByNumber.jsp"/>
         </action>
 
 
@@ -229,7 +224,7 @@
                 scope="session"
                 input='/WEB-INF/actions/poly_ticket/listOpenDate.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/listOpenDate.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/listOpenDate.jsp"/>
         </action>
 
         <action path='/poly_ticketsopen' type='ru.ecom.poly.web.action.ticket.TicketOpenAction'
@@ -238,7 +233,7 @@
                 scope="session"
                 input='/WEB-INF/actions/poly_ticket/listOpen.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/listOpen.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/listOpen.jsp"/>
         </action>
 
 
@@ -248,7 +243,7 @@
                 scope="session"
                 input='/WEB-INF/actions/poly_ticket/list_statByUser.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_statByUser.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_statByUser.jsp"/>
         </action>
         <action path='/poly_ticketsBySpecialistList' type='ru.ecom.poly.web.action.ticket.TicketBySpecialistListAction'
                 name='stac_admissionJournalForm'
@@ -256,15 +251,16 @@
                 scope="session"
                 input='/WEB-INF/actions/poly_ticket/list_spec_list.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_spec_list.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_spec_list.jsp"/>
         </action>
-        <action path='/poly_ticketsBySpecialistMkbData' type='ru.ecom.poly.web.action.ticket.TicketBySpecialistDataAction'
+        <action path='/poly_ticketsBySpecialistMkbData'
+                type='ru.ecom.poly.web.action.ticket.TicketBySpecialistDataAction'
                 name='poly_ticketForm'
                 validate='false'
                 scope="session"
                 input='/WEB-INF/actions/poly_ticket/list_spec_data_mkb.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_spec_data_mkb.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_spec_data_mkb.jsp"/>
         </action>
         <action path='/poly_ticketsBySpecialistData' type='ru.ecom.poly.web.action.ticket.TicketBySpecialistDataAction'
                 name='poly_ticketForm'
@@ -272,7 +268,7 @@
                 scope="session"
                 input='/WEB-INF/actions/poly_ticket/list_spec_data.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_spec_data.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_spec_data.jsp"/>
         </action>
         <action path='/poly_journalRegisterVisit_list' type='ru.ecom.poly.web.action.ticket.JournalRegisterVisitAction'
                 name='poly_journalBySpecForm'
@@ -288,7 +284,8 @@
                 scope='session'
                 input='/WEB-INF/actions/smo_visit/journal_directOtherSpecialist_list.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/journal_directOtherSpecialist_list.jsp"/>
+            <forward name="success" redirect="false"
+                     path="/WEB-INF/actions/smo_visit/journal_directOtherSpecialist_list.jsp"/>
         </action>
         <action path='/visit_f039_param' type='ru.ecom.poly.web.action.ticket.Report039Action'
                 name='poly_journalBySpecForm'
@@ -329,13 +326,15 @@
         >
             <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/journal_openSpo_list.jsp"/>
         </action>
-        <action path='/visit_journal_direction' type='ru.ecom.mis.web.action.medcase.journal.DirectionPatientByPoliclinic'
+        <action path='/visit_journal_direction'
+                type='ru.ecom.mis.web.action.medcase.journal.DirectionPatientByPoliclinic'
                 name='poly_journalBySpecForm'
                 validate='true'
                 scope='session'
                 input='/WEB-INF/actions/smo_visit/journal_direction_patient_list.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/journal_direction_patient_list.jsp"/>
+            <forward name="success" redirect="false"
+                     path="/WEB-INF/actions/smo_visit/journal_direction_patient_list.jsp"/>
         </action>
         <action path='/journal_visits_list' type='ru.ecom.mis.web.action.medcase.journal.VisitPatientByPoliclinic'
                 name='poly_journalBySpecForm'
@@ -396,32 +395,35 @@
         >
             <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/journal_ticket_spec_print.jsp"/>
         </action>
-        <action path='/poly_ticketsByNonredidentPatientList' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
+        <action path='/poly_ticketsByNonredidentPatientList'
+                type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
                 name='stac_admissionJournalForm'
                 validate='false'
                 scope="session"
                 input='/WEB-INF/actions/poly_ticket/list_nonresident_list.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_nonresident_list.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_nonresident_list.jsp"/>
         </action>
 
-        <action path='/poly_ticketsByNonresidentPatientPrint' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
+        <action path='/poly_ticketsByNonresidentPatientPrint'
+                type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
                 name='stac_admissionJournalForm'
                 validate='false'
                 scope="session"
                 input='/WEB-INF/actions/poly_ticket/list_nonresident_print.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_nonresident_print.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_nonresident_print.jsp"/>
         </action>
 
 
-        <action path='/poly_ticketsByNonredidentPatientData' type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
+        <action path='/poly_ticketsByNonredidentPatientData'
+                type='ru.ecom.poly.web.action.ticket.TicketByNonresidentListAction'
                 name='poly_ticketForm'
                 validate='false'
                 scope="session"
                 input='/WEB-INF/actions/poly_ticket/list_nonresident_data.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_nonresident_data.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_nonresident_data.jsp"/>
         </action>
         <action path='/poly_doubleTickets_list' type='ru.ecom.poly.web.action.ticket.TicketDoubleListAction'
                 name='stac_admissionJournalForm'
@@ -429,7 +431,7 @@
                 scope="session"
                 input='/WEB-INF/actions/poly_ticket/list_double_list.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_double_list.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_double_list.jsp"/>
         </action>
         <action path='/poly_doubleTickets_data' type='ru.ecom.poly.web.action.ticket.TicketDoubleDataAction'
                 name='poly_ticketForm'
@@ -437,7 +439,7 @@
                 scope="session"
                 input='/WEB-INF/actions/poly_ticket/list_double_data.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_double_data.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_double_data.jsp"/>
         </action>
 
         <action path='/poly_ticketsByUserData' type='ru.ecom.poly.web.action.ticket.TicketStatByUserDataAction'
@@ -446,12 +448,8 @@
                 scope="session"
                 input='/WEB-INF/actions/poly_ticket/list_statByUser_data.jsp'
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_statByUser_data.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/poly_ticket/list_statByUser_data.jsp"/>
         </action>
-
-
-
-
 
         <action path='/poly_closeTicket' type='ru.ecom.poly.web.action.ticket.CloseTicketAction'
                 name='poly_ticketForm'
@@ -465,42 +463,29 @@
                 name='pharmnet_outcomeForm'
                 validate='false'
                 scope="session">
-            <forward name="success" redirect="false" path="/WEB-INF/actions/pharm_report/pharm_outcome.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/pharm_report/pharm_outcome.jsp"/>
         </action>
 
         <action path='/pharm_admin' type='ru.ecom.web.actions.base.ForwardAction'
                 name='pharmnet_adminForm'
                 validate='false'
                 scope="session">
-            <forward name="success" redirect="false" path="/WEB-INF/actions/pharm_report/pharm_admin.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/pharm_report/pharm_admin.jsp"/>
         </action>
 
         <action path='/pharm_balance' type='ru.ecom.web.actions.base.ForwardAction'
                 name='pharmnet_balanceForm'
                 validate='false'
                 scope="session">
-            <forward name="success" redirect="false" path="/WEB-INF/actions/pharm_report/pharm_balance.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/pharm_report/pharm_balance.jsp"/>
         </action>
 
         <action path='/pharm_inventar' type='ru.ecom.web.actions.base.ForwardAction'
                 name='pharmnet_inventarForm'
                 validate='false'
                 scope="session">
-            <forward name="success" redirect="false" path="/WEB-INF/actions/pharm_report/pharm_inventar.jsp" />
+            <forward name="success" redirect="false" path="/WEB-INF/actions/pharm_report/pharm_inventar.jsp"/>
         </action>
-
-        <!--
-        <action path="/smo_directionSave" type='ru.ecom.web.actions.entity.SaveAction'
-            scope='request' validate="true" name="smo_directionForm" input="/WEB-INF/actions/smo_direction/edit.jsp">
-            <forward name="success" path="/js-smo_direction-findDirections.do" redirect="true"/>
-        </action>
-
-        <action path="/smo_contract_directionSave" type='ru.ecom.web.actions.entity.SaveAction'
-            scope='request' validate="true" name="smo_contract_directionForm" input="/WEB-INF/actions/smo_direction/contract_direction.jsp">
-            <forward name="success" path="/js-smo_direction-findDirections.do" redirect="true"/>
-        </action>
-         -->
     </action-mappings>
 
 </struts-config>
-

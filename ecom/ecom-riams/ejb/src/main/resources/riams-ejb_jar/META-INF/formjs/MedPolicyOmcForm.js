@@ -61,7 +61,6 @@ function checkNumSerSmo(aCtx, aForm, aSqlAdd) {
         dateTo = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.actualDateTo);
     } catch (e) {
         dateTo = null;
-        //throw "Неправильно введена дата начала или окончания" ;
     }
     if (dateFrom == null) throw "Поле даты начала действия полиса является обязательным";
     if (dateTo != null && (dateTo.getTime() < dateFrom.getTime())) throw "Дата окончания должна быть больше, чем дата начала";

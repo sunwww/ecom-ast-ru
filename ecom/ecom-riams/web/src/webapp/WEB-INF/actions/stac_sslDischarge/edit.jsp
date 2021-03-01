@@ -9,77 +9,84 @@
     <tiles:put name="style" type="string">
         <msh:ifInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
             <style type="text/css">
-                #sourceHospTypeLabel,#admissionOrderLabel, #whereAdmissionLabel,
-                #orderMkbLabel,#orderDiagnosLabel,
-                #admissionInHospitalLabel, #psychReasonLabel, #clinicalActuityLabel
-                ,#orderLpuLabel
-                {
-                    color: blue ;
+                #sourceHospTypeLabel, #admissionOrderLabel, #whereAdmissionLabel,
+                #orderMkbLabel, #orderDiagnosLabel,
+                #admissionInHospitalLabel, #psychReasonLabel, #clinicalActuityLabel, #orderLpuLabel {
+                    color: blue;
                 }
-                #sourceHospTypeName,#admissionOrderName, #whereAdmissionName,
-                #orderMkbName,#orderDiagnos,
+
+                #sourceHospTypeName, #admissionOrderName, #whereAdmissionName,
+                #orderMkbName, #orderDiagnos,
                 #admissionInHospitalName, #psychReasonName, #clinicalActuityName {
-                    background-color:#FFFFA0;
+                    background-color: #FFFFA0;
                 }
             </style>
         </msh:ifInRole>
         <msh:ifInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
             <style type="text/css">
-                #sourceHospTypeLabel,#admissionOrderLabel, #whereAdmissionLabel,
-                #admissionInHospitalLabel, #psychReasonLabel, #clinicalActuityLabel
-                ,#judgment35Label,#lawCourtDesicionDate
-                {
-                    color: blue ;
+                #sourceHospTypeLabel, #admissionOrderLabel, #whereAdmissionLabel,
+                #admissionInHospitalLabel, #psychReasonLabel, #clinicalActuityLabel, #judgment35Label, #lawCourtDesicionDate {
+                    color: blue;
                 }
-                #sourceHospTypeName,#admissionOrderName, #whereAdmissionName,
+
+                #sourceHospTypeName, #admissionOrderName, #whereAdmissionName,
                 #admissionInHospitalName, #psychReasonName, #clinicalActuityName {
-                    background-color:#FFFFA0;
+                    background-color: #FFFFA0;
                 }
             </style>
         </msh:ifInRole>
         <style type="text/css">
 
 
-            #clinicalDiagnosLabel, #clinicalMkbLabel, #clinicalActuityLabel,#mkbAdcLabel {
-                color: blue ;
+            #clinicalDiagnosLabel, #clinicalMkbLabel, #clinicalActuityLabel, #mkbAdcLabel {
+                color: blue;
             }
+
             #concomitantDiagnosLabel, #concomitantMkbLabel, .concomitantDiags {
-                color: green ;
+                color: green;
             }
 
             #concludingDiagnosLabel, #concludingMkbLabel, .concludingDiags {
-                color: black ;
+                color: black;
             }
+
             #complicationDiagnosLabel, #complicationMkbLabel, .complicationDiags {
                 color: purple;
             }
 
             #pathanatomicalDiagnosLabel, #pathanatomicalMkbLabel {
-                color: red ;
+                color: red;
             }
+
             .otherTable {
-                width:99% ;
+                width: 99%;
             }
+
             .otherTable tr {
-                border: 1px solid ;
+                border: 1px solid;
             }
 
             .epicrisis {
-                left:0px;  width:99%;
-                top:0px;  height:45em;
+                left: 0px;
+                width: 99%;
+                top: 0px;
+                height: 45em;
             }
+
             #epicriPanel {
-                width:100%;
+                width: 100%;
             }
+
             .dischargeEpicrisis {
-                width:100%;
+                width: 100%;
             }
         </style>
 
     </tiles:put>
     <tiles:put name="side" type="string">
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
-            <tags:template_new_diary name="newTemp" roles="/Policy/Diary/Template/Create" field="dischargeEpicrisis" title="Создание шаблона на основе выписки"/>
+            <tags:template_new_diary name="newTemp" roles="/Policy/Diary/Template/Create" field="dischargeEpicrisis"
+                                     title="Создание шаблона на основе выписки"/>
         </msh:ifNotInRole>
         <tags:stac_hospitalMenu currentAction="stac_sslDischarge"/>
     </tiles:put>
@@ -89,7 +96,8 @@
         -->
 
         <msh:ifFormTypeIsView formName="stac_sslDischargeForm">
-            <ecom:webQuery name="isTransferLpu" nativeSql="select id,lpu_id from medcase where id=${param.id} and moveToAnotherLpu_id is not null"/>
+            <ecom:webQuery name="isTransferLpu"
+                           nativeSql="select id,lpu_id from medcase where id=${param.id} and moveToAnotherLpu_id is not null"/>
             <msh:tableNotEmpty name="isTransferLpu">
                 <ecom:webQuery name="directOtherLpuQ" nativeSql="select wchb.id as id, to_char(wchb.createDate,'yyyy-MM-dd') as w0chbcreatedate
  ,cast('1' as varchar(1)) as f1orPom
@@ -143,7 +151,7 @@
     	</span>
                 </msh:tableEmpty>
                 <msh:tableNotEmpty name="directOtherLpuQ">
-                    <msh:table  action="entityView-smo_planHospitalByHosp.do" name="directOtherLpuQ" idField="1">
+                    <msh:table action="entityView-smo_planHospitalByHosp.do" name="directOtherLpuQ" idField="1">
                         <msh:tableColumn property="1" columnName="?"/>
                     </msh:table>
                 </msh:tableNotEmpty>
@@ -151,11 +159,12 @@
 
 
         </msh:ifFormTypeIsView>
-        <msh:form action="/entityParentSaveGoView-stac_sslDischarge.do" defaultField="" title="Случай стационарного лечения. ВЫПИСКА">
-            <msh:hidden property="id" />
-            <msh:hidden property="patient" />
-            <msh:hidden property="saveType" />
-            <msh:hidden property="lpu" />
+        <msh:form action="/entityParentSaveGoView-stac_sslDischarge.do" defaultField=""
+                  title="Случай стационарного лечения. ВЫПИСКА">
+            <msh:hidden property="id"/>
+            <msh:hidden property="patient"/>
+            <msh:hidden property="saveType"/>
+            <msh:hidden property="lpu"/>
             <msh:hidden property="emergency"/>
             <msh:hidden property="ambulanceTreatment"/>
             <msh:hidden property="ownerFunction"/>
@@ -198,49 +207,59 @@
             </msh:ifFormTypeIsView>
             <msh:panel colsWidth="5%,10%,5%,80%">
                 <msh:row>
-                    <td colspan="4"><div id='errorInformation' style="display: none;" class="errorMessage"/></td>
+                    <td colspan="4">
+                        <div id='errorInformation' style="display: none;" class="errorMessage"/>
+                    </td>
                 </msh:row>
-                <msh:separator label="Приемное отделение" colSpan="8" />
+                <msh:separator label="Приемное отделение" colSpan="8"/>
                 <msh:row>
-                    <msh:textField property="statCardNumber" label="Номер стат.карты" horizontalFill="true" viewOnlyField="true" />
-                </msh:row>
-                <msh:row>
-                    <msh:textField property="dateStart" label="Дата поступления" viewOnlyField="true" />
-                    <msh:textField property="entranceTime" label="время" viewOnlyField="true" />
-                </msh:row>
-                <msh:row>
-                    <msh:textField property="transferDate" label="Выбыт. из приемника"  viewOnlyField="true"/>
-                    <msh:textField property="transferTime" label="время" fieldColSpan="3"  viewOnlyField="true"/>
+                    <msh:textField property="statCardNumber" label="Номер стат.карты" horizontalFill="true"
+                                   viewOnlyField="true"/>
                 </msh:row>
                 <msh:row>
-                    <msh:checkBox property="relativeMessage" label="Сообщение родственникам" viewOnlyField="true" />
-                    <msh:autoComplete property="department" label="Отделение" vocName="vocLpuOtd" horizontalFill="true" viewOnlyField="true" />
+                    <msh:textField property="dateStart" label="Дата поступления" viewOnlyField="true"/>
+                    <msh:textField property="entranceTime" label="время" viewOnlyField="true"/>
                 </msh:row>
-                <mis:ifPatientIsWoman classByObject="Patient" idObject="stac_sslDischargeForm.patient" roles="/Policy/Mis/Pregnancy/History/View">
+                <msh:row>
+                    <msh:textField property="transferDate" label="Выбыт. из приемника" viewOnlyField="true"/>
+                    <msh:textField property="transferTime" label="время" fieldColSpan="3" viewOnlyField="true"/>
+                </msh:row>
+                <msh:row>
+                    <msh:checkBox property="relativeMessage" label="Сообщение родственникам" viewOnlyField="true"/>
+                    <msh:autoComplete property="department" label="Отделение" vocName="vocLpuOtd" horizontalFill="true"
+                                      viewOnlyField="true"/>
+                </msh:row>
+                <mis:ifPatientIsWoman classByObject="Patient" idObject="stac_sslDischargeForm.patient"
+                                      roles="/Policy/Mis/Pregnancy/History/View">
                     <msh:separator label="Беременность" colSpan="9"/>
                     <msh:row>
-                        <msh:autoComplete viewOnlyField="true" viewAction="entityParentView-preg_pregnancy.do" property="pregnancy" label="Беременность" fieldColSpan="3" parentId="patient" vocName="pregnancyByPatient" horizontalFill="true"/>
+                        <msh:autoComplete viewOnlyField="true" viewAction="entityParentView-preg_pregnancy.do"
+                                          property="pregnancy" label="Беременность" fieldColSpan="3" parentId="patient"
+                                          vocName="pregnancyByPatient" horizontalFill="true"/>
                     </msh:row>
                 </mis:ifPatientIsWoman>
             </msh:panel>
             <msh:panel colsWidth="5%,10%,5%,80%">
                 <msh:row>
-                    <msh:autoComplete vocName="vocIllnesPrimary" property="clinicalActuity" horizontalFill="true" label="Характер заболевания"
+                    <msh:autoComplete vocName="vocIllnesPrimary" property="clinicalActuity" horizontalFill="true"
+                                      label="Характер заболевания"
                                       fieldColSpan="3"
                     />
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete vocName="vocIdc10" label="МКБ клин.диаг." property="clinicalMkb" fieldColSpan="3" horizontalFill="true"/>
+                    <msh:autoComplete vocName="vocIdc10" label="МКБ клин.диаг." property="clinicalMkb" fieldColSpan="3"
+                                      horizontalFill="true"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField label="Клинический диагноз" property="clinicalDiagnos" fieldColSpan="3" horizontalFill="true"/>
+                    <msh:textField label="Клинический диагноз" property="clinicalDiagnos" fieldColSpan="3"
+                                   horizontalFill="true"/>
                 </msh:row>
             </msh:panel>
             <msh:panel styleId="epicriPanel" colsWidth="1%,1%,1%,1%">
                 <msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View">
                     <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
                         <msh:row>
-                            <msh:separator colSpan="8" label="Выписной эпикриз" />
+                            <msh:separator colSpan="8" label="Выписной эпикриз"/>
                         </msh:row>
                         <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
                             <msh:row>
@@ -249,15 +268,18 @@
                                     <input type="button" value="Шаблон" onclick="showTextTemplateProtocol()"/>
                                     <input type="button" value="Доп. сведения" onclick="showTextEpicrisis()"/>
                                     <input type="button" value="Сохранить пред. выписку" onclick="savePreRecord()"/>
-                                    <input type="button" id="submitPreDischrge1" name="submitPreDischrge1" value="Сохранить пред. выписку+диагноз" onclick="check_diags('1');"/>
-                                    <input type="button" id="changeSizeEpicrisisButton1" value="Увеличить" onclick="changeSizeEpicrisis()">
-                                    <input type="button" onclick="checkStorage();" value="Восстановить потерянные данные" />
+                                    <input type="button" id="submitPreDischrge1" name="submitPreDischrge1"
+                                           value="Сохранить пред. выписку+диагноз" onclick="check_diags('1');"/>
+                                    <input type="button" id="changeSizeEpicrisisButton1" value="Увеличить"
+                                           onclick="changeSizeEpicrisis()">
+                                    <input type="button" onclick="checkStorage();"
+                                           value="Восстановить потерянные данные"/>
 
                                 </td>
                             </msh:row>
                         </msh:ifFormTypeIsNotView>
                         <msh:row>
-                            <msh:textArea property="dischargeEpicrisis" fieldColSpan="3" label="Текст" />
+                            <msh:textArea property="dischargeEpicrisis" fieldColSpan="3" label="Текст"/>
                         </msh:row>
                         <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
                             <msh:row>
@@ -265,9 +287,12 @@
                                     <input type="button" value="Шаблон" onclick="showTextTemplateProtocol()"/>
                                     <input type="button" value="Доп. сведения" onclick="showTextEpicrisis()"/>
                                     <input type="button" value="Сохранить пред. выписку" onclick="savePreRecord()"/>
-                                    <input type="button" id="submitPreDischrge2" name="submitPreDischrge2" value="Сохранить пред. выписку+диагноз" onclick="check_diags('1');"/>
-                                    <input type="button" id="changeSizeEpicrisisButton" value="Увеличить" onclick="changeSizeEpicrisis()">
-                                    <input type="button" onclick="checkStorage();" value="Восстановить потерянные данные" />
+                                    <input type="button" id="submitPreDischrge2" name="submitPreDischrge2"
+                                           value="Сохранить пред. выписку+диагноз" onclick="check_diags('1');"/>
+                                    <input type="button" id="changeSizeEpicrisisButton" value="Увеличить"
+                                           onclick="changeSizeEpicrisis()">
+                                    <input type="button" onclick="checkStorage();"
+                                           value="Восстановить потерянные данные"/>
                                 </td>
                             </msh:row>
                         </msh:ifFormTypeIsNotView>
@@ -281,103 +306,133 @@
                 </msh:ifNotInRole>
             </msh:panel>
             <msh:panel colsWidth="5%,10%,5%,80%">
-                <msh:separator colSpan="8" label="Выписка" />
+                <msh:separator colSpan="8" label="Выписка"/>
                 <msh:row>
-                    <msh:autoComplete vocName="vocIllnesPrimary" property="concludingActuity" horizontalFill="true" label="Характер заболевания"
+                    <msh:autoComplete vocName="vocIllnesPrimary" property="concludingActuity" horizontalFill="true"
+                                      label="Характер заболевания"
                                       fieldColSpan="3"
                     />
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete vocName="vocIdc10" label="МКБ-10 закл.диаг." property="concludingMkb" fieldColSpan="3" horizontalFill="true"/>
+                    <msh:autoComplete vocName="vocIdc10" label="МКБ-10 закл.диаг." property="concludingMkb"
+                                      fieldColSpan="3" horizontalFill="true"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField label="Заключительный диагноз" property="concludingDiagnos" fieldColSpan="3" horizontalFill="true"/>
+                    <msh:textField label="Заключительный диагноз" property="concludingDiagnos" fieldColSpan="3"
+                                   horizontalFill="true"/>
                 </msh:row>
                 <msh:hidden property="complicationDiags"/>
                 <msh:hidden property="concomitantDiags"/>
                 <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
                     <msh:row>
-                        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 клин.диаг.соп." property="concomitantMkb" fieldColSpan="6" horizontalFill="true"/>
+                        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 клин.диаг.соп." property="concomitantMkb"
+                                          fieldColSpan="6" horizontalFill="true"/>
                     </msh:row>
 
                     <msh:row>
-                        <msh:textField label="Клин. диаг. сопут" property="concomitantDiagnos" fieldColSpan="5" horizontalFill="true"/>
+                        <msh:textField label="Клин. диаг. сопут" property="concomitantDiagnos" fieldColSpan="5"
+                                       horizontalFill="true"/>
                         <td><input type="button" value="+ диагноз" onclick="addDiag('concomitant')"/></td>
                     </msh:row>
                 </msh:ifFormTypeIsNotView>
-                <tr><td colspan="7">
-                    <table class="otherTable" id='otherconcomitantDiagsTable'></table>
-                </td></tr>
+                <tr>
+                    <td colspan="7">
+                        <table class="otherTable" id='otherconcomitantDiagsTable'></table>
+                    </td>
+                </tr>
                 <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
                     <msh:row>
-                        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 клин.диаг.осл." property="complicationMkb" fieldColSpan="6" horizontalFill="true"/>
+                        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 клин.диаг.осл." property="complicationMkb"
+                                          fieldColSpan="6" horizontalFill="true"/>
                     </msh:row>
                     <msh:row>
-                        <msh:textField label="Клин. диаг. осл." property="complicationDiagnos" fieldColSpan="5" horizontalFill="true"/>
+                        <msh:textField label="Клин. диаг. осл." property="complicationDiagnos" fieldColSpan="5"
+                                       horizontalFill="true"/>
                         <td><input type="button" value="+ диагноз" onclick="addDiag('complication')"/></td>
                     </msh:row>
                 </msh:ifFormTypeIsNotView>
-                <msh:row><td colspan="7">
-                    <table class="otherTable" id='othercomplicationDiagsTable'></table>
-                </td></msh:row>
+                <msh:row>
+                    <td colspan="7">
+                        <table class="otherTable" id='othercomplicationDiagsTable'></table>
+                    </td>
+                </msh:row>
 
 
                 <msh:ifFormTypeIsView formName="stac_sslDischargeForm">
                     <msh:row>
-                        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 патанат.диаг." property="pathanatomicalMkb" fieldColSpan="3" horizontalFill="true"/>
+                        <msh:autoComplete vocName="vocIdc10" label="МКБ-10 патанат.диаг." property="pathanatomicalMkb"
+                                          fieldColSpan="3" horizontalFill="true"/>
                     </msh:row>
                     <msh:row>
-                        <msh:textField label="Патанатомический диагноз" property="pathanatomicalDiagnos" fieldColSpan="3" horizontalFill="true"/>
+                        <msh:textField label="Патанатомический диагноз" property="pathanatomicalDiagnos"
+                                       fieldColSpan="3" horizontalFill="true"/>
                     </msh:row>
                 </msh:ifFormTypeIsView>
                 <msh:row>
-                    <msh:autoComplete property="kinsman" label="Представитель (иног.)" viewAction="entityParentView-mis_kinsman.do"
-                                      parentId="stac_sslDischargeForm.patient" vocName="kinsmanBySMO" horizontalFill="true" fieldColSpan="3"/>
+                    <msh:autoComplete property="kinsman" label="Представитель (иног.)"
+                                      viewAction="entityParentView-mis_kinsman.do"
+                                      parentId="stac_sslDischargeForm.patient" vocName="kinsmanBySMO"
+                                      horizontalFill="true" fieldColSpan="3"/>
                 </msh:row>
                 <msh:ifInRole roles="/Policy/Mis/Patient/Newborn">
                     <msh:row>
-                        <msh:checkBox property="hotelServices" label="Находится в больнице по уходу за пациентом" fieldColSpan="3"/>
+                        <msh:checkBox property="hotelServices" label="Находится в больнице по уходу за пациентом"
+                                      fieldColSpan="3"/>
                     </msh:row>
                 </msh:ifInRole>
                 <msh:row>
-                    <msh:autoComplete label="Исход" property="outcome" fieldColSpan="1" horizontalFill="true" vocName="vocHospitalizationOutcome" />
-                    <msh:autoComplete label="Результат госп." property="result" fieldColSpan="1" horizontalFill="true" vocName="vocHospitalizationResult" />
+                    <msh:autoComplete label="Исход" property="outcome" fieldColSpan="1" horizontalFill="true"
+                                      vocName="vocHospitalizationOutcome"/>
+                    <msh:autoComplete label="Результат госп." property="result" fieldColSpan="1" horizontalFill="true"
+                                      vocName="vocHospitalizationResult"/>
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete label="Причина выписки" property="reasonDischarge"  horizontalFill="true" vocName="vocReasonDischarge"/>
-                    <msh:autoComplete label="Дефекты догоспитального этапа" property="preAdmissionDefect"  horizontalFill="true" vocName="vocPreAdmissionDefect"/>
-                </msh:row>
-
-                <msh:row>
-                    <msh:textField label="Дата выписки" property="dateFinish" />
-                    <msh:textField label="Время выписки" property="dischargeTime" />
-                </msh:row>
-                <msh:row>
-                    <msh:autoComplete label="Перевод в др ЛПУ" property="moveToAnotherLPU" horizontalFill="true" vocName="mainLpu" fieldColSpan="3" />
-                </msh:row>
-                <msh:row>
-                    <msh:autoComplete vocName="vocHospType" property="targetHospType" label="Куда выписан" horizontalFill="true" />
-                    <msh:autoComplete label="Итог выписки" property="resultDischarge"  horizontalFill="true" vocName="vocResultDischarge" />
+                    <msh:autoComplete label="Причина выписки" property="reasonDischarge" horizontalFill="true"
+                                      vocName="vocReasonDischarge"/>
+                    <msh:autoComplete label="Дефекты догоспитального этапа" property="preAdmissionDefect"
+                                      horizontalFill="true" vocName="vocPreAdmissionDefect"/>
                 </msh:row>
 
                 <msh:row>
-                    <msh:checkBox property="rareCase" label="Редкий случай" />
+                    <msh:textField label="Дата выписки" property="dateFinish"/>
+                    <msh:textField label="Время выписки" property="dischargeTime"/>
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete labelColSpan="3" property="hospitalization" label="Госпитализация в данном году по данному заболевания" vocName="vocHospitalization" horizontalFill="true" fieldColSpan="1" />
+                    <msh:autoComplete label="Перевод в др ЛПУ" property="moveToAnotherLPU" horizontalFill="true"
+                                      vocName="mainLpu" fieldColSpan="3"/>
+                </msh:row>
+                <msh:row>
+                    <msh:autoComplete vocName="vocHospType" property="targetHospType" label="Куда выписан"
+                                      horizontalFill="true"/>
+                    <msh:autoComplete label="Итог выписки" property="resultDischarge" horizontalFill="true"
+                                      vocName="vocResultDischarge"/>
+                </msh:row>
+
+                <msh:row>
+                    <msh:checkBox property="rareCase" label="Редкий случай"/>
+                </msh:row>
+                <msh:row>
+                    <msh:autoComplete labelColSpan="3" property="hospitalization"
+                                      label="Госпитализация в данном году по данному заболевания"
+                                      vocName="vocHospitalization" horizontalFill="true" fieldColSpan="1"/>
                 </msh:row>
                 <msh:ifInRole roles="/Policy/Mis/MedCase/IsPsychiatry">
                     <msh:row>
-                        <msh:autoComplete vocName="vocHospitalization" property="admissionInHospital" label="Поступление в стационар" horizontalFill="true" labelColSpan="1"/>
-                        <msh:autoComplete label="Причина госпитализации" vocName="vocPsychHospitalReason" property="psychReason" labelColSpan="1" horizontalFill="true"/>
+                        <msh:autoComplete vocName="vocHospitalization" property="admissionInHospital"
+                                          label="Поступление в стационар" horizontalFill="true" labelColSpan="1"/>
+                        <msh:autoComplete label="Причина госпитализации" vocName="vocPsychHospitalReason"
+                                          property="psychReason" labelColSpan="1" horizontalFill="true"/>
                     </msh:row>
                     <msh:row>
-                        <msh:autoComplete property="admissionOrder" label="Порядок поступления" fieldColSpan="1" vocName="vocAdmissionOrder" horizontalFill="true"/>
-                        <msh:autoComplete label="Откуда поступил" vocName="vocHospitalizationWhereAdmission" property="whereAdmission" labelColSpan="1" horizontalFill="true"/>
+                        <msh:autoComplete property="admissionOrder" label="Порядок поступления" fieldColSpan="1"
+                                          vocName="vocAdmissionOrder" horizontalFill="true"/>
+                        <msh:autoComplete label="Откуда поступил" vocName="vocHospitalizationWhereAdmission"
+                                          property="whereAdmission" labelColSpan="1" horizontalFill="true"/>
                     </msh:row>
                     <msh:row>
                         <msh:textField property="lawCourtDesicionDate" label="Дата решения суда"/>
-                        <msh:autoComplete property="judgment35" label="Решение судьи по ст. 35" horizontalFill="true" vocName="vocJudgment"/>
+                        <msh:autoComplete property="judgment35" label="Решение судьи по ст. 35" horizontalFill="true"
+                                          vocName="vocJudgment"/>
                     </msh:row>
                 </msh:ifInRole>
 
@@ -389,52 +444,64 @@
                 <msh:row>
                     <msh:label property="createDate" label="Дата создания"/>
                     <msh:label property="createTime" label="время"/>
-                    <msh:label property="username" label="пользователь" />
+                    <msh:label property="username" label="пользователь"/>
                 </msh:row>
                 <msh:row>
                     <msh:label property="editDate" label="Дата редак."/>
                     <msh:label property="editTime" label="время"/>
-                    <msh:label property="editUsername" label="пользователь" />
+                    <msh:label property="editUsername" label="пользователь"/>
                 </msh:row>
 
-                <msh:submitCancelButtonsRow functionSubmit="check_diags('') ;" colSpan="4" labelSave="Сохранить изменения" labelCreating="Создание" labelCreate="Создать новый случай" labelSaving="Сохранение данных" />
+                <msh:submitCancelButtonsRow functionSubmit="check_diags('') ;" colSpan="4"
+                                            labelSave="Сохранить изменения" labelCreating="Создание"
+                                            labelCreate="Создать новый случай" labelSaving="Сохранение данных"/>
             </msh:panel>
         </msh:form>
         <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
             <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
-                <tags:templateProtocol property="dischargeEpicrisis" name="Text" version="Visit" idSmo="stac_sslDischargeForm.id" voc="protocolVisitByPatient" />
-                <tags:dischargeEpicrisis property="dischargeEpicrisis" name="Text" patient="patient" dateStart="dateStart" dateFinish="dateFinish"/>
+                <tags:templateProtocol property="dischargeEpicrisis" name="Text" version="Visit"
+                                       idSmo="stac_sslDischargeForm.id" voc="protocolVisitByPatient"/>
+                <tags:dischargeEpicrisis property="dischargeEpicrisis" name="Text" patient="patient"
+                                         dateStart="dateStart" dateFinish="dateFinish"/>
             </msh:ifFormTypeIsNotView>
         </msh:ifNotInRole>
         <tags:stac_infoBySls form="stac_sslDischargeForm"/>
     </tiles:put>
     <tiles:put name="title" type="string">
-        <ecom:titleTrail mainMenu="Patient" beginForm="stac_sslDischargeForm" />
+        <ecom:titleTrail mainMenu="Patient" beginForm="stac_sslDischargeForm"/>
     </tiles:put>
     <tiles:put name="javascript" type="string">
         <script type="text/javascript">
-            var slo_form_is_view = 0 ;
+            var slo_form_is_view = 0;
             var medCaseId = $('id');
+
             function saveToStorage() {
                 try {
                     localStorage.setItem("stac_sslDischargeForm" + ";" + medCaseId.value + ";" + document.getElementById('current_username_li').innerHTML, $('dischargeEpicrisis').value);
+                } catch (e) {
                 }
-                catch (e) {}
             }
+
             function removeFromStorage() {
                 try {
-                    localStorage.removeItem("stac_sslDischargeForm"+";"+medCaseId.value+";"+document.getElementById('current_username_li').innerHTML);
+                    localStorage.removeItem("stac_sslDischargeForm" + ";" + medCaseId.value + ";" + document.getElementById('current_username_li').innerHTML);
+                } catch (e) {
                 }
-                catch (e) {}
             }
-            eventutil.addEventListener($('dischargeEpicrisis'), "input", function(){saveToStorage();}) ;
-            eventutil.addEventListener($('dischargeEpicrisis'), "keyup", function(){saveToStorage();}) ;
-            //eventutil.addEventListener($('dischargeEpicrisis'), "blur", function(){saveToStorage();}) ;
-            eventutil.addEventListener($('dischargeEpicrisis'), "paste", function(){saveToStorage();}) ;
+
+            eventutil.addEventListener($('dischargeEpicrisis'), "input", function () {
+                saveToStorage();
+            });
+            eventutil.addEventListener($('dischargeEpicrisis'), "keyup", function () {
+                saveToStorage();
+            });
+            eventutil.addEventListener($('dischargeEpicrisis'), "paste", function () {
+                saveToStorage();
+            });
         </script>
         <msh:ifFormTypeIsView formName="stac_sslDischargeForm">
             <script type="text/javascript">
-                slo_form_is_view = 1 ;
+                slo_form_is_view = 1;
             </script>
         </msh:ifFormTypeIsView>
 
@@ -442,26 +509,28 @@
         <script type="text/javascript" src="./dwr/interface/CovidService.js"></script>
         <script type="text/javascript">
             function trim(aStr) {
-                return aStr.replace(/|\s+|\s+$/gm,'') ;
+                return aStr.replace(/|\s+|\s+$/gm, '');
             }
 
             try {
-                var old_action = document.forms["mainForm"].action ;
-                document.forms["mainForm"].action="javascript:check_diags('')" ;
+                var old_action = document.forms["mainForm"].action;
+                document.forms["mainForm"].action = "javascript:check_diags('')";
 
-            } catch(e) {}
+            } catch (e) {
+            }
 
             function checkCountSLO() {
                 var count = 1;
-                OncologyService.checkSLO(${param.id},{
-                    callback : function(res) {
+                OncologyService.checkSLO(${param.id}, {
+                    callback: function (res) {
                         return res;
-                    }});
+                    }
+                });
 
             }
 
             function check_diags(aPrefix) {
-                if (aPrefix=='') {
+                if (aPrefix == '') {
                     CovidService.checkSlsU(${param.id}, {
                         callback: function (resU) {
                             var umas = resU.split('#');
@@ -470,80 +539,69 @@
                             if (umas[0] == '1' || ($('concludingMkbName').value[0] == 'U' && umas[1] == 0)) {
                                 if (confirm("Внимание! Не создана форма оценки тяжести заболевания COVID-19. Продолжить?")) {
                                     saveNext(aPrefix);
-                                }
-                                else {
+                                } else {
                                     $('submitButton').disabled = false;
                                     $('submitPreDischrge1').disabled = false;
                                     $('submitPreDischrge2').disabled = false;
                                 }
-                            }
-                                else {
+                            } else {
                                 saveNext(aPrefix);
-                                }
                             }
-                        });
-                }
-                else {
+                        }
+                    });
+                } else {
                     alert("Внимание! При сохранении предварительной выписки дата и время выписки сохраняться НЕ БУДУТ!");
-                    $('dateFinish').value='';
-                    $('dischargeTime').value='';
+                    $('dateFinish').value = '';
+                    $('dischargeTime').value = '';
                     saveNext(aPrefix);
                 }
             }
 
             function saveNext(aPrefix) {
-                var a= $('concludingMkbName').value;
+                var a = $('concludingMkbName').value;
 
-                var concludingMkb=$('concludingMkbName').value;
-                var index=concludingMkb.indexOf(' ');
-                if (index!=-1) concludingMkb=concludingMkb.substring(0,index);
-                //if (a.match(/C\d\d/ )==null) concludingMkb='';
-                OncologyService.checkSLO(${param.id},{
-                    callback : function(res) {
-                        if(res=="0" && a.match(/C\d\d/ )!=null) {
+                var concludingMkb = $('concludingMkbName').value;
+                var index = concludingMkb.indexOf(' ');
+                if (index != -1) concludingMkb = concludingMkb.substring(0, index);
+                OncologyService.checkSLO(${param.id}, {
+                    callback: function (res) {
+                        if (res == "0" && a.match(/C\d\d/) != null) {
                             alert('Внимание! Для выбранного диагноза нужно заполнить случай ЗНО');
                             savePreRecord();
-                            //window.open
-                            showOnkOncology("entityParentPrepareCreate-oncology_case_reestr.do?id="+'${param.id}'+"&mkb="+concludingMkb+"&short=ShortCreate");
-                            try{$('submitPreDischrge2').disabled=false;
-                                $('submitPreDischrge1').disabled=false ;}catch(e){}
-                            $('submitButton').disabled=false ;
+                            showOnkOncology("entityParentPrepareCreate-oncology_case_reestr.do?id=" + '${param.id}' + "&mkb=" + concludingMkb + "&short=ShortCreate");
+                            try {
+                                $('submitPreDischrge2').disabled = false;
+                                $('submitPreDischrge1').disabled = false;
+                            } catch (e) {
+                            }
+                            $('submitButton').disabled = false;
 
-                        }else {
-                            OncologyService.checkDiagnosisOnkoForm(${param.id},concludingMkb, {
+                        } else {
+                            OncologyService.checkDiagnosisOnkoForm(${param.id}, concludingMkb, {
                                 callback: function (res) {
-                                    if (res!='' && res!='0' && a.match(/C\d\d/ )!=null) {
+                                    if (res != '' && res != '0' && a.match(/C\d\d/) != null) {
                                         var mas = res.split('#');
                                         alert(mas[0]);
-                                        try{$('submitPreDischrge2').disabled=false;
-                                            $('submitPreDischrge1').disabled=false ;}catch(e){}
-                                        $('submitButton').disabled=false ;
-                                        showOnkOncology(/*'.do'*/"entityEdit-oncology_case_reestr.do?id="+mas[1]+"&mkb="+concludingMkb+"&short=ShortCreate");
-                                        //window.open();
-                                    }
-                                    //смена С на не С
-                                    /*else if (res!='' && res!='0' && !a.match(/C\d\d/ )!=null) {
-                                        var mas = res.split('#');
-                                        alert(mas[0]);
-                                        try{$('submitPreDischrge2').disabled=false;
-                                            $('submitPreDischrge1').disabled=false ;}catch(e){}
-                                        $('submitButton').disabled=false ;
-                                        window.open("entityEdit-oncology_case_reestr.do?id="+mas[1]+"&mkb="+concludingMkb);// + "&actualMsg=Созданная ранее онкологическая форма была удалена. Если необходимо, создайте подозрение на ЗНО.");
-                                    }*/
-                                    else {
-                                        if ((res != '' && res != '0' && !a.match(/C\d\d/) != null && confirm(res.split('#')[0])) || (res=='' || res=='0')) {
+                                        try {
+                                            $('submitPreDischrge2').disabled = false;
+                                            $('submitPreDischrge1').disabled = false;
+                                        } catch (e) {
+                                        }
+                                        $('submitButton').disabled = false;
+                                        showOnkOncology("entityEdit-oncology_case_reestr.do?id=" + mas[1] + "&mkb=" + concludingMkb + "&short=ShortCreate");
+                                    } else {
+                                        if ((res != '' && res != '0' && !a.match(/C\d\d/) != null && confirm(res.split('#')[0])) || (res == '' || res == '0')) {
                                             if (res != '' && res != '0' && !a.match(/C\d\d/) != null) { //смена С на не С
                                                 var mas = res.split('#');
                                                 //удаление формы
-                                                if (mas[1]!='') {
+                                                if (mas[1] != '') {
                                                     OncologyService.deleteAllByCase(mas[1], {
                                                         callback: function () {
-                                                            showToastMessage('Неактуальная онкологическая форма была удалена',null,true);
+                                                            showToastMessage('Неактуальная онкологическая форма была удалена', null, true);
                                                         }
                                                     });
                                                 }
                                             }
-                                            //if (res=='0' && a.match(/C\d\d/ )!=null) alert('Есть несколько ЗНО, у одного из них совпадает диагноз с основным выписным.');
                                             var list_diag = ["complication", "concomitant"];
                                             var isnext = true;
                                             try {
@@ -573,8 +631,7 @@
                                                 }
                                                 $('submitButton').disabled = false;
                                             }
-                                        }
-                                        else if (res != '' && res != '0' && !a.match(/C\d\d/) != null) {
+                                        } else if (res != '' && res != '0' && !a.match(/C\d\d/) != null) {
                                             try {
                                                 $('submitPreDischrge2').disabled = false;
                                                 $('submitPreDischrge1').disabled = false;
@@ -586,75 +643,70 @@
                                 }
                             });
 
-                        }}});
+                        }
+                    }
+                });
             }
+
             <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
             <msh:ifInRole roles="/Policy/Mis/Pregnancy/BirthNosologyCard/Create">
-            //проверка, необходимо ли наличие карты нозологий перед сохранением
-            /*function checkNessessaryDischargeNosologyCard(aPrefix) {
-                HospitalMedCaseService.checkNessessaryDischargeNosologyCard(${param.id},{
-                    callback: function(aResult) {
-                        if (aResult=='0') {
-                            showToastMessage("При выписке из патологии беременности необходимо выбрать нозологию!",null,true,false,4000);
-                            showbirthNosologyCard(${param.id},null,null,null,aPrefix);
-                        }
-                        else saveNext(aPrefix);
-                    }
-                }) ;
-            }*/
 
             function checkNessessaryDischargeNosologyCardOnload() {
-                HospitalMedCaseService.checkNessessaryDischargeNosologyCard(${param.id},{
-                    callback: function(aResult) {
-                        if (aResult=='0') {
-                            showToastMessage("При выписке из патологии беременности необходимо выбрать нозологию!",null,true,false,4000);
-                            showbirthNosologyCard(${param.id},null,null,null,null,null,null,true);
+                HospitalMedCaseService.checkNessessaryDischargeNosologyCard(${param.id}, {
+                    callback: function (aResult) {
+                        if (aResult == '0') {
+                            showToastMessage("При выписке из патологии беременности необходимо выбрать нозологию!", null, true, false, 4000);
+                            showbirthNosologyCard(${param.id}, null, null, null, null, null, null, true);
                         }
                     }
-                }) ;
+                });
             }
+
             //создание сопутствующих диагнозов из списка нозологий (в случае, когда заполнено)
             function fillСoncomitantDiagnosis(id) {
-                if (id==${param.id}) { //если это - текущее окно
+                if (id ==${param.id}) { //если это - текущее окно
                     HospitalMedCaseService.getConcomitantDiagnosisFromNosCard(
                         id, {
-                            callback: function(aResult) {
-                                if (aResult!=null && aResult!='[]') {
+                            callback: function (aResult) {
+                                if (aResult != null && aResult != '[]') {
                                     var result = JSON.parse(aResult);
-                                    for (var i=0; i<result.length; i++) {
-                                        $('concomitantMkb').value=result[i].idcId; $('concomitantMkbName').value=result[i].idcName;
-                                        $('concomitantDiagnos').value=result[i].idcName;
+                                    for (var i = 0; i < result.length; i++) {
+                                        $('concomitantMkb').value = result[i].idcId;
+                                        $('concomitantMkbName').value = result[i].idcName;
+                                        $('concomitantDiagnos').value = result[i].idcName;
                                         addDiag('concomitant');
                                     }
-                            }}}
+                                }
+                            }
+                        }
                     );
                 }
             }
+
             checkNessessaryDischargeNosologyCardOnload();
             </msh:ifInRole>
             </msh:ifFormTypeIsNotView>
-            onload=function(){
+            onload = function () {
 
-                var list_diag = ["complication","concomitant"] ;
-                for (var j=0;j<list_diag.length;j++) {
+                var list_diag = ["complication", "concomitant"];
+                for (var j = 0; j < list_diag.length; j++) {
 
-                    if ($(list_diag[j]+'Diags').value!='') {
-                        var addRowF="";
-                        var ind_f=0 ;
-                        for (var i=0;i<theFld.length;i++) {
-                            addRowF+="ar["+(ind_f++)+"],"
-                            if (theFld[i][2]==1) {
-                                addRowF+="ar["+(ind_f++)+"],"
+                    if ($(list_diag[j] + 'Diags').value != '') {
+                        var addRowF = "";
+                        var ind_f = 0;
+                        for (var i = 0; i < theFld.length; i++) {
+                            addRowF += "ar[" + (ind_f++) + "],"
+                            if (theFld[i][2] == 1) {
+                                addRowF += "ar[" + (ind_f++) + "],"
                             }
                         }
-                        addRowF=addRowF.length>0?trim(addRowF).substring(0,addRowF.length-1):"";
-                        addRowF="addRowDiag('"+list_diag[j]+"',"+addRowF+",1);"
+                        addRowF = addRowF.length > 0 ? trim(addRowF).substring(0, addRowF.length - 1) : "";
+                        addRowF = "addRowDiag('" + list_diag[j] + "'," + addRowF + ",1);"
 
-                        var arr = $(list_diag[j]+'Diags').value.split("#@#");
-                        for (var i=0;i<arr.length;i++) {
-                            var ar=arr[i].split("@#@") ;
-                            //alert(addRowF);
-                            eval(addRowF) ;
+                        var arr = $(list_diag[j] + 'Diags').value.split("#@#");
+                        for (var i = 0; i < arr.length; i++) {
+                            var ar = arr[i].split("@#@");
+                            eval(addRowF);
                         }
                     }
 
@@ -662,134 +714,144 @@
 
             }
 
-            function addDiag(aDiagType,aCheck) {
-                var addRowF="";
-                var isCheckReq =true ;
-                for (var i=0;i<theFld.length;i++) {
-                    var fld_i = theFld[i] ;
-                    eval("var "+fld_i[1]+"=$('"+aDiagType+fld_i[5]+"').value;");
-                    var fld_i = theFld[i] ;addRowF+=fld_i[1]+","
+            function addDiag(aDiagType, aCheck) {
+                var addRowF = "";
+                var isCheckReq = true;
+                for (var i = 0; i < theFld.length; i++) {
+                    var fld_i = theFld[i];
+                    eval("var " + fld_i[1] + "=$('" + aDiagType + fld_i[5] + "').value;");
+                    var fld_i = theFld[i];
+                    addRowF += fld_i[1] + ","
 
-                    if (fld_i[2]==1) {
-                        eval("var "+fld_i[1]+"Name=$('"+aDiagType+fld_i[5]+"Name').value;");
-                        eval("if ("+fld_i[1]+">0) {} else {isCheckReq=false ;}") ;
-                        addRowF+=fld_i[1]+"Name," ;
+                    if (fld_i[2] == 1) {
+                        eval("var " + fld_i[1] + "Name=$('" + aDiagType + fld_i[5] + "Name').value;");
+                        eval("if (" + fld_i[1] + ">0) {} else {isCheckReq=false ;}");
+                        addRowF += fld_i[1] + "Name,";
                     } else {
-                        eval("if ("+fld_i[1]+".length>0) {} else {isCheckReq=false ;}") ;
+                        eval("if (" + fld_i[1] + ".length>0) {} else {isCheckReq=false ;}");
                     }
                 }
-                addRowF=addRowF.length>0?trim(addRowF).substring(0,addRowF.length-1):"";
-                addRowF="addRowDiag('"+aDiagType+"',"+addRowF+");"
+                addRowF = addRowF.length > 0 ? trim(addRowF).substring(0, addRowF.length - 1) : "";
+                addRowF = "addRowDiag('" + aDiagType + "'," + addRowF + ");"
 
                 if (isCheckReq) {
-                    var servs = document.getElementById('other'+aDiagType+"DiagsTable").childNodes;
+                    var servs = document.getElementById('other' + aDiagType + "DiagsTable").childNodes;
                     var l = servs.length;
-                    for (var i=1; i<l;i++) {
+                    for (var i = 1; i < l; i++) {
 
-                        var isCheckDouble = (+$(aDiagType+theFld[0][5]).value
-                        == +servs[i].childNodes[0].childNodes[theFld[0][3]].value)?false:true ;
+                        var isCheckDouble = (+$(aDiagType + theFld[0][5]).value
+                            == +servs[i].childNodes[0].childNodes[theFld[0][3]].value) ? false : true;
                         if (!isCheckDouble) {
-                            if (+aCheck!=1) {
+                            if (+aCheck != 1) {
                                 if (confirm("Такой диагноз уже зарегистрирован. Вы хотите его заменить?")) {
-                                    var node=servs[i];node.parentNode.removeChild(node);
+                                    var node = servs[i];
+                                    node.parentNode.removeChild(node);
                                 } else {
                                     return true;
                                 }
-                            } else {return true;}
+                            } else {
+                                return true;
+                            }
                         }
                     }
 
 
-                    eval(addRowF) ;
-                    for (var i=0;i<theFld.length;i++) {
-                        var fld_i = theFld[i] ;
-                        if (fld_i[6]==1) {
-                            eval("$('"+aDiagType+fld_i[5]+"').value='';");
-                            if (fld_i[2]==1) {
-                                eval("$('"+aDiagType+fld_i[5]+"Name').value='';");
+                    eval(addRowF);
+                    for (var i = 0; i < theFld.length; i++) {
+                        var fld_i = theFld[i];
+                        if (fld_i[6] == 1) {
+                            eval("$('" + aDiagType + fld_i[5] + "').value='';");
+                            if (fld_i[2] == 1) {
+                                eval("$('" + aDiagType + fld_i[5] + "Name').value='';");
                             }
                         }
                     }
                 } else {
-                    if (+aCheck!=1) {
+                    if (+aCheck != 1) {
                         alert("Заполнены не все поля диагноза!!");
                     } else {
-                        if (+$(aDiagType+"Mkb").value>0&&$(aDiagType+"Diagnos").length>0&&!confirm('Диагнозы, где не заполнены все данные (МКБ и наименование) сохранены не будут!!! Продолжить сохранение?')) {
-                            return false ;
+                        if (+$(aDiagType + "Mkb").value > 0 && $(aDiagType + "Diagnos").length > 0 && !confirm('Диагнозы, где не заполнены все данные (МКБ и наименование) сохранены не будут!!! Продолжить сохранение?')) {
+                            return false;
                         }
                     }
                 }
-                return true ;
+                return true;
             }
-            //alert(document.getElementById('othercomplicationDiagsTable').childNodes.childNodes[0].childNodes[4].value);
+
             function createOtherDiag(aDiagType) {
-                var servs = document.getElementById('other'+aDiagType+"DiagsTable").childNodes;
-                var str = ""; $(aDiagType+"Diags").value='';
-                for (var i=0;i<servs.length;i++) {
-                    for (var ii=0;ii<theFld.length;ii++) {
-                        str+=servs[i].childNodes[0].childNodes[theFld[ii][3]].value+"@#@";
-                        if (theFld[ii][2]==1) {
-                            str+=servs[i].childNodes[0].childNodes[theFld[ii][3]+1].value+"@#@";
+                var servs = document.getElementById('other' + aDiagType + "DiagsTable").childNodes;
+                var str = "";
+                $(aDiagType + "Diags").value = '';
+                for (var i = 0; i < servs.length; i++) {
+                    for (var ii = 0; ii < theFld.length; ii++) {
+                        str += servs[i].childNodes[0].childNodes[theFld[ii][3]].value + "@#@";
+                        if (theFld[ii][2] == 1) {
+                            str += servs[i].childNodes[0].childNodes[theFld[ii][3] + 1].value + "@#@";
                         }
 
                     }
-                    str=str.length>0?trim(str).substring(0,str.length-3):"";
-                    str+="#@#" ;
+                    str = str.length > 0 ? trim(str).substring(0, str.length - 3) : "";
+                    str += "#@#";
                 }
-                str=str.length>0?trim(str).substring(0,str.length-3):"";
-                $(aDiagType+"Diags").value=str;
+                str = str.length > 0 ? trim(str).substring(0, str.length - 3) : "";
+                $(aDiagType + "Diags").value = str;
             }
+
             // 0. наименование 1. Наим. поля в функции 2. autocomplete-1,textFld-2
             // 3. Номер node в добавленной услуге 4. Обяз.поля да-1 нет-2
             // 5. наим. поля в форме 6. очищать поле в форме при добавление да-1, нет-0
-            var theFld = [['Код МКБ','Mkb',1,3,1,'Mkb',1],['Наименование','Diagnos',2,8,1,'Diagnos',1]] ;
-            function editMkbByDiag(aDiagType,aNode) {
-                if (+$(aDiagType+'Mkb').value==0 || confirm("Вы точно хотите продолжить? В этом случае Вы потеряете данные еще недобавленного диагноза!")) {
-                    for (var ii=0;ii<theFld.length;ii++) {
-                        $(aDiagType+theFld[ii][5]).value=aNode.childNodes[0].childNodes[theFld[ii][3]].value;
-                        if (theFld[ii][2]==1) {
-                            $(aDiagType+theFld[ii][5]+'Name').value=aNode.childNodes[0].childNodes[theFld[ii][3]+1].value;
+            var theFld = [['Код МКБ', 'Mkb', 1, 3, 1, 'Mkb', 1], ['Наименование', 'Diagnos', 2, 8, 1, 'Diagnos', 1]];
+
+            function editMkbByDiag(aDiagType, aNode) {
+                if (+$(aDiagType + 'Mkb').value == 0 || confirm("Вы точно хотите продолжить? В этом случае Вы потеряете данные еще недобавленного диагноза!")) {
+                    for (var ii = 0; ii < theFld.length; ii++) {
+                        $(aDiagType + theFld[ii][5]).value = aNode.childNodes[0].childNodes[theFld[ii][3]].value;
+                        if (theFld[ii][2] == 1) {
+                            $(aDiagType + theFld[ii][5] + 'Name').value = aNode.childNodes[0].childNodes[theFld[ii][3] + 1].value;
                         }
 
                     }
-                    aNode.parentNode.removeChild(aNode) ;
+                    aNode.parentNode.removeChild(aNode);
                 }
             }
-            function addRowDiag(aDiagType,aMkb,aMkbName,aDiagnos,aIsLoad) {
-                var table = document.getElementById('other'+aDiagType+"DiagsTable");
+
+            function addRowDiag(aDiagType, aMkb, aMkbName, aDiagnos, aIsLoad) {
+                var table = document.getElementById('other' + aDiagType + "DiagsTable");
                 var row = document.createElement('TR');
                 var td = document.createElement('TD');
                 var tdDel = document.createElement('TD');
                 table.appendChild(row);
                 row.appendChild(td);
-                var txt ="" ;addText="" ;
-                if (aDiagType=="complication") {addText="ослож."} else if (aDiagType=="concomitant") {addText="сопут." ;}
-                for (var i=0;i<theFld.length;i++) {
-                    var fld_i = theFld[i] ;
-                    if (fld_i[2]==1) {
-                        txt+=" <label class='"+aDiagType+"Diags'>"+fld_i[0]+" "+addText+": </label>"+eval("a"+fld_i[1]+"Name")+" <input type='hidden' value='"+eval("a"+fld_i[1])+"'><input type='hidden' value='"+eval("a"+fld_i[1]+"Name")+"'>"
-                    } else if (fld_i[2]==2) {
-                        txt+=" <label class='"+aDiagType+"Diags'>"+fld_i[0]+" "+addText+":  </label><input type='text' style='width:85%' value='"+eval("a"+fld_i[1])+"'>"
-                    }
-                    if (i<theFld.length-1) txt+="<br>" ;
+                var txt = "";
+                addText = "";
+                if (aDiagType == "complication") {
+                    addText = "ослож."
+                } else if (aDiagType == "concomitant") {
+                    addText = "сопут.";
                 }
-                td.innerHTML=txt ;
-                if (slo_form_is_view==0) {
-                    row.appendChild(tdDel);
-                    tdDel.style.width='2%' ;
-                    tdDel.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);createOtherDiag(\""+aDiagType+"\")' value='- диагноз' />"
-                        + "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;editMkbByDiag(\""+aDiagType+"\",node);' value='редак.' />";
-                    if (+aIsLoad>0 && (+aMkb==0)) {
-                        //if (+$(aDiagType+"Mkb").value==0) editMkbByDiag(aDiagType,row) ;
+                for (var i = 0; i < theFld.length; i++) {
+                    var fld_i = theFld[i];
+                    if (fld_i[2] == 1) {
+                        txt += " <label class='" + aDiagType + "Diags'>" + fld_i[0] + " " + addText + ": </label>" + eval("a" + fld_i[1] + "Name") + " <input type='hidden' value='" + eval("a" + fld_i[1]) + "'><input type='hidden' value='" + eval("a" + fld_i[1] + "Name") + "'>"
+                    } else if (fld_i[2] == 2) {
+                        txt += " <label class='" + aDiagType + "Diags'>" + fld_i[0] + " " + addText + ":  </label><input type='text' style='width:85%' value='" + eval("a" + fld_i[1]) + "'>"
                     }
+                    if (i < theFld.length - 1) txt += "<br>";
+                }
+                td.innerHTML = txt;
+                if (slo_form_is_view == 0) {
+                    row.appendChild(tdDel);
+                    tdDel.style.width = '2%';
+                    tdDel.innerHTML = "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;node.parentNode.removeChild(node);createOtherDiag(\"" + aDiagType + "\")' value='- диагноз' />"
+                        + "<input type='button' name='subm' onclick='var node=this.parentNode.parentNode;editMkbByDiag(\"" + aDiagType + "\",node);' value='редак.' />";
                 }
             }
         </script>
 
         <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
             <script type="text/javascript">
-                $('outcomeName').select() ;
-                $('outcomeName').focus() ;
+                $('outcomeName').select();
+                $('outcomeName').focus();
             </script>
         </msh:ifInRole>
         <msh:ifFormTypeIsNotView formName="stac_sslDischargeForm">
@@ -800,122 +862,136 @@
                             if (confirm('Обнаружена несохранённая выписка. Восстановить? Она заменит введённый текст.')) {
                                 $('dischargeEpicrisis').value = localStorage.getItem("stac_sslDischargeForm" + ";" + medCaseId.value + ";" + document.getElementById('current_username_li').innerHTML);
                             }
-                            //removeFromStorage();
-                        }
-                        else showToastMessage("Данных для восстановления не найдено!",null,true);
+                        } else showToastMessage("Данных для восстановления не найдено!", null, true);
                     } catch (e) {
                     }
                 }
+
                 function submitFunc() {
                     var frm = document.stac_sslDischargeForm;
                     var medCaseId = document.querySelector('#id');
                     removeFromStorage();
-                    frm.action= "entityParentEdit-stac_sslDischarge.do";
+                    frm.action = "entityParentEdit-stac_sslDischarge.do";
                     frm.submit();
                 }
 
                 HospitalMedCaseService.isCanDischarge('${param.id}', {
-                    callback: function(aResult) {
-                        if (aResult!=null) {
-                            $('errorInformation').innerHTML=aResult + " <u>Выписка создаваться не будет!!!</u>";
-                            $('errorInformation').style.display = 'block' ;
+                    callback: function (aResult) {
+                        if (aResult != null) {
+                            $('errorInformation').innerHTML = aResult + " <u>Выписка создаваться не будет!!!</u>";
+                            $('errorInformation').style.display = 'block';
                         } else {
-                            $('errorInformation').style.display = 'none' ;
+                            $('errorInformation').style.display = 'none';
                         }
                     }
                 })
             </script>
             <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Discharge/NotViewDischargeEpicrisis">
                 <script type="text/javascript">
-                    $('dischargeEpicrisis').select() ;
-                    $('dischargeEpicrisis').focus() ;
-                    var isChangeSizeEpicrisis = 1 ;
+                    $('dischargeEpicrisis').select();
+                    $('dischargeEpicrisis').focus();
+                    var isChangeSizeEpicrisis = 1;
+
                     function changeSizeEpicrisis() {
-                        if (isChangeSizeEpicrisis==1) {
-                            Element.addClassName($('dischargeEpicrisis'), "epicrisis") ;
+                        if (isChangeSizeEpicrisis == 1) {
+                            Element.addClassName($('dischargeEpicrisis'), "epicrisis");
                             if ($('changeSizeEpicrisisButton')) {
-                                $('changeSizeEpicrisisButton').value='Уменьшить'
-                                $('changeSizeEpicrisisButton1').value='Уменьшить'
-                            } ;
-                            isChangeSizeEpicrisis=0 ;
-                        } else {
-                            Element.removeClassName($('dischargeEpicrisis'), "epicrisis") ;
-                            if ($('changeSizeEpicrisisButton')) {
-                                $('changeSizeEpicrisisButton').value='Увеличить' ;
-                                $('changeSizeEpicrisisButton1').value='Увеличить' ;
+                                $('changeSizeEpicrisisButton').value = 'Уменьшить'
+                                $('changeSizeEpicrisisButton1').value = 'Уменьшить'
                             }
-                            isChangeSizeEpicrisis=1;
+                            ;
+                            isChangeSizeEpicrisis = 0;
+                        } else {
+                            Element.removeClassName($('dischargeEpicrisis'), "epicrisis");
+                            if ($('changeSizeEpicrisisButton')) {
+                                $('changeSizeEpicrisisButton').value = 'Увеличить';
+                                $('changeSizeEpicrisisButton1').value = 'Увеличить';
+                            }
+                            isChangeSizeEpicrisis = 1;
                         }
                     }
+
                     eventutil.addEventListener($('dischargeEpicrisis'), "dblclick",
-                        function() {
-                            changeSizeEpicrisis() ;
-                        }) ;
+                        function () {
+                            changeSizeEpicrisis();
+                        });
                 </script>
             </msh:ifNotInRole>
 
             <script type="text/javascript">
                 try {
-                    if (concludingMkbAutocomplete) concludingMkbAutocomplete.addOnChangeCallback(function() {
-                        setDiagnosisText('concludingMkb','concludingDiagnos');
+                    if (concludingMkbAutocomplete) concludingMkbAutocomplete.addOnChangeCallback(function () {
+                        setDiagnosisText('concludingMkb', 'concludingDiagnos');
 
-                    });} catch(e) {
+                    });
+                } catch (e) {
                 }
                 try {
-                    if (clinicalMkbAutocomplete) clinicalMkbAutocomplete.addOnChangeCallback(function() {
-                        setDiagnosisText('clinicalMkb','clinicalDiagnos');
-                    });} catch(e) {}
+                    if (clinicalMkbAutocomplete) clinicalMkbAutocomplete.addOnChangeCallback(function () {
+                        setDiagnosisText('clinicalMkb', 'clinicalDiagnos');
+                    });
+                } catch (e) {
+                }
                 try {
-                    if (pathanatomicalMkbAutocomplete) pathanatomicalMkbAutocomplete.addOnChangeCallback(function() {
-                        setDiagnosisText('pathanatomicalMkb','pathanatomicalDiagnos');
-                    });} catch(e) {}
+                    if (pathanatomicalMkbAutocomplete) pathanatomicalMkbAutocomplete.addOnChangeCallback(function () {
+                        setDiagnosisText('pathanatomicalMkb', 'pathanatomicalDiagnos');
+                    });
+                } catch (e) {
+                }
                 try {
-                    if (concomitantMkbAutocomplete) concomitantMkbAutocomplete.addOnChangeCallback(function() {
-                        setDiagnosisText('concomitantMkb','concomitantDiagnos');
-                    });} catch(e) {}
+                    if (concomitantMkbAutocomplete) concomitantMkbAutocomplete.addOnChangeCallback(function () {
+                        setDiagnosisText('concomitantMkb', 'concomitantDiagnos');
+                    });
+                } catch (e) {
+                }
                 try {
-                    if (complicationMkbAutocomplete) complicationMkbAutocomplete.addOnChangeCallback(function() {
-                        setDiagnosisText('complicationMkb','complicationDiagnos');
-                    });} catch(e) {}
-                function setDiagnosisText(aFieldMkb,aFieldText) {
-                    var val = $(aFieldMkb+'Name').value ;
-                    var ind = val.indexOf(' ') ;
-                    //alert(ind+' '+val)
-                    if (ind!=-1) {
-                        if ($(aFieldText).value=="") $(aFieldText).value=val.substring(ind+1) ;
+                    if (complicationMkbAutocomplete) complicationMkbAutocomplete.addOnChangeCallback(function () {
+                        setDiagnosisText('complicationMkb', 'complicationDiagnos');
+                    });
+                } catch (e) {
+                }
+
+                function setDiagnosisText(aFieldMkb, aFieldText) {
+                    var val = $(aFieldMkb + 'Name').value;
+                    var ind = val.indexOf(' ');
+                    if (ind != -1) {
+                        if ($(aFieldText).value == "") $(aFieldText).value = val.substring(ind + 1);
                     }
                 }
+
                 function getDiagnosis(aFieldMkb) {
-                    var val = $(aFieldMkb+'Name').value ;
-                    var ind = val.indexOf(' ') ;
-                    //alert(ind+' '+val)
-                    if (ind!=-1) {
-                        return val.substring(0,ind) ;
+                    var val = $(aFieldMkb + 'Name').value;
+                    var ind = val.indexOf(' ');
+                    if (ind != -1) {
+                        return val.substring(0, ind);
                     }
                     return null
                 }
+
                 function savePreRecord() {
                     HospitalMedCaseService.preRecordDischarge(
-                        $('id').value,$('dischargeEpicrisis').value, {
-                            callback: function(aResult) {
+                        $('id').value, $('dischargeEpicrisis').value, {
+                            callback: function (aResult) {
                                 removeFromStorage();
-                                alert("Текст выписки сохранён") ;
+                                alert("Текст выписки сохранён");
                             }
                         }
-                    ) ;
+                    );
                 }
             </script>
             <msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/NoCheckTime">
                 <script type="text/javascript">
 
-                    setTimeout(checktime,600000);
+                    setTimeout(checktime, 600000);
 
                     function checktime() {
                         if (confirm('Вы хотите сохранить выписку?')) {
 
                             check_diags('');
                             removeFromStorage();
-                        }else {setTimeout(checktime,600000); }
+                        } else {
+                            setTimeout(checktime, 600000);
+                        }
 
                     }
 

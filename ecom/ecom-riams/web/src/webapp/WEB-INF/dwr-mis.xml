@@ -14,21 +14,21 @@
         <create creator="new" javascript="Expert2Service" scope="application">
             <param name="class" value="ru.ecom.mis.web.dwr.expert2.Expert2ServiceJs"/>
         </create>
-    <!-- Сервис для архива -->
-    <create creator="new" javascript="ArchiveService" scope="application">
-    	<param name="class" value="ru.ecom.mis.web.dwr.medcase.ArchiveServiceJs"/>
-    </create>
-    <!-- Работа с заявками -->
-    <create creator="new" javascript="ClaimService" scope="application">
-    	<param name="class" value="ru.ecom.mis.web.dwr.claim.ClaimServiceJs"/>
-    </create>
-        
-		<!-- Редактирование ЛПУ -->
+        <!-- Сервис для архива -->
+        <create creator="new" javascript="ArchiveService" scope="application">
+            <param name="class" value="ru.ecom.mis.web.dwr.medcase.ArchiveServiceJs"/>
+        </create>
+        <!-- Работа с заявками -->
+        <create creator="new" javascript="ClaimService" scope="application">
+            <param name="class" value="ru.ecom.mis.web.dwr.claim.ClaimServiceJs"/>
+        </create>
+
+        <!-- Редактирование ЛПУ -->
         <create creator="new" javascript="LpuService" scope="application">
             <param name="class" value="ru.ecom.mis.web.dwr.lpu.LpuJs"/>
         </create>
-        
-		<!-- Вывод строки адреса -->
+
+        <!-- Вывод строки адреса -->
         <create creator="new" javascript="AddressService" scope="application">
             <param name="class" value="ru.ecom.address.web.dwr.AddressServiceJs"/>
         </create>
@@ -37,7 +37,7 @@
             <param name="class" value="ru.ecom.mis.web.dwr.contract.ContractServiceJs"/>
         </create>
 
-		<!-- Редактирование справочников -->
+        <!-- Редактирование справочников -->
         <convert converter="bean" match="ru.ecom.ejb.services.vocentity.VocEntityPropertyInfo"/>
         <convert converter="bean" match="ru.ecom.ejb.services.vocentity.VocEntityInfo"/>
         <create creator="new" javascript="VocEntityService" scope="application">
@@ -46,13 +46,13 @@
 
         <create creator="new" javascript="PregnancyService" scope="application">
             <param name="class" value="ru.ecom.mis.web.dwr.birth.PregnancyServiceJs"/>
-        </create>		
+        </create>
         <create creator="new" javascript="DisabilityService" scope="application">
             <param name="class" value="ru.ecom.mis.web.dwr.disability.DisabilityServiceJs"/>
-        </create>		
+        </create>
         <create creator="new" javascript="TicketService" scope="application">
             <param name="class" value="ru.ecom.poly.web.dwr.TicketServiceJs"/>
-        </create>		
+        </create>
     </allow>
 
     <signatures>

@@ -8,9 +8,9 @@
 
 <style type="text/css">
     #CloseDocument {
-        visibility: hidden ;
-        display: none ;
-        position: absolute ;
+        visibility: hidden;
+        display: none;
+        position: absolute;
     }
 </style>
 <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
@@ -34,24 +34,24 @@
     </div>
 </div>
 <script type="text/javascript">
-    var theIs${name}CloseDocumentDialogInitialized = false ;
-    var the${name}CloseDocumentDialog = new msh.widget.Dialog($('${name}CloseDocumentDialog')) ;
+    var theIs${name}CloseDocumentDialogInitialized = false;
+    var the${name}CloseDocumentDialog = new msh.widget.Dialog($('${name}CloseDocumentDialog'));
 
     function show${name}CloseDocument(id) {
         var table2${name} = document.getElementById('table2${name}');
-        table2${name}.innerHTML="<tr><td></td></tr><tr><td align=\"center\"><input type=\"button\" value=\'Закрыть\' id=\"${name}Cancel\" onclick=\'javascript:the${name}CloseDocumentDialog.hide()\'/></td></tr><tr><td></td></tr>";
+        table2${name}.innerHTML = "<tr><td></td></tr><tr><td align=\"center\"><input type=\"button\" value=\'Закрыть\' id=\"${name}Cancel\" onclick=\'javascript:the${name}CloseDocumentDialog.hide()\'/></td></tr><tr><td></td></tr>";
         HospitalMedCaseService.getPatientFIOStat(id, {
-                callback: function(res) {
+                callback: function (res) {
                     jQuery("#info").text(res)
                 }
             }
         );
         HospitalMedCaseService.showMBioResResList(id, {
-                callback: function(res) {
-                    if (res!=null) {
+                callback: function (res) {
+                    if (res != null) {
                         var array = JSON.parse(res);
                         var table = document.getElementById('table1${name}');
-                        table.innerHTML="<tr>\n" +
+                        table.innerHTML = "<tr>\n" +
                             "<th align=\"center\" width=\"100\">Код услуги</th>\n" +
                             "<th align=\"center\" width=\"300\">Название</th>\n" +
                             "<th align=\"center\" width=\"300\">Короткое название</th>\n" +
@@ -60,17 +60,26 @@
                         for (var i = 0; i < array.length; i++) {
                             var obj = array[i];
                             var tr = document.createElement('tr');
-                            var td1 = document.createElement('td');var td2 = document.createElement('td');
-                            var td3 = document.createElement('td');var td4 = document.createElement('td');
-                            td1.innerHTML = obj.name1;td2.innerHTML = obj.name3;td3.innerHTML = obj.shname;td4.innerHTML = obj.dt;
-                            td1.setAttribute('align','center');td2.setAttribute('align','center');
-                            td3.setAttribute('align','center');td4.setAttribute('align','center');
-                            tr.appendChild(td1);tr.appendChild(td2);tr.appendChild(td3);tr.appendChild(td4);
+                            var td1 = document.createElement('td');
+                            var td2 = document.createElement('td');
+                            var td3 = document.createElement('td');
+                            var td4 = document.createElement('td');
+                            td1.innerHTML = obj.name1;
+                            td2.innerHTML = obj.name3;
+                            td3.innerHTML = obj.shname;
+                            td4.innerHTML = obj.dt;
+                            td1.setAttribute('align', 'center');
+                            td2.setAttribute('align', 'center');
+                            td3.setAttribute('align', 'center');
+                            td4.setAttribute('align', 'center');
+                            tr.appendChild(td1);
+                            tr.appendChild(td2);
+                            tr.appendChild(td3);
+                            tr.appendChild(td4);
                             table.appendChild(tr);
                         }
-                        the${name}CloseDocumentDialog.show() ;
-                    }
-                    else alert("Микробиологические исследования пациента с положительным результатом не найдены!");
+                        the${name}CloseDocumentDialog.show();
+                    } else alert("Микробиологические исследования пациента с положительным результатом не найдены!");
                 }
             }
         );

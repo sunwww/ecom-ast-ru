@@ -6,15 +6,15 @@ package ru.nuzmsh.commons.auth;
 public interface ILoginInfo {
 
     /** Имя пользователя при входе в систему */
-    public String getUsername() ;
+    String getUsername() ;
 
     /** Полное имя пользователя */
-    public String getFullname() ;
+    String getFullname() ;
 
     /** Комментарий  */
-    public String getComment() ;
+    String getComment() ;
 
     /** Есть ли у пользователя роль, группа или политика */
-    public boolean isUserInRole(String aRole) ;
+    boolean isUserInRole(String aRole) ;
 
 }

@@ -8,9 +8,9 @@
 
 <style type="text/css">
     #CloseDisDocument {
-        visibility: hidden ;
-        display: none ;
-        position: absolute ;
+        visibility: hidden;
+        display: none;
+        position: absolute;
     }
 </style>
 
@@ -27,24 +27,33 @@
             <table width="100%" cellspacing="0" cellpadding="4">
                 <tr>
                     <td colspan="2">
-                        <input type="button" value="Создать заполнение из файла" onclick="setAction('createEntry','СОЗДАЕМ НОВОЕ ЗАПОЛНЕНИЕ')">
-                        <input type="button" value="Импорт дефектов" onclick="setAction('importDefect','ИМПОРТ ДЕФЕКТОВ')">
+                        <input type="button" value="Создать заполнение из файла"
+                               onclick="setAction('createEntry','СОЗДАЕМ НОВОЕ ЗАПОЛНЕНИЕ')">
+                        <input type="button" value="Импорт дефектов"
+                               onclick="setAction('importDefect','ИМПОРТ ДЕФЕКТОВ')">
                     </td>
                 </tr>
-                <tr><td colspan="2">
-                        <input type="button" value="Импорт ошибок ФЛК" onclick="setAction('importFlk','ИМПОРТ ОШИБОК ФЛК')">
+                <tr>
+                    <td colspan="2">
+                        <input type="button" value="Импорт ошибок ФЛК"
+                               onclick="setAction('importFlk','ИМПОРТ ОШИБОК ФЛК')">
+                    </td>
+                    <td colspan="2">
+                        <input type="button" value="F100"
+                               onclick="setAction('f100','F100')">
                     </td>
                 </tr>
                 <tr>
                     <td align="right" width="100">Выберите файл:</td>
-                    <td><input type="file" id="file" name="file" ></td>
+                    <td><input type="file" id="file" name="file"></td>
                 </tr>
                 <tr>
                     <td></td>
                 </tr>
                 <tr>
-                    <td><input type="submit" value='Импортировать' id="${name}Save" /></td>
-                    <td><input type="button" value='Закрыть' id="${name}Cancel" onclick='javascript:cancel${name}BillNumber()'/></td>
+                    <td><input type="submit" value='Импортировать' id="${name}Save"/></td>
+                    <td><input type="button" value='Закрыть' id="${name}Cancel"
+                               onclick='javascript:cancel${name}BillNumber()'/></td>
                 </tr>
             </table>
         </msh:form>
@@ -54,22 +63,23 @@
 
 <script type="text/javascript">
 
-var theIs${name}BillDialogInitialized = false ;
-var the${name}BillDialog = new msh.widget.Dialog($('${name}BillDialog')) ;
-function setAction(val, label) {
-    $('dirName').value=val;
-    $('dirNameName').innerHTML=label;
-}
+    var theIs${name}BillDialogInitialized = false;
+    var the${name}BillDialog = new msh.widget.Dialog($('${name}BillDialog'));
 
-// Показать
-function show${name}BillDialog() {
-    the${name}BillDialog.show() ;
+    function setAction(val, label) {
+        $('dirName').value = val;
+        $('dirNameName').innerHTML = label;
+    }
 
-}
+    // Показать
+    function show${name}BillDialog() {
+        the${name}BillDialog.show();
 
-// Отмена
-function cancel${name}BillNumber() {
-    the${name}BillDialog.hide() ;
-}
+    }
+
+    // Отмена
+    function cancel${name}BillNumber() {
+        the${name}BillDialog.hide();
+    }
 
 </script>

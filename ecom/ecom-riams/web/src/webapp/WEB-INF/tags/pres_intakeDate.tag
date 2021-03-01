@@ -9,153 +9,143 @@
 
 <msh:ifInRole roles="${roles}">
 
-<style type="text/css">
-    #${name}IntakeInfoDialog {
-        visibility: hidden ;
-        display: none ;
-        position: absolute ;
-    }
-</style>
+    <style type="text/css">
+        #${name}IntakeInfoDialog {
+            visibility: hidden;
+            display: none;
+            position: absolute;
+        }
+    </style>
 
-<div id='${name}IntakeInfoDialog' class='dialog'>
-    <h2>Дата</h2>
-    <div class='rootPane'>
-    
-<form action="javascript:void(0)">
-    <msh:panel>
-    	<msh:row>
-    		<input type="hidden" id="${name}List" name="${name}List" />
-    		<msh:textField property="${name}Date" label="Дата"/>
-    		<msh:textField property="${name}Time" label="Время"/>
-    		<msh:textField property="${name}Barcode" label="Штрих-код"/>
-            <msh:textField property="${name}matPcr" label="Номер пробирки ПЦР"/>
-    	</msh:row>
-    </msh:panel>
-        <msh:row>
-            <td colspan="6">
-                <input type="button" name="${name}butOK" id="${name}butOK" value='OK'  onclick="javascript:save${name}IntakeInfo()"/>
-                <input type="button" value='Отменить' onclick='javascript:cancel${name}IntakeInfo()'/>
-            </td>
-        </msh:row>
-</form>
+    <div id='${name}IntakeInfoDialog' class='dialog'>
+        <h2>Дата</h2>
+        <div class='rootPane'>
 
-</div>
-</div>
+            <form action="javascript:void(0)">
+                <msh:panel>
+                    <msh:row>
+                        <input type="hidden" id="${name}List" name="${name}List"/>
+                        <msh:textField property="${name}Date" label="Дата"/>
+                        <msh:textField property="${name}Time" label="Время"/>
+                        <msh:textField property="${name}Barcode" label="Штрих-код"/>
+                        <msh:textField property="${name}matPcr" label="Номер пробирки ПЦР"/>
+                    </msh:row>
+                </msh:panel>
+                <msh:row>
+                    <td colspan="6">
+                        <input type="button" name="${name}butOK" id="${name}butOK" value='OK'
+                               onclick="javascript:save${name}IntakeInfo()"/>
+                        <input type="button" value='Отменить' onclick='javascript:cancel${name}IntakeInfo()'/>
+                    </td>
+                </msh:row>
+            </form>
 
-<script type="text/javascript">
-     var theIs${name}IntakeInfoDialogInitialized = false ;
-     var the${name}IntakeInfoDialog = new msh.widget.Dialog($('${name}IntakeInfoDialog')) ;
-     // Показать
-     function show${name}IntakeInfo(aListPrescript) {
-         //поле времени недоступно для редактирования
-         <msh:ifInRole roles="/Policy/Mis/Journal/Prescription/LabSurvey/IntakeByCurrentDepartment/NoEditTimeIntake">
-         jQuery('#${name}Time').prop("disabled",true);
-         </msh:ifInRole>
-         // устанавливается инициализация для диалогового окна
-         $('${name}List').value=aListPrescript;
-      //   if (!theIs${name}IntakeInfoDialogInitialized) {
-         	init${name}IntakeInfoDialog() ;
-       //   }
-         //$("${name}Date").focus() ;
-     	$("${name}Barcode").focus();
-         ${service}.${method}ShowSetMaterialPCR($('${name}List').value, {
-             callback: function(aResult) {
-                 if (aResult=="1") {
-                     jQuery( "#${name}matPcrLabel").show();
-                     jQuery( ".${name}matPcr").show();
-                 }
-                  else {
-                     jQuery( "#${name}matPcrLabel").hide();
-                     jQuery( ".${name}matPcr").hide();
-                 }
-                 the${name}IntakeInfoDialog.show() ;
-             }
-         });
-     }
+        </div>
+    </div>
 
-     // Отмена
-     function cancel${name}IntakeInfo() {
-         the${name}IntakeInfoDialog.hide() ;
-     }
+    <script type="text/javascript">
+        var theIs${name}IntakeInfoDialogInitialized = false;
+        var the${name}IntakeInfoDialog = new msh.widget.Dialog($('${name}IntakeInfoDialog'));
 
-     // Сохранение данных
-     function save${name}IntakeInfo() {
-     	if ($('${name}Date').value=="") {
-     		alert("Поле дата является обязательным") ;
-     		$("${name}Date").focus() ;
-     	} else if ($('${name}Time').value=="") {
-     		alert("Поле время является обязательным") ;
-     		$("${name}Time").focus() ;
-     	}
-     	else if (jQuery( ".${name}matPcr").is(":visible") && $('${name}matPcr').value=="") {
-            alert("Поле номер пробирки ПЦР является обязательным") ;
-            $("${name}${name}matPcr").focus() ;
-        }  else {
-     		if ($('${name}Barcode') && $('${name}Barcode').value!='' ) {
-     			${service}.${method}WithBarcode($('${name}List').value,$('${name}Date').value, $('${name}Time').value, $('${name}Barcode').value,$('${name}matPcr').value, {
-    	            callback: function(aResult) {
-    	            	if (aResult=="1") {
-    	            		window.document.location.reload();
-    	            	} else {
-    	            		alert ("Ошибка: "+aResult);
-    	            	}
-    	            }
-    			}); 
-     		} else {
-     			${service}.${method}($('${name}List').value,$('${name}Date').value, $('${name}Time').value,$('${name}matPcr').value, {
-		            callback: function(aResult) {
-		            	if (aResult=="1") {
-		            		window.document.location.reload();
-		            	} else {
-		            		alert ("Ошибка: "+aResult);
-		            	}
-		            }
-				}); 
-     		}
-         }
-     }
-     
-     function save${name}IntakeCurrent(aListPrescript) {
-    	 $('${name}List').value=aListPrescript;
-    	 var currentDate = new Date;
- 		var textDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
- 		var textMonth = currentDate.getMonth()+1;
- 		var textMonth = textMonth<10?'0'+textMonth:textMonth;
- 		var textYear =currentDate.getFullYear();
- 		var textMinute = currentDate.getMinutes() ;
- 		var textHour = currentDate.getHours() ;
- 		$('${name}Date').value = textDay+'.'+textMonth+'.'+textYear;
- 		$('${name}Time').value = (textHour<10?'0'+textHour:textHour)+':'+(textMinute<10?'0'+textMinute:textMinute);
- 		show${name}IntakeInfo(aListPrescript);
- 	//	${service}.${method}($('${name}List').value, textDay+'.'+textMonth+'.'+textYear
-     // 			,(textHour<10?'0'+textHour:textHour)+':'+(textMinute<10?'0'+textMinute:textMinute)
-  	//			, { 
-	 //           callback: function(aResult) {
-	  //          	window.document.location.reload();
-	   //         }
-	//		});
-    	 
-     }
-     // инициализация диалогового окна
-     function init${name}IntakeInfoDialog() {
-     	new dateutil.DateField($('${name}Date')) ;
-     	new timeutil.TimeField($('${name}Time')) ;
-     	var currentDate = new Date;
-		var textDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
-		var textMonth = currentDate.getMonth()+1;
-		var textMonth = textMonth<10?'0'+textMonth:textMonth;
-		var textYear =currentDate.getFullYear();
-		$('${name}Date').value=textDay+'.'+textMonth+'.'+textYear;
-		var textMinute = currentDate.getMinutes() ;
-		var textHour = currentDate.getHours() ;
-		$('${name}Time').value=(textHour<10?'0'+textHour:textHour)+':'+(textMinute<10?'0'+textMinute:textMinute);
-     	theIs${name}IntakeInfoDialogInitialized = true ;
-     	 eventutil.addEnterSupport('${name}Date', '${name}Time') ;
-     	 eventutil.addEnterSupport( '${name}Time','${name}Barcode') ;
-     	eventutil.addEnterSupport( '${name}Barcode','${name}butOK') ;
-     	// ('${name}Barcode').focus();
-     
+        // Показать
+        function show${name}IntakeInfo(aListPrescript) {
+            //поле времени недоступно для редактирования
+            <msh:ifInRole roles="/Policy/Mis/Journal/Prescription/LabSurvey/IntakeByCurrentDepartment/NoEditTimeIntake">
+            jQuery('#${name}Time').prop("disabled", true);
+            </msh:ifInRole>
+            // устанавливается инициализация для диалогового окна
+            $('${name}List').value = aListPrescript;
+            init${name}IntakeInfoDialog();
+            $("${name}Barcode").focus();
+            ${service}.
+            ${method}ShowSetMaterialPCR($('${name}List').value, {
+                callback: function (aResult) {
+                    if (aResult == "1") {
+                        jQuery("#${name}matPcrLabel").show();
+                        jQuery(".${name}matPcr").show();
+                    } else {
+                        jQuery("#${name}matPcrLabel").hide();
+                        jQuery(".${name}matPcr").hide();
+                    }
+                    the${name}IntakeInfoDialog.show();
+                }
+            });
+        }
 
-     }
-</script>
+        // Отмена
+        function cancel${name}IntakeInfo() {
+            the${name}IntakeInfoDialog.hide();
+        }
+
+        // Сохранение данных
+        function save${name}IntakeInfo() {
+            if ($('${name}Date').value == "") {
+                alert("Поле дата является обязательным");
+                $("${name}Date").focus();
+            } else if ($('${name}Time').value == "") {
+                alert("Поле время является обязательным");
+                $("${name}Time").focus();
+            } else if (jQuery(".${name}matPcr").is(":visible") && $('${name}matPcr').value == "") {
+                alert("Поле номер пробирки ПЦР является обязательным");
+                $("${name}${name}matPcr").focus();
+            } else {
+                if ($('${name}Barcode') && $('${name}Barcode').value != '') {
+                    ${service}.
+                    ${method}WithBarcode($('${name}List').value, $('${name}Date').value, $('${name}Time').value, $('${name}Barcode').value, $('${name}matPcr').value, {
+                        callback: function (aResult) {
+                            if (aResult == "1") {
+                                window.document.location.reload();
+                            } else {
+                                alert("Ошибка: " + aResult);
+                            }
+                        }
+                    });
+                } else {
+                    ${service}.
+                    ${method}($('${name}List').value, $('${name}Date').value, $('${name}Time').value, $('${name}matPcr').value, {
+                        callback: function (aResult) {
+                            if (aResult == "1") {
+                                window.document.location.reload();
+                            } else {
+                                alert("Ошибка: " + aResult);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        function save${name}IntakeCurrent(aListPrescript) {
+            $('${name}List').value = aListPrescript;
+            var currentDate = new Date;
+            var textDay = currentDate.getDate() < 10 ? '0' + currentDate.getDate() : currentDate.getDate();
+            var textMonth = currentDate.getMonth() + 1;
+            var textMonth = textMonth < 10 ? '0' + textMonth : textMonth;
+            var textYear = currentDate.getFullYear();
+            var textMinute = currentDate.getMinutes();
+            var textHour = currentDate.getHours();
+            $('${name}Date').value = textDay + '.' + textMonth + '.' + textYear;
+            $('${name}Time').value = (textHour < 10 ? '0' + textHour : textHour) + ':' + (textMinute < 10 ? '0' + textMinute : textMinute);
+            show${name}IntakeInfo(aListPrescript);
+        }
+
+        // инициализация диалогового окна
+        function init${name}IntakeInfoDialog() {
+            new dateutil.DateField($('${name}Date'));
+            new timeutil.TimeField($('${name}Time'));
+            var currentDate = new Date;
+            var textDay = currentDate.getDate() < 10 ? '0' + currentDate.getDate() : currentDate.getDate();
+            var textMonth = currentDate.getMonth() + 1;
+            var textMonth = textMonth < 10 ? '0' + textMonth : textMonth;
+            var textYear = currentDate.getFullYear();
+            $('${name}Date').value = textDay + '.' + textMonth + '.' + textYear;
+            var textMinute = currentDate.getMinutes();
+            var textHour = currentDate.getHours();
+            $('${name}Time').value = (textHour < 10 ? '0' + textHour : textHour) + ':' + (textMinute < 10 ? '0' + textMinute : textMinute);
+            theIs${name}IntakeInfoDialogInitialized = true;
+            eventutil.addEnterSupport('${name}Date', '${name}Time');
+            eventutil.addEnterSupport('${name}Time', '${name}Barcode');
+            eventutil.addEnterSupport('${name}Barcode', '${name}butOK');
+        }
+    </script>
 </msh:ifInRole>

@@ -154,9 +154,6 @@ public class RewritingHttpServletRequest implements HttpServletRequest {
 		return null;
 	}
 
-	public <T extends HttpUpgradeHandler> T upgrade(Class<T> aClass) throws IOException, ServletException {
-		return null;
-	}
 
 	public boolean isRequestedSessionIdFromURL() {
 		return theRequest.isRequestedSessionIdFromURL() ;

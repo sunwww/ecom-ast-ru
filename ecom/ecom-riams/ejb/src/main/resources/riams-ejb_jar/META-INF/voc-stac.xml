@@ -1,508 +1,508 @@
 <vocconfig>
-	<voc id="vocLeftRight" type="NativeVocService">
-			<NativeVocService
-			    	from="VocLeftRight as voc"
-			    	nameId="voc.id"
-			    	queryAppend=""
-			    	order=""
-			    	queried=""
-			    	names = "voc.name"
-			/>
-		</voc>
-	<voc id="vocAbortationByProfile" type="NativeVocService">
-			<NativeVocService
-			    	from="Surgicalprofileabortation as spa "
-			    	parent='spa.surgicalprofile =:parent'
-			    	nameId="va.id"
-			    	join="left join vocabortion va on va.id=spa.abortation"
-			    	queryAppend=""
-			    	order=""
-			    	queried=""
-			    	names = "va.name"
-			/>
-		</voc>
+    <voc id="vocLeftRight" type="NativeVocService">
+        <NativeVocService
+                from="VocLeftRight as voc"
+                nameId="voc.id"
+                queryAppend=""
+                order=""
+                queried=""
+                names="voc.name"
+        />
+    </voc>
+    <voc id="vocAbortationByProfile" type="NativeVocService">
+        <NativeVocService
+                from="Surgicalprofileabortation as spa "
+                parent='spa.surgicalprofile =:parent'
+                nameId="va.id"
+                join="left join vocabortion va on va.id=spa.abortation"
+                queryAppend=""
+                order=""
+                queried=""
+                names="va.name"
+        />
+    </voc>
 
-	<voc id="slsByPregnancy" type="NativeVocService">
-		<NativeVocService
-		    	from=" MedCase as sls "
-		    	parent='preg.id=:parent'
-		    	nameId="sls.id"
-		    	join=" left join Pregnancy preg on preg.patient_id=sls.patient_id
+    <voc id="slsByPregnancy" type="NativeVocService">
+        <NativeVocService
+                from=" MedCase as sls "
+                parent='preg.id=:parent'
+                nameId="sls.id"
+                join=" left join Pregnancy preg on preg.patient_id=sls.patient_id
 		    		left join StatisticStub ss on ss.medCase_id=sls.id
 		    	"
-		    	queryAppend="sls.dtype='HospitalMedCase'"
-		    	order=""
-		    	queried=" ss.code like upper(:query) "
-		    	names = "'Стат.карта №'||ss.code ||' '||to_char(sls.dateStart,'dd.mm.yyyy')||'-'||coalesce(to_char(sls.dateFinish,'dd.mm.yyyy'),'')"
-		/>
-	</voc>
-	<voc id="slsByPatient" type="NativeVocService">
-		<NativeVocService
-		    	from=" MedCase as sls "
-		    	parent='sls.patient_id=:parent'
-		    	nameId="sls.id"
-		    	join=" 
+                queryAppend="sls.dtype='HospitalMedCase'"
+                order=""
+                queried=" ss.code like upper(:query) "
+                names="'Стат.карта №'||ss.code ||' '||to_char(sls.dateStart,'dd.mm.yyyy')||'-'||coalesce(to_char(sls.dateFinish,'dd.mm.yyyy'),'')"
+        />
+    </voc>
+    <voc id="slsByPatient" type="NativeVocService">
+        <NativeVocService
+                from=" MedCase as sls "
+                parent='sls.patient_id=:parent'
+                nameId="sls.id"
+                join="
 		    		left join StatisticStub ss on ss.medCase_id=sls.id
 		    	"
-		    	queryAppend="sls.dtype='HospitalMedCase'"
-		    	order=""
-		    	queried=" ss.code like upper(:query) "
-		    	names = "'Стат.карта №'||ss.code ||' '||to_char(sls.dateStart,'dd.mm.yyyy')||'-'||coalesce(to_char(sls.dateFinish,'dd.mm.yyyy'),'')"
-		/>
-	</voc>
-	<voc id="sloBySls" type="NativeVocService">
-		<NativeVocService
-		    	from=" MedCase as slo "
-		    	parent='slo.parent_id=:parent'
-		    	nameId="slo.id"
-		    	join=" left join MisLpu ml on ml.id=slo.department_id
+                queryAppend="sls.dtype='HospitalMedCase'"
+                order=""
+                queried=" ss.code like upper(:query) "
+                names="'Стат.карта №'||ss.code ||' '||to_char(sls.dateStart,'dd.mm.yyyy')||'-'||coalesce(to_char(sls.dateFinish,'dd.mm.yyyy'),'')"
+        />
+    </voc>
+    <voc id="sloBySls" type="NativeVocService">
+        <NativeVocService
+                from=" MedCase as slo "
+                parent='slo.parent_id=:parent'
+                nameId="slo.id"
+                join=" left join MisLpu ml on ml.id=slo.department_id
 		    	"
-		    	queryAppend="slo.dtype='DepartmentMedCase'"
-		    	order=""
-		    	queried=" ml.name like upper(:query) "
-		    	names = "'отд. '||ml.name ||' '||to_char(slo.dateStart,'dd.mm.yyyy')||' '||cast(slo.entranceTime as varchar(5))||'-'||coalesce(to_char(slo.dateFinish,'dd.mm.yyyy')||' '||cast(slo.dischargeTime as varchar(5)),to_char(slo.transferDate,'dd.mm.yyyy')||' '||cast(slo.transferTime as varchar(5)),'')"
-		/>
-	</voc>
-	<voc id="vocCountBedInHospitalRoom" type="NativeVocService">
-		<NativeVocService
-		    	from=" VocCountBedInHospitalRoom as vkhc "
-		    	parent=''
-		    	nameId="vkhc.id"
-		    	join=""
-		    	queryAppend=""
-		    	order=""
-		    	queried=" (vkhc.name like upper(:query) or cast(vkhc.id as varchar(3)) like upper(:querId))"
-		    	names = "vkhc.name"
-		/>
-	</voc>
-	<voc id="vocKindHighCare" type="NativeVocService">
-		<NativeVocService
-		    	from=" VocKindHighCare as vkhc "
-		    	parent=" (vss.id=:parent or vkhc.serviceStreamCode is null or vkhc.serviceStreamCode='') "
-		    	nameId="vkhc.id"
-		    	join=" left join VocServiceStream vss on vss.code=vkhc.serviceStreamCode  "
-		    	queryAppend="(vkhc.dateTo is null or vkhc.dateTo >=current_date)"
-		    	order=""
-		    	queried=" (vkhc.name like upper(:query) or upper(vkhc.code) like upper(:querId) or replace(upper(vkhc.code),'.','') like upper(:querId))"
-		    	names = "vkhc.code||' '||vkhc.name"
-		/>
-	</voc>
-	<voc id="vocMethodHighCareByKind" type="NativeVocService">
-		<NativeVocService
-		    	from=" VocMethodHighCare as vmhc "
-		    	parent="vkhc.id=:parent"
-		    	nameId="vmhc.id"
-		    	join=" left join VocKindHighCare vkhc on vkhc.code=vmhc.kindHighCare "
-		    	queryAppend="(vmhc.dateTo is null or vmhc.dateTo >=current_date)"
-		    	order=""
-		    	queried="( vmhc.name like upper(:query) or  vmhc.code like upper(:querId))"
-		    	names = "vmhc.code||' '||vmhc.name"
-		    	
-		/>
-	</voc>
+                queryAppend="slo.dtype='DepartmentMedCase'"
+                order=""
+                queried=" ml.name like upper(:query) "
+                names="'отд. '||ml.name ||' '||to_char(slo.dateStart,'dd.mm.yyyy')||' '||cast(slo.entranceTime as varchar(5))||'-'||coalesce(to_char(slo.dateFinish,'dd.mm.yyyy')||' '||cast(slo.dischargeTime as varchar(5)),to_char(slo.transferDate,'dd.mm.yyyy')||' '||cast(slo.transferTime as varchar(5)),'')"
+        />
+    </voc>
+    <voc id="vocCountBedInHospitalRoom" type="NativeVocService">
+        <NativeVocService
+                from=" VocCountBedInHospitalRoom as vkhc "
+                parent=''
+                nameId="vkhc.id"
+                join=""
+                queryAppend=""
+                order=""
+                queried=" (vkhc.name like upper(:query) or cast(vkhc.id as varchar(3)) like upper(:querId))"
+                names="vkhc.name"
+        />
+    </voc>
+    <voc id="vocKindHighCare" type="NativeVocService">
+        <NativeVocService
+                from=" VocKindHighCare as vkhc "
+                parent=" (vss.id=:parent or vkhc.serviceStreamCode is null or vkhc.serviceStreamCode='') "
+                nameId="vkhc.id"
+                join=" left join VocServiceStream vss on vss.code=vkhc.serviceStreamCode  "
+                queryAppend="(vkhc.dateTo is null or vkhc.dateTo >=current_date)"
+                order=""
+                queried=" (vkhc.name like upper(:query) or upper(vkhc.code) like upper(:querId) or replace(upper(vkhc.code),'.','') like upper(:querId))"
+                names="vkhc.code||' '||vkhc.name"
+        />
+    </voc>
+    <voc id="vocMethodHighCareByKind" type="NativeVocService">
+        <NativeVocService
+                from=" VocMethodHighCare as vmhc "
+                parent="vkhc.id=:parent"
+                nameId="vmhc.id"
+                join=" left join VocKindHighCare vkhc on vkhc.code=vmhc.kindHighCare "
+                queryAppend="(vmhc.dateTo is null or vmhc.dateTo >=current_date)"
+                order=""
+                queried="( vmhc.name like upper(:query) or  vmhc.code like upper(:querId))"
+                names="vmhc.code||' '||vmhc.name"
 
-	<voc id="vocMethodHighCare" type="NativeVocService">
-		<NativeVocService
-				from=" VocMethodHighCare as vmhc "
-				nameId="vmhc.id"
-				join=" left join VocKindHighCare vkhc on vkhc.code=vmhc.kindHighCare "
-				queryAppend="(vmhc.dateTo is null or vmhc.dateTo >=current_date)"
-				order=""
-				queried="( vmhc.name like upper(:query) or  vmhc.code like upper(:querId))"
-				names = "vkhc.code||' '||vmhc.code||' '||vmhc.name"
+        />
+    </voc>
 
-		/>
-	</voc>
-	<voc id="vocChildEmergency" type="NativeVocService">
-		<NativeVocService
-		    	from=" VocChildEmergency as vce "
-		    	parent="vcb.id=:parent"
-		    	nameId="vce.id"
-		    	join=" left join VocChildBirth vcb on vcb.code=vce.childBirthCode "
-		    	queryAppend=""
-		    	order=""
-		    	queried="(cast(vce.id as varchar(5)) like cast(:querId as varchar(5)) or  vce.name like upper(:query) )"
-		    	names = "vce.name"
-		    	
-		/>
-	</voc>
-	<voc id="vocTypeMisbirth" type="NativeVocService">
-		<NativeVocService
-				from=" VocTypeMisbirth "
-				parent=""
-				nameId=" id "
-				join=""
-				queryAppend=""
-				order=""
-				queried=" name "
-				names = " name "
+    <voc id="vocMethodHighCare" type="NativeVocService">
+        <NativeVocService
+                from=" VocMethodHighCare as vmhc "
+                nameId="vmhc.id"
+                join=" left join VocKindHighCare vkhc on vkhc.code=vmhc.kindHighCare "
+                queryAppend="(vmhc.dateTo is null or vmhc.dateTo >=current_date)"
+                order=""
+                queried="( vmhc.name like upper(:query) or  vmhc.code like upper(:querId))"
+                names="vkhc.code||' '||vmhc.code||' '||vmhc.name"
 
-		/>
-	</voc>
-	<voc id="hospitalRoomByLpu" type="NativeVocService">
-		<NativeVocService
-		    	from=" WorkPlace as wp "
-		    	parent='wp.lpu_id=:parent'
-		    	nameId="wp.id"
-		    	join=" left join WorkPlace wp1 on wp1.id=wp.parent_id"
-		    	queryAppend=" wp.dtype='HospitalRoom' and (wp.isnoactuality is null or wp.isnoactuality='0')"
-		    	order=""
-		    	queried=" upper(wp.name) like upper(:query) "
-		    	names = "'№'||wp.name||' ('||wp1.name||')'"
-		/>
-	</voc>
-	<voc id="hospitalBedByRoom" type="NativeVocService">
-		<NativeVocService
-		    	from=" WorkPlace as wp "
-		    	parent='wp.parent_id=:parent'
-		    	nameId="wp.id"
-		    	join=""
-		    	queryAppend=" wp.dtype='HospitalBed' and (wp.isnoactuality is null or wp.isnoactuality='0')"
-		    	order=""
-		    	queried=" upper(wp.name) like upper(:query) "
-		    	names = "wp.name"
-		/>
-	</voc>
-	    <voc id='allPolicyByPatient' type='NativeVocService'>
-		    <NativeVocService
-		    	from=" MedPolicy as mp "
-		    	parent='mp.patient_id=:parent'
-		    	nameId="mp.id"
-		    	join=" left join REG_IC as com on com.id=mp.company_id  "
-		    	queryAppend=" (CURRENT_DATE >= mp.actualDateFrom and (mp.actualDateTo is null or mp.actualDateTo >=CURRENT_DATE)) "
-		    	order=""
-		    	queried=" (mp.polNumber like UPPER(:query) or mp.series like UPPER(:query)) "
-		    	names = "(CASE WHEN DTYPE='MedPolicyOmc' THEN 'ОМС. '||com.name WHEN DTYPE='MedPolicyDmc' THEN 'ДМС. '||com.name WHEN DTYPE='MedPolicyOmcForeign' THEN 'ОМС иног. '||mp.insuranceCompanyName WHEN DTYPE='MedPolicyDmcForeign' THEN 'ДМС иног. '||mp.insuranceCompanyName END) ||' '|| mp.series||' '|| mp.polNumber||' '|| to_char(mp.actualDateFrom,'DD.MM.YYYY')||'-'||coalesce(to_char(mp.actualDateTo,'DD.MM.YYYY'),'нет даты окончания')"
-		    />
+        />
+    </voc>
+    <voc id="vocChildEmergency" type="NativeVocService">
+        <NativeVocService
+                from=" VocChildEmergency as vce "
+                parent="vcb.id=:parent"
+                nameId="vce.id"
+                join=" left join VocChildBirth vcb on vcb.code=vce.childBirthCode "
+                queryAppend=""
+                order=""
+                queried="(cast(vce.id as varchar(5)) like cast(:querId as varchar(5)) or  vce.name like upper(:query) )"
+                names="vce.name"
+
+        />
+    </voc>
+    <voc id="vocTypeMisbirth" type="NativeVocService">
+        <NativeVocService
+                from=" VocTypeMisbirth "
+                parent=""
+                nameId=" id "
+                join=""
+                queryAppend=""
+                order=""
+                queried=" name "
+                names=" name "
+
+        />
+    </voc>
+    <voc id="hospitalRoomByLpu" type="NativeVocService">
+        <NativeVocService
+                from=" WorkPlace as wp "
+                parent='wp.lpu_id=:parent'
+                nameId="wp.id"
+                join=" left join WorkPlace wp1 on wp1.id=wp.parent_id"
+                queryAppend=" wp.dtype='HospitalRoom' and (wp.isnoactuality is null or wp.isnoactuality='0')"
+                order=""
+                queried=" upper(wp.name) like upper(:query) "
+                names="'№'||wp.name||' ('||wp1.name||')'"
+        />
+    </voc>
+    <voc id="hospitalBedByRoom" type="NativeVocService">
+        <NativeVocService
+                from=" WorkPlace as wp "
+                parent='wp.parent_id=:parent'
+                nameId="wp.id"
+                join=""
+                queryAppend=" wp.dtype='HospitalBed' and (wp.isnoactuality is null or wp.isnoactuality='0')"
+                order=""
+                queried=" upper(wp.name) like upper(:query) "
+                names="wp.name"
+        />
+    </voc>
+    <voc id='allPolicyByPatient' type='NativeVocService'>
+        <NativeVocService
+                from=" MedPolicy as mp "
+                parent='mp.patient_id=:parent'
+                nameId="mp.id"
+                join=" left join REG_IC as com on com.id=mp.company_id  "
+                queryAppend=" (CURRENT_DATE >= mp.actualDateFrom and (mp.actualDateTo is null or mp.actualDateTo >=CURRENT_DATE)) "
+                order=""
+                queried=" (mp.polNumber like UPPER(:query) or mp.series like UPPER(:query)) "
+                names="(CASE WHEN DTYPE='MedPolicyOmc' THEN 'ОМС. '||com.name WHEN DTYPE='MedPolicyDmc' THEN 'ДМС. '||com.name WHEN DTYPE='MedPolicyOmcForeign' THEN 'ОМС иног. '||mp.insuranceCompanyName WHEN DTYPE='MedPolicyDmcForeign' THEN 'ДМС иног. '||mp.insuranceCompanyName END) ||' '|| mp.series||' '|| mp.polNumber||' '|| to_char(mp.actualDateFrom,'DD.MM.YYYY')||'-'||coalesce(to_char(mp.actualDateTo,'DD.MM.YYYY'),'нет даты окончания')"
+        />
 
     </voc>
-	    <voc id='vocPhoneMessageSubType' type='NativeVocService'>
-		    <NativeVocService
-		    	from=" VocPhoneMessageSubType as vst "
-		    	parent='vst.type_id=:parent'
-		    	nameId="vst.id"
-		    	join=""
-		    	queryAppend=""
-		    	order=""
-		    	queried=" (cast(vst.id as varchar(5)) like cast(:querId as varchar(5)) or UPPER(vst.name) like UPPER(:query)) "
-		    	names = "vst.name"
-		    />
+    <voc id='vocPhoneMessageSubType' type='NativeVocService'>
+        <NativeVocService
+                from=" VocPhoneMessageSubType as vst "
+                parent='vst.type_id=:parent'
+                nameId="vst.id"
+                join=""
+                queryAppend=""
+                order=""
+                queried=" (cast(vst.id as varchar(5)) like cast(:querId as varchar(5)) or UPPER(vst.name) like UPPER(:query)) "
+                names="vst.name"
+        />
     </voc>
-	    <voc id='vocPhoneMessageEmploye' type='NativeVocService'>
-		    <NativeVocService
-		    	from=" VocPhoneMessageEmploye as ve "
-		    	parent='ve.organization_id=:parent'
-		    	nameId="ve.id"
-		    	join=""
-		    	queryAppend=""
-		    	order=""
-		    	queried=" (cast(ve.id as varchar(5)) like cast(:querId as varchar(5)) or UPPER(ve.name) like UPPER(:query)) "
-		    	names = "ve.name"
-		    />
+    <voc id='vocPhoneMessageEmploye' type='NativeVocService'>
+        <NativeVocService
+                from=" VocPhoneMessageEmploye as ve "
+                parent='ve.organization_id=:parent'
+                nameId="ve.id"
+                join=""
+                queryAppend=""
+                order=""
+                queried=" (cast(ve.id as varchar(5)) like cast(:querId as varchar(5)) or UPPER(ve.name) like UPPER(:query)) "
+                names="ve.name"
+        />
     </voc>
-	    <voc id='dmcPolicyByPatient' type='NativeVocService'>
-		    <NativeVocService
-		    	from=" MedPolicy as mp "
-		    	parent='mp.patient_id=:parent'
-		    	nameId="mp.id"
-		    	join=" left join REG_IC as com on com.id=mp.company_id  "
-		    	queryAppend=" (DTYPE ='MedPolicyDmc' or DTYPE='MedPolicyDmcForeign') AND (CURRENT_DATE >= mp.actualDateFrom and (mp.actualDateTo is null or mp.actualDateTo >=CURRENT_DATE))"
-		    	order=""
-		    	queried=" (mp.polNumber like UPPER(:query) or mp.series like UPPER(:query)) "
-		    	names = "(CASE WHEN DTYPE='MedPolicyDmc' THEN 'ДМС. '||com.name WHEN DTYPE='MedPolicyDmcForeign' THEN 'ДМС иног. '||mp.insuranceCompanyName ELSE '--' END) ||' '|| mp.series||' '|| mp.polNumber||' '|| to_char(mp.actualDateFrom,'DD.MM.YYYY')||'-'||coalesce(to_char(mp.actualDateTo,'DD.MM.YYYY'),'нет даты окончания')"
-		    />
+    <voc id='dmcPolicyByPatient' type='NativeVocService'>
+        <NativeVocService
+                from=" MedPolicy as mp "
+                parent='mp.patient_id=:parent'
+                nameId="mp.id"
+                join=" left join REG_IC as com on com.id=mp.company_id  "
+                queryAppend=" (DTYPE ='MedPolicyDmc' or DTYPE='MedPolicyDmcForeign') AND (CURRENT_DATE >= mp.actualDateFrom and (mp.actualDateTo is null or mp.actualDateTo >=CURRENT_DATE))"
+                order=""
+                queried=" (mp.polNumber like UPPER(:query) or mp.series like UPPER(:query)) "
+                names="(CASE WHEN DTYPE='MedPolicyDmc' THEN 'ДМС. '||com.name WHEN DTYPE='MedPolicyDmcForeign' THEN 'ДМС иног. '||mp.insuranceCompanyName ELSE '--' END) ||' '|| mp.series||' '|| mp.polNumber||' '|| to_char(mp.actualDateFrom,'DD.MM.YYYY')||'-'||coalesce(to_char(mp.actualDateTo,'DD.MM.YYYY'),'нет даты окончания')"
+        />
 
     </voc>
-	    <voc id='omcPolicyByPatient' type='NativeVocService'>
-		    <NativeVocService
-		    	from=" MedPolicy as mp "
-		    	parent='mp.patient_id=:parent'
-		    	nameId="mp.id"
-		    	join=" left join REG_IC as com on com.id=mp.company_id  "
-		    	queryAppend=" (DTYPE in ('MedPolicyOmc','MedPolicyOmcForeign')) AND (CURRENT_DATE >= mp.actualDateFrom and (mp.actualDateTo is null or mp.actualDateTo >=CURRENT_DATE))"
-		    	order=""
-		    	queried=" (mp.polNumber like UPPER(:query) or mp.series like UPPER(:query)) "
-		    	names = "(CASE WHEN DTYPE='MedPolicyOmc' THEN 'ОМС. '||com.name WHEN DTYPE='MedPolicyOmcForeign' THEN 'ОМС иног. '||mp.insuranceCompanyName ELSE '--' END) ||' '|| mp.series||' '|| mp.polNumber||' '|| to_char(mp.actualDateFrom,'DD.MM.YYYY')||'-'||coalesce(to_char(mp.actualDateTo,'DD.MM.YYYY'),'нет даты окончания')"
-		    />
+    <voc id='omcPolicyByPatient' type='NativeVocService'>
+        <NativeVocService
+                from=" MedPolicy as mp "
+                parent='mp.patient_id=:parent'
+                nameId="mp.id"
+                join=" left join REG_IC as com on com.id=mp.company_id  "
+                queryAppend=" (DTYPE in ('MedPolicyOmc','MedPolicyOmcForeign')) AND (CURRENT_DATE >= mp.actualDateFrom and (mp.actualDateTo is null or mp.actualDateTo >=CURRENT_DATE))"
+                order=""
+                queried=" (mp.polNumber like UPPER(:query) or mp.series like UPPER(:query)) "
+                names="(CASE WHEN DTYPE='MedPolicyOmc' THEN 'ОМС. '||com.name WHEN DTYPE='MedPolicyOmcForeign' THEN 'ОМС иног. '||mp.insuranceCompanyName ELSE '--' END) ||' '|| mp.series||' '|| mp.polNumber||' '|| to_char(mp.actualDateFrom,'DD.MM.YYYY')||'-'||coalesce(to_char(mp.actualDateTo,'DD.MM.YYYY'),'нет даты окончания')"
+        />
 
     </voc>
-	    <voc id='serviceStreamByDepAndDate' type='NativeVocService'>
-		    <NativeVocService
-		    	from=" vocServiceStream vss "
-		    	parent="(select count(*) from BedFund bf where bf.serviceStream_id =vss.id and bf.lpu_id=:par1 and 
+    <voc id='serviceStreamByDepAndDate' type='NativeVocService'>
+        <NativeVocService
+                from=" vocServiceStream vss "
+                parent="(select count(*) from BedFund bf where bf.serviceStream_id =vss.id and bf.lpu_id=:par1 and
 						 to_date(:par2,'dd.mm.yyyy')  between bf.dateStart and coalesce(bf.dateFinish,CURRENT_DATE) ) > 0 "
-		    	nameId="vss.id"
-		    	join=""
-		    	queryAppend=""
-		    	order=""
-		    	queried=" (cast(vss.id as varchar(10))  like UPPER(:querId) or vss.name like UPPER(:query)) "
-		    	names = " vss.name "
-		    	parentSplitCount="2"
-		    />
+                nameId="vss.id"
+                join=""
+                queryAppend=""
+                order=""
+                queried=" (cast(vss.id as varchar(10))  like UPPER(:querId) or vss.name like UPPER(:query)) "
+                names=" vss.name "
+                parentSplitCount="2"
+        />
 
     </voc>
-	    <voc id='bedFundByDepAndStreamAndDate' type='NativeVocService'>
-		    <NativeVocService
-		    	from=" BedFund bf "
-		    	parent="bf.lpu_id=:par1 and bf.serviceStream_id=:par2 and 
+    <voc id='bedFundByDepAndStreamAndDate' type='NativeVocService'>
+        <NativeVocService
+                from=" BedFund bf "
+                parent="bf.lpu_id=:par1 and bf.serviceStream_id=:par2 and
 to_date(:par3,'dd.mm.yyyy') between bf.dateStart and coalesce(bf.dateFinish,CURRENT_DATE)"
-		    	nameId="bf.id"
-		    	join=" left join vocBedType vbt on vbt.id=bf.bedType_id
+                nameId="bf.id"
+                join=" left join vocBedType vbt on vbt.id=bf.bedType_id
 left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
-		    	queryAppend=""
-		    	order=""
-		    	queried=" (cast(bf.id as varchar(10)) like :querId or vbt.name like UPPER(:query)) "
-		    	names = " vbt.name||' ('||vbst.name||' ' || case when bf.isRehab='1' then 'реабилитационные ' else '' end || case when bf.noFood='1' then 'без питания' else 'с питанием' end  ||')'"
-		    	parentSplitCount="3"
-		    />
+                queryAppend=""
+                order=""
+                queried=" (cast(bf.id as varchar(10)) like :querId or vbt.name like UPPER(:query)) "
+                names=" vbt.name||' ('||vbst.name||' ' || case when bf.isRehab='1' then 'реабилитационные ' else '' end || case when bf.noFood='1' then 'без питания' else 'с питанием' end  ||')'"
+                parentSplitCount="3"
+        />
 
     </voc>
     <!-- Справочник исходов госпитализации -->
     <voc id='vocHospitalizationOutcome' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationOutcome'
-                names   = 'name'
-                queried = 'name'
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationOutcome'
+                names='name'
+                queried='name'
                 queryAppend="(isNotViewDischarge is null or isNotViewDischarge='0')"
-                />
-    </voc> 
+        />
+    </voc>
     <!-- Справочник исходов госпитализации -->
     <voc id='vocHospitalizationWhereAdmission' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationOutcome'
-                names   = 'name'
-                queried = 'name'
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationOutcome'
+                names='name'
+                queried='name'
                 queryAppend="(isNotViewAdmission is null or isNotViewAdmission='0')"
-                />
-    </voc> 
+        />
+    </voc>
     <voc id='vocAnesthesiaMethod' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocAnesthesiaMethod'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocAnesthesiaMethod'
+                names='name'
+                queried='name'
+        />
+    </voc>
     <voc id='vocAbortion' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocAbortion'
-                names   = 'code,name'
-                queried = 'code,name'
-                />
-    </voc> 
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocAbortion'
+                names='code,name'
+                queried='code,name'
+        />
+    </voc>
     <voc id='vocPediculosis' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPediculosis'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocPediculosis'
+                names='name'
+                queried='name'
+        />
+    </voc>
     <voc id='vocCriminalPhoneMessageType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageType'
-                names   = 'name'
-                queried = 'name'
-                queryAppend = 'isCriminal=true'
-                />
-    </voc> 
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageType'
+                names='name'
+                queried='name'
+                queryAppend='isCriminal=true'
+        />
+    </voc>
     <voc id='vocPhoneMessageOrganization' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageOrganization'
-                names   = 'name,phoneNumber'
-                queried = 'name,phoneNumber'
-                />
-    </voc> 
-    
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocPhoneMessageOrganization'
+                names='name,phoneNumber'
+                queried='name,phoneNumber'
+        />
+    </voc>
+
     <!-- Справочник результатов госпитализации -->
     <voc id='vocHospitalizationResult' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationResult'
-                names   = 'name'
-                queried = 'name'
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationResult'
+                names='name'
+                queried='name'
                 queryAppend="(isArchival is null or isArchival='0')"
-                />
-    </voc> 
-    
+        />
+    </voc>
+
     <!-- Справочник дефектов догоспитального этапа -->
     <voc id='vocPreAdmissionDefect' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionDefect'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
-    
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionDefect'
+                names='name'
+                queried='name'
+        />
+    </voc>
+
     <!-- Справочник времен заболевания до госпитализации -->
     <voc id='vocPreAdmissionTime' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionTime'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionTime'
+                names='name'
+                queried='name'
+        />
+    </voc>
 
     <!-- Справочник типов опьянения -->
     <voc id='vocIntoxication' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocIntoxication'
-                names   = "name"
-                queried = 'name'
-                />
-    </voc> 
-    
-    
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocIntoxication'
+                names="name"
+                queried='name'
+        />
+    </voc>
+
+
     <!-- Справочник операций -->
     <voc id='vocOperation' type='NativeVocService'>
-    	<NativeVocService
-    			from = 'VocOperation'
-    			parent="(startActualDate is null or to_date(:parent,'dd.mm.yyyy')  >=startActualDate ) and (finishActualDate is null or finishActualDate>=to_date(:parent,'dd.mm.yyyy'))"
-    			names = "coalesce(code||' ','')||name"
-    			nameId="id"
-    			queryAppend=''
-    			join=''
-    			order=''
-    			queried = "(cast(id as varchar(10)) like :querId or code like :querId or UPPER(name) like UPPER(:query))"
-    			 			
-    	/>
+        <NativeVocService
+                from='VocOperation'
+                parent="(startActualDate is null or to_date(:parent,'dd.mm.yyyy')  >=startActualDate ) and (finishActualDate is null or finishActualDate>=to_date(:parent,'dd.mm.yyyy'))"
+                names="coalesce(code||' ','')||name"
+                nameId="id"
+                queryAppend=''
+                join=''
+                order=''
+                queried="(cast(id as varchar(10)) like :querId or code like :querId or UPPER(name) like UPPER(:query))"
+
+        />
     </voc>
-	<!-- Дата операции/раб.функция/отделение/поток обслуживания
-	* учитываем поток обслуживания
-	-->
+    <!-- Дата операции/раб.функция/отделение/поток обслуживания
+    * учитываем поток обслуживания
+    -->
     <voc id='medServiceOperation' type='NativeVocService'>
-    	<NativeVocService
-    			from = 'MedService ms'
-    			parent="(ms.startDate is null or to_date(:par1,'dd.mm.yyyy')  >=ms.startDate )
+        <NativeVocService
+                from='MedService ms'
+                parent="(ms.startDate is null or to_date(:par1,'dd.mm.yyyy')  >=ms.startDate )
     					 and (ms.finishDate is null or ms.finishDate>=to_date(:par1,'dd.mm.yyyy'))
     					 and wf.id=:par2 and (wfs.lpu_id is null or wfs.lpu_id=:par3)
     					 and ms.dtype='MedService' and (vst.code='OPERATION' or vst.code='SURVEY')
     					 and 1=(select count(vss.id) from vocServiceStream vss where vss.id=:par4 and ((vss.isCalcOmcHosp='1' and (ms.isNoOmc is null or ms.isNoOmc='0')) or ((vss.isCalcOmcHosp is null or vss.isCalcOmcHosp='0') and pl.id is not null)))
 "
-    			names = "coalesce(ms.code||' ','')||ms.name"
-    			nameId="ms.id"
-    			queryAppend=""
-    			join=" left join VocServiceType vst on vst.id=ms.serviceType_id
+                names="coalesce(ms.code||' ','')||ms.name"
+                nameId="ms.id"
+                queryAppend=""
+                join=" left join VocServiceType vst on vst.id=ms.serviceType_id
     			       left join WorkFunctionService wfs on wfs.medService_id=ms.id
     			       left join WorkFunction wf on wfs.vocWorkFunction_id=wf.workFunction_id
     			       left join pricemedservice pms on pms.medservice_id=ms.id
     			       left join priceposition pp on pp.id=pms.priceposition_id
     			       left join pricelist pl on pl.id=pp.pricelist_id and pl.isDefault='1'
     			       "
-    			order='ms.code, ms.name'
-    			queried = "(cast(ms.id as varchar(10)) like :querId or replace(ms.code,'.','') like :query or ms.code like :querId  or UPPER(ms.name) like UPPER(:query))"
-				groupBy="ms.id, ms.code, ms.name"
-		    	parentSplitCount="4" />
+                order='ms.code, ms.name'
+                queried="(cast(ms.id as varchar(10)) like :querId or replace(ms.code,'.','') like :query or ms.code like :querId  or UPPER(ms.name) like UPPER(:query))"
+                groupBy="ms.id, ms.code, ms.name"
+                parentSplitCount="4"/>
     </voc>
 
-	<voc id="medServiceForBandage" type="NativeVocService">
-		<NativeVocService
-				from="medservice ms"
-				nameId="ms.id"
-				order="ms.name, ms.code"
-				groupBy="ms.id, ms.name, ms.code"
-				names="ms.code||' '||ms.name"
-				queryAppend="ms.finishDate is null and (code='A16.01.029' or code='A16.01.003' or code like 'A16.01.010.%' or code='A16.01.004' or code='A16.01.004.996')"
-		/>
-	</voc>
+    <voc id="medServiceForBandage" type="NativeVocService">
+        <NativeVocService
+                from="medservice ms"
+                nameId="ms.id"
+                order="ms.name, ms.code"
+                groupBy="ms.id, ms.name, ms.code"
+                names="ms.code||' '||ms.name"
+                queryAppend="ms.finishDate is null and (code='A16.01.029' or code='A16.01.003' or code like 'A16.01.010.%' or code='A16.01.004' or code='A16.01.004.996')"
+        />
+    </voc>
 
-	<!-- Осложнение -->
-	<voc id='vocComplication' type='EntityVocService'>
-		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocComplication'
-				names   = 'name'
-				queried = 'code,name'
-		/>
-	</voc>
-	<!-- Справочник отказов при госпитализации -->
+    <!-- Осложнение -->
+    <voc id='vocComplication' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocComplication'
+                names='name'
+                queried='code,name'
+        />
+    </voc>
+    <!-- Справочник отказов при госпитализации -->
     <voc id='vocDeniedHospitalizating' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeniedHospitalizating'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocDeniedHospitalizating'
+                names='name'
+                queried='name'
+        />
+    </voc>
     <!-- Справочник профилей операций -->
     <voc id='vocSurgicalProfile' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocSurgicalProfile'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocSurgicalProfile'
+                names='name'
+                queried='name'
+        />
+    </voc>
     <!-- Справочник показаний (экстр.,план.) -->
     <voc id='vocHospitalAspect' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalAspect'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalAspect'
+                names='name'
+                queried='name'
+        />
+    </voc>
     <!-- Справочник профилей коек -->
     <voc id='vocBedType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocBedType'
-                names   = 'name'
-                queried = 'name'
-                />
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocBedType'
+                names='name'
+                queried='name'
+        />
     </voc>
-	<!-- Справочник профилей коек -->
-	<voc id='vocBedTypeWithCode' type='EntityVocService'>
-		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocBedType'
-				names   = 'omcCode,name'
-				queried = 'name'
-		/>
-	</voc>
-	<voc id='vocBedTypeByDep' type='NativeVocService'>
-		<NativeVocService
-		    	from=" VocBedType vbt "
-		    	parent="bf.lpu_id=:parent"
-		    	nameId="vbt.id"
-		    	join=" left join bedfund bf on bf.bedtype_id=vbt.id  "
-		    	queryAppend=""
-		    	order=""
-		    	queried=" (cast(vbt.id as varchar(10)) like :querId or vbt.name like UPPER(:query)) "
-		    	names = "vbt.name"
-		    	groupBy="vbt.id,vbt.name"
-		    />
-	</voc>
-   <voc id='vocBedSubTypeByDep' type='NativeVocService'>
-		<NativeVocService
-		    	from=" VocBedSubType vbst "
-		    	parent="bf.lpu_id=:par1 and bf.bedType_id=:par2"
-		    	nameId="vbst.id"
-		    	join=" left join bedfund bf on bf.bedsubtype_id=vbst.id "
-		    	queryAppend=""
-		    	order=""
-		    	queried=" (cast(vbst.id as varchar(10)) like :querId or vbst.name like UPPER(:query)) "
-		    	names = "vbst.name"
-		    	parentSplitCount="2"
-		    	groupBy="vbst.id,vbst.name"
-		    />
-	</voc>
+    <!-- Справочник профилей коек -->
+    <voc id='vocBedTypeWithCode' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocBedType'
+                names='omcCode,name'
+                queried='name'
+        />
+    </voc>
+    <voc id='vocBedTypeByDep' type='NativeVocService'>
+        <NativeVocService
+                from=" VocBedType vbt "
+                parent="bf.lpu_id=:parent"
+                nameId="vbt.id"
+                join=" left join bedfund bf on bf.bedtype_id=vbt.id  "
+                queryAppend=""
+                order=""
+                queried=" (cast(vbt.id as varchar(10)) like :querId or vbt.name like UPPER(:query)) "
+                names="vbt.name"
+                groupBy="vbt.id,vbt.name"
+        />
+    </voc>
+    <voc id='vocBedSubTypeByDep' type='NativeVocService'>
+        <NativeVocService
+                from=" VocBedSubType vbst "
+                parent="bf.lpu_id=:par1 and bf.bedType_id=:par2"
+                nameId="vbst.id"
+                join=" left join bedfund bf on bf.bedsubtype_id=vbst.id "
+                queryAppend=""
+                order=""
+                queried=" (cast(vbst.id as varchar(10)) like :querId or vbst.name like UPPER(:query)) "
+                names="vbst.name"
+                parentSplitCount="2"
+                groupBy="vbst.id,vbst.name"
+        />
+    </voc>
     <!-- Справочник типов коек -->
     <voc id='vocRoomType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocRoomType'
+                names='name'
+                queried='name'
+        />
+    </voc>
     <voc id='vocOmcFrm' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.expomc.ejb.domain.omcvoc.OmcFrm'
-                names   = 'name'
-                queried = 'name'
-            />
+                entity='ru.ecom.expomc.ejb.domain.omcvoc.OmcFrm'
+                names='name'
+                queried='name'
+        />
     </voc>
-        <!-- Подразделения у LPU -->
+    <!-- Подразделения у LPU -->
     <voc id='vocLpuOtd' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.lpu.MisLpu'
-                names   = 'name'
-                queried = 'name'
-                parent  = 'parent'
-       queryConvertType = "UPPER_CASE"
+                entity='ru.ecom.mis.ejb.domain.lpu.MisLpu'
+                names='name'
+                queried='name'
+                parent='parent'
+                queryConvertType="UPPER_CASE"
         />
-     </voc> 
+    </voc>
     <voc id='vocLpuHospOtd' type='NativeVocService'>
         <NativeVocService
                 from="MisLpu ml"
@@ -512,9 +512,9 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 queryAppend=" (vlf.code='3' or vlf.code='7') and (ml.isArchive is null or ml.isArchive='0')"
                 join="left join VocLpuFunction vlf ON vlf.id = ml.lpuFunction_id"
                 order=""
-	    		queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
+                queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
         />
-     </voc> 
+    </voc>
     <voc id='vocNewBornDep' type='NativeVocService'>
         <NativeVocService
                 from="MisLpu ml"
@@ -524,9 +524,9 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 queryAppend=" ml.isNewBornDep='1' "
                 join="left join VocLpuFunction vlf ON vlf.id = ml.lpuFunction_id"
                 order=""
-	    		queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
+                queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
         />
-     </voc> 
+    </voc>
     <voc id='vocNewBornAllDeps' type='NativeVocService'>
         <NativeVocService
                 from="MisLpu ml"
@@ -534,9 +534,9 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 nameId="ml.id"
                 queryAppend=" ml.isNewBornDep='1' "
                 order=""
-	    		queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
+                queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
         />
-     </voc> 
+    </voc>
     <voc id='vocLpuHospOtdAll' type='NativeVocService'>
         <NativeVocService
                 from="MisLpu ml"
@@ -546,423 +546,422 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 queryAppend=" (vlf.code='3' or vlf.code='7') "
                 join="left join VocLpuFunction vlf ON vlf.id = ml.lpuFunction_id left join MisLpu mlP on mlP.id=ml.parent_id "
                 order=""
-	    		queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
+                queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
         />
-     </voc>
+    </voc>
 
-	<voc id='vocLpuHospOtdOnlyKMP' type='NativeVocService'>
-		<NativeVocService
-				from="MisLpu ml"
-				names="ml.name||' ('||mlP.name||')'"
-				parent=''
-				nameId="ml.id"
-				queryAppend=" ml.isreportkmp=true "
-				join="left join VocLpuFunction vlf ON vlf.id = ml.lpuFunction_id left join MisLpu mlP on mlP.id=ml.parent_id "
-				order=""
-				queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
-		/>
-	</voc>
-           <!--  queryAppend = 'dateFinish is null' -->
-           
-           <!-- Справочник типов стационара при выписке, поступлении -->
+    <voc id='vocLpuHospOtdOnlyKMP' type='NativeVocService'>
+        <NativeVocService
+                from="MisLpu ml"
+                names="ml.name||' ('||mlP.name||')'"
+                parent=''
+                nameId="ml.id"
+                queryAppend=" ml.isreportkmp=true "
+                join="left join VocLpuFunction vlf ON vlf.id = ml.lpuFunction_id left join MisLpu mlP on mlP.id=ml.parent_id "
+                order=""
+                queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
+        />
+    </voc>
+    <!--  queryAppend = 'dateFinish is null' -->
+
+    <!-- Справочник типов стационара при выписке, поступлении -->
     <voc id='vocHospType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospType'
-                names   = 'name'
-                queried = 'name'
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocHospType'
+                names='name'
+                queried='name'
                 queryAppend="(isNotViewDefault is null or isNotViewDefault='0')"
-                />
-    </voc> 
+        />
+    </voc>
     <voc id='vocHospTypeInAdmission' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospType'
-                names   = 'name'
-                queried = 'name'
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocHospType'
+                names='name'
+                queried='name'
                 queryAppend="(isNotViewAdmission is null or isNotViewAdmission='0')"
-                />
-    </voc> 
+        />
+    </voc>
     <!-- Справочник типов листов назначений -->
     <voc id='vocPrescriptType' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
-    
+                entity='ru.ecom.mis.ejb.domain.prescription.voc.VocPrescriptType'
+                names='name'
+                queried='name'
+        />
+    </voc>
+
     <!-- Справочник госпитализаций (впервые, повторно) -->
     <voc id='vocHospitalization' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
-    
-     <!-- Справочник места смерти -->
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization'
+                names='name'
+                queried='name'
+        />
+    </voc>
+
+    <!-- Справочник места смерти -->
     <voc id='vocDeathPlace' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeathPlace'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
-     <!-- Справочник категорий расхождения диагнозов в связи со смертью -->
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocDeathPlace'
+                names='name'
+                queried='name'
+        />
+    </voc>
+    <!-- Справочник категорий расхождения диагнозов в связи со смертью -->
     <voc id='vocDeathCategory' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeathCategory'
-                names   = 'name'
-                queried = 'name'
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocDeathCategory'
+                names='name'
+                queried='name'
                 queryAppend="(deprecated='0' or deprecated is null)"
-                />
-    </voc> 
-    
+        />
+    </voc>
+
     <!-- Справочник причин смерти -->
     <voc id='vocDeathReason' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeathReason'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
-    
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocDeathReason'
+                names='name'
+                queried='name'
+        />
+    </voc>
+
     <!-- Справочник оснований смерти -->
     <voc id='vocDeathEvidence' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeathEvidence'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
-    
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocDeathEvidence'
+                names='name'
+                queried='name'
+        />
+    </voc>
+
     <!-- Смерть после окончания беременности -->
     <voc id='vocAfterPregnance' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocAfterPregnance'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
-    
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocAfterPregnance'
+                names='name'
+                queried='name'
+        />
+    </voc>
+
     <!-- Справочник. Доношенность. -->
     <voc id='vocIsPrematurity' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocIsPrematurity'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocIsPrematurity'
+                names='name'
+                queried='name'
+        />
+    </voc>
 
     <!-- Справочник. Кем установлена смерть -->
     <voc id='vocDeathWitnessFunction' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocDeathWitnessFunction'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocDeathWitnessFunction'
+                names='name'
+                queried='name'
+        />
+    </voc>
 
 
-    
     <!-- Справочник осложнений новорожденного -->
     <voc id='vocNewbornComplication' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocNewbornComplication'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
-    
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocNewbornComplication'
+                names='name'
+                queried='name'
+        />
+    </voc>
+
     <!-- Справочник акушерских процедур -->
     <voc id='vocObstetricProcedure' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocObstetricProcedure'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
-    
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocObstetricProcedure'
+                names='name'
+                queried='name'
+        />
+    </voc>
+
     <!-- Справочник порядка рождения ребенка -->
     <voc id='vocOrderAndQuantity' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocOrderAndQuantity'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc> 
-    
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocOrderAndQuantity'
+                names='name'
+                queried='name'
+        />
+    </voc>
+
     <!-- Справочник медицинских факторов настоящей беременности -->
     <voc id='vocPregnancyMedFactor' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPregnancyMedFactor'
-                names   = 'name'
-                queried = 'name'
-                />
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocPregnancyMedFactor'
+                names='name'
+                queried='name'
+        />
     </voc>
-    
+
     <!-- Справочник прочих факторов риска во время беременности -->
     <voc id='vocPregnancyRiskFactor' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPregnancyRiskFactor'
-                names   = 'name'
-                queried = 'name'
-                />
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocPregnancyRiskFactor'
+                names='name'
+                queried='name'
+        />
     </voc>
-    
-     <!-- Справочник приоритетов диагнозов -->
+
+    <!-- Справочник приоритетов диагнозов -->
     <voc id='vocPriorityDiagnosis' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis'
-                names   = 'name'
-                queried = 'name'
-       queryConvertType = "UPPER_CASE"                
-                />
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocPriorityDiagnosis'
+                names='name'
+                queried='name'
+                queryConvertType="UPPER_CASE"
+        />
     </voc>
-    
+
     <!-- Справочник положений плода -->
     <voc id='vocFetusLocation' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocFetusLocation'
-                names   = 'name'
-                queried = 'name'
-                />
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocFetusLocation'
+                names='name'
+                queried='name'
+        />
     </voc>
-    
+
     <!-- Справочник предлежащей части плода -->
     <voc id='vocPreviusPart' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocPreviusPart'
-                names   = 'name'
-                queried = 'name'
-                />
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocPreviusPart'
+                names='name'
+                queried='name'
+        />
     </voc>
-    
+
     <!-- Справочник родовой деятельности -->
     <voc id='vocPregnancyActivity' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocPregnancyActivity'
-                names   = 'name'
-                queried = 'name'
-                />
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocPregnancyActivity'
+                names='name'
+                queried='name'
+        />
     </voc>
-    
+
     <!-- Справочник влагалищных выделений -->
     <voc id='vocVaginalDischarge' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocVaginalDischarge'
-                names   = 'name'
-                queried = 'name'
-                />
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocVaginalDischarge'
+                names='name'
+                queried='name'
+        />
     </voc>
-    
+
     <!-- Справочник преждевременности отхождения вод -->
     <voc id='vocBirthWatesPrematurity' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocBirthWatesPrematurity'
-                names   = 'name'
-                queried = 'name'
-                />
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocBirthWatesPrematurity'
+                names='name'
+                queried='name'
+        />
     </voc>
-    
+
     <!-- Справочник отделения плаценты -->
     <voc id='vocPlacentaSeparation' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocPlacentaSeparation'
-                names   = 'name'
-                queried = 'name'
-                />
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocPlacentaSeparation'
+                names='name'
+                queried='name'
+        />
     </voc>
-    
+
     <!-- Справочник целостности оболочек -->
     <voc id='vocFetalMembranesIntegrity' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocFetalMembranesIntegrity'
-                names   = 'name'
-                queried = 'name'
-                />
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocFetalMembranesIntegrity'
+                names='name'
+                queried='name'
+        />
     </voc>
-    
+
     <!-- Справочник особенностей повышения температуры тела -->
     <voc id='vocFeverFeature' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocFeverFeature'
-                names   = 'name'
-                queried = 'name'
-                />
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocFeverFeature'
+                names='name'
+                queried='name'
+        />
     </voc>
-    
+
     <!-- Справочник частоты дыхательных движений по Downes -->
     <voc id='vocDownesRespirationRate' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocDownesRespirationRate'
-                names   = 'name'
-                queried = 'name'
-                />
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocDownesRespirationRate'
+                names='name'
+                queried='name'
+        />
     </voc>
-    
-     <!-- Справочник цианоза по Downes -->
+
+    <!-- Справочник цианоза по Downes -->
     <voc id='vocDownesCyanosis' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocDownesCyanosis'
-                names   = 'name'
-                queried = 'name'
-                />
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocDownesCyanosis'
+                names='name'
+                queried='name'
+        />
     </voc>
-    
+
     <!-- Справочник втяжения межреберных промежутков по Downes -->
     <voc id='vocDownesIntercostalRet' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocDownesIntercostalRet'
-                names   = 'name'
-                queried = 'name'
-                />
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocDownesIntercostalRet'
+                names='name'
+                queried='name'
+        />
     </voc>
-    
+
     <!-- Справочник затруднения дыхания по Downes -->
     <voc id='vocDownesDifExhalation' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocDownesDifExhalation'
-                names   = 'name'
-                queried = 'name'
-                />
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocDownesDifExhalation'
+                names='name'
+                queried='name'
+        />
     </voc>
-    
+
     <!-- Справочник аускультации по Downes -->
     <voc id='vocDownesAuscultation' type='EntityVocService'>
         <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocDownesAuscultation'
-                names   = 'name'
-                queried = 'name'
-                />
-    </voc>
-    
-     <!-- Справочник зрелости новорожденного -->
-    <voc id='vocNewBornMaturity' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocNewBornMaturity'
-                names   = 'name'
-                queried = 'name'
-                />
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocDownesAuscultation'
+                names='name'
+                queried='name'
+        />
     </voc>
 
-	<!--Назначения -->
-	<voc id="vocPharmDrugOnStorage" type="NativeVocService">
-		<NativeVocService
-				from="prescriptionlist as pl"
-				parent="pl.id =:parent"
-				nameId="pd.id"
-				join="left join medcase mc on mc.id = pl.medcase_id
+    <!-- Справочник зрелости новорожденного -->
+    <voc id='vocNewBornMaturity' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocNewBornMaturity'
+                names='name'
+                queried='name'
+        />
+    </voc>
+
+    <!--Назначения -->
+    <voc id="vocPharmDrugOnStorage" type="NativeVocService">
+        <NativeVocService
+                from="prescriptionlist as pl"
+                parent="pl.id =:parent"
+                nameId="pd.id"
+                join="left join medcase mc on mc.id = pl.medcase_id
 						left join pharmstorage ps on ps.department_id =mc.department_id
 						left join pharmdrug pd on pd.pharmstorage_id = ps.id and pd.nextstate_id is null
 						left join vocdrug vd on vd.id = pd.drug_id"
-				queryAppend="pd.nextstate_id is null"
-				order=""
-				queried="(vd.name like upper(:query))"
-				names = "vd.name"
-		/>
-	</voc>
-	<!-- Справочник причин отмены консультаций -->
-	<voc id='vocWfConsultationCancelReason' type='EntityVocService'>
-		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.prescription.voc.VocWfConsultationCancelReason'
-				names   = 'name'
-				queried = 'name'
-		/>
-	</voc>
-	<!-- Справочники по кардиологическому скринингу -->
-	<voc id='vocScreeningSkin' type='EntityVocService'>
-		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocScreeningSkin'
-				names   = 'name'
-				queried = 'id,name'
-		/>
-	</voc>
-	<!-- Справочники инфекционных отделений -->
-	<voc id='vocCovidLpu' type='NativeVocService'>
-		<NativeVocService
-				from="MisLpu"
-				names="name"
-				nameId="id"
-				queryAppend=" isforcovid=true "
-				order=""
-				queried=" (upper(name) like upper(:query)) "
-		/>
-	</voc>
+                queryAppend="pd.nextstate_id is null"
+                order=""
+                queried="(vd.name like upper(:query))"
+                names="vd.name"
+        />
+    </voc>
+    <!-- Справочник причин отмены консультаций -->
+    <voc id='vocWfConsultationCancelReason' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.prescription.voc.VocWfConsultationCancelReason'
+                names='name'
+                queried='name'
+        />
+    </voc>
+    <!-- Справочники по кардиологическому скринингу -->
+    <voc id='vocScreeningSkin' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocScreeningSkin'
+                names='name'
+                queried='id,name'
+        />
+    </voc>
+    <!-- Справочники инфекционных отделений -->
+    <voc id='vocCovidLpu' type='NativeVocService'>
+        <NativeVocService
+                from="MisLpu"
+                names="name"
+                nameId="id"
+                queryAppend=" isforcovid=true "
+                order=""
+                queried=" (upper(name) like upper(:query)) "
+        />
+    </voc>
 
-	<!-- Справочники рабочих функций для инф. отделения -->
-	<voc id='vocCovidWf' type='NativeVocService'>
-		<NativeVocService
-				from = 'VocWorkFunction voc '
-				names="voc.code||' '||voc.name"
-				nameId=" voc.id "
-				queried=" ( upper(voc.code) like upper(:query) or upper(voc.name) like upper(:query) )"
-				queryAppend=" isSuitForCovid=true "
-				order="voc.code"
-		/>
-	</voc>
-	<voc id='vocScreeningArterialPulsation' type='EntityVocService'>
-		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocScreeningArterialPulsation'
-				names   = 'name'
-				queried = 'id,name'
-		/>
-	</voc>
-	<voc id='vocScreeningCNS' type='EntityVocService'>
-		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocScreeningCNS'
-				names   = 'name'
-				queried = 'id,name'
-		/>
-	</voc>
-	<voc id='vocScreeningCardiacActivity' type='EntityVocService'>
-		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocScreeningCardiacActivity'
-				names   = 'name'
-				queried = 'id,name'
-		/>
-	</voc>
-	<voc id='vocScreeningApicalImpulseLocalization' type='EntityVocService'>
-		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocScreeningLocalization'
-				names   = 'name'
-				queried = 'id,name'
-				queryAppend=" code='1' "
-		/>
-	</voc>
-	<voc id='vocScreeningLiverEdgeLocalLocalization' type='EntityVocService'>
-		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocScreeningLocalization'
-				names   = 'name'
-				queried = 'id,name'
-				queryAppend=" code='2' "
-		/>
-	</voc>
-	<voc id='vocScreeningDiuresis' type='EntityVocService'>
-		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.birth.voc.VocScreeningDiuresis'
-				names   = 'name'
-				queried = 'id,name'
-		/>
-	</voc>
-	<voc id='vocClassWound' type='EntityVocService'>
-		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocClassWound'
-				names   = 'name'
-				queried = 'name'
-		/>
-	</voc>
-	<voc id='vocAntibioticDrug' type='EntityVocService'>
-		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocAntibioticDrug'
-				names   = 'name'
-				queried = 'name'
-		/>
-	</voc>
-	<voc id='vocMethodsDrugAdm' type='EntityVocService'>
-		<EntityVocService
-				entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocMethodsDrugAdm'
-				names   = 'name'
-				queried = 'name'
-		/>
-	</voc>
+    <!-- Справочники рабочих функций для инф. отделения -->
+    <voc id='vocCovidWf' type='NativeVocService'>
+        <NativeVocService
+                from='VocWorkFunction voc '
+                names="voc.code||' '||voc.name"
+                nameId=" voc.id "
+                queried=" ( upper(voc.code) like upper(:query) or upper(voc.name) like upper(:query) )"
+                queryAppend=" isSuitForCovid=true "
+                order="voc.code"
+        />
+    </voc>
+    <voc id='vocScreeningArterialPulsation' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocScreeningArterialPulsation'
+                names='name'
+                queried='id,name'
+        />
+    </voc>
+    <voc id='vocScreeningCNS' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocScreeningCNS'
+                names='name'
+                queried='id,name'
+        />
+    </voc>
+    <voc id='vocScreeningCardiacActivity' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocScreeningCardiacActivity'
+                names='name'
+                queried='id,name'
+        />
+    </voc>
+    <voc id='vocScreeningApicalImpulseLocalization' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocScreeningLocalization'
+                names='name'
+                queried='id,name'
+                queryAppend=" code='1' "
+        />
+    </voc>
+    <voc id='vocScreeningLiverEdgeLocalLocalization' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocScreeningLocalization'
+                names='name'
+                queried='id,name'
+                queryAppend=" code='2' "
+        />
+    </voc>
+    <voc id='vocScreeningDiuresis' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.birth.voc.VocScreeningDiuresis'
+                names='name'
+                queried='id,name'
+        />
+    </voc>
+    <voc id='vocClassWound' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocClassWound'
+                names='name'
+                queried='name'
+        />
+    </voc>
+    <voc id='vocAntibioticDrug' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocAntibioticDrug'
+                names='name'
+                queried='name'
+        />
+    </voc>
+    <voc id='vocMethodsDrugAdm' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocMethodsDrugAdm'
+                names='name'
+                queried='name'
+        />
+    </voc>
 </vocconfig>

@@ -14,9 +14,11 @@ import ru.ecom.expert2.domain.voc.VocE2BillStatus;
 import ru.ecom.expert2.domain.voc.VocE2EntrySubType;
 import ru.ecom.expert2.domain.voc.VocE2Sanction;
 import ru.ecom.expert2.domain.voc.federal.*;
+import ru.ecom.jaas.ejb.service.ISoftConfigService;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
+import ru.nuzmsh.util.StringUtil;
 
 import javax.annotation.EJB;
 import javax.ejb.Local;
@@ -33,6 +35,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static ru.nuzmsh.util.EqualsUtil.isEquals;
+import static ru.nuzmsh.util.EqualsUtil.isOneOf;
 
 @Stateless
 @Local(IExpert2ImportService.class)
@@ -54,6 +60,9 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     IExpert2Service expertService;
     private @EJB
     ILocalMonitorService monitorService;
+
+    private @EJB
+    ISoftConfigService softConfigService;
 
     private Date toDate(String date) throws ParseException {
         return new java.sql.Date(new SimpleDateFormat("yyy-MM-dd").parse(date).getTime());
@@ -235,6 +244,51 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         }
     }
 
+    @Override
+    public void importDepartmentAddressCodes(long monitorId, String fileName, Long entryListId) {
+        IMonitor monitor = startMonitor(monitorId, "Обновляем коды отделений: " + fileName);
+        try {
+            Element root = new SAXBuilder().build(fileName).getRootElement();
+            Map<String, String> addresses = new HashMap<>();
+            List<Element> zaps = root.getChildren("ZAP");
+            String lpuCode = softConfigService.getConfigValue("DEFAULT_LPU_OMCCODE");
+            for (Element zap : zaps) {
+                if (isEquals(lpuCode,zap.getChildText("N_REESTR"))) {
+                    List<Element> profiles = zap.getChildren("PROF");
+                    for (Element profil : profiles) {
+                        String key = zap.getChildText("LPU_1") + "#" + profil.getChildText("PROFIL");
+                        if (!addresses.containsKey(key)) {
+                            addresses.put(key, zap.getChildText("ADDR_CODE"));
+                        }
+                    }
+                }
+            }
+            monitor.setText("Найдено "+addresses.size()+" кодов для подстановки");
+            List<E2Entry> entries = manager.createNamedQuery("E2Entry.getAllByListEntryId").setParameter("listEntryId", entryListId).getResultList();
+            int cnt = 1;
+            int found = 0;
+            LOG.info("start addressing entries: "+entries.size()+", map: "+addresses.size());
+            for (E2Entry entry : entries) {
+                if (entry.getMedHelpProfile() != null && StringUtil.isNullOrEmpty(entry.getDepartmentAddressCode())
+                        && isOneOf(entry.getServiceStream(), "OBLIGATORYINSURANCE", "COMPLEXCASE")) {
+                    String key = entry.getDepartmentCode() + "#" + entry.getMedHelpProfile().getCode();
+                    entry.setDepartmentAddressCode(addresses.get(key));
+                    manager.persist(entry);
+                    found++;
+                }
+                if (cnt%100==0 && isMonitorCancel(monitor, "Проверено записей "+cnt+" из "+entries.size()+" записей, проставлено кодов "+found)) {
+                    return;
+                }
+                cnt++;
+            }
+
+        } catch (JDOMException | IOException e) {
+            LOG.error("some error :"+e.getMessage(),e);
+            e.printStackTrace();
+        }
+        monitor.finish("Закончено!");
+    }
+
     private PersonalWorkFunction getWorkFuntionByDoctorCode(String tabnom) {
         //находим рабочую функцию по табельному номеру
         if (DOCTORLIST.containsKey(tabnom)) {
@@ -281,8 +335,13 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 String dir = unZip(aMpFilename);
                 String hFilename = "H" + aMpFilename.substring(aMpFilename.indexOf('M')).replace(".MP", ".XML");
                 File hFile = new File(dir + File.separator + hFilename);
-                Document doc = new SAXBuilder().build(hFile);
-                org.jdom.Element root = doc.getRootElement();
+                Element root;
+                try {
+                    root = new SAXBuilder().build(hFile).getRootElement();
+                } catch (JDOMException | IOException e) {
+                    LOG.error("can't parse xml " + hFilename + ": " + e.getMessage());
+                    return;
+                }
                 String ver = root.getChild("ZGLV").getChildText("VERSION");
                 if ("3.0".equals(ver)) {
                     throw new IllegalStateException("Импорт в старом формате более не поддерживается!");
@@ -295,7 +354,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 java.sql.Date billDate = new java.sql.Date(fromFormat.parse(billDateString).getTime());
                 E2Bill bill = expertService.getBillEntryByDateAndNumber(billNumber, billDate, null);
                 if (bill == null) {
-                    throw new IllegalStateException("Невозможно определить счет с №"+billNumber+" от "+billDateString);
+                    throw new IllegalStateException("Невозможно определить счет с №" + billNumber + " от " + billDateString);
                 }
                 E2Bill savedBill = manager.find(E2Bill.class, bill.getId());
                 savedBill.setStatus(getActualVocByCode(VocE2BillStatus.class, null, "code='PAID'"));
@@ -398,11 +457,12 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         sb.append("7z e ").append(XMLDIR).append("/").append(zipFile).append(" -o").append(outputDir);
 
         try {
-            Runtime.getRuntime().exec(sb.toString());//arraCmd);
+            Runtime.getRuntime().exec(sb.toString());
             Thread.sleep(5000); //Заснем, чтобы точно всё распаковалось
         } catch (Exception e) {
             LOG.warn("Похоже, у нас Виндовс. Попробуем запустить 7-zip");
-            sb = new StringBuilder().append("\"C:\\Program Files\\7-Zip\\7z.exe\" e ").append(XMLDIR).append("\\").append(zipFile).append(" -o").append(outputDir);
+            sb.setLength(0);
+            sb.append("\"C:\\Program Files\\7-Zip\\7z.exe\" e ").append(XMLDIR).append("\\").append(zipFile).append(" -o").append(outputDir);
             try {
                 LOG.info("sb=" + sb + ", dir=" + outputDir);
                 Runtime.getRuntime().exec(sb.toString());

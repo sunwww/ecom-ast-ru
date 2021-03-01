@@ -11,7 +11,6 @@
   </tiles:put>
   <tiles:put name="side" type="string">
   	<tags:style_currentMenu currentAction="smo_medCase" />
-    	<tags:mis_journal />
   </tiles:put>
   <tiles:put name="body" type="string">
     <msh:form action="/journal_serviceMedCase.do" defaultField="dateBegin" disableFormDataConfirm="true" method="GET">

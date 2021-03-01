@@ -1,86 +1,84 @@
 <vocconfig>
     <voc id='medcard' type='EntityVocService'>
-            <EntityVocService
-                    entity  = 'ru.ecom.poly.ejb.domain.Medcard'
-                    names   = 'number'
-                    queried = 'number'
-                    />
+        <EntityVocService
+                entity='ru.ecom.poly.ejb.domain.Medcard'
+                names='number'
+                queried='number'
+        />
     </voc>
 
-
-
     <voc id='worker' type='EntityVocService'>
-            <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.worker.Worker'
-                    names   = 'doctorInfo'
-                    queried = "person.lastname"
-                    queryConvertType = 'UPPER_CASE'
-                    />
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.worker.Worker'
+                names='doctorInfo'
+                queried="person.lastname"
+                queryConvertType='UPPER_CASE'
+        />
     </voc>
 
     <voc id='vocSpecLabel' type='EntityVocService'>
-            <EntityVocService
-                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocSpecLabel'
-                    names   = 'name'
-                    queried = 'name'
-                    />
+        <EntityVocService
+                entity='ru.ecom.poly.ejb.domain.voc.VocSpecLabel'
+                names='name'
+                queried='name'
+        />
     </voc>
 
     <voc id='vocReason' type='EntityVocService'>
-            <EntityVocService
-                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocReason'
-                    names   = 'name'
-                    queried = 'name'
-                queryAppend = '(deprecated is null or deprecated = false)'
-                    />
+        <EntityVocService
+                entity='ru.ecom.poly.ejb.domain.voc.VocReason'
+                names='name'
+                queried='name'
+                queryAppend='(deprecated is null or deprecated = false)'
+        />
     </voc>
 
     <voc id='vocVisitResult' type='EntityVocService'>
-            <EntityVocService
-                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocVisitResult'
-                    names   = 'name'
-                    queried = 'name'
-                    queryAppend="(deprecated is null or deprecated='0')"
-                    />
+        <EntityVocService
+                entity='ru.ecom.poly.ejb.domain.voc.VocVisitResult'
+                names='name'
+                queried='name'
+                queryAppend="(deprecated is null or deprecated='0')"
+        />
     </voc>
 
     <voc id='vocTraumaType' type='EntityVocService'>
-            <EntityVocService
-                    entity  = 'ru.ecom.mis.ejb.domain.medcase.voc.VocTraumaType'
-                    names   = 'name'
-                    queried = 'name'
-                    />
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocTraumaType'
+                names='name'
+                queried='name'
+        />
     </voc>
     <voc id='vocTrauma' type='EntityVocService'>
-            <EntityVocService
-                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocTrauma'
-                    names   = 'name'
-                    queried = 'name'
-                    />
-    </voc>   
-
-     <voc id='vocDispanseryRegistration' type='EntityVocService'>
-            <EntityVocService
-                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocDispanseryRegistration'
-                    names   = 'name'
-                    queried = 'name'
-                    queryConvertType="FIRST_UPPER"
-                    />
+        <EntityVocService
+                entity='ru.ecom.poly.ejb.domain.voc.VocTrauma'
+                names='name'
+                queried='name'
+        />
     </voc>
 
-    <voc  id='vocMedUsluga' type='EntityVocService'>
-            <EntityVocService
-                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocMedUsluga'
-                    names   = 'code,name'
-                    queried = 'code,name'
-                    />
+    <voc id='vocDispanseryRegistration' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.poly.ejb.domain.voc.VocDispanseryRegistration'
+                names='name'
+                queried='name'
+                queryConvertType="FIRST_UPPER"
+        />
+    </voc>
+
+    <voc id='vocMedUsluga' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.poly.ejb.domain.voc.VocMedUsluga'
+                names='code,name'
+                queried='code,name'
+        />
     </voc>
     <voc id='vocDisabilityDocumentStatus' type='EntityVocService'>
-            <EntityVocService
-                    entity  = 'ru.ecom.poly.ejb.domain.voc.VocDisabilityDocumentStatus'
-                    names   = 'name'
-                    queried = 'name'
-                    />
+        <EntityVocService
+                entity='ru.ecom.poly.ejb.domain.voc.VocDisabilityDocumentStatus'
+                names='name'
+                queried='name'
+        />
     </voc>
 
 </vocconfig>

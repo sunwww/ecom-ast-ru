@@ -40,6 +40,13 @@ public class Expert2FileImportAction extends BaseAction {
 			final long monitorId = monitorService.createMonitor();
 
 			switch (action) {
+				case "f100": //проставляем коды отделений длинные
+					saveFile(ffile.getInputStream(), xmlUploadDir+"/"+fileName);
+					new Thread() {
+						public void run() {
+							expert2importService.importDepartmentAddressCodes(monitorId, xmlUploadDir+"/"+fileName, entryListId);
+						}}.start();
+					break;
 				case "createEntry":
 					if (fileName.startsWith("ELMED")) { //импорт файлов с элмеда
 						saveFile(ffile.getInputStream(), xmlUploadDir + "/" + fileName);

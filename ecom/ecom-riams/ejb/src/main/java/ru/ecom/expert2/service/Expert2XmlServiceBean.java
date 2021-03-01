@@ -613,7 +613,8 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 //USL start
                 int uslCnt = 0;
                 if (currentEntry.getReanimationEntry() != null && !isVmp) { //Реанимационная услуга
-                    sl.addContent(createUsl(a3, "" + (++uslCnt), lpuRegNumber, profileK, "B03.003.005", isChild, startDate, startDate, sl.getChildText("DS1"), "1", prvs, currentEntry.getDoctorSnils(), BigDecimal.ZERO));
+                    sl.addContent(createUsl(a3, "" + (++uslCnt), lpuRegNumber, profileK, "B03.003.005", isChild, startDate, startDate, sl.getChildText("DS1"), "1", prvs
+                            , currentEntry.getDoctorSnils(), BigDecimal.ZERO, currentEntry.getDepartmentAddressCode()));
                 }
                 //Информация об услугах
                 if (isPoliclinic) { //Для поликлиники - кол-во визитов
@@ -644,7 +645,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             String serviceCode = service.getMedService().getCode();
                             BigDecimal cost = service.getCost();
                             sl.addContent(createUsl(a3, "" + (++uslCnt), lpuRegNumber, childProfile.getCode(), serviceCode, isChild, uslDate, uslDate
-                                    , isNotNull(child.getMainMkb()) ? child.getMainMkb() : sl.getChildText("DS1"), "1", spec.getCode(), child.getDoctorSnils(), cost));
+                                    , isNotNull(child.getMainMkb()) ? child.getMainMkb() : sl.getChildText("DS1"), "1", spec.getCode(), child.getDoctorSnils(), cost, child.getDepartmentAddressCode()));
                             if (serviceCode.equals(visitService)) {
                                 isFoundPriemService = true;
                             }
@@ -652,7 +653,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         isFirst = false;
                         if (visitService != null && !isFoundPriemService) { //не нашли нужную услугу - создадим её сами!
                             sl.addContent(createUsl(a3, "" + (++uslCnt), lpuRegNumber, childProfile.getCode(), visitService, isChild, uslDate, uslDate
-                                    , isNotNull(child.getMainMkb()) ? child.getMainMkb() : sl.getChildText("DS1"), "1", spec.getCode(), child.getDoctorSnils(), BigDecimal.ZERO)); //Создаем услугу по умолчанию. Для КДП и неотложки - не нужно
+                                    , isNotNull(child.getMainMkb()) ? child.getMainMkb() : sl.getChildText("DS1"), "1", spec.getCode(), child.getDoctorSnils(), BigDecimal.ZERO, child.getDepartmentAddressCode())); //Создаем услугу по умолчанию. Для КДП и неотложки - не нужно
                         }
                     }
 
@@ -664,7 +665,8 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                                 String servDate = "" + (ms.getServiceDate() != null ? ms.getServiceDate() : entry.getFinishDate());
                                 sl.addContent(createUsl(true, "" + (++uslCnt), lpuRegNumber, null, ms.getMedService().getCode(), null
                                         , servDate, servDate, null
-                                        , null, ms.getDoctorSpeciality() != null ? ms.getDoctorSpeciality().getCode() : prvs, isNotNull(ms.getDoctorSnils()) ? ms.getDoctorSnils() : entry.getDoctorSnils(), ms.getCost()));
+                                        , null, ms.getDoctorSpeciality() != null ? ms.getDoctorSpeciality().getCode() : prvs
+                                        , isNotNull(ms.getDoctorSnils()) ? ms.getDoctorSnils() : entry.getDoctorSnils(), ms.getCost(), null));
                             } catch (Exception e) {
                                 LOG.warn("Услуга " + ms.getId() + " - NO SERVICE CODE");
                             }
@@ -684,17 +686,18 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         for (Object[] ms : list) {
                             sl.addContent(createUsl(a3, "" + (++uslCnt), lpuRegNumber, profileK, ms[0].toString(), isChild, ms[2].toString()
                                     , ms[2].toString(), sl.getChildText("DS1"), ms[1].toString()
-                                    , prvs, currentEntry.getDoctorSnils(), BigDecimal.ZERO)); //в стационаре КТ-МРТ не оплачивается
+                                    , prvs, currentEntry.getDoctorSnils(), BigDecimal.ZERO, currentEntry.getDepartmentAddressCode())); //в стационаре КТ-МРТ не оплачивается
 
                         }
                     }
-                    sl.addContent(createUsl(a3, ++uslCnt + "", lpuRegNumber, profileK, currentEntry.getBedProfile().getDefaultStacMedService() != null ? currentEntry.getBedProfile().getDefaultStacMedService().getCode() : "AAA"
+                    sl.addContent(createUsl(a3, ++uslCnt + "", lpuRegNumber, profileK
+                            , currentEntry.getBedProfile().getDefaultStacMedService() != null ? currentEntry.getBedProfile().getDefaultStacMedService().getCode() : "AAA"
                             , isChild, finishDate, finishDate, sl.getChildText("DS1"), "1"
-                            , prvs, currentEntry.getDoctorSnils(), BigDecimal.ZERO));
+                            , prvs, currentEntry.getDoctorSnils(), BigDecimal.ZERO, currentEntry.getDepartmentAddressCode()));
                 } else { //ВМП
                     sl.addContent(createUsl(a3, ++uslCnt + "", lpuRegNumber, profileK, entry.getVMPMethod()
                             , isChild, finishDate, finishDate, sl.getChildText("DS1"), "1"
-                            , prvs, currentEntry.getDoctorSnils(), BigDecimal.ZERO));
+                            , prvs, currentEntry.getDoctorSnils(), BigDecimal.ZERO, currentEntry.getDepartmentAddressCode()));
                 }
                 // USL finish
                 zSl.addContent(indSl, sl);
@@ -716,13 +719,14 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     }
 
     /*Создаем тэг USL по формату 2020 года*/
-    private Element createUsl(boolean isDD, String id, String lpu, String profile, String vidVme, String isChild, String startDate, String finishDate, String ds, String kolUsl, String prvs, String codeMd, BigDecimal cost) {
+    private Element createUsl(boolean isDD, String id, String lpu, String profile, String vidVme, String isChild, String startDate
+            , String finishDate, String ds, String kolUsl, String prvs, String codeMd, BigDecimal cost, String departmentAddressCode) {
         Element usl = new Element("USL");
         add(usl, "IDSERV", id);
         add(usl, "LPU", lpu);
         //  usl.addContent(new Element("LPU_1").setText(lpu1));
-        //  PODR
         if (!isDD) {
+            addIfNotNull(usl, "PODR", departmentAddressCode);
             add(usl, "PROFIL", profile);
             add(usl, "VID_VME", vidVme);
             add(usl, "DET", isChild); //Возраст на момент начала случая (<18 лет =1)

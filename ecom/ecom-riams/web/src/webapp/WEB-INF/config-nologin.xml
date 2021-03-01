@@ -1,26 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+        "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
 
 <struts-config>
-
     <form-beans>
-        <form-bean name="emptyForm" type="ru.ecom.mis.ejb.uc.privilege.form.voc.VocDrugClassifyForm" />
+        <form-bean name="emptyForm" type="ru.ecom.mis.ejb.uc.privilege.form.voc.VocDrugClassifyForm"/>
         <!--шаблоны протоколов-->
-        
     </form-beans>
-
     <global-forwards>
     </global-forwards>
-
     <action-mappings>
-
-
-
-
-
     </action-mappings>
-
-
 </struts-config>
-

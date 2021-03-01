@@ -8,61 +8,61 @@
 
 <msh:ifInRole roles="${role}">
 
-<style type="text/css">
-    #${name}ProtChangeInfoDialog {
-        visibility: hidden ;
-        display: none ;
-        position: absolute ;
-    }
-</style>
+    <style type="text/css">
+        #${name}ProtChangeInfoDialog {
+            visibility: hidden;
+            display: none;
+            position: absolute;
+        }
+    </style>
 
-<div id='${name}ProtChangeInfoDialog' class='dialog'>
-    <h2 id='${name}ProtChangeInfoTitle'>ВЫБОР ШАБЛОНА ПО УСЛУГАМ</h2>
-    <input type='hidden' name='${name}MedService' id='${name}MedService'/>
-    <div id="${name}ProtChangeRootPane" class='rootPane'>
-    	
-	</div>
-</div>
+    <div id='${name}ProtChangeInfoDialog' class='dialog'>
+        <h2 id='${name}ProtChangeInfoTitle'>ВЫБОР ШАБЛОНА ПО УСЛУГАМ</h2>
+        <input type='hidden' name='${name}MedService' id='${name}MedService'/>
+        <div id="${name}ProtChangeRootPane" class='rootPane'>
 
-<script type="text/javascript"><!--
-     var theIs${name}ProtChangeInfoDialogInitialized = false ;
-     var the${name}ProtChangeInfoDialog = new msh.widget.Dialog($('${name}ProtChangeInfoDialog')) ;
-     // Показать
-     function show${name}ProtChangeShowTemplate(aMedService) {
-         ..$('${name}ProtChangeInfoTitle').innerHTML = "ВЫБОР ДЕФЕКТА" ;
-         $('${name}List').value=aPrescipt;
-         PrescriptionService.getListTemplateBySmo($('${name}Smo').value, { 
-             callback: function(aResult) {
-             	$('${name}ProtChangeRootPane').innerHTML = aResult +"<br><input type=\"button\" value=\"Отмена\" onclick=\"cancel${name}ProtChangeInfo()\">";
-             	the${name}ProtChangeInfoDialog.show() ;
-             }
- 		}); 
-         
-     }
-     function show${name}ProtChangeCabinet(aListPrescript,aDepartment,aPrescriptType) {
-    	 
-     }
+        </div>
+    </div>
 
-     // Отмена
-     function cancel${name}ProtChangeInfo() {
-         the${name}ProtChangeInfoDialog.hide() ;
-     }
+    <script type="text/javascript">
+        var theIs${name}ProtChangeInfoDialogInitialized = false;
+        var the${name}ProtChangeInfoDialog = new msh.widget.Dialog($('${name}ProtChangeInfoDialog'));
 
-     // Сохранение данных
-     function save${name}ProtChangeInfo() {
-     	
-     }
-     
-     function save${name}ProtChange() {
-    	
- 		
-    	 
-     }
-     // инициализация диалогового окна
-     function init${name}ProtChangeInfoDialog() {
-     	
-     	theIs${name}ProtChangeInfoDialogInitialized = true ;
-     	
-     }
-</script>
+        // Показать
+        function show${name}ProtChangeShowTemplate() {
+            $('${name}ProtChangeInfoTitle').innerHTML = "ВЫБОР ДЕФЕКТА";
+            $('${name}List').value = aPrescipt;
+            PrescriptionService.getListTemplateBySmo($('${name}Smo').value, {
+                callback: function (aResult) {
+                    $('${name}ProtChangeRootPane').innerHTML = aResult + "<br><input type=\"button\" value=\"Отмена\" onclick=\"cancel${name}ProtChangeInfo()\">";
+                    the${name}ProtChangeInfoDialog.show();
+                }
+            });
+        }
+
+        function show${name}ProtChangeCabinet(aListPrescript, aDepartment, aPrescriptType) {
+
+        }
+
+        // Отмена
+        function cancel${name}ProtChangeInfo() {
+            the${name}ProtChangeInfoDialog.hide();
+        }
+
+        // Сохранение данных
+        function save${name}ProtChangeInfo() {
+
+        }
+
+        function save${name}ProtChange() {
+
+        }
+
+        // инициализация диалогового окна
+        function init${name}ProtChangeInfoDialog() {
+
+            theIs${name}ProtChangeInfoDialogInitialized = true;
+
+        }
+    </script>
 </msh:ifInRole>

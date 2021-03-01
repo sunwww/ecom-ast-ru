@@ -6,8 +6,8 @@
 
 <%@  attribute name="form" required="true" description="" %>
 
-    <msh:ifFormTypeIsView formName="${form}">
-      <msh:ifInRole roles="/Policy/Mis/MedPolicy/View,/Policy/Mis/MedCase/Stac/Ssl/Admission/Edit">
+<msh:ifFormTypeIsView formName="${form}">
+    <msh:ifInRole roles="/Policy/Mis/MedPolicy/View,/Policy/Mis/MedCase/Stac/Ssl/Admission/Edit">
         <ecom:webQuery nativeSql="select mp.id, case when (mp.DTYPE='MedPolicyOmc')
         then 'ОМС' when (mp.DTYPE='MedPolicyDmcForeign')
         then 'ДМС иногороднего' when (mp.DTYPE='MedPolicyDmc')
@@ -15,28 +15,30 @@
         ,case when mc.datesync is not null then '&#9989;' else '&#x2716;' end as actually
         from MedCase_MedPolicy as mc left join MedPolicy as mp on mp.id=mc.policies_id
         left join reg_ic as ri on ri.id=mp.company_id where mc.MedCase_id=${param.id}"
-                       name="policies" />
-          <msh:section>
-          <msh:sectionTitle>
-          <msh:link action="stac_policiesEdit.do?id=${param.id}"  >Прикрепленные полисы к случаю</msh:link>
-          </msh:sectionTitle>
-          <msh:sectionContent>
-            <msh:table name="policies" hideTitle="false" action="entitySubclassView-mis_medPolicy.do" idField="1">
-              <msh:tableColumn property="sn" columnName="#" />
-              <msh:tableColumn property="2" columnName="Тип" />
-              <msh:tableColumn property="3" columnName="Страховая компания" />
-              <msh:tableColumn property="4" columnName="Номер"/>
-              <msh:tableColumn property="5" columnName="Серия"/>
-              <msh:tableColumn property="6" columnName="Дата начала" />
-              <msh:tableColumn property="7" columnName="Дата окончания" />
-              <msh:tableColumn property="8" columnName="Проверка"/>
-            </msh:table>
-          </msh:sectionContent>
-          </msh:section>
-      </msh:ifInRole>
-      <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/View">
-      	<msh:section createRoles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/Create" createUrl="entityParentPrepareCreate-stac_criminalMessages.do?id=${param.id}" title="Сообщения в полицию">
-      		<ecom:webQuery name="milMessages" nativeSql="
+                       name="policies"/>
+        <msh:section>
+            <msh:sectionTitle>
+                <msh:link action="stac_policiesEdit.do?id=${param.id}">Прикрепленные полисы к случаю</msh:link>
+            </msh:sectionTitle>
+            <msh:sectionContent>
+                <msh:table name="policies" hideTitle="false" action="entitySubclassView-mis_medPolicy.do" idField="1">
+                    <msh:tableColumn property="sn" columnName="#"/>
+                    <msh:tableColumn property="2" columnName="Тип"/>
+                    <msh:tableColumn property="3" columnName="Страховая компания"/>
+                    <msh:tableColumn property="4" columnName="Номер"/>
+                    <msh:tableColumn property="5" columnName="Серия"/>
+                    <msh:tableColumn property="6" columnName="Дата начала"/>
+                    <msh:tableColumn property="7" columnName="Дата окончания"/>
+                    <msh:tableColumn property="8" columnName="Проверка"/>
+                </msh:table>
+            </msh:sectionContent>
+        </msh:section>
+    </msh:ifInRole>
+    <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/View">
+        <msh:section createRoles="/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage/Create"
+                     createUrl="entityParentPrepareCreate-stac_criminalMessages.do?id=${param.id}"
+                     title="Сообщения в полицию">
+            <ecom:webQuery name="milMessages" nativeSql="
       		    select pm.id, pm.phoneDate
     ,vpht.name||coalesce(' '||vpmst.name,'')
     ,to_char(pm.whenDateEventOccurred,'dd.mm.yyyy')||' '||cast(pm.whenTimeEventOccurred as varchar(5)) as whenevent
@@ -66,24 +68,25 @@
     and pm.medCase_id=${param.id}
     order by pm.phoneDate
       		"/>
-      		<msh:table name="milMessages" 
-      		viewUrl="entityShortView-stac_criminalMessages.do"
-      		action="entityParentView-stac_criminalMessages.do" idField="1">
-      			<msh:tableColumn columnName="Дата" property="2" />
-      <msh:tableColumn property="9" columnName="Пациент"/>
-      <msh:tableColumn columnName="Тип" property="3" />
-      <msh:tableColumn columnName="Когда" property="4" />
-      <msh:tableColumn columnName="Место" property="5" />
-      <msh:tableColumn columnName="Фамилия принявшего" property="6" />
-      <msh:tableColumn columnName="Фамилия передавшего" property="8" />
-      <msh:tableColumn columnName="Диагноз" property="11" />
-      <msh:tableColumn columnName="Исход" property="7" />
-      		</msh:table>
-      	</msh:section>
-      </msh:ifInRole>
-      <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View">
-        <msh:section title="Движения по отделениям. <a href='entityParentPrepareCreate-stac_slo.do?id=${param.id }'>Добавить новый случай лечения в отделении</a>">
-          <ecom:webQuery  name="allSLOs" nativeSql="select MedCase.id
+            <msh:table name="milMessages"
+                       viewUrl="entityShortView-stac_criminalMessages.do"
+                       action="entityParentView-stac_criminalMessages.do" idField="1">
+                <msh:tableColumn columnName="Дата" property="2"/>
+                <msh:tableColumn property="9" columnName="Пациент"/>
+                <msh:tableColumn columnName="Тип" property="3"/>
+                <msh:tableColumn columnName="Когда" property="4"/>
+                <msh:tableColumn columnName="Место" property="5"/>
+                <msh:tableColumn columnName="Фамилия принявшего" property="6"/>
+                <msh:tableColumn columnName="Фамилия передавшего" property="8"/>
+                <msh:tableColumn columnName="Диагноз" property="11"/>
+                <msh:tableColumn columnName="Исход" property="7"/>
+            </msh:table>
+        </msh:section>
+    </msh:ifInRole>
+    <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View">
+        <msh:section
+                title="Движения по отделениям. <a href='entityParentPrepareCreate-stac_slo.do?id=${param.id }'>Добавить новый случай лечения в отделении</a>">
+            <ecom:webQuery name="allSLOs" nativeSql="select MedCase.id
           , MedCase.dateStart as mdateStart 
           , postDep.Name as mdepartment      
           , MedCase.transferDate as mtransferDate
@@ -120,35 +123,36 @@
                left join VocBedSubType on VocBedSubType.id = BedFund.bedSubType_id 
                where MedCase.parent_id=${param.id}   and upper(MedCase.DTYPE)='DEPARTMENTMEDCASE'
                order by MedCase.dateStart,MedCase.entranceTime
-               " />
-          <msh:table name="allSLOs" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1">
-            <msh:tableNotEmpty>
-              <tr>
-                <th colspan="1" />
-                <th colspan="7" class="rightBold">Поступление</th>
-                <th colspan="3" class="rightBold">Перевод</th>
-                <th colspan="2" class="rightBold">Выписка</th>
-                <th colspan="1" />
-              </tr>
-            </msh:tableNotEmpty>
-              <msh:tableColumn property="sn" columnName="#" />
-            <msh:tableColumn columnName="Дата" property="2" />
-            <msh:tableColumn columnName="Время" property="10" />
-            <msh:tableColumn columnName="Отделение" property="3" cssClass="rightBold" />
-            <msh:tableColumn columnName="Поток" property="13" cssClass="rightBold" />
-            <msh:tableColumn property="8" columnName="Леч. врач"/>
-            <msh:tableColumn property="7" columnName="Стандарт"/>
-            <msh:tableColumn columnName="Дата" property="4" />
-            <msh:tableColumn columnName="Время" property="11" />
-            <msh:tableColumn columnName="Отделение" property="5" cssClass="rightBold" />
-            <msh:tableColumn columnName="Дата" property="6" />
-            <msh:tableColumn columnName="Время" property="12" />
-            <msh:tableColumn columnName="Койко-дни" property="9" />
-          </msh:table>
+               "/>
+            <msh:table name="allSLOs" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do"
+                       idField="1">
+                <msh:tableNotEmpty>
+                    <tr>
+                        <th colspan="1"/>
+                        <th colspan="7" class="rightBold">Поступление</th>
+                        <th colspan="3" class="rightBold">Перевод</th>
+                        <th colspan="2" class="rightBold">Выписка</th>
+                        <th colspan="1"/>
+                    </tr>
+                </msh:tableNotEmpty>
+                <msh:tableColumn property="sn" columnName="#"/>
+                <msh:tableColumn columnName="Дата" property="2"/>
+                <msh:tableColumn columnName="Время" property="10"/>
+                <msh:tableColumn columnName="Отделение" property="3" cssClass="rightBold"/>
+                <msh:tableColumn columnName="Поток" property="13" cssClass="rightBold"/>
+                <msh:tableColumn property="8" columnName="Леч. врач"/>
+                <msh:tableColumn property="7" columnName="Стандарт"/>
+                <msh:tableColumn columnName="Дата" property="4"/>
+                <msh:tableColumn columnName="Время" property="11"/>
+                <msh:tableColumn columnName="Отделение" property="5" cssClass="rightBold"/>
+                <msh:tableColumn columnName="Дата" property="6"/>
+                <msh:tableColumn columnName="Время" property="12"/>
+                <msh:tableColumn columnName="Койко-дни" property="9"/>
+            </msh:table>
         </msh:section>
-      </msh:ifInRole>
-      <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/View">
-          <ecom:webQuery name="allSurgOper" nativeSql="select so.id
+    </msh:ifInRole>
+    <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/View">
+        <ecom:webQuery name="allSurgOper" nativeSql="select so.id
           ,so.operationDate as sooperationDate
           ,so.operationTime as soperationTime
           ,ms.code||' '||ms.name as voname
@@ -166,25 +170,25 @@
           and  (so.medCase_id in (select id from medcase  where  parent_id=(select parent_id from medcase where id=${param.id} )) or so.medCase_id=(select parent_id from medcase where id=${param.id} )) ) or ('HospitalMedCase'=(select DTYPE from medcase where id=${param.id}) and  (so.medCase_id in (select id from medcase  where  parent_id=${param.id}) or so.medCase_id=${param.id}) )
           order by so.operationDate
           "/>
-    <msh:tableNotEmpty name="allSurgOper">
-	    <msh:section title="Просмотр всех хир.операций по СЛС, включая все СЛО">
-	    	<msh:table name="allSurgOper" 
-	    	action="entityParentView-stac_surOperation.do" idField="1">
-	    		<msh:tableColumn columnName="#" property="sn"/>
-	    		<msh:tableColumn columnName="Отделение" property="5"/>
-	    		<msh:tableColumn columnName="Дата" property="2"/>
-	    		<msh:tableColumn columnName="Время" property="3"/>
-	    		<msh:tableColumn columnName="Операция" property="4"/>
-	    		<msh:tableColumn columnName="Хирург" property="6"/>
-	    	</msh:table>
-	    </msh:section>
-    </msh:tableNotEmpty>
-      
-      
-      </msh:ifInRole>
-      
-     <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/HitechMedCase/View">
-          <ecom:webQuery name="hitechCases" nameFldSql="hitechCases_sql" nativeSql="select himc.id
+        <msh:tableNotEmpty name="allSurgOper">
+            <msh:section title="Просмотр всех хир.операций по СЛС, включая все СЛО">
+                <msh:table name="allSurgOper"
+                           action="entityParentView-stac_surOperation.do" idField="1">
+                    <msh:tableColumn columnName="#" property="sn"/>
+                    <msh:tableColumn columnName="Отделение" property="5"/>
+                    <msh:tableColumn columnName="Дата" property="2"/>
+                    <msh:tableColumn columnName="Время" property="3"/>
+                    <msh:tableColumn columnName="Операция" property="4"/>
+                    <msh:tableColumn columnName="Хирург" property="6"/>
+                </msh:table>
+            </msh:section>
+        </msh:tableNotEmpty>
+
+
+    </msh:ifInRole>
+
+    <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/HitechMedCase/View">
+        <ecom:webQuery name="hitechCases" nameFldSql="hitechCases_sql" nativeSql="select himc.id
           ,to_char(himc.ticketDate,'dd.mm.yyyy') as f2_ticketDate
           ,to_char(himc.planHospDate,'dd.mm.yyyy') as f3_planHospDate
           ,coalesce(vkhc1.code ||' '||vkhc1.name,vkhc2.code ||' '||vkhc2.name) as f4_kind
@@ -200,21 +204,21 @@
           slo.parent_id=${param.id} and slo.dtype='DepartmentMedCase'  and coalesce(vkhc1.id, vkhc2.id) is not null
           order by himc.ticketDate
           "/>
-	    <msh:section title="Случаи ВМП (включая случаи в СЛО) ">
-	    	<msh:table
-	    	editUrl="entityParentEdit-stac_vmpCase.do"  
-	    	name="hitechCases" action="entityParentView-stac_vmpCase.do" idField="1">
-	    		<msh:tableColumn columnName="#" property="sn"/>
-	    		<msh:tableColumn columnName="Номер талона" property="6"/>
-	    		<msh:tableColumn columnName="Дата направления" property="2"/>
-	    		<msh:tableColumn columnName="Дата предварительной госпитализации" property="3"/>
-	    		<msh:tableColumn columnName="Вид" property="4"/>
-	    		<msh:tableColumn columnName="Метод" property="5"/>
-	    	</msh:table>
-	    </msh:section>
+        <msh:section title="Случаи ВМП (включая случаи в СЛО) ">
+            <msh:table
+                    editUrl="entityParentEdit-stac_vmpCase.do"
+                    name="hitechCases" action="entityParentView-stac_vmpCase.do" idField="1">
+                <msh:tableColumn columnName="#" property="sn"/>
+                <msh:tableColumn columnName="Номер талона" property="6"/>
+                <msh:tableColumn columnName="Дата направления" property="2"/>
+                <msh:tableColumn columnName="Дата предварительной госпитализации" property="3"/>
+                <msh:tableColumn columnName="Вид" property="4"/>
+                <msh:tableColumn columnName="Метод" property="5"/>
+            </msh:table>
+        </msh:section>
     </msh:ifInRole>
-        <msh:ifInRole roles="/Policy/Mis/Journal/CheckDiabetes">
-            <ecom:webQuery name="asCard" nativeSql="  select ac.id, act.name, to_char(ac.startDate,'dd.MM.yyyy') as priemDate
+    <msh:ifInRole roles="/Policy/Mis/Journal/CheckDiabetes">
+        <ecom:webQuery name="asCard" nativeSql="  select ac.id, act.name, to_char(ac.startDate,'dd.MM.yyyy') as priemDate
                   ,ac.ballsum as f4_ballsum
                   ,ass.name as risk
                   from assessmentCard ac
@@ -222,23 +226,25 @@
                   left join assessment ass on ass.assessmentcard=ac.id
                   where ac.medcase_id=${param.id} and act.code='checkDiabetes'
                 order by ac.startDate desc"/>
-            <msh:section>
-                <msh:sectionTitle>
-                    Риск развития сахарного диабета
-                    <msh:ifInRole roles="/Policy/Mis/AssessmentCard/Create"><a href="javascript:goCreateAssessmentCard('checkDiabetes')">Добавить карту оценки</a></msh:ifInRole>
-                </msh:sectionTitle>
-                <msh:sectionContent>
-                    <msh:table name="asCard" action="entityParentView-mis_assessmentCard.do" idField="1">
-                        <msh:tableColumn columnName="Название" property="2" />
-                        <msh:tableColumn columnName="Дата приема" property="3" />
-                        <msh:tableColumn columnName="Сумма баллов" property="4" />
-                        <msh:tableColumn columnName="Риск" property="5" />
-                    </msh:table>
-                </msh:sectionContent>
-            </msh:section>
-        </msh:ifInRole>
-      <msh:ifInRole roles="/Policy/Mis/MedCase/Diagnosis/View,/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/View">
-         <ecom:webQuery name="diags" nativeSql="
+        <msh:section>
+            <msh:sectionTitle>
+                Риск развития сахарного диабета
+                <msh:ifInRole roles="/Policy/Mis/AssessmentCard/Create"><a
+                        href="javascript:goCreateAssessmentCard('checkDiabetes')">Добавить карту
+                    оценки</a></msh:ifInRole>
+            </msh:sectionTitle>
+            <msh:sectionContent>
+                <msh:table name="asCard" action="entityParentView-mis_assessmentCard.do" idField="1">
+                    <msh:tableColumn columnName="Название" property="2"/>
+                    <msh:tableColumn columnName="Дата приема" property="3"/>
+                    <msh:tableColumn columnName="Сумма баллов" property="4"/>
+                    <msh:tableColumn columnName="Риск" property="5"/>
+                </msh:table>
+            </msh:sectionContent>
+        </msh:section>
+    </msh:ifInRole>
+    <msh:ifInRole roles="/Policy/Mis/MedCase/Diagnosis/View,/Policy/Mis/MedCase/Stac/Ssl/Diagnosis/View">
+        <ecom:webQuery name="diags" nativeSql="
          select d.id as did, VocDiagnosisRegistrationType.name as vdrtname
          ,d.establishDate as establishDate
          ,d.name as dname,VocIdc10.code as mkbcode
@@ -254,26 +260,28 @@
          left join worker w on w.id=wf.worker_id
          left join patient wpat on wpat.id=w.person_id
          left join vocworkfunction vwf on vwf.id=wf.workfunction_id
-         where d.medCase_id=${param.id}" />
-        <msh:section createRoles="/Policy/Mis/MedCase/Diagnosis/Create" createUrl="entityParentPrepareCreate-stac_diagnosis.do?id=${param.id }"
-         title="Диагнозы" >
-          <msh:table name="diags" action="entityParentView-stac_diagnosis.do" idField="1">
-              <msh:tableColumn property="sn" columnName="#" />
-            <msh:tableColumn columnName="Тип регистрации" property="2" />
-            <msh:tableColumn columnName="Приоритет" property="6" />
-            <msh:tableColumn columnName="Дата" property="3" />
-            <msh:tableColumn columnName="Наименование" property="4" />
-            <msh:tableColumn columnName="Код МКБ" property="5" />
-            <msh:tableColumn columnName="Фоновое заболевание" property="7" />
-            <msh:tableColumn columnName="Установил" property="8" />
-          </msh:table>
+         where d.medCase_id=${param.id}"/>
+        <msh:section createRoles="/Policy/Mis/MedCase/Diagnosis/Create"
+                     createUrl="entityParentPrepareCreate-stac_diagnosis.do?id=${param.id }"
+                     title="Диагнозы">
+            <msh:table name="diags" action="entityParentView-stac_diagnosis.do" idField="1">
+                <msh:tableColumn property="sn" columnName="#"/>
+                <msh:tableColumn columnName="Тип регистрации" property="2"/>
+                <msh:tableColumn columnName="Приоритет" property="6"/>
+                <msh:tableColumn columnName="Дата" property="3"/>
+                <msh:tableColumn columnName="Наименование" property="4"/>
+                <msh:tableColumn columnName="Код МКБ" property="5"/>
+                <msh:tableColumn columnName="Фоновое заболевание" property="7"/>
+                <msh:tableColumn columnName="Установил" property="8"/>
+            </msh:table>
         </msh:section>
-      </msh:ifInRole>
-      <msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/View,/Policy/Mis/MedCase/Stac/Ssl/Protocol/View">
-      	<msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View,/Policy/Mis/MedCase/Stac/Ssl/Protocol/ViewForDeniedHospitalization">
-      	</msh:ifInRole>
-      		<msh:section>
-		          <ecom:webQuery name="protocols" nativeSql="select p.id as pid
+    </msh:ifInRole>
+    <msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/View,/Policy/Mis/MedCase/Stac/Ssl/Protocol/View">
+        <msh:ifInRole
+                roles="/Policy/Mis/MedCase/Protocol/View,/Policy/Mis/MedCase/Stac/Ssl/Protocol/ViewForDeniedHospitalization">
+        </msh:ifInRole>
+        <msh:section>
+            <ecom:webQuery name="protocols" nativeSql="select p.id as pid
 		          ,p.dateRegistration as pdateregistration,p.timeRegistration as ptimeRegistration
 		          ,p.record as precord
 		          ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
@@ -285,36 +293,41 @@
 		           and m.deniedHospitalizating_id is not null
 		           order by p.dateRegistration desc, p.timeRegistration desc
 		           "/>
-		           <msh:tableNotEmpty name="protocols">
-		            <msh:sectionTitle>
-		        	Дневник специалиста
-			        </msh:sectionTitle>
-			        <msh:sectionContent>
-			          <msh:table hideTitle="false" disableKeySupport="false" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do" disabledGoFirst="false" disabledGoLast="false">
-			              <msh:tableColumn property="sn" columnName="#"/>
-					      <msh:tableColumn columnName="Дата" property="2" />
-					      <msh:tableColumn columnName="Время" property="3" />
-					      <msh:tableColumn columnName="Текст" property="4" cssClass="preCell"/>
-					      <msh:tableColumn columnName="Специалист" property="5" />
-				     </msh:table>
-				     </msh:sectionContent>
-				     </msh:tableNotEmpty>
-		        </msh:section>
-      	
-      </msh:ifNotInRole>
-      <msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View,/Policy/Mis/MedCase/Stac/Ssl/Protocol/View">
+            <msh:tableNotEmpty name="protocols">
+                <msh:sectionTitle>
+                    Дневник специалиста
+                </msh:sectionTitle>
+                <msh:sectionContent>
+                    <msh:table hideTitle="false" disableKeySupport="false" idField="1" name="protocols"
+                               action="entityParentView-smo_visitProtocol.do" disabledGoFirst="false"
+                               disabledGoLast="false">
+                        <msh:tableColumn property="sn" columnName="#"/>
+                        <msh:tableColumn columnName="Дата" property="2"/>
+                        <msh:tableColumn columnName="Время" property="3"/>
+                        <msh:tableColumn columnName="Текст" property="4" cssClass="preCell"/>
+                        <msh:tableColumn columnName="Специалист" property="5"/>
+                    </msh:table>
+                </msh:sectionContent>
+            </msh:tableNotEmpty>
+        </msh:section>
+
+    </msh:ifNotInRole>
+    <msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/View,/Policy/Mis/MedCase/Stac/Ssl/Protocol/View">
         <msh:section>
-        <msh:sectionTitle>
-        	Дневник специалиста<span style="color: purple;"> ПРИЕМНОГО ОТДЕЛЕНИЯ</span>. 
-        		<msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/CreateOnlyInMedService">
-        			<msh:ifInRole roles="/Policy/Mis/MedCase/Protocol/Create,/Policy/Mis/MedCase/Stac/Ssl/Protocol/Create">
-		        		<a href='entityParentPrepareCreate-smo_visitProtocol.do?id=${param.id}'> Добавить новый дневник специалиста ПРИЕМНОГО ОТДЕЛЕНИЯ</a>
-                        <a href="printProtocolsBySLS.do?id=${param.id}&medcase=${param.id}">Печать дневников приемного отделения</a>
-        			</msh:ifInRole>
-        		</msh:ifNotInRole>
-        </msh:sectionTitle>
-        <msh:sectionContent>
-          <ecom:webQuery name="protocols" nativeSql="select p.id as pid
+            <msh:sectionTitle>
+                Дневник специалиста<span style="color: purple;"> ПРИЕМНОГО ОТДЕЛЕНИЯ</span>.
+                <msh:ifNotInRole roles="/Policy/Mis/MedCase/Protocol/CreateOnlyInMedService">
+                    <msh:ifInRole
+                            roles="/Policy/Mis/MedCase/Protocol/Create,/Policy/Mis/MedCase/Stac/Ssl/Protocol/Create">
+                        <a href='entityParentPrepareCreate-smo_visitProtocol.do?id=${param.id}'> Добавить новый дневник
+                            специалиста ПРИЕМНОГО ОТДЕЛЕНИЯ</a>
+                        <a href="printProtocolsBySLS.do?id=${param.id}&medcase=${param.id}">Печать дневников приемного
+                            отделения</a>
+                    </msh:ifInRole>
+                </msh:ifNotInRole>
+            </msh:sectionTitle>
+            <msh:sectionContent>
+                <ecom:webQuery name="protocols" nativeSql="select p.id as pid
           ,p.dateRegistration as pdateregistration,p.timeRegistration as ptimeRegistration
           ,p.record as precord
           ,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename as doctor
@@ -323,14 +336,16 @@
            left join vocworkfunction vwf on vwf.id=wf.workfunction_id 
            where p.medcase_id=${param.id} and p.dtype='Protocol'
             order by p.dateRegistration desc, p.timeRegistration desc"/>
-          <msh:table hideTitle="false" disableKeySupport="false" idField="1" name="protocols" action="entityParentView-smo_visitProtocol.do" disabledGoFirst="false" disabledGoLast="false">
-              <msh:tableColumn property="sn" columnName="#"/>
-		      <msh:tableColumn columnName="Дата" property="2" />
-		      <msh:tableColumn columnName="Время" property="3" />
-		      <msh:tableColumn columnName="Текст" property="4" cssClass="preCell"/>
-		      <msh:tableColumn columnName="Специалист" property="5" />
-	     </msh:table>
-	     </msh:sectionContent>
+                <msh:table hideTitle="false" disableKeySupport="false" idField="1" name="protocols"
+                           action="entityParentView-smo_visitProtocol.do" disabledGoFirst="false"
+                           disabledGoLast="false">
+                    <msh:tableColumn property="sn" columnName="#"/>
+                    <msh:tableColumn columnName="Дата" property="2"/>
+                    <msh:tableColumn columnName="Время" property="3"/>
+                    <msh:tableColumn columnName="Текст" property="4" cssClass="preCell"/>
+                    <msh:tableColumn columnName="Специалист" property="5"/>
+                </msh:table>
+            </msh:sectionContent>
         </msh:section>
-      </msh:ifInRole>
-    </msh:ifFormTypeIsView>
+    </msh:ifInRole>
+</msh:ifFormTypeIsView>
