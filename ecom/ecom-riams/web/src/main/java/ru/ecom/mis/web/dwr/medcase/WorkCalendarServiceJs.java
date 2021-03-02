@@ -375,7 +375,8 @@ public class WorkCalendarServiceJs {
                 .append(" left join WorkCalendar wc1 on wfGr.id=wc1.workFunction_id")
                 .append(" left join VocWorkFunction vwf on vwf.id=wf1.workFunction_id")
                 .append(" left join patient wp on wp.id=w1.person_id ")
-                .append("where su.login='").append(username).append("' and wc1.id is not null ");
+                .append("where su.login='").append(username).append("' and wc1.id is not null ")
+                .append(" and (wfgr.IsCreateDIrectionWithoutService is null or wfgr.IsCreateDIrectionWithoutService=false)"); //платная лаб.
         Collection<WebQueryResult> list1 = service.executeNativeSql(sql.toString());
         if (!list1.isEmpty()) list.addAll(list1);
         if (anyWFadd) {
