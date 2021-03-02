@@ -36,7 +36,10 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import java.io.*;
 import java.sql.Date;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import static ru.nuzmsh.util.EqualsUtil.isEquals;
 import static ru.nuzmsh.util.EqualsUtil.isOneOf;
@@ -383,7 +386,7 @@ public class AddressPointServiceBean implements IAddressPointService {
             } catch (ParseException e) {
                 currentDate = "";
             }
-            filename = "MO2" + reestrNum + currentDate + (smoCode == null ? "" : smoCode);
+            filename = "MO2" + reestrNum + currentDate;
         }
         return filename;
     }
