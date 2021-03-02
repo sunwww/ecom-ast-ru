@@ -281,25 +281,26 @@ public class Expert2ServiceJs {
                             replaceFieldByError(entryListId, errorCode, fldName.equals("SNILS_REPLACE_STRING") ? "SNILS_DOCTOR" : "MEDSERVICE_CODE", stringFrom, stringTo, request);
                         }
                     } else {
-                        replaceString=new String[0];
+                        replaceString = new String[0];
                     }
                     return fldName + " заменены: " + Arrays.toString(replaceString);
                 } catch (Exception e) {
                     return "Не удалось заменить " + fldName + " = " + e;
                 }
             case "DEPARTMENT_BY_SERVICE":
-                WebQueryResult wqr = getConfigString(fldName, request); //profileCode:depCode, profileCode:depCode
+                WebQueryResult wqr = getConfigString(fldName, request); //profileCode:newDepCode:oldDepCode, profileCode:newDepCode:oldDepCode
                 if (wqr != null) {
                     String con = wqr.get1().toString();
                     String[] configs = con.split(",");
                     for (String config : configs) {
-                        String[] pair = config.trim().split(":");
-                        String profileCode = pair[0];
-                        String departmentCode = pair[1];
+                        String[] triple = config.trim().split(":");
+                        String profileCode = triple[0];
+                        String newDepartmentCode = triple[1];
+                        String oldDepartmentCode = triple.length > 2 ? triple[2] : null;
                         service.executeUpdateNativeSql("update e2entry e set departmentCode = '" +
-                                departmentCode + "' where listEntry_id=" +
+                                newDepartmentCode + "' where listEntry_id=" +
                                 entryListId + " and medhelpprofile_id=(select max(id) from voce2medhelpprofile where code ='" +
-                                profileCode + "')");
+                                profileCode + "')" + (oldDepartmentCode == null ? "" : " and departmentCode='" + oldDepartmentCode + "'"));
                     }
                     return "Всё заменено согласно настройкам: " + con;
                 }
