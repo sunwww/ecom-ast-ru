@@ -258,7 +258,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     for (Element profil : profiles) {
                         String key = zap.getChildText("LPU_1") + "#" + profil.getChildText("PROFIL");
                         if (!addresses.containsKey(key)) {
-                            addresses.put(key, zap.getChildText("ADDR_CODE"));
+                            addresses.put(key, zap.getChildText("PODR"));
                         }
                     }
                 }
