@@ -3,21 +3,24 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainShortLayout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/mainShortLayout.jsp" flush="true">
 
-  <tiles:put name="title" type="string">
-  	<ecom:titleTrail mainMenu="Patient" beginForm="mis_patientForm" title="Список направлений, сделанных за текущее число"/>
-  </tiles:put>
-  <tiles:put name="side" type="string">
-    <msh:sideMenu title="Добавить">
-      <msh:sideLink roles="/Policy/Mis/MedCase/Direction/Create" key="ALT+N" action="/entityPrepareCreate-smo_direction" name="Направление" />
-    </msh:sideMenu>
-  </tiles:put>
-  <tiles:put name="body" type="string">
-  	<a href="print-begunok.do?s=SmoVisitService&amp;m=printDirectionByPatient&patientId=${param.id}" target="_blank">бегунок</a>
-  
-  <msh:section title="Список, сделанных сегодня направлений">
-  	<ecom:webQuery name="list" nativeSql="
+    <tiles:put name="title" type="string">
+        <ecom:titleTrail mainMenu="Patient" beginForm="mis_patientForm"
+                         title="Список направлений, сделанных за текущее число"/>
+    </tiles:put>
+    <tiles:put name="side" type="string">
+        <msh:sideMenu title="Добавить">
+            <msh:sideLink roles="/Policy/Mis/MedCase/Direction/Create" key="ALT+N"
+                          action="/entityPrepareCreate-smo_direction" name="Направление"/>
+        </msh:sideMenu>
+    </tiles:put>
+    <tiles:put name="body" type="string">
+        <a href="print-begunok.do?s=SmoVisitService&amp;m=printDirectionByPatient&patientId=${param.id}"
+           target="_blank">бегунок</a>
+
+        <msh:section title="Список сделанных сегодня направлений">
+            <ecom:webQuery name="list" nativeSql="
   	select d.id
   		,to_char(wcd.calendarDate,'dd.mm.yyyy'),cast(wct.timeFrom as varchar(5))
   		,vwf.name as vwfname,ml.name as mlname
@@ -35,23 +38,23 @@
   	 
   	where d.dtype='Visit' and patient_id='${param.id}' and d.createDate=CURRENT_DATE
   	"/>
-    <msh:table name="list" action="entityView-smo_direction.do" idField="1"
-    viewUrl="entityShortView-smo_direction.do" 
-    deleteUrl="entityParentDeleteGoParentView-smo_direction.do" 
-    editUrl="entityParentEdit-smo_direction.do"
-    >
-      <msh:tableColumn columnName="Принят?" property="8"/>
-      <msh:tableColumn columnName="Дата" property="2" />
-      <msh:tableColumn columnName="Время" property="3" />
-      <msh:tableColumn columnName="Специалист" property="4" />
-      <msh:tableColumn columnName="ФИО специалиста" property="6" />
-      <msh:tableColumn columnName="Направитель (внеш.ЛПУ)" property="5" />
-      <msh:tableColumn columnName="Создал" property="7" />
-    </msh:table>
-  </msh:section>
-  
-  <msh:section title="Список предварительных записей по пациенту">
-  	<ecom:webQuery name="listPre" nativeSql="
+            <msh:table name="list" action="entityView-smo_direction.do" idField="1"
+                       viewUrl="entityShortView-smo_direction.do"
+                       deleteUrl="entityParentDeleteGoParentView-smo_direction.do"
+                       editUrl="entityParentEdit-smo_direction.do"
+            >
+                <msh:tableColumn columnName="Принят?" property="8"/>
+                <msh:tableColumn columnName="Дата" property="2"/>
+                <msh:tableColumn columnName="Время" property="3"/>
+                <msh:tableColumn columnName="Специалист" property="4"/>
+                <msh:tableColumn columnName="ФИО специалиста" property="6"/>
+                <msh:tableColumn columnName="Направитель (внеш.ЛПУ)" property="5"/>
+                <msh:tableColumn columnName="Создал" property="7"/>
+            </msh:table>
+        </msh:section>
+
+        <msh:section title="Список предварительных записей по пациенту">
+            <ecom:webQuery name="listPre" nativeSql="
   	select wct.prepatient_id||'&time='||wct.id as id,to_char(wcd.calendarDate,'dd.mm.yyyy'),cast(wct.timeFrom as varchar(5))
   		,vwf.name as vwfname,ml.name as mlname
   		,wp.lastname||' '||wp.firstname||' '||wp.middlename as fiospec
@@ -67,20 +70,20 @@
   	and wcd.calendarDate>=CURRENT_DATE
 
   	"/>
-    <msh:table name="listPre" action="entityParentPrepareCreate-smo_direction.do" idField="1"
-    >
-      <msh:tableColumn columnName="Дата" property="2" />
-      <msh:tableColumn columnName="Время" property="3" />
-      <msh:tableColumn columnName="Специалист" property="4" />
-      <msh:tableColumn columnName="ФИО специалиста" property="6" />
-      <msh:tableColumn property="5" columnName="ЛПУ"/>
-     </msh:table>
-  
-  
-  </msh:section>
-  
-  <msh:section title="Список активных направлений">
-  	<ecom:webQuery name="list" nativeSql="
+            <msh:table name="listPre" action="entityParentPrepareCreate-smo_direction.do" idField="1"
+            >
+                <msh:tableColumn columnName="Дата" property="2"/>
+                <msh:tableColumn columnName="Время" property="3"/>
+                <msh:tableColumn columnName="Специалист" property="4"/>
+                <msh:tableColumn columnName="ФИО специалиста" property="6"/>
+                <msh:tableColumn property="5" columnName="ЛПУ"/>
+            </msh:table>
+
+
+        </msh:section>
+
+        <msh:section title="Список активных направлений">
+            <ecom:webQuery name="list" nativeSql="
   	select d.id,to_char(wcd.calendarDate,'dd.mm.yyyy'),cast(wct.timeFrom as varchar(5))
   		,vwf.name as vwfname,ml.name as mlname
   		,wp.lastname||' '||wp.firstname||' '||wp.middlename
@@ -100,19 +103,18 @@
   	
   	
   	"/>
-    <msh:table name="list" action="entityView-smo_direction.do" idField="1"
-    viewUrl="entityShortView-smo_direction.do" 
-    deleteUrl="entityParentDeleteGoParentView-smo_direction.do" 
-    editUrl="entityParentEdit-smo_direction.do"
-    >
-      <msh:tableColumn columnName="Дата" property="2" />
-      <msh:tableColumn columnName="Время" property="3" />
-      <msh:tableColumn columnName="Специалист" property="4" />
-      <msh:tableColumn columnName="ФИО специалиста" property="6" />
-      <msh:tableColumn columnName="Направитель (внеш.ЛПУ)" property="5" />
-      <msh:tableColumn columnName="Создал" property="7" />
-    </msh:table>
-  </msh:section>
-  </tiles:put>
+            <msh:table name="list" action="entityView-smo_direction.do" idField="1"
+                       viewUrl="entityShortView-smo_direction.do"
+                       deleteUrl="entityParentDeleteGoParentView-smo_direction.do"
+                       editUrl="entityParentEdit-smo_direction.do"
+            >
+                <msh:tableColumn columnName="Дата" property="2"/>
+                <msh:tableColumn columnName="Время" property="3"/>
+                <msh:tableColumn columnName="Специалист" property="4"/>
+                <msh:tableColumn columnName="ФИО специалиста" property="6"/>
+                <msh:tableColumn columnName="Направитель (внеш.ЛПУ)" property="5"/>
+                <msh:tableColumn columnName="Создал" property="7"/>
+            </msh:table>
+        </msh:section>
+    </tiles:put>
 </tiles:insert>
-
