@@ -2119,7 +2119,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                         sb.append(",");
                     }
                     sb.append("'").append(d).append("'");
-                    char mkbClass = sb.charAt(0);
+                    char mkbClass = d.charAt(0);
                     int mkbNum = Integer.parseInt(d.substring(1, 3));
                     if ((mkbClass == 'C' && mkbNum < 97) || (mkbClass == 'D' && (mkbNum < 10 || mkbNum > 44 && mkbNum < 48))) {
                         cancerDiagnosis = d;

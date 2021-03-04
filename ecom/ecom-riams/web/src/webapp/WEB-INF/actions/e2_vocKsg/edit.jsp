@@ -62,7 +62,7 @@
         </msh:section>
 
         <ecom:webQuery name="ksgPositionList" nativeSql="
-        select p.code, p.mainMkb, p.anothermkb , p.servicecode , p.doppriznak , p.sex, p.duration from grouperksgposition p where ksgvalue_id =${param.id}
+        select p.code, p.mainMkb, p.anothermkb , p.servicecode , p.doppriznak , p.sex, p.duration as f7, p.age as f8 from grouperksgposition p where ksgvalue_id =${param.id}
   order by id desc "/>
         <msh:section title='Группировщик по КСГ '>
             <msh:table name="ksgPositionList" printToExcelButton="в excel" action="/javascript:void()" idField="1" >
@@ -72,6 +72,7 @@
                 <msh:tableColumn property="4" columnName="Услуга" />
                 <msh:tableColumn property="5" columnName="доп критерий" />
                 <msh:tableColumn property="6" columnName="Пол" />
+                <msh:tableColumn property="8" columnName="Возраст" />
                 <msh:tableColumn property="7" columnName="Длительность" />
             </msh:table>
         </msh:section>
