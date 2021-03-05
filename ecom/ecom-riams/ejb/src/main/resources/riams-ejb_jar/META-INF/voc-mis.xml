@@ -608,6 +608,17 @@
         />
     </voc>
 
+    <voc id="vocIVL" type="NativeVocService">
+        <NativeVocService
+                from="MedService ms"
+                nameId="ms.id"
+                queryAppend="vip.code='ИВЛ'"
+                join=" left join vocColorIdentityPatient vip on vip.id=ms.vocColorIdentity_id  " order=""
+                names="ms.code||' '|| ms.name"
+                queried=" upper(ms.name) like upper(:query) or upper(ms.code) like upper(:query) "
+        />
+    </voc>
+
     <voc id='serviceWorkFunction' type='NativeVocService'>
         <NativeVocService
                 from='WorkFunction as wf '
