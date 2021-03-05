@@ -1,7 +1,9 @@
 package ru.ecom.mis.ejb.service.addresspoint;
 
+import com.opencsv.CSVWriter;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvBeanIntrospectionException;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import org.apache.log4j.Logger;
@@ -67,9 +69,9 @@ public class AddressPointServiceBean implements IAddressPointService {
     private @PersistenceContext
     EntityManager entityManager;
 
-  /*  public static void main(String[] args) {
+    /* public static void main(String[] args) {
         AddressPointServiceBean bean = new AddressPointServiceBean();
-        bean.createCsv("d:/java/", "123", bean.makeTest());
+        bean.createCsv("d:/java/", "123", bean.makeTest(), "301234");
     }*/
 
     @Override
@@ -418,7 +420,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         if (isEquals(fileType, "xml")) {
             createXml(workDir, filename, aPeriodByReestr, regNumber, listPat, aProps, "ZAP");
         } else if (isEquals(fileType, "csv")) {
-            createCsv(workDir, filename, listPat);
+            createCsv(workDir, filename, listPat, regNumber);
         }
     }
 
@@ -428,26 +430,25 @@ public class AddressPointServiceBean implements IAddressPointService {
      * @param workDir
      * @param filename
      * @param patientList
+     * @param regNumber   Код ЛПУ
      */
-    private void createCsv(String workDir, String filename, List<Object[]> patientList) {
+    private void createCsv(String workDir, String filename, List<Object[]> patientList, String regNumber) {
         File outFile = new File(workDir + "/" + filename + CSV);
         try {
             PrintWriter writer = new PrintWriter(outFile, "windows-1251");
-            StatefulBeanToCsv<PatientAttachmentDto> beanToCsv = new StatefulBeanToCsvBuilder(writer).withSeparator(';').build();
-            writer.println(printHeaders());
+            StatefulBeanToCsv<PatientAttachmentDto> beanToCsv = new StatefulBeanToCsvBuilder(writer).withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+                    .withSeparator(';').build();
             for (Object[] pat : patientList) {
-                beanToCsv.write(createPatient(pat));
+                beanToCsv.write(createPatient(pat, regNumber));
             }
             writer.close();
 
-        } catch (FileNotFoundException | CsvRequiredFieldEmptyException | CsvDataTypeMismatchException | UnsupportedEncodingException e) {
+        } catch (FileNotFoundException | CsvRequiredFieldEmptyException | CsvDataTypeMismatchException
+                | UnsupportedEncodingException | CsvBeanIntrospectionException e) {
             e.printStackTrace();
         }
     }
 
-    private String printHeaders() {
-        return "\"" + String.join("\";\"", PatientAttachmentDto.HEADERS) + "\"";
-    }
 
    /* private List<Object[]> makeTest() {
         List<Object[]> list = new ArrayList<>();
@@ -461,11 +462,12 @@ public class AddressPointServiceBean implements IAddressPointService {
         return list;
     }*/
 
-    private PatientAttachmentDto createPatient(Object[] patObject) {
+    private PatientAttachmentDto createPatient(Object[] patObject, String regNumber) {
         boolean isAttached = isEquals("1", toString(patObject[12]));
         String policyType = toString(patObject[20]);
         PatientAttachmentDto pat = new PatientAttachmentDto();
         pat.setMedPolicyType(policyType);
+        pat.setLpuCode(toString(regNumber));
         pat.setLastname(toString(patObject[0]));
         pat.setFirstname(toString(patObject[1]));
         pat.setMiddlename(toString(patObject[2]));
