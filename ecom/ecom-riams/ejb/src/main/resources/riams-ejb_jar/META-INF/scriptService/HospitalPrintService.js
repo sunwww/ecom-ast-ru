@@ -51,7 +51,7 @@ function printKiliProtocol(aCtx, aParams) {
 
     var patList = "select pat.lastname||' '||pat.firstname||' '||pat.middlename as f0_patFio, pat.birthday as f1_birthday, case when mlp.isNoOmc='1' then depPrev.name else mlp.name end as f2_mlpname, sls.datestart as f3_dateStart, " +
         "sls.datefinish as f4_dateFinish, pk.id as f5_pkid, stt.code as f6_sscode, pat.id as f7_patid " +
-        ",vwf.name as f8_vwfname, case when  mlp.isnoomc='1' then  wpat2.lastname||' '||wpat2.firstname||' '||wpat2.middlename else wpat.lastname||' '||wpat.firstname||' '||wpat.middlename end as f9_docFio" +
+        ",case when  mlp.isnoomc='1' then vwf2.name else vwf.name end as f8_vwfname, case when  mlp.isnoomc='1' then  wpat2.lastname||' '||wpat2.firstname||' '||wpat2.middlename else wpat.lastname||' '||wpat.firstname||' '||wpat.middlename end as f9_docFio" +
         ",list(case when vpd.code='1' and vdrt.code='3' then mkb.code|| ' '|| dia.name end )as f10_diagOSN" +
         ",list(case when vpd.code='3' and vdrt.code='3' then mkb.code|| ' '||dia.name end) as f11_diagSOP" +
         ",list(case when vpd.code='4' and vdrt.code='3' then mkb.code|| ' '||dia.name end) as f12_diagOSL" +
@@ -88,7 +88,7 @@ function printKiliProtocol(aCtx, aParams) {
         " left join vockiliconclusion vkc on vkc.id = pk.conclusion_id " +
         " where pk.protocolnumber = '" + protocolNumber + "' and pk.protocolDate = to_date('" + protocolDate + "','dd.MM.yyyy') " +
         " group by pat.lastname||' '||pat.firstname||' '||pat.middlename, pat.birthday, mlp.name, sls.datestart," +
-        " sls.datefinish, pk.id, stt.code, pat.id , dth.reasoncomplicationtext, dth.reasonconcomitanttext,vwf.name, wpat.lastname, wpat.firstname, wpat.middlename, dth.commentcategory, mlp.isnoomc,depPrev.name,f9_docFio, depPrev.kiliprofile_id, mlp.kiliprofile_id, vkp.name, vkp2.name, vkc.name,dth.isneonatologic,dth.commentreason,dth.newbornhistory" +
+        " sls.datefinish, pk.id, stt.code, pat.id , dth.reasoncomplicationtext, dth.reasonconcomitanttext,vwf.name, wpat.lastname, wpat.firstname, wpat.middlename, dth.commentcategory, mlp.isnoomc,depPrev.name,f9_docFio, depPrev.kiliprofile_id, mlp.kiliprofile_id, vkp.name, vkp2.name, vkc.name,dth.isneonatologic,dth.commentreason,dth.newbornhistory,vwf2.name" +
         " order by f9_docFio";
     var resultPatList = aCtx.manager.createNativeQuery(patList).getResultList();
     var showPat = new java.util.ArrayList();
