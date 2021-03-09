@@ -334,7 +334,7 @@ public class Expert2ServiceJs {
     public long makeMPFIle(final Long entryListId, final String type, String billNumber, String billDate
             , final Long entryId, final Boolean calcAllListEntry
             , final String version, final String fileType, HttpServletRequest request) throws NamingException {
-        final SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        final SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyyHH:mm");
         if (entryId != null) {
             billNumber = billNumber != null ? billNumber : "TEST";
             billDate = isNotEmpty(billDate) ? billDate : "24.12.1986";
@@ -342,16 +342,17 @@ public class Expert2ServiceJs {
         final IExpert2XmlService service = Injection.find(request).getService(IExpert2XmlService.class);
 
         final String finalBillNumber = billNumber;
-        final String finalBillDate = billDate;
+        Date dateBillDate ;
+        try {
+            dateBillDate = new Date(format.parse(billDate+"15:00").getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+            dateBillDate= null;
+
+        }
+        final Date finalBillDate = dateBillDate;
         final long monitorId = createMonitor(request);
-        new Thread(() -> {
-            Date finalDate = null;
-            try {
-                finalDate = new Date(format.parse(finalBillDate).getTime());
-            } catch (Exception ignored) {
-            }
-            service.makeMPFIle(entryListId, type, finalBillNumber, finalDate, entryId, calcAllListEntry, monitorId, version, fileType);
-        }).start();
+        new Thread(() -> service.makeMPFIle(entryListId, type, finalBillNumber, finalBillDate, entryId, calcAllListEntry, monitorId, version, fileType)).start();
 
         return monitorId;
     }
