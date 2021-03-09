@@ -53,86 +53,6 @@ public class TemperatureCurve extends BaseEntity {
 	/** Температурный градус */
 	private BigDecimal theDegree;
 	
-	/** Пульс */
-	@Comment("Пульс")
-	public Integer getPulse() {
-		return thePulse;
-	}
-
-	public void setPulse(Integer aPulse) {
-		thePulse = aPulse;
-	}
-
-	/** Пульс */
-	private Integer thePulse;
-	
-	/** Частота дыхания */
-	@Comment("Частота дыхания")
-	public Integer getRespirationRate() {
-		return theRespirationRate;
-	}
-
-	public void setRespirationRate(Integer aRespirationRate) {
-		theRespirationRate = aRespirationRate;
-	}
-
-	/** Частота дыхания */
-	private Integer theRespirationRate;
-	
-	/** Артериальное давление - верхнее */
-	@Comment("Артериальное давление - верхнее")
-	public Integer getBloodPressureUp() {
-		return theBloodPressureUp;
-	}
-
-	public void setBloodPressureUp(Integer aBloodPressureUp) {
-		theBloodPressureUp = aBloodPressureUp;
-	}
-
-	/** Артериальное давление - верхнее */
-	private Integer theBloodPressureUp;
-	
-	/** Артериальное давление - нижнее */
-	@Comment("Артериальное давление - нижнее")
-	public Integer getBloodPressureDown() {
-		return theBloodPressureDown;
-	}
-
-	public void setBloodPressureDown(Integer aBloodPressureDown) {
-		theBloodPressureDown = aBloodPressureDown;
-	}
-
-	/** Артериальное давление - нижнее */
-	private Integer theBloodPressureDown;
-	
-	/** Стул */
-	@Comment("Стул")
-	@OneToOne
-	public VocStoolType getStool() {
-		return theStool;
-	}
-
-	public void setStool(VocStoolType aStool) {
-		theStool = aStool;
-	}
-
-	/** Стул */
-	private VocStoolType theStool;
-	
-	/** Вес */
-	@Comment("Вес")
-	public BigDecimal getWeight() {
-		return theWeight;
-	}
-
-	public void setWeight(BigDecimal aWeight) {
-		theWeight = aWeight;
-	}
-
-	/** Вес */
-	private BigDecimal theWeight;
-	
-	
 	/** Дата измерения температуры */
 	@Comment("Дата измерения температуры")
 	public Date getTakingDate() {
@@ -198,12 +118,5 @@ public class TemperatureCurve extends BaseEntity {
 	@Transient
 	public String getDayTimeText() {
 		return theDayTime!=null ? theDayTime.getName():"";
-	}
-	
-	/** АД */
-	@Comment("АД")
-	@Transient
-	public String getBloodPressureInfo() {
-		return getBloodPressureUp() + "/" +getBloodPressureDown();
 	}
 }

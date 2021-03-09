@@ -10,14 +10,11 @@
         display: none;
         position: absolute;
     }
-
 </style>
 
 <div id='${name}CurveDialog' class='dialog'>
     <h2>Создание показателя температурного листа</h2>
     <div class='rootPane'>
-
-
         <form>
             <msh:panel>
                 <msh:row>
@@ -28,25 +25,13 @@
                 </msh:row>
                 <msh:row>
                     <msh:textField property="illnessDayNumber" label="День болезни "/>
-                    <msh:textField property="hospDayNumber" label="День пребывания в стационаре "/>
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete vocName="vocDayTime" property="dayTime" label="Время суток" fieldColSpan="5"
                                       horizontalFill="true"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="bloodPressureUp" label="Артериальное давление, систолическое "/>
-                    <msh:textField property="bloodPressureDown" label="диастолическое "/>
-                    <msh:textField property="pulse" label="Пульс "/>
-                </msh:row>
-                <msh:row>
                     <msh:textField property="degree" label="Температура, в градусах"/>
-                    <msh:textField property="respirationRate" label="ЧДД"/>
-                    <msh:textField property="weight" label="Вес "/>
-                </msh:row>
-                <msh:row>
-                    <msh:autoComplete vocName="vocStoolType" property="stool" horizontalFill="true" label="Стул"
-                                      fieldColSpan="5"/>
                 </msh:row>
             </msh:panel>
             <msh:row>
@@ -83,19 +68,14 @@
     function save${name}Curve(next) {
         var requiredFields = [['takingDate', 'Дата'], ['dayTime', 'Время суток'], ['degree', 'Температура']];
         if (checkFields(requiredFields)) {
-            var data = '';
-            data += $('takingDate').value + ' :';
-            data += $('illnessDayNumber').value + ' :';
-            data += $('hospDayNumber').value + ' :';
-            data += $('dayTime').value + ' :';
-            data += $('bloodPressureUp').value + ' :';
-            data += $('bloodPressureDown').value + ' :';
-            data += $('pulse').value + ' :';
-            data += $('degree').value + ' :';
-            data += $('respirationRate').value + ' :';
-            data += $('weight').value + ' : ';
-            data += $('stool').value;
+            var obj = {
+                takingDate: $('takingDate').value,
+                illnessDayNumber: $('illnessDayNumber').value,
+                dayTime: $('dayTime').value,
+                degree: $('degree').value
+            };
             $('resultText').innerHTML = "...";
+            var data = JSON.stringify(obj);
             HospitalMedCaseService.createTemperatureCurve($('id').value, data, {
                 callback: function (a) {
                     if (a == '1') {
@@ -112,22 +92,14 @@
                     }
                 }
             });
-
         }
     }
 
     function show${name}Curve() {
-
         the${name}CurveDialog.show();
-
     }
 
     function cancel${name}Curve() {
         the${name}CurveDialog.hide();
     }
-
-
 </script>
-
-
-
