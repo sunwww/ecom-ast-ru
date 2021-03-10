@@ -276,8 +276,8 @@ public class AddressPointServiceBean implements IAddressPointService {
 
                 sql.setLength(0);
                 sql.append("select ").append(fld)
-                        .append(", mp.series ||' № '||mp.polnumber as mpNumber")
-                        .append(", case when vmpt.code ='1' then 'С' when vmpt.code ='2' then 'В' when vmpt.code='3' then 'П' else 'ХЗ' end as medpolicytype")
+                        .append(",case when vmpt.code='1' then mp.series ||' № '||mp.polnumber when vmpt.code='2' then mp.series ||mp.polnumber end as mpNumber")
+                        .append(", case when vmpt.code ='1' then 'С' when vmpt.code ='2' then 'В' else 'П' end as medpolicytype")
                         .append(" ,p.id as pid, lp.id as lpid")
                         .append(" from Patient p")
                         .append(" left join MisLpu ml1 on ml1.id=p.lpu_id")
@@ -321,8 +321,8 @@ public class AddressPointServiceBean implements IAddressPointService {
             filenames.append("#").append(filename).append(".").append(fileType);
             sql.setLength(0);
             sql.append("select ").append(fld)
-                    .append(", mp.series ||' № '||mp.polnumber as mpNumber")
-                    .append(", case when vmpt.code ='1' then 'С' when vmpt.code ='2' then 'В' when vmpt.code='3' then 'П' else 'ХЗ' end as medpolicytype")
+                    .append(",case when vmpt.code='1' then mp.series ||' № '||mp.polnumber when vmpt.code='2' then mp.series ||mp.polnumber end as mpNumber")
+                    .append(", case when vmpt.code ='1' then 'С' when vmpt.code ='2' then 'В' else 'П' end as medpolicytype")
                     .append(" ,p.id as pid, lp.id as lpid")
                     .append(" from Patient p")
                     .append(" left join MisLpu ml1 on ml1.id=p.lpu_id")
@@ -347,7 +347,7 @@ public class AddressPointServiceBean implements IAddressPointService {
             if (lpuCheck && areaId != null && areaId.intValue() > 0) {
                 sql.append(" (p.lpuArea_id='").append(areaId).append("' or lp.area_id='").append(areaId).append("') and ");
             }
-            sql.append(" (p.noActuality='0' or p.noActuality is null) and p.deathDate is null ")
+            sql.append(" p.noActuality is not true and p.deathDate is null ")
                     .append(addSql)
                     .append(" group by p.id, lp.id, mp.series ,mp.polnumber ,vmpt.code, ").append(fldGroup)
                     .append(" order by p.lastname,p.firstname,p.middlename,p.birthday");
@@ -436,7 +436,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         File outFile = new File(workDir + "/" + filename + CSV);
         try {
             PrintWriter writer = new PrintWriter(outFile, "windows-1251");
-            StatefulBeanToCsv<PatientAttachmentDto> beanToCsv = new StatefulBeanToCsvBuilder(writer).withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+            StatefulBeanToCsv<PatientAttachmentDto> beanToCsv = new StatefulBeanToCsvBuilder(writer).withQuotechar(CSVWriter.DEFAULT_ESCAPE_CHARACTER)
                     .withSeparator(';').build();
             for (Object[] pat : patientList) {
                 beanToCsv.write(createPatient(pat, regNumber));

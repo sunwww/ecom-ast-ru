@@ -18,7 +18,7 @@
             ActionUtil.updateParameter("PatientAttachment", "typeDefect", "3", request);
             ActionUtil.updateParameter("PatientAttachment", "typeCompany", "3", request);
             ActionUtil.updateParameter("PatientAttachment", "typeAreaCheck", "3", request);
-            ActionUtil.updateParameter("PatientAttachment", "typeDivide", "1", request);
+            ActionUtil.updateParameter("PatientAttachment", "typeDivide", "2", request);
             ActionUtil.updateParameter("PatientAttachment", "typeFile", "xml", request);
             ActionUtil.updateParameter("PatientAttachment", "typeResult", "file", request);
             ActionUtil.updateParameter("PatientAttachment", "typeDispPlan", "ATTACHMENT", request);
@@ -278,10 +278,10 @@
                     checkFieldUpdate('typeDefect', '${typeDefect}', 3);
                     checkFieldUpdate('typeChange', '${typeChange}', 1);
                     checkFieldUpdate('typeCompany', '${typeCompany}', 3);
-                    checkFieldUpdate('typeDivide', '${typeDivide}', 1);
+                    checkFieldUpdate('typeDivide', '${typeDivide}', 2);
                     checkFieldUpdate('typeAreaCheck', '${typeAreaCheck}', 3);
                     checkFieldUpdate('typeResult', '${typeResult}', 'file');
-                    checkFieldUpdate('typeExportFile', '${typeExportFile}', 'xml');
+                    checkFieldUpdate('typeExportFile', '${typeExportFile}', 'csv');
                     checkFieldUpdate('typeDispPlan', '${typeDispPlan}', 'attachment');
                     $('aView').innerHTML = $('filename').value;
 
