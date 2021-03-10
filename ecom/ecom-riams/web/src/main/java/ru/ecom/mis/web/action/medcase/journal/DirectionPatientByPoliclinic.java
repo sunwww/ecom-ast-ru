@@ -312,6 +312,12 @@ public class DirectionPatientByPoliclinic extends BaseAction {
         sql.append(" left join Omc_Oksm ok on p.nationality_id=ok.id");
         sql.append(" LEFT JOIN MisLpu lpu on lpu.id=w.lpu_id");
         sql.append(" LEFT JOIN MisLpu olpu on olpu.id=t.orderLpu_id");
+        if (isLab) {
+            sql.append(" left join PrescriptionList pl on pl.medcase_id =t.id");
+            sql.append(" left join prescription pres on pres.prescriptionlist_id = pl.id and pres.canceldate is null and pres.DTYPE='ServicePrescription'");
+            sql.append(" left join medservice ms on ms.id=pres.medService_id");
+            sql.append(" left join vocservicetype as vms on vms.id=ms.serviceType_id");
+        }
         sql.append(" WHERE ");
         sql.append("  ").append(aTypeDate);
         sql.append(" BETWEEN TO_DATE('").append(aStartDate).append("','dd.mm.yyyy') and TO_DATE('").append(aFinishDate).append("','dd.mm.yyyy')");
@@ -322,6 +328,8 @@ public class DirectionPatientByPoliclinic extends BaseAction {
         } else if (aTypeUser.equals("2")) {
             sql.append(" and (osu.isRemoteUser='0' or osu.isRemoteUser is null)");
         }
+        if (isLab)
+            sql.append(" and vms.code='LABSURVEY'");
         if (aReestr) {
             sql.append(" and wct.medcase_id is not null");
             if (!aWhereDop.equals("")) sql.append(" and ").append(aWhereDop);
@@ -330,6 +338,12 @@ public class DirectionPatientByPoliclinic extends BaseAction {
             if (!isLab) {
                 sql.append(" GROUP BY ").append(group);
                 sql.append(" having count(distinct wct.medcase_id)>0");
+            } else {
+                sql.append("GROUP BY t.id,vss.name");
+                sql.append(" ,ovwf.name,owp.lastname,owp.firstname,owp.middlename");
+                sql.append(" , p.lastname||' '||p.firstname||' '||coalesce(p.middlename),p.birthday");
+                sql.append(" ,to_char(t.createDate,'dd.mm.yyyy')");
+                sql.append(" ,to_char(wcd.calendarDate,'dd.mm.yyyy'),to_char(wct.timefrom,'HH:MI') ");
             }
             sql.append(" ORDER BY ").append(order);
         }

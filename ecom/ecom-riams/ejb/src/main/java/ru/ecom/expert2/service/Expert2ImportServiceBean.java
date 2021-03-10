@@ -91,7 +91,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         XMLOutputter out = new XMLOutputter();
         Element rootElement = root.getRootElement();
         List<Element> defs = rootElement.getChildren("PR");
-        manager.createNativeQuery("update e2entry set isdefect='0' where listentry_id=:id and (isdeleted is null or isdeleted='0')")
+        manager.createNativeQuery("update e2entry set isdefect='0' where listentry_id=:id and isdeleted is not true")
                 .setParameter("id", listEntryId).executeUpdate();
         LOG.info("clean defect before flk " + defs.size());
         monitor.setText("ФЛК " + filename + ", записей для расчета: " + defs.size());
@@ -307,9 +307,9 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     /*Загружаем ответ от фонда (версия файла {3.1}
      * Добавляем импорт целиком пакета (*.paket)
      * */
-    public void importFondMPAnswer(long monitorId, String mpFilename) {
-        IMonitor monitor = startMonitor(monitorId, "Импорт дефектов. Файл: " + mpFilename);
-        importFondMPAnswer(monitorId, mpFilename, monitor);
+    public void importFondMPAnswer(long monitorId, String mpFileName) {
+        IMonitor monitor = startMonitor(monitorId, "Импорт дефектов. Файл: " + mpFileName);
+        importFondMPAnswer(monitorId, mpFileName, monitor);
         monitor.finish("Закончили импорт дефектов");
     }
 
@@ -317,12 +317,12 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         return Boolean.TRUE.equals(value);
     }
 
-    private void importFondMPAnswer(long monitorId, String aMpFilename, IMonitor monitor) {
+    private void importFondMPAnswer(long monitorId, String mpFileName, IMonitor monitor) {
         try {
-            LOG.info("filename = " + aMpFilename);
-            if (aMpFilename.toUpperCase().endsWith(".PAKET")) { //like B300026_200205.paket
+            LOG.info("filename = " + mpFileName);
+            if (mpFileName.toUpperCase().endsWith(".PAKET")) { //like B300026_200205.paket
                 //распаковываем в папку. Потом проходимся по каждому файлу в папке
-                File unpackedDir = new File(unZip(aMpFilename));
+                File unpackedDir = new File(unZip(mpFileName));
                 LOG.info("unpack paket " + unpackedDir.getAbsolutePath());
                 for (File mpFile : unpackedDir.listFiles()) {
                     String filename = mpFile.getName();
@@ -332,8 +332,8 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     }
                 }
             } else {
-                String dir = unZip(aMpFilename);
-                String hFilename = "H" + aMpFilename.substring(aMpFilename.indexOf('M')).replace(".MP", ".XML");
+                String dir = unZip(mpFileName);
+                String hFilename = "H" + mpFileName.substring(mpFileName.indexOf('M')).replace(".MP", ".XML");
                 File hFile = new File(dir + File.separator + hFilename);
                 Element root;
                 try {
@@ -497,29 +497,29 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         }
     }
 
-    private <T> T getActualVocByCode(Class aClass, Date aActualDate, String aSqlAdd) {
-        String sql = " from " + aClass.getName() + " where ";
+    private <T> T getActualVocByCode(Class clazz, Date actualDate, String sqlAdd) {
+        String sql = " from " + clazz.getName() + " where ";
         List<T> list;
-        if (aActualDate != null) {
+        if (actualDate != null) {
             sql += " :actualDate between startDate and finishDate";
-            if (isNotNull(aSqlAdd)) {
-                sql += " and " + aSqlAdd;
+            if (isNotNull(sqlAdd)) {
+                sql += " and " + sqlAdd;
             }
-            list = manager.createQuery(sql).setParameter("actualDate", aActualDate).getResultList();
+            list = manager.createQuery(sql).setParameter("actualDate", actualDate).getResultList();
             if (list.isEmpty()) {
-                list = manager.createQuery("from " + aClass.getName() + " where finishDate is null and " + aSqlAdd).getResultList();
+                list = manager.createQuery("from " + clazz.getName() + " where finishDate is null and " + sqlAdd).getResultList();
             }
-        } else if (isNotNull(aSqlAdd)) {
-            sql += aSqlAdd;
+        } else if (isNotNull(sqlAdd)) {
+            sql += sqlAdd;
             list = manager.createQuery(sql).getResultList();
         } else {
             throw new IllegalStateException("Необходимо указать дату актуальности либо другое условие");
         }
         if (list.isEmpty()) {
-            LOG.error("Не удалось найти действующее значение справочника " + aClass.getCanonicalName() + " с условием " + sql);
+            LOG.error("Не удалось найти действующее значение справочника " + clazz.getCanonicalName() + " с условием " + sql);
             return null;
         } else if (list.size() > 1) {
-            LOG.error("Найдено несколько действующих значений справочника " + aClass.getCanonicalName() + " с условием " + sql);
+            LOG.error("Найдено несколько действующих значений справочника " + clazz.getCanonicalName() + " с условием " + sql);
             return null;
         }
         return list.get(0);
@@ -527,19 +527,19 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
 
     }
 
-    private <T> T getVocByCode(Class aClass, Date aActualDate, String aCode) {
-        if (!isNotNull(aCode)) {
+    private <T> T getVocByCode(Class aClass, Date actualDate, String code) {
+        if (!isNotNull(code)) {
             return null;
         }
         String sql = " from " + aClass.getName() + " where ";
         List<T> list;
-        if (aActualDate != null) {
+        if (actualDate != null) {
             sql += " :actualDate between startDate and finishDate and";
         }
-        sql += " code='" + aCode + "'";
-        list = manager.createQuery(sql).setParameter("actualDate", aActualDate).getResultList();
+        sql += " code='" + code + "'";
+        list = manager.createQuery(sql).setParameter("actualDate", actualDate).getResultList();
         if (list.isEmpty()) {
-            list = manager.createQuery("from " + aClass.getName() + " where finishDate is null and code=:code").setParameter("code", aCode).getResultList();
+            list = manager.createQuery("from " + aClass.getName() + " where finishDate is null and code=:code").setParameter("code", code).getResultList();
         }
 
         if (list.isEmpty()) {

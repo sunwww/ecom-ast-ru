@@ -1263,7 +1263,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
         }
     }
 
-	@Override
+    @Override
     public void startMonitor(long aMonitorId) {
         try {
             theMonitorService.startMonitor(aMonitorId, "Обработка данных", 100);
@@ -2162,7 +2162,6 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
         for (TemperatureCurve curve : list) {
             if (!isFirst) {
                 json.append(",");
-                //isFirst =  ;
             } else {
                 isFirst = false;
             }
@@ -2185,21 +2184,6 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
             }
             json.append("\"id\":").append(curve.getId()).append(",");
-            json.append("\"pulse\":")
-                    .append(curve.getPulse())
-                    .append(",");
-            json.append("\"bloodPressureDown\":")
-                    .append(curve.getBloodPressureDown())
-                    .append(",");
-            json.append("\"bloodPressureUp\":")
-                    .append(curve.getBloodPressureUp())
-                    .append(",");
-            json.append("\"weight\":")
-                    .append(curve.getWeight())
-                    .append(",");
-            json.append("\"respirationRate\":")
-                    .append(curve.getRespirationRate())
-                    .append(",");
             json.append("\"degree\":")
                     .append(curve.getDegree())
                     .append("}");

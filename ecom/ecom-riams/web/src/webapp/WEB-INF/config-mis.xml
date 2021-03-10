@@ -1132,6 +1132,15 @@
                      path='/WEB-INF/actions/stac_surOperation/listByPeriod.jsp'
             />
         </action>
+        <action path='/journal_ivlTimeCount'
+                type='ru.ecom.web.actions.base.ForwardAction'
+                name='stac_admissionJournalForm' validate='false' scope='session'
+                input='/WEB-INF/actions/stac_ssl/journal_ivlTimeCount.jsp'
+        >
+            <forward name="success" redirect="false"
+                     path='/WEB-INF/actions/stac_ssl/journal_ivlTimeCount.jsp'
+            />
+        </action>
         <action path='/journal_doc_externalMedService'
                 type='ru.ecom.web.actions.base.ForwardAction'
                 name='stac_admissionJournalForm' validate='false' scope='session'

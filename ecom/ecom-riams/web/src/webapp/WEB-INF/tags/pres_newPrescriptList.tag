@@ -40,7 +40,7 @@
                 <tr>
                     <td>
                         <input name="add" type='button' onclick="javascript:goTo('service')"
-                               value='Добавить лабораторные назначение'>
+                               value='Добавить лабораторные назначения'>
                     </td>
                 </tr>
                 <tr>

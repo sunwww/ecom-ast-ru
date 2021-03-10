@@ -14,196 +14,237 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.Time;
 
 /**
  * Температурная кривая
- * @author oegorova
  *
+ * @author oegorova
  */
 
-@Comment ("Температурная кривая")
+@Comment("Температурная кривая")
 @Entity
-@Table(schema="SQLUser")
+@Table(schema = "SQLUser")
 public class TemperatureCurve extends BaseEntity {
 
-	/** Время суток */
-	@Comment("Время суток")
-	@OneToOne
-	public VocDayTime getDayTime() {
-		return theDayTime;
-	}
+    /**
+     * Время суток
+     */
+    @Comment("Время суток")
+    @OneToOne
+    public VocDayTime getDayTime() {
+        return theDayTime;
+    }
 
-	public void setDayTime(VocDayTime aDayTime) {
-		theDayTime = aDayTime;
-	}
+    public void setDayTime(VocDayTime aDayTime) {
+        theDayTime = aDayTime;
+    }
 
-	/** Время суток */
-	private VocDayTime theDayTime;
-	
-	/** Температурный градус */
-	@Comment("Температурный градус")
-	public BigDecimal getDegree() {
-		return theDegree;
-	}
+    /**
+     * Время суток
+     */
+    private VocDayTime theDayTime;
 
-	public void setDegree(BigDecimal aDegree) {
-		theDegree = aDegree;
-	}
+    /**
+     * Температурный градус
+     */
+    @Comment("Температурный градус")
+    public BigDecimal getDegree() {
+        return theDegree;
+    }
 
-	/** Температурный градус */
-	private BigDecimal theDegree;
-	
-	/** Пульс */
-	@Comment("Пульс")
-	public Integer getPulse() {
-		return thePulse;
-	}
+    public void setDegree(BigDecimal aDegree) {
+        theDegree = aDegree;
+    }
 
-	public void setPulse(Integer aPulse) {
-		thePulse = aPulse;
-	}
+    /**
+     * Температурный градус
+     */
+    private BigDecimal theDegree;
 
-	/** Пульс */
-	private Integer thePulse;
-	
-	/** Частота дыхания */
-	@Comment("Частота дыхания")
-	public Integer getRespirationRate() {
-		return theRespirationRate;
-	}
+    /**
+     * Дата измерения температуры
+     */
+    @Comment("Дата измерения температуры")
+    public Date getTakingDate() {
+        return theTakingDate;
+    }
 
-	public void setRespirationRate(Integer aRespirationRate) {
-		theRespirationRate = aRespirationRate;
-	}
+    public void setTakingDate(Date aTakingDate) {
+        theTakingDate = aTakingDate;
+    }
 
-	/** Частота дыхания */
-	private Integer theRespirationRate;
-	
-	/** Артериальное давление - верхнее */
-	@Comment("Артериальное давление - верхнее")
-	public Integer getBloodPressureUp() {
-		return theBloodPressureUp;
-	}
+    /**
+     * Дата измерения температуры
+     */
+    private Date theTakingDate;
 
-	public void setBloodPressureUp(Integer aBloodPressureUp) {
-		theBloodPressureUp = aBloodPressureUp;
-	}
+    /**
+     * Случай медицинского обслуживания
+     */
+    @Comment("Случай медицинского обслуживания")
+    @OneToOne
+    public MedCase getMedCase() {
+        return theMedCase;
+    }
 
-	/** Артериальное давление - верхнее */
-	private Integer theBloodPressureUp;
-	
-	/** Артериальное давление - нижнее */
-	@Comment("Артериальное давление - нижнее")
-	public Integer getBloodPressureDown() {
-		return theBloodPressureDown;
-	}
+    public void setMedCase(MedCase aMedCase) {
+        theMedCase = aMedCase;
+    }
 
-	public void setBloodPressureDown(Integer aBloodPressureDown) {
-		theBloodPressureDown = aBloodPressureDown;
-	}
+    /**
+     * Случай медицинского обслуживания
+     */
+    private MedCase theMedCase;
 
-	/** Артериальное давление - нижнее */
-	private Integer theBloodPressureDown;
-	
-	/** Стул */
-	@Comment("Стул")
-	@OneToOne
-	public VocStoolType getStool() {
-		return theStool;
-	}
+    /**
+     * День пребывания в стационаре
+     */
+    @Comment("День пребывания в стационаре")
+    @Transient
+    public Integer getHospDayNumber() {
+        Long dateFinish = theTakingDate.getTime();
+        Long dateStart = dateFinish;
+        if (theMedCase instanceof HospitalMedCase) {
+            dateStart = theMedCase.getDateStart().getTime();
+        }
+        if (theMedCase instanceof DepartmentMedCase) {
+            dateStart = theMedCase.getParent().getDateStart().getTime();
+        }
 
-	public void setStool(VocStoolType aStool) {
-		theStool = aStool;
-	}
+        final int msecinday = 1000 * 60 * 60 * 24;
 
-	/** Стул */
-	private VocStoolType theStool;
-	
-	/** Вес */
-	@Comment("Вес")
-	public BigDecimal getWeight() {
-		return theWeight;
-	}
+        return Integer.valueOf((int) (1 + ((dateFinish - dateStart) / msecinday)));
+    }
 
-	public void setWeight(BigDecimal aWeight) {
-		theWeight = aWeight;
-	}
 
-	/** Вес */
-	private BigDecimal theWeight;
-	
-	
-	/** Дата измерения температуры */
-	@Comment("Дата измерения температуры")
-	public Date getTakingDate() {
-		return theTakingDate;
-	}
+    /**
+     * День болезни
+     */
+    @Comment("День болезни")
+    public Integer getIllnessDayNumber() {
+        return theIllnessDayNumber;
+    }
 
-	public void setTakingDate(Date aTakingDate) {
-		theTakingDate = aTakingDate;
-	}
+    public void setIllnessDayNumber(Integer aIllnessDayNumber) {
+        theIllnessDayNumber = aIllnessDayNumber;
+    }
 
-	/** Дата измерения температуры */
-	private Date theTakingDate;
-	
-	/** Случай медицинского обслуживания */
-	@Comment("Случай медицинского обслуживания")
-	@OneToOne
-	public MedCase getMedCase() {
-		return theMedCase;
-	}
+    /**
+     * День болезни
+     */
+    private Integer theIllnessDayNumber;
 
-	public void setMedCase(MedCase aMedCase) {
-		theMedCase = aMedCase;
-	}
 
-	/** Случай медицинского обслуживания */
-	private MedCase theMedCase;
-	
-	/** День пребывания в стационаре */
-	@Comment("День пребывания в стационаре")
-	@Transient
-	public Integer getHospDayNumber() {
-		Long dateFinish = theTakingDate.getTime() ;
-		Long dateStart = dateFinish;
-		if (theMedCase instanceof HospitalMedCase) {
-			dateStart = theMedCase.getDateStart().getTime() ;
-		}
-		if (theMedCase instanceof DepartmentMedCase) {
-			dateStart = theMedCase.getParent().getDateStart().getTime() ;
-		}
-		
-		final int msecinday = 1000 * 60 *  60   * 24 ; 
-		
-		return Integer.valueOf((int) (1 +( (dateFinish-dateStart) / msecinday)));
-	}
+    /**
+     * Время суток (текст)
+     */
+    @Comment("Время суток (текст)")
+    @Transient
+    public String getDayTimeText() {
+        return theDayTime != null ? theDayTime.getName() : "";
+    }
 
-		
-	/** День болезни */
-	@Comment("День болезни")
-	public Integer getIllnessDayNumber() {
-		return theIllnessDayNumber;
-	}
+    /**
+     * Дата создания
+     */
+    @Comment("Дата создания")
+    public Date getDate() {
+        return theDate;
+    }
 
-	public void setIllnessDayNumber(Integer aIllnessDayNumber) {
-		theIllnessDayNumber = aIllnessDayNumber;
-	}
+    public void setDate(Date aDate) {
+        theDate = aDate;
+    }
 
-	/** День болезни */
-	private Integer theIllnessDayNumber;
-	
-		
-	/** Время суток (текст) */
-	@Comment("Время суток (текст)")
-	@Transient
-	public String getDayTimeText() {
-		return theDayTime!=null ? theDayTime.getName():"";
-	}
-	
-	/** АД */
-	@Comment("АД")
-	@Transient
-	public String getBloodPressureInfo() {
-		return getBloodPressureUp() + "/" +getBloodPressureDown();
-	}
+    /**
+     * Дата создания
+     */
+    private Date theDate;
+
+    /**
+     * Время создания
+     */
+    @Comment("Время создания")
+    public Time getTime() {
+        return theTime;
+    }
+
+    public void setTime(Time aTime) {
+        theTime = aTime;
+    }
+
+    /**
+     * Время создания
+     */
+    private Time theTime;
+
+    /**
+     * Время редактирования
+     */
+    @Comment("Время редактирования")
+    public Time getEditTime() {
+        return theEditTime;
+    }
+
+    public void setEditTime(Time aEditTime) {
+        theEditTime = aEditTime;
+    }
+
+    /**
+     * Время редактирования
+     */
+    private Time theEditTime;
+
+    /**
+     * Дата редактирования
+     */
+    @Comment("Дата редактирования")
+    public Date getEditDate() {
+        return theEditDate;
+    }
+
+    public void setEditDate(Date aEditDate) {
+        theEditDate = aEditDate;
+    }
+
+    /**
+     * Дата редактирования
+     */
+    private Date theEditDate;
+
+    /**
+     * Пользователь последний, изменявший запись
+     */
+    @Comment("Пользователь последний, изменявший запись")
+    public String getEditUsername() {
+        return theEditUsername;
+    }
+
+    public void setEditUsername(String aEditUsername) {
+        theEditUsername = aEditUsername;
+    }
+
+    /**
+     * Пользователь последний, изменявший запись
+     */
+    private String theEditUsername;
+
+    /**
+     * Пользователь
+     */
+    @Comment("Пользователь")
+    public String getUsername() {
+        return theUsername;
+    }
+
+    public void setUsername(String aUsername) {
+        theUsername = aUsername;
+    }
+
+    /**
+     * Пользователь
+     */
+    private String theUsername;
+
 }

@@ -365,24 +365,34 @@ select t.id as tid
 ,to_char(t.createDate,'dd.mm.yyyy') as createDate
 ,to_char(wcd.calendarDate,'dd.mm.yyyy') as wcdcalendardate
 ,to_char(wct.timefrom,'HH:MI') as time_naprav
-,(select list(ms.name||' '||ms.code)
- from Prescription p
- left join PrescriptionList pl on pl.id=p.prescriptionList_id
- left join medservice ms on ms.id=p.medService_id
- left join vocservicetype as vms on vms.id=ms.serviceType_id
- where pl.medcase_id=t.id and p.DTYPE='ServicePrescription'
- and vms.code='LABSURVEY' and p.canceldate is null) as labserv
+,replace(cast(list(ms.name||' '||ms.code||'<br>') as varchar),'<br>,','<br>')
+ ,(select replace(cast(list(mspaid.name||' '||mspaid.code||'<br>') as varchar),'<br>,','<br>')
+ from patient pat
+ left join contractperson cp on cp.patient_id=pat.id
+ left join servedperson sp on sp.person_id = cp.id
+ left join ContractAccountMedService cams on cams.servedperson_id=sp.id
+ left join contractaccountoperation cao on cao.account_id=cams.account_id
+ left join contractaccountoperationbyservice caos on caos.accountmedservice_id=cams.id
+ left join pricemedservice pms on pms.id=cams.medservice_id
+ left join medservice mspaid on mspaid.id=pms.medservice_id
+ left join VocServiceType vms on vms.id=mspaid.servicetype_id
+ where pat.id=t.patient_id and cao.dtype='OperationAccrual' and cao.repealoperation_id is null
+ and vms.code='LABSURVEY'
+ and (cao.isdeleted is null or cao.isdeleted='0') ) as list_paid
 ${queryTextEnd}
 "/>
                 <msh:table printToExcelButton="excel"
                            name="journal_swod_lab" action="entityView-smo_direction.do" idField="1"
                            noDataMessage="Не найдено"
-                           openNewWindow="true">
+                           openNewWindow="true"
+                           escapeSymbols="false">
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="ФИО пациента" property="4"/>
                     <msh:tableColumn columnName="Дата рождения" property="5"/>
                     <msh:tableColumn columnName="Внут. направитель" property="3"/>
                     <msh:tableColumn columnName="Лаб. услуги" property="9"/>
+                    <msh:tableColumn columnName="Оплаченные" property="10"/>
+                    <msh:tableButton buttonFunction="goVisit" property="1" buttonShortName="ВИЗИТ"/>
                     <msh:tableColumn columnName="Дата создания напр." property="6"/>
                     <msh:tableColumn columnName="Дата направления" property="7"/>
                     <msh:tableColumn columnName="Время направления" property="8"/>
@@ -405,6 +415,10 @@ ${queryTextEnd}
             checkFieldUpdate('typeGroup', '${typeGroup}', 9);
             checkFieldUpdate('typeDate', '${typeDate}', 2);
             checkFieldUpdate('typeUser', '${typeUser}', 3);
+
+            function goVisit(aMedcaseId) {
+                window.open("entityView-smo_visit.do?id=" + aMedcaseId);
+            }
 
             function checkFieldUpdate(aField, aValue, aDefault) {
                 aValue = +aValue;

@@ -285,31 +285,25 @@ public class HospitalMedCaseServiceJs {
         return null;
     }
 
-    public String toNull(String aValue) {
-        if (aValue == null || aValue.equals("") || aValue.trim().equals("")) return "null";
-        return aValue.trim();
-    }
-
-    public String createTemperatureCurve(Long aMedCase, String aParams, HttpServletRequest aRequest) throws NamingException {
+    /**
+     * Cоздать темп. лист
+     *
+     * @param aMedCase  MedCase.id
+     * @param aTempData json с данными
+     * @return результат insert
+     */
+    public String createTemperatureCurve(Long aMedCase, String aTempData, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 
-        String[] par = aParams.split(":");
-        String takingDate = toNull(par[0]);
-        String pulse = toNull(par[6]);
-        String bloodPressureDown = toNull(par[5]);
-        String bloodPressureUp = toNull(par[4]);
-        String weight = toNull(par[9]);
-        String respirationRate = toNull(par[8]);
-        String degree = toNull(par[7]);
-        String illnessDayNumber = toNull(par[1]);
-        String dayTime = toNull(par[3]);
-        String stool = par.length > 10 ? toNull(par[10]) : "null";
+        JSONObject obj = new JSONObject(aTempData);
+        String takingDate = getString(obj, "takingDate");
+        String degree = getString(obj, "degree");
+        String illnessdaynumber = getString(obj, "illnessdaynumber");
+        String dayTime = getString(obj, "dayTime");
 
-        String sql = "insert into temperatureCurve (takingDate, pulse, bloodPressureDown, bloodPressureUp, weight, respirationRate, degree" +
-                ", illnessdaynumber, daytime_id, medcase_id, stool_id) values (" +
-                "to_date('" + takingDate + "','dd.MM.yyyy')," + pulse + "," + bloodPressureDown + "," + bloodPressureUp + "," + weight + "," + respirationRate +
-                ", " + degree + ", " + illnessDayNumber + ", " + dayTime + ", " + aMedCase + ", " + stool +
-                ")";
+        String sql = "insert into temperatureCurve (takingDate, degree, illnessdaynumber, daytime_id, medcase_id,date,time,username) values (" +
+                "to_date('" + takingDate + "','dd.MM.yyyy')," + degree + "," + illnessdaynumber + "," + dayTime +
+                ", " + aMedCase + ",current_date,current_time,'" + LoginInfo.find(aRequest.getSession(true)).getUsername() + "')";
         return "" + service.executeUpdateNativeSql(sql);
 
     }
