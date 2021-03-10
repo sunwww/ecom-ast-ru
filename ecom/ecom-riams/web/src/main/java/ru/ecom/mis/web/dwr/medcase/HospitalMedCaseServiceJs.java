@@ -301,9 +301,9 @@ public class HospitalMedCaseServiceJs {
         String illnessdaynumber = getString(obj, "illnessdaynumber");
         String dayTime = getString(obj, "dayTime");
 
-        String sql = "insert into temperatureCurve (takingDate, degree, illnessdaynumber, daytime_id, medcase_id) values (" +
+        String sql = "insert into temperatureCurve (takingDate, degree, illnessdaynumber, daytime_id, medcase_id,date,time,username) values (" +
                 "to_date('" + takingDate + "','dd.MM.yyyy')," + degree + "," + illnessdaynumber + "," + dayTime +
-                ", " + aMedCase + ")";
+                ", " + aMedCase + ",current_date,current_time,'" + LoginInfo.find(aRequest.getSession(true)).getUsername() + "')";
         return "" + service.executeUpdateNativeSql(sql);
 
     }

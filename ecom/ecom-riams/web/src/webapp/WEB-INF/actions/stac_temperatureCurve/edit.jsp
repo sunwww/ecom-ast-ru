@@ -35,6 +35,29 @@
                     <msh:textField property="degree" label="Температура, в градусах"/>
                 </msh:row>
                 <msh:submitCancelButtonsRow colSpan="2"/>
+                <msh:ifFormTypeIsView formName="stac_temperatureCurveForm">
+                    <msh:row>
+                        <msh:separator label="Дополнительная информация" colSpan="10"/>
+                    </msh:row>
+                    <msh:row>
+                        <msh:label property="date" label="Дата создания"/>
+                        <msh:label property="time" label="время"/>
+                        <msh:label property="username" label="пол-ль"/>
+                    </msh:row>
+                    <msh:row>
+                        <msh:label property="editDate" label="Дата редакт."/>
+                        <msh:label property="editTime" label="время"/>
+                        <msh:label property="editUsername" label="пол-ль"/>
+                    </msh:row>
+                </msh:ifFormTypeIsView>
+                <msh:ifFormTypeIsNotView formName="stac_temperatureCurveForm">
+                        <msh:hidden property="date"/>
+                        <msh:hidden property="time"/>
+                        <msh:hidden property="username"/>
+                        <msh:hidden property="editDate"/>
+                        <msh:hidden property="editTime"/>
+                        <msh:hidden property="editUsername"/>
+                </msh:ifFormTypeIsNotView>
             </msh:panel>
         </msh:form>
     </tiles:put>
