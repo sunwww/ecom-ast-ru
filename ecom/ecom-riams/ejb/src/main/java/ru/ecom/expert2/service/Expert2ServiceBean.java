@@ -1259,7 +1259,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                         if (fldName.toUpperCase().contains("DATE")) { //ищем дату
                             sql.append(" and ").append(fldName).append("=").append("to_date('").append(val).append("','dd.MM.yyyy') ");
                         } else if (fldName.startsWith("is")) { //Булево значение
-                            sql.append(" and ").append(fldName).append(val.equals("1") ? " is true" : " is not true " );
+                            sql.append(" and ").append(fldName).append(val.equals("1") ? " is true" : " is not true ");
                         } else { //ищем строку
                             sql.append(" and upper(").append(fldName).append(")='").append(val.toUpperCase()).append("' ");
                         }
@@ -3498,6 +3498,9 @@ public class Expert2ServiceBean implements IExpert2Service {
      * @return код V008
      */
     private String calculateHelpKindPol(E2Entry entry) {
+        if (entry.getDoctorWorkfunction() == null) {
+            return null;
+        }
         String code;
         switch (entry.getDoctorWorkfunction()) {
             case "49": //педиатр
