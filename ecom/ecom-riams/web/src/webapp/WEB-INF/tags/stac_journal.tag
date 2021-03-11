@@ -111,6 +111,10 @@
                 roles="/Policy/Mis/MedCase/Stac/Journal/HIVDirection" key="ALT+0"
                 action="/stac_directionHIVByUserDepartment" name="Направление на ВИЧ"/>
         <msh:sideLink
+                styleId="stac_directionsByUserDepartment"
+                roles="/Policy/Mis/MedCase/Stac/Journal/HIVDirection" key="ALT+0"
+                action="/stac_directionsByUserDepartment" name="Направления на исследования"/>
+        <msh:sideLink
                 styleId="stac_directionCovidByUserDepartment"
                 roles="/Policy/Mis/MedCase/Covid19/View"
                 action="/stac_directionCovidByUserDepartment" name="Направление на COVID"/>

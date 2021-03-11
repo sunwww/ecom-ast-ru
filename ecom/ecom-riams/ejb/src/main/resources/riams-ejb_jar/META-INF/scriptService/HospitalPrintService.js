@@ -2697,6 +2697,13 @@ function getPatientHIVDirectionInfo(aCtx, patId) {
 function printDirectionHIV(aCtx, aParams) {
     var ret = new java.util.ArrayList();
     var info = new java.lang.String(aParams.get("info"));
+    var name = aParams.get("name");
+    if (name && name != '') {
+        name = new java.lang.String(aParams.get("name"));
+        if (name == 'dirSif')
+            name = 'сифилис ММ, ИФА (сум.)';
+        map.put("name", name);
+    }
     var infoMas = info.split('!');
     for (var i = 0; i < infoMas.length; i++) {
         var row = infoMas[i].split('-');
