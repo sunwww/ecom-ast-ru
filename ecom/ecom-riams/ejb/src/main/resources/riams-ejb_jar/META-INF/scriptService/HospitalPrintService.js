@@ -1,24 +1,3 @@
-/*Печать реестра операций по операционной*/
-function printOperationsByCabinet(aCtx, aParams) {
-    var operRoom = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.OperatingRoom, new java.lang.Long(aParams.get("id")));
-    var operations = aParams.get("sqlInfo");
-    var wqs = new Packages.ru.ecom.ejb.services.query.WebQueryServiceBean();
-    var date = aParams.get("date");
-    map.put("roomName", operRoom.groupName);
-    map.put("operDate", date);
-    map.put("departmentName", operRoom.lpu.name);
-    var boss = "";
-    if (operRoom.director != null) {
-        var bossPat = operRoom.director.worker.person;
-        boss = bossPat.lastname + " " + bossPat.firstname.substring(0, 1) + ". " + bossPat.middlename.substring(0, 1);
-    } else {
-        boss = "_______________";
-    }
-    map.put("departmentAdmin", boss);
-    map.put("operations", wqs.executeNativeSql(operations, 1, aCtx.manager));
-    return map;
-}
-
 /**Печать произвольных реквизитов для ЛПУ по умолчанию*/
 function printDefaultLpuRequisites(aCtx, aFldName) {
     var lpu = aCtx.manager.createNativeQuery("select keyvalue from softconfig  where key = 'DEFAULT_LPU' ").getResultList();
