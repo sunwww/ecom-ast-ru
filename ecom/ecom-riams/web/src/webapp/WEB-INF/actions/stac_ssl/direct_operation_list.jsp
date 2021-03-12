@@ -140,11 +140,11 @@ order by p.planStartDate, p.planStartTime"/>
             </msh:sectionContent>
         </msh:section>
         <form action="print-reestOperationsByCabinet.do" method="post" target="_blank">
-            <input type="hidden" name="id" id="id" value="${cabinetId}">
-            <input type="hidden" name="date" id="date" value="${startDate}">
-            <input type="hidden" name="sqlInfo" id="sqlInfo" value="${journal_list_suroper_sql}"/>
-            <input type='hidden' name="s" id="s" value="HospitalPrintService">
-            <input type='hidden' name="m" id="m" value="printOperationsByCabinet">
+            <input type="hidden" name="sqlText" id="sqlText" value="${journal_list_suroper_sql}"/>
+            <input type='hidden' name="s" id="s" value="PrintService">
+            <input type='hidden' name="m" id="m" value="printGroupColumnNativeQuery">
+            <input type='hidden' name="groupField" id="groupField" value="4">
+            <input type='hidden' name="cntColumn" id="cntColumn" value="1">
             <input type="submit" value="Печать реестра">
         </form>
 

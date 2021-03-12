@@ -237,7 +237,7 @@ left join VocHospType vht on sls.sourceHospType_id=vht.id
 left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id
 where ${dateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')
-    and    upper(sls.dtype)='HOSPITALMEDCASE'
+    and sls.dtype='HospitalMedCase'
 ${department} ${emergencySql} ${lpuDirectSql} ${serviceStreamSql}
 ${lpuFunctionDirectSql}
 and sls.deniedhospitalizating_id is null
@@ -304,7 +304,7 @@ left join VocHospType vht on sls.sourceHospType_id=vht.id
 left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id
 where ${dateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')
-    and    upper(sls.dtype)='HOSPITALMEDCASE'
+    and sls.dtype='HospitalMedCase'
 ${department} ${emergencySql} ${lpuDirectSql} ${serviceStreamSql}
 ${lpuFunctionDirectSql}
 and sls.deniedhospitalizating_id is null
@@ -394,7 +394,7 @@ left join diagnosis d on d.medcase_id=sls.id and d.registrationType_id=3 and d.p
 left join vocidc10 mkb on mkb.id=d.idc10_id
 where ${dateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')
-and    upper(sls.dtype)='HOSPITALMEDCASE'
+    and sls.dtype='HospitalMedCase'
  
 ${department} ${emergencySql} ${lpuDirectSql} ${serviceStreamSql}
 ${lpuFunctionDirectSql}
@@ -402,7 +402,8 @@ and sls.deniedhospitalizating_id is null
 group by sls.id ,ss.code ,p.id
 ,p.birthday,sls.dateStart,sls.dateFinish,${dateSql}
 , ml.name , dep.name ,of_.name , vss.name 
- ,vht.name ,sls.emergency , vlf.name ,vr.name
+ ,vht.name ,sls.emergency , vlf.name ,vr.name, p.lastname, p.firstname , p.middlename
+,p.newbornweight
 order by p.lastname,p.firstname,p.middlename " />
     <msh:table name="journal_surOperation"  printToExcelButton="Сохранить в excel"
     viewUrl="entityShortView-stac_ssl.do" 
