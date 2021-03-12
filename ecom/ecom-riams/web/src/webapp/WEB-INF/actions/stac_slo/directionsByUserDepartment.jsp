@@ -7,10 +7,10 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.s}Layout.jsp" flush="true">
 
     <tiles:put name="title" type="string">
-        <msh:title mainMenu="StacJournal">Направление на исследование образцов крови в ИФА на ВИЧ</msh:title>
+        <msh:title mainMenu="StacJournal">Направления на исследования</msh:title>
     </tiles:put>
     <tiles:put name="side" type="string">
-        <tags:stac_journal currentAction="stac_directionHIVByUserDepartment"/>
+        <tags:stac_journal currentAction="stac_directionsByUserDepartment"/>
     </tiles:put>
     <tiles:put name="body" type="string">
         <%
@@ -58,15 +58,15 @@ left join Mislpu dep on dep.id=sloAll.department_id
             />
             <msh:sectionTitle>
                 Журнал состоящих пациентов в отделении  ${departmentInfo} на текущий момент
-                <br>ВНИМАНИЕ! Необходимо ввести <u>код контингента</u>, <u>дату забора
-                крови</u>, чтобы пациент попал в направление!
-                <input type="button" value="ПЕЧАТЬ НАПРАВЛЕНИЯ" onclick="print()">
+                <br>ВНИМАНИЕ! Необходимо ввести <u>дату забора крови</u>, чтобы пациент попал в направление!
+                <input type="button" value="Печать на HbsAg" onclick="print('HbsAg')">
+                <input type="button" value="Печать на HCV" onclick="print('HCV')">
+                <input type="button" value="Печать на сифилис" onclick="print('dirSif')">
             </msh:sectionTitle>
             <msh:sectionContent>
                 <msh:table name="datelist" viewUrl="entityShortView-mis_patient.do" action="/javascript:void()"
                            idField="1">
                     <msh:tableColumn property="sn" columnName="#"/>
-                    <msh:tableColumn columnName="Код контингента" property="7"/>
                     <msh:tableColumn columnName="Дата забора крови" property="7"/>
                     <msh:tableColumn columnName="Стат.карта (рег. номер)" property="2"/>
                     <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -98,8 +98,8 @@ left join Mislpu dep on dep.id=sloAll.department_id
     order by ml.name
     "
                     />
-                    <msh:table name="datelist" viewUrl="stac_directionHIVByUserDepartment.do?s=Short&"
-                               action="stac_directionHIVByUserDepartment.do" idField="1">
+                    <msh:table name="datelist" viewUrl="stac_directionsByUserDepartment.do?s=Short&"
+                               action="stac_directionsByUserDepartment.do" idField="1">
                         <msh:tableColumn property="sn" columnName="#"/>
                         <msh:tableColumn columnName="Отделение" property="2"/>
                         <msh:tableColumn columnName="Кол-во состоящих" property="3"/>
@@ -118,29 +118,6 @@ left join Mislpu dep on dep.id=sloAll.department_id
     <tiles:put name="javascript" type="string">
         <script type="text/javascript">
             var table = document.getElementsByTagName('table')[0];
-            var voc = 'vocHIVCodeResearch';
-
-            //создать autocomplete
-            function createAutocomplete(ii) {
-                eval("var " + voc + ii + "Autocomplete = new msh_autocomplete.Autocomplete()");
-                eval(voc + ii + "Autocomplete.setUrl('simpleVocAutocomplete/" + voc + "') ");
-                eval(voc + ii + "Autocomplete.setIdFieldId('" + voc + ii + "') ");
-                eval(voc + ii + "Autocomplete.setNameFieldId('" + voc + ii + "Name') ");
-                eval(voc + ii + "Autocomplete.setDivId('" + voc + ii + "Div') ");
-                eval(voc + ii + "Autocomplete.setVocKey('" + voc + "') ");
-                eval(voc + ii + "Autocomplete.setVocTitle('Код на ВИЧ')");
-                eval(voc + ii + "Autocomplete.build() ");
-            }
-
-            //создать div для autocomplete
-            function createDivAutocomplete(td, ii) {
-                td.innerHTML = "<div><input type=\"hidden\" size=\"1\" name=\"" + voc + "\" id=\"" + voc +
-                    +ii + "\" value=\"\"><input title=\"" + voc + ii + "\" type=\"text\" name=\"" + voc +
-                    +ii + "Name\" id=\"" + voc + ii + "Name\" size=\"50\" class=\"autocomplete horizontalFill\" " +
-                    "autocomplete=\"off\"><div id=\"" + voc + ii + "Div\" style=\"visibility: hidden; display: none;\" " +
-                    "class=\"autocomplete\"></div></div>";
-                createAutocomplete(ii);
-            }
 
             //создать дату
             function createDate(td, ii) {
@@ -149,39 +126,36 @@ left join Mislpu dep on dep.id=sloAll.department_id
                 new dateutil.DateField($('dateIntake' + ii));
             }
 
-            //Milamesher #179 - вывод списка кода обследуемого
-            function setVocCode() {
-                table.className = '';
-                if (typeof table !== 'undefined') {
-                    for (var ii = 1; ii < table.rows.length; ii++) {
-                        createDivAutocomplete(table.rows[ii].cells[2], ii);
-                        createDate(table.rows[ii].cells[3], ii);
-                    }
-                }
-            }
-
-            setVocCode();
-
-            function print() {
+            function print(service) {
                 var params = '';
                 if (typeof table !== 'undefined') {
                     for (var ii = 1; ii < table.rows.length; ii++) {
                         var row = table.rows[ii];
                         var id = +row.className.replace('datelist', '')
                             .replace('selected', '').replace(' ', '');
-                        if (!isNaN(id) && $(voc + ii).value != '' && $('dateIntake' + ii).value != '') {
-                            params = params + id + "-"
-                                + $(voc + ii).value + "-"
+                        if (!isNaN(id) && $('dateIntake' + ii).value != '') {
+                            params = params + id + "--"
                                 + $('dateIntake' + ii).value + "!";
                         }
                     }
                 }
                 var depName = '${departmentInfo}'.replace('ГБУЗ АО "АЛЕКСАНДРО-МАРИИНСКАЯ ОБЛАСТНАЯ КЛИНИЧЕСКАЯ БОЛЬНИЦА " / ','');
                 if (params.length > 0)
-                    window.open('print-dirHIV.do?m=printDirectionHIV&s=HospitalPrintService&info=' + params + "&dep="+depName);
+                    window.open('print-dirHbsAg.do?m=printDirectionHIV&s=HospitalPrintService&info=' + params + "&name="+service + "&dep="+depName);
                 else
-                    showToastMessage('Укажите код контингента и дату забора хотя бы одного пациента, чтобы распечатать направление!', null, true);
+                    showToastMessage('Укажите дату забора хотя бы одного пациента, чтобы распечатать направление!', null, true);
             }
+
+            function setInputs() {
+                table.className = '';
+                if (typeof table !== 'undefined') {
+                    for (var ii = 1; ii < table.rows.length; ii++) {
+                        createDate(table.rows[ii].cells[2], ii);
+                    }
+                }
+            }
+
+            setInputs();
         </script>
     </tiles:put>
     <%}%>

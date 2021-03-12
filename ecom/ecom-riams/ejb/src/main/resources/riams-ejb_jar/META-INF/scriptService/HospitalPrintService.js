@@ -1,24 +1,3 @@
-/*Печать реестра операций по операционной*/
-function printOperationsByCabinet(aCtx, aParams) {
-    var operRoom = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.lpu.OperatingRoom, new java.lang.Long(aParams.get("id")));
-    var operations = aParams.get("sqlInfo");
-    var wqs = new Packages.ru.ecom.ejb.services.query.WebQueryServiceBean();
-    var date = aParams.get("date");
-    map.put("roomName", operRoom.groupName);
-    map.put("operDate", date);
-    map.put("departmentName", operRoom.lpu.name);
-    var boss = "";
-    if (operRoom.director != null) {
-        var bossPat = operRoom.director.worker.person;
-        boss = bossPat.lastname + " " + bossPat.firstname.substring(0, 1) + ". " + bossPat.middlename.substring(0, 1);
-    } else {
-        boss = "_______________";
-    }
-    map.put("departmentAdmin", boss);
-    map.put("operations", wqs.executeNativeSql(operations, 1, aCtx.manager));
-    return map;
-}
-
 /**Печать произвольных реквизитов для ЛПУ по умолчанию*/
 function printDefaultLpuRequisites(aCtx, aFldName) {
     var lpu = aCtx.manager.createNativeQuery("select keyvalue from softconfig  where key = 'DEFAULT_LPU' ").getResultList();
@@ -2703,6 +2682,7 @@ function getPatientHIVDirectionInfo(aCtx, patId) {
         "       ||case when pat.BuildingHousesNonresident is not null and pat.BuildingHousesNonresident!='' then ' корп.'|| pat.BuildingHousesNonresident else '' end" +
         "       ||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end" +
         "   else  pat.foreignRegistrationAddress end as address" +
+        " ,st.code as regNum" +
 
         " from Patient pat" +
         " left join vocsex vsex on vsex.id=pat.sex_id" +
@@ -2710,7 +2690,9 @@ function getPatientHIVDirectionInfo(aCtx, patId) {
         " left join Omc_KodTer okt on okt.id=pat.territoryRegistrationNonresident_id" +
         " left join Omc_Qnp oq on oq.id=pat.TypeSettlementNonresident_id" +
         " left join Omc_StreetT ost on ost.id=pat.TypeStreetNonresident_id" +
-        " where pat.id=" + patId).getResultList();
+        " left join medcase sls on sls.patient_id=pat.id and sls.dtype='HospitalMedCase' and (sls.datefinish is null or sls.dischargetime is null)" +
+        " left join statisticstub st on st.medcase_id=sls.id" +
+        " where st.id is not null and pat.id=" + patId).getResultList();
 }
 
 
@@ -2718,6 +2700,18 @@ function getPatientHIVDirectionInfo(aCtx, patId) {
 function printDirectionHIV(aCtx, aParams) {
     var ret = new java.util.ArrayList();
     var info = new java.lang.String(aParams.get("info"));
+    var name = aParams.get("name");
+    if (name && name != '') {
+        name = new java.lang.String(aParams.get("name"));
+        if (name == 'dirSif')
+            name = 'сифилис ММ, ИФА (сум.)';
+        map.put("name", name);
+    }
+    var dep = aParams.get("dep");
+    if (dep && dep != '') {
+        dep = new java.lang.String(aParams.get("dep"));
+        map.put("dep", dep);
+    }
     var infoMas = info.split('!');
     for (var i = 0; i < infoMas.length; i++) {
         var row = infoMas[i].split('-');
@@ -2733,7 +2727,7 @@ function printDirectionHIV(aCtx, aParams) {
                 par.set5(obj[3]);	//дом. адрес
                 par.set6(row[1]);	//код контингента
                 par.set7(row[2]);	//дата забора крови
-                par.set8(typeof row[3] == 'undefined' ? '' : row[3]);	//рег. номер
+                par.set8(obj[4]);	//рег. номер (номер стат. карты)
                 ret.add(par);
             }
         }
