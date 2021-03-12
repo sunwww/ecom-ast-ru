@@ -237,7 +237,7 @@ left join VocHospType vht on sls.sourceHospType_id=vht.id
 left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id
 where ${dateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')
-    and sls.dtype='HospitalMedCase''
+    and sls.dtype='HospitalMedCase'
 ${department} ${emergencySql} ${lpuDirectSql} ${serviceStreamSql}
 ${lpuFunctionDirectSql}
 and sls.deniedhospitalizating_id is null
