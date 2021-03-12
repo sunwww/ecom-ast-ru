@@ -68,8 +68,7 @@ left join Mislpu dep on dep.id=sloAll.department_id
                     <msh:tableColumn property="sn" columnName="#"/>
                     <msh:tableColumn columnName="Код контингента" property="7"/>
                     <msh:tableColumn columnName="Дата забора крови" property="7"/>
-                    <msh:tableColumn columnName="Регистрац. номер" property="7"/>
-                    <msh:tableColumn columnName="Стат.карта" property="2"/>
+                    <msh:tableColumn columnName="Стат.карта (рег. номер)" property="2"/>
                     <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
                     <msh:tableColumn columnName="Год рождения" property="4"/>
                     <msh:tableColumn columnName="Дата поступления" property="5"/>
@@ -143,12 +142,6 @@ left join Mislpu dep on dep.id=sloAll.department_id
                 createAutocomplete(ii);
             }
 
-            //создать текстовое поле
-            function createTextField(td, ii) {
-                td.innerHTML = "<label id=\"regNum" + ii + "Label\" for=\"regNum" + ii + "\"></label>" +
-                    "<input title=\"Рег.&nbsp;номерNoneField\" id=\"regNum" + ii + "\" name=\"regNum" + ii + "\" size=\"10\" value=\"\" type=\"text\" autocomplete=\"off\">";
-            }
-
             //создать дату
             function createDate(td, ii) {
                 td.innerHTML = "<label id=\"dateIntake" + ii + "Label\" for=\"dateIntake" + ii + "\"></label>" +
@@ -163,7 +156,6 @@ left join Mislpu dep on dep.id=sloAll.department_id
                     for (var ii = 1; ii < table.rows.length; ii++) {
                         createDivAutocomplete(table.rows[ii].cells[2], ii);
                         createDate(table.rows[ii].cells[3], ii);
-                        createTextField(table.rows[ii].cells[4], ii);
                     }
                 }
             }
@@ -180,13 +172,13 @@ left join Mislpu dep on dep.id=sloAll.department_id
                         if (!isNaN(id) && $(voc + ii).value != '' && $('dateIntake' + ii).value != '') {
                             params = params + id + "-"
                                 + $(voc + ii).value + "-"
-                                + $('dateIntake' + ii).value + "-"
-                                + $('regNum' + ii).value + "!";
+                                + $('dateIntake' + ii).value + "!";
                         }
                     }
                 }
+                var depName = '${departmentInfo}'.replace('ГБУЗ АО "АЛЕКСАНДРО-МАРИИНСКАЯ ОБЛАСТНАЯ КЛИНИЧЕСКАЯ БОЛЬНИЦА " / ','');
                 if (params.length > 0)
-                    window.open('print-dirHIV.do?m=printDirectionHIV&s=HospitalPrintService&info=' + params);
+                    window.open('print-dirHIV.do?m=printDirectionHIV&s=HospitalPrintService&info=' + params + "&dep="+depName);
                 else
                     showToastMessage('Укажите код контингента и дату забора хотя бы одного пациента, чтобы распечатать направление!', null, true);
             }

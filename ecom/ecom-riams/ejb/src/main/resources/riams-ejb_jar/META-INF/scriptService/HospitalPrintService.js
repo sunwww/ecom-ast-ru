@@ -2682,6 +2682,7 @@ function getPatientHIVDirectionInfo(aCtx, patId) {
         "       ||case when pat.BuildingHousesNonresident is not null and pat.BuildingHousesNonresident!='' then ' корп.'|| pat.BuildingHousesNonresident else '' end" +
         "       ||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end" +
         "   else  pat.foreignRegistrationAddress end as address" +
+        " ,st.code as regNum" +
 
         " from Patient pat" +
         " left join vocsex vsex on vsex.id=pat.sex_id" +
@@ -2689,7 +2690,9 @@ function getPatientHIVDirectionInfo(aCtx, patId) {
         " left join Omc_KodTer okt on okt.id=pat.territoryRegistrationNonresident_id" +
         " left join Omc_Qnp oq on oq.id=pat.TypeSettlementNonresident_id" +
         " left join Omc_StreetT ost on ost.id=pat.TypeStreetNonresident_id" +
-        " where pat.id=" + patId).getResultList();
+        " left join medcase sls on sls.patient_id=pat.id and sls.dtype='HospitalMedCase' and (sls.datefinish is null or sls.dischargetime is null)" +
+        " left join statisticstub st on st.medcase_id=sls.id" +
+        " where st.id is not null and pat.id=" + patId).getResultList();
 }
 
 
@@ -2703,6 +2706,11 @@ function printDirectionHIV(aCtx, aParams) {
         if (name == 'dirSif')
             name = 'сифилис ММ, ИФА (сум.)';
         map.put("name", name);
+    }
+    var dep = aParams.get("dep");
+    if (dep && dep != '') {
+        dep = new java.lang.String(aParams.get("dep"));
+        map.put("dep", dep);
     }
     var infoMas = info.split('!');
     for (var i = 0; i < infoMas.length; i++) {
@@ -2719,7 +2727,7 @@ function printDirectionHIV(aCtx, aParams) {
                 par.set5(obj[3]);	//дом. адрес
                 par.set6(row[1]);	//код контингента
                 par.set7(row[2]);	//дата забора крови
-                par.set8(typeof row[3] == 'undefined' ? '' : row[3]);	//рег. номер
+                par.set8(obj[4]);	//рег. номер (номер стат. карты)
                 ret.add(par);
             }
         }

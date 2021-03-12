@@ -68,8 +68,7 @@ left join Mislpu dep on dep.id=sloAll.department_id
                            idField="1">
                     <msh:tableColumn property="sn" columnName="#"/>
                     <msh:tableColumn columnName="Дата забора крови" property="7"/>
-                    <msh:tableColumn columnName="Регистрац. номер" property="7"/>
-                    <msh:tableColumn columnName="Стат.карта" property="2"/>
+                    <msh:tableColumn columnName="Стат.карта (рег. номер)" property="2"/>
                     <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
                     <msh:tableColumn columnName="Год рождения" property="4"/>
                     <msh:tableColumn columnName="Дата поступления" property="5"/>
@@ -120,12 +119,6 @@ left join Mislpu dep on dep.id=sloAll.department_id
         <script type="text/javascript">
             var table = document.getElementsByTagName('table')[0];
 
-            //создать текстовое поле
-            function createTextField(td, ii) {
-                td.innerHTML = "<label id=\"regNum" + ii + "Label\" for=\"regNum" + ii + "\"></label>" +
-                    "<input title=\"Рег.&nbsp;номерNoneField\" id=\"regNum" + ii + "\" name=\"regNum" + ii + "\" size=\"10\" value=\"\" type=\"text\" autocomplete=\"off\">";
-            }
-
             //создать дату
             function createDate(td, ii) {
                 td.innerHTML = "<label id=\"dateIntake" + ii + "Label\" for=\"dateIntake" + ii + "\"></label>" +
@@ -142,13 +135,13 @@ left join Mislpu dep on dep.id=sloAll.department_id
                             .replace('selected', '').replace(' ', '');
                         if (!isNaN(id) && $('dateIntake' + ii).value != '') {
                             params = params + id + "--"
-                                + $('dateIntake' + ii).value + "-"
-                                + $('regNum' + ii).value + "!";
+                                + $('dateIntake' + ii).value + "!";
                         }
                     }
                 }
+                var depName = '${departmentInfo}'.replace('ГБУЗ АО "АЛЕКСАНДРО-МАРИИНСКАЯ ОБЛАСТНАЯ КЛИНИЧЕСКАЯ БОЛЬНИЦА " / ','');
                 if (params.length > 0)
-                    window.open('print-dirHbsAg.do?m=printDirectionHIV&s=HospitalPrintService&info=' + params + "&name="+service);
+                    window.open('print-dirHbsAg.do?m=printDirectionHIV&s=HospitalPrintService&info=' + params + "&name="+service + "&dep="+depName);
                 else
                     showToastMessage('Укажите дату забора хотя бы одного пациента, чтобы распечатать направление!', null, true);
             }
@@ -158,7 +151,6 @@ left join Mislpu dep on dep.id=sloAll.department_id
                 if (typeof table !== 'undefined') {
                     for (var ii = 1; ii < table.rows.length; ii++) {
                         createDate(table.rows[ii].cells[2], ii);
-                        createTextField(table.rows[ii].cells[3], ii);
                     }
                 }
             }
