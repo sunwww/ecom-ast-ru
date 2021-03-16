@@ -91,8 +91,7 @@ select
 , p.id as f11_presId
 , mkb.code||' '||mkb.name as f12_diagnosis
 , va.name as f13_anastesia
-, vbg.name||' '||vrf.name as f14_bloodInfo
-, surgPat.lastname as f15_surgeonInfo
+, surgPat.lastname as f14_surgeonInfo
 from prescription p
 left join medservice ms on ms.id=p.medservice_id
 left join vocservicetype vst on vst.id=ms.servicetype_id
@@ -128,8 +127,7 @@ order by p.planStartDate, p.planStartTime"/>
                     <msh:tableColumn columnName="Операция" property="4"/>
                     <msh:tableColumn columnName="Вид наркоза" property="13"/>
                     <msh:tableColumn columnName="Время проведения" property="7"/>
-                    <msh:tableColumn columnName="Хирург" property="15"/>
-                    <msh:tableColumn columnName="Группа крови" property="14"/>
+                    <msh:tableColumn columnName="Хирург" property="14"/>
                     <msh:tableColumn columnName="Направитель" property="8"/>
                     <msh:tableColumn columnName="Операционная" property="5"/>
                     <msh:tableColumn columnName="Дата назначения" property="6"/>
