@@ -93,7 +93,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             sqlAdd.append(") ");
         }
 
-        String sql = "from E2Entry where listEntry_id=:listId and " + sqlAdd.toString() + " and isDeleted is not true";
+        String sql = "from E2Entry where listEntry_id=:listId and " + sqlAdd.toString() + " and  coalesce(isDeleted, false) = false";
         List<Object> list = manager.createQuery(sql).setParameter("listId", listEntryId).getResultList();
         File dbfFile = new File(getWorkDir() + "/expert2xml/" + listEntryId + "_flyToFond.dbf");
         List<ImportDocument> documents = manager.createNamedQuery("ImportDocument.findByKey").setParameter("key", CENTRAL_SEGMENT_DOC).getResultList();
@@ -362,7 +362,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 String edCol = "1";
 
                 if (isPoliclinic) {
-                    children = manager.createQuery("from E2Entry where parentEntry_id=:id and isDeleted is not true and doNotSend is not true order by startDate").setParameter("id", currentEntry.getId()).getResultList();
+                    children = manager.createQuery("from E2Entry where parentEntry_id=:id and coalesce(isDeleted, false) = false and coalesce(doNotSend, false) = false order by startDate").setParameter("id", currentEntry.getId()).getResultList();
                 } else {
                     if (!isPoliclinicKdp) {
                         kdz += currentEntry.getBedDays().intValue();
@@ -914,23 +914,23 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             String sql;
             if (entryId == null) { //формируем файл по заполнению
                 sql = "select " + selectSqlAdd + " from E2Entry e" +
-                        " left join e2entry child on child.parentEntry_id=e.id and child.isDeleted is not true" +
+                        " left join e2entry child on child.parentEntry_id=e.id and coalesce(child.isDeleted, false) = false" +
                         " where " + (isTrue(calcAllListEntry) ? "" : "e.listEntry_id=" + entryListId + " and") +
                         "  e.billNumber=:billNumber and e.billDate=:billDate " +
-                        " and e.isDeleted is not true" +
+                        " and coalesce(e.isDeleted, false) = false" +
                         " and e.serviceStream!='COMPLEXCASE'" +
-                        " and e.doNotSend is not true group by " + groupSqlAdd;
+                        " and coalesce(child.doNotSend, false) = false group by " + groupSqlAdd;
                  LOG.info("sql=" + sql);
                 records = manager.createNativeQuery(sql)
                         .setParameter("billNumber", billNumber).setParameter("billDate", billDate).getResultList();
             } else if (entry != null) { //файл по одному случаю (для теста)
                 sql = "select " + selectSqlAdd + " from E2Entry e" +
-                        " left join e2entry child on child.parentEntry_id=e.id and child.isDeleted is not true" +
+                        " left join e2entry child on child.parentEntry_id=e.id and coalesce(child.isDeleted, false) = false" +
                         " where e.listEntry_id=" + entryListId +
-                        " and e.isDeleted is not true " +
+                        " and coalesce(e.isDeleted, false) = false " +
                         " and e.serviceStream!='COMPLEXCASE'" +
                         " and e.externalparentid=" + entry.getExternalParentId() +
-                        " and e.doNotSend is not true group by " + groupSqlAdd;
+                        " and coalesce(e.doNotSend, false) = false group by " + groupSqlAdd;
                 LOG.info("sql=" + sql);
                 records = manager.createNativeQuery(sql).getResultList();
             } else {
@@ -1104,7 +1104,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     private E2Entry calculateHospitalEntry(Long hospitalMedcaseId, String ids) {
         E2Entry hospital = null;
         List<E2Entry> slo = manager.createQuery("from E2Entry where id in (" + ids + ") and externalParentId=:parent and serviceStream!='COMPLEXCASE' " +
-                "and isDeleted is not true and doNotSend is not true order by startDate").setParameter("parent", hospitalMedcaseId)
+                "and coalesce(isDeleted, false) = false and coalesce(doNotSend, false) = false order by startDate").setParameter("parent", hospitalMedcaseId)
                 .getResultList();
         if (!slo.isEmpty()) {
             hospital = cloneEntity(slo.get(0));
@@ -1241,7 +1241,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     }
 
     private String getExpertConfigValue(String parameterName, String defaultValue) {
-        List<Object> ret = manager.createNativeQuery("select value from Expert2Config where code=:code AND isDeleted is not true").setParameter("code", parameterName).getResultList();
+        List<Object> ret = manager.createNativeQuery("select value from Expert2Config where code=:code AND coalesce(isDeleted, false) = false").setParameter("code", parameterName).getResultList();
         if (ret.isEmpty()) {
             LOG.warn("Не удалось найти настройку с ключем " + parameterName + ", возвращаю значение по умолчанию");
             return defaultValue;

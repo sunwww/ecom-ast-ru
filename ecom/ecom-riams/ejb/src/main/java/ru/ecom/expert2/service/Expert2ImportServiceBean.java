@@ -91,7 +91,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         XMLOutputter out = new XMLOutputter();
         Element rootElement = root.getRootElement();
         List<Element> defs = rootElement.getChildren("PR");
-        manager.createNativeQuery("update e2entry set isdefect='0' where listentry_id=:id and isdeleted is not true")
+        manager.createNativeQuery("update e2entry set isdefect='0' where listentry_id=:id and (isDeleted is null or isDeleted='0')")
                 .setParameter("id", listEntryId).executeUpdate();
         LOG.info("clean defect before flk " + defs.size());
         monitor.setText("ФЛК " + filename + ", записей для расчета: " + defs.size());

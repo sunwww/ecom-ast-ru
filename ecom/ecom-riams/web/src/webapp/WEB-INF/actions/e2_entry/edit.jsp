@@ -318,7 +318,7 @@
         <msh:ifFormTypeIsView formName="e2_entryForm">
             <msh:separator colSpan="4" label="Комплексные СЛО"/>
             <ecom:webQuery name="childEntries" nativeSql="select e.id
- ,e.departmentName, e.startDate, e.finishDate
+ ,e.departmentName, e.startDate, e.finishDate, e.mainMkb as mainMkb
  from e2entry e
  where e.parententry_id=${param.id} and (e.isDeleted is null or e.isDeleted='0') order by e.startdate, e.starttime"/>
             <msh:table idField="1" name="childEntries" action="entityParentView-e2_entry.do"
@@ -327,6 +327,7 @@
                 <msh:tableColumn columnName="Отделение" property="2"/>
                 <msh:tableColumn columnName="Дата начала" property="3"/>
                 <msh:tableColumn columnName="Дата окончания" property="4"/>
+                <msh:tableColumn columnName="Основной диагноз" property="5"/>
             </msh:table>
 
             <msh:separator colSpan="4" label="Сложности лечения пациента"/>
