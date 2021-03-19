@@ -1836,7 +1836,6 @@ public class PrescriptionServiceJs {
                 "0" : "1";
     }
 
-
     /**
      * Является ли отделение ковидным.
      *
@@ -1853,5 +1852,42 @@ public class PrescriptionServiceJs {
                 " where vbt.code='14' and pl.id=" + plId;
         return service.executeNativeSql(query).isEmpty() ?
                 "0" : "1";
+    }
+
+    /**
+     * Проверка, нужно ли создавать примечание к назначению на лаб. услугу
+     *
+     * @param msIds   Medservice.id услуг в назначении
+     * @return список через запятую 1,2,3, где указаны типы примечаний (noteForLabPrescript)
+     */
+    public String checkNoteNecessary(String msIds, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        String query = "select list(distinct case when m1.isaskstatuswomen then '1' else '' end" +
+                " ||(case when m2.isaskbiotype then '2' else '' end)" +
+                " ||(case when m3.isaskhwa then '3' else '' end))" +
+                " from medservice m" +
+                " left join medservice m1 on m1.id=m.id and m1.isaskstatuswomen=true" +
+                " left join medservice m2 on m2.id=m.id and m2.isaskbiotype=true" +
+                " left join medservice m3 on m3.id=m.id and m3.isaskhwa=true" +
+                " where m.id in (" + msIds + ")";
+        Collection<WebQueryResult> list = service.executeNativeSql(query);
+        return list.isEmpty() ? "" : list.iterator().next().get1().toString();
+    }
+
+    /**
+     * Проверка, нужно ли создавать примечание к назначению на лаб. услугу
+     *
+     * @param plId   PrescriptionList.id услуг в назначении
+     * @return возраст
+     */
+    public String getPatientAge(String plId, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        String query = "select cast(to_char(current_date,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int)" +
+                " from patient pat" +
+                " left join medcase mc on mc.patient_id = pat.id" +
+                " left join prescriptionlist pl on pl.medcase_id = mc.id" +
+                " where pl.id=" + plId;
+        Collection<WebQueryResult> list = service.executeNativeSql(query);
+        return list.isEmpty() ? "" : list.iterator().next().get1().toString();
     }
 }

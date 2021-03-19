@@ -112,7 +112,18 @@
           <msh:row>
               <msh:checkBox property="isAvailableReanimAlways" label="Всегда выполняется для реанимаций"/>
           </msh:row>
-
+          <msh:row>
+              <msh:separator label="Примечания к услуге:" colSpan="4"/>
+              <msh:row>
+                  <msh:checkBox property="isAskStatusWomen" label="Обязательно указывать статус пациентки?"/>
+              </msh:row>
+              <msh:row>
+                  <msh:checkBox property="isAskBioType" label="Обязательно указывать вид биоматериала?"/>
+              </msh:row>
+              <msh:row>
+                  <msh:checkBox property="isAskHWA" label="Обязательно указывать рост, вес и возраст?"/>
+              </msh:row>
+          </msh:row>
         <msh:row>
          	<msh:textField property="createUsername" label="Пользователь" viewOnlyField="true"/>
          	<msh:textField property="createDate" label="Дата создания" viewOnlyField="true"/>

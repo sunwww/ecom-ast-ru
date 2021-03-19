@@ -209,7 +209,7 @@
 		function prepareLabRow(type) {
 			
 			if ($(type+'Servicies').value==""){
-				alert("Выбирите услугу!");
+				alert("Выберите услугу!");
 				return;
 			}
 			// Проверим на дубли 
