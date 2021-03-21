@@ -124,10 +124,7 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
 
                     String birthday2 = formatOutput.format(birthday) + " г.р.";
                     String patientInfo = lastname + " " + firstname + " " + middlename + " " + birthday2;
-                    if (isNullOrEmpty(datePrik)) {
-                        sb.append("green:").append(i).append(":::Открепление пациента ").append(patientInfo).append(" не может быть загружено#");
-                        continue;
-                    }
+
                     String prikName;
                     if ("2".equals(tPrik)) { //При дефекте случая, поданного на открепление, не учитываем дефект(МАКС-М - 14 -открепление неправомерно, когда пациент уже откреплен)
                         refreason = "";
@@ -135,6 +132,10 @@ public class SyncAttachmentDefectServiceBean implements ISyncAttachmentDefectSer
                     } else {
                         refreason = refrSB.length() > 0 ? refrSB.substring(0, refrSB.length() - 1) : "";
                         prikName = "Прикрепление";
+                    }
+                    if (isNullOrEmpty(datePrik)) {
+                        sb.append("green:").append(i).append(":::Открепление пациента ").append(patientInfo).append(" не может быть загружено. Дефекты по записи - ").append(refreason).append("#");
+                        continue;
                     }
 
                     Long patientId = theSyncService.findPatientId(lastname, firstname, middlename, new java.sql.Date(birthday.getTime()));
