@@ -3279,4 +3279,20 @@ left join patient wp on wp.id=w.person_id "
                 queried=" upper(voc.code||' ('||voc.name||')') like upper(:query) "
         />
     </voc>
+
+    <voc id='vocPatientStatus' type='NativeVocService'>
+        <NativeVocService
+                from="vocPatientStatus voc"
+                nameId="voc.id"
+                names="voc.name"
+        />
+    </voc>
+
+    <voc id='vocTypeBiomat' type='NativeVocService'>
+        <NativeVocService
+                from="vocTypeBiomat voc"
+                nameId="voc.id"
+                names="voc.name"
+        />
+    </voc>
 </vocconfig>

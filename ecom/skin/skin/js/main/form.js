@@ -319,7 +319,7 @@ function getCurrentDate() {
 	var dt = new Date() ;
 	return format2day(dt.getDate())+"."+format2day(dt.getMonth()+1)+"."+dt.getFullYear() ;
 }
-//toDate - в дату из строки, dd mm yyyy разделённы символом sym
+//toDate - в дату из строки, dd mm yyyy разделённые символом sym
 //например, dd.mm.yyyy sym - это .
 function toDate(dateStr,sym) {
     var parts = dateStr.split(sym);

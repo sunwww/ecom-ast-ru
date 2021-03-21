@@ -91,6 +91,7 @@
                 var labNum = 0;
                 var funcNum = 0;
                 var labList = "";
+                var msCodes = "";
 
                 function showChangeDepartment() {
                     if (confirm("Место забора необходимо указывать, если оно отличается от отделения, где лежит пациент!!!")) {
@@ -162,6 +163,7 @@
 
                 function checkDoubles() {
                     labList = "";
+                    msCodes = "";
                     if ($('labServicies')) {
                         writeServicesToList('lab');
                     }
@@ -211,7 +213,7 @@
                         jQuery('#btnAddCharged').hide();
                         jQuery('#btnAddCharged').hide();
                         //fix Milamesher 19102020 учёт разрешения в реанимации любых услуг (передаю id листа назначения)
-                        labServiciesAutocomplete.setParentId(prescriptionType+'#'+'${param.id}');
+                        labServiciesAutocomplete.setParentId(prescriptionType + '#' + '${param.id}');
                         writeServicesToList('lab');
                         $('labServicies').value = "";
                         $('labServiciesName').value = "";
@@ -264,8 +266,26 @@
                     if ($('funcServicies')) {
                         writeServicesToList('func');
                     }
-
                     $('labList').value = labList;
+                    $('noteForLab').value = '';
+                    $('noteForLab1').value = '';
+                    $('noteForLab2').value = '';
+                    $('noteForLab3').value = '';
+                    if (msCodes[msCodes.length - 1] == ',')
+                        msCodes = msCodes.substring(0, msCodes.length - 1);
+                    //Проверка на необходимость примечания
+                    PrescriptionService.checkNoteNecessary(msCodes, {
+                        callback: function (aResult) {
+                            if (aResult) {
+                                showNoteLabNote(aResult);
+                            } else {
+                                submitFunc();
+                            }
+                        }
+                    });
+                }
+
+                function submitFunc() {
                     document.forms['pres_servicePrescriptionForm'].action = oldaction;
                     document.forms['pres_servicePrescriptionForm'].submit();
                 }
@@ -287,6 +307,7 @@
 
                             if (curService.value != "" & curDate.value != "") {
                                 labList += curService.value + ":";
+                                msCodes += curService.value + ",";
                                 labList += curDate.value + ":";
                                 labList += curCabinet.value + ":";
                                 labList += curDepartment.value;
@@ -305,6 +326,7 @@
 
                         if ($(type + 'Servicies').value != "" & $(type + 'Date').value != "") {
                             labList += $(type + 'Servicies').value;
+                            msCodes += $(type + 'Servicies').value;
                             labList += ":";
                             labList += $(type + 'Date').value;
                             labList += ":";
@@ -361,10 +383,9 @@
                         num = surgNum;
                     } else if (type == 'hosp') {
                         num = hospNum;
-                    } else if (type.substring(0,8) == 'COMMENT@') {
+                    } else if (type.substring(0, 8) == 'COMMENT@') {
                         return;
-                    }
-                    else {
+                    } else {
                         alert('Неизвестный тип: ' + type);
                     }
                     num += 1;
@@ -430,7 +451,7 @@
                         num = funcNum;
                     }
                     if ($(type + 'Servicies').value == "") {
-                        alert("Выбирите услугу!");
+                        alert("Выберите услугу!");
                         return;
                     }
 
@@ -648,8 +669,8 @@
 
                 //Если анализ на ковид
                 $('materialPCRId').hide();
-                labServiciesAutocomplete.addOnChangeCallback(function() {
-                    if ($('labServicies').value=='22347') {
+                labServiciesAutocomplete.addOnChangeCallback(function () {
+                    if ($('labServicies').value == '22347') {
                         if (jQuery('input[name ="subm"]')[0]) jQuery('input[name ="subm"]')[0].disabled = true;
                         if (jQuery('input[name ="subm"]')[1]) jQuery('input[name ="subm"]')[1].disabled = true;
                         if (jQuery('input[name ="minB"]')[0]) jQuery('input[name ="minB"]')[0].disabled = true;
@@ -657,10 +678,10 @@
                         if (jQuery('input[name ="btnChangePrescriptionType"]')[0]) jQuery('input[name ="btnChangePrescriptionType"]')[0].disabled = true;
                         if (jQuery('input[name ="btnChangeDepartment"]')[0]) jQuery('input[name ="btnChangeDepartment"]')[0].disabled = true;
                         if (jQuery('input[name ="btnMakeAnyPrescription"]')[0]) jQuery('input[name ="btnMakeAnyPrescription"]')[0].disabled = true;
-                        if ($('medcaseType').value=='HOSPITAL') {
+                        if ($('medcaseType').value == 'HOSPITAL') {
                             PrescriptionService.checkSloCovid(${param.id}, {
                                 callback: function (aResult) {
-                                    if (aResult==1) {
+                                    if (aResult == 1) {
                                         $('labDate').value = getDateAfterOrBeforeCurrent();
                                         $('labDate').disabled = true;
                                     }
@@ -668,13 +689,11 @@
                                     $('materialPCRId').className = 'required';
                                 }
                             });
-                        }
-                        else if ($('medcaseType').value=='POLYCLINIC') {
+                        } else if ($('medcaseType').value == 'POLYCLINIC') {
                             $('labDepartment').disabled = true;
                             $('labDepartmentName').disabled = true;
                         }
-                    }
-                    else {
+                    } else {
                         if (jQuery('input[name ="subm"]')[0]) jQuery('input[name ="subm"]')[0].disabled = false;
                         if (jQuery('input[name ="subm"]')[1]) jQuery('input[name ="subm"]')[1].disabled = false;
                         if (jQuery('input[name ="minB"]')[0]) jQuery('input[name ="minB"]')[0].disabled = false;
@@ -682,12 +701,11 @@
                         if (jQuery('input[name ="btnChangePrescriptionType"]')[0]) jQuery('input[name ="btnChangePrescriptionType"]')[0].disabled = false;
                         if (jQuery('input[name ="btnChangeDepartment"]')[0]) jQuery('input[name ="btnChangeDepartment"]')[0].disabled = false;
                         if (jQuery('input[name ="btnMakeAnyPrescription"]')[0]) jQuery('input[name ="btnMakeAnyPrescription"]')[0].disabled = false;
-                        if ($('medcaseType').value=='HOSPITAL') {
+                        if ($('medcaseType').value == 'HOSPITAL') {
                             $('labDate').disabled = false;
                             $('materialPCRId').hide();
                             $('materialPCRId').value = '';
-                        }
-                        else if ($('medcaseType').value=='POLYCLINIC') { //место забора пусть берётся по раб функции врача
+                        } else if ($('medcaseType').value == 'POLYCLINIC') { //место забора пусть берётся по раб функции врача
                             $('labDepartment').disabled = false;
                             $('labDepartmentName').disabled = false;
                         }
@@ -696,26 +714,23 @@
 
                 //Сохранение
                 function save() {
-                    if ($('labServicies').value=='22347') {
-                        if (!$('materialPCRId').value && $('medcaseType').value=='HOSPITAL') {
-                            showToastMessage('Введите номер пробирки!',null,true,true,3000);
+                    if ($('labServicies').value == '22347') {
+                        if (!$('materialPCRId').value && $('medcaseType').value == 'HOSPITAL') {
+                            showToastMessage('Введите номер пробирки!', null, true, true, 3000);
                             $('submitButton').disabled = false;
                             $('submitButton').value = 'Создать';
-                        }
-                        else if (!checkDate($('labDate').value)) {
-                            showToastMessage('Введите корректную дату!',null,true,true,3000);
+                        } else if (!checkDate($('labDate').value)) {
+                            showToastMessage('Введите корректную дату!', null, true, true, 3000);
                             $('submitButton').disabled = false;
                             $('submitButton').value = 'Создать';
-                        }
-                        else
+                        } else
                             checkDoublesNextDayCovid();
-                    }
-                    else
+                    } else
                         checkDoubles();
                 }
 
                 //действия после проверки
-                function makeCovidPresc(aResult,msg) {
+                function makeCovidPresc(aResult, msg) {
                     if (+aResult != 0) {
                         showToastMessage(msg, null, true, true, 4000);
                         $('submitButton').disabled = false;
@@ -728,17 +743,16 @@
 
                 //проверка ковид анализов: можно только один анализ на след. день
                 function checkDoublesNextDayCovid() {
-                    if ($('medcaseType').value=='HOSPITAL') {
+                    if ($('medcaseType').value == 'HOSPITAL') {
                         PrescriptionService.checkDoublesNextDayCovid($('medcaseId').value, $('labDate').value, {
                             callback: function (aResult) {
-                                makeCovidPresc(aResult,'У пациента уже есть такое назначение на планируемую дату. Дубли запрещены.');
+                                makeCovidPresc(aResult, 'У пациента уже есть такое назначение на планируемую дату. Дубли запрещены.');
                             }
                         });
-                    }
-                    else if ($('medcaseType').value=='POLYCLINIC') {
+                    } else if ($('medcaseType').value == 'POLYCLINIC') {
                         PrescriptionService.checkDoublesPolyclinicCovid($('medcaseId').value, {
                             callback: function (aResult) {
-                                makeCovidPresc(aResult,'У пациента уже есть невыполенное назначение. Дубли запрещены.', null, true, true, 4000);
+                                makeCovidPresc(aResult, 'У пациента уже есть невыполенное назначение. Дубли запрещены.', null, true, true, 4000);
                             }
                         });
                     }
@@ -750,14 +764,13 @@
             <script type="text/javascript">
                 function cancelService() {
                     var reason = '' + prompt('Введите причину отмены');
-                    if (reason!='null') {
+                    if (reason != 'null') {
                         PrescriptionService.cancelPrescription($('id').value, reason, {
                             callback: function (a) {
                                 alert(a);
                             }
                         });
-                    }
-                    else
+                    } else
                         alert("Необходимо указать причину аннулирования!");
                 }
             </script>
@@ -783,6 +796,10 @@
             <msh:hidden property="unpaidConfirmation"/>
             <msh:hidden property="saveType"/>
             <msh:hidden property="labList"/>
+            <msh:hidden property="noteForLab"/>
+            <msh:hidden property="noteForLab1"/>
+            <msh:hidden property="noteForLab2"/>
+            <msh:hidden property="noteForLab3"/>
             <input type="hidden" id="labCaosService" value="">
             <input type="hidden" id="funcDepartment" value="">
             <input type="hidden" id="labCabinet" value="">
@@ -848,7 +865,7 @@
                                 <td>
                                     <input type='button' value='-1' title="Уменьшить дату на 1 день" name="minB"
                                            onclick='changeDate(-1)'>
-                                    <input type='button' value='+1' title="Увеличить дату на 1 день"  name="minB"
+                                    <input type='button' value='+1' title="Увеличить дату на 1 день" name="minB"
                                            onclick='changeDate(1)'>
 
                                 </td>
@@ -918,15 +935,16 @@
         </msh:form>
         <tags:dir_medService name="1" table="MEDSERVICE" title="Услуги" functionAdd="prepare1Row" addParam="id"/>
         <tags:enter_date name="2" functionSave="prepare1RowByDate"/>
+        <tags:noteForLabPrescript name="Note" functionSave="submitFunc"/>
         <msh:ifFormTypeIsView formName="pres_servicePrescriptionForm">
             <msh:section title="Исполнения">
                 <ecom:parentEntityListAll formName="pres_prescriptionFulfilmentForm"
                                           attribute="fulfilments"/>
                 <msh:table name="fulfilments"
                            action="entityParentView-pres_prescriptionFulfilment.do" idField="id">
-                    <msh:tableColumn columnName="Дата исполнения" property="fulfilDate" />
-                    <msh:tableColumn columnName="Время исполнения" property="fulfilTime" />
-                    <msh:tableColumn columnName="Исполнитель" property="executorInfo" />
+                    <msh:tableColumn columnName="Дата исполнения" property="fulfilDate"/>
+                    <msh:tableColumn columnName="Время исполнения" property="fulfilTime"/>
+                    <msh:tableColumn columnName="Исполнитель" property="executorInfo"/>
                 </msh:table>
             </msh:section>
         </msh:ifFormTypeIsView>

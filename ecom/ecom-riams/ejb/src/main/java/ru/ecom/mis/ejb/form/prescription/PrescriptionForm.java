@@ -523,5 +523,34 @@ public class PrescriptionForm extends IdEntityForm {
 	public Long getGuaranteeId() {return theGuaranteeId;}
 	public void setGuaranteeId(Long aGuaranteeId) {theGuaranteeId = aGuaranteeId;}
 	private Long theGuaranteeId ;
+
+	/** Примечание для лаборатории*/
+	@Comment("Примечание для лаборатории")
+	@Persist
+	public String getNoteForLab() {return theNoteForLab;}
+	public void setNoteForLab(String aNoteForLab) {theNoteForLab = aNoteForLab;}
+	/** Примечание для лаборатории*/
+	private String theNoteForLab;
+
+	/** Примечание1*/
+	@Comment("Примечание1")
+	public String getNoteForLab1() {return theNoteForLab1;}
+	public void setNoteForLab1(String aNoteForLab1) {theNoteForLab1 = aNoteForLab1;}
+	/** Примечание1*/
+	private String theNoteForLab1;
+
+	/** Примечание2*/
+	@Comment("Примечание2")
+	public String getNoteForLab2() {return theNoteForLab2;}
+	public void setNoteForLab2(String aNoteForLab2) {theNoteForLab2 = aNoteForLab2;}
+	/** Примечание2*/
+	private String theNoteForLab2;
+
+	/** Примечание3*/
+	@Comment("Примечание3")
+	public String getNoteForLab3() {return theNoteForLab3;}
+	public void setNoteForLab3(String aNoteForLab3) {theNoteForLab3 = aNoteForLab3;}
+	/** Примечание3*/
+	private String theNoteForLab3;
 }
 
