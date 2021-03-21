@@ -140,6 +140,15 @@ function onCreate(aForm, aEntity, aCtx) {
                     adMedService.setPrescriptionList(aEntity.getPrescriptionList());
                     adMedService.setPrescriptSpecial(aEntity.getPrescriptSpecial());
                     adMedService.setMedService(medService);
+                    //сохранять примечание только там, где надо и только актуальное для услуги
+                    if (medService.getIsAskStatusWomen() != null && +medService.getIsAskStatusWomen() == 1)
+                        adMedService.setNoteForLab(aForm.getNoteForLab1());
+                    else if (medService.getIsAskBioType() != null && +medService.getIsAskBioType() == 1)
+                        adMedService.setNoteForLab(aForm.getNoteForLab2());
+                    else if (medService.getIsAskHWA() != null && +medService.getIsAskHWA() == 1)
+                        adMedService.setNoteForLab(aForm.getNoteForLab3());
+                    else
+                        adMedService.setNoteForLab('');
                     adMedService.setPlanStartDate(par2);
                     adMedService.setPrescriptType(prescriptType);
                     adMedService.setMaterialId(matId != null ? "" + matId : "");

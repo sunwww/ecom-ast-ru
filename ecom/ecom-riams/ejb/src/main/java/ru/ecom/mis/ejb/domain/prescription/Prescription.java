@@ -431,4 +431,11 @@ public abstract class Prescription extends BaseEntity{
 	public void setSetPatologySpecial(WorkFunction aSetPatologySpecial) {theSetPatologySpecial = aSetPatologySpecial;}
 	/** Проставил патологию специалист */
 	private WorkFunction theSetPatologySpecial;
+
+	/** Примечание для лаборатории*/
+	@Comment("Примечание для лаборатории")
+	public String getNoteForLab() {return theNoteForLab;}
+	public void setNoteForLab(String aNoteForLab) {theNoteForLab = aNoteForLab;}
+	/** Примечание для лаборатории*/
+	private String theNoteForLab;
 }
