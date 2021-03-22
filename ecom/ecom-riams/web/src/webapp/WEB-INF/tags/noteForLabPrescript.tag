@@ -100,21 +100,21 @@
         else {
             var note1 = '', note2 = '', note3 = '';
             if ($('patientStatusName').value)
-                note1 += 'Статус: ' + $('patientStatusName').value + '. ';
+                note1 += 'Статус: ' + $('patientStatusName').value;
             if ($('lastMensDate').value)
-                note1 += 'Дата посл. менс.: ' + $('lastMensDate').value + '. ';
+                note1 += ' Дата посл. менс.: ' + $('lastMensDate').value + ' ';
             if ($('otherStatus').value)
-                note1 += 'Иное: ' + $('otherStatus').value + '. ';
+                note1 += ' (' + $('otherStatus').value + ')';
             if ($('typeBiomatName').value)
-                note2 += 'Вид биомат.: ' + $('typeBiomatName').value + '. ';
+                note2 += ' Вид биомат.: ' + $('typeBiomatName').value;
             if ($('otherBiomat').value)
-                note2 += 'Иное (биомат.).: ' + $('otherBiomat').value + '. ';
+                note2 += ' (' + $('otherBiomat').value + ')';
             if ($('height').value)
-                note3 += 'Рост: ' + $('height').value + '. ';
+                note3 += 'Рост: ' + $('height').value;
             if ($('weight').value)
-                note3 += 'Вес: ' + $('weight').value + '. ';
+                note3 += ' Вес: ' + $('weight').value + '. ';
             if ($('age').value)
-                note3 += 'Возраст: ' + $('age').value + '. ';
+                note3 += ' Возраст: ' + $('age').value + ' ';
             $('noteForLab1').value = note1;
             $('noteForLab2').value = note2;
             $('noteForLab3').value = note3;
