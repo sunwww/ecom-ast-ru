@@ -143,6 +143,9 @@
             <label onclick="document.getElementById('dayOfWeek7').click()">Воскресенье</label><br>
         </msh:form>
         <input type="button" onclick="createDateTimes(this)" value="Создать" />
+        <msh:ifInRole roles="/Policy/Mis/Worker/WorkCalendar/OperatingRoom">
+            <input type="button" onclick="changeSpecialist(this)" value="Поменять на опер." />
+        </msh:ifInRole>
         <div id="schedule">
         </div>
 
@@ -209,56 +212,58 @@
 
         <script type='text/javascript'>
             getReserves();
-function getReserves() {
-    WorkCalendarService.getActualReserves({
-        callback: function(arr) {
-            if (arr) {
-                arr = JSON.parse(arr);
-                var t="";
-                for (i=0;i<arr.length;i++) {
-                    r = arr[i];
-                     t +="<li class=\"menu-item\">" +
-                        " <button type=\"button\" class=\"menu-btn\" onclick=\"changeReserve('"+r.id+"');\">" +
-                        " <i class=\"fa fa-comment\"></i>" +
-                        " <span class=\"menu-text\">"+r.name+"</span>" +
-                        " </button>" +
-                        " </li>"
-                }
-                t +="<li class=\"menu-item\">" +
-                    " <button type=\"button\" class=\"menu-btn\" onclick=\"changeReserve('0');\">" +
-                    " <i class=\"fa fa-comment\"></i>" +
-                    " <span class=\"menu-text\">Удалить резерв</span>" +
-                    " </button>" +
-                    " </li>"
-                jQuery('#menuSubMenu').html(t);
-            }
-        }
-    });
 
-}
+            function getReserves() {
+                WorkCalendarService.getActualReserves({
+                    callback: function (arr) {
+                        if (arr) {
+                            arr = JSON.parse(arr);
+                            var t = "";
+                            for (i = 0; i < arr.length; i++) {
+                                r = arr[i];
+                                t += "<li class=\"menu-item\">" +
+                                    " <button type=\"button\" class=\"menu-btn\" onclick=\"changeReserve('" + r.id + "');\">" +
+                                    " <i class=\"fa fa-comment\"></i>" +
+                                    " <span class=\"menu-text\">" + r.name + "</span>" +
+                                    " </button>" +
+                                    " </li>"
+                            }
+                            t += "<li class=\"menu-item\">" +
+                                " <button type=\"button\" class=\"menu-btn\" onclick=\"changeReserve('0');\">" +
+                                " <i class=\"fa fa-comment\"></i>" +
+                                " <span class=\"menu-text\">Удалить резерв</span>" +
+                                " </button>" +
+                                " </li>"
+                            jQuery('#menuSubMenu').html(t);
+                        }
+                    }
+                });
+
+            }
 
             var thisCell;
-            var weekplus=0;
-            document.forms[0].rdMode[0].checked=true ;
-            document.forms[0].chetnechet[0].checked=true ;
-            var checkedRadio=1;
-            var checkedRadioevenodd=3;
+            var weekplus = 0;
+            document.forms[0].rdMode[0].checked = true;
+            document.forms[0].chetnechet[0].checked = true;
+            var checkedRadio = 1;
+            var checkedRadioevenodd = 3;
 
             function chkchange(value) {
                 checkedRadio = value;
-                if(document.forms[0].rdMode[0].checked){
-                    checkedRadio=1;
-                }else {
-                    checkedRadio=2;
+                if (document.forms[0].rdMode[0].checked) {
+                    checkedRadio = 1;
+                } else {
+                    checkedRadio = 2;
                 }
             }
+
             function chkchangeChet(value) {
                 checkedRadioevenodd = value;
             }
-            //upd. Milamesher 20112018 учитываются дни недели
+
             function createDateTimes(ths) {
                 //проверка на непустой промежуток/кол-во
-                if (document.getElementById("countVisits").value!='' && !isNaN(+document.getElementById("countVisits").value)) {
+                if (document.getElementById("countVisits").value != '' && !isNaN(+document.getElementById("countVisits").value)) {
                     //если ни один не выбран  - по умолчанию - все
                     var flag = false;
                     for (var i = 0; i < 8; i++)
@@ -279,169 +284,158 @@ function getReserves() {
                         document.getElementById('dayOfWeek5').checked,
                         document.getElementById('dayOfWeek6').checked,
                         document.getElementById('dayOfWeek7').checked, {
-                            callback: function (aResult) {
-                                //alert(aResult);
+                            callback: function () {
                                 updateTable();
                                 ths.disabled = false;
                                 ths.value = "Создать";
                                 var message = "Успешно создано!";
-                                showToastMessage(message, null, true);
+                                showToastMessage(message, null, true, false, 3000);
                             },
                             errorHandler: function (aMessage) {
-                                alert("Не удалось создать! " + aMessage);
+                                showToastMessage("Не удалось создать! " + aMessage, null, true, true, 3000);
                                 ths.disabled = false;
                                 ths.value = "Создать";
                             }
                         });
-                }
-                else alert('Введите длительность визитов либо их количество!');
+                } else showToastMessage('Введите длительность визитов либо их количество!', null, true, true, 3000);
             }
-            //Milamesher 22112018 - выбрать все дни недели
+
+            //выбрать все дни недели
             function chooseAllDaysOfWeek() {
                 if (document.getElementById("dayOfWeek0").checked) {
-                    document.getElementById("dayOfWeek1").checked=document.getElementById("dayOfWeek2").checked=
-                        document.getElementById("dayOfWeek3").checked=document.getElementById("dayOfWeek4").checked=
-                            document.getElementById("dayOfWeek5").checked=document.getElementById("dayOfWeek6").checked=
-                                document.getElementById("dayOfWeek7").checked='checked';
+                    document.getElementById("dayOfWeek1").checked = document.getElementById("dayOfWeek2").checked =
+                        document.getElementById("dayOfWeek3").checked = document.getElementById("dayOfWeek4").checked =
+                            document.getElementById("dayOfWeek5").checked = document.getElementById("dayOfWeek6").checked =
+                                document.getElementById("dayOfWeek7").checked = 'checked';
                 }
             }
-            //Milamesher 22112018 - снять отметку с все, если не все отмечены
+
+            //снять отметку с все, если не все отмечены
             function checkAll() {
                 if (document.getElementById("dayOfWeek0").checked &&
-                !document.getElementById("dayOfWeek1").checked || !document.getElementById("dayOfWeek2").checked ||
+                    !document.getElementById("dayOfWeek1").checked || !document.getElementById("dayOfWeek2").checked ||
                     !document.getElementById("dayOfWeek3").checked || !document.getElementById("dayOfWeek4").checked ||
-                !document.getElementById("dayOfWeek5").checked || !document.getElementById("dayOfWeek6").checked ||
-                    !document.getElementById("dayOfWeek7").checked) document.getElementById("dayOfWeek0").checked=false;
+                    !document.getElementById("dayOfWeek5").checked || !document.getElementById("dayOfWeek6").checked ||
+                    !document.getElementById("dayOfWeek7").checked) document.getElementById("dayOfWeek0").checked = false;
                 if (!document.getElementById("dayOfWeek0").checked &&
                     document.getElementById("dayOfWeek1").checked && document.getElementById("dayOfWeek2").checked &&
                     document.getElementById("dayOfWeek3").checked && document.getElementById("dayOfWeek4").checked &&
-                    document.getElementById("dayOfWeek5").checked  && document.getElementById("dayOfWeek6").checked  &&
-                    document.getElementById("dayOfWeek7").checked) document.getElementById("dayOfWeek0").checked='checked';
+                    document.getElementById("dayOfWeek5").checked && document.getElementById("dayOfWeek6").checked &&
+                    document.getElementById("dayOfWeek7").checked) document.getElementById("dayOfWeek0").checked = 'checked';
             }
+
             function nextWeek() {
-                weekplus=weekplus+7;
+                weekplus = weekplus + 7;
                 updateTable();
             }
 
             function prevWeek() {
-                weekplus=weekplus-7;
+                weekplus = weekplus - 7;
                 updateTable();
             }
 
             function updateTable() {
-                WorkCalendarService.buildSheduleTable($('specialist').value,weekplus,{
-                    callback: function(aResult) {
+                WorkCalendarService.buildSheduleTable($('specialist').value, weekplus, {
+                    callback: function (aResult) {
                         var t = document.getElementById("schedule");
-                        t.innerHTML=aResult;
+                        t.innerHTML = aResult;
                         tranetable();
                     },
-                    errorHandler: function(aMessage) {
-                        alert("Не удалось отобразить! "+aMessage) ;
+                    errorHandler: function (aMessage) {
+                        showToastMessage("Не удалось отобразить! " + aMessage, null, true, true, 3000);
                     }
                 });
             }
 
 
-            specialistAutocomplete.addOnChangeCallback(function(){
+            specialistAutocomplete.addOnChangeCallback(function () {
                 updateTable();
             });
 
-           /* window.document.onclick = function (e) {
-                if(e.target.getAttribute('class')=='th'){
-                    setMenu("menu2");
-                    thisCell = e.target;
-                    document.addEventListener('contextmenu', onContextMenu, true);
-                }
-
-                if(e.target.getAttribute('class')!='th' && e.target.nodeName=='TD'){
-                    setMenu("menu");
-                  thisCell = e.target;
-                  document.addEventListener('contextmenu', onContextMenu, true);
-                }
-            };*/
-
             window.document.oncontextmenu = function (e) {
-                if(e.target.getAttribute('class')=='th'){
+                if (e.target.getAttribute('class') == 'th') {
                     setMenu("menu2");
                     thisCell = e.target;
                     onContextMenu(e);
                 }
 
-                if(e.target.getAttribute('class')!='th' && e.target.nodeName=='TD'){
+                if (e.target.getAttribute('class') != 'th' && e.target.nodeName == 'TD') {
                     setMenu("menu");
                     thisCell = e.target;
                     onContextMenu(e);
                 }
             };
-    //Milamesher 14112018 если ничего не выделено - делаем текущий, если что-то выделено - делаю им
+
+            //если ничего не выделено - делаем текущий, если что-то выделено - делаю им
             function changeReserve(type) {
                 var array = [];
                 var checkboxes = document.querySelectorAll('input[type=checkbox]:checked');
                 for (var i = 0; i < checkboxes.length; i++) {
-                    if (checkboxes[i].id.indexOf("dayOfWeek")==-1)
-                        array.push(checkboxes[i].id.replace("ch",""));
+                    if (checkboxes[i].id.indexOf("dayOfWeek") == -1)
+                        array.push(checkboxes[i].id.replace("ch", ""));
                 }
-                if (array.length==0) {
+                if (array.length == 0) {
                     WorkCalendarService.changeScheduleElementReserve(thisCell.getAttribute('id'), type, {
-                        callback: function (aResult) {
+                        callback: function () {
                             updateTable();
 
                         },
                         errorHandler: function (aMessage) {
-                            alert("Не удалось отобразить! " + aMessage);
+                            showToastMessage("Не удалось отобразить! " + aMessage, null, true, true, 3000);
                         }
                     });
-                }
-                else {
+                } else {
                     WorkCalendarService.changeScheduleArrayReserve(array, type, {
-                        callback: function (aResult) {
+                        callback: function () {
                             updateTable();
 
                         },
                         errorHandler: function (aMessage) {
-                            alert("Не удалось отобразить! " + aMessage);
+                            showToastMessage("Не удалось отобразить! " + aMessage, null, true, true, 3000);
                         }
                     });
                 }
             }
-    //Milamesher 16112018 добавить время в существующий день
+
+            //добавить время в существующий день
             function addTime() {
                 var mins;
                 do {
                     mins = prompt("Введите значение минут:", "00");
-                    if (mins != null && mins>=0 && mins<60) {
-                        if (mins.length<2) mins="0"+mins;
-                        WorkCalendarService.addTime(thisCell.getAttribute('id'),mins,{
-                            callback: function(aResult) {
-                                showToastMessage(aResult,null,true);
+                    if (mins != null && mins >= 0 && mins < 60) {
+                        if (mins.length < 2) mins = "0" + mins;
+                        WorkCalendarService.addTime(thisCell.getAttribute('id'), mins, {
+                            callback: function (aResult) {
+                                showToastMessage(aResult, null, true, false, 3000);
                                 updateTable();
                             },
-                            errorHandler: function(aMessage) {
-                                alert("Не удалось создать время! "+aMessage) ;
+                            errorHandler: function (aMessage) {
+                                showToastMessage("Не удалось создать время! " + aMessage, null, true, true, 3000);
                             }
                         });
-                    }
-                    else if (mins != null) alert("Некорректное количество минут!");
+                    } else if (mins != null) showToastMessage("Некорректное количество минут!", null, true, true, 3000);
                 }
-                while (mins != null && (mins<0 || mins>=60));
+                while (mins != null && (mins < 0 || mins >= 60));
             }
+
             function deleteTime() {
-                WorkCalendarService.setScheduleElementIsDelete(thisCell.getAttribute('id'),{
-                    callback: function(aResult) {
+                WorkCalendarService.setScheduleElementIsDelete(thisCell.getAttribute('id'), {
+                    callback: function () {
                         updateTable();
                     },
-                    errorHandler: function(aMessage) {
-                        alert("Не удалось отобразить! "+aMessage) ;
+                    errorHandler: function (aMessage) {
+                        showToastMessage("Не удалось отобразить! " + aMessage, null, true, true, 3000);
                     }
                 });
             }
+
             function deleteDay() {
-                WorkCalendarService.setScheduleDayIsDelete(thisCell.getAttribute('id'),{
-                    callback: function(aResult) {
+                WorkCalendarService.setScheduleDayIsDelete(thisCell.getAttribute('id'), {
+                    callback: function () {
                         updateTable();
                     },
-                    errorHandler: function(aMessage) {
-                        alert("Не удалось отобразить! "+aMessage) ;
+                    errorHandler: function (aMessage) {
+                        showToastMessage("Не удалось отобразить! " + aMessage, null, true, true, 3000);
                     }
                 });
             }
@@ -449,7 +443,7 @@ function getReserves() {
             function editRecord() {
                 var id = thisCell.getAttribute('id');
                 var t = document.getElementById(id).innerHTML;
-                document.getElementById(id).innerHTML ="<input id='edit' style='display: block;' value='"+t+"'>";
+                document.getElementById(id).innerHTML = "<input id='edit' style='display: block;' value='" + t + "'>";
                 document.getElementById(id).focus();
             }
 
@@ -460,21 +454,20 @@ function getReserves() {
                 newTable.id = myTable.id;
                 var maxCells = 0;
                 var maxRows = (myTable.rows.length);
-                for(var r = 0; r < myTable.rows.length; r++) {
-                    if(myTable.rows[r].cells.length > maxCells) {
+                for (var r = 0; r < myTable.rows.length; r++) {
+                    if (myTable.rows[r].cells.length > maxCells) {
                         maxCells = myTable.rows[r].cells.length;
                     }
                 }
 
-                for(var i = 0; i < maxCells; i++) {
+                for (var i = 0; i < maxCells; i++) {
                     newTable.insertRow(i);
-                    for(var j = 0; j < maxRows; j++) {
+                    for (var j = 0; j < maxRows; j++) {
 
-                        //alert(i+" "+j);
-                        if(myTable.rows[j].cells[i] == undefined){
+                        if (myTable.rows[j].cells[i] == undefined) {
                             newTable.rows[i].insertCell(j);
                             newTable.rows[i].cells[j] = '-';
-                        }else{
+                        } else {
                             newTable.rows[i].insertCell(j);
                             newTable.rows[i].cells[j].innerHTML = myTable.rows[j].cells[i].innerHTML;
                             newTable.rows[i].cells[j].className = myTable.rows[j].cells[i].className;
@@ -484,9 +477,27 @@ function getReserves() {
                 }
 
                 var div = document.getElementById('body-cont');
-                div.innerHTML="";
+                div.innerHTML = "";
                 div.appendChild(newTable);
             }
+
+            <msh:ifInRole roles="/Policy/Mis/Worker/WorkCalendar/OperatingRoom">
+            //изменить справочник Специалист <-> Операционная
+            function changeSpecialist(btn) {
+                if (btn.value == 'Поменять на опер.') {
+                    specialistAutocomplete.setUrl('simpleVocAutocomplete/operationRoom');
+                    specialistAutocomplete.setVocKey('operationRoom');
+                    btn.value = 'Поменять на спец.'
+                } else {
+                    specialistAutocomplete.setUrl('simpleVocAutocomplete/workFunctionByDirect');
+                    specialistAutocomplete.setVocKey('workFunctionByDirect');
+                    btn.value = 'Поменять на опер.'
+                }
+                specialistAutocomplete.setVocId('');
+                document.getElementById("schedule").innerHTML = '';
+            }
+
+            </msh:ifInRole>
         </script>
     </tiles:put>
 </tiles:insert>
