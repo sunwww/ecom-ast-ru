@@ -1025,6 +1025,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                         unionEntries(mainEntry, entry);
                     } else { //например - кардиология - сосуд. хирургия (вторая - главная
                         if (isEquals(mainEntry.getDepartmentId(), entry.getDepartmentId())) { //Если ИД отделения равны - не учитываем цену
+                            entry.setExternalPrevMedcaseId(mainEntry.getExternalPrevMedcaseId());
                             unionEntries(entry, mainEntry); //последнее отделение - главное
                             mainEntry = entry;
                         } else if (isDiagnosisGroupAreEquals(mainEntry, entry)) { //Если классы МКБ сходятся
