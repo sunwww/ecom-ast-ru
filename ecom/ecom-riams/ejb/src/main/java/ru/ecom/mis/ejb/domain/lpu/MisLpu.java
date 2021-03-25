@@ -271,6 +271,10 @@ public class MisLpu extends BaseEntity {
      * Инфекционное?
      */
     private Boolean theIsForCovid;
+    /**
+     * Опер. блок?
+     */
+    private Boolean theIsOperBlock;
 
     /**
      * Признак мобильной поликлиники
@@ -997,5 +1001,17 @@ public class MisLpu extends BaseEntity {
 
     public void setIsForCovid(Boolean aIsForCovid) {
         theIsForCovid = aIsForCovid;
+    }
+
+    /**
+     * Опер. блок?
+     */
+    @Comment("Опер. блок?")
+    public Boolean getIsOperBlock() {
+        return theIsOperBlock;
+    }
+
+    public void setIsOperBlock(Boolean aIsOperBlock) {
+        theIsOperBlock = aIsOperBlock;
     }
 }

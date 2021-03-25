@@ -125,6 +125,7 @@
                 <msh:row>
                     <msh:checkBox property="isOphthalmic" label="Офтальмологическое отделение"/>
                     <msh:checkBox property="isForCovid" label="Инфекционное"/>
+                    <msh:checkBox property="isOperBlock" label="Опер. блок"/>
                 </msh:row>
                 <msh:row>
                     <msh:checkBox property="isMobilePolyclinic" label="Мобильная поликлиника"/>
