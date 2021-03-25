@@ -36,8 +36,7 @@
                                       label="Операционная" vocName="operationRoom"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="dateBegin" label="Период с"/>
-                    <msh:textField property="dateEnd" label="по"/>
+                    <msh:textField property="dateBegin" label="Дата"/>
                     <td colspan="3">
                         <input type="submit" onclick="find()" value="Найти"/>
                     </td>
@@ -51,13 +50,8 @@
             String date = request.getParameter("dateBegin");
             if (date != null && !date.equals("")) {
                 request.setAttribute("startDate", date);
-                String dateEnd = request.getParameter("dateEnd");
-                if (dateEnd == null || dateEnd.equals("")) {
-                    dateEnd = date;
-                }
-                request.setAttribute("finishDate", dateEnd);
 
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(date, dateEnd, request));
+                request.setAttribute("isReportBase", ActionUtil.isReportBase(date, date, request));
                 String dep = request.getParameter("department");
                 String room = request.getParameter("roomType");
                 String sqlAdd = "";
@@ -72,7 +66,7 @@
                 request.setAttribute("dep", sqlAdd);
 
         %>
-        <msh:section title="Журнал направлений на хир. операции. Период с ${startDate} по ${finishDate}.">
+        <msh:section title="Журнал направлений на хир. операции. Дата: ${startDate}.">
             <msh:sectionContent>
                 <ecom:webQuery isReportBase="${isReportBase}" name="journal_list_suroper"
                                nameFldSql="journal_list_suroper_sql" nativeSql="
@@ -87,11 +81,13 @@ select
 ,cast(p.planStartTime as varchar(5))||'-'||cast(p.planEndTime as varchar(5)) as f7_oper_time
 ,mlN.name||' (' ||wp.lastname||')' as f8_naprInfo
 ,p.comments as f9_comments
-,cast('background:#F6D8CE;color:black;' as varchar) as f10_colorStyle
+,case when p.canceldate is not null then 'background:#C0C0C0;color:black' else
+case when p.intakedate is not null then 'background:#90EE90;color:black' else '' end end as f10_colorStyle
 , p.id as f11_presId
 , mkb.code||' '||mkb.name as f12_diagnosis
 , va.name as f13_anastesia
 , surgPat.lastname as f14_surgeonInfo
+, coalesce(p.cancelreasontext||' '||to_char(p.canceldate,'dd.MM.yyyy'),'') as f15_cnsl
 from prescription p
 left join medservice ms on ms.id=p.medservice_id
 left join vocservicetype vst on vst.id=ms.servicetype_id
@@ -113,7 +109,7 @@ left join worker wN on wN.id=wfN.worker_id
 left join patient wp on wp.id=wN.person_id
 left join mislpu mlN on mlN.id=wN.lpu_id
 left join statisticstub ss on ss.id=coalesce(mc.statisticstub_id,mcP.statisticstub_id)
-where p.planStartDate between to_date('${startDate}','dd.MM.yyyy') and to_date('${finishDate}','dd.MM.yyyy')
+where p.planStartDate = to_date('${startDate}','dd.MM.yyyy')
 and wf.dtype='OperatingRoom'
 and vst.code='OPERATION'  
 ${dep}
@@ -121,7 +117,7 @@ order by p.planStartDate, p.planStartTime"/>
 
                 <msh:table printToExcelButton="сохранить в excel" styleRow='10' name="journal_list_suroper"
                            action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено"
-                           openNewWindow="true">
+                           openNewWindow="true" >
                     <msh:tableColumn columnName="Пациент" property="2"/>
                     <msh:tableColumn columnName="Диагноз" property="12"/>
                     <msh:tableColumn columnName="Операция" property="4"/>
@@ -132,8 +128,7 @@ order by p.planStartDate, p.planStartTime"/>
                     <msh:tableColumn columnName="Операционная" property="5"/>
                     <msh:tableColumn columnName="Дата назначения" property="6"/>
                     <msh:tableColumn columnName="Примечание" property="9"/>
-                    <msh:tableButton buttonFunction="printCheckList" buttonShortName="Печать чек-листа"
-                                     buttonName="Печать чек-листа" property="11"/>
+                    <msh:tableColumn columnName="Причина и дата отмены" property="15"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -143,6 +138,7 @@ order by p.planStartDate, p.planStartTime"/>
             <input type='hidden' name="m" id="m" value="printGroupColumnNativeQuery">
             <input type='hidden' name="groupField" id="groupField" value="4">
             <input type='hidden' name="cntColumn" id="cntColumn" value="1">
+            <input type='hidden' name="planStartDate" id="planStartDate" value="${startDate}">
             <input type="submit" value="Печать реестра">
         </form>
 
@@ -178,10 +174,6 @@ order by p.planStartDate, p.planStartTime"/>
                 var frm = document.forms[0];
                 frm.target = '';
                 frm.action = 'direct_operation_list.do';
-            }
-
-            function printCheckList(id) {
-                window.location = 'print-checkList.do?s=HospitalPrintService&m=printCheckList&id=' + id;
             }
 
         </script>

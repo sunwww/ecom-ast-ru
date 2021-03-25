@@ -1905,6 +1905,32 @@ public class WorkCalendarServiceJs {
         return "Скопировано.";
     }
 
+
+    /**
+     * Помечаем период дней удалёнными
+     *
+     * @param aCalendarDay Long - день, расписание которого скопировать на преиод:
+     * @param date         String  - дата начала периода
+     * @param date2        String 0 дата окончания периода
+     * @param date2        String 0 дата окончания периода
+     * @param aRequest     HttpServletRequest
+     * @return String сообщение пользователю
+     */
+    public String deletePeriodDay(Long aCalendarDay, String date, String date2, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        StringBuilder sql = new StringBuilder();
+        sql.append("(select wcd.id from workcalendarday wcd where")
+                .append(" wcd.workcalendar_id = (select workcalendar_id from workcalendarday where id=")
+                .append(aCalendarDay)
+                .append(") and (wcd.isDeleted is null or wcd.isDeleted = false) and wcd.calendardate between to_date('")
+                .append(date).append("','dd.mm.yyyy')")
+                .append("and to_date('").append(date2).append("','dd.mm.yyyy'))");
+
+        service.executeUpdateNativeSql("update workcalendartime set isdeleted=true where workcalendarday_id=ANY" + sql.toString());
+        service.executeUpdateNativeSql("update workcalendarday set isdeleted=true where id=ANY" + sql.toString());
+        return "Удалено";
+    }
+
     /**
      * Изменить резерв у массива.
      *
