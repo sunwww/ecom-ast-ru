@@ -5,9 +5,12 @@
 <%@ taglib prefix="ecom" uri="http://www.ecom-ast.ru/tags/ecom" %>
 
 <%@ attribute name="name" required="true" description="Название" %>
+<%@ attribute name="actionText" required="true" description="Копирование/удаление" %>
+<%@ attribute name="action" required="true" description="Копирование/удаление" %>
+<%@ attribute name="title" required="true" description="Примечание для заголовка" %>
 
 <div id='${name}CloseDocumentDialog' class='dialog'>
-    <h2>Период, на который скопировать день</h2>
+    <h2>Период, ${title}</h2>
     <div>
         <form id="${name}">
             <msh:panel>
@@ -21,7 +24,7 @@
     <div>
         <table width="100%" cellspacing="10" cellpadding="10">
             <tr>
-                <td align="center"><input type="button" value='Копировать' id="${name}Add"
+                <td align="center"><input type="button" value='${actionText}' id="${name}Add"
                                           onclick='javascript:copy${name}()'/></td>
             </tr>
             <tr>
@@ -64,7 +67,8 @@
             var dateParts2 = $('${name}date2').value.split(".");
             var oDate2 = new Date(dateParts2[2], (dateParts2[1] - 1), dateParts2[0]);
             if (oDate2.getTime() >= oDate.getTime()) {
-                WorkCalendarService.copyDay(ID, $('${name}date').value, $('${name}date2').value, {
+                //для удаление периода ID нужен лишь для получения календаря
+                WorkCalendarService.${action}Day(ID, $('${name}date').value, $('${name}date2').value, {
                     callback: function (aResult) {
                         the${name}CloseDocumentDialog.hide();
                         $('${name}date').value = '';
@@ -73,10 +77,10 @@
                         updateTable();
                     },
                     errorHandler: function (aMessage) {
-                        alert("Не удалось скопировать! " + aMessage);
+                        alert("Не удалось ${action}! " + aMessage);
                     }
                 });
             } else alert('Последняя дата меньше первой!');
-        } else alert('Ввыедите период!');
+        } else alert('Введите период!');
     }
 </script>
