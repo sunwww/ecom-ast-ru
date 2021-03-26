@@ -216,8 +216,8 @@ public class AddressPointServiceBean implements IAddressPointService {
                     , {"cast('' as varchar(1))", "TEL", "p.phone", null, "Телефон"}
                     , {"p.commonNumber", "RZ", "p.commonNumber", null, "ЕПН"}
                     , {" case when lp.id is null then '1' else coalesce(vat.code,'2') end", "SP_PRIK", "lp.id,vat.code", "1", "Тип прикрепления"}
-                    , {"case when lp.dateTo is null then '1' else '2' end", "T_PRIK", "lp.dateTo", "1", "прикреплениt/открепление"}
-                    , {"coalesce(to_char(lp.dateTo,'yyyy-mm-dd'),to_char(lp.dateFrom,'yyyy-mm-dd'),'2013-04-01')", "DATE_1", "lp.dateTo,lp.dateFrom", "1", "Дата прикрепления"}
+                    , {"case when lp.dateTo is null then '1' else '2' end", "T_PRIK", "lp.dateTo", "1", "прикрепление/открепление"}
+                    , {"to_char(lp.dateFrom,'yyyy-mm-dd')", "DATE_1", "lp.dateFrom", "1", "Дата прикрепления"}
                     , {"case when lp.newAddress='1' then '1' else '0' end", "N_ADR", "lp.newAddress", null, ""}
                     , {"case when la.codeDepartment!='' then la.codeDepartment else ml3.codeDepartment end", "KODPODR", "la.codeDepartment,ml3.codeDepartment", "1", "Код подразделения"}
                     , {"la.number", "LPUUCH", "la.number", null}
@@ -278,6 +278,7 @@ public class AddressPointServiceBean implements IAddressPointService {
                 sql.append("select ").append(fld)
                         .append(",case when vmpt.code='1' then mp.series ||' № '||mp.polnumber when vmpt.code='2' then mp.series ||mp.polnumber end as mpNumber")
                         .append(", case when vmpt.code ='1' then 'С' when vmpt.code ='2' then 'В' else 'П' end as medpolicytype")
+                        .append(" ,to_char(lp.dateTo,'yyyy-mm-dd') as f21_detachDate")
                         .append(" ,p.id as pid, lp.id as lpid")
                         .append(" from Patient p")
                         .append(" left join MisLpu ml1 on ml1.id=p.lpu_id")
@@ -321,8 +322,9 @@ public class AddressPointServiceBean implements IAddressPointService {
             filenames.append("#").append(filename).append(".").append(fileType);
             sql.setLength(0);
             sql.append("select ").append(fld)
-                    .append(",case when vmpt.code='1' then mp.series ||' № '||mp.polnumber when vmpt.code='2' then mp.series ||mp.polnumber end as mpNumber")
-                    .append(", case when vmpt.code ='1' then 'С' when vmpt.code ='2' then 'В' else 'П' end as medpolicytype")
+                    .append(",case when vmpt.code='1' then mp.series ||' № '||mp.polnumber when vmpt.code='2' then mp.series ||mp.polnumber end as f19_mpNumber")
+                    .append(", case when vmpt.code ='1' then 'С' when vmpt.code ='2' then 'В' else 'П' end as f20_medpolicytype")
+                    .append(" ,to_char(lp.dateTo,'yyyy-mm-dd') as f21_detachDate")
                     .append(" ,p.id as pid, lp.id as lpid")
                     .append(" from Patient p")
                     .append(" left join MisLpu ml1 on ml1.id=p.lpu_id")
@@ -463,7 +465,7 @@ public class AddressPointServiceBean implements IAddressPointService {
     }*/
 
     private PatientAttachmentDto createPatient(Object[] patObject, String regNumber) {
-        boolean isAttached = isEquals("1", toString(patObject[12]));
+        boolean isDettached = isEquals("2", toString(patObject[12]));
         String policyType = toString(patObject[20]);
         PatientAttachmentDto pat = new PatientAttachmentDto();
         pat.setMedPolicyType(policyType);
@@ -478,10 +480,10 @@ public class AddressPointServiceBean implements IAddressPointService {
         pat.setPassportDate(toDate(patObject[8]));
         pat.setCommonNumber(toString(patObject[10]));
         pat.setAttachedMethod(toString(patObject[11]));
-        if (isAttached) {
-            pat.setAttachedDate(toDate(patObject[13]));
-        } else {
-            pat.setDettachedDate(toDate(patObject[13]));
+        pat.setAttachedType(toString(patObject[12]));
+        pat.setAttachedDate(toDate(patObject[13]));
+        if (isDettached) {
+            pat.setDettachedDate(toDate(patObject[21]));
         }
         pat.setDepartmentCode(toString(patObject[15]));
         pat.setAreaNumber(toString(patObject[16]));
