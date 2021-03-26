@@ -5,9 +5,11 @@
 <%@ taglib prefix="ecom" uri="http://www.ecom-ast.ru/tags/ecom" %>
 
 <%@ attribute name="name" required="true" description="Название" %>
+<%@ attribute name="voc" required="true" description="Справочник причин отмены" %>
+<%@ attribute name="title" required="true" description="Добавление к заголовку" %>
 
 <div id='${name}CloseDocumentDialog' class='dialog'>
-    <h2>Отменить консультацию</h2>
+    <h2>Отменить ${title}</h2>
     <table width="100%" cellspacing="10" cellpadding="10" id="cmbTable" border="1">
     </table>
     <div>
@@ -15,7 +17,7 @@
             <msh:panel>
                 <msh:row>
                     <msh:comboBox size='300' horizontalFill="true" property='${name}vocWfConsultationCancelReason'
-                                  vocName="vocWfConsultationCancelReason" label='Причина:'/>
+                                  vocName="${voc}" label='Причина:'/>
                 </msh:row>
             </msh:panel>
         </form>
@@ -56,7 +58,7 @@
 
     // Отменить консультацию
     function wfCancel${name}() {
-        var reason = document.getElementById('${name}vocWfConsultationCancelReason').value;
+        var reason = document.getElementById('${name}vocWfConsultationCancelReasonName').value;
         if (reason == null || reason == '-' || reason == '') alert('Выберите причину!'); else {
             reason = reason.replace(/[-0-9 ][ ]/gim, '');
             PrescriptionService.cancelWFPrescription(ID, reason, {

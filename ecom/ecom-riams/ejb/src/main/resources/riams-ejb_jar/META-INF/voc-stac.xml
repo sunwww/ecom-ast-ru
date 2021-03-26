@@ -868,6 +868,14 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 queried='name'
         />
     </voc>
+    <!-- Справочник причин отмены назначений на операцию -->
+    <voc id='vocOperationCancelReason' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.prescription.voc.VocOperationCancelReason'
+                names='name'
+                queried='name'
+        />
+    </voc>
     <!-- Справочники по кардиологическому скринингу -->
     <voc id='vocScreeningSkin' type='EntityVocService'>
         <EntityVocService

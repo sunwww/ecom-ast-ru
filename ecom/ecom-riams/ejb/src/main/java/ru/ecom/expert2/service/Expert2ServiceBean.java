@@ -785,11 +785,12 @@ public class Expert2ServiceBean implements IExpert2Service {
         for (E2Entry entry : entriesList) {
             if (mainEntry == null) { //Последнее СЛО (99% обсервационное)
                 mainEntry = entry;
-            } else if (mainEntry.getNoOmcDepartment() || entry.getNoOmcDepartment()) {
+            } else if (isTrue(mainEntry.getNoOmcDepartment()) || isTrue(entry.getNoOmcDepartment())) {
                 mainEntry = isTrue(mainEntry.getNoOmcDepartment()) ? unionEntries(entry, mainEntry) : unionEntries(mainEntry, entry);
             } else if (entry.getDepartmentId().equals(mainEntry.getDepartmentId())) { //Если реанимация или Отд-Реан-Отд, последнее главное
                 unionEntries(mainEntry, entry);
             } else if (isTrue(entry.getIsChildBirthDepartment())) {
+                mainEntry.setExternalPrevMedcaseId(null);
                 unionEntries(mainEntry, entry);
                 childBirthFound = true;
                 childEntry = mainEntry;
@@ -806,11 +807,12 @@ public class Expert2ServiceBean implements IExpert2Service {
             //Если текущий случай - обсервационное отделение. Допускаем что до него может быть только патология беременности(+роды). Все операции с пред. отделений переносим в это отделение.
             long calendarDays = isNotLogicalNull(patologyEntry.getCalendarDays()) ? patologyEntry.getCalendarDays() : 0;
             if (isNotTrue(patologyEntry.getIsChildBirthDepartment())
-                    && (calendarDays > 5 || (calendarDays > 1 && CHILD_BIRTH_MKB.contains(patologyEntry.getMainMkb())))) { //Если длительность случая - больше пяти дней (или диагноз входит в список)- не объединяемъ
+                    && (calendarDays > 5 || calendarDays > 1 && CHILD_BIRTH_MKB.contains(patologyEntry.getMainMkb()))) { //Если длительность случая - больше пяти дней (или диагноз входит в список)- не объединяемъ
                 VocE2FondV009 perevodResult = getActualVocByClassName(VocE2FondV009.class, patologyEntry.getFinishDate(), " code='104'"); //TODO Колхоз - исправить
                 patologyEntry.setFondIshod(getActualVocByClassName(VocE2FondV012.class, patologyEntry.getFinishDate(), " code='103'")); //TODO Колхоз - исправить
                 patologyEntry.setFondResult(perevodResult); //TODO Колхоз - исправить
                 patologyEntry.setIsUnion(true);
+                childEntry.setExternalPrevMedcaseId(patologyEntry.getExternalId());
                 manager.persist(childEntry);
                 manager.persist(patologyEntry);
                 makeCheckEntry(childEntry, false, false);
@@ -971,7 +973,6 @@ public class Expert2ServiceBean implements IExpert2Service {
          * Если классы МКБ совпадают, берем СЛО с наибольшим КЗ, из второго СЛО добавляем дни и услуги.
          *      Второе СЛО помечаем как "200 входит в комплексный случай и ставим у него parentEntry  главного случая
          */
-        // if (!aMainEntry.getExternalParentId().equals(aEntry.getExternalParentId())) { throw new IllegalStateException("Невозможно объединить случаи из разных СЛС");}
         //объединяем все СЛО внутри СЛС
         try {
             if (listEntryId == null || hospitalMedcaseId == null) {
@@ -1024,6 +1025,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                         unionEntries(mainEntry, entry);
                     } else { //например - кардиология - сосуд. хирургия (вторая - главная
                         if (isEquals(mainEntry.getDepartmentId(), entry.getDepartmentId())) { //Если ИД отделения равны - не учитываем цену
+                            entry.setExternalPrevMedcaseId(mainEntry.getExternalPrevMedcaseId());
                             unionEntries(entry, mainEntry); //последнее отделение - главное
                             mainEntry = entry;
                         } else if (isDiagnosisGroupAreEquals(mainEntry, entry)) { //Если классы МКБ сходятся
@@ -1382,7 +1384,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         try {
             setEntrySubType(entry);
             entry.setIsForeign(isNotLogicalNull(entry.getInsuranceCompanyCode()) && !entry.getInsuranceCompanyCode().startsWith("30"));
-            entry.setBedDays(bedDays > 0 ? bedDays : 1L);
+            entry.setBedDays(Math.max(bedDays,1L));
             try {
                 entry.setIsChild(AgeUtil.calcAgeYear(entry.getBirthDate(), entry.getStartDate()) < 18);
             } catch (Exception e) {

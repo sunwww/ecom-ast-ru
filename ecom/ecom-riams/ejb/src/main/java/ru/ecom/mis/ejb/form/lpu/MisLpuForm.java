@@ -247,6 +247,10 @@ public class MisLpuForm extends IdNameEntityForm {
      * Инфекционное?
      */
     private Boolean theIsForCovid;
+    /**
+     * Опер. блок?
+     */
+    private Boolean theIsOperBlock;
 
     @Comment("Код адреса отделения")
     @Persist
@@ -959,5 +963,18 @@ public class MisLpuForm extends IdNameEntityForm {
 
     public void setIsForCovid(Boolean aIsForCovid) {
         theIsForCovid = aIsForCovid;
+    }
+
+    /**
+     * Опер. блок?
+     */
+    @Comment("Опер. блок?")
+    @Persist
+    public Boolean getIsOperBlock() {
+        return theIsOperBlock;
+    }
+
+    public void setIsOperBlock(Boolean aIsOperBlock) {
+        theIsOperBlock = aIsOperBlock;
     }
 }
