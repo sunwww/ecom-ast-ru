@@ -14,24 +14,27 @@ import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
 
 public class Expert2FondUtil {
 
-    /** Расчитываем признак перевода для случая*/ //Реализовано
-    public static String calculateFondP_PER(E2Entry aEntry) { //TODO реализовать по нормальному!!!
-        String ret ; // по умолчанию - самостоятельно
-        String lpuType =aEntry.getDirectLpuType();
-        if (aEntry.getExternalPrevMedcaseId()!=null && aEntry.getExternalPrevMedcaseId()>0L) { //Переведен из другого отделения
-            ret="4"; //Перевод внутри МО с другого профиля
+    /**
+     * Расчитываем признак перевода для случая
+     */
+    public static String calculateFondP_PER(E2Entry aEntry) {
+        String ret; // по умолчанию - самостоятельно
+        String lpuType = aEntry.getDirectLpuType();
+        if (aEntry.getExternalPrevMedcaseId() != null) { //Переведен из другого отделения
+            ret = "4"; //Перевод внутри МО с другого профиля
         } else if ("К".equals(lpuType)) { //карета скорой помощи
-            ret="2"; //СМП
+            ret = "2"; //СМП
         } else if ("С".equals(lpuType)) { //Переведен с другой МО
             ret = "3"; //Перевод в другой МО
         } else {
-            ret="1";
+            ret = "1";
         }
         return ret;
     }
 
     /**
-     * Считаем признак "особые случай " */ //Реализовано
+     * Считаем признак "особые случай "
+     */
     public static String calculateFondOsSluch(E2Entry aEntry) {
         /*
          * Указываются все имевшиеся особые случаи.
@@ -43,7 +46,7 @@ public class Expert2FondUtil {
          23 - внутрибольничное инфицирование
 
          */
-        StringBuilder ret= new StringBuilder();
+        StringBuilder ret = new StringBuilder();
         if (isNotEmpty(aEntry.getKinsmanLastname()) && isTrue(aEntry.getMultiplyBirth())) {
             ret.append("1;");
         }
@@ -56,10 +59,10 @@ public class Expert2FondUtil {
         if (isTrue(aEntry.getMedicalAbort())) {
             ret.append("10;");
         }
-        if (isOneOf(aEntry.getEntryType(),E2Enumerator.HOSPITALTYPE,E2Enumerator.VMPTYPE)) { //Только для стац
+        if (isOneOf(aEntry.getEntryType(), E2Enumerator.HOSPITALTYPE, E2Enumerator.VMPTYPE)) { //Только для стац
             List<E2CoefficientPatientDifficultyEntryLink> list = aEntry.getPatientDifficulty();
             if (isNotEmpty(list)) {
-                for (E2CoefficientPatientDifficultyEntryLink diff: list) {
+                for (E2CoefficientPatientDifficultyEntryLink diff : list) {
                     if (diff.getDifficulty().getCode().equals("11")) {
                         ret.append("21;22;");
                         break;
@@ -68,6 +71,6 @@ public class Expert2FondUtil {
             }
         }
         //TODO сделать признак ДТП
-        return ret.length()>0 ? ret.substring(0,ret.length()-1) : null; //формат 2020
+        return ret.length() > 0 ? ret.substring(0, ret.length() - 1) : null;
     }
 }

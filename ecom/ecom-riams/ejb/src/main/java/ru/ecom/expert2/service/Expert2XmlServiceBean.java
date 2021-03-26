@@ -50,6 +50,7 @@ import static ru.nuzmsh.util.CollectionUtil.isEmpty;
 import static ru.nuzmsh.util.CollectionUtil.isNotEmpty;
 import static ru.nuzmsh.util.EqualsUtil.isAnyIsNull;
 import static ru.nuzmsh.util.EqualsUtil.isOneOf;
+import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
 
 @Stateless
 @Local(IExpert2XmlService.class)
@@ -80,7 +81,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
      */
     public String exportToCentralSegment(Long listEntryId, String historyNumbers) {
         StringBuilder sqlAdd = new StringBuilder();
-        if (StringUtil.isNullOrEmpty(historyNumbers)) {
+        if (isNullOrEmpty(historyNumbers)) {
             sqlAdd.append("isForeign='1' and serviceStream='OBLIGATORYINSURANCE'"); // по умолчанию - иногородние омс
         } else {
             boolean first = true;
@@ -221,7 +222,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             add(z, "ISHOD", entry.getFondIshod().getCode()); // Исход случая.
         }
         addIfNotNull(z, "OS_SLUCH", Expert2FondUtil.calculateFondOsSluch(entry)); // Особый случай
-        if (!isPoliclinic && !a3 && slCnt > 1)
+        if (!isPoliclinic && !a3 && isOneOf(entry.getFondResult().getCode(), "104","204"))
             add(z, "VB_P", "1"); // Признак внутрибольничного перевода *05.08 1 - только если есть перевод
         z.addContent(new Element("SL_TEMPLATE")); // Список случаев
         add(z, "IDSP", entry.getIDSP().getCode()); // Способ оплаты медицинской помощи (V010)
@@ -1003,31 +1004,31 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     err.append("НЕ РАСЧИТАН СПОСОБ ОПЛАТЫ МЕД. ПОМОЩИ;");
                     isError = true;
                 }
-                if (isNull(entry.getMedPolicyType())) {
+                if (isNullOrEmpty(entry.getMedPolicyType())) {
                     err.append("НЕ УКАЗАН ВИД ПОЛИСА;");
                     isError = true;
                 }
-                if (isNull(entry.getMedPolicyNumber())) {
+                if (isNullOrEmpty(entry.getMedPolicyNumber())) {
                     err.append("НЕ УКАЗАН НОМЕР ПОЛИСА;");
                     isError = true;
                 }
-                if (isNull(entry.getInsuranceCompanyCode())) {
+                if (isNullOrEmpty(entry.getInsuranceCompanyCode())) {
                     err.append("НЕ УКАЗАН КОД СТРАХ КОМПАНИИ;");
                     isError = true;
                 }
-                if (isPolic && isNull(entry.getMainMkb())) {
+                if (isPolic && isNullOrEmpty(entry.getMainMkb())) {
                     err.append("НЕ УКАЗАН ОСНОВНОЙ ДИАГНОЗ");
                     isError = true;
                 }
-                if (isNull(entry.getHistoryNumber())) {
+                if (isNullOrEmpty(entry.getHistoryNumber())) {
                     err.append("НЕ ЗАПОЛНЕН НОМЕР ИСТОРИИ БОЛЕЗНИ");
                     isError = true;
                 }
-                if (isNull(entry.getVidSluch())) {
+                if (null == entry.getVidSluch()) {
                     err.append("НЕ ЗАПОЛНЕН ВИД СЛУЧАЯ");
                     isError = true;
                 }
-                if (!isDisp && isNull(entry.getDoctorSnils())) {
+                if (!isDisp && isNullOrEmpty(entry.getDoctorSnils())) {
                     err.append("НЕ УКАЗАН СНИЛС ВРАЧА");
                     isError = true;
                 }
