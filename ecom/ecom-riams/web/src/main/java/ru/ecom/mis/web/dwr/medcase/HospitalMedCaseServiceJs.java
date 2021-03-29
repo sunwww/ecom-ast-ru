@@ -34,6 +34,14 @@ public class HospitalMedCaseServiceJs {
 
     /**
      * Календарь с предварительной госпитализацией
+     *
+     * @param aYear       the a year
+     * @param aMonth      the a month
+     * @param aDepartment the a department
+     * @param isOpht      the is opht
+     * @param aRequest    the a request
+     * @return the pre hosp calendar
+     * @throws NamingException the naming exception
      */
 
     public String getPreHospCalendar(Integer aYear, Integer aMonth, Long aDepartment, Boolean isOpht, HttpServletRequest aRequest) throws NamingException {
@@ -288,24 +296,80 @@ public class HospitalMedCaseServiceJs {
     /**
      * Cоздать темп. лист
      *
-     * @param aMedCase  MedCase.id
+     * @param aMedCase  DepMedCase.id
      * @param aTempData json с данными
      * @return результат insert
      */
     public String createTemperatureCurve(Long aMedCase, String aTempData, HttpServletRequest aRequest) throws NamingException {
-        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        Long identTemp = 15L;
+        Integer daysToFinish = 2;
 
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         JSONObject obj = new JSONObject(aTempData);
         String takingDate = getString(obj, "takingDate");
         String degree = getString(obj, "degree");
-        String illnessdaynumber = getString(obj, "illnessdaynumber");
+        String illnessdaynumber = getString(obj, "illnessDayNumber");
         String dayTime = getString(obj, "dayTime");
 
         String sql = "insert into temperatureCurve (takingDate, degree, illnessdaynumber, daytime_id, medcase_id,date,time,username) values (" +
                 "to_date('" + takingDate + "','dd.MM.yyyy')," + degree + "," + illnessdaynumber + "," + dayTime +
-                ", " + aMedCase + ",current_date,current_time,'" + LoginInfo.find(aRequest.getSession(true)).getUsername() + "')";
-        return "" + service.executeUpdateNativeSql(sql);
+                ", " + aMedCase + ",current_date,current_time,'" + LoginInfo.find(aRequest.getSession(true)).getUsername() + "') returning id";
+        String tempCurveId = "";
+        Collection<WebQueryResult> res = service.executeNativeSql(sql);
+        for (WebQueryResult wqr : res) {
+            tempCurveId = wqr.get1().toString();
+        }
+        if (checkThirdDayHighTemp(aMedCase, takingDate, aRequest) && !tempCurveId.equals("")) {
+            addIdentityPatient(aMedCase, true, identTemp, daysToFinish, Long.valueOf(tempCurveId), aRequest);
+        }
+        return tempCurveId.equals("") ? "" : "1";
+    }
 
+    /**
+     * Проверить, 3й ли день у пациента высокая температура
+     *
+     * @param aMedCase   DepMedCase.id
+     * @param takingDate Дата регистрации темп. листа, с которой надо сравнивать
+     * @return true, если да
+     */
+    private boolean checkThirdDayHighTemp(Long aMedCase, String takingDate, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        StringBuilder sql = new StringBuilder();
+        int highTemp = Integer.parseInt(getDefaultParameterByConfig("highTemp", "38", aRequest).toString());
+        sql.append("select count(case when y.degree>").append(highTemp)
+                .append(" then 1 else 0 end) as yC")
+                .append(",count(case when befY.degree>").append(highTemp).append(" then 1 else 0 end) as befYC")
+                .append(" from temperaturecurve y")
+                .append(" left join temperaturecurve befY on befY.medcase_id=y.medcase_id and befY.takingdate=y.takingdate-1")
+                .append(" where y.medcase_id = ").append(aMedCase)
+                .append(" and y.takingdate=to_date('").append(takingDate).append("','dd.mm.yyyy')-1");
+
+        Collection<WebQueryResult> beforeTemp = service.executeNativeSql(sql.toString());
+        if (!beforeTemp.isEmpty() && !checkExistBraceletHighTempOpened(aMedCase, aRequest)) {
+            WebQueryResult wqr = beforeTemp.iterator().next();
+            if (wqr.get1() != null && wqr.get2() != null &&
+                    Integer.parseInt(wqr.get1().toString()) > 0 && Integer.parseInt(wqr.get2().toString()) > 0)
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Проверить, есть ли открытый браслет
+     *
+     * @param aMedCase DepMedCase.id
+     * @return true, если есть открытый браслет
+     */
+    private boolean checkExistBraceletHighTempOpened(Long aMedCase, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        Collection<WebQueryResult> list = service.executeNativeSql("select cip.id from coloridentitypatient cip" +
+                " left join voccoloridentitypatient vip on vip.id=cip.voccoloridentity_id" +
+                " left join medcase_coloridentitypatient mcip on mcip.colorsidentity_id=cip.id" +
+                " left join medcase slo on slo.id=" + aMedCase +
+                " left join medcase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'" +
+                " where vip.code='high_temp' and (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp)" +
+                " and mcip.medcase_id=sls.id");
+        return !list.isEmpty();
     }
 
     public String getServiceStreamAndMkbByMedCase(Long aMedCase, HttpServletRequest aRequest) throws NamingException {
@@ -1551,27 +1615,43 @@ public class HospitalMedCaseServiceJs {
     /**
      * Добавить браслет пациенту/СЛС #151
      *
-     * @param aSlsOrPatId Sls.id or Patient.id
-     * @param aSlsOrPat   1 - СЛС, 0 - пациент
-     * @param idP         vocColorIdentityPatient.id
+     * @param aSlsOrPatId  Sls.id or Patient.id
+     * @param aSlsOrPat    1 - СЛС, 0 - пациент
+     * @param idP          vocColorIdentityPatient.id
+     * @param daysToFinish Через сколько дней браслет снять
+     * @param aRequest     the a request
      * @return void
+     * @throws NamingException the naming exception
      */
-    public void addIdentityPatient(Long aSlsOrPatId, Boolean aSlsOrPat, Long idP, HttpServletRequest aRequest) throws NamingException {
+    public void addIdentityPatient(Long aSlsOrPatId, Boolean aSlsOrPat, Long idP, int daysToFinish, Long tempCurveId, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         String login = LoginInfo.find(aRequest.getSession(true)).getUsername();
         StringBuilder sql = new StringBuilder();
         String id = "";
-        Collection<WebQueryResult> res = service.executeNativeSql
-                ("insert into coloridentitypatient(startdate,starttime,finishdate,finishtime,voccoloridentity_id,createusername) values(current_date,current_time,null,null,"
-                        + idP + ",'" + login + "') returning id");
+        if (tempCurveId==0)
+            tempCurveId=null;
+        sql.append("insert into coloridentitypatient(startdate,starttime,finishdate,finishtime,voccoloridentity_id,createusername,tempCurve_id)" +
+                " values(current_date,current_time,")
+                .append(daysToFinish > 0 ? "current_date + " + daysToFinish + ",current_time," : "null,null,")
+                .append(idP).append(",'")
+                .append(login)
+                .append("',").append(tempCurveId)
+                .append(") returning id");
+        Collection<WebQueryResult> res = service.executeNativeSql(sql.toString());
         for (WebQueryResult wqr : res) {
             id = wqr.get1().toString();
         }
         if (!id.equals("")) {
-            sql.append("insert into ")
-                    .append(Boolean.TRUE.equals(aSlsOrPat) ? "medcase_coloridentitypatient(medcase_id, " : "patient_coloridentitypatient(patient_id, ")
-                    .append(" colorsidentity_id) values(")
-                    .append(aSlsOrPatId).append(",").append(id).append(")");
+            sql = new StringBuilder();
+            if (Boolean.TRUE.equals(aSlsOrPat))
+                sql.append("insert into medcase_coloridentitypatient(medcase_id,colorsidentity_id) values")
+                        .append(" ((case when (select dtype from medcase where id=")
+                        .append(aSlsOrPatId).append(") = 'HospitalMedCase' then ")
+                        .append(aSlsOrPatId).append(" else (select parent_id from medcase where id=")
+                        .append(aSlsOrPatId).append(") end), ").append(id).append(")");
+            else
+                sql.append("insert into patient_coloridentitypatient(patient_id,colorsidentity_id) values(")
+                        .append(aSlsOrPatId).append(",").append(id).append(")");
             service.executeUpdateNativeSql(sql.toString());
         }
     }

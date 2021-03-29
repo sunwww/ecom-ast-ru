@@ -65,8 +65,8 @@
     <tiles:put name="side" type="string">
         <msh:ifFormTypeIsView formName="stac_temperatureCurveForm">
             <msh:sideMenu>
-                <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-stac_temperatureCurve" name="Изменить"
-                              roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Edit"/>
+<%--                <msh:sideLink key="ALT+2" params="id" action="/entityParentEdit-stac_temperatureCurve" name="Изменить"--%>
+<%--                              roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Edit"/>--%>
                 <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id"
                               action="/entityParentDelete-stac_temperatureCurve" name="Удалить"
                               roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Delete"/>

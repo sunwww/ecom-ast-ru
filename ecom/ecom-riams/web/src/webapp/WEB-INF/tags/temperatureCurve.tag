@@ -21,12 +21,12 @@
                     <span id="resultText"> </span>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="takingDate" label="Дата"/>
+                    <msh:textField property="takingDate" label="Дата" viewOnlyField="true"/>
                 </msh:row>
                 <msh:row>
                     <msh:textField property="illnessDayNumber" label="День болезни "/>
                 </msh:row>
-                <msh:row>
+                <msh:row> hideLabel="true"
                     <msh:autoComplete vocName="vocDayTime" property="dayTime" label="Время суток" fieldColSpan="5"
                                       horizontalFill="true"/>
                 </msh:row>
@@ -76,7 +76,7 @@
             };
             $('resultText').innerHTML = "...";
             var data = JSON.stringify(obj);
-            HospitalMedCaseService.createTemperatureCurve($('id').value, data, {
+            HospitalMedCaseService.createTemperatureCurve('${param.id}', data, {
                 callback: function (a) {
                     if (a == '1') {
                         $('resultText').innerHTML = "Успешно создано";
@@ -84,7 +84,6 @@
                         $('resultText').innerHTML = "Ошибка: " + a;
                     }
                     if (next == 1) {
-                        $('takingDate').value = '';
                         $('dayTime').value = '';
                         $('dayTimeName').value = '';
                     } else {
@@ -97,6 +96,8 @@
 
     function show${name}Curve() {
         the${name}CurveDialog.show();
+        $('takingDate').value = getCurrentDate();
+        $('takingDateReadOnly').value = getCurrentDate();
     }
 
     function cancel${name}Curve() {

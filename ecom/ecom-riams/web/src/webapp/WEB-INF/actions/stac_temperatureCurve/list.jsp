@@ -2,6 +2,8 @@
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
+<%@ taglib uri="/WEB-INF/mis.tld" prefix="mis" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
@@ -9,8 +11,9 @@
         <ecom:titleTrail beginForm="mis_medCaseForm" mainMenu="Patient" title="Температурные листы"/>
     </tiles:put>
     <tiles:put name="side" type="string">
+        <tags:temperatureCurve name="New"/>
         <msh:sideMenu title="Добавить">
-            <msh:sideLink params="id" action="/entityParentPrepareCreate-stac_temperatureCurve"
+            <msh:sideLink params="id" action="/javascript:showNewCurve()"
                           name="Новые показатели температурного листа"
                           title="Добавить новые показатели температурного листа"
                           roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Create"/>
@@ -27,4 +30,5 @@
             <msh:tableColumn columnName="Температура" property="degree"/>
         </msh:table>
     </tiles:put>
+    <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
 </tiles:insert>

@@ -127,7 +127,7 @@
         var identityPatientId = $(${name}vocColorIdentityPatient).value;
         if (identityPatientId != null && identityPatientId != "") {
             HospitalMedCaseService.addIdentityPatient(
-                ID, slsOrPat, identityPatientId, {
+                ID, slsOrPat, identityPatientId, 0,0, {
                     callback: function () {
                         the${name}Dialog.hide();
                         reload${name}();
