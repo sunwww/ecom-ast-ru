@@ -166,6 +166,19 @@
                     $('calendarTime').value = "0";
                 }
 
+                <msh:ifFormTypeAreViewOrEdit formName="pres_operationPrescriptionForm">
+                    WorkCalendarService.getOperationDateId(${param.id}, {
+                        callback: function (id) {
+                            if (id) {
+                                $('surgCalDate').value = +id;
+                                $('surgCalDateName').value = $('planStartDate').value;
+                                getPreRecord();
+                                updateOperationParent();
+                            }
+                        }
+                    });
+                </msh:ifFormTypeAreViewOrEdit>
+
                 <msh:ifFormTypeIsCreate formName="pres_operationPrescriptionForm">
                 surgCalDateAutocomplete.setUrl('simpleVocAutocomplete/vocWorkCalendarDayByWorkFunctionFuture');
                 </msh:ifFormTypeIsCreate>
@@ -209,7 +222,7 @@
                     </msh:row>
 
                 </msh:ifFormTypeIsView>
-                <msh:ifFormTypeIsCreate formName="pres_operationPrescriptionForm">
+                <msh:ifFormTypeIsNotView formName="pres_operationPrescriptionForm">
                     <msh:panel styleId="tblSurgOperation">
                         <msh:row>
                             <msh:separator label="Операции" colSpan="10"/>
@@ -279,7 +292,7 @@
                             </tr>
                         </msh:row>
                     </msh:panel>
-                </msh:ifFormTypeIsCreate>
+                </msh:ifFormTypeIsNotView>
                 <msh:ifFormTypeAreViewOrEdit formName="pres_operationPrescriptionForm">
                     <msh:row>
                         <msh:separator label="Дополнительная информация" colSpan="4"/>

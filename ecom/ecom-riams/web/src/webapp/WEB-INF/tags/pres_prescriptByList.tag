@@ -164,7 +164,7 @@ left join Patient as wp on wp.id=w.person_id
  left join vocservicetype as vms on vms.id=ms.serviceType_id
  left join vocprescripttype vpt on vpt.id=p.prescriptType_id
  where ${field } and p.DTYPE='ServicePrescription'
- and vms.code='OPERATION'
+ and vms.code='OPERATION' and p.canceldate is null
  order by p.planStartDate"/>
     <msh:sectionTitle>Список назначений на операции</msh:sectionTitle>
     <msh:sectionContent>

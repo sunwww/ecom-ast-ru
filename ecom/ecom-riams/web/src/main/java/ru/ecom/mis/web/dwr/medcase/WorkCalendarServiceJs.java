@@ -2001,4 +2001,18 @@ public class WorkCalendarServiceJs {
                 "where wpwf.workfunctions_id=" + wfId);
         return list.isEmpty() ? "" : list.iterator().next().get1().toString();
     }
+
+    /**
+     * Получить id даты начала операции из назначения
+     *
+     * @param pId     Prescription.id
+     * @param aRequest HttpServletRequest
+     * @return String Кабинет
+     */
+    public String getOperationDateId(Long pId, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        Collection<WebQueryResult> list = service.executeNativeSql("select workcalendarday_id from workcalendartime where id = " +
+                "(select calendartime_id from prescription where id = " + pId + ")");
+        return list.isEmpty() ? "" : list.iterator().next().get1().toString();
+    }
 }

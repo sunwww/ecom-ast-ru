@@ -143,6 +143,7 @@ where ${field}
 <msh:section title="Список назначений на операции">
     <ecom:webQuery name="pres" nativeSql="select p.id as pid,pl.id as plid,ms.name as drname ,to_char(p.planStartDate,'dd.MM.yyyy')
 ,cast (wct.timefrom as varchar(5)) ,wf.groupname
+,case when p.canceldate is not null then cvwf.name||' '|| cwp.lastname||' '||cwp.firstname||' '||cwp.middlename||' '||to_char(p.canceldate,'dd.MM.yyyy')||' '||cast(p.canceltime as varchar(5)) else null end as f9_cnsl
 from Medcase sls
 left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
 left join PrescriptionList pl on pl.medcase_id=sls.id or pl.medcase_id=slo.id
@@ -151,6 +152,11 @@ left join medservice ms on ms.id=p.medService_id
 left join vocservicetype as vms on vms.id=ms.serviceType_id
 left join workfunction wf on wf.id=p.prescriptcabinet_id
 left join workcalendartime wct on wct.id=p.calendartime_id
+left join SecUser su on p.cancelusername=su.login
+left join WorkFunction cwf on cwf.secUser_id=su.id
+left join VocWorkFunction cvwf on cvwf.id=cwf.workFunction_id
+left join Worker as cw on cw.id=cwf.worker_id
+left join Patient as cwp on cwp.id=cw.person_id
  where ${field}
   and p.DTYPE='ServicePrescription' and vms.code='OPERATION' order by p.planStartDate"/>
     <msh:sectionContent>
