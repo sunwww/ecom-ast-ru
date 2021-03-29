@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.domain.prescription;
 
 import ru.ecom.mis.ejb.domain.medcase.MedService;
+import ru.ecom.mis.ejb.domain.medcase.SurgicalOperation;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAnesthesia;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBloodGroup;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocRhesusFactor;
@@ -124,4 +125,18 @@ public class ServicePrescription extends Prescription {
 
     private VocRhesusFactor theRhesusFactor;
 
+    /**
+     * Хир. операция
+     */
+    @Comment("Хир. операция")
+    @OneToOne
+    public SurgicalOperation getSurgOperation() {
+        return theSurgOperation;
+    }
+
+    public void setSurgOperation(SurgicalOperation aSurgOperation) {
+        theSurgOperation = aSurgOperation;
+    }
+
+    private SurgicalOperation theSurgOperation;
 }
