@@ -38,7 +38,6 @@ function onCreate(aForm, aSurgOper, aCtx) {
     checkParent(aSurgOper, aCtx); //Находим родителя по дате и времени операции
     saveComplications(aForm, aSurgOper, aCtx);
     createBraceletIfNeed(aForm, aSurgOper, aCtx);
-    checkOperationPrescriptionAndSet(aForm, aSurgOper, aCtx);
 }
 
 function onPreSave(aForm, aEntity, aCtx) {
@@ -124,13 +123,6 @@ function onPreDelete(aEntityId, aCtx) {
         aCtx.manager.createNativeQuery("update coloridentitypatient set surgoperation_id=null,finishdate=current_date, finishtime=current_time,editusername='"
             + aCtx.getSessionContext().getCallerPrincipal().toString() + "' where id=" + aColorIdentityId).executeUpdate();
     }
-    //назначение на операцию
-    var list = aCtx.manager.createNativeQuery("select id from prescription where surgoperation_id=" + aEntityId).getResultList();
-    if (list.size() > 0 && list.get(0) != null) {
-        var aPrescId = list.get(0);
-        aCtx.manager.createNativeQuery("update prescription set surgoperation_id=null,editdate=current_date, edittime=current_time,editusername='"
-            + aCtx.getSessionContext().getCallerPrincipal().toString() + "' where id=" + aPrescId).executeUpdate();
-    }
 }
 
 //сохранение осложнений
@@ -197,38 +189,5 @@ function checkBraceleteAndClose(aForm, aEntity, aCtx) {
                     aCtx.getSessionContext().getCallerPrincipal().toString() + "',finishdate = null, finishtime = null where id=" + idB).executeUpdate();
             }
         }
-    }
-}
-
-//есть ли в СЛО назначение на операцию с выбранными в протоколе операции параметрами
-function checkOperationPrescriptionExists(aForm, aCtx) {
-    var list = aCtx.manager.createNativeQuery("select p.id from prescription p" +
-        " left join prescriptionlist pl on pl.id=p.prescriptionlist_id" +
-        " left join medcase mc on mc.id=pl.medcase_id" +
-        " where p.surgoperation_id is null and mc.id=:id" +
-        " and p.planStartDate=to_date(:surgCalDate,'dd.MM.yyyy') and p.planStartTime=cast(:planStartTime as time) and p.medservice_id=:operId")
-        .setParameter("id", +aForm.medCase)
-        .setParameter("surgCalDate", aForm.operationDate)
-        .setParameter("planStartTime", aForm.operationTime)
-        .setParameter("operId", +aForm.medService)
-        .getResultList();
-    if (list.size() > 0 && list.get(0) != null)
-        return new java.lang.Long(list.get(0));
-    else
-        return 0;
-
-}
-
-//действия с назначением на операцию
-function checkOperationPrescriptionAndSet(aForm, aEntity, aCtx) {
-    var idP = checkOperationPrescriptionExists(aForm, aCtx);
-    if (idP == 0)
-        throw 'Перед созданием операции в СЛО необходимо создать направление на операцию ' +
-        'с указанными параметрами (дата операции, плановое время начала и услуга)!';
-    else {
-        var pres = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.prescription.ServicePrescription, idP);
-        pres.setSurgOperation(aEntity);
-        pres.setIntakeDate(aEntity.operationDate);
-        aCtx.manager.persist(pres);
     }
 }
