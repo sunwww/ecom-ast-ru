@@ -24,6 +24,7 @@ import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 import ru.ecom.mis.ejb.service.disability.DisabilityServiceBean;
 import ru.ecom.oncological.ejb.domain.*;
+import ru.nuzmsh.util.CollectionUtil;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.date.AgeUtil;
@@ -434,7 +435,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         if (serviceList != null && serviceList.size() > 1) {
             for (EntryMedService medService : serviceList) {
                 if (medService.getCost().longValue() > 0L) {
-                    E2Entry newEntry = cloneEntity(entry);
+                    E2Entry newEntry = cloneEntity(entry, true);
                     createDiagnosis(newEntry);
                     newEntry.setDiagnosis(entry.getDiagnosis().subList(0, 0));
                     ArrayList<EntryMedService> ms = new ArrayList<>();
@@ -2790,17 +2791,19 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     private void calculateServiceEntryPrice(E2Entry entry) { //Цена случая с типом услуга = цене услуги!
         List<EntryMedService> medServices = entry.getMedServices();
-        if (medServices == null || medServices.size() != 1) {
-            LOG.warn(entry.getId() + " : в случае несколько услуг!! нельзя посчитать цену " + (medServices != null ? medServices.size() : -1));
-            return;
-        }
-        EntryMedService medService = medServices.get(0); //1 случай = 1 услуга
-        BigDecimal cost = medService.getCost();
-        entry.setCost(cost);
-        entry.setBaseTarif(cost);
-        if (cost == null || cost.compareTo(BigDecimal.ZERO) == 0) {
-            entry.setCostFormulaString("Не удалось найти цену услуги " + medService.getMedService().getCode());
-            entry.setDoNotSend(true);
+        if (CollectionUtil.isEmpty(medServices)) {
+            LOG.warn(entry.getId() + " : в случае отсутствуют услуги, нельзя посчитать цену " + (medServices != null ? medServices.size() : -1));
+        } else if (medServices.size()>1) {
+            LOG.warn(entry.getId() + " : в случае несколько услуг!! нельзя посчитать цену " + medServices.size());
+        } else {
+            EntryMedService medService = medServices.get(0); //1 случай = 1 услуга
+            BigDecimal cost = medService.getCost();
+            entry.setCost(cost);
+            entry.setBaseTarif(cost);
+            if (cost == null || cost.compareTo(BigDecimal.ZERO) == 0) {
+                entry.setCostFormulaString("Не удалось найти цену услуги " + medService.getMedService().getCode());
+                entry.setDoNotSend(true);
+            }
         }
         manager.persist(entry);
     }
