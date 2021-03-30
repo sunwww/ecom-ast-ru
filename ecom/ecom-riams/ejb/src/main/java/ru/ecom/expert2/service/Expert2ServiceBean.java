@@ -435,7 +435,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         if (serviceList != null && serviceList.size() > 1) {
             for (EntryMedService medService : serviceList) {
                 if (medService.getCost().longValue() > 0L) {
-                    E2Entry newEntry = cloneEntity(entry);
+                    E2Entry newEntry = cloneEntity(entry, true);
                     createDiagnosis(newEntry);
                     newEntry.setDiagnosis(entry.getDiagnosis().subList(0, 0));
                     ArrayList<EntryMedService> ms = new ArrayList<>();
