@@ -176,7 +176,7 @@ var colors={red:"background-color:red;"
                         var el = array[i];
                         var minutes = el.minutes;
                         var color="";
-                        if (minutes>119){color=colors.red} else if (minutes>89){color=colors.orange} else if (minutes>59) {color=colors.yellow} else if (minutes>29){color=colors.blue} else {color=colors.green;}
+                        if (minutes>39){color=colors.red} else if (minutes>29){color=colors.orange} else if (minutes>19) {color=colors.yellow} else if (minutes>9){color=colors.blue} else {color=colors.green;}
                         tbl.append("<tr"+(isDoctor ? " onclick=\"goToPageNewWindow('entityView-stac_ssl.do','"+el.id+"');\" ": "")+" style='"+color+"'>" +
                             "<td>"+el.patientInfo+"</td>" +
                             (isDoctor ? "<td>"+el.waitTime+"</td><td>"+el.startTime+"</td><td>"+el.departmentName+"</td>" +
