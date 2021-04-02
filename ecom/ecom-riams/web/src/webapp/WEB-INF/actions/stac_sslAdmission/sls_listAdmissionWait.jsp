@@ -59,15 +59,15 @@
                 <ecom:webQuery name="journal_hosp" nativeSql="
 select '&dateBegin=${startDate}&dateEnd=${finishDate}&reestr=1&department='||ml.id
 ,ml.name
-,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) between 120 and 180 then sls.id end) as f3_23h
-,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) between 181 and 240 then sls.id end) as f4_34h
-,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) between 241 and 300 then sls.id end) as f5_45h
-,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) between 301 and 360 then sls.id end) as f6_56h
-,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) between 361 and 420 then sls.id end) as f7_67h
-,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) between 421 and 480 then sls.id end) as f8_78h
-,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) between 481 and 540 then sls.id end) as f9_89h
-,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) between 541 and 600 then sls.id end) as f10_910h
-,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) > 600 then sls.id end) as f11_100h
+,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) between 0 and 10 then sls.id end) as f3_23h
+,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) between 11 and 20 then sls.id end) as f4_34h
+,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) between 21 and 30 then sls.id end) as f5_45h
+,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) between 31 and 40 then sls.id end) as f6_56h
+,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) between 41 and 60 then sls.id end) as f7_67h
+,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) between 61 and 120 then sls.id end) as f8_78h
+,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) between 121 and 180 then sls.id end) as f9_89h
+,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) between 181 and 240 then sls.id end) as f10_910h
+,count( case when cast(extract(epoch from age(coalesce(cast((sls.transferdate||' '|| sls.transfertime) as timestamp),current_timestamp),cast(sls.dateStart||' '||sls.entranceTime as timestamp)))/60 as int) > 240 then sls.id end) as f11_100h
 ,count(sls.id) as f12_all
 from medcase sls
 left join mislpu ml on ml.id=sls.department_id
@@ -81,15 +81,15 @@ order by ml.name
                            action="sls_listAdmissionWait.do?short=Short" idField="1" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Отделение" property="2"/>
-                    <msh:tableColumn columnName="2-3 часа" property="3" addParam="&wait=23"/>
-                    <msh:tableColumn columnName="3-4 часа" property="4" addParam="&wait=34"/>
-                    <msh:tableColumn columnName="4-5 часов" property="5" addParam="&wait=45"/>
-                    <msh:tableColumn columnName="5-6 часов" property="6" addParam="&wait=56"/>
-                    <msh:tableColumn columnName="6-7 часов" property="7" addParam="&wait=67"/>
-                    <msh:tableColumn columnName="7-8 часов" property="8" addParam="&wait=78"/>
-                    <msh:tableColumn columnName="8-9 часов" property="9" addParam="&wait=89"/>
-                    <msh:tableColumn columnName="9-10 часов" property="10" addParam="&wait=910"/>
-                    <msh:tableColumn columnName="Свыше 10 часов" property="11" addParam="&wait=more_10"/>
+                    <msh:tableColumn columnName="0-10 минут" property="3" addParam="&wait=23"/>
+                    <msh:tableColumn columnName="10-20 минут" property="4" addParam="&wait=34"/>
+                    <msh:tableColumn columnName="20-30 минут" property="5" addParam="&wait=45"/>
+                    <msh:tableColumn columnName="30-40 минут" property="6" addParam="&wait=56"/>
+                    <msh:tableColumn columnName="40-60 минут" property="7" addParam="&wait=67"/>
+                    <msh:tableColumn columnName="1-2 часов" property="8" addParam="&wait=78"/>
+                    <msh:tableColumn columnName="2-3 часов" property="9" addParam="&wait=89"/>
+                    <msh:tableColumn columnName="3-4 часов" property="10" addParam="&wait=910"/>
+                    <msh:tableColumn columnName="Свыше 4 часов" property="11" addParam="&wait=more_4"/>
                     <msh:tableColumn columnName="Всего" property="12"/>
                 </msh:table>
             </msh:sectionContent>
@@ -101,31 +101,31 @@ order by ml.name
             String waitSql;
             switch (wait) {
                 case "23":
-                    waitSql = " between 120 and 180";
+                    waitSql = " between 0 and 10";
                     break;
                 case "34":
-                    waitSql = " between 181 and 240";
+                    waitSql = " between 11 and 20";
                     break;
                 case "45":
-                    waitSql = " between 241 and 300";
+                    waitSql = " between 21 and 30";
                     break;
                 case "56":
-                    waitSql = " between 301 and 360";
+                    waitSql = " between 31 and 40";
                     break;
                 case "67":
-                    waitSql = " between 361 and 420";
+                    waitSql = " between 41 and 60";
                     break;
                 case "78":
-                    waitSql = " between 421 and 480";
+                    waitSql = " between 61 and 120";
                     break;
                 case "89":
-                    waitSql = " between 481 and 540";
+                    waitSql = " between 121 and 180";
                     break;
                 case "910":
-                    waitSql = " between 541 and 600";
+                    waitSql = " between 181 and 240";
                     break;
-                case "more_10":
-                    waitSql = " > 600";
+                case "more_4":
+                    waitSql = " > 240";
                     break;
                 default:
                     waitSql = " >-1";

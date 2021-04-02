@@ -1245,7 +1245,7 @@ public class PrescriptionServiceJs {
         StringBuilder sql = new StringBuilder();
         Date currentDate = new Date();
         Date intakeDate = DateFormat.parseDate(aDate + aTime, "dd.MM.yyyyHH:mm");
-        if (intakeDate.getTime() > currentDate.getTime()) {
+        if (intakeDate.getTime() > currentDate.getTime() + 1000 * 60) {
             return "Дата забора не может быть больше текущей даты!";
         }
         String pattern = "MM/dd/yyyy";
@@ -1857,7 +1857,7 @@ public class PrescriptionServiceJs {
     /**
      * Проверка, нужно ли создавать примечание к назначению на лаб. услугу
      *
-     * @param msIds   Medservice.id услуг в назначении
+     * @param msIds Medservice.id услуг в назначении
      * @return список через запятую 1,2,3, где указаны типы примечаний (noteForLabPrescript)
      */
     public String checkNoteNecessary(String msIds, HttpServletRequest aRequest) throws NamingException {
@@ -1877,7 +1877,7 @@ public class PrescriptionServiceJs {
     /**
      * Проверка, нужно ли создавать примечание к назначению на лаб. услугу
      *
-     * @param plId   PrescriptionList.id услуг в назначении
+     * @param plId PrescriptionList.id услуг в назначении
      * @return возраст
      */
     public String getPatientAge(String plId, HttpServletRequest aRequest) throws NamingException {

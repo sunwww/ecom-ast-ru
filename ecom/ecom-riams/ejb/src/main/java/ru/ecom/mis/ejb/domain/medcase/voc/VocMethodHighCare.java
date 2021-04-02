@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.domain.medcase.voc;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 import javax.persistence.Entity;
@@ -50,4 +51,11 @@ public class VocMethodHighCare extends VocBaseEntity {
 	public void setPatientModel(String aPatientModel) {thePatientModel = aPatientModel;}
 	/** Модель пациента */
 	private String thePatientModel ;
+
+	/** Цена */
+	@Comment("Цена")
+	public BigDecimal getCost() {return theCost;}
+	public void setCost(BigDecimal aCost) {theCost = aCost;}
+	/** Цена */
+	private BigDecimal theCost ;
 }
