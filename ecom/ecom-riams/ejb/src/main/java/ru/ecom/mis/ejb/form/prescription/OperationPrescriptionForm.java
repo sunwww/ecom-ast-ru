@@ -154,4 +154,12 @@ public class OperationPrescriptionForm extends ServicePrescriptionForm {
     }
 
     private Long theAnesthesiaType;
+
+    /** Отделение */
+    @Comment("Отделение")
+    @Required
+    public Long getDepartment() {return theDepartment;}
+    public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+    /** Отделение */
+    private Long theDepartment;
 }
