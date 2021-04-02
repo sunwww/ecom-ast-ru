@@ -2457,11 +2457,14 @@ public class Expert2ServiceBean implements IExpert2Service {
         try {
             String key;
             if (isNotLogicalNull(entry.getVMPKind())) { //Если есть ВМП и нет цены - цена случая = цене метода ВМП
-                key = "VMP#" + entry.getVMPKind();
+                key = "VMP#" + entry.getVMPKind()+"#"+entry.getVMPMethod();
                 BigDecimal cost;
                 if (!hospitalCostMap.containsKey(key)) {
-                    List<BigDecimal> costs = manager.createNativeQuery("select cost from vockindhighcare where code=:code " +
-                            "and :vmpDate between dateFrom and coalesce(dateTo,current_date) and cost is not null")
+                    List<BigDecimal> costs = manager.createNativeQuery("select coalesce(vmhc.cost, vkhc.cost)" +
+                            " from vockindhighcare vkhc " +
+                            " left join vocmethodhighcare vmhc on vmhc.kindhighcare = vkhc.code and :vmpDate between vmhc.dateFrom and coalesce(vmhc.dateTo,current_date)" +
+                            "where vkhc.code=:code " +
+                            "and :vmpDate between vkhc.dateFrom and coalesce(vkhc.dateTo,current_date) and vkhc.cost is not null")
                             .setParameter("code", entry.getVMPKind()).setParameter("vmpDate", entry.getFinishDate()).getResultList();
                     if (!costs.isEmpty()) {
                         cost = costs.get(0);
