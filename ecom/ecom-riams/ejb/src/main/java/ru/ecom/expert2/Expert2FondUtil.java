@@ -17,10 +17,10 @@ public class Expert2FondUtil {
     /**
      * Расчитываем признак перевода для случая
      */
-    public static String calculateFondP_PER(E2Entry aEntry) {
+    public static String calculateFondP_PER(E2Entry entry) {
         String ret; // по умолчанию - самостоятельно
-        String lpuType = aEntry.getDirectLpuType();
-        if (aEntry.getExternalPrevMedcaseId() != null) { //Переведен из другого отделения
+        String lpuType = entry.getDirectLpuType();
+        if (entry.getExternalPrevMedcaseId() != null && entry.getExternalPrevMedcaseId() > 0L) { //Переведен из другого отделения
             ret = "4"; //Перевод внутри МО с другого профиля
         } else if ("К".equals(lpuType)) { //карета скорой помощи
             ret = "2"; //СМП
@@ -35,7 +35,7 @@ public class Expert2FondUtil {
     /**
      * Считаем признак "особые случай "
      */
-    public static String calculateFondOsSluch(E2Entry aEntry) {
+    public static String calculateFondOsSluch(E2Entry entry) {
         /*
          * Указываются все имевшиеся особые случаи.
          1 – медицинская помощь оказана новорожденному ребенку до государственной регистрации рождения при многоплодных родах;
@@ -47,20 +47,20 @@ public class Expert2FondUtil {
 
          */
         StringBuilder ret = new StringBuilder();
-        if (isNotEmpty(aEntry.getKinsmanLastname()) && isTrue(aEntry.getMultiplyBirth())) {
+        if (isTrue(entry.getMultiplyBirth()) && isNotEmpty(entry.getKinsmanLastname())) {
             ret.append("1;");
         }
-        if (isNullOrEmpty(aEntry.getKinsmanMiddlename()) && isNullOrEmpty(aEntry.getMiddlename())) {
+        if (isNullOrEmpty(entry.getKinsmanMiddlename()) && isNullOrEmpty(entry.getMiddlename())) {
             ret.append("2;");
         }
-        if (isTrue(aEntry.getIsCriminalMessage())) {
+        if (isTrue(entry.getIsCriminalMessage())) {
             ret.append("9;");
         }
-        if (isTrue(aEntry.getMedicalAbort())) {
+        if (isTrue(entry.getMedicalAbort())) {
             ret.append("10;");
         }
-        if (isOneOf(aEntry.getEntryType(), E2Enumerator.HOSPITALTYPE, E2Enumerator.VMPTYPE)) { //Только для стац
-            List<E2CoefficientPatientDifficultyEntryLink> list = aEntry.getPatientDifficulty();
+        if (isOneOf(entry.getEntryType(), E2Enumerator.HOSPITALTYPE, E2Enumerator.VMPTYPE)) { //Только для стац
+            List<E2CoefficientPatientDifficultyEntryLink> list = entry.getPatientDifficulty();
             if (isNotEmpty(list)) {
                 for (E2CoefficientPatientDifficultyEntryLink diff : list) {
                     if (diff.getDifficulty().getCode().equals("11")) {
