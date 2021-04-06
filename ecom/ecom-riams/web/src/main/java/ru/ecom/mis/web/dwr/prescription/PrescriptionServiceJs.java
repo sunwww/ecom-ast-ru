@@ -318,12 +318,27 @@ public class PrescriptionServiceJs {
                             + " and 0=(select count(*) from medcase where id='" + medcaseId + "'and (noactuality is null or noactuality='0'))");// Если визит недействительный - очищаем время в расписании
                 }
                 service.executeUpdateNativeSql("update contractaccountoperationbyservice set serviceid=null, servicetype= null where serviceType = 'PRESCRIPTION' and serviceId = " + aPrescriptionId); //аннулируем информацию в договоре
+                //если есть браслет с назначением, то ему надо проставить дату окончания
+                cancelBraceletetIfExists(aPrescriptionId, aRequest);
                 return "Назначение отменено!";
             } else {
                 return "Невозможно отменить назначение! Уже было отменено или находится в работе";
             }
         }
         return "Ошибка при определении контекста импедантности!";
+    }
+
+    /**
+     * Снимаем браслет, если он связан с отменяемым назначением
+     *
+     * @param aCanseledPrescriptionId
+     * @throws NamingException
+     */
+    private void cancelBraceletetIfExists(Long aCanseledPrescriptionId, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
+        service.executeUpdateNativeSql("update coloridentitypatient set finishdate=current_date, finishtime=current_time,editusername='"
+                + username + "' where entityname='prescription' and entityid=" + aCanseledPrescriptionId);
     }
 
     public String cancelPrescription(Long aPresctiptionId, String aReason, HttpServletRequest aRequest) throws NamingException {
@@ -683,6 +698,26 @@ public class PrescriptionServiceJs {
         //Обновление текста дневника в случае отметки о браке после подтверждения врачом КДЛ
         String wfCnsl = bean.getRealLabTechUsername(Long.valueOf(aPrescripts.split(",")[0]), "");
         updateDiaryWhileCancelPrescription(null, aPrescripts, "Брак биоматериала: " + reasonText, wfCnsl, service);
+        //Обновление браслета в случае брака лаборатории
+        updateBraceleteIfExists(aPrescripts, aRequest);
+    }
+
+    /**
+     * Обновление браслета в случае брака лаборатории
+     *
+     * @param aPrescripts Строка с ИД назначений (prescription) разделенная запятами
+     * @param aRequest
+     * @return
+     * @throws NamingException
+     */
+    private void updateBraceleteIfExists(String aPrescripts, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        //если брак до ввода результата и браслет связан с назначением
+        service.executeUpdateNativeSql("update coloridentitypatient set voccoloridentity_id=(select id from VocColorIdentityPatient where code='Pres_COVID_cans') " +
+               " where entityname='prescription' and entityid in (" + aPrescripts + ")");
+        //пбрак после введения результата (тогда будет Protocol, а не Prescription)
+        service.executeUpdateNativeSql("update coloridentitypatient set voccoloridentity_id=(select id from VocColorIdentityPatient where code='Pres_COVID_cans') " +
+                " where entityname='Protocol' and entityid in (select id from diary where medcase_id=ANY(select medcase_id from prescription  where id in (" + aPrescripts + ")))");
     }
 
     /* Получить всех пользователей для отправки сообщения о браке

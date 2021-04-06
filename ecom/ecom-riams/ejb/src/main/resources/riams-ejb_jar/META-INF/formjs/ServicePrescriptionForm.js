@@ -135,6 +135,20 @@ function onCreate(aForm, aEntity, aCtx) {
                                 adMedService.setIntakeSpecial(intakeSpecial);
                             }
                         }
+                        //создать пустой браслет-ожидание
+                        var vocColorIdentity = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.voc.VocColorIdentityPatient, java.lang.Long.valueOf(15));
+                        if (vocColorIdentity != null) {
+                            var colorIdentity = new Packages.ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient();
+                            colorIdentity.startDate = date;
+                            colorIdentity.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
+                            colorIdentity.setVocColorIdentity(vocColorIdentity);
+                            colorIdentity.setEntityId(adMedService.id);
+                            colorIdentity.setEntityName('prescription');
+                            aCtx.manager.persist(colorIdentity);
+                            var existedIds = aEntity.prescriptionList.medCase.parent.getColorsIdentity();
+                            existedIds.add(colorIdentity);
+                            aEntity.prescriptionList.medCase.parent.setColorsIdentity(existedIds);
+                        }
                     }
 
                     adMedService.setPrescriptionList(aEntity.getPrescriptionList());
