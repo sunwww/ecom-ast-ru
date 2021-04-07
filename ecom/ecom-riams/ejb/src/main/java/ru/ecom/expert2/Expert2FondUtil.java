@@ -20,7 +20,7 @@ public class Expert2FondUtil {
     public static String calculateFondP_PER(E2Entry entry) {
         String ret; // по умолчанию - самостоятельно
         String lpuType = entry.getDirectLpuType();
-        if (entry.getExternalPrevMedcaseId() != null && entry.getExternalPrevMedcaseId() > 0L) { //Переведен из другого отделения
+        if (entry.havePrevMedCase()) { //Переведен из другого отделения
             ret = "4"; //Перевод внутри МО с другого профиля
         } else if ("К".equals(lpuType)) { //карета скорой помощи
             ret = "2"; //СМП

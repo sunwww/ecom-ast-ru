@@ -930,25 +930,58 @@ public class E2Entry extends BaseEntity {
     /** Идентификатор случая во внешней системе */
     @Comment("Идентификатор случая во внешней системе")
     public Long getExternalId() {return theExternalId;}
-    public void setExternalId(Long aExternalId) {theExternalId = aExternalId;}
-    /** Идентификатор случая во внешней системе */
-    private Long theExternalId ;
 
-    /** Идентификатор пред. случая во внешней системе */
+    public void setExternalId(Long aExternalId) {
+        theExternalId = aExternalId;
+    }
+
+    /**
+     * Идентификатор случая во внешней системе
+     */
+    private Long theExternalId;
+
+    /**
+     * Идентификатор пред. случая во внешней системе
+     */
     @Comment("Идентификатор пред. случая во внешней системе")
-    public Long getExternalPrevMedcaseId() {return theExternalPrevMedcaseId;}
-    public void setExternalPrevMedcaseId(Long aExternalPrevMedcaseId) {theExternalPrevMedcaseId = aExternalPrevMedcaseId;}
-    /** Идентификатор пред. случая во внешней системе */
-    private Long theExternalPrevMedcaseId ;
+    public Long getExternalPrevMedcaseId() {
+        return theExternalPrevMedcaseId;
+    }
 
-    /** Идентификатор госпитализации во внешней системе */
+    public void setExternalPrevMedcaseId(Long aExternalPrevMedcaseId) {
+        theExternalPrevMedcaseId = aExternalPrevMedcaseId;
+    }
+
+    /**
+     * Идентификатор пред. случая во внешней системе
+     */
+    private Long theExternalPrevMedcaseId;
+
+    @Transient
+    public boolean havePrevMedCase() {
+        return getExternalPrevMedcaseId() != null && getExternalPrevMedcaseId() > 0L;
+    }
+
+    /**
+     * Идентификатор госпитализации во внешней системе
+     */
     @Comment("Идентификатор госпитализации во внешней системе")
-    public Long getExternalParentId() {return theExternalParentId;}
-    public void setExternalParentId(Long aExternalParentId) {theExternalParentId = aExternalParentId;}
-    /** Идентификатор госпитализации во внешней системе */
-    private Long theExternalParentId ;
+    public Long getExternalParentId() {
+        return theExternalParentId;
+    }
 
-    /** Заполнение */
+    public void setExternalParentId(Long aExternalParentId) {
+        theExternalParentId = aExternalParentId;
+    }
+
+    /**
+     * Идентификатор госпитализации во внешней системе
+     */
+    private Long theExternalParentId;
+
+    /**
+     * Заполнение
+     */
     @Comment("Заполнение")
     @ManyToOne(fetch = FetchType.LAZY)
     public E2ListEntry getListEntry() {return theListEntry;}

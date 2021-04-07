@@ -22,7 +22,6 @@ import ru.ecom.expomc.ejb.services.exportservice.ExportServiceBean;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.nuzmsh.util.CollectionUtil;
 import ru.nuzmsh.util.PropertyUtil;
-import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.date.AgeUtil;
 
 import javax.annotation.EJB;
@@ -222,7 +221,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             add(z, "ISHOD", entry.getFondIshod().getCode()); // Исход случая.
         }
         addIfNotNull(z, "OS_SLUCH", Expert2FondUtil.calculateFondOsSluch(entry)); // Особый случай
-        if (!isPoliclinic && !a3 && isOneOf(entry.getFondResult().getCode(), "104","204"))
+        if (!isPoliclinic && !a3
+                && (isOneOf(entry.getFondResult().getCode(), "104", "204"))
+                || entry.getMedHelpProfile().getCode().equals("136") && entry.havePrevMedCase())
             add(z, "VB_P", "1"); // Признак внутрибольничного перевода *05.08 1 - только если есть перевод
         z.addContent(new Element("SL_TEMPLATE")); // Список случаев
         add(z, "IDSP", entry.getIDSP().getCode()); // Способ оплаты медицинской помощи (V010)
