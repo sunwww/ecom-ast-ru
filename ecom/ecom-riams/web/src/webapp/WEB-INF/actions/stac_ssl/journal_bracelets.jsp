@@ -284,10 +284,11 @@ left join voccolor vcr on vcr.id=vcid.color_id
             <msh:sectionContent>
 
                 <msh:table name="brList" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do"
-                           idField="1" styleRow="9">
+                           idField="1" styleRow="9"
+                           openNewWindow="true">
                     <msh:tableColumn property="sn" columnName="#"/>
                     <msh:tableColumn columnName="Стат.карта" property="2"/>
-                    <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
+                    <msh:tableColumn columnName="ФИО пациента" property="3"/>
                     <msh:tableColumn columnName="Год рождения" property="4"/>
                     <msh:tableColumn columnName="Дата поступления" property="5"/>
                     <msh:tableColumn columnName="Леч.врач" property="6"/>
