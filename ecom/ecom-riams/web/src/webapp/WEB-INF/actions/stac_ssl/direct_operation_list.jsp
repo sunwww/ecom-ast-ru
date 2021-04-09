@@ -113,7 +113,7 @@ where p.planStartDate = to_date('${startDate}','dd.MM.yyyy')
 and wf.dtype='OperatingRoom'
 and vst.code='OPERATION'  
 ${dep}
-order by p.planStartDate, p.planStartTime"/>
+order by wf.groupname,p.planStartDate, p.planStartTime"/>
 
                 <msh:table printToExcelButton="сохранить в excel" styleRow='10' name="journal_list_suroper"
                            action="entitySubclassView-mis_medCase.do" idField="1" noDataMessage="Не найдено"
