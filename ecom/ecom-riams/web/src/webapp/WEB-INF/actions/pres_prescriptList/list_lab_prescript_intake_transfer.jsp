@@ -152,7 +152,7 @@
   	if (department!=null && !department.equals("") || serviceSubType.equals("24")) {
 
   		if (beginDate==null || beginDate.equals("")) {
-  			beginDate=DateFormat.formatToDate(new java.util.Date()) ;
+  			beginDate=DateFormat.formatCurrentDate() ;
   		}
   		String endDate = request.getParameter("endDate") ;
   	  	if (endDate==null|| endDate.equals("")) {endDate=beginDate;}

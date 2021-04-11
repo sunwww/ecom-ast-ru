@@ -30,7 +30,7 @@ public class TicketSpecSearchAction extends BaseAction {
         	IWorkerService servWorker = Injection.find(aRequest).getService(IWorkerService.class) ;
         	Long doctor = servWorker.getWorkFunction() ;
         	if (form.getDateFilter() == null || form.getDateFilter().equals("")) {
-        		form.setDateFilter(DateFormat.formatToDate(new Date())) ;
+        		form.setDateFilter(DateFormat.formatCurrentDate()) ;
         		form.setDoctor(doctor) ;
         	}
         	aRequest.setAttribute("listDirect", service.findAllWorkerTickets(doctor, form.getDateFilter(),0));

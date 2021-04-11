@@ -5,21 +5,20 @@ function onPreCreate(aForm, aCtx) {
     checkFields(aForm, aCtx);
     var pat = aForm.getPatient();
     var username = aCtx.getSessionContext().getCallerPrincipal().toString();
-    var date = Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(new java.util.Date());
+    var date = Packages.ru.nuzmsh.util.format.DateFormat.formatCurrentDate();
     aForm.setDateStart(date);
     aForm.setUsername(username);
     aForm.setCreateDate(date);
 
-    var list = aCtx.manager.createQuery("select id from PatientExternalServiceAccount where patient_id= :pat and dateTo is null"
-    ).setParameter("pat", pat).getResultList();
-    if (!list.isEmpty() && list.size() > 0) {
+    if (!aCtx.manager.createQuery("select id from PatientExternalServiceAccount where patient_id= :pat and dateTo is null"
+    ).setParameter("pat", pat).getResultList().isEmpty()) {
         throw "У пациента уже есть неотозванное согласие на передачу. Создание нового невозможно";
     }
 }
 
 function onPreSave(aForm, aEntity, aCtx) {
     checkFields(aForm, aCtx);
-    var date = Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(new java.util.Date());
+    var date = Packages.ru.nuzmsh.util.format.DateFormat.formatCurrentDate();
     if (aForm.getDisabled() != null && aForm.getDisabled() == "1") {
         aForm.setDateTo(date);
     }
