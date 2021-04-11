@@ -162,6 +162,11 @@
                                     Журнал заведующего лабораторией</msh:link>
                             </li>
                             <li>
+                                <msh:link isReport="true" action="scienceLabJournal.do"
+                                          roles="/Policy/Mis/Journal/Prescription/LabSurvey/ScienceJournal">
+                                    Наука для лаборатории</msh:link>
+                            </li>
+                            <li>
                                 <msh:link isReport="true" action="lab_plus_covidPcr.do"
                                           roles="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratoryPCR">
                                     Положительные ПЦР</msh:link>

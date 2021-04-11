@@ -28,7 +28,7 @@ public class AttachmentServiceJs {
             aRequest.setAttribute("impResult", "");
             return "Синхронизация успешно завершена. <a href='js-exp_importtime-checkByTime.do?id=" + s + "' target='_blank'>Просмотреть результаты</a>";
         } catch (Exception e) {
-            return "" + e.toString();
+            return "" + e;
         }
 
     }
@@ -71,22 +71,26 @@ public class AttachmentServiceJs {
 
     }
 
-    public String cleanDefect(long aAttachmentId, HttpServletRequest aRequest) throws NamingException {
+    public void cleanDefect(long aAttachmentId, HttpServletRequest aRequest) throws NamingException {
         ISyncAttachmentDefectService service = Injection.find(aRequest).getService(ISyncAttachmentDefectService.class);
         try {
-            return service.cleanDefect(aAttachmentId);
+            service.cleanDefect(aAttachmentId);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            return "Ошибка: " + e.toString();
         }
     }
 
+    /**
+     * Импорт ответа фонда по прикрепленному населению
+     * @param aFileText
+     * @param aRequest
+     * @return
+     */
     public String importDefectsFromXML(String aFileText, HttpServletRequest aRequest) {
         try {
             return Injection.find(aRequest).getService(ISyncAttachmentDefectService.class).importDefectFromXML(aFileText);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;

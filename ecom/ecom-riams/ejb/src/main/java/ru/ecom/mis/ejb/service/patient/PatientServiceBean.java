@@ -776,7 +776,7 @@ public class PatientServiceBean implements IPatientService {
             , boolean aIsPatient, boolean aIsPolicy
             , boolean aIsDocument, boolean aIsAddress, boolean aIsAttachment) {
         String[] fiodr = null;
-        String curDate = DateFormat.formatToDate(new java.util.Date());
+        String curDate = DateFormat.formatCurrentDate();
 
         if (aFiodr != null && !aFiodr.equals("")) {
             fiodr = aFiodr.split("#");

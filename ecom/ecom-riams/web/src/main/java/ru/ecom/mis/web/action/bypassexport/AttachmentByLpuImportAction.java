@@ -32,7 +32,7 @@ public class AttachmentByLpuImportAction extends BaseAction {
 			timeForm.setActualDateFrom(form.getPeriod());
 			timeForm.setActualDateTo(form.getPeriod());
 			timeForm.setImportFormat(form.getImportFormat());
-			timeForm.setComment("AUTOIMPORT, Дата импорта = "+DateFormat.formatToDate(new java.util.Date()));
+			timeForm.setComment("AUTOIMPORT, Дата импорта = "+DateFormat.formatCurrentDate());
 
 			try {
 				service.importFile(monitorId, fileId, tempFileName, originalFileName, timeForm);
