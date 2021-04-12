@@ -166,19 +166,6 @@
                     $('calendarTime').value = "0";
                 }
 
-                <msh:ifFormTypeAreViewOrEdit formName="pres_operationPrescriptionForm">
-                    WorkCalendarService.getOperationDateId(${param.id}, {
-                        callback: function (id) {
-                            if (id) {
-                                $('surgCalDate').value = +id;
-                                $('surgCalDateName').value = $('planStartDate').value;
-                                getPreRecord();
-                                updateOperationParent();
-                            }
-                        }
-                    });
-                </msh:ifFormTypeAreViewOrEdit>
-
                 <msh:ifFormTypeIsCreate formName="pres_operationPrescriptionForm">
                 surgCalDateAutocomplete.setUrl('simpleVocAutocomplete/vocWorkCalendarDayByWorkFunctionFuture');
                 </msh:ifFormTypeIsCreate>
@@ -223,7 +210,7 @@
                     </msh:row>
 
                 </msh:ifFormTypeIsView>
-                <msh:ifFormTypeIsNotView formName="pres_operationPrescriptionForm">
+                <msh:ifFormTypeIsCreate formName="pres_operationPrescriptionForm">
                     <msh:panel styleId="tblSurgOperation">
                         <msh:row>
                             <msh:separator label="Операции" colSpan="10"/>
@@ -295,7 +282,7 @@
                             </tr>
                         </msh:row>
                     </msh:panel>
-                </msh:ifFormTypeIsNotView>
+                </msh:ifFormTypeIsCreate>
                 <msh:ifFormTypeAreViewOrEdit formName="pres_operationPrescriptionForm">
                     <msh:row>
                         <msh:separator label="Дополнительная информация" colSpan="4"/>
@@ -334,7 +321,7 @@
                               action="/entityParentDelete-pres_operationPrescription" name="Удалить" key="ALT+DEL"/>
                 <tags:chooseCnslReasonWf name="chooseCnslReasonWf" voc="vocOperationCancelReason"
                                          title="назначение на операцию"/>
-                <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit1" params=""
+                <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit" params=""
                               action="/javascript:showchooseCnslReasonWf(${param.id})" name="Отменить"/>
 
             </msh:sideMenu>
