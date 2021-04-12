@@ -49,7 +49,7 @@
                         c.add(Calendar.DATE, 1);
                         beginDate = DateFormat.formatToDate(c.getTime());
                     } else
-                        beginDate = DateFormat.formatToDate(new Date());
+                        beginDate = DateFormat.formatCurrentDate();
                 }
                 String endDate = request.getParameter("endDate");
                 if (endDate == null || endDate.equals("")) {

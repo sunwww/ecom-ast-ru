@@ -306,6 +306,25 @@ public class Expert2ServiceJs {
                 }
 
                 return "Не найдено настройки с именем " + fldName;
+            case "DEPARTMENT_ADDRESS_BY_SERVICE":
+                WebQueryResult wqr2 = getConfigString(fldName, request); //profileCode:newDepAddressCode:oldDepAddressCode, profileCode:newDepAddressCode:oldDepAddressCode
+                if (wqr2 != null) {
+                    String con = wqr2.get1().toString();
+                    String[] configs = con.split(",");
+                    for (String config : configs) {
+                        String[] triple = config.trim().split(":");
+                        String profileCode = triple[0];
+                        String newDepartmentAddressCode = triple[1];
+                        String oldDepartmentAddressCode = triple.length > 2 ? triple[2] : null;
+                        service.executeUpdateNativeSql("update e2entry e set departmentCode = '" +
+                                newDepartmentAddressCode.substring(0, 8) + "', departmentAddressCode='" + newDepartmentAddressCode + "' where listEntry_id=" +
+                                entryListId + " and medhelpprofile_id=(select max(id) from voce2medhelpprofile where code ='" +
+                                profileCode + "')" + (oldDepartmentAddressCode == null ? "" : " and departmentAddressCode='" + oldDepartmentAddressCode + "'"));
+                    }
+                    return "Всё заменено согласно настройкам: " + con;
+                }
+
+                return "Не найдено настройки с именем " + fldName;
             default:
                 return "BAD_FIELD_NAME!";
         }

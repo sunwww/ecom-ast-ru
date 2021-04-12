@@ -428,11 +428,18 @@ public class PrescriptionServiceBean implements IPrescriptionService {
             String medServiceCode = medService != null ? medService.getCode() : "";
             if ("A26.08.027.999".equals(medServiceCode)) { //анализ на ковид. Делаем браслет с положительным/отрицательным анализом.
                 String entityName = "Protocol";
-                deleteBraceletByEntity(entityName, protocolId, manager);
-                ColorIdentityPatient cip = new ColorIdentityPatient();
-                cip.setCreateUsername(username);
-                cip.setEntityName(entityName);
-                cip.setEntityId(protocolId);
+                Long braceleteId = findBraceleteStatusCovidIfExists(medCase.getId(), manager);
+                //если нет браслета-ожидания, можно удалять результаты и создавать браслет
+                ColorIdentityPatient cip = null;
+                if (braceleteId == 0) {
+                    deleteBraceletByEntity(entityName, protocolId, manager);
+                    cip = new ColorIdentityPatient();
+                    cip.setCreateUsername(username);
+                    cip.setEntityName(entityName);
+                    cip.setEntityId(protocolId);
+                } else {
+                    cip = theManager.find(ColorIdentityPatient.class, braceleteId);
+                }
                 StringBuilder info = new StringBuilder();
                 String vocCode = "";
                 String zbr = "", rslt = "";
@@ -441,13 +448,14 @@ public class PrescriptionServiceBean implements IPrescriptionService {
                     String id = par.getString("id");
                     switch (id) {
                         case "1284": //результат
-                            if ("ОТРИЦАТЕЛЬНЫЙ".equals(par.getString("valueVoc").trim())) {
+                            if ("69".equals(par.getString("value").trim())) {
                                 vocCode = "LAB_COVID_MINUS";
-                            } else if ("УСЛОВНО ПОЛОЖИТЕЛЬНЫЙ".equals(par.getString("valueVoc").trim())) {
+                            } else if ("1025".equals(par.getString("value").trim())) {
                                 vocCode = "LAB_COVID_USL";
-                            } else if ("ПОЛОЖИТЕЛЬНЫЙ".equals(par.getString("valueVoc").trim())) {
+                            } else if ("70".equals(par.getString("value").trim())) {
                                 vocCode = "LAB_COVID_PLUS";
-                            }
+                            } else
+                                vocCode = "Pres_COVID_?"; //результат сомнительный?
                             break;
                         case "1286": //дата забора
                             String zbrDate = par.getString("value");
@@ -463,13 +471,14 @@ public class PrescriptionServiceBean implements IPrescriptionService {
                             break; //остальные - не нужны
                     }
                 }
-                if (vocCode.length() > 0) {
-                    VocColorIdentityPatient vcip = (VocColorIdentityPatient) manager.createNamedQuery("VocColorIdentityPatient.getByCode").setParameter("code", vocCode).getSingleResult();
-                    cip.setVocColorIdentity(vcip);
-                    cip.setInfo(zbr + "\n" + rslt);
-                    manager.persist(cip);
+                VocColorIdentityPatient vcip = (VocColorIdentityPatient) manager.createNamedQuery("VocColorIdentityPatient.getByCode").setParameter("code", vocCode).getSingleResult();
+                cip.setVocColorIdentity(vcip);
+                cip.setInfo(zbr + "\n" + rslt);
+                cip.setEntityId(protocolId);
+                cip.setEntityName(entityName);
+                manager.persist(cip);
+                if (braceleteId == 0)
                     medCase.addColorsIdentity(cip);
-                }
             } else if ("A26.06.041.002".equals(medServiceCode) || "A26.06.041.999".equals(medServiceCode)
                     || "A26.06.036.001".equals(medServiceCode) || "A26.06.036.002".equals(medServiceCode)) { //браслет с гепатитом
                 boolean isGepatit = false;
@@ -508,8 +517,28 @@ public class PrescriptionServiceBean implements IPrescriptionService {
         }
     }
 
+    /**
+     * Находим браслет, связанный с назначением по HospitalMedCase
+     *
+     * @param medCaseId HospitalMedCase.id
+     * @param manager
+     * @return
+     */
+    private Long findBraceleteStatusCovidIfExists(Long medCaseId, EntityManager manager) {
+        List<Object> list = theManager.createNativeQuery("select cip.id from coloridentitypatient cip" +
+                " left join voccoloridentitypatient vcip on vcip.id=cip.voccoloridentity_id" +
+                " left join medcase_coloridentitypatient mcip on mcip.colorsidentity_id = cip.id" +
+                " where cip.entityname='prescription'" +
+                " and (vcip.code='Pres_COVID_wait' or vcip.code='LAB_COVID_PLUS' or vcip.code='LAB_COVID_MINUS' or vcip.code='Pres_COVID_?')" +
+                " and mcip.medcase_id=:medCaseId" +
+                " order by cip.id desc")
+                .setParameter("medCaseId", medCaseId).setMaxResults(1).getResultList();
+        return list.isEmpty() ? 0 : Long.valueOf(list.get(0).toString());
+    }
+
     private void deleteBraceletByEntity(String name, Long code, EntityManager manager) {
-        String sql = " ColorIdentityPatient where entityName='" + name + "' and entityId='" + code + "'";
+        String sql = " ColorIdentityPatient where entityName='" + name + "' and entityId='" + code
+                + "' and finishdate is null or (cast ((finishdate||' '||finishtime) as TIMESTAMP) > current_timestamp)";
         manager.createNativeQuery("delete from medcase_coloridentitypatient where colorsidentity_id = (select id from " + sql + ")").executeUpdate();
         manager.createNativeQuery("delete from " + sql).executeUpdate();
     }

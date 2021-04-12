@@ -11,11 +11,11 @@
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
-<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true" >
+<tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
     <%
-        String typeDate = ActionUtil.updateParameter("BrList","typeDate","1", request) ;
-        String typeView = ActionUtil.updateParameter("BrList","typeView","1", request) ;
-        String typeViewBr = ActionUtil.updateParameter("BrList","typeViewBr","1", request) ;
+        String typeDate = ActionUtil.updateParameter("BrList", "typeDate", "1", request);
+        String typeView = ActionUtil.updateParameter("BrList", "typeView", "1", request);
+        String typeViewBr = ActionUtil.updateParameter("BrList", "typeViewBr", "1", request);
     %>
     <tiles:put name="title" type="string">
         <msh:title mainMenu="StacJournal" title="Отчет по браслетам пациентов"></msh:title>
@@ -24,38 +24,42 @@
         <msh:form action="/journal_bracelets.do" defaultField="department" method="GET">
             <msh:panel>
                 <msh:row>
-                    <msh:separator label="Параметры поиска" colSpan="7" />
+                    <msh:separator label="Параметры поиска" colSpan="7"/>
                 </msh:row>
                 <msh:row>
                     <msh:row>
-                        <msh:autoComplete property="department" fieldColSpan="16" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
+                        <msh:autoComplete property="department" fieldColSpan="16" horizontalFill="true"
+                                          label="Отделение" vocName="vocLpuHospOtdAll"/>
                     </msh:row>
                     <msh:row>
-                        <ecom:oneToManyOneAutocomplete label="Браслеты" vocName="vocColorIdentityPatientWithPat" property="filterAdd1" colSpan="16"/>
+                        <ecom:oneToManyOneAutocomplete label="Браслеты" vocName="vocColorIdentityPatientWithPat"
+                                                       property="filterAdd1" colSpan="16"/>
                     </msh:row>
                     <msh:row>
                         <td></td>
                         <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
-                            <input type="radio" name="typeViewBr" value="1">  хотя бы один
+                            <input type="radio" name="typeViewBr" value="1"> хотя бы один
                         </td>
                         <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
-                            <input type="radio" name="typeViewBr" value="2">  только выбранные
+                            <input type="radio" name="typeViewBr" value="2"> только выбранные
                         </td>
                         <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
-                            <input type="radio" name="typeViewBr" value="3">  включая все выбранные
+                            <input type="radio" name="typeViewBr" value="3"> включая все выбранные
                         </td>
                     </msh:row>
                     <msh:row>
-                        <msh:textField property="dateBegin" label="Период с" />
-                        <msh:textField property="dateEnd" label="по" />
+                        <msh:textField property="dateBegin" label="Период с"/>
+                        <msh:textField property="dateEnd" label="по"/>
                     </msh:row>
                     <msh:row>
-                        <td class="label" title="Поиск по дате  (typeDate)"><label for="typeDateName" id="typeDateLabel">Искать по дате:</label></td>
+                        <td class="label" title="Поиск по дате  (typeDate)"><label for="typeDateName"
+                                                                                   id="typeDateLabel">Искать по
+                            дате:</label></td>
                         <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
-                            <input type="radio" name="typeDate" value="1">  поступления
+                            <input type="radio" name="typeDate" value="1"> поступления
                         </td>
                         <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
-                            <input type="radio" name="typeDate" value="2">  выписки
+                            <input type="radio" name="typeDate" value="2"> выписки
                         </td>
                     </msh:row>
 
@@ -63,31 +67,32 @@
                     <msh:row>
                         <td></td>
                         <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
-                            <input type="radio" name="typeView" value="1">  свод по отделениям
+                            <input type="radio" name="typeView" value="1"> свод по отделениям
                         </td>
                         <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
-                            <input type="radio" name="typeView" value="2">  реестр пациентов
+                            <input type="radio" name="typeView" value="2"> реестр пациентов
                         </td>
                     </msh:row>
                     <td>
-                        <input type="submit" value="Найти" />
+                        <input type="submit" value="Найти"/>
                     </td>
                 </msh:row>
             </msh:panel>
         </msh:form>
         <script type='text/javascript'>
 
-            checkFieldUpdate('typeDate','${typeDate}',1) ;
-            checkFieldUpdate('typeView','${typeView}',1) ;
-            checkFieldUpdate('typeViewBr','${typeViewBr}',1) ;
-            function checkFieldUpdate(aField,aValue,aDefault) {
+            checkFieldUpdate('typeDate', '${typeDate}', 1);
+            checkFieldUpdate('typeView', '${typeView}', 1);
+            checkFieldUpdate('typeViewBr', '${typeViewBr}', 1);
 
-                eval('var chk =  document.forms[0].'+aField) ;
-                var max = chk.length ;
-                if ((+aValue)>max) {
-                    chk[+aDefault-1].checked='checked' ;
+            function checkFieldUpdate(aField, aValue, aDefault) {
+
+                eval('var chk =  document.forms[0].' + aField);
+                var max = chk.length;
+                if ((+aValue) > max) {
+                    chk[+aDefault - 1].checked = 'checked';
                 } else {
-                    chk[+aValue-1].checked='checked' ;
+                    chk[+aValue - 1].checked = 'checked';
                 }
             }
         </script>
@@ -97,7 +102,7 @@
              * @param brs String json
              * @return Long[] массив с id
              */
-            public Long[] getMasFromJson(String brs){
+            public Long[] getMasFromJson(String brs) {
                 List<Long> list = new ArrayList<>();
                 JsonParser parser = new JsonParser();
                 JsonObject jparsr = parser.parse(brs).getAsJsonObject();
@@ -106,11 +111,12 @@
                     JsonObject elo = el.getAsJsonObject();
                     String val = elo.get("value").toString().replaceAll("\"", "");
                     if (!val.equals("")) {
-                        Long l=0L;
+                        Long l = 0L;
                         try {
                             l = Long.parseLong(val);
-                        } catch (NumberFormatException e) { }
-                        if (l>0L)
+                        } catch (NumberFormatException e) {
+                        }
+                        if (l > 0L)
                             list.add(l);
                     }
                 }
@@ -123,9 +129,9 @@
              * @param arr Long[] отсортированный массив
              * @return String id через запятую
              */
-            public String getStrWithChoosenIds(Long[] arr){
+            public String getStrWithChoosenIds(Long[] arr) {
                 StringBuilder brSb = new StringBuilder();
-                String brString="";
+                String brString = "";
                 for (long c : arr) {
                     brSb.append(c).append(", ");
                 }
@@ -152,69 +158,72 @@
             }
         %>
         <%
-            String department = request.getParameter("department") ;
-            if (department!=null && !department.equals("")) request.setAttribute("department"," and m.department_id="+department);
+            String department = request.getParameter("department");
+            if (department != null && !department.equals(""))
+                request.setAttribute("department", " and m.department_id=" + department);
 
-            String date = (String)request.getParameter("dateBegin") ;
-            String dateEnd = (String)request.getParameter("dateEnd") ;
+            String date = (String) request.getParameter("dateBegin");
+            String dateEnd = (String) request.getParameter("dateEnd");
 
-            if (dateEnd==null || dateEnd.equals("")) dateEnd=date ;
+            if (dateEnd == null || dateEnd.equals("")) dateEnd = date;
 
 
-            if (typeDate.equals("1")) {typeDate="sls.dateStart";}
-            else if (typeDate.equals("2")) {typeDate="sls.dateFinish";}
+            if (typeDate.equals("1")) {
+                typeDate = "sls.dateStart";
+            } else if (typeDate.equals("2")) {
+                typeDate = "sls.dateFinish";
+            }
 
-            String sqlDate = date!=null && !date.equals("")?
-                    " and " + typeDate + " between to_date('"+date+"','dd.mm.yyyy') and to_date('"+dateEnd+"','dd.mm.yyyy')" :
+            String sqlDate = date != null && !date.equals("") ?
+                    " and " + typeDate + " between to_date('" + date + "','dd.mm.yyyy') and to_date('" + dateEnd + "','dd.mm.yyyy')" :
                     " and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)";
-            request.setAttribute("sqlDate", sqlDate) ;
+            request.setAttribute("sqlDate", sqlDate);
 
             String brs = request.getParameter("brs");
 
             String brString = "";
             String brSql = "";
-            if (brs==null || brs.isEmpty()) {
+            if (brs == null || brs.isEmpty()) {
                 brs = request.getParameter("filterAdd1");
                 if (brs != null && !brs.equals("") && !brs.equals("null")) {
                     Long[] mas = getMasFromJson(brs);
                     bubbleSort(mas);
                     brString = getStrWithChoosenIds(mas);
                 }
-            }
-            else
-                brString=brs;
-              if (!brString.isEmpty()) {
-                  if (typeViewBr.equals("1")) {
-                      brSql = " and vcid.id in (" + brString + ")";
-                  } else if (typeViewBr.equals("2")) { //только выбранные
+            } else
+                brString = brs;
+            if (!brString.isEmpty()) {
+                if (typeViewBr.equals("1")) {
+                    brSql = " and vcid.id in (" + brString + ")";
+                } else if (typeViewBr.equals("2")) { //только выбранные
                       /*
                       Сравниваю list(id voc-браслетов), отсортированные по возрастанию, как и массив
                       т.е., например "1, 2, 3".
                       Если такая же строка получена после сортировки выбранных на форме
                       - в слс есть исключительно браслеты, которые указаны на форме
                       * */
-                      brSql = " and (select list(cast(t.ids as varchar)) from (" +
-                              " select list(cast(vcid.id as varchar)) as ids from medcase_coloridentitypatient mcid " +
-                              " left join ColorIdentityPatient cip on cip.id=mcid.colorsidentity_id" +
-                              " left join VocColorIdentityPatient vcid on vcid.id=cip.voccoloridentity_id" +
-                              " where mcid.medcase_id=sls.id " + "group by vcid.id order by vcid.id) as t) = '" + brString + "'";
-                  } else if (typeViewBr.equals("3")){ //включая все выбранные
-                      brSql = " and (select sqluser.checkBracelet('" + brString + "',list(cast(vcid.id as varchar))) from medcase_coloridentitypatient mcid" +
-                              " left join ColorIdentityPatient cip on cip.id=mcid.colorsidentity_id" +
-                              " left join VocColorIdentityPatient vcid on vcid.id=cip.voccoloridentity_id" +
-                              " where mcid.medcase_id=sls.id " + ")=true ";
-                  }
-              }
+                    brSql = " and (select list(cast(t.ids as varchar)) from (" +
+                            " select list(cast(vcid.id as varchar)) as ids from medcase_coloridentitypatient mcid " +
+                            " left join ColorIdentityPatient cip on cip.id=mcid.colorsidentity_id" +
+                            " left join VocColorIdentityPatient vcid on vcid.id=cip.voccoloridentity_id" +
+                            " where mcid.medcase_id=sls.id " + "group by vcid.id order by vcid.id) as t) = '" + brString + "'";
+                } else if (typeViewBr.equals("3")) { //включая все выбранные
+                    brSql = " and (select sqluser.checkBracelet('" + brString + "',list(cast(vcid.id as varchar))) from medcase_coloridentitypatient mcid" +
+                            " left join ColorIdentityPatient cip on cip.id=mcid.colorsidentity_id" +
+                            " left join VocColorIdentityPatient vcid on vcid.id=cip.voccoloridentity_id" +
+                            " where mcid.medcase_id=sls.id " + ")=true ";
+                }
+            }
             request.setAttribute("brSql", brSql);
             request.setAttribute("brs", brString);
 
             String title = "Журнал браслетов пациентов";
             title += " в отделении " + request.getParameter("departmentName");
-            if (brs!=null && !brs.equals("")) title += " с выбранными браслетами ";
-            title += date!=null && !date.equals("")?
+            if (brs != null && !brs.equals("")) title += " с выбранными браслетами ";
+            title += date != null && !date.equals("") ?
                     " за период " + date + " - " + dateEnd : " на текущий момент";
-            request.setAttribute("title",title);
-            if (typeView.equals("2") || (department!=null && !department.equals(""))) {
+            request.setAttribute("title", title);
+            if (typeView.equals("2") || (department != null && !department.equals(""))) {
         %>
         <msh:section>
             <ecom:webQuery name="brList" nameFldSql="brList_sql" nativeSql="
@@ -238,7 +247,10 @@
 				left join voccolor vc on vcip.color_id=vc.id
 				 left join medcase_coloridentitypatient
 				 ss on ss.colorsidentity_id=cip.id where
-				(medcase_id=sls.id or medcase_id=m.id)) as t) as varchar) as jsonAr
+				((medcase_id=sls.id or medcase_id=m.id)
+				 and (cip.startdate<=current_date and cip.finishdate is null
+				 or (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp))))
+				  as t) as varchar) as jsonAr
     from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
     left join vocidc10 mkb on mkb.id=diag.idc10_id
@@ -271,12 +283,14 @@ left join voccolor vcr on vcr.id=vcid.color_id
             </msh:sectionTitle>
             <msh:sectionContent>
 
-                <msh:table name="brList" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do" idField="1" styleRow="9">
+                <msh:table name="brList" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do"
+                           idField="1" styleRow="9"
+                           openNewWindow="true">
                     <msh:tableColumn property="sn" columnName="#"/>
-                    <msh:tableColumn columnName="Стат.карта" property="2" />
-                    <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3" />
-                    <msh:tableColumn columnName="Год рождения" property="4" />
-                    <msh:tableColumn columnName="Дата поступления" property="5" />
+                    <msh:tableColumn columnName="Стат.карта" property="2"/>
+                    <msh:tableColumn columnName="ФИО пациента" property="3"/>
+                    <msh:tableColumn columnName="Год рождения" property="4"/>
+                    <msh:tableColumn columnName="Дата поступления" property="5"/>
                     <msh:tableColumn columnName="Леч.врач" property="6"/>
                     <msh:tableColumn columnName="Отделение" property="7"/>
                     <msh:tableColumn columnName="Диагноз" property="8"/>
@@ -287,13 +301,13 @@ left join voccolor vcr on vcr.id=vcid.color_id
         </msh:section>
         <%
         } else {
-%>
+        %>
         <msh:section>
             <msh:sectionTitle>Результаты поиска. Если не введён период, показываются пациенты с браслетами в текущий момент</msh:sectionTitle>
         </msh:section>
         <msh:section>
-        <msh:sectionContent>
-            <ecom:webQuery name="braceletsListAll" nameFldSql="braceletsListAll_sql" nativeSql="
+            <msh:sectionContent>
+                <ecom:webQuery name="braceletsListAll" nameFldSql="braceletsListAll_sql" nativeSql="
     select m.department_id,ml.name, count(distinct sls.id) as cntSls
     ,'&department='||coalesce(m.department_id,0)||'&departmentName='||coalesce(ml.name,'')
     from medCase m
@@ -305,48 +319,51 @@ left join voccolor vcr on vcr.id=vcid.color_id
     left join VocColorIdentityPatient vcid on vcid.id=cip.voccoloridentity_id
     where m.DTYPE='DepartmentMedCase'
     and m.transferDate is null ${sqlDate} ${brSql} ${department}
+     and (cip.startdate<=current_date and cip.finishdate is null
+    or (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp))
     and mci.colorsidentity_id is not null
     group by m.department_id,ml.name
     order by ml.name
-    " />
-            <msh:table name="braceletsListAll"
-                       action="journal_bracelets.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&brs=${brs}"
-                       idField="4">
-                <msh:tableColumn property="sn" columnName="#"/>
-                <msh:tableColumn columnName="Отделение" property="2"/>
-                <msh:tableColumn columnName="Кол-во пациентов с браслетами" property="3" isCalcAmount="true"/>
-            </msh:table>
-        </msh:sectionContent>
-    </msh:section>
+    "/>
+                <msh:table name="braceletsListAll"
+                           action="journal_bracelets.do?dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&brs=${brs}"
+                           idField="4">
+                    <msh:tableColumn property="sn" columnName="#"/>
+                    <msh:tableColumn columnName="Отделение" property="2"/>
+                    <msh:tableColumn columnName="Кол-во пациентов с браслетами" property="3" isCalcAmount="true"/>
+                </msh:table>
+            </msh:sectionContent>
+        </msh:section>
         <%}%>
     </tiles:put>
     <tiles:put name="javascript" type="string">
         <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
         <script type="text/javascript">
-            function setValOrNull(field,ifcase) {
-                if (ifcase || typeof $(field).value === 'undefined' || typeof $(field+'Name').value === 'undefined'
-                || $(field).value==null || $(field).value=='null' || $(field+'Name').value=='null') {
-                    $(field).value='';
-                    $(field+'Name').value='';
+            function setValOrNull(field, ifcase) {
+                if (ifcase || typeof $(field).value === 'undefined' || typeof $(field + 'Name').value === 'undefined'
+                    || $(field).value == null || $(field).value == 'null' || $(field + 'Name').value == 'null') {
+                    $(field).value = '';
+                    $(field + 'Name').value = '';
                 }
             }
-            setValOrNull('department',true);
+
+            setValOrNull('department', true);
             <%
             if (request.getParameter("departmentName")!=null && request.getParameter("department")!=null)
             %>
-            $('department').value='<%= request.getParameter("department") %>';
-            $('departmentName').value='<%= request.getParameter("departmentName")%>';
+            $('department').value = '<%= request.getParameter("department") %>';
+            $('departmentName').value = '<%= request.getParameter("departmentName")%>';
 
             <%
            if (request.getParameter("filterAdd1")!=null)
            %>
-            $('filterAdd1').value='<%= request.getParameter("filterAdd1") %>';
+            $('filterAdd1').value = '<%= request.getParameter("filterAdd1") %>';
 
-            setValOrNull('department',false);
+            setValOrNull('department', false);
 
             var tableBr = getTableToSetBracelets('brList');
-            if (tableBr!=null)
-                setBr(tableBr,9,10);
+            if (tableBr != null)
+                setBr(tableBr, 9, 10);
         </script>
     </tiles:put>
 </tiles:insert>

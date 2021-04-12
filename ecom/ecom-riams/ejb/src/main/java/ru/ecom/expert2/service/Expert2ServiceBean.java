@@ -24,6 +24,7 @@ import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 import ru.ecom.mis.ejb.service.disability.DisabilityServiceBean;
 import ru.ecom.oncological.ejb.domain.*;
+import ru.nuzmsh.util.CollectionUtil;
 import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.date.AgeUtil;
@@ -434,7 +435,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         if (serviceList != null && serviceList.size() > 1) {
             for (EntryMedService medService : serviceList) {
                 if (medService.getCost().longValue() > 0L) {
-                    E2Entry newEntry = cloneEntity(entry);
+                    E2Entry newEntry = cloneEntity(entry, true);
                     createDiagnosis(newEntry);
                     newEntry.setDiagnosis(entry.getDiagnosis().subList(0, 0));
                     ArrayList<EntryMedService> ms = new ArrayList<>();
@@ -2456,11 +2457,14 @@ public class Expert2ServiceBean implements IExpert2Service {
         try {
             String key;
             if (isNotLogicalNull(entry.getVMPKind())) { //Если есть ВМП и нет цены - цена случая = цене метода ВМП
-                key = "VMP#" + entry.getVMPKind();
+                key = "VMP#" + entry.getVMPKind()+"#"+entry.getVMPMethod();
                 BigDecimal cost;
                 if (!hospitalCostMap.containsKey(key)) {
-                    List<BigDecimal> costs = manager.createNativeQuery("select cost from vockindhighcare where code=:code " +
-                            "and :vmpDate between dateFrom and coalesce(dateTo,current_date) and cost is not null")
+                    List<BigDecimal> costs = manager.createNativeQuery("select coalesce(vmhc.cost, vkhc.cost)" +
+                            " from vockindhighcare vkhc " +
+                            " left join vocmethodhighcare vmhc on vmhc.kindhighcare = vkhc.code and :vmpDate between vmhc.dateFrom and coalesce(vmhc.dateTo,current_date)" +
+                            "where vkhc.code=:code " +
+                            "and :vmpDate between vkhc.dateFrom and coalesce(vkhc.dateTo,current_date) and vkhc.cost is not null")
                             .setParameter("code", entry.getVMPKind()).setParameter("vmpDate", entry.getFinishDate()).getResultList();
                     if (!costs.isEmpty()) {
                         cost = costs.get(0);
@@ -2790,17 +2794,19 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     private void calculateServiceEntryPrice(E2Entry entry) { //Цена случая с типом услуга = цене услуги!
         List<EntryMedService> medServices = entry.getMedServices();
-        if (medServices == null || medServices.size() != 1) {
-            LOG.warn(entry.getId() + " : в случае несколько услуг!! нельзя посчитать цену " + (medServices != null ? medServices.size() : -1));
-            return;
-        }
-        EntryMedService medService = medServices.get(0); //1 случай = 1 услуга
-        BigDecimal cost = medService.getCost();
-        entry.setCost(cost);
-        entry.setBaseTarif(cost);
-        if (cost == null || cost.compareTo(BigDecimal.ZERO) == 0) {
-            entry.setCostFormulaString("Не удалось найти цену услуги " + medService.getMedService().getCode());
-            entry.setDoNotSend(true);
+        if (CollectionUtil.isEmpty(medServices)) {
+            LOG.warn(entry.getId() + " : в случае отсутствуют услуги, нельзя посчитать цену " + (medServices != null ? medServices.size() : -1));
+        } else if (medServices.size()>1) {
+            LOG.warn(entry.getId() + " : в случае несколько услуг!! нельзя посчитать цену " + medServices.size());
+        } else {
+            EntryMedService medService = medServices.get(0); //1 случай = 1 услуга
+            BigDecimal cost = medService.getCost();
+            entry.setCost(cost);
+            entry.setBaseTarif(cost);
+            if (cost == null || cost.compareTo(BigDecimal.ZERO) == 0) {
+                entry.setCostFormulaString("Не удалось найти цену услуги " + medService.getMedService().getCode());
+                entry.setDoNotSend(true);
+            }
         }
         manager.persist(entry);
     }
