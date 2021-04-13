@@ -318,12 +318,27 @@ public class PrescriptionServiceJs {
                             + " and 0=(select count(*) from medcase where id='" + medcaseId + "'and (noactuality is null or noactuality='0'))");// Если визит недействительный - очищаем время в расписании
                 }
                 service.executeUpdateNativeSql("update contractaccountoperationbyservice set serviceid=null, servicetype= null where serviceType = 'PRESCRIPTION' and serviceId = " + aPrescriptionId); //аннулируем информацию в договоре
+                //если есть браслет с назначением, то ему надо проставить дату окончания
+                cancelBraceletetIfExists(aPrescriptionId, aRequest);
                 return "Назначение отменено!";
             } else {
                 return "Невозможно отменить назначение! Уже было отменено или находится в работе";
             }
         }
         return "Ошибка при определении контекста импедантности!";
+    }
+
+    /**
+     * Снимаем браслет, если он связан с отменяемым назначением
+     *
+     * @param aCanseledPrescriptionId
+     * @throws NamingException
+     */
+    private void cancelBraceletetIfExists(Long aCanseledPrescriptionId, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        String username = LoginInfo.find(aRequest.getSession(true)).getUsername();
+        service.executeUpdateNativeSql("update coloridentitypatient set finishdate=current_date, finishtime=current_time,editusername='"
+                + username + "' where entityname='prescription' and entityid=" + aCanseledPrescriptionId);
     }
 
     public String cancelPrescription(Long aPresctiptionId, String aReason, HttpServletRequest aRequest) throws NamingException {
@@ -683,6 +698,26 @@ public class PrescriptionServiceJs {
         //Обновление текста дневника в случае отметки о браке после подтверждения врачом КДЛ
         String wfCnsl = bean.getRealLabTechUsername(Long.valueOf(aPrescripts.split(",")[0]), "");
         updateDiaryWhileCancelPrescription(null, aPrescripts, "Брак биоматериала: " + reasonText, wfCnsl, service);
+        //Обновление браслета в случае брака лаборатории
+        updateBraceleteIfExists(aPrescripts, aRequest);
+    }
+
+    /**
+     * Обновление браслета в случае брака лаборатории
+     *
+     * @param aPrescripts Строка с ИД назначений (prescription) разделенная запятами
+     * @param aRequest
+     * @return
+     * @throws NamingException
+     */
+    private void updateBraceleteIfExists(String aPrescripts, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        //если брак до ввода результата и браслет связан с назначением
+        service.executeUpdateNativeSql("update coloridentitypatient set voccoloridentity_id=(select id from VocColorIdentityPatient where code='Pres_COVID_cans') " +
+               " where entityname='prescription' and entityid in (" + aPrescripts + ")");
+        //пбрак после введения результата (тогда будет Protocol, а не Prescription)
+        service.executeUpdateNativeSql("update coloridentitypatient set voccoloridentity_id=(select id from VocColorIdentityPatient where code='Pres_COVID_cans') " +
+                " where entityname='Protocol' and entityid in (select id from diary where medcase_id=ANY(select medcase_id from prescription  where id in (" + aPrescripts + ")))");
     }
 
     /* Получить всех пользователей для отправки сообщения о браке
@@ -1245,7 +1280,7 @@ public class PrescriptionServiceJs {
         StringBuilder sql = new StringBuilder();
         Date currentDate = new Date();
         Date intakeDate = DateFormat.parseDate(aDate + aTime, "dd.MM.yyyyHH:mm");
-        if (intakeDate.getTime() > currentDate.getTime()) {
+        if (intakeDate.getTime() > currentDate.getTime() + 1000 * 60) {
             return "Дата забора не может быть больше текущей даты!";
         }
         String pattern = "MM/dd/yyyy";
@@ -1717,10 +1752,11 @@ public class PrescriptionServiceJs {
      *
      * @param aPresctiptionId Presctiption.id
      * @param aReason         String причина отмены
+     * @param oper            String 1 - еcли назначение на операцию, 0 - нет
      * @param aRequest        HttpServletRequest
      * @return String сообщение
      */
-    public String cancelWFPrescription(String aPresctiptionId, String aReason, HttpServletRequest aRequest) throws NamingException {
+    public String cancelWFPrescription(String aPresctiptionId, String aReason, String oper, HttpServletRequest aRequest) throws NamingException {
         if (aReason == null || aReason.trim().equals("")) {
             return "Необходимо указать причину аннулирования!";
         }
@@ -1740,9 +1776,46 @@ public class PrescriptionServiceJs {
                     "cancelspecial_id = (select wf.id from secuser su left join workfunction wf on wf.secuser_id=su.id where su.login='" + username + "') " +
                     "where id=" + aPresctiptionId;
             service.executeUpdateNativeSql(canAnnulSql); //Отметили назначение как аннулированное
+            if ("1".equals(oper)) {
+                //нужно освободить времена
+                releaseOperationTimes(aPresctiptionId, aRequest);
+            }
             return "Назначение отменено.";
         } else {
             return "Невозможно отменить назначение! Уже было отменено или находится в работе. Можно отменять невыполненные назначения.";
+        }
+    }
+
+    /**
+     * Освободить занятые отменённой операцией времена
+     *
+     * @param aPresctiptionId Presctiption.id
+     * @param aRequest        HttpServletRequest
+     * @return String сообщение
+     */
+    private void releaseOperationTimes(String aPresctiptionId, HttpServletRequest aRequest) throws NamingException {
+        final int numAfterCells = 50;  //сколько максимально ячеек проверять после
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        Collection<WebQueryResult> wrt =
+                service.executeNativeSql("select id from workcalendartime where prescription = " + aPresctiptionId, 1);
+        if (!wrt.isEmpty()) {
+            Long startId = Long.valueOf(wrt.iterator().next().get1().toString());
+            startId++;
+            Long endId = startId + numAfterCells;
+            Collection<WebQueryResult> list =
+                    service.executeNativeSql(
+                            "select id,(rest is not null and rest) or prescription is not null from workcalendartime where id between " + startId + " and " + endId);
+            for (WebQueryResult r : list) {
+                Long pId = Long.parseLong(r.get1().toString());
+                Boolean next = Boolean.parseBoolean(r.get2().toString());
+                if (!next) //если ячейка занята или уже с другим назначением
+                    break; //завершить, если ячейка не занята или заняты уже другим назначением
+                else
+                    //set rest null
+                    service.executeUpdateNativeSql("update workcalendartime set rest = null where id=" + pId);
+            }
+            startId--;
+            service.executeUpdateNativeSql("update workcalendartime set rest = null where id=" + startId); //освободить 1е время
         }
     }
 
@@ -1857,7 +1930,7 @@ public class PrescriptionServiceJs {
     /**
      * Проверка, нужно ли создавать примечание к назначению на лаб. услугу
      *
-     * @param msIds   Medservice.id услуг в назначении
+     * @param msIds Medservice.id услуг в назначении
      * @return список через запятую 1,2,3, где указаны типы примечаний (noteForLabPrescript)
      */
     public String checkNoteNecessary(String msIds, HttpServletRequest aRequest) throws NamingException {
@@ -1877,7 +1950,7 @@ public class PrescriptionServiceJs {
     /**
      * Проверка, нужно ли создавать примечание к назначению на лаб. услугу
      *
-     * @param plId   PrescriptionList.id услуг в назначении
+     * @param plId PrescriptionList.id услуг в назначении
      * @return возраст
      */
     public String getPatientAge(String plId, HttpServletRequest aRequest) throws NamingException {

@@ -32,6 +32,7 @@
         <script type="text/javascript" src="./dwr/interface/WorkCalendarService.js"></script>
         <msh:ifFormTypeIsNotView formName="pres_operationPrescriptionForm">
             <script type="text/javascript">
+                departmentAutocomplete.setParentId(1);
 
                 function checkDoubles() {
                     labList = "";
@@ -91,9 +92,8 @@
                 /*обновляем парент у справочника операций*/
                 function updateOperationParent() {
                     //date#wfId#depId#serviceStreamId
-                    var str = $('planStartDate').value.trim() + '#' + $('intakeSpecial').value + '#' + $('labDepartment').value + "#" + $('serviceStream').value;
+                    var str = $('planStartDate').value.trim() + '#' + $('intakeSpecial').value + '#' + $('department').value + "#" + $('serviceStream').value;
                     medServiceAutocomplete.setParentId(str);
-
                 }
 
                 function getPreRecord() {
@@ -192,6 +192,7 @@
                                       fieldColSpan="3" viewOnlyField="true" horizontalFill="true"/>
                 </msh:row>
                 <msh:ifFormTypeIsView formName="pres_operationPrescriptionForm">
+                    <msh:hidden property="department"/>
                     <msh:row>
                         <msh:autoComplete property="prescriptCabinet" label="Операционная" viewOnlyField="true"
                                           vocName="operationRoom" size='20' horizontalFill="true"/>
@@ -235,6 +236,8 @@
                                             <msh:autoComplete property="duration" vocName="durationInMinute" size="40"
                                                               fieldColSpan="5"/>
                                         </msh:row>
+                                        <msh:autoComplete property="department" label="Отделение" fieldColSpan="3" horizontalFill="true"
+                                                          vocName="vocLpuOtd"/>
                                         <msh:row>
                                             <msh:autoComplete property="intakeSpecial" vocName="workFunctionIsSurgical"
                                                               label="Хирург" size="100" fieldColSpan="5"

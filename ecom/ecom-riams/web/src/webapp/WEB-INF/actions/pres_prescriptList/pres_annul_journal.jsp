@@ -39,7 +39,7 @@
     String beginDate = request.getParameter("beginDate") ;
 
   		if (beginDate==null || beginDate.equals("")) {
-  			beginDate=DateFormat.formatToDate(new Date()) ;
+  			beginDate=DateFormat.formatCurrentDate() ;
   		}
   		String endDate = request.getParameter("endDate") ;
   	  	if (endDate==null|| endDate.equals("")) {endDate=beginDate;}

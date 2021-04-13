@@ -143,6 +143,10 @@ where ${field}
 <msh:section title="Список назначений на операции">
     <ecom:webQuery name="pres" nativeSql="select p.id as pid,pl.id as plid,ms.name as drname ,to_char(p.planStartDate,'dd.MM.yyyy')
 ,cast (wct.timefrom as varchar(5)) ,wf.groupname
+,coalesce(vpcr.name,'')||' '||coalesce(p.cancelReasonText,'') as f7_reasonFldCancel
+,case when p.canceldate is not null then cvwf.name||' '|| cwp.lastname||' '||cwp.firstname||' '||cwp.middlename
+||' '||to_char(p.canceldate,'dd.MM.yyyy')||' '||cast(p.canceltime as varchar(5)) else null end as f8_userCnsl
+,case when p.canceldate is not null then 'color:red;' else null end as f9_styleCancel
 from Medcase sls
 left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'
 left join PrescriptionList pl on pl.medcase_id=sls.id or pl.medcase_id=slo.id
@@ -151,14 +155,23 @@ left join medservice ms on ms.id=p.medService_id
 left join vocservicetype as vms on vms.id=ms.serviceType_id
 left join workfunction wf on wf.id=p.prescriptcabinet_id
 left join workcalendartime wct on wct.id=p.calendartime_id
+left join SecUser su on p.cancelusername=su.login
+left join WorkFunction cwf on cwf.secUser_id=su.id
+left join VocWorkFunction cvwf on cvwf.id=cwf.workFunction_id
+left join Worker as cw on cw.id=cwf.worker_id
+left join Patient as cwp on cwp.id=cw.person_id
+left join VocPrescriptCancelReason vpcr on vpcr.id=p.cancelReason_id
  where ${field}
   and p.DTYPE='ServicePrescription' and vms.code='OPERATION' order by p.planStartDate"/>
     <msh:sectionContent>
-        <msh:table name="pres" action="entityView-pres_operationPrescription.do" idField="1">
+        <msh:table name="pres" action="entityView-pres_operationPrescription.do"
+                   idField="1" styleRow="9">
             <msh:tableColumn property="3" columnName="Операция"/>
             <msh:tableColumn property="6" columnName="Операционная"/>
             <msh:tableColumn property="4" columnName="Дата начала"/>
             <msh:tableColumn property="5" columnName="Время начала"/>
+            <msh:tableColumn property="7" columnName="Причина отмены"/>
+            <msh:tableColumn property="8" columnName="Отменил"/>
         </msh:table>
     </msh:sectionContent>
 </msh:section>

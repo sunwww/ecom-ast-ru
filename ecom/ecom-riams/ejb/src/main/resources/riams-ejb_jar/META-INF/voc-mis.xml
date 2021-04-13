@@ -452,7 +452,7 @@
                 nameId="wf.id"
                 order="wf.groupname"
                 names="wf.groupname"
-                queryAppend="wf.dtype='OperatingRoom'"
+                queryAppend="wf.dtype='OperatingRoom' and (wf.archival is null or wf.archival=false)"
                 queried="cast(wf.id as varchar(2)) like :querId or upper(wf.groupname) like upper(:query) "
         />
     </voc>

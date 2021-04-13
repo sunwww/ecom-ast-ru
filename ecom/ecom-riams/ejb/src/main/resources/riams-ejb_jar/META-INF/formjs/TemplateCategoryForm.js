@@ -13,7 +13,7 @@ function onPreCreate(aForm, aCtx) {
         .getResultList();
     errorThrow(list);
 
-    aForm.setDateCreate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(new java.util.Date()));
+    aForm.setDateCreate(Packages.ru.nuzmsh.util.format.DateFormat.formatCurrentDate());
     aForm.setUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
 }
 

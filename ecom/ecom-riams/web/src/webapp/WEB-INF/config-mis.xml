@@ -1264,6 +1264,14 @@
             <forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/journal_lawerLab.jsp"/>
         </action>
 
+        <action path='/scienceLabJournal' type='ru.ecom.web.actions.base.ForwardAction'
+                validate='false'
+                name='stac_admissionJournalForm'
+                scope="session"
+        >
+            <forward name="success" redirect="false" path="/WEB-INF/actions/pres_prescriptList/scienceLabJournal.jsp"/>
+        </action>
+
         <action path='/journal_analysisUpdate' type='ru.ecom.web.actions.base.ForwardAction'
                 validate='false'
                 name='stac_admissionJournalForm'

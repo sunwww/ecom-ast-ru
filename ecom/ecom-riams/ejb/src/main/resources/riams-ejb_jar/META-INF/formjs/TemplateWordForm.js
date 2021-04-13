@@ -1,5 +1,5 @@
 function onPreCreate(aForm, aCtx) {
-    aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(new java.util.Date()));
+    aForm.setCreateDate(Packages.ru.nuzmsh.util.format.DateFormat.formatCurrentDate());
     aForm.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
 }
 
@@ -12,6 +12,6 @@ function onPreDelete(aEntityId, aContext) {
 }
 
 function onPreSave(aForm, aEntity, aCtx) {
-    aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(new java.util.Date()));
+    aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatCurrentDate());
     aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
 }

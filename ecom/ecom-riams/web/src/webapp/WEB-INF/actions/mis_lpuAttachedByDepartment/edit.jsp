@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -129,8 +129,7 @@
   function cleanDefect () {
 	  if (confirm("Очистить данные о дефекте?")){
 	  AttachmentService.cleanDefect($('id').value, {
-		  callback: function (aResult) {
-			//  alert(""+aResult);
+		  callback: function () {
 			  window.document.location.reload();
 		  }
 	  });

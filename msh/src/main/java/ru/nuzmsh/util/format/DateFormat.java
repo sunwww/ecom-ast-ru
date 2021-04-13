@@ -221,4 +221,11 @@ public class DateFormat {
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         return format.format(aDateTime);
     }
+
+    /**
+     * Получаем текущую дату в формате 25.03.2018
+     */
+    public static String formatCurrentDate() {
+        return formatToDate(new Date());
+    }
 }
