@@ -26,7 +26,7 @@
                 <msh:row>
                     <msh:textField property="illnessDayNumber" label="День болезни "/>
                 </msh:row>
-                <msh:row> hideLabel="true"
+                <msh:row>
                     <msh:autoComplete vocName="vocDayTime" property="dayTime" label="Время суток" fieldColSpan="5"
                                       horizontalFill="true"/>
                 </msh:row>

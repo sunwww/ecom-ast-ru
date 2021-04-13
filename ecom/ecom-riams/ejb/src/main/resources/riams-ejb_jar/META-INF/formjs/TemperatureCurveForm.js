@@ -49,7 +49,7 @@ function checkBraceleteAndClose(aEntityId, aCtx) {
             var idB = new java.lang.Long(list.get(0));
             aCtx.manager.createNativeQuery("update ColorIdentityPatient set editusername='" +
                 aCtx.getSessionContext().getCallerPrincipal().toString() + "',finishdate = current_date"
-                + ", finishtime = current_time where id=" + idB).executeUpdate();
+                + ", finishtime = current_time, tempcurve_id=null where id=" + idB).executeUpdate();
         }
     }
 }

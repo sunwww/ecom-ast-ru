@@ -301,7 +301,7 @@ public class HospitalMedCaseServiceJs {
      * @return результат insert
      */
     public String createTemperatureCurve(Long aMedCase, String aTempData, HttpServletRequest aRequest) throws NamingException {
-        Long identTemp = 15L;
+        Long identTemp = 18L;
         Integer daysToFinish = 2;
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
@@ -319,10 +319,34 @@ public class HospitalMedCaseServiceJs {
         for (WebQueryResult wqr : res) {
             tempCurveId = wqr.get1().toString();
         }
-        if (checkThirdDayHighTemp(aMedCase, takingDate, aRequest) && !tempCurveId.equals("")) {
-            addIdentityPatient(aMedCase, true, identTemp, daysToFinish, Long.valueOf(tempCurveId), aRequest);
+        if (!tempCurveId.equals("")) {
+            if (checkThirdDayHighTemp(aMedCase, takingDate, aRequest))
+                addIdentityPatient(aMedCase, true, identTemp, daysToFinish, Long.valueOf(tempCurveId), aRequest);
+            else
+                check2DaysNormalTempAndClose(aMedCase, takingDate, aRequest);
         }
         return tempCurveId.equals("") ? "" : "1";
+    }
+
+    /**
+     * Проверить, 2й ли день у пациента нормальная температура и закрыть браслет, если есть
+     *
+     * @param aMedCase   DepMedCase.id
+     * @param takingDate Дата регистрации темп. листа, с которой надо сравнивать
+     */
+    private void check2DaysNormalTempAndClose(Long aMedCase, String takingDate, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        StringBuilder sql = new StringBuilder();
+        float normalTemp = Float.parseFloat(getDefaultParameterByConfig("normalTemp", "36.9", aRequest).toString());
+        sql.append("select count(1)");
+
+        Collection<WebQueryResult> beforeTemp = service.executeNativeSql(sql.toString());
+        Long cipId = checkExistBraceletHighTempOpened(aMedCase, aRequest);
+        if (!beforeTemp.isEmpty() && cipId > 0) { //закрываю браслет
+            String login = LoginInfo.find(aRequest.getSession(true)).getUsername();
+            service.executeUpdateNativeSql("update coloridentitypatient set finishdate=current_date, finishtime=current_time,editusername='"
+                    + login + "' where id=" + cipId);
+        }
     }
 
     /**
@@ -335,7 +359,7 @@ public class HospitalMedCaseServiceJs {
     private boolean checkThirdDayHighTemp(Long aMedCase, String takingDate, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         StringBuilder sql = new StringBuilder();
-        int highTemp = Integer.parseInt(getDefaultParameterByConfig("highTemp", "38", aRequest).toString());
+        float highTemp = Float.parseFloat(getDefaultParameterByConfig("highTemp", "37.5", aRequest).toString());
         sql.append("select count(case when y.degree>").append(highTemp)
                 .append(" then 1 else 0 end) as yC")
                 .append(",count(case when befY.degree>").append(highTemp).append(" then 1 else 0 end) as befYC")
@@ -345,7 +369,7 @@ public class HospitalMedCaseServiceJs {
                 .append(" and y.takingdate=to_date('").append(takingDate).append("','dd.mm.yyyy')-1");
 
         Collection<WebQueryResult> beforeTemp = service.executeNativeSql(sql.toString());
-        if (!beforeTemp.isEmpty() && !checkExistBraceletHighTempOpened(aMedCase, aRequest)) {
+        if (!beforeTemp.isEmpty() && checkExistBraceletHighTempOpened(aMedCase, aRequest) == 0L) {
             WebQueryResult wqr = beforeTemp.iterator().next();
             if (wqr.get1() != null && wqr.get2() != null &&
                     Integer.parseInt(wqr.get1().toString()) > 0 && Integer.parseInt(wqr.get2().toString()) > 0)
@@ -360,7 +384,7 @@ public class HospitalMedCaseServiceJs {
      * @param aMedCase DepMedCase.id
      * @return true, если есть открытый браслет
      */
-    private boolean checkExistBraceletHighTempOpened(Long aMedCase, HttpServletRequest aRequest) throws NamingException {
+    private Long checkExistBraceletHighTempOpened(Long aMedCase, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         Collection<WebQueryResult> list = service.executeNativeSql("select cip.id from coloridentitypatient cip" +
                 " left join voccoloridentitypatient vip on vip.id=cip.voccoloridentity_id" +
@@ -369,7 +393,8 @@ public class HospitalMedCaseServiceJs {
                 " left join medcase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'" +
                 " where vip.code='high_temp' and (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp)" +
                 " and mcip.medcase_id=sls.id");
-        return !list.isEmpty();
+        return list.isEmpty() ? 0L :
+                Long.valueOf(list.iterator().next().get1().toString());
     }
 
     public String getServiceStreamAndMkbByMedCase(Long aMedCase, HttpServletRequest aRequest) throws NamingException {
@@ -1628,8 +1653,8 @@ public class HospitalMedCaseServiceJs {
         String login = LoginInfo.find(aRequest.getSession(true)).getUsername();
         StringBuilder sql = new StringBuilder();
         String id = "";
-        if (tempCurveId==0)
-            tempCurveId=null;
+        if (tempCurveId == 0)
+            tempCurveId = null;
         sql.append("insert into coloridentitypatient(startdate,starttime,finishdate,finishtime,voccoloridentity_id,createusername,tempCurve_id)" +
                 " values(current_date,current_time,")
                 .append(daysToFinish > 0 ? "current_date + " + daysToFinish + ",current_time," : "null,null,")
