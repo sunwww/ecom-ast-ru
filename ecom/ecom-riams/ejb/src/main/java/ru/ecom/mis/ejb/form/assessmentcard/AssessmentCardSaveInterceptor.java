@@ -49,7 +49,7 @@ public class AssessmentCardSaveInterceptor implements IFormInterceptor {
                url=req[0];
                String aMethod = req[1];
                if (!url.equals("") && !aMethod.equals("")) {
-                   bean.makePOSTRequest(out.toString(),url,aMethod,null,null,null);
+                   bean.makePOSTRequest(out.toString(),url,aMethod,null);
                }
            }
 

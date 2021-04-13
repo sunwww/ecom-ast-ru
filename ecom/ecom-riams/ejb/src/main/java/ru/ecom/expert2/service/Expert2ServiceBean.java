@@ -1427,7 +1427,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     entry.setAddGroupFld("1".equals(entry.getBedSubType()) ? "КС" : "ДС");
                 }
                 fileType = "H";
-                if (isNotLogicalNull(entry.getVMPKind())) {
+                if (isNotLogicalNull(entry.getVmpKind())) {
                     code = "STAC_VMP";
                     fileType = "T";
                 } else if (entry.getBedSubType().equals("1")) {
@@ -1536,7 +1536,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
             entry.setVisitPurpose(subType.getVisitPurpose()); //Цель посещения (V025)
             entry.setMedHelpUsl(subType.getUslOk()); //Условия оказания находим согласно подтипу записи (V006)
-            entry.setIDSP(subType.getIdsp());
+            entry.setIdsp(subType.getIdsp());
             if (isTrue(entry.getIsCancer()) || isNotEmpty(entry.getCancerEntries())) {
                 fileType = fileType.equals("P") ? "PC" : "C";
             }
@@ -2388,7 +2388,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         String key, sqlAdd;
         String entryType = aEntry.getEntryType();
         String mmYYYY = new SimpleDateFormat("MMyyyy").format(aEntry.getFinishDate());
-        if (isNotLogicalNull(aEntry.getVMPKind())) { //Если в СЛО есть ВМП, цена = ВМП
+        if (isNotLogicalNull(aEntry.getVmpKind())) { //Если в СЛО есть ВМП, цена = ВМП
             return aEntry.getCost();
         }
         if (isOneOf(entryType, POLYCLINICTYPE, KDPTYPE, HOSPITALTYPE)) {
@@ -2457,8 +2457,8 @@ public class Expert2ServiceBean implements IExpert2Service {
     private void calculateHospitalEntryPrice(E2Entry entry) {
         try {
             String key;
-            if (isNotLogicalNull(entry.getVMPKind())) { //Если есть ВМП и нет цены - цена случая = цене метода ВМП
-                key = "VMP#" + entry.getVMPKind() + "#" + entry.getVMPMethod();
+            if (isNotLogicalNull(entry.getVmpKind())) { //Если есть ВМП и нет цены - цена случая = цене метода ВМП
+                key = "VMP#" + entry.getVmpKind() + "#" + entry.getVmpMethod();
                 BigDecimal cost;
                 if (!hospitalCostMap.containsKey(key)) {
                     List<BigDecimal> costs = manager.createNativeQuery("select coalesce(vmhc.cost, vkhc.cost)" +
@@ -2466,7 +2466,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                             " left join vocmethodhighcare vmhc on vmhc.kindhighcare = vkhc.code and :vmpDate between vmhc.dateFrom and coalesce(vmhc.dateTo,current_date)" +
                             "where vkhc.code=:code " +
                             "and :vmpDate between vkhc.dateFrom and coalesce(vkhc.dateTo,current_date) and vkhc.cost is not null")
-                            .setParameter("code", entry.getVMPKind()).setParameter("vmpDate", entry.getFinishDate()).getResultList();
+                            .setParameter("code", entry.getVmpKind()).setParameter("vmpDate", entry.getFinishDate()).getResultList();
                     if (!costs.isEmpty()) {
                         cost = costs.get(0);
                         hospitalCostMap.put(key, cost);
@@ -3040,7 +3040,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                                 entry.setMedHelpUsl(medHelpUsl);
                                 entry.setVidSluch(vidSluch);
                                 entry.setVisitPurpose(visitPurpose);
-                                entry.setIDSP(idsp);
+                                entry.setIdsp(idsp);
                                 entry.setMainMkb(service.getMkb().getCode());
                                 entry.setEntryType(POLYCLINICTYPE);
                                 entry.setDoctorSnils(service.getDoctorSnils());
@@ -3081,7 +3081,7 @@ public class Expert2ServiceBean implements IExpert2Service {
      * Проставляем тип записи (стационар, ВМП, поликлиника, подушевое финансирование, __ИНОГОРОДНИЕ__
      */
     private void setEntryType(E2Entry entry, String entryCode) {
-        if (entryCode.equals(HOSPITALTYPE) && isNotLogicalNull(entry.getVMPKind())) {
+        if (entryCode.equals(HOSPITALTYPE) && isNotLogicalNull(entry.getVmpKind())) {
             entryCode = VMPTYPE;
         } else if (entryCode.equals(HOSPITALPEREVODTYPE)) {
             entryCode = HOSPITALTYPE;
@@ -3302,7 +3302,6 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
 
         if (isLogicalNull(npl)) entry.setNotFullPaymentReason("0");
-        entry.setIsBreakedCase(isPrerSluch);
         manager.persist(entry);
         return ret.setScale(2, RoundingMode.HALF_UP);
     }
@@ -3634,7 +3633,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 sloEntry.setStartDate(medCase.getDateStart());
                 if (isNotEmpty(vmps)) { //Считаем цену по виду ВМП
                     HitechMedicalCase vmp = vmps.get(0);
-                    sloEntry.setVMPKind(vmp.getKind().getCode());
+                    sloEntry.setVmpKind(vmp.getKind().getCode());
                 } else if (medCase instanceof ShortMedCase || medCase instanceof PolyclinicMedCase) { // Расчет цены СПО
                     PolyclinicMedCase spo;
                     ShortMedCase visit;

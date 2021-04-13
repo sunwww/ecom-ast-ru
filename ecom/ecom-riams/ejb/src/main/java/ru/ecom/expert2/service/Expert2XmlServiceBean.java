@@ -226,7 +226,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 || entry.getMedHelpProfile().getCode().equals("136") && entry.havePrevMedCase())
             add(z, "VB_P", "1"); // Признак внутрибольничного перевода *05.08 1 - только если есть перевод
         z.addContent(new Element("SL_TEMPLATE")); // Список случаев
-        add(z, "IDSP", entry.getIDSP().getCode()); // Способ оплаты медицинской помощи (V010)
+        add(z, "IDSP", entry.getIdsp().getCode()); // Способ оплаты медицинской помощи (V010)
         add(z, "SUMV", entry.getCost()); // Сумма, выставленная к оплате
         return z;
     }
@@ -319,7 +319,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             }
             Element zap = new Element("ZAP");
             add(zap, "N_ZAP", entry.getId() + "");
-            add(zap, "PR_NOV", isTrue(entry.getPRNOV()) ? "1" : "0");
+            add(zap, "PR_NOV", isTrue(entry.getPrnov()) ? "1" : "0");
             Element pat = new Element("PACIENT");
             add(pat, "ID_PAC", entry.getExternalPatientId() + "");
             add(pat, "VPOLIS", entry.getMedPolicyType());
@@ -394,14 +394,14 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 }
                 add(sl, "SL_ID", slId);
                 if (isVmp) {
-                    if (isAnyIsNull(currentEntry.getVMPTicketDate(), currentEntry.getVMPTicketNumber()
-                            , currentEntry.getVMPPlanHospDate(), currentEntry.getVMPKind(),
-                            currentEntry.getVMPMethod())) {
+                    if (isAnyIsNull(currentEntry.getVmpTicketDate(), currentEntry.getVmpTicketNumber()
+                            , currentEntry.getVmpPlanHospDate(), currentEntry.getVmpKind(),
+                            currentEntry.getVmpMethod())) {
                         manager.persist(new E2EntryError(currentEntry, "NO_FOND_FIELD: В случае ВМП не заполнены обязательные поля"));
                         return null;
                     }
-                    add(sl, "VID_HMP", currentEntry.getVMPKind()); // Вид ВМП
-                    add(sl, "METOD_HMP", currentEntry.getVMPMethod()); // Метод ВМП
+                    add(sl, "VID_HMP", currentEntry.getVmpKind()); // Вид ВМП
+                    add(sl, "METOD_HMP", currentEntry.getVmpMethod()); // Метод ВМП
                 }
                 add(sl, "LPU_1", currentEntry.getDepartmentCode() != null ? currentEntry.getDepartmentCode() : "30000101");
                 addIfNotNull(sl, "PODR", currentEntry.getDepartmentAddressCode());
@@ -419,9 +419,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(sl, "P_CEL", currentEntry.getVisitPurpose().getCode()); // Цель посещения
                 }
                 if (a2) {
-                    add(sl, "TAL_D", currentEntry.getVMPTicketDate()); // Дата выдачи талона ВМП
-                    add(sl, "TAL_NUM", currentEntry.getVMPTicketNumber()); // Номер выдачи ВМП
-                    addIfNotNull(sl, "TAL_P", dateToString(currentEntry.getVMPPlanHospDate())); // Дата планируемой госпитализации
+                    add(sl, "TAL_D", currentEntry.getVmpTicketDate()); // Дата выдачи талона ВМП
+                    add(sl, "TAL_NUM", currentEntry.getVmpTicketNumber()); // Номер выдачи ВМП
+                    addIfNotNull(sl, "TAL_P", dateToString(currentEntry.getVmpPlanHospDate())); // Дата планируемой госпитализации
                 }
                 add(sl, "NHISTORY", currentEntry.getHistoryNumber()); //Номер истории болезни
                 if (isHosp) {
@@ -697,7 +697,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             , isChild, finishDate, finishDate, sl.getChildText("DS1"), "1"
                             , prvs, currentEntry.getDoctorSnils(), BigDecimal.ZERO, currentEntry.getDepartmentAddressCode()));
                 } else { //ВМП
-                    sl.addContent(createUsl(a3, ++uslCnt + "", lpuRegNumber, profileK, entry.getVMPMethod()
+                    sl.addContent(createUsl(a3, ++uslCnt + "", lpuRegNumber, profileK, entry.getVmpMethod()
                             , isChild, finishDate, finishDate, sl.getChildText("DS1"), "1"
                             , prvs, currentEntry.getDoctorSnils(), BigDecimal.ZERO, currentEntry.getDepartmentAddressCode()));
                 }
@@ -726,7 +726,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         Element usl = new Element("USL");
         add(usl, "IDSERV", id);
         add(usl, "LPU", lpu);
-        //  usl.addContent(new Element("LPU_1").setText(lpu1));
         if (!isDD) {
             addIfNotNull(usl, "PODR", departmentAddressCode);
             add(usl, "PROFIL", profile);
@@ -922,7 +921,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         " and coalesce(e.isDeleted, false) = false" +
                         " and e.serviceStream!='COMPLEXCASE'" +
                         " and coalesce(child.doNotSend, false) = false group by " + groupSqlAdd;
-                 LOG.info("sql=" + sql);
+                LOG.info("sql=" + sql);
                 records = manager.createNativeQuery(sql)
                         .setParameter("billNumber", billNumber).setParameter("billDate", billDate).getResultList();
             } else if (entry != null) { //файл по одному случаю (для теста)
@@ -1001,7 +1000,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     err.append("НЕ РАСЧИТАН БАЗОВЫЙ ТАРИФ;");
                     isError = true;
                 }
-                if (null == entry.getIDSP()) {
+                if (null == entry.getIdsp()) {
                     err.append("НЕ РАСЧИТАН СПОСОБ ОПЛАТЫ МЕД. ПОМОЩИ;");
                     isError = true;
                 }
