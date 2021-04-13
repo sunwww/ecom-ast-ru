@@ -51,7 +51,6 @@
             if (date != null && !date.equals("")) {
                 request.setAttribute("startDate", date);
 
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(date, date, request));
                 String dep = request.getParameter("department");
                 String room = request.getParameter("roomType");
                 String sqlAdd = "";
@@ -68,7 +67,7 @@
         %>
         <msh:section title="Журнал направлений на хир. операции. Дата: ${startDate}.">
             <msh:sectionContent>
-                <ecom:webQuery isReportBase="${isReportBase}" name="journal_list_suroper"
+                <ecom:webQuery name="journal_list_suroper"
                                nameFldSql="journal_list_suroper_sql" nativeSql="
 select 
  mc.id as f1_medcaseid
