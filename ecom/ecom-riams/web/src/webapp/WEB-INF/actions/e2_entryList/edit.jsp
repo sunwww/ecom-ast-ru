@@ -191,6 +191,10 @@
                               roles="/Policy/E2/Admin"/>
                 <msh:sideLink action="/javascript:deleteAllDeletedEntries()" name="Удалить удаленные случаи"
                               roles="/Policy/E2/Admin"/>
+                <msh:sideLink action="/javascript:exportHospLeaveToAlkona()" name="Послать выписки в Алькону"
+                              roles="/Policy/E2/Admin"/>
+                <msh:sideLink action="/javascript:exportHospToAlkona()" name="Послать госпитализации в Алькону"
+                              roles="/Policy/E2/Admin"/>
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
     </tiles:put>
@@ -250,6 +254,30 @@
                         };
                     }
                 });
+
+                //
+                function exportHospLeaveToAlkona() {
+                  if (confirm("Отправить все ОМС случаи в алькону?")) {
+                      Expert2Service.exportHospLeaveToAlkona(${param.id}, {
+                          callback: function () {
+                              alert("Отправили все случаи!");
+                          }
+                      });
+                      alert("Запрос на отправку отправлен");
+                  }
+                }
+
+                function exportHospToAlkona() {
+                    var emergency = confirm("Послать Экстренные (ДА) или плановые (ОТМЕНА)?");
+                    if (confirm("Уверены?")) {
+                        Expert2Service.exportHospToAlkona(${param.id},emergency, {
+                            callback: function () {
+                                alert("Отправили все случаи!");
+                            }
+                        });
+                        alert("Запрос на отправку отправлен");
+                    }
+                }
 
                 function importFile(url, frm, dropZone) {
 

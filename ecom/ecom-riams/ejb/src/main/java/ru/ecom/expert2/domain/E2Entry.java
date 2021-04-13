@@ -37,7 +37,10 @@ import java.util.List;
                 " and isDeleted is not true order by lastname, firstname, middlename "),
         @NamedQuery( name="E2Entry.getAllByListEntryId"
                 , query="from E2Entry where listEntry.id=:listEntryId" +
-                " and isDeleted is not true")
+                " and isDeleted is not true"),
+        @NamedQuery( name="E2Entry.getAllByListEntryIdAndServiceStream"
+                , query="from E2Entry where listEntry.id=:listEntryId and serviceStream=:serviceStream" +
+                " and isDeleted is not true ")
 })
 public class E2Entry extends BaseEntity {
 
@@ -1267,6 +1270,13 @@ public class E2Entry extends BaseEntity {
     public String getAddGroupFld() {return theAddGroupFld;}
     public void setAddGroupFld(String aAddGroupFld) {theAddGroupFld = aAddGroupFld;}
     private String theAddGroupFld ="";
+
+
+    /** Стоматологический случай */
+//    public Boolean getDentalCase() {return false;}
+//    public void setDentalCase(Boolean dentalCase) {}
+//    @Transient
+//    private Boolean isDentalCase;
 
     public E2Entry() {
         theAddGroupFld="";
