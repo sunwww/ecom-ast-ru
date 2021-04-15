@@ -24,7 +24,7 @@ import java.util.List;
 public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
     private static final Logger LOG = Logger.getLogger(Expert2AlkonaServiceBean.class);
     private static final String OMC_SERVICE_STREAM = "OBLIGATORYINSURANCE";
-    private static final String ALKONA_URL = "http://127.0.0.1:8082/medcase";
+    private static final String ALKONA_URL = "http://127.0.0.1:8082/medcase"; //TODO в конфиг
     private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
     private @EJB
     IWebClientService clientService;
@@ -142,9 +142,7 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
     }
 
     public String toString(Object o) {
-        Gson gson = new Gson();
-        String str = gson.toJson(o);
-        return str;
+        return new Gson().toJson(o);
     }
 
 }

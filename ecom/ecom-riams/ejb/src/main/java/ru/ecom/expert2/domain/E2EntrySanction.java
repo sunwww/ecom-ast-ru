@@ -1,5 +1,8 @@
 package ru.ecom.expert2.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -12,6 +15,9 @@ import javax.persistence.OneToOne;
 
 /** Санкции к случаю*/
 @Entity
+@Getter
+@Setter
+@Accessors(prefix = "the")
 @AIndexes({
         @AIndex(properties= {"entry"}),
         @AIndex(properties= {"dopCode"})
@@ -19,25 +25,13 @@ import javax.persistence.OneToOne;
 })
 public class E2EntrySanction extends BaseEntity {
     /** Запись */
-    @Comment("Запись")
     @ManyToOne
-    public E2Entry getEntry() {return theEntry;}
-    public void setEntry(E2Entry aEntry) {theEntry = aEntry;}
-    /** Запись */
     private E2Entry theEntry ;
 
     /** Санкция */
-    @Comment("Санкция")
     @OneToOne
-    public VocE2Sanction getSanction() {return theSanction;}
-    public void setSanction(VocE2Sanction aSanction) {theSanction = aSanction;}
-    /** Санкция */
     private VocE2Sanction theSanction ;
 
-    /** Доп. код */
-    @Comment("Доп. код")
-    public String getDopCode() {return theDopCode;}
-    public void setDopCode(String aDopCode) {theDopCode = aDopCode;}
     /** Доп. код */
     private String theDopCode ;
 
@@ -50,16 +44,8 @@ public class E2EntrySanction extends BaseEntity {
     }
 
     /** Примечание */
-    @Comment("Примечание")
-    public String getComment() {return theComment;}
-    public void setComment(String aComment) {theComment = aComment;}
-    /** Примечание */
     private String theComment ;
 
-    /** Главыный дефект случая */
-    @Comment("Главыный дефект случая")
-    public Boolean getIsMainDefect() {return theIsMainDefect;}
-    public void setIsMainDefect(Boolean aIsMainDefect) {theIsMainDefect = aIsMainDefect;}
     /** Главыный дефект случая */
     private Boolean theIsMainDefect ;
 
