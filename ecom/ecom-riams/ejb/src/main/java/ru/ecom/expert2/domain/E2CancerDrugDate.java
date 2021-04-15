@@ -1,8 +1,5 @@
 package ru.ecom.expert2.domain;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -11,15 +8,20 @@ import javax.persistence.ManyToOne;
 import java.sql.Date;
 
 @Entity
-@Getter
-@Setter
-@Accessors(prefix = "the")
 public class E2CancerDrugDate extends BaseEntity {
 
     /** Лекарство */
+    @Comment("Лекарство")
     @ManyToOne
+    public E2CancerDrug getDrug() {return theDrug;}
+    public void setDrug(E2CancerDrug aDrug) {theDrug = aDrug;}
+    /** Онкологический случай */
     private E2CancerDrug theDrug ;
 
+    /** Дата введения препарата */
+    @Comment("Дата введения препарата")
+    public Date getDate() {return theDate;}
+    public void setDate(Date aDate) {theDate = aDate;}
     /** Дата введения препарата */
     private Date theDate ;
 

@@ -4,25 +4,21 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import ru.ecom.expert2.config.LocalDateAdapter;
-import ru.ecom.expert2.config.LocalTimeAdapter;
 
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.time.LocalTime;
+import java.time.LocalDate;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Hosp", propOrder = {
+@XmlType(name = "Non", propOrder = {
         "externalId",
-        "isEmergency",
         "directNumber",
         "directDate",
         "serviceKind",
         "directLpu",
         "directLpuDepartment",
         "lpuCode",
-        "departmentName",
-        "hospStartDate",
-        "hospStartTime",
+        "lpuDepartment",
         "medPolicyType",
         "medPolicySeries",
         "medPolicyNumber",
@@ -34,7 +30,7 @@ import java.time.LocalTime;
         "sex",
         "birthDate",
         "medHelpProfile",
-        "hospitalBranch",
+        "cHospitalBranch",
         "statisticStub",
         "diagnosis",
         "medTerms"
@@ -45,18 +41,14 @@ import java.time.LocalTime;
 /**
  * Случай госпитализации
  */
-public class Hosp {
+public class BaseWsdlEntity {
 
     /**
      * Идентификатор факта госпитализации в ИС МО
      */
     @XmlElement(name = "ID", required = true)
     private String externalId;
-    /**
-     * Экстренная госпитализация 0/1
-     */
-    @XmlElement(name = "B_Emergency")
-    private int isEmergency;
+
     /**
      * Номер направления
      */
@@ -68,7 +60,7 @@ public class Hosp {
     @XmlElement(name = "D_Referral")
     @XmlSchemaType(name = "date")
     @XmlJavaTypeAdapter(value = LocalDateAdapter.class)
-    private String directDate;
+    private LocalDate directDate;
     /**
      * Тип медицинской помощи: 1	Планово, 2	Экстренно, 3 Неотложная помощь
      */
@@ -94,22 +86,7 @@ public class Hosp {
      * Код подразделения госпитализации (справочник подразделений в АИС)
      */
     @XmlElement(name = "C_DepartmentDest")
-    private String departmentName;
-    /**
-     * Дата фактической госпитализации
-     */
-    @XmlElement(name = "D_DateHosp", required = true)
-    @XmlSchemaType(name = "date")
-    @XmlJavaTypeAdapter(value = LocalDateAdapter.class)
-    private String hospStartDate;
-
-    /**
-     * Время фактической госпитализации
-     */
-    @XmlElement(name = "D_TimeHosp", required = true)
-    @XmlSchemaType(name = "time")
-    @XmlJavaTypeAdapter(value = LocalTimeAdapter.class)
-    private LocalTime hospStartTime;
+    private String lpuDepartment;
 
     /**
      * Тип полиса ОМС (1,2,3)
@@ -165,7 +142,7 @@ public class Hosp {
     @XmlElement(name = "D_BirthDate", required = true)
     @XmlSchemaType(name = "date")
     @XmlJavaTypeAdapter(value = LocalDateAdapter.class)
-    private String birthDate;
+    private LocalDate birthDate;
 
     /**
      * Код профиля медицинской помощи (справочник V002 ФФОМС)
@@ -177,7 +154,7 @@ public class Hosp {
      * Наименование отделения (профиль медицинской помощи)
      */
     @XmlElement(name = "C_HospitalBranch")
-    private String hospitalBranch;
+    private String cHospitalBranch;
 
     /**
      * № карты стац.больного

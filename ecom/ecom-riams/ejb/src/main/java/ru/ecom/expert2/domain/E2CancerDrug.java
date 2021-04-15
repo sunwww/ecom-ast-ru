@@ -1,8 +1,5 @@
 package ru.ecom.expert2.domain;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.oncological.ejb.domain.voc.VocOncologyN020;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -12,24 +9,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
-@Accessors(prefix = "the")
 /** Использование лекарственного препарата в онкологическом случае*/
 public class E2CancerDrug extends BaseEntity {
 
     /** Онкологический случай */
+    @Comment("Онкологический случай")
     @ManyToOne
+    public E2CancerEntry getCancerEntry() {return theCancerEntry;}
+    public void setCancerEntry(E2CancerEntry aCancerEntry) {theCancerEntry = aCancerEntry;}
     private E2CancerEntry theCancerEntry ;
 
     /** Дата введения препарата */
     @Comment("Дата введения препарата")
     @OneToMany(mappedBy = "drug", cascade = CascadeType.ALL)
     public List<E2CancerDrugDate> getDates() {return theDates;}
+    public void setDates(List<E2CancerDrugDate> aDates) {theDates= aDates;}
     private List<E2CancerDrugDate> theDates ;
 
     /** Лекарственный препарат */
+    @Comment("Лекарственный препарат")
     @OneToOne
+    public VocOncologyN020 getDrug() {return theDrug;}
+    public void setDrug(VocOncologyN020 aDrug) {theDrug = aDrug;}
     private VocOncologyN020 theDrug ;
 
     public E2CancerDrug() {}

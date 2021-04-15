@@ -1,8 +1,5 @@
 package ru.ecom.expert2.domain;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -20,9 +17,6 @@ import javax.persistence.OneToOne;
  * Список диагнозов по записи
  */
 @Entity
-@Getter
-@Setter
-@Accessors(prefix = "the")
 @AIndexes({
         @AIndex(properties = {"entry"})
 })
@@ -37,24 +31,47 @@ public class EntryDiagnosis extends BaseEntity {
     private E2Entry theEntry ;
 
     /** Диагноз */
+    @Comment("Диагноз")
     @OneToOne
+    public VocIdc10 getMkb() {return theMkb;}
+    public void setMkb(VocIdc10 aMkb) {theMkb = aMkb;}
+    /** Диагноз */
     private VocIdc10 theMkb ;
-
     /** Тип регистрации */
+    @Comment("Тип регистрации")
     @OneToOne
+    public VocDiagnosisRegistrationType getRegistrationType() {return theRegistrationType;}
+    public void setRegistrationType(VocDiagnosisRegistrationType aRegistrationType) {theRegistrationType = aRegistrationType;}
+    /** Тип регистрации */
     private VocDiagnosisRegistrationType theRegistrationType ;
 
     /** Приоритет */
+    @Comment("Приоритет")
     @OneToOne
+    public VocPriorityDiagnosis getPriority() {return thePriority;}
+    public void setPriority(VocPriorityDiagnosis aPriority) {thePriority = aPriority;}
+    /** Приоритет */
     private VocPriorityDiagnosis thePriority ;
 
+    /** Доп. код МКБ */
+    @Comment("Доп. код МКБ")
+    public String getDopMkb() {return theDopMkb;}
+    public void setDopMkb(String aDopMkb) {theDopMkb = aDopMkb;}
     /** Доп. код МКБ */
     private String theDopMkb ;
 
     /** Справочник характеров заболевания */
+    @Comment("Справочник характеров заболевания")
     @OneToOne
+    public VocE2FondV027 getVocIllnessPrimary() {return theVocIllnessPrimary;}
+    public void setVocIllnessPrimary(VocE2FondV027 aVocIllnessPrimary) {theVocIllnessPrimary = aVocIllnessPrimary;}
+    /** Справочник характеров заболевания */
     private VocE2FondV027 theVocIllnessPrimary ;
 
+    /** Характер заболевания */
+    @Comment("Характер заболевания")
+    public String getIllnessPrimary() {return theIllnessPrimary;}
+    public void setIllnessPrimary(String aIllnessPrimary) {theIllnessPrimary = aIllnessPrimary;}
     /** Характер заболевания */
     private String theIllnessPrimary ;
 
