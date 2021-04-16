@@ -293,6 +293,28 @@ public class HospitalMedCaseServiceJs {
         return null;
     }
 
+    private Float parseFloat(String value) throws ParseException {
+        if(value == null || value.length()==0)
+            return null;
+        try {
+            return Float.valueOf(value);
+        }
+        catch (NumberFormatException e) {
+            throw new ParseException("Некорректное значение для вещественного числа!", 0);
+        }
+    }
+
+    private Integer parseInt(String value) throws ParseException {
+        if(value == null || value.length()==0)
+            return null;
+        try {
+            return Integer.valueOf(value);
+        }
+        catch (NumberFormatException e) {
+            throw new ParseException("Некорректное значение для целого числа!", 0);
+        }
+    }
+
     /**
      * Cоздать темп. лист
      *
@@ -300,15 +322,17 @@ public class HospitalMedCaseServiceJs {
      * @param aTempData json с данными
      * @return результат insert
      */
-    public String createTemperatureCurve(Long aMedCase, String aTempData, HttpServletRequest aRequest) throws NamingException {
+    public String createTemperatureCurve(Long aMedCase, String aTempData, HttpServletRequest aRequest) throws NamingException, ParseException {
         Long identTemp = 18L;
         Integer daysToFinish = 2;
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         JSONObject obj = new JSONObject(aTempData);
         String takingDate = getString(obj, "takingDate");
-        String degree = getString(obj, "degree");
-        String illnessdaynumber = getString(obj, "illnessDayNumber");
+        String degreeStr = getString(obj, "degree");
+        float degree = parseFloat(degreeStr);
+        String illnessdaynumberStr = getString(obj, "illnessDayNumber");
+        int illnessdaynumber = parseInt(illnessdaynumberStr);
         String dayTime = getString(obj, "dayTime");
 
         String sql = "insert into temperatureCurve (takingDate, degree, illnessdaynumber, daytime_id, medcase_id,date,time,username) values (" +
@@ -320,10 +344,11 @@ public class HospitalMedCaseServiceJs {
             tempCurveId = wqr.get1().toString();
         }
         if (!tempCurveId.equals("")) {
-            if (checkThirdDayHighTemp(aMedCase, takingDate, aRequest))
+            float highTemp = Float.parseFloat(getDefaultParameterByConfig("highTemp", "37.5", aRequest).toString());
+            if (degree >= highTemp && checkThirdDayHighTemp(aMedCase, takingDate, highTemp, aRequest))
                 addIdentityPatient(aMedCase, true, identTemp, daysToFinish, Long.valueOf(tempCurveId), aRequest);
             else
-                check2DaysNormalTempAndClose(aMedCase, takingDate, aRequest);
+                check2DaysNormalTempAndClose(aMedCase, takingDate, highTemp, aRequest);
         }
         return tempCurveId.equals("") ? "" : "1";
     }
@@ -333,19 +358,39 @@ public class HospitalMedCaseServiceJs {
      *
      * @param aMedCase   DepMedCase.id
      * @param takingDate Дата регистрации темп. листа, с которой надо сравнивать
+     * @param highTemp   Нижний предел высокой температуры
      */
-    private void check2DaysNormalTempAndClose(Long aMedCase, String takingDate, HttpServletRequest aRequest) throws NamingException {
+    private void check2DaysNormalTempAndClose(Long aMedCase, String takingDate, float highTemp, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         StringBuilder sql = new StringBuilder();
-        float normalTemp = Float.parseFloat(getDefaultParameterByConfig("normalTemp", "36.9", aRequest).toString());
-        sql.append("select count(1)");
+        sql.append("select count(case when y1.degree<").append(highTemp)
+                .append(" and y2.degree<").append(highTemp)
+                .append(" then 1 else 0 end) as yC")
+                .append(" ,count(case when befY1.degree<").append(highTemp)
+                .append(" and befY2.degree<").append(highTemp)
+                .append(" then 1 else 0 end) as befYC")
+                .append(" from temperaturecurve y1")
+                .append(" inner join temperaturecurve y2 on y1.medcase_id=y2.medcase_id and y1.takingdate=y2.takingdate")
+                .append(" inner join temperaturecurve befY1 on befY1.medcase_id=y1.medcase_id and befY1.takingdate=y1.takingdate-1")
+                .append(" inner join temperaturecurve befY2 on befY2.medcase_id=y2.medcase_id and befY2.takingdate=y2.takingdate-1")
+                .append(" inner join vocdaytime vy1 on vy1.id=y1.daytime_id and vy1.code='1'")
+                .append(" inner join vocdaytime vy2 on vy2.id=y2.daytime_id and vy2.code='2'" )
+                .append(" inner join vocdaytime vbefY1 on vbefY1.id=befY1.daytime_id and vbefY1.code='1'")
+                .append(" inner join vocdaytime vbefY2 on vbefY2.id=befY2.daytime_id and vbefY2.code='1'")
+                .append(" where y1.medcase_id = ").append(aMedCase)
+                .append(" and vy1.id is not null and vy2.id is not null")
+                .append(" and befY1.id is not null and befY2.id is not null")
+                .append(" and y1.takingdate=to_date('").append(takingDate).append("','dd.mm.yyyy')-1");
 
         Collection<WebQueryResult> beforeTemp = service.executeNativeSql(sql.toString());
         Long cipId = checkExistBraceletHighTempOpened(aMedCase, aRequest);
         if (!beforeTemp.isEmpty() && cipId > 0) { //закрываю браслет
             String login = LoginInfo.find(aRequest.getSession(true)).getUsername();
-            service.executeUpdateNativeSql("update coloridentitypatient set finishdate=current_date, finishtime=current_time,editusername='"
-                    + login + "' where id=" + cipId);
+            WebQueryResult wqr = beforeTemp.iterator().next();
+            if (wqr.get1() != null && wqr.get2() != null &&
+                    Integer.parseInt(wqr.get1().toString()) > 0 && Integer.parseInt(wqr.get2().toString()) > 0)
+                service.executeUpdateNativeSql("update coloridentitypatient set finishdate=current_date, finishtime=current_time,editusername='"
+                        + login + "' where id=" + cipId);
         }
     }
 
@@ -354,15 +399,16 @@ public class HospitalMedCaseServiceJs {
      *
      * @param aMedCase   DepMedCase.id
      * @param takingDate Дата регистрации темп. листа, с которой надо сравнивать
+     * @param highTemp   Нижний предел высокой температуры
      * @return true, если да
      */
-    private boolean checkThirdDayHighTemp(Long aMedCase, String takingDate, HttpServletRequest aRequest) throws NamingException {
+    private boolean checkThirdDayHighTemp(Long aMedCase, String takingDate, float highTemp, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         StringBuilder sql = new StringBuilder();
-        float highTemp = Float.parseFloat(getDefaultParameterByConfig("highTemp", "37.5", aRequest).toString());
-        sql.append("select count(case when y.degree>").append(highTemp)
+
+        sql.append("select count(case when y.degree>=").append(highTemp)
                 .append(" then 1 else 0 end) as yC")
-                .append(",count(case when befY.degree>").append(highTemp).append(" then 1 else 0 end) as befYC")
+                .append(",count(case when befY.degree>=").append(highTemp).append(" then 1 else 0 end) as befYC")
                 .append(" from temperaturecurve y")
                 .append(" left join temperaturecurve befY on befY.medcase_id=y.medcase_id and befY.takingdate=y.takingdate-1")
                 .append(" where y.medcase_id = ").append(aMedCase)
@@ -391,8 +437,8 @@ public class HospitalMedCaseServiceJs {
                 " left join medcase_coloridentitypatient mcip on mcip.colorsidentity_id=cip.id" +
                 " left join medcase slo on slo.id=" + aMedCase +
                 " left join medcase sls on sls.id=slo.parent_id and sls.dtype='HospitalMedCase'" +
-                " where vip.code='high_temp' and (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp)" +
-                " and mcip.medcase_id=sls.id");
+                " where vip.code='high_temp' and (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp" +
+                " or finishdate is null) and mcip.medcase_id=sls.id");
         return list.isEmpty() ? 0L :
                 Long.valueOf(list.iterator().next().get1().toString());
     }
