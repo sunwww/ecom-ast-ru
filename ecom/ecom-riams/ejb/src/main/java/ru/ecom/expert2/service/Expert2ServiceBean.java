@@ -1935,6 +1935,13 @@ public class Expert2ServiceBean implements IExpert2Service {
                         } else {
                             cost = (BigDecimal) resultMap.get(costKey);
                         }
+                        if (service.has("uet")) {
+                            BigDecimal uet = BigDecimal.valueOf(service.getDouble("uet"));
+                            ms.setUet(uet);
+                            if (uet.compareTo(BigDecimal.ZERO) > 0) {
+                                entry.setIsDentalCase(true);
+                            }
+                        }
                         ms.setCost(cost);
                         if (isNotLogicalNull(workfunction)) {
                             VocE2FondV021 doctor;
@@ -2779,11 +2786,17 @@ public class Expert2ServiceBean implements IExpert2Service {
         BigDecimal tariff;
         BigDecimal km = calculateKm();
         tariff = calculateTariff(entry);
-        String costFormula = "Тариф=" + tariff + ", КЗ=" + kz + ", Кп(Кпд)=" + kp + ", КМ=" + km;
+        BigDecimal kUet;
+        if (isTrue(entry.getIsDentalCase()) && isNotEmpty(entry.getMedServices())) {
+            kUet = getMaxKuet(entry.getMedServices());
+        } else {
+            kUet = BigDecimal.ONE;
+        }
+        String costFormula = "Тариф=" + tariff + ", КЗ=" + kz + ", Кп(Кпд)=" + kp + ", КМ=" + km + (kUet.compareTo(BigDecimal.ONE) > 0 ? ", Кует=" + kUet : "");
         if (isAnyIsNull(tariff, kz, km)) {
             LOG.warn("Не удалось расчитать цену случая");
         } else {
-            BigDecimal coeff = kz.multiply(kp).multiply(km);
+            BigDecimal coeff = kz.multiply(kp).multiply(km).multiply(kUet);
             BigDecimal cost = tariff.multiply(coeff);
             entry.setTotalCoefficient(coeff);
             entry.setCost(cost);
@@ -2791,6 +2804,18 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
         entry.setCostFormulaString(costFormula);
         manager.persist(entry);
+    }
+
+    //максимальные УЕТ по случаю
+    private BigDecimal getMaxKuet(List<EntryMedService> medServices) {
+        BigDecimal theBest = BigDecimal.ONE;
+        for (EntryMedService medService: medServices) {
+            BigDecimal uet = medService.getUet();
+            if (uet!=null && uet.compareTo(theBest)>0) {
+                theBest = uet;
+            }
+        }
+        return theBest;
     }
 
     private void calculateServiceEntryPrice(E2Entry entry) { //Цена случая с типом услуга = цене услуги!

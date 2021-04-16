@@ -1101,8 +1101,7 @@ public class E2Entry extends BaseEntity {
     /**
      * Стоматологический случай
      */
-//    @Transient
-//    private Boolean isDentalCase;
+    private Boolean isDentalCase;
     public E2Entry() {
         addGroupFld = "";
         setIsDeleted(false);

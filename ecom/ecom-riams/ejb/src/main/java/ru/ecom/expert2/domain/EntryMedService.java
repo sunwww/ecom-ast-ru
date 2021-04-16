@@ -1,5 +1,7 @@
 package ru.ecom.expert2.domain;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -18,13 +20,14 @@ import java.sql.Date;
 @AIndexes({
         @AIndex(properties = {"entry"})
 })
+@Data
+@Accessors(prefix = "the")
 public class EntryMedService extends BaseEntity {
 
     /** Запись */
     @Comment("Запись")
     @ManyToOne
     public E2Entry getEntry() {return theEntry;}
-    public void setEntry(E2Entry aEntry) {theEntry = aEntry;}
     /** Запись */
     private E2Entry theEntry ;
 
@@ -32,7 +35,6 @@ public class EntryMedService extends BaseEntity {
     @Comment("Мед. услуга")
     @OneToOne
     public VocMedService getMedService() {return theMedService;}
-    public void setMedService(VocMedService aMedService) {theMedService = aMedService;}
     /** Мед. услуга */
     private VocMedService theMedService ;
 
@@ -50,44 +52,32 @@ public class EntryMedService extends BaseEntity {
     }
 
     /** СНИЛС специалиста, выполневшего услугу */
-    @Comment("СНИЛС специалиста, выполневшего услугу")
-    public String getDoctorSnils() {return theDoctorSnils;}
-    public void setDoctorSnils(String aDoctorSnils) {theDoctorSnils = aDoctorSnils;}
     private String theDoctorSnils ;
 
     /** Дата оказания мед. услуги */
-    @Comment("Дата оказания мед. услуги")
-    public Date getServiceDate() {return theServiceDate;}
-    public void setServiceDate(Date aServiceDate) {theServiceDate = aServiceDate;}
     private Date theServiceDate ;
 
     /** Специальность врача */
     @Comment("Специальность врача")
     @OneToOne
     public VocE2FondV021 getDoctorSpeciality() {return theDoctorSpeciality;}
-    public void setDoctorSpeciality(VocE2FondV021 aDoctorSpeciality) {theDoctorSpeciality = aDoctorSpeciality;}
     private VocE2FondV021 theDoctorSpeciality ;
 
     /** Диагноз, выявленный при оказании услуги */
     @Comment("Диагноз, выявленный при оказании услуги")
     @OneToOne
     public VocIdc10 getMkb() {return theMkb;}
-    public void setMkb(VocIdc10 aMkb) {theMkb = aMkb;}
     private VocIdc10 theMkb ;
 
-    /** Цена */
-    @Comment("Цена")
-    public BigDecimal getCost() {return theCost;}
-    public void setCost(BigDecimal aCost) {theCost = aCost;}
     /** Цена */
     private BigDecimal theCost ;
 
     public EntryMedService(){}
 
     /** Коммент */
-    @Comment("Коммент")
-    public String getComment() {return theComment;}
-    public void setComment(String aComment) {theComment = aComment;}
     private String theComment ;
+
+    /** Цена */
+    private BigDecimal theUet ;
 
 }
