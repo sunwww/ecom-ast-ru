@@ -55,6 +55,7 @@
         <mkdir dir="./target/classes"/>
         <javac destdir="./target/classes" encoding="utf-8" debug="true">
             <src path="./src/main/java"/>
+            <classpath location="lombok/lombok.jar" />
         <!--    <src path="./src/test/java"/> -->
             <classpath refid="compile.classpath"/>
             <classpath refid="compile.junit.classpath"/>
@@ -110,12 +111,9 @@
     <target name="deploy" depends="">
         <delete file="${jboss_deploy}/${appname}-ejb.jar" failonerror="true"/>
         <delete file="${jboss_deploy}/${appname}-app.ear" failonerror="false"/>
-        <!--<delete file="${jboss_deploy}/${appname}-app.ear" failonerror="false"/> -->
-        
+
         <copy overwrite="true" todir="${jboss_deploy}" file="./target/${appname}-app.ear" />
-        <!--<copy overwrite="true" todir="${jboss_deploy}" file="./target/${appname}-app.ear" />-->
-        <!--<delete file="${jboss_deploy}/${appname}-app.ear" failonerror="false"/> -->
-        
+
 		<delete dir='${libdir}/${dirname}/ejb' />
 	
         <delete file="${libdir}/${dirname}/ejb/${appname}-ejb-api.jar" />

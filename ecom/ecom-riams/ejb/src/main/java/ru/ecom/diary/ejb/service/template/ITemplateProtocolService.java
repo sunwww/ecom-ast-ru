@@ -11,6 +11,6 @@ package ru.ecom.diary.ejb.service.template;
 public interface ITemplateProtocolService {
     String getTextTemplate(long aId) ;
     String getTextByProtocol(long aProtocolId) ;
-    String getNameVoc(String aClassif, long aId) ;
+
     Long getCountSymbolsInProtocol(long aVisit) ;
 }

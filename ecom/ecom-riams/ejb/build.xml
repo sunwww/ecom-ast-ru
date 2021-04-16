@@ -16,6 +16,7 @@
 		<include name="gson/gson-2.8.5.jar" />
 		<include name='junit/junit-jupiter-5.5.2.jar' />
 		<include name='opencsv/opencsv-4.1.jar' />
+		<include name='lombok/lombok.jar' />
 
 	</fileset>
 
@@ -43,7 +44,6 @@
 	</target>
 
 	<target name='ejb.jar' depends="persistence.xml">
-
 		<jar destfile="./target/${appname}-ejb.jar" compress="false">
 
 			<fileset refid="ecom.lib.fileset" />
@@ -75,6 +75,7 @@
 		<mkdir dir="./target/sqlUpdater"/>
 		<javac destdir="./target/sqlUpdater/" includeantruntime="false">
 			<src path="../ejb/src/main/java/ru/ecom/sql/runBuild"/>
+			<classpath location="lombok/lombok.jar" />
 		</javac>
 		<java classname="ru.ecom.sql.runBuild.SqlUpdateVersion" classpath="target/sqlUpdater"/>
 		<!--<jar destfile="./tarrunBuildtrunBuildtest.jar" basedir="./tarrunBuildtest/">

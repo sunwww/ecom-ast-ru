@@ -78,6 +78,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     private static final String EXTDISPTYPE = "EXTDISP";
     private static final String SERVICETYPE = "SERVICE";
     private static final String COMPLEXSERVICESTREAM = "COMPLEXCASE";
+    private static final String OMC_SERVICE_STREAM = "OBLIGATORYINSURANCE";
     private static final ArrayList<String> CHILD_BIRTH_MKB = new ArrayList<>();
     private static final BigDecimal MAX_KSLP_COEFF = BigDecimal.valueOf(1.8); //максимально возможный коэффициент КСЛП
     private static final String[] politravmaMainList = {"S02.7", "S12.7", "S22.1", "S27.7", "S29.7", "S31.7", "S32.7", "S36.7", "S38.1", "S39.6", "S39.7", "S37.7", "S42.7", "S49.7", "T01.1", "T01.8", "T01.9", "T02.0", "T02.1", "T02.2", "T02.3", "T02.4", "T02.5", "T02.6", "T02.7", "T02.8", "T02.9", "T04.0", "T04.1", "T04.2", "T04.3", "T04.4", "T04.7", "T04.8", "T04.9", "T05.0", "T05.1", "T05.2", "T05.3", "T05.4", "T05.5", "T05.6", "T05.8", "T05.9", "T06.0", "T06.1", "T06.2", "T06.3", "T06.4", "T06.5", "T06.8", "T07"};
@@ -1385,7 +1386,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         try {
             setEntrySubType(entry);
             entry.setIsForeign(isNotLogicalNull(entry.getInsuranceCompanyCode()) && !entry.getInsuranceCompanyCode().startsWith("30"));
-            entry.setBedDays(Math.max(bedDays,1L));
+            entry.setBedDays(Math.max(bedDays, 1L));
             try {
                 entry.setIsChild(AgeUtil.calcAgeYear(entry.getBirthDate(), entry.getStartDate()) < 18);
             } catch (Exception e) {
@@ -1426,7 +1427,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     entry.setAddGroupFld("1".equals(entry.getBedSubType()) ? "КС" : "ДС");
                 }
                 fileType = "H";
-                if (isNotLogicalNull(entry.getVMPKind())) {
+                if (isNotLogicalNull(entry.getVmpKind())) {
                     code = "STAC_VMP";
                     fileType = "T";
                 } else if (entry.getBedSubType().equals("1")) {
@@ -1535,7 +1536,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
             entry.setVisitPurpose(subType.getVisitPurpose()); //Цель посещения (V025)
             entry.setMedHelpUsl(subType.getUslOk()); //Условия оказания находим согласно подтипу записи (V006)
-            entry.setIDSP(subType.getIdsp());
+            entry.setIdsp(subType.getIdsp());
             if (isTrue(entry.getIsCancer()) || isNotEmpty(entry.getCancerEntries())) {
                 fileType = fileType.equals("P") ? "PC" : "C";
             }
@@ -1571,7 +1572,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     private void checkErrors(E2Entry entry) {
         List<E2EntryError> errors = new ArrayList<>();
-        if ("OBLIGATORYINSURANCE".equals(entry.getServiceStream())) { //Проверка только для ОМС *05.06.2018
+        if (OMC_SERVICE_STREAM.equals(entry.getServiceStream())) { //Проверка только для ОМС *05.06.2018
             //Дата выписки не входит в период
             if (entry.getFinishDate().getTime() > entry.getListEntry().getFinishDate().getTime()
                     || entry.getFinishDate().getTime() < entry.getListEntry().getStartDate().getTime()) {
@@ -1995,7 +1996,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 medPolicy = new JSONArray(entry.getPolicyPatientString());
             }
             if (medPolicy.isEmpty()) {
-                if (serviceStream == null || serviceStream.equals("OBLIGATORYINSURANCE")) {
+                if (serviceStream == null || serviceStream.equals(OMC_SERVICE_STREAM)) {
                     manager.persist(new E2EntryError(entry, "NO_MED_POLICY"));
                 }
                 return;
@@ -2387,7 +2388,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         String key, sqlAdd;
         String entryType = aEntry.getEntryType();
         String mmYYYY = new SimpleDateFormat("MMyyyy").format(aEntry.getFinishDate());
-        if (isNotLogicalNull(aEntry.getVMPKind())) { //Если в СЛО есть ВМП, цена = ВМП
+        if (isNotLogicalNull(aEntry.getVmpKind())) { //Если в СЛО есть ВМП, цена = ВМП
             return aEntry.getCost();
         }
         if (isOneOf(entryType, POLYCLINICTYPE, KDPTYPE, HOSPITALTYPE)) {
@@ -2456,8 +2457,8 @@ public class Expert2ServiceBean implements IExpert2Service {
     private void calculateHospitalEntryPrice(E2Entry entry) {
         try {
             String key;
-            if (isNotLogicalNull(entry.getVMPKind())) { //Если есть ВМП и нет цены - цена случая = цене метода ВМП
-                key = "VMP#" + entry.getVMPKind()+"#"+entry.getVMPMethod();
+            if (isNotLogicalNull(entry.getVmpKind())) { //Если есть ВМП и нет цены - цена случая = цене метода ВМП
+                key = "VMP#" + entry.getVmpKind() + "#" + entry.getVmpMethod();
                 BigDecimal cost;
                 if (!hospitalCostMap.containsKey(key)) {
                     List<BigDecimal> costs = manager.createNativeQuery("select coalesce(vmhc.cost, vkhc.cost)" +
@@ -2465,7 +2466,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                             " left join vocmethodhighcare vmhc on vmhc.kindhighcare = vkhc.code and :vmpDate between vmhc.dateFrom and coalesce(vmhc.dateTo,current_date)" +
                             "where vkhc.code=:code " +
                             "and :vmpDate between vkhc.dateFrom and coalesce(vkhc.dateTo,current_date) and vkhc.cost is not null")
-                            .setParameter("code", entry.getVMPKind()).setParameter("vmpDate", entry.getFinishDate()).getResultList();
+                            .setParameter("code", entry.getVmpKind()).setParameter("vmpDate", entry.getFinishDate()).getResultList();
                     if (!costs.isEmpty()) {
                         cost = costs.get(0);
                         hospitalCostMap.put(key, cost);
@@ -2796,7 +2797,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         List<EntryMedService> medServices = entry.getMedServices();
         if (CollectionUtil.isEmpty(medServices)) {
             LOG.warn(entry.getId() + " : в случае отсутствуют услуги, нельзя посчитать цену " + (medServices != null ? medServices.size() : -1));
-        } else if (medServices.size()>1) {
+        } else if (medServices.size() > 1) {
             LOG.warn(entry.getId() + " : в случае несколько услуг!! нельзя посчитать цену " + medServices.size());
         } else {
             EntryMedService medService = medServices.get(0); //1 случай = 1 услуга
@@ -3039,7 +3040,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                                 entry.setMedHelpUsl(medHelpUsl);
                                 entry.setVidSluch(vidSluch);
                                 entry.setVisitPurpose(visitPurpose);
-                                entry.setIDSP(idsp);
+                                entry.setIdsp(idsp);
                                 entry.setMainMkb(service.getMkb().getCode());
                                 entry.setEntryType(POLYCLINICTYPE);
                                 entry.setDoctorSnils(service.getDoctorSnils());
@@ -3080,7 +3081,7 @@ public class Expert2ServiceBean implements IExpert2Service {
      * Проставляем тип записи (стационар, ВМП, поликлиника, подушевое финансирование, __ИНОГОРОДНИЕ__
      */
     private void setEntryType(E2Entry entry, String entryCode) {
-        if (entryCode.equals(HOSPITALTYPE) && isNotLogicalNull(entry.getVMPKind())) {
+        if (entryCode.equals(HOSPITALTYPE) && isNotLogicalNull(entry.getVmpKind())) {
             entryCode = VMPTYPE;
         } else if (entryCode.equals(HOSPITALPEREVODTYPE)) {
             entryCode = HOSPITALTYPE;
@@ -3301,7 +3302,6 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
 
         if (isLogicalNull(npl)) entry.setNotFullPaymentReason("0");
-        entry.setIsBreakedCase(isPrerSluch);
         manager.persist(entry);
         return ret.setScale(2, RoundingMode.HALF_UP);
     }
@@ -3633,7 +3633,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 sloEntry.setStartDate(medCase.getDateStart());
                 if (isNotEmpty(vmps)) { //Считаем цену по виду ВМП
                     HitechMedicalCase vmp = vmps.get(0);
-                    sloEntry.setVMPKind(vmp.getKind().getCode());
+                    sloEntry.setVmpKind(vmp.getKind().getCode());
                 } else if (medCase instanceof ShortMedCase || medCase instanceof PolyclinicMedCase) { // Расчет цены СПО
                     PolyclinicMedCase spo;
                     ShortMedCase visit;

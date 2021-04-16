@@ -5,6 +5,7 @@ import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.expert2.domain.E2Bill;
+import ru.ecom.expert2.service.IExpert2AlkonaService;
 import ru.ecom.expert2.service.IExpert2Service;
 import ru.ecom.expert2.service.IExpert2XmlService;
 import ru.ecom.expert2.service.IFinanceService;
@@ -26,6 +27,16 @@ import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
 
 public class Expert2ServiceJs {
     private static final Logger LOG = Logger.getLogger(Expert2ServiceJs.class);
+
+    //выписки по заполнению в алькону
+    public void exportHospLeaveToAlkona(Long entryListId, HttpServletRequest request) throws NamingException {
+        Injection.find(request).getService(IExpert2AlkonaService.class).exportHospLeaveToAlkona(entryListId);
+    }
+
+    //госпитализации по заполнению в алькону
+    public void exportHospToAlkona(Long entryListId, Boolean isEmergency, HttpServletRequest request) throws NamingException {
+        Injection.find(request).getService(IExpert2AlkonaService.class).exportHospToAlkona(entryListId, isEmergency);
+    }
 
     public static String getMedcaseCost(Long medcaseId, HttpServletRequest request) throws NamingException {
         return Injection.find(request).getService(IExpert2Service.class).getMedcaseCost(medcaseId);
@@ -361,12 +372,12 @@ public class Expert2ServiceJs {
         final IExpert2XmlService service = Injection.find(request).getService(IExpert2XmlService.class);
 
         final String finalBillNumber = billNumber;
-        Date dateBillDate ;
+        Date dateBillDate;
         try {
-            dateBillDate = new Date(format.parse(billDate+"15:00").getTime());
+            dateBillDate = new Date(format.parse(billDate + "15:00").getTime());
         } catch (ParseException e) {
             e.printStackTrace();
-            dateBillDate= null;
+            dateBillDate = null;
 
         }
         final Date finalBillDate = dateBillDate;
