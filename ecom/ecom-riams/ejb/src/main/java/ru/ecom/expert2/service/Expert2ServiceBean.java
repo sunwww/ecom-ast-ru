@@ -2788,7 +2788,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         tariff = calculateTariff(entry);
         BigDecimal kUet;
         if (isTrue(entry.getIsDentalCase()) && isNotEmpty(entry.getMedServices())) {
-            kUet = getMaxKuet(entry.getMedServices());
+            kUet = getSumKuet(entry);
         } else {
             kUet = BigDecimal.ONE;
         }
@@ -2807,15 +2807,26 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     //максимальные УЕТ по случаю
-    private BigDecimal getMaxKuet(List<EntryMedService> medServices) {
+    private BigDecimal getSumKuet(E2Entry entry) {
+        List<EntryMedService> medServices = entry.getMedServices();
+        String diagnosis = entry.getMainMkb();
         BigDecimal theBest = BigDecimal.ONE;
-        for (EntryMedService medService: medServices) {
+        boolean isShortCase = entry.getStartDate().equals(entry.getFinishDate());
+        for (EntryMedService medService : medServices) {
             BigDecimal uet = medService.getUet();
-            if (uet!=null && uet.compareTo(theBest)>0) {
-                theBest = uet;
+            if (uet != null && uet.compareTo(BigDecimal.ZERO) > 0) {
+                theBest = theBest.add(uet);
             }
         }
-        return theBest;
+        return theBest.min(getStomUetByDiagnosis(diagnosis, isShortCase));
+    }
+
+    private BigDecimal getStomUetByDiagnosis(String diagnosis, boolean shortCase) {
+        VocDentalUetCoefficient uetCoefficient = getActualVocByClassName(VocDentalUetCoefficient.class, null, "diagnosis like '%;" + diagnosis + ";%'");
+        if (uetCoefficient != null) {
+            return shortCase ? uetCoefficient.getShortCaseValue() : uetCoefficient.getLongCaseValue();
+        }
+        return BigDecimal.ONE;
     }
 
     private void calculateServiceEntryPrice(E2Entry entry) { //Цена случая с типом услуга = цене услуги!
