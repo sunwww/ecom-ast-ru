@@ -42,7 +42,7 @@
 
             String bedType = request.getParameter("bedType") ;
             if (bedType!=null && !bedType.equals(""))
-                request.setAttribute("bedType"," and vbt.id="+bedType);
+                request.setAttribute("vbtSql"," and vbt.id="+bedType);
             ActionUtil.setParameterFilterSql("bedType", "bf.bedType_id", request);
         %>
         <msh:form action="/journal_ivlTimeCount.do" defaultField="dateBegin" method="GET">

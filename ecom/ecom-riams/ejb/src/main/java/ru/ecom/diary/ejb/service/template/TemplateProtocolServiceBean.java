@@ -43,7 +43,7 @@ import java.util.Map;
 public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 	private static final Logger LOG = Logger.getLogger(TemplateProtocolServiceBean.class);
 
-	public String makePOSTRequest (String data, String address,String aMethod, Map<String,String> params, Long aObjectId , EntityManager aManager) {
+	public String makePOSTRequest(String data, String address, String aMethod, Map<String, String> params) {
 		//LOG.info("create connection, address = "+address+",method = "+aMethod+" , data="+data);
 		if (address==null) {
 			return "";
@@ -208,11 +208,7 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
         return tempprot.getText() ;
     }
 
-    public String getNameVoc(String aClassif, long aId) {
-        return "123123" ;
-    }
-
-    @EJB ILocalEntityFormService theEntityFormService ;
+	@EJB ILocalEntityFormService theEntityFormService ;
     @PersistenceContext
     EntityManager theManager ;
 	public Long getCountSymbolsInProtocol(long aVisit) {

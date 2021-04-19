@@ -16,10 +16,9 @@
             <msh:hidden property="saveType"/>
             <msh:hidden property="listEntry"/>
             <msh:hidden property="isDeleted"/>
-            <msh:hidden property="KLADRRegistration"/>
-            <msh:hidden property="KLADRReal"/>
+            <msh:hidden property="kladrRegistration"/>
+            <msh:hidden property="kladrReal"/>
             <msh:hidden property="okatoReg"/>
-            <msh:hidden property="okatoReal"/>
             <msh:hidden property="bill"/>
             <msh:panel>
                 <msh:separator colSpan="4" label="Общие"/>
@@ -28,7 +27,7 @@
                     <msh:checkBox property="isForeign"/>
                 </msh:row>
                 <msh:row>
-                    <msh:checkBox property="PRNOV"/>
+                    <msh:checkBox property="prnov"/>
                 </msh:row>
                 <msh:row>
                     <msh:checkBox property="isDefect" label="Дефект"/>
@@ -199,14 +198,14 @@
 
                 <msh:separator colSpan="8" label="ВМП"/>
                 <msh:row>
-                    <msh:textField property="VMPKind" size="30"/>
-                    <msh:textField property="VMPMethod" size="30"/>
+                    <msh:textField property="vmpKind" size="30"/>
+                    <msh:textField property="vmpMethod" size="30"/>
                 </msh:row><msh:row>
-                <msh:textField property="VMPStantAmount" size="30"/>
-                <msh:textField property="VMPTicketNumber" size="30"/>
+                <msh:textField property="vmpStantAmount" size="30"/>
+                <msh:textField property="vmpTicketNumber" size="30"/>
             </msh:row><msh:row>
-                <msh:textField property="VMPTicketDate"/>
-                <msh:textField property="VMPPlanHospDate"/>
+                <msh:textField property="vmpTicketDate"/>
+                <msh:textField property="vmpPlanHospDate"/>
             </msh:row>
                 <msh:separator colSpan="6" label="Экономическая информация"/>
                 <msh:row>
@@ -261,7 +260,7 @@
                     <msh:textField property="fileType" size="30"/>
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete vocName="vocE2FondV010" property="IDSP" fieldColSpan="6" horizontalFill="true"/>
+                    <msh:autoComplete vocName="vocE2FondV010" property="idsp" fieldColSpan="6" horizontalFill="true"/>
                 </msh:row>
                 <msh:row>
                     <msh:checkBox property="noOmcDepartment"/>
@@ -401,7 +400,7 @@ where cancer.entry_id=${param.id}"/>
             <ecom:webQuery name="servicesList" nativeSql="select ms.id, coalesce(vms.code ||' '|| coalesce(vms.name,'Нет наименования')||coalesce(' ('|| ms.comment||')',''),'Нет услуги '||ms.comment) as f2
                 , ms.serviceDate as name
                 ,ms.doctorsnils as dsnils
-                ,ms.cost as f5_cost
+                ,ms.cost ||case when ms.uet is not null then ' ('||ms.uet||')' else '' end as f5_cost
                 ,case when ms.medservice_id is null then 'color: red'
                   when ms.comment!='' then 'color: #8B4513' else '' end as f6_styleRow
                   ,v021.code as f7_doctorWf

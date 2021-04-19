@@ -719,6 +719,8 @@
                             showToastMessage('Введите номер пробирки!', null, true, true, 3000);
                             $('submitButton').disabled = false;
                             $('submitButton').value = 'Создать';
+                            $('materialPCRId').show();
+                            $('materialPCRId').className = 'required';
                         } else if (!checkDate($('labDate').value)) {
                             showToastMessage('Введите корректную дату!', null, true, true, 3000);
                             $('submitButton').disabled = false;

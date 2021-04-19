@@ -59,9 +59,10 @@
     // Отменить консультацию
     function wfCancel${name}() {
         var reason = document.getElementById('${name}vocWfConsultationCancelReasonName').value;
+        var oper = '${voc}'=='vocOperationCancelReason' ? '1' : '0';
         if (reason == null || reason == '-' || reason == '') alert('Выберите причину!'); else {
             reason = reason.replace(/[-0-9 ][ ]/gim, '');
-            PrescriptionService.cancelWFPrescription(ID, reason, {
+            PrescriptionService.cancelWFPrescription(ID, reason, oper, {
                 callback: function (a) {
                     showToastMessage(a, null, true, false, 2000);
                     the${name}CloseDocumentDialog.hide();

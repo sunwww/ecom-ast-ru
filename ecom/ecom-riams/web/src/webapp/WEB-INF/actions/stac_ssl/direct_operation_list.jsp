@@ -51,7 +51,6 @@
             if (date != null && !date.equals("")) {
                 request.setAttribute("startDate", date);
 
-                request.setAttribute("isReportBase", ActionUtil.isReportBase(date, date, request));
                 String dep = request.getParameter("department");
                 String room = request.getParameter("roomType");
                 String sqlAdd = "";
@@ -68,7 +67,7 @@
         %>
         <msh:section title="Журнал направлений на хир. операции. Дата: ${startDate}.">
             <msh:sectionContent>
-                <ecom:webQuery isReportBase="${isReportBase}" name="journal_list_suroper"
+                <ecom:webQuery name="journal_list_suroper"
                                nameFldSql="journal_list_suroper_sql" nativeSql="
 select 
  mc.id as f1_medcaseid
@@ -132,14 +131,22 @@ order by wf.groupname,p.planStartDate, p.planStartTime"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
-        <form action="print-reestOperationsByCabinet.do" method="post" target="_blank">
+        <form id="printForm" action="print-reestOperationsByCabinet.do" method="post" target="_blank">
             <input type="hidden" name="sqlText" id="sqlText" value="${journal_list_suroper_sql}"/>
             <input type='hidden' name="s" id="s" value="PrintService">
             <input type='hidden' name="m" id="m" value="printGroupColumnNativeQuery">
             <input type='hidden' name="groupField" id="groupField" value="4">
             <input type='hidden' name="cntColumn" id="cntColumn" value="1">
             <input type='hidden' name="planStartDate" id="planStartDate" value="${startDate}">
-            <input type="submit" value="Печать реестра">
+            <input type="button" value="Печать реестра" onclick="printReestr()">
+            <script type="text/javascript">
+                function printReestr() {
+                    $('sqlText').value = $('sqlText').value.replace("and vst.code='OPERATION'"
+                        ,"and vst.code='OPERATION' and p.canceldate is null");
+                    document.getElementById('printForm').action = 'print-reestOperationsByCabinet.do';
+                    document.getElementById('printForm').submit();
+                }
+            </script>
         </form>
 
         <% } else {%>

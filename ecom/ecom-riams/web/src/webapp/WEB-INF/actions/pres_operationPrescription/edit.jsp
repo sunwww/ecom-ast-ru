@@ -321,7 +321,7 @@
                               action="/entityParentDelete-pres_operationPrescription" name="Удалить" key="ALT+DEL"/>
                 <tags:chooseCnslReasonWf name="chooseCnslReasonWf" voc="vocOperationCancelReason"
                                          title="назначение на операцию"/>
-                <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit1" params=""
+                <msh:sideLink roles="/Policy/Mis/Prescription/ServicePrescription/Edit" params=""
                               action="/javascript:showchooseCnslReasonWf(${param.id})" name="Отменить"/>
 
             </msh:sideMenu>

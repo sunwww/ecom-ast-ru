@@ -161,7 +161,6 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     } else {
                         entry.setPatientSnils(zap.getChildText("SNILS"));
                     }
-                    entry.setOkatoReg(zap.getChildText("OKATOG"));
                     entry.setCommonNumber(zap.getChildText("ENP"));
                     entry.setPassportType(zap.getChildText("DOCTYPE"));
                     entry.setPassportSeries(zap.getChildText("DOCSER"));
@@ -205,7 +204,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     }
 
                     entry.setVisitPurpose(getVocByCode(VocE2FondV025.class, finishDate, sl.getChildText("P_CEL")));
-                    entry.setIDSP(getVocByCode(VocE2FondV010.class, finishDate, sl.getChildText("IDSP")));
+                    entry.setIdsp(getVocByCode(VocE2FondV010.class, finishDate, sl.getChildText("IDSP")));
                     String entryTypeCode = "EXTDISP_" + zap.getChildText("VID_SLUCH");
                     VocE2EntrySubType subType = getActualVocByCode(VocE2EntrySubType.class, null, "code='" + entryTypeCode + "'");
                     if (subType != null) {
@@ -213,7 +212,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                         entry.setFileType(subType.getFileType());
                         entry.setVidSluch(subType.getVidSluch());
                     }
-                    entry.setIDSP(getVocByCode(VocE2FondV010.class, finishDate, zap.getChildText("IDSP")));
+                    entry.setIdsp(getVocByCode(VocE2FondV010.class, finishDate, zap.getChildText("IDSP")));
                     manager.persist(entry);
                     List<Element> uslList = sl.getChildren("USL");
                     for (Element usl : uslList) {
