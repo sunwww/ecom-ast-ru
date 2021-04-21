@@ -14,6 +14,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.Date;
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +26,8 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
     private static final Logger LOG = Logger.getLogger(Expert2AlkonaServiceBean.class);
     private static final String OMC_SERVICE_STREAM = "OBLIGATORYINSURANCE";
     private static final String ALKONA_URL = "http://127.0.0.1:8082/medcase";
-    private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
     private @EJB
     IWebClientService clientService;
     private @PersistenceContext
@@ -46,8 +48,8 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
+        LOG.info("Finish. sent entries: " + i);
     }
 
     @Override
@@ -67,7 +69,7 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
                     e.printStackTrace();
                 }
             }
-
+            LOG.info("Finish. sent entries: " + i);
         }
     }
 
@@ -105,11 +107,12 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
         hosp.setLpuCode(entry.getLpuCode());
         hosp.setDepartmentName(entry.getDepartmentName());
         hosp.setHospStartDate(toLocalDate(entry.getStartDate()));
-        hosp.setHospStartTime(entry.getStartTime().toLocalTime());
+        hosp.setHospStartTime(toLocalTime(entry.getStartTime()));
         hosp.setMedPolicyType(Integer.parseInt(entry.getMedPolicyType()));
         hosp.setMedPolicySeries(entry.getMedPolicySeries());
         hosp.setMedPolicyNumber(entry.getMedPolicyNumber());
         hosp.setInsuranceCompanyCode(entry.getInsuranceCompanyCode());
+        hosp.setDiagnosis(entry.getMainMkb());
         hosp.setRegionOkato("12700");
         hosp.setPatientLastname(entry.getLastname());
         hosp.setPatientFirstname(entry.getFirstname());
@@ -137,8 +140,11 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
     }
 
     private String toLocalDate(Date date) {
-        return date == null ? null : format.format(date);
+        return date == null ? null : DATE_FORMAT.format(date);
+    }
 
+    private String toLocalTime(Time time) {
+        return time == null ? null : TIME_FORMAT.format(time);
     }
 
     public String toString(Object o) {

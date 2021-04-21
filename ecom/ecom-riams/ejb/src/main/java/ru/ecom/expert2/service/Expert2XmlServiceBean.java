@@ -442,6 +442,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 if (a3) add(sl, "PR_D_N", "1"); // взят-состоит
                 //if (a3) *DS2_N
                 //CODE_MES1
+                if (isTrue(entry.getIsDentalCase())) {
+                    addIfNotNull(sl, "CODE_MES1", calcCodeMes(entry));
+                }
                 //CODE_MES2
                 if (a2 || a4) { //NAPR, CONS, ONK_SL
                     if (isCancer && cancerEntry != null) { //NAPR
@@ -718,6 +721,17 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             LOG.error("Entry #" + entry.getId() + ", error = " + e.getLocalizedMessage(), e);
             throw new IllegalStateException("Entry #" + entry.getId() + ", error = " + e.getLocalizedMessage(), e);
         }
+    }
+
+    //stom //пока заколхозим
+    private String calcCodeMes(E2Entry entry) {
+        String mainMkb = entry.getMainMkb();
+        if (isOneOf(mainMkb,"K02.0","K02.1","K02.3")) return "1";
+        if (isOneOf(mainMkb,"K04.0")) return "2";
+        if (isOneOf(mainMkb,"K04.5","K04.6","K04.7")) return "4";
+
+        return null;
+
     }
 
     /*Создаем тэг USL по формату 2020 года*/

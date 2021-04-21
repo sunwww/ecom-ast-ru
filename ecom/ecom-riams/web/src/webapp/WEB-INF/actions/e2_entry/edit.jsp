@@ -400,7 +400,7 @@ where cancer.entry_id=${param.id}"/>
             <ecom:webQuery name="servicesList" nativeSql="select ms.id, coalesce(vms.code ||' '|| coalesce(vms.name,'Нет наименования')||coalesce(' ('|| ms.comment||')',''),'Нет услуги '||ms.comment) as f2
                 , ms.serviceDate as name
                 ,ms.doctorsnils as dsnils
-                ,ms.cost as f5_cost
+                ,ms.cost ||case when ms.uet is not null then ' ('||ms.uet||')' else '' end as f5_cost
                 ,case when ms.medservice_id is null then 'color: red'
                   when ms.comment!='' then 'color: #8B4513' else '' end as f6_styleRow
                   ,v021.code as f7_doctorWf
