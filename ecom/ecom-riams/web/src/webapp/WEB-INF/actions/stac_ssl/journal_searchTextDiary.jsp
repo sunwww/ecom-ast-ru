@@ -121,7 +121,7 @@
             <msh:sectionContent>
                 <ecom:webQuery isReportBase="true" name="journal_DiaryText" nativeSql="
                 select distinct slo.id
-                ,dep.name as depName
+                , dep.name as depName
                 ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename|| ' ' || to_char(pat.birthday,'dd.mm.yyyy') as patInfo
                 ,to_char(di.dateregistration,'dd.mm.yyy') as dD
                 from medCase slo
@@ -137,6 +137,7 @@
                 left join vochospitalizationresult vhr on vhr.id=sls.result_id
                 left join secuser su on su.login=di.username
                 where ${fldDate} between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+                and slo.dtype='DepartmentMedCase'
                 ${department}
                 ${workFunction}
                 ${login}

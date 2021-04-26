@@ -558,6 +558,10 @@
                                           roles="/Policy/Mis/MedCase/Stac/Journal/BraceletsJournal">
                                 Журнал браслетов
                             </msh:link></li>
+                            <li><msh:link isReport="false" action="journal_kas.do"
+                                          roles="/Policy/Mis/MedCase/Stac/Ssl/View">
+                                Отчёт по критическим акушерским состояниям
+                            </msh:link></li>
                             <li><msh:link isReport="false" action="journal_searchTextDiary.do"
                                           roles="/Policy/Mis/MedCase/Stac/Ssl/View">
                                 Поиск дневников по тексту

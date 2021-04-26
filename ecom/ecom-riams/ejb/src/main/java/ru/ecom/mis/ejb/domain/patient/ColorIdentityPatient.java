@@ -4,6 +4,7 @@ package ru.ecom.mis.ejb.domain.patient;/**
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.medcase.SurgicalOperation;
+import ru.ecom.mis.ejb.domain.medcase.hospital.TemperatureCurve;
 import ru.ecom.mis.ejb.domain.patient.voc.VocColorIdentityPatient;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -66,6 +67,14 @@ public class ColorIdentityPatient extends BaseEntity {
     /** Хирургическая операция, с которой связан  браслет */
     private SurgicalOperation theSurgOperation ;
 
+    /** Температурный лист, с которым связан  браслет */
+    @Comment("Температурный лист, с которым связан  браслет")
+    @OneToOne
+    public TemperatureCurve getTempCurve() {return theTempCurve;}
+    public void setTempCurve(TemperatureCurve aTempCurve) {theTempCurve = aTempCurve;}
+    /** Температурный лист, с которым связан  браслет */
+    private TemperatureCurve theTempCurve ;
+
     /** Время регистрации */
     @Comment("Время регистрации")
     public Time getStartTime() {return theStartTime;}
@@ -97,6 +106,4 @@ public class ColorIdentityPatient extends BaseEntity {
     public Long getEntityId() {return theEntityId;}
     public void setEntityId(Long aEntityId) {theEntityId = aEntityId;}
     private Long theEntityId ;
-
-
 }

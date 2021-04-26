@@ -45,6 +45,9 @@
                     <msh:sideLink action="/riams_edkc_patientList.do?preg=${param.preg}" roles="/Policy/Mis/Patient/MobileAnestResNeo/ObservationSheet${param.preg}"
                                   name="Отчёт по пациентам" title="Отчёт по пациентам"
                     />
+                    <msh:sideLink action="/journal_kas.do" roles="/Policy/Mis/MedCase/Stac/Ssl/View"
+                                  name="Отчёт по критическим акушерским состояниям" title="Отчёт по критическим акушерским состояниям"
+                    />
                 </form>
             </div>
         </tiles:put>
