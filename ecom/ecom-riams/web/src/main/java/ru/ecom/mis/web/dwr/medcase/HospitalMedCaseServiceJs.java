@@ -323,7 +323,11 @@ public class HospitalMedCaseServiceJs {
      * @return результат insert
      */
     public String createTemperatureCurve(Long aMedCase, String aTempData, HttpServletRequest aRequest) throws NamingException, ParseException {
-        Long identTemp = 18L;
+        String identTempStr = getSettingsKeyValueByKey("identTemp", aRequest);
+        if (identTempStr.length() == 0)
+            identTempStr = "19";
+        Long identTemp = Long.valueOf(identTempStr);
+
         Integer daysToFinish = 2;
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
