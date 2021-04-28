@@ -54,7 +54,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
     order by pat.lastname,pat.firstname,pat.middlename
 "
         />
-        <msh:table name="patKasList" action="entityParentView-stac_ssl.do" idField="1" openNewWindow="true" printToExcelButton="Сохранить в EXCEL">
+        <msh:table name="patKasList" action="entityParentView-stac_slo.do" idField="1" openNewWindow="true" printToExcelButton="Сохранить в EXCEL">
             <msh:tableColumn property="sn" columnName="#"/>
             <msh:tableColumn columnName="Стат.карта" property="2"/>
             <msh:tableColumn columnName="ФИО пациента" property="3"/>
