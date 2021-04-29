@@ -335,12 +335,10 @@ public class HospitalMedCaseServiceJs {
         String takingDate = getString(obj, "takingDate");
         String degreeStr = getString(obj, "degree");
         float degree = parseFloat(degreeStr);
-        String illnessdaynumberStr = getString(obj, "illnessDayNumber");
-        int illnessdaynumber = parseInt(illnessdaynumberStr);
         String dayTime = getString(obj, "dayTime");
 
-        String sql = "insert into temperatureCurve (takingDate, degree, illnessdaynumber, daytime_id, medcase_id,date,time,username) values (" +
-                "to_date('" + takingDate + "','dd.MM.yyyy')," + degree + "," + illnessdaynumber + "," + dayTime +
+        String sql = "insert into temperatureCurve (takingDate, degree, daytime_id, medcase_id,date,time,username) values (" +
+                "to_date('" + takingDate + "','dd.MM.yyyy')," + degree + "," + dayTime +
                 ", " + aMedCase + ",current_date,current_time,'" + LoginInfo.find(aRequest.getSession(true)).getUsername() + "') returning id";
         String tempCurveId = "";
         Collection<WebQueryResult> res = service.executeNativeSql(sql);

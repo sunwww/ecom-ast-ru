@@ -117,25 +117,6 @@ public class TemperatureCurve extends BaseEntity {
         return Integer.valueOf((int) (1 + ((dateFinish - dateStart) / msecinday)));
     }
 
-
-    /**
-     * День болезни
-     */
-    @Comment("День болезни")
-    public Integer getIllnessDayNumber() {
-        return theIllnessDayNumber;
-    }
-
-    public void setIllnessDayNumber(Integer aIllnessDayNumber) {
-        theIllnessDayNumber = aIllnessDayNumber;
-    }
-
-    /**
-     * День болезни
-     */
-    private Integer theIllnessDayNumber;
-
-
     /**
      * Время суток (текст)
      */

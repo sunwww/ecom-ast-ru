@@ -7,10 +7,11 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.s}Layout.jsp" flush="true">
 
     <tiles:put name="title" type="string">
-        <msh:title mainMenu="StacJournal">Направления на исследования</msh:title>
+        <msh:title mainMenu="StacJournal">Направления на исследования и темп. листы</msh:title>
     </tiles:put>
     <tiles:put name="side" type="string">
         <tags:stac_journal currentAction="stac_directionsByUserDepartment"/>
+        <tags:temperatureCurve name="New"/>
     </tiles:put>
     <tiles:put name="body" type="string">
         <%
@@ -29,6 +30,7 @@
     ||case when m.dateFinish is not null then ' выписывается '||to_char(m.dateFinish,'dd.mm.yyyy')||' '||cast(m.dischargeTime as varchar(5)) else '' end as datestart
     	,wp.lastname||' '||wp.firstname||' '||wp.middlename as worker
     ,cast('' as varchar) as emp
+    ,m.id as sloId
     from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
     left join vocidc10 mkb on mkb.id=diag.idc10_id
@@ -52,7 +54,7 @@ left join Mislpu dep on dep.id=sloAll.department_id
     and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)
     group by pat.id,m.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday,sc.code,wp.lastname,wp.firstname,wp.middlename,sls.dateStart
-    ,bf.addCaseDuration,m.dateFinish,m.dischargeTime
+    ,bf.addCaseDuration,m.dateFinish,m.dischargeTime,m.id
     order by pat.lastname,pat.firstname,pat.middlename
     "
             />
@@ -73,6 +75,10 @@ left join Mislpu dep on dep.id=sloAll.department_id
                     <msh:tableColumn columnName="Год рождения" property="4"/>
                     <msh:tableColumn columnName="Дата поступления" property="5"/>
                     <msh:tableColumn columnName="Леч.врач" property="6"/>
+                    <msh:tableButton role="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Create" property="8"
+                                     buttonFunction="showNewCurve" buttonName="Доб. темп. лист" buttonShortName="Доб. темп. лист"/>
+                    <msh:tableButton role="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/View" property="8"
+                                     buttonFunction="showAllCurves" buttonName="Все темп. листы" buttonShortName="Все темп. листы"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -116,8 +122,9 @@ left join Mislpu dep on dep.id=sloAll.department_id
         if (department != null && department.intValue() > 0) {
     %>
     <tiles:put name="javascript" type="string">
+        <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
         <script type="text/javascript">
-            var table = document.getElementsByTagName('table')[0];
+            var table = document.getElementsByTagName('table')[1];
 
             //создать дату
             function createDate(td, ii) {
@@ -156,6 +163,10 @@ left join Mislpu dep on dep.id=sloAll.department_id
             }
 
             setInputs();
+
+            function showAllCurves(sloId) {
+                window.location.href = "entityParentList-stac_temperatureCurve.do?id=" + sloId;
+            }
         </script>
     </tiles:put>
     <%}%>

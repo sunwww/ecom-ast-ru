@@ -38,7 +38,7 @@
                   roles="/Policy/Mis/Journal/Prescription/LabSurvey/DoctorLaboratory"/>
     <msh:sideLink name="Направление на ВИЧ" styleId="stac_journalCurrentByUserDepartmentMicroBio"
                   action="/stac_directionHIVByUserDepartment" roles="/Policy/Mis/MedCase/Stac/Journal/HIVDirection"/>
-    <msh:sideLink name="Направления на исследования" styleId="stac_journalCurrentByUserDepartmentMicroBio"
+    <msh:sideLink name="Направления на исследования и темп. листы" styleId="stac_journalCurrentByUserDepartmentMicroBio"
                   action="/stac_directionsByUserDepartment" roles="/Policy/Mis/MedCase/Stac/Journal/HIVDirection"/>
     <msh:sideLink name="Печать" styleId="pres_lab_print" action="/pres_lab_print"
                   roles="/Policy/Mis/Journal/Prescription/LabSurvey/PrintPrescripton"/>

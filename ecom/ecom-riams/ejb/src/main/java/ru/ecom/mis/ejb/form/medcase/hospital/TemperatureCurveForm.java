@@ -125,25 +125,6 @@ public class TemperatureCurveForm extends IdEntityForm {
     private String theHospDayNumber;
 
     /**
-     * День болезни
-     */
-    @Comment("День болезни")
-    @Persist
-    public String getIllnessDayNumber() {
-        return theIllnessDayNumber;
-    }
-
-    public void setIllnessDayNumber(String aIllnessDayNumber) {
-        theIllnessDayNumber = aIllnessDayNumber;
-    }
-
-    /**
-     * День болезни
-     */
-    private String theIllnessDayNumber;
-
-
-    /**
      * Время суток (текст)
      */
     @Comment("Время суток (текст)")
