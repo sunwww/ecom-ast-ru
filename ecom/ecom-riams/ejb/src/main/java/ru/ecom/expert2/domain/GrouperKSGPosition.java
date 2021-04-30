@@ -33,8 +33,8 @@ public class GrouperKSGPosition extends BaseEntity {
     /** Группировщик КСГ */
     @Comment("Группировщик КСГ")
     @OneToOne
-    public GrouperKSG getKSGGrouper() {return kSGGrouper;}
-    private GrouperKSG kSGGrouper ;
+    public GrouperKSG getKsgGrouper() {return ksgGrouper;}
+    private GrouperKSG ksgGrouper ;
 
     /** Код МКБ основной */
     @Comment("Код МКБ основной")
