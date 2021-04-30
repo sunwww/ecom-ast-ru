@@ -23,7 +23,6 @@ import java.util.HashSet;
 @Service
 @Local(IIndexService.class)
 public class IndexServiceBean implements IIndexService, IIndexServiceManagement {
-//НЕ КОММИТИТЬ!!!!!!!
 	private static final Logger LOG = Logger.getLogger(IndexServiceBean.class);
 
 	private HashSet<String> getIndexNames(Connection aCon) throws SQLException {
@@ -98,10 +97,7 @@ public class IndexServiceBean implements IIndexService, IIndexServiceManagement 
 			throws NoSuchMethodException {
 		AIndexes indexesAnnotation = aIndexes;
 		if (indexesAnnotation != null) {
-			if (CAN_DEBUG)
-				LOG.debug("Creating indexes for "
-						+ theEntityHelper.getEntityName(aEntitClass) + " ...");
-			String tableName = theEntityHelper.getTableName(aEntitClass);
+			String tableName = entityHelper.getTableName(aEntitClass);
 			AIndex[] indexes = indexesAnnotation.value();
 			for (AIndex index : indexes) {
 				if (!index.table().equals("")) tableName = index.table() ; 
@@ -260,6 +256,6 @@ public class IndexServiceBean implements IIndexService, IIndexServiceManagement 
 		return aProperty;
 	}
 
-	private final EntityHelper theEntityHelper = EntityHelper.getInstance();
+	private final EntityHelper entityHelper = EntityHelper.getInstance();
 
 }
