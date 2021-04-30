@@ -85,6 +85,9 @@
                               action="/javascript:initSelectPrinter('print-transfusionAgreement.do?s=HospitalPrintService&m=printTransfusionAgreement&patId='+$('patient').value);"
                               name="Печать согласия на переливание" title="Печать согласия на переливание"/>
                 <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id"
+                              action="/javascript:initSelectPrinter('print-emlAgreement.do?s=HospitalPrintService&m=printTransfusionAgreement&patId='+$('patient').value);"
+                              name="Печать согласия на ЭМЛ" title="Печать согласия на ЭМЛ"/>
+                <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id"
                               action="/entityParentPrepareCreate-trans_blood" name="Протокол трансфузии"
                               title="Добавить донорской крови и её компонентов"/>
                 <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Other/Create" key="ALT+3" params="id"
