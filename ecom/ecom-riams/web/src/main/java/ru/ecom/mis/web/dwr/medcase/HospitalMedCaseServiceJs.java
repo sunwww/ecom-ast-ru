@@ -294,6 +294,7 @@ public class HospitalMedCaseServiceJs {
     }
 
     private Float parseFloat(String value) throws ParseException {
+        value = value.replace(",",".");
         if(value == null || value.length()==0)
             return null;
         try {
