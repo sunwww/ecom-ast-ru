@@ -35,4 +35,5 @@ public interface IExpert2Service {
     E2Entry cloneEntity(E2Entry aSourceObject);
     BigDecimal calculateResultDifficultyCoefficient(E2Entry aEntry);
     String fixFondAnswerError(Long aListEntryId, String aSanctionCode);
+    BigDecimal getSumKuet(E2Entry entry);
 }
