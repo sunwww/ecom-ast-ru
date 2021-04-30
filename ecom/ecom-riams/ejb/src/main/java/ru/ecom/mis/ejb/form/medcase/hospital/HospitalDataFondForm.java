@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.hospital.HospitalDataFond;
@@ -20,408 +21,353 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Данные фонда по 263 приказу", nameProperties= "id", view="entityParentView-stac_dataFond.do")
 //@Parent(property="surgicalOperation", parentForm= SurgicalOperationForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/HospitalDataFond")
+@Setter
 public class HospitalDataFondForm extends IdEntityForm{
 
 	/** Направление */
 	@Persist @Comment("Направление")
-	public Long getDirectMedCase() {return theDirectMedCase;}
-	public void setDirectMedCase(Long aDirectMedCase) {theDirectMedCase = aDirectMedCase;}
+	public Long getDirectMedCase() {return directMedCase;}
 
 	/** Госпитализация */
 	@Persist @Comment("Госпитализация")
-	public Long getHospitalMedCase() {return theHospitalMedCase;}
-	public void setHospitalMedCase(Long aHospitalMedCase) {theHospitalMedCase = aHospitalMedCase;}
+	public Long getHospitalMedCase() {return hospitalMedCase;}
 
 	/** Экстренность */
 	@Persist @Comment("Экстренность")
-	public Integer getEmergency() {return theEmergency;}
-	public void setEmergency(Integer aEmergency) {theEmergency = aEmergency;}
+	public Integer getEmergency() {return emergency;}
 
 	/** Номер направления из фонда */
 	@Persist @Comment("Номер направления из фонда")
-	public String getNumberFond() {return theNumberFond;}
-	public void setNumberFond(String aNumberFond) {theNumberFond = aNumberFond;}
+	public String getNumberFond() {return numberFond;}
 
 	/** Фамилия */
 	@Persist @Comment("Фамилия")
-	public String getLastname() {return theLastname;}
-	public void setLastname(String aLastname) {theLastname = aLastname;}
+	public String getLastname() {return lastname;}
 
 	/** Имя */
 	@Persist @Comment("Имя")
-	public String getFirstname() {return theFirstname;}
-	public void setFirstname(String aFirstname) {theFirstname = aFirstname;}
+	public String getFirstname() {return firstname;}
 
 	/** Отчетсво */
 	@Persist @Comment("Отчетсво")
-	public String getMiddlename() {return theMiddlename;}
-	public void setMiddlename(String aMiddlename) {theMiddlename = aMiddlename;}
+	public String getMiddlename() {return middlename;}
 
 	/** Дата рождения */
 	@Persist @Comment("Дата рождения")
 	@DateString @DoDateString
-	public String getBirthday() {return theBirthday;}
-	public void setBirthday(String aBirthday) {theBirthday = aBirthday;}
+	public String getBirthday() {return birthday;}
 
 	/** Профиль */
 	@Persist @Comment("Профиль")
-	public String getProfile() {return theProfile;}
-	public void setProfile(String aProfile) {theProfile = aProfile;}
+	public String getProfile() {return profile;}
 
 	/** Дата предварительной госпитализации */
 	@Persist @Comment("Дата предварительной госпитализации")
 	@DateString @DoDateString
-	public String getPreHospDate() {return thePreHospDate;}
-	public void setPreHospDate(String aPreHospDate) {thePreHospDate = aPreHospDate;}
+	public String getPreHospDate() {return preHospDate;}
 
 	/** Дата госпитализации */
 	@Persist @Comment("Дата госпитализации")
 	@DateString @DoDateString
-	public String getHospDate() {return theHospDate;}
-	public void setHospDate(String aHospDate) {theHospDate = aHospDate;}
+	public String getHospDate() {return hospDate;}
 
 	/** Пол */
 	@Persist @Comment("Пол")
-	public Long getSex() {return theSex;}
-	public void setSex(Long aSex) {theSex = aSex;}
+	public Long getSex() {return sex;}
 
 	/** Дата направления */
 	@Persist @Comment("Дата направления")
 	@DateString @DoDateString
-	public String getDirectDate() {return theDirectDate;}
-	public void setDirectDate(String aDirectDate) {theDirectDate = aDirectDate;}
+	public String getDirectDate() {return directDate;}
 
 	/** Дата направления */
-	private String theDirectDate;
+	private String directDate;
 	/** Пол */
-	private Long theSex;
+	private Long sex;
 	/** Дата госпитализации */
-	private String theHospDate;
+	private String hospDate;
 	/** Дата предварительной госпитализации */
-	private String thePreHospDate;
+	private String preHospDate;
 	/** Профиль */
-	private String theProfile;
+	private String profile;
 	/** Дата рождения */
-	private String theBirthday;
+	private String birthday;
 	/** Отчетсво */
-	private String theMiddlename;
+	private String middlename;
 	/** Имя */
-	private String theFirstname;
+	private String firstname;
 	/** Фамилия */
-	private String theLastname;
+	private String lastname;
 	/** Номер направления из фонда */
-	private String theNumberFond;
+	private String numberFond;
 	/** Экстренность */
-	private Integer theEmergency;
+	private Integer emergency;
 	/** Госпитализация */
-	private Long theHospitalMedCase;
+	private Long hospitalMedCase;
 	/** Направление */
-	private Long theDirectMedCase;
+	private Long directMedCase;
 	
 	/** Диагноз */
 	@Persist @Comment("Диагноз")
-	public String getDiagnosis() {return theDiagnosis;}
-	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
+	public String getDiagnosis() {return diagnosis;}
 
 	/** Телефон */
 	@Persist @Comment("Телефон")
-	public String getPhone() {return thePhone;}
-	public void setPhone(String aPhone) {thePhone = aPhone;}
+	public String getPhone() {return phone;}
 
 	/** Номер стат.карты */
 	@Persist @Comment("Номер стат.карты")
-	public String getStatCard() {return theStatCard;}
-	public void setStatCard(String aStatCard) {theStatCard = aStatCard;}
+	public String getStatCard() {return statCard;}
 
 	/** Номер стат.карты */
-	private String theStatCard;
+	private String statCard;
 	/** Телефон */
-	private String thePhone;
+	private String phone;
 	/** Диагноз */
-	private String theDiagnosis;
+	private String diagnosis;
 	
 	/** Вид полиса */
 	@Persist @Comment("Вид полиса")
-	public String getTypePolicy() {return theTypePolicy;}
-	public void setTypePolicy(String aTypePolicy) {theTypePolicy = aTypePolicy;}
+	public String getTypePolicy() {return typePolicy;}
 
 	/** Серия полиса */
 	@Persist @Comment("Серия полиса")
-	public String getSeriesPolicy() {return theSeriesPolicy;}
-	public void setSeriesPolicy(String aSeriesPolicy) {theSeriesPolicy = aSeriesPolicy;}
+	public String getSeriesPolicy() {return seriesPolicy;}
 
 	/** Номер полиса */
 	@Persist @Comment("Номер полиса")
-	public String getNumberPolicy() {return theNumberPolicy;}
-	public void setNumberPolicy(String aNumberPolicy) {theNumberPolicy = aNumberPolicy;}
+	public String getNumberPolicy() {return numberPolicy;}
 
 	/** СМО */
 	@Persist @Comment("СМО")
-	public String getSmo() {return theSmo;}
-	public void setSmo(String aSmo) {theSmo = aSmo;}
+	public String getSmo() {return smo;}
 
 	/** СМО ОГРН */
 	@Persist @Comment("СМО ОГРН")
-	public String getSmoOgrn() {return theSmoOgrn;}
-	public void setSmoOgrn(String aSmoOgrn) {theSmoOgrn = aSmoOgrn;}
+	public String getSmoOgrn() {return smoOgrn;}
 
 	/** СМО ОКАТО */
 	@Persist @Comment("СМО ОКАТО")
-	public String getSmoOkato() {return theSmoOkato;}
-	public void setSmoOkato(String aSmoOkato) {theSmoOkato = aSmoOkato;}
+	public String getSmoOkato() {return smoOkato;}
 
 	/** СМО наименование */
 	@Persist @Comment("СМО наименование")
-	public String getSmoName() {return theSmoName;}
-	public void setSmoName(String aSmoName) {theSmoName = aSmoName;}
+	public String getSmoName() {return smoName;}
 
 	/** Форма помощи */
 	@Persist @Comment("Форма помощи")
-	public String getFormHelp() {return theFormHelp;}
-	public void setFormHelp(String aFormHelp) {theFormHelp = aFormHelp;}
+	public String getFormHelp() {return formHelp;}
 
 	/** Направ. ЛПУ */
 	@Persist @Comment("Направ. ЛПУ")
-	public String getOrderLpuCode() {return theOrderLpuCode;}
-	public void setOrderLpuCode(String aOrderLpuCode) {	theOrderLpuCode = aOrderLpuCode;}
+	public String getOrderLpuCode() {return orderLpuCode;}
 
 	/** Куда направлен пациент */
 	@Persist @Comment("Куда направлен пациент")
-	public String getDirectLpuCode() {return theDirectLpuCode;}
-	public void setDirectLpuCode(String aDirectLpuCode) {theDirectLpuCode = aDirectLpuCode;}
+	public String getDirectLpuCode() {return directLpuCode;}
 
 	/** Куда направлен пациент */
-	private String theDirectLpuCode;
+	private String directLpuCode;
 	/** Направ. ЛПУ */
-	private String theOrderLpuCode;
+	private String orderLpuCode;
 	/** Форма помощи */
-	private String theFormHelp;
+	private String formHelp;
 	/** СМО наименование */
-	private String theSmoName;
+	private String smoName;
 	/** СМО ОКАТО */
-	private String theSmoOkato;
+	private String smoOkato;
 	/** СМО ОГРН */
-	private String theSmoOgrn;
+	private String smoOgrn;
 	/** СМО */
-	private String theSmo;
+	private String smo;
 	/** Номер полиса */
-	private String theNumberPolicy;
+	private String numberPolicy;
 	/** Серия полиса */
-	private String theSeriesPolicy;
+	private String seriesPolicy;
 	/** Вид полиса */
-	private String theTypePolicy;
+	private String typePolicy;
 	
 	/** Снилс */
 	@Persist @Comment("Снилс")
-	public String getSnils() {return theSnils;}
-	public void setSnils(String aSnils) {theSnils = aSnils;}
+	public String getSnils() {return snils;}
 
 	/** Снилс */
-	private String theSnils;
+	private String snils;
 	
 	/** Дата импорта */
 	@Persist @Comment("Дата импорта")
 	@DateString @DoDateString
-	public String getImportDate() {return theImportDate;}
-	public void setImportDate(String aImportDate) {theImportDate = aImportDate;}
+	public String getImportDate() {return importDate;}
 
 	/** Дата импорта */
-	private String theImportDate;
+	private String importDate;
 	
 	/** Table1 */
 	@Persist @Comment("Table1")
-	public Boolean getIsTable1() {return theIsTable1;}
-	public void setIsTable1(Boolean aIsTable1) {theIsTable1 = aIsTable1;}
-	
+	public Boolean getIsTable1() {return isTable1;}
+
 	/** Table1 */
-	private Boolean theIsTable1;
+	private Boolean isTable1;
 	/** Table2 */
 	@Persist @Comment("Table2")
-	public Boolean getIsTable2() {return theIsTable2;}
-	public void setIsTable2(Boolean aIsTable2) {theIsTable2 = aIsTable2;}
-	
+	public Boolean getIsTable2() {return isTable2;}
+
 	/** Table2 */
-	private Boolean theIsTable2;
+	private Boolean isTable2;
 	/** Table3 */
 	@Persist @Comment("Table3")
-	public Boolean getIsTable3() {return theIsTable3;}
-	public void setIsTable3(Boolean aIsTable3) {theIsTable3 = aIsTable3;}
-	
+	public Boolean getIsTable3() {return isTable3;}
+
 	/** Table3 */
-	private Boolean theIsTable3;
+	private Boolean isTable3;
 	/** Table4 */
 	@Persist @Comment("Table4")
-	public Boolean getIsTable4() {return theIsTable4;}
-	public void setIsTable4(Boolean aIsTable4) {theIsTable4 = aIsTable4;}
-	
+	public Boolean getIsTable4() {return isTable4;}
+
 	/** Table4 */
-	private Boolean theIsTable4;
+	private Boolean isTable4;
 	/** Table4 */
 	@Persist @Comment("Table5")
-	public Boolean getIsTable5() {return theIsTable5;}
-	public void setIsTable5(Boolean aIsTable5) {theIsTable5 = aIsTable5;}
-	
+	public Boolean getIsTable5() {return isTable5;}
+
 	/** Table5 */
-	private Boolean theIsTable5;
+	private Boolean isTable5;
 	
 	/** Время госпитализации */
 	@Persist @Comment("Время госпитализации")
 	@TimeString @DoTimeString
-	public String getHospTime() {return theHospTime;}
-	public void setHospTime(String aHospTime) {theHospTime = aHospTime;}
+	public String getHospTime() {return hospTime;}
 
 	/** Дата выписки */
 	@Persist @Comment("Дата выписки")
 	@DateString @DoDateString
-	public String getHospDischargeDate() {return theHospDischargeDate;}
-	public void setHospDischargeDate(String aHospDischargeDate) {theHospDischargeDate = aHospDischargeDate;}
+	public String getHospDischargeDate() {return hospDischargeDate;}
 
 	/** Дата выписки */
-	private String theHospDischargeDate;
+	private String hospDischargeDate;
 	/** Время госпитализации */
-	private String theHospTime;
+	private String hospTime;
 	
 	/** Отказ от госпитализации */
 	@Persist @Comment("Отказ от госпитализации")
-	public Long getDeniedHospital() {return theDeniedHospital;}
-	public void setDeniedHospital(Long aDeniedHospital) {theDeniedHospital = aDeniedHospital;}
+	public Long getDeniedHospital() {return deniedHospital;}
 
 	/** Отказ от госпитализации */
-	private Long theDeniedHospital;
+	private Long deniedHospital;
 	
 	/** Файл */
 	@Persist @Comment("Файл")
-	public String getFilename5() {return theFilename5;}
-	public void setFilename5(String aFilename5) {theFilename5 = aFilename5;}
+	public String getFilename5() {return filename5;}
 
 	/** Файл */
-	private String theFilename5;
+	private String filename5;
 	
 	/** Дата импорта */
 	@Persist @Comment("Дата импорта")
 	@DateString @DoDateString
-	public String getDateImport5() {return theDateImport5;}
-	public void setDateImport5(String aDateImport5) {theDateImport5 = aDateImport5;}
+	public String getDateImport5() {return dateImport5;}
 
 	/** Дата импорта */
-	private String theDateImport5;
+	private String dateImport5;
 	
 	/** Файл */
 	@Persist @Comment("Файл")
-	public String getFilename4() {return theFilename4;}
-	public void setFilename4(String aFilename4) {theFilename4 = aFilename4;}
+	public String getFilename4() {return filename4;}
 
 	/** Файл */
-	private String theFilename4;
+	private String filename4;
 	
 	/** Дата импорта */
 	@Persist @Comment("Дата импорта")
 	@DateString @DoDateString
-	public String getDateImport4() {return theDateImport4;}
-	public void setDateImport4(String aDateImport4) {theDateImport4 = aDateImport4;}
+	public String getDateImport4() {return dateImport4;}
 
 	/** Дата импорта */
-	private String theDateImport4;
+	private String dateImport4;
 	
 	/** Файл */
 	@Persist @Comment("Файл")
-	public String getFilename3() {return theFilename3;}
-	public void setFilename3(String aFilename3) {theFilename3 = aFilename3;}
+	public String getFilename3() {return filename3;}
 
 	/** Файл */
-	private String theFilename3;
+	private String filename3;
 	
 	/** Дата импорта */
 	@Persist @Comment("Дата импорта")
 	@DateString @DoDateString
-	public String getDateImport3() {return theDateImport3;}
-	public void setDateImport3(String aDateImport3) {theDateImport3 = aDateImport3;}
+	public String getDateImport3() {return dateImport3;}
 
 	/** Дата импорта */
-	private String theDateImport3;
+	private String dateImport3;
 	
 	/** Файл */
 	@Persist @Comment("Файл")
-	public String getFilename2() {return theFilename2;}
-	public void setFilename2(String aFilename2) {theFilename2 = aFilename2;}
+	public String getFilename2() {return filename2;}
 
 	/** Файл */
-	private String theFilename2;
+	private String filename2;
 	
 	/** Дата импорта */
 	@Persist @Comment("Дата импорта")
 	@DateString @DoDateString
-	public String getDateImport2() {return theDateImport2;}
-	public void setDateImport2(String aDateImport2) {theDateImport2 = aDateImport2;}
+	public String getDateImport2() {return dateImport2;}
 
 	/** Дата импорта */
-	private String theDateImport2;
+	private String dateImport2;
 	
 
 	/** Файл */
 	@Persist @Comment("Файл")
-	public String getFilename1() {return theFilename1;}
-	public void setFilename1(String aFilename1) {theFilename1 = aFilename1;}
+	public String getFilename1() {return filename1;}
 
 	/** Файл */
-	private String theFilename1;
+	private String filename1;
 	
 	/** Дата импорта */
 	@Persist @Comment("Дата импорта")
 	@DateString @DoDateString
-	public String getDateImport1() {return theDateImport1;}
-	public void setDateImport1(String aDateImport1) {theDateImport1 = aDateImport1;}
+	public String getDateImport1() {return dateImport1;}
 
 	/** Дата импорта */
-	private String theDateImport1;
+	private String dateImport1;
 	
 	
 	/** Тип помощи дн круг */
 	@Comment("Тип помощи дн круг")
 	@Persist
 	public String getBedSubType() {
-		return theBedSubType;
-	}
-
-	public void setBedSubType(String aBedSubType) {
-		theBedSubType = aBedSubType;
+		return bedSubType;
 	}
 
 	/** Тип помощи дн круг */
-	private String theBedSubType;
+	private String bedSubType;
 
 
 	
 	/** Детский профиль */
 	@Persist @Comment("Детский профиль")
-	public String getForChild() {return theForChild;}
-	public void setForChild(String aForChild) {theForChild = aForChild;}
-
+	public String getForChild() {return forChild;}
 	/** Детский профиль */
-	private String theForChild;
+	private String forChild;
 	
 	/** Без госпитализаций */
 	@Persist @Comment("Без госпитализаций")
-	public Boolean getWithoutHosp() {return theWithoutHosp;}
-	public void setWithoutHosp(Boolean aWithoutHosp) {theWithoutHosp = aWithoutHosp;}
+	public Boolean getWithoutHosp() {return withoutHosp;}
 
 	/** Без госпитализаций */
-	private Boolean theWithoutHosp;
+	private Boolean withoutHosp;
 
     /** Время импорта */
-    public long getTime() { return theTime ; }
-    public void setTime(long aTime) { theTime = aTime ; }
-
+    public long getTime() { return time ; }
 
     /** Время импорта */
-    private long theTime ;
+    private long time ;
     
     /** Фамилия имя отчетство */
 	@Persist @Comment("Фамилия имя отчетство")
-	public String getFio() {return theFio;}
-	public void setFio(String aFio) {theFio = aFio;	}
+	public String getFio() {return fio;}
 
 	/** Фамилия имя отчетство */
-	private String theFio;
+	private String fio;
 
 }

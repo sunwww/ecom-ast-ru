@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.lpu;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.lpu.BedFund;
@@ -23,163 +24,112 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Коечный фонд", nameProperties = "id", view = "entityParentView-mis_bedFund.do")
 @Parent(property = "lpu", parentForm = MisLpuForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/BedFund")
+@Setter
 public class BedFundForm extends IdEntityForm {
 
-    private String theAmount;
-    private Long theReductionType;
-    private Long theServiceStream;
-    private Long theBedType;
-    private Long theLpu;
-    private Boolean theNoFood;
-    private Boolean theForChild;
-    private String theReductionTypeName;
-    private String theServiceStreamName;
-    private String theBedTypeName;
-    private String theServiceTypeName;
-    private String theVTE;
-    private String theVTS;
-    private String theDateStart;
-    private String theTimeStart;
-    private String theDateFinish;
-    private String theTimeFinish;
-    private Long theBedSubType;
-    private String theBedSubTypeName;
-    private Boolean theAddCaseDuration;
-    private Boolean theIsRehab;
-    private String theSnilsDoctorDirect263;
-    private String theDepartmentAddressCode;
+    private String amount;
+    private Long reductionType;
+    private Long serviceStream;
+    private Long bedType;
+    private Long lpu;
+    private Boolean noFood;
+    private Boolean forChild;
+    private String reductionTypeName;
+    private String serviceStreamName;
+    private String bedTypeName;
+    private String serviceTypeName;
+    private String vTE;
+    private String vTS;
+    private String dateStart;
+    private String timeStart;
+    private String dateFinish;
+    private String timeFinish;
+    private Long bedSubType;
+    private String bedSubTypeName;
+    private Boolean addCaseDuration;
+    private Boolean isRehab;
+    private String snilsDoctorDirect263;
+    private String departmentAddressCode;
 
     @Comment("Количество коек")
     @Persist
     public String getAmount() {
-        return theAmount;
-    }
-
-    public void setAmount(String aAmount) {
-        theAmount = aAmount;
+        return amount;
     }
 
     @Comment("Тип развертывания-свертывания")
     @Persist
     @Required
     public Long getReductionType() {
-        return theReductionType;
-    }
-
-    public void setReductionType(Long aReductionType) {
-        theReductionType = aReductionType;
+        return reductionType;
     }
 
     @Comment("Поток обслуживания")
     @Persist
     @Required
     public Long getServiceStream() {
-        return theServiceStream;
-    }
-
-    public void setServiceStream(Long aServiceStream) {
-        theServiceStream = aServiceStream;
+        return serviceStream;
     }
 
     @Comment("Профиль коек")
     @Persist
     @Required
     public Long getBedType() {
-        return theBedType;
-    }
-
-    public void setBedType(Long aBedType) {
-        theBedType = aBedType;
+        return bedType;
     }
 
     @Comment("ЛПУ")
     @Persist
     public Long getLpu() {
-        return theLpu;
-    }
-
-    public void setLpu(Long aLpu) {
-        theLpu = aLpu;
+        return lpu;
     }
 
     @Comment("Для детей")
     @Persist
     public Boolean getForChild() {
-        return theForChild;
-    }
-
-    public void setForChild(Boolean aForChild) {
-        theForChild = aForChild;
+        return forChild;
     }
 
     @Comment("Без питания")
     @Persist
     public Boolean getNoFood() {
-        return theNoFood;
-    }
-
-    public void setNoFood(Boolean aNoFood) {
-        theNoFood = aNoFood;
+        return noFood;
     }
 
     @Comment("Тип свертывания (текст)")
     @Persist
     public String getReductionTypeName() {
-        return theReductionTypeName;
-    }
-
-    public void setReductionTypeName(String aReductionTypeName) {
-        theReductionTypeName = aReductionTypeName;
+        return reductionTypeName;
     }
 
     @Comment("Поток обслуживания (текст)")
     @Persist
     public String getServiceStreamName() {
-        return theServiceStreamName;
-    }
-
-    public void setServiceStreamName(String aServiceStreamName) {
-        theServiceStreamName = aServiceStreamName;
+        return serviceStreamName;
     }
 
     @Comment("Профиль коек (текст)")
     @Persist
     public String getBedTypeName() {
-        return theBedTypeName;
-    }
-
-    public void setBedTypeName(String aBedTypeName) {
-        theBedTypeName = aBedTypeName;
+        return bedTypeName;
     }
 
     @Comment("Тип госпитального обслуживания (текст)")
     @Persist
     public String getServiceTypeName() {
-        return theServiceTypeName;
-    }
-
-    public void setServiceTypeName(String aServiceTypeName) {
-        theServiceTypeName = aServiceTypeName;
+        return serviceTypeName;
     }
 
     @Comment("Время окончания актуальности")
     @Persist
     public String getVTE() {
-        return theVTE;
-    }
-
-    public void setVTE(String aVTE) {
-        theVTE = aVTE;
+        return vTE;
     }
 
     @Comment("Время начала актуальности")
     @Persist
     public String getVTS() {
-        return theVTS;
-    }
-
-    public void setVTS(String aVTS) {
-        theVTS = aVTS;
+        return vTS;
     }
 
     @Comment("Дата начала актуальности")
@@ -188,11 +138,7 @@ public class BedFundForm extends IdEntityForm {
     @DateString
     @DoDateString
     public String getDateStart() {
-        return theDateStart;
-    }
-
-    public void setDateStart(String aDateStart) {
-        theDateStart = aDateStart;
+        return dateStart;
     }
 
     @Comment("Время начала актуальности")
@@ -201,11 +147,7 @@ public class BedFundForm extends IdEntityForm {
     @TimeString
     @DoTimeString
     public String getTimeStart() {
-        return theTimeStart;
-    }
-
-    public void setTimeStart(String aTimeStart) {
-        theTimeStart = aTimeStart;
+        return timeStart;
     }
 
     @Comment("Дата окончания актуальности")
@@ -213,11 +155,7 @@ public class BedFundForm extends IdEntityForm {
     @DateString
     @DoDateString
     public String getDateFinish() {
-        return theDateFinish;
-    }
-
-    public void setDateFinish(String aDateFinish) {
-        theDateFinish = aDateFinish;
+        return dateFinish;
     }
 
     @Comment("Время окончания актуальности")
@@ -225,72 +163,44 @@ public class BedFundForm extends IdEntityForm {
     @TimeString
     @DoTimeString
     public String getTimeFinish() {
-        return theTimeFinish;
-    }
-
-    public void setTimeFinish(String aTimeFinish) {
-        theTimeFinish = aTimeFinish;
+        return timeFinish;
     }
 
     @Comment("Тип койки")
     @Persist
     @Required
     public Long getBedSubType() {
-        return theBedSubType;
-    }
-
-    public void setBedSubType(Long aBedSubType) {
-        theBedSubType = aBedSubType;
+        return bedSubType;
     }
 
     @Comment("Тип койки (текст)")
     @Persist
     public String getBedSubTypeName() {
-        return theBedSubTypeName;
-    }
-
-    public void setBedSubTypeName(String aBedSubTypeName) {
-        theBedSubTypeName = aBedSubTypeName;
+        return bedSubTypeName;
     }
 
     @Comment("День выписки и день поступления считать разными днями")
     @Persist
     public Boolean getAddCaseDuration() {
-        return theAddCaseDuration;
-    }
-
-    public void setAddCaseDuration(Boolean aAddCaseDuration) {
-        theAddCaseDuration = aAddCaseDuration;
+        return addCaseDuration;
     }
 
     @Comment("Реабилитационные")
     @Persist
     public Boolean getIsRehab() {
-        return theIsRehab;
-    }
-
-    public void setIsRehab(Boolean aIsRehab) {
-        theIsRehab = aIsRehab;
+        return isRehab;
     }
 
     @Comment("По умолчанию снилс врача генерации направлений для 263 приказа")
     @Persist
     public String getSnilsDoctorDirect263() {
-        return theSnilsDoctorDirect263;
-    }
-
-    public void setSnilsDoctorDirect263(String aSnilsDoctorDirect263) {
-        theSnilsDoctorDirect263 = aSnilsDoctorDirect263;
+        return snilsDoctorDirect263;
     }
 
     @Persist
     @Comment("Код адреса отделения")
     public String getDepartmentAddressCode() {
-        return theDepartmentAddressCode;
-    }
-
-    public void setDepartmentAddressCode(String aDepartmentAddressCode) {
-        theDepartmentAddressCode = aDepartmentAddressCode;
+        return departmentAddressCode;
     }
 
 }

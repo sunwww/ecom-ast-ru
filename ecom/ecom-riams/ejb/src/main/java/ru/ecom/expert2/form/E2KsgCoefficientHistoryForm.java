@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.E2KsgCoefficientHistory;
@@ -15,39 +16,36 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "КСГ", nameProperties = "id", view = "entityParentView-e2_vocKsgKuksg.do")
 @EntityFormSecurityPrefix("/Policy/E2")
 @Parent(property = "ksg", parentForm = VocKsgForm.class)
+@Setter
 public class E2KsgCoefficientHistoryForm extends IdEntityForm {
 
         /** КСГ */
         @Comment("КСГ")
         @Persist @Required
-        public Long getKsg() {return theKsg;}
-        public void setKsg(Long aKsg) {theKsg = aKsg;}
+        public Long getKsg() {return ksg;}
         /** КСГ */
-        private Long theKsg ;
+        private Long ksg ;
 
         /** Дата начала действия */
         @Comment("Дата начала действия")
         @Persist @Required
         @DateString @DoDateString
-        public String getStartDate() {return theStartDate;}
-        public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
+        public String getStartDate() {return startDate;}
         /** Дата начала действия */
-        private String theStartDate ;
+        private String startDate ;
 
         /** Дата окончания действия */
         @Comment("Дата окончания действия")
         @Persist @Required
         @DateString @DoDateString
-        public String getFinishDate() {return theFinishDate;}
-        public void setFinishDate(String aFinishDate) {theFinishDate = aFinishDate;}
+        public String getFinishDate() {return finishDate;}
         /** Дата окончания действия */
-        private String theFinishDate ;
+        private String finishDate ;
 
         /** Управляющий коэффициент */
         @Comment("Управляющий коэффициент")
         @Persist @Required
-        public String getValue() {return theValue;}
-        public void setValue(String aValue) {theValue = aValue;}
+        public String getValue() {return value;}
         /** Управляющий коэффициент */
-        private String theValue;
+        private String value;
 }

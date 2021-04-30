@@ -28,17 +28,10 @@ public class ScriptServiceBean  implements IScriptService {
 	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
 	public Object invoke(String aServiceName, String aMethodName, Object[] args) {
-		if (CAN_DEBUG)
-			LOG.debug("invoke: " + aServiceName+"."+aMethodName+" () ");
-		for(Object o : args) {
-			if (CAN_DEBUG)
-				LOG.debug("invoke:      " + o); 
-
-		}
 
 		String jsResourceName = "/META-INF/scriptService/"+aServiceName+".js" ;
 		try {
-			InputStream inputStream = theEcomConfig.getInputStream(jsResourceName, EjbEcomConfig.SCRIPT_SERVICE_PREFIX, true) ;
+			InputStream inputStream = ecomConfig.getInputStream(jsResourceName, EjbEcomConfig.SCRIPT_SERVICE_PREFIX, true) ;
 			if(inputStream!=null) {
 				Context jsContext = Context.enter();
 				try (Reader in = new InputStreamReader(inputStream, "utf-8")) {
@@ -76,7 +69,7 @@ public class ScriptServiceBean  implements IScriptService {
 	
 
 	private Object[] createArguments(Object[] aInputArguments) {
-		ScriptServiceContext ctx = new ScriptServiceContext(theManager, theContext, theEjbInjection) ;
+		ScriptServiceContext ctx = new ScriptServiceContext(manager, context, ejbInjection) ;
 		Object[] args = new Object[aInputArguments.length+1] ;
 		args[0] = ctx ;
 		for(int i=0; i<aInputArguments.length; i++) {
@@ -86,13 +79,13 @@ public class ScriptServiceBean  implements IScriptService {
 		
 	}
 	
-	EjbEcomConfig theEcomConfig = EjbEcomConfig.getInstance(); 
+	EjbEcomConfig ecomConfig = EjbEcomConfig.getInstance(); 
 	@PersistenceContext
-	EntityManager theManager;
+	EntityManager manager;
 
 	@Resource
-	SessionContext theContext;
+	SessionContext context;
 	
-	private final EjbInjection theEjbInjection = EjbInjection.getInstance();
+	private final EjbInjection ejbInjection = EjbInjection.getInstance();
 	
 }

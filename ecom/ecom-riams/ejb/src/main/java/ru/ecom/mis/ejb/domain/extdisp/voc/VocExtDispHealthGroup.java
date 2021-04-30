@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.extdisp.voc;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -13,52 +15,30 @@ import javax.persistence.Table;
 	@Comment("Справочник групп здоровья дополнительной диспансеризации")
 @Entity
 @Table(schema="SQLUser")
+	@Getter
+	@Setter
 public class VocExtDispHealthGroup extends VocBaseEntity{
 	/**
 	 * Номер строки карты дополнительной диспансеризации
 	 */
-	@Comment("Номер строки карты дополнительной диспансеризации")
-	public String getCardStringNumber() {
-		return theCardStringNumber;
-	}
-	public void setCardStringNumber(String aCardStringNumber) {
-		theCardStringNumber = aCardStringNumber;
-	}
-	/**
-	 * Номер строки карты дополнительной диспансеризации
-	 */
-	private String theCardStringNumber;
+	private String cardStringNumber;
 	/**
 	 * Тип дополнительной диспансеризации
 	 */
 	@Comment("Тип дополнительной диспансеризации")
 	@OneToOne
-	public VocExtDisp getDispType() {return theDispType;}
-	public void setDispType(VocExtDisp aDispType) {theDispType = aDispType;}
+	public VocExtDisp getDispType() {return dispType;}
 	/**
 	 * Тип дополнительной диспансеризации
 	 */
-	private VocExtDisp theDispType;
-	/** Код диспансеризации */
-	@Comment("Код диспансеризации")
-	public String getDispCode() {return theDispCode;}
-	public void setDispCode(String aDispCode) {theDispCode = aDispCode;}
+	private VocExtDisp dispType;
 
 	/** Код диспансеризации */
-	private String theDispCode;
+	private String dispCode;
 	
 	/** Архивная */
-	@Comment("Архивная")
-	public Boolean getIsArchival() {return theIsArchival;}
-	public void setIsArchival(Boolean aIsArchival) {theIsArchival = aIsArchival;}
-	/** Архивная */
-	private Boolean theIsArchival;
+	private Boolean isArchival;
 	
 	/** Срок действия */
-	@Comment("Срок действия")
-	public Long getValidityDays() {return theValidityDays;}
-	public void setValidityDays(Long aValidityDays) {theValidityDays = aValidityDays;}
-
-	/** Срок действия */
-	private Long theValidityDays;
+	private Long validityDays;
 }

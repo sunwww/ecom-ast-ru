@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.calc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.calc.Calculations;
@@ -18,47 +19,42 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 , nameProperties= "id", list="entityParentList-calculations.do", view="entityParentView-calc_calculations.do")
 @Parent(property="calculator", parentForm=CalculatorForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Calc/Calculator")
+@Setter
 public class CalculationsForm extends IdEntityForm{
 	
 	/** Калькулятор */
 	@Comment("Калькулятор")
 	@Persist
-	public Long getCalculator() {return theCalculator;}
-	public void setCalculator(Long aCalculator) {theCalculator = aCalculator;}
-	private Long theCalculator;
+	public Long getCalculator() {return calculator;}
+	private Long calculator;
 	
 	/** Тип */
 	@Comment("Тип")
 	@Persist
-	public Long getType() {return theType;}
-	public void setType(Long aType) {theType = aType;}
-	private Long theType;
+	public Long getType() {return type;}
+	private Long type;
 	
 	/** Порядок */
 	@Comment("Порядок")
 	@Persist
-	public Long getOrderus() {return theOrderus;}
-	public void setOrderus(Long aOrderus) {theOrderus = aOrderus;}
-	private Long theOrderus;
+	public Long getOrderus() {return orderus;}
+	private Long orderus;
 	
 	/** Значение */
 	@Comment("Значение")
 	@Persist
-	public String getValue() {return theValue;}
-	public void setValue(String aValue) {theValue = aValue;	}
-	private String theValue;
+	public String getValue() {return value;}
+	private String value;
 	
 	/** Комментарий */
 	@Comment("Комментарий")
 	@Persist
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
-	private String theComment;
+	public String getComment() {return comment;}
+	private String comment;
 
 	/** Примечание */
 	@Comment("Примечание")
 	@Persist
-	public String getNote() {return theNote;}
-	public void setNote(String aNote) {theNote = aNote;}
-	private String theNote;
+	public String getNote() {return note;}
+	private String note;
 }

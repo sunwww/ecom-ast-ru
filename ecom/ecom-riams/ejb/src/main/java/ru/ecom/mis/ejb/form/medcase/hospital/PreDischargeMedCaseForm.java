@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
@@ -28,113 +29,100 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @ASaveInterceptors(
         @AEntityFormInterceptor(PreDischargeMedCaseSaveInterceptor.class)
 )
+@Setter
 public class PreDischargeMedCaseForm extends DischargeMedCaseForm {
 	/** Причина выписки */
 	@Comment("Причина выписки")
 	@Persist
-	public Long getReasonDischarge() {return theReasonDischarge;}
-	public void setReasonDischarge(Long aReasonDischarge) {theReasonDischarge = aReasonDischarge;}
+	public Long getReasonDischarge() {return reasonDischarge;}
 
 	/** Причина выписки */
-	private Long theReasonDischarge;
+	private Long reasonDischarge;
 
 	/** Время выписки */
 	@Comment("Время выписки")
 	@TimeString @DoTimeString
-	public String getDischargeTime() {return theDischargeTime;}
-	public void setDischargeTime(String aDischargeTime) {theDischargeTime = aDischargeTime;	}
+	public String getDischargeTime() {return dischargeTime;}
 
 	/** Результат госпитализации */
 	@Comment("Результат госпитализации")
 	@Persist 
-	public Long getResult() {return theResult;	}
-	public void setResult(Long aResult) {theResult = aResult;}
-	
+	public Long getResult() {return result;	}
+
 	/** Дата окончания */
 	@Comment("Дата окончания")
 	@Persist @DateString @DoDateString
-	public String getDateFinish() {return theDateFinish;}
-	public void setDateFinish(String aDateFinish) {theDateFinish = aDateFinish;}
-	
+	public String getDateFinish() {return dateFinish;}
+
 	/** Куда переведен */
 	@Comment("Куда переведен")
 	@Persist
-	public Long getTargetHospType() {return theTargetHospType;}
-	public void setTargetHospType(Long aTargetHospType) {theTargetHospType = aTargetHospType;}
-	
+	public Long getTargetHospType() {return targetHospType;}
+
 	/** Клинический диагноз */
 	@Comment("Клинический диагноз")
-	public String getClinicalDiagnos() {return theClinicalDiagnos;}
-	public void setClinicalDiagnos(String aClinicalDiagnos) {theClinicalDiagnos = aClinicalDiagnos;}
+	public String getClinicalDiagnos() {return clinicalDiagnos;}
 
 	/** Клинический диагноз по МКБ-10 */
 	@Comment("Клинический диагноз по МКБ-10")
-	@Mkb(clazz="VocIdc10",field="code")
-	public Long getClinicalMkb() {return theClinicalMkb;}
-	public void setClinicalMkb(Long aClinicalMkb) {theClinicalMkb = aClinicalMkb;}
+	@Mkb()
+	public Long getClinicalMkb() {return clinicalMkb;}
 
 	/** Патанатомический диагноз */
 	@Comment("Патанатомический диагноз")
-	public String getPathanatomicalDiagnos() {return thePathanatomicalDiagnos;}
-	public void setPathanatomicalDiagnos(String aPathanatomicalDiagnos) {thePathanatomicalDiagnos = aPathanatomicalDiagnos;}
-	
+	public String getPathanatomicalDiagnos() {return pathanatomicalDiagnos;}
+
 	/** Патанатомический диагноз по МКБ-10 */
 	@Comment("Патанатомический диагноз по МКБ-10")
-	@Mkb(clazz="VocIdc10",field="code")
-	public Long getPathanatomicalMkb() {return thePathanatomicalMkb;}
-	public void setPathanatomicalMkb(Long aPathanatomicalMkb) {thePathanatomicalMkb = aPathanatomicalMkb;}
+	@Mkb()
+	public Long getPathanatomicalMkb() {return pathanatomicalMkb;}
 
 	/** Заключительный диагноз */
 	@Comment("Заключительный диагноз")
-	public String getConcludingDiagnos() {return theConcludingDiagnos;}
-	public void setConcludingDiagnos(String aConcludingDiagnos) {theConcludingDiagnos = aConcludingDiagnos;}
+	public String getConcludingDiagnos() {return concludingDiagnos;}
 
 	/** Заключительный диагноз по МКБ-10 */
 	@Comment("Заключительный диагноз по МКБ-10")
-	@Mkb(clazz="VocIdc10",field="code") 
-	public Long getConcludingMkb() {return theConcludingMkb;}
-	public void setConcludingMkb(Long aConcludingMkb) {theConcludingMkb = aConcludingMkb;}
+	@Mkb()
+	public Long getConcludingMkb() {return concludingMkb;}
 
 	/** Исход госпитализации */
 	@Comment("Исход госпитализации")
 	@Persist 
-	public Long getOutcome() {	return theOutcome;}
-	public void setOutcome(Long aOutcome) {theOutcome = aOutcome;	}
-	
+	public Long getOutcome() {	return outcome;}
+
 	/** Острота диагноза клинического */
 	@Comment("Острота диагноза клинического")
-	public Long getClinicalActuity() {return theClinicalActuity;}
-	public void setClinicalActuity(Long aClinicalActuity) {theClinicalActuity = aClinicalActuity;}
+	public Long getClinicalActuity() {return clinicalActuity;}
 
 	/** Острота диагноза заключительного */
 	@Comment("Острота диагноза клинического")
-	public Long getConcludingActuity() {return theConcludingActuity;}
-	public void setConcludingActuity(Long aClinicalActuity) {theConcludingActuity = aClinicalActuity;}
+	public Long getConcludingActuity() {return concludingActuity;}
 
 	/** Острота диагноза заключительного */
-	private Long theConcludingActuity;
+	private Long concludingActuity;
 	/** Острота диагноза клинического */
-	private Long theClinicalActuity;
+	private Long clinicalActuity;
 	/** Исход госпитализации */
-	private Long theOutcome;
+	private Long outcome;
 	/** Заключительный диагноз по МКБ-10 */
-	private Long theConcludingMkb;
+	private Long concludingMkb;
 	/** Заключительный диагноз */
-	private String theConcludingDiagnos;
+	private String concludingDiagnos;
 	/** Патанатомический диагноз */
-	private String thePathanatomicalDiagnos;
+	private String pathanatomicalDiagnos;
 	/** Патанатомический диагноз по МКБ-10 */
-	private Long thePathanatomicalMkb;
+	private Long pathanatomicalMkb;
 	/** Клинический диагноз */
-	private String theClinicalDiagnos;
+	private String clinicalDiagnos;
 	/** Клинический диагноз по МКБ-10 */
-	private Long theClinicalMkb;
+	private Long clinicalMkb;
 	/** Куда переведен */
-	private Long theTargetHospType;
+	private Long targetHospType;
 	/** Дата окончания */
-	private String theDateFinish;
+	private String dateFinish;
 	/** Результат госпитализации */
-	private Long theResult;
+	private Long result;
 	/** Время выписки */
-	private String theDischargeTime;
+	private String dischargeTime;
 }

@@ -49,7 +49,7 @@ public class ImportEntity {
     }
 
     public void load(Element entity) {
-        theEntity = entity;
+        entity = entity;
     }
 
     
@@ -62,10 +62,10 @@ public class ImportEntity {
         inclev();
         try {
             String entityClassName = getEntityClassName();
-            keys = XPath.selectNodes(theEntity,"sync-record/key");
+            keys = XPath.selectNodes(entity,"sync-record/key");
             for (Element key : keys) {
                 ImportSyncKey importSyncKey = new ImportSyncKey();
-                importSyncKey.setImportLogger(theImportLogger);
+                importSyncKey.setImportLogger(importLogger);
                 importSyncKey.load(key,aManager);
                 importSyncKey.createQuery(aManager,entityClassName);
 
@@ -89,10 +89,10 @@ public class ImportEntity {
         log("Построение запросов синхронизации внешних ключей");
         inclev();
         try {
-            maps = XPath.selectNodes(theEntity,"maps/map");
+            maps = XPath.selectNodes(entity,"maps/map");
             for (Element map : maps) {
                 ImportMap importMap = new ImportMap();
-                importMap.setImportLogger(theImportLogger);
+                importMap.setImportLogger(importLogger);
                 importMap.load(map,aManager);
                 list.add(importMap);
             }
@@ -105,7 +105,7 @@ public class ImportEntity {
     }
 
     public String getEntityClassName() {
-        return theEntity.getAttributeValue("entityClass","");
+        return entity.getAttributeValue("entityClass","");
     }
 
     public String getEntityName() throws ClassNotFoundException {
@@ -114,32 +114,32 @@ public class ImportEntity {
     }
 
     public String getMatch() {
-        return theEntity.getAttributeValue("match","*/result/row");
+        return entity.getAttributeValue("match","*/result/row");
     }
 
     public String getTableName() {
-        return theEntity.getAttributeValue("table","");
+        return entity.getAttributeValue("table","");
     }
 
     public String getFormat() {
-        if (theEntity.getAttribute("match")!=null) return "xml";
-        if (theEntity.getAttribute("table")!=null) return "dbf";
+        if (entity.getAttribute("match")!=null) return "xml";
+        if (entity.getAttribute("table")!=null) return "dbf";
         throw new IllegalStateException("Uknown format: no match or table artribute found ");
     }
 
     public long getCount(Object xDocument) throws JDOMException {
-        String countMatch = theEntity.getAttributeValue("count","count("+getMatch()+")");
+        String countMatch = entity.getAttributeValue("count","count("+getMatch()+")");
         XPath path = XPath.newInstance(countMatch);
         Number number = path.numberValueOf(xDocument);
         return number.longValue();
     }
 
     public boolean isDebug() {
-        return theEntity.getAttribute("debug")!=null;
+        return entity.getAttribute("debug")!=null;
     }
 
     public long getDebugCount() {
-        Attribute attribute = theEntity.getAttribute("debug");
+        Attribute attribute = entity.getAttribute("debug");
         if (attribute != null) {
             String value = attribute.getValue();
             if (value.equals(""))
@@ -152,12 +152,12 @@ public class ImportEntity {
 
 
 
-    private void log(String message) { theImportLogger.log(message);  }
-    private void inclev() { theImportLogger.inclev(); }
-    private void declev() { theImportLogger.declev(); }
-    public ImportLogger getImportLogger() { return theImportLogger ; }
-    public void setImportLogger(ImportLogger aImportLogger) { theImportLogger = aImportLogger ; }
+    private void log(String message) { importLogger.log(message);  }
+    private void inclev() { importLogger.inclev(); }
+    private void declev() { importLogger.declev(); }
+    public ImportLogger getImportLogger() { return importLogger ; }
+    public void setImportLogger(ImportLogger aImportLogger) { importLogger = aImportLogger ; }
 
-    private ImportLogger theImportLogger ;
-    private Element theEntity;
+    private ImportLogger importLogger ;
+    private Element entity;
 }

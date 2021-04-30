@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.worker;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.worker.JournalPatternCalendar;
@@ -19,69 +20,61 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Журнал шаблона  календаря", nameProperties= "info", view="entityParentView-work_journalPatternCalendar.do")
 @Parent(property="workCalendar", parentMapForm="$$map$$cal_workCalendarForm")
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/WorkCalendar/JournalPattern")
+@Setter
 public class JournalPatternCalendarForm extends IdEntityForm {
 
 	/** Шаблон календаря */
 	@Comment("Шаблон календаря")
 	@Persist 
-	public Long getPattern() {return thePattern;}
-	public void setPattern(Long aPattern) {thePattern = aPattern;}
+	public Long getPattern() {return pattern;}
 
 	/** Дата начала действия */
 	@Comment("Дата начала действия")
 	@Persist @Required @DateString @DoDateString
-	public String getDateFrom() {return theDateFrom;}
-	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
+	public String getDateFrom() {return dateFrom;}
 
 	/** Дата окончания действия */
 	@Comment("Дата окончания действия")
 	@Persist @Required @DateString @DoDateString
-	public String getDateTo() {return theDateTo;}
-	public void setDateTo(String aDateTo) {theDateTo = aDateTo;}
-	
+	public String getDateTo() {return dateTo;}
+
 	/** Информация */
 	@Comment("Информация")
 	@Persist
-	public String getInfo() {return theInfo;}
-	public void setInfo(String aInfo) {theInfo = aInfo;}
+	public String getInfo() {return info;}
 
 	/** Не действует */
 	@Comment("Не действует")
 	@Persist
-	public Boolean getNoActive() {return theNoActive;}
-	public void setNoActive(Boolean aNoActive) {theNoActive = aNoActive;}
+	public Boolean getNoActive() {return noActive;}
 
 	/** Рабочий календарь */
 	@Comment("Рабочий календарь")
 	@Persist
-	public Long getWorkCalendar() {return theWorkCalendar;}
-	public void setWorkCalendar(Long aWorkCalendar) {theWorkCalendar = aWorkCalendar;}
+	public Long getWorkCalendar() {return workCalendar;}
 
 	/** Рабочий календарь */
-	private Long theWorkCalendar;
+	private Long workCalendar;
 	/** Не действует */
-	private Boolean theNoActive;
+	private Boolean noActive;
 	/** Информация */
-	private String theInfo;
+	private String info;
 	/** Дата окончания действия */
-	private String theDateTo;
+	private String dateTo;
 	/** Дата начала действия */
-	private String theDateFrom;
+	private String dateFrom;
 	/** Шаблон календаря */
-	private Long thePattern;
+	private Long pattern;
 	/**
 	 * Тип занятости
 	 */
 	@Comment("Тип занятости")
 	@Persist @Required
 	public Long getWorkBusy() {
-		return theWorkBusy;
-	}
-	public void setWorkBusy(Long aWorkBusy) {
-		theWorkBusy = aWorkBusy;
+		return workBusy;
 	}
 	/**
 	 * Тип занятости
 	 */
-	private Long theWorkBusy;
+	private Long workBusy;
 }

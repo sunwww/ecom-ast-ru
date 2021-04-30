@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.diet;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.diet.voc.VocMealTime;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
@@ -19,66 +21,55 @@ import java.util.List;
 @Comment("Меню блюд")
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public abstract class MealMenu extends BaseEntity{
 			
 	/** Блюда */
 	@Comment("Блюда")
 	@OneToMany(mappedBy="menu", cascade=CascadeType.ALL)
-	public List<DishMealMenu> getDishes() {return theDishes;}
-	public void setDishes(List<DishMealMenu> aDishes) {theDishes = aDishes;}
+	public List<DishMealMenu> getDishes() {return dishes;}
 
-	
-	/** Дата начала действия */
-	@Comment("Дата начала действия")
-	public Date getDateFrom() {return theDateFrom;}
-	public void setDateFrom(Date aDateFrom) {theDateFrom = aDateFrom;}
-	
 	/** Вид приема пищи */
 	@Comment("Вид приема пищи")
 	@OneToOne
-	public VocMealTime getMealTime() {return theMealTime;}
-	public void setMealTime(VocMealTime aMealTime) {theMealTime = aMealTime;}
-	
+	public VocMealTime getMealTime() {return mealTime;}
+
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@OneToOne
-	public VocServiceStream getServiceStream() {return theServiceStream;}
-	public void setServiceStream(VocServiceStream aServiceStream) {theServiceStream = aServiceStream;}
+	public VocServiceStream getServiceStream() {return serviceStream;}
 
 	
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@OneToOne
-	public MisLpu getLpu() {return theLpu;}
-	public void setLpu(MisLpu aLpu) {theLpu = aLpu;	}
+	public MisLpu getLpu() {return lpu;}
 
 	
 	/** Диета */
 	@Comment("Диета")
 	@ManyToOne
-	public Diet getDiet() {return theDiet;}
-	public void setDiet(Diet aDiet) {theDiet = aDiet;}
+	public Diet getDiet() {return diet;}
 
-	//// Вычисляемые поля
-	
 	/** Название диеты */
 	@Comment("Название диеты")
 	@Transient
 	public String getDietName() {
-		return theDiet!=null?theDiet.getName():"";
+		return diet!=null?diet.getName():"";
 	}
 	
 	/** Название потока обслуживания */
 	@Comment("Название потока обслуживания")
 	@Transient
 	public String getServiceStreamName() {
-		return theServiceStream!=null ? theServiceStream.getName() : "" ;
+		return serviceStream!=null ? serviceStream.getName() : "" ;
 	}
 	/** Название приема пищи */
 	@Comment("Название приема пищи")
 	@Transient
 	public String getMealTimeName() {
-		return theMealTime!=null? theMealTime.getName():"";
+		return mealTime!=null? mealTime.getName():"";
 	}
 
 		
@@ -104,17 +95,17 @@ public abstract class MealMenu extends BaseEntity{
 	}
 
 	/** Блюда */
-	private List<DishMealMenu> theDishes; 
+	private List<DishMealMenu> dishes; 
 	/** Дата начала действия */
-	private Date theDateFrom;
+	private Date dateFrom;
 	/** Вид приема пищи */
-	private VocMealTime theMealTime;
+	private VocMealTime mealTime;
 	/** Поток обслуживания */
-	private VocServiceStream theServiceStream;
+	private VocServiceStream serviceStream;
 	/** ЛПУ */
-	private MisLpu theLpu;
+	private MisLpu lpu;
 	/** Диета */
-	private Diet theDiet;
+	private Diet diet;
 	
 
 }

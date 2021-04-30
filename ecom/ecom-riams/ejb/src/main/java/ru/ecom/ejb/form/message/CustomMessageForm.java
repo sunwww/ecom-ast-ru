@@ -1,5 +1,7 @@
 package ru.ecom.ejb.form.message;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.live.domain.CustomMessage;
@@ -19,138 +21,122 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Comment("Сообщения")
 @EntityFormSecurityPrefix("/Policy/Mis/CustomMessage")
 @WebTrail(comment="Сообщения", nameProperties="messageTitle", view="entityView-mis_customMessage.do")
+@Setter
 public class CustomMessageForm extends IdEntityForm{
     /** Пользователь */
 	@Comment("Пользователь")
 	@Persist
-	public String getUsername() {return theUsername;}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
+	public String getUsername() {return username;}
 
 	/** Дата получения */
 	@Comment("Дата получения")
 	@DateString @DoDateString @Persist
-	public String getDateReceipt() {return theDateReceipt;}
-	public void setDateReceipt(String aDateReceipt) {theDateReceipt = aDateReceipt;}
+	public String getDateReceipt() {return dateReceipt;}
 
 	/** Время получения */
 	@Comment("Время получения")
 	@TimeString @DoTimeString @Persist
-	public String getTimeReceipt() {return theTimeReceipt;}
-	public void setTimeReceipt(String aTimeReceipt) {theTimeReceipt = aTimeReceipt;}
+	public String getTimeReceipt() {return timeReceipt;}
 
 	/** Дата отправки сообщения */
 	@Comment("Дата отправки сообщения")
 	@DateString @DoDateString @Persist
-	public String getDispatchDate() {return theDispatchDate;}
-	public void setDispatchDate(String aDispatchDate) {theDispatchDate = aDispatchDate;}
+	public String getDispatchDate() {return dispatchDate;}
 
 	/** Время отправки сообщения */
 	@Comment("Время отправки сообщения")
 	@TimeString @DoTimeString @Persist
-	public String getDispatchTime() {return theDispatchTime;}
-	public void setDispatchTime(String aDispatchTime) {theDispatchTime = aDispatchTime;}
+	public String getDispatchTime() {return dispatchTime;}
 
 	/** Текст сообщения */
 	@Comment("Текст сообщения")
 	@Persist @Required
-	public String getMessageText() {return theMessageText;}
-	public void setMessageText(String aMessageText) {theMessageText = aMessageText;}
+	public String getMessageText() {return messageText;}
 
 	/** Заголовок */
 	@Comment("Заголовок")
 	@Persist @Required
-	public String getMessageTitle() {return theMessageTitle;}
-	public void setMessageTitle(String aMessageTitle) {theMessageTitle = aMessageTitle;}
+	public String getMessageTitle() {return messageTitle;}
 
 	/** Получатель */
 	@Comment("Получатель")
 	@Persist
-	public String getRecipient() {return theRecipient;}
-	public void setRecipient(String aRecipient) {theRecipient = aRecipient;}
+	public String getRecipient() {return recipient;}
 
 	/** Срок действия */
 	@Comment("Срок действия")
 	@DateString @DoDateString @Persist
-	public String getValidityDate() {return theValidityDate;}
-	public void setValidityDate(String aValidityDate) {theValidityDate = aValidityDate;}
-	
+	public String getValidityDate() {return validityDate;}
+
 	/** Системное сообшение */
 	@Comment("Системное сообшение")
 	@Persist
-	public Boolean getIsSystem() {return theIsSystem;}
-	public void setIsSystem(Boolean aIsSystem) {theIsSystem = aIsSystem;}
+	public Boolean getIsSystem() {return isSystem;}
 
 	/** Всем пользователям */
 	@Comment("Всем пользователям")
-	public Boolean getIsAllUsers() {return theIsAllUsers;}
-	public void setIsAllUsers(Boolean aIsAllUsers) {theIsAllUsers = aIsAllUsers;}
+	public Boolean getIsAllUsers() {return isAllUsers;}
 
 	/** Роль */
 	@Comment("Роль")
-	public Long getSecRole() {return theSecRole;}
-	public void setSecRole(Long aSecRole) {theSecRole = aSecRole;}
+	public Long getSecRole() {return secRole;}
 
 	/** Пользователь */
 	@Comment("Пользователь")
-	public Long getSecUser() {return theSecUser;}
-	public void setSecUser(Long aSecUser) {theSecUser = aSecUser;}
+	public Long getSecUser() {return secUser;}
 
 	/** Url */
 	@Comment("Url")
 	@Persist
-	public String getMessageUrl() {return theMessageUrl;}
-	public void setMessageUrl(String aUrl) {theMessageUrl = aUrl;}
+	public String getMessageUrl() {return messageUrl;}
 
 	/** Url */
-	private String theMessageUrl;
+	private String messageUrl;
 	/** Пользователь */
-	private Long theSecUser;
+	private Long secUser;
 	/** Роль */
-	private Long theSecRole;
+	private Long secRole;
 	/** Всем пользователям */
-	private Boolean theIsAllUsers;
+	private Boolean isAllUsers;
 	/** Системное сообшение */
-	private Boolean theIsSystem;
+	private Boolean isSystem;
 	/** Срок действия */
-	private String theValidityDate;
+	private String validityDate;
 	/** Получатель */
-	private String theRecipient;
+	private String recipient;
 	/** Заголовок */
-	private String theMessageTitle;
+	private String messageTitle;
 	/** Текст сообщения */
-	private String theMessageText;
+	private String messageText;
 	/** Время отправки сообщения */
-	private String theDispatchTime;
+	private String dispatchTime;
 	/** Дата отправки сообщения */
-	private String theDispatchDate;
+	private String dispatchDate;
 	/** Время получения */
-	private String theTimeReceipt;
+	private String timeReceipt;
 	/** Дата получения */
-	private String theDateReceipt;
+	private String dateReceipt;
 	/** Пользователь */
-	private String theUsername;
+	private String username;
 	/** Эксренное */
 	@Comment("Эксренное")
 	@Persist
-	public Boolean getIsEmergency() {return theIsEmergency;}
-	public void setIsEmergency(Boolean aIsEmergency) {theIsEmergency = aIsEmergency;}
+	public Boolean getIsEmergency() {return isEmergency;}
 
 	/** Эксренное */
-	private Boolean theIsEmergency;
+	private Boolean isEmergency;
 	
 	/** Время действия */
 	@Comment("Время действия")
 	@Persist @TimeString @DoTimeString
-	public String getValidityTime() {return theValidityTime;}
-	public void setValidityTime(String aValidityTime) {theValidityTime = aValidityTime;}
+	public String getValidityTime() {return validityTime;}
 
 	/** Время действия */
-	private String theValidityTime;
+	private String validityTime;
 
 	/** Список отделений */
 	@Comment("Список отделений")
-	public String getLpus() {return theLpus;}
-	public void setLpus(String aLpus) {theLpus = aLpus;}
+	public String getLpus() {return lpus;}
 	/** Список отделений */
-	private String theLpus;
+	private String lpus;
 }

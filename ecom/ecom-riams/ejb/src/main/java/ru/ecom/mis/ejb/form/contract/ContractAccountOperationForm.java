@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -20,156 +21,137 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/ContractAccountOperation")
 @Subclasses({OperationAccrualForm.class,OperationReservationForm.class
 	,OperationReturnForm.class,OperationWriteOffForm.class})
+@Setter
 public class ContractAccountOperationForm extends IdEntityForm {
 
 	/** Номер телефона для чека */
 	@Comment("Номер телефона для чека")
 	@Persist
-	public String getCustomerPhone() {return theCustomerPhone;}
-	public void setCustomerPhone(String aCustomerPhone) {theCustomerPhone = aCustomerPhone;}
+	public String getCustomerPhone() {return customerPhone;}
 	/** Номер телефона для чека */
-	private String theCustomerPhone ;
+	private String customerPhone ;
 
 	/** Тип операции */
 	@Comment("Тип операции")
-	public Long getType() {return theType;}
-	public void setType(Long aType) {theType = aType;}
+	public Long getType() {return type;}
 	/** Тип операции*/
-	private Long theType;
+	private Long type;
 	
 	/** Договорной счет */
 	@Comment("Договорной счет")
 	@Persist
-	public Long getAccount() {return theAccount;}
-	public void setAccount(Long aAccount) {theAccount = aAccount;}
+	public Long getAccount() {return account;}
 	/** Договорной счет */
-	private Long theAccount;
+	private Long account;
 	/** Дата */
 	@Comment("Дата")
 	@Persist @DateString @DoDateString
-	public String getOperationDate() {return theOperationDate;}
-	public void setOperationDate(String aOperationDate) {theOperationDate = aOperationDate;}
+	public String getOperationDate() {return operationDate;}
 	/** Дата */
-	private String theOperationDate;
+	private String operationDate;
 	/** Время операции */
 	@Comment("Время операции")
 	@Persist @TimeString @DoTimeString
-	public String getOperationTime() {return theOperationTime;}
-	public void setOperationTime(String aOperationTime) {theOperationTime = aOperationTime;}
+	public String getOperationTime() {return operationTime;}
 	/** Время операции */
-	private String theOperationTime;
+	private String operationTime;
 	/** Стоимость */
 	@Comment("Стоимость")
 	@Required @Persist
-	public String getCost() {return theCost;}
-	public void setCost(String aCost) {theCost = aCost;}
+	public String getCost() {return cost;}
 	
 	/** Стоимость */
-	private String theCost;
+	private String cost;
 
 	/** Отменившая операция	 */
 	@Comment("Отменившая операция")
 	@Persist
-	public Long getRepealOperation() {return theRepealOperation;}
-	public void setRepealOperation(Long aRepealOperation) {theRepealOperation = aRepealOperation;}
+	public Long getRepealOperation() {return repealOperation;}
 	/** Отменившая операция */
-	private Long theRepealOperation;
+	private Long repealOperation;
 	/** Оператор */
 	@Comment("Оператор")
 	@Persist
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public Long getWorkFunction() {return workFunction;}
 	/** Оператор */
-	private Long theWorkFunction;
+	private Long workFunction;
 	/** Скидка */
 	@Comment("Скидка")
 	@Persist
-	public String getDiscount() {return theDiscount;}
-	public void setDiscount(String aDiscount) {theDiscount = aDiscount;}
+	public String getDiscount() {return discount;}
 	/** Скидка */
-	private String theDiscount;
+	private String discount;
 	
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DoDateString @DateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	public String getCreateDate() {return createDate;}
 	
 	/** Время создания */
 	@Comment("Время создания")
 	@Persist @DoTimeString @TimeString
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;}
 	
 	/** Пользователь, создавший запись */
 	@Comment("Пользователь, создавший запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 	
 	/** Дата последнего изменения */
 	@Comment("Дата последнего изменения")
 	@Persist @DoDateString @DateString
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	public String getEditDate() {return editDate;}
 	
 	/** Время, последнего изменения */
 	@Comment("Время, последнего изменения")
 	@Persist @DoTimeString @TimeString
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+	public String getEditTime() {return editTime;}
 	
 	/** Пользователь, последний изменивший запись */
 	@Comment("Пользователь, последний изменивший запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Пользователь, последний изменивший запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Время, последнего изменения */
-	private String theEditTime;
+	private String editTime;
 	/** Дата последнего изменения */
-	private String theEditDate;
+	private String editDate;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	
 	/** Услуги */
 	@Comment("Услуги")
-	public String getMedServicies() {return theMedServicies;}
-	public void setMedServicies(String aMedServicies) {theMedServicies = aMedServicies;}
+	public String getMedServicies() {return medServicies;}
 	/** Услуги */
-	private String theMedServicies;
+	private String medServicies;
 	
 	@Comment("Оплата терминалом")
 	@Persist
-	public Boolean getIsPaymentTerminal() {return theIsPaymentTerminal;}
-	public void setIsPaymentTerminal(Boolean aIsPaymentTerminal) {theIsPaymentTerminal = aIsPaymentTerminal;}
+	public Boolean getIsPaymentTerminal() {return isPaymentTerminal;}
 	/** Оплата терминалом */
-	private Boolean theIsPaymentTerminal;
+	private Boolean isPaymentTerminal;
 
 	/** Номер договора */
 	@Comment("Номер договора")
-	public String getContractNumber() {return theContractNumber;}
-	public void setContractNumber(String aContractNumber) {theContractNumber=aContractNumber;}
+	public String getContractNumber() {return contractNumber;}
 	/** Номер договора */
-	private String theContractNumber;
+	private String contractNumber;
 
 	/** Дата договора */
 	@Comment("Дата договора")
-	public String getContractDate() {return theContractDate;}
-	public void setContractDate(String aContractDate) {theContractDate = aContractDate;}
+	public String getContractDate() {return contractDate;}
 	/** Дата договора */
-	private String theContractDate ;
+	private String contractDate ;
 
 	/** Заказчик */
 	@Comment("Заказчик")
-	public String getContractCustomer() {return theContractCustomer;}
-	public void setContractCustomer(String aContractCustomer) {theContractCustomer = aContractCustomer;}
+	public String getContractCustomer() {return contractCustomer;}
 	/** Заказчик */
-	private String theContractCustomer ;
+	private String contractCustomer ;
 }

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase.listwatch;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -15,20 +17,20 @@ import javax.persistence.Table;
 @Comment("Пациенты, которых надо наблюдать")
 @Entity 
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class PatientWatch extends BaseEntity{
 	
 	/** СЛС */
 	@Comment("СЛС")
 	@OneToOne
-	public MedCase getMedCase() {return theMedCase;	}
-	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
-	private MedCase theMedCase; 
+	public MedCase getMedCase() {return medCase;	}
+	private MedCase medCase;
 
 	/** Лист наблюдения */
 	@Comment("Лист наблюдения")
 	@OneToOne
-	public ListWatch getListWatch() {return thegetListWatch;}
-	public void setListWatch(ListWatch aListWatch) {thegetListWatch = aListWatch;}
+	public ListWatch getListWatch() {return listWatch;}
 	/** Лист наблюдения */
-	private ListWatch thegetListWatch; 
+	private ListWatch listWatch;
 }

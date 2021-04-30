@@ -6,71 +6,35 @@ import java.sql.Time;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Comment("Госпитализации данные фонда таблица импорта")
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class FondImport extends BaseEntity{
 	/** Дата импорта */
-	@Comment("Дата импорта")
-	public Date getImportDate() {return theImportDate;}
-	public void setImportDate(Date aImportDate) {theImportDate = aImportDate;}
-
-	/** Дата импорта */
-	private Date theImportDate;
-	
-	/** Время импорта */
-	@Comment("Время импорта")
-	public Time getImportTime() {return theImportTime;}
-	public void setImportTime(Time aImportTime) {theImportTime = aImportTime;}
-
-	/** Пользователь */
-	@Comment("Пользователь")
-	public String getUsername() {return theUsername;}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
-
+	private Date importDate;
 	/** Таблица */
-	@Comment("Таблица")
-	public String getImportTable() {return theImportTable;}
-	public void setImportTable(String aImportTable) {theImportTable = aImportTable;}
-
-	/** Таблица */
-	private String theImportTable;
+	private String importTable;
 	/** Пользователь */
-	private String theUsername;
+	private String username;
 	/** Время импорта */
-	private Time theImportTime;
+	private Time importTime;
 	
 	/** Имя файла */
-	@Comment("Имя файла")
-	public String getFilename() {return theFilename;}
-	public void setFilename(String aFilename) {theFilename = aFilename;}
-
-	/** Имя файла */
-	private String theFilename;
+	private String filename;
 	
 	/** Кол-во импортируемых данных */
-	@Comment("Кол-во импортируемых данных")
-	public Long getCntImport() {return theCntImport;}
-	public void setCntImport(Long aCntImport) {theCntImport = aCntImport;}
-
-	/** Кол-во импортируемых данных */
-	private Long theCntImport;
+	private Long cntImport;
 	
 	/** Кол-во дефектных данных */
-	@Comment("Кол-во дефектных данных")
-	public Long getCntDefect() {return theCntDefect;}
-	public void setCntDefect(Long aCntDefect) {theCntDefect = aCntDefect;}
-
-	/** Кол-во дефектных данных */
-	private Long theCntDefect;
+	private Long cntDefect;
 	
 	/** Номер импорта */
-	@Comment("Номер импорта")
-	public String getImportNumber() {return theImportNumber;}
-	public void setImportNumber(String aImportNumber) {theImportNumber = aImportNumber;}
-	/** Номер импорта */
-	private String theImportNumber;
+	private String importNumber;
 }

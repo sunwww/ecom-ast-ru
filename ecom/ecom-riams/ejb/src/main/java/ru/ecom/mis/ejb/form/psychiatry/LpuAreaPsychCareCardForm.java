@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.psychiatry;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -25,6 +26,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(LpuAreaPsychPreCreateInterceptor.class)
 )
+@Setter
 public class LpuAreaPsychCareCardForm extends IdEntityForm {
 	 /**
 	  * Дата прихода на участок
@@ -32,192 +34,151 @@ public class LpuAreaPsychCareCardForm extends IdEntityForm {
 	 @Comment("Дата прихода на участок")
 	 @DateString @DoDateString @Persist @Required
 	 public String getStartDate() {
-	  return theStartDate;
-	 }
-	 public void setStartDate(String aStartDate) {
-	  theStartDate = aStartDate;
+	  return startDate;
 	 }
 	 /**
 	  * Дата прихода на участок
 	  */
-	 private String theStartDate;
+	 private String startDate;
 	 /**
 	  * Дата выбытия с участка
 	  */
 	 @Comment("Дата выбытия с участка")
 	 @DateString @DoDateString @Persist
 	 public String getFinishDate() {
-	  return theFinishDate;
-	 }
-	 public void setFinishDate(String aFinishDate) {
-	  theFinishDate = aFinishDate;
+	  return finishDate;
 	 }
 	 /**
 	  * Дата выбытия с участка
 	  */
-	 private String theFinishDate;
+	 private String finishDate;
 	 /**
 	  * Участок ЛПУ
 	  */
 	 @Comment("Участок ЛПУ")
 	 @Persist @Required
 	 public Long getLpuArea() {
-	  return theLpuArea;
-	 }
-	 public void setLpuArea(Long aLpuArea) {
-	  theLpuArea = aLpuArea;
+	  return lpuArea;
 	 }
 	 /**
 	  * Участок ЛПУ
 	  */
-	 private Long theLpuArea;
+	 private Long lpuArea;
 	 /**
 	  * Карта обративщегося за психиатрической помощью
 	  */
 	 @Comment("Карта обративщегося за психиатрической помощью")
 	 @Persist @Required
 	 public Long getCareCard() {
-	  return theCareCard;
-	 }
-	 public void setCareCard(Long aCareCard) {
-	  theCareCard = aCareCard;
+	  return careCard;
 	 }
 	 /**
 	  * Карта обративщегося за психиатрической помощью
 	  */
-	 private Long theCareCard;
+	 private Long careCard;
 	 
 	 /** Участок ЛПУ (ИНФО) */
 	@Comment("Участок ЛПУ (ИНФО)")
 	@Persist
 	public String getLpuAreaInfo() {
-		return theLpuAreaInfo;
-	}
-
-	public void setLpuAreaInfo(String aLpuAreaInfo) {
-		theLpuAreaInfo = aLpuAreaInfo;
+		return lpuAreaInfo;
 	}
 
 	 /** Дата перевода */
 	@Comment("Дата перевода")
 	@Persist @DateString @DoDateString
-	public String getTransferDate() {return theTransferDate;}
-	public void setTransferDate(String aTransferDate) {theTransferDate = aTransferDate;}
-	
+	public String getTransferDate() {return transferDate;}
+
 	/** Причина перевода */
 	@Comment("Причина перевода")
 	@Persist
-	public Long getTransferReason() {return theTransferReason;}
-	public void setTransferReason(Long aTransferReason) {theTransferReason = aTransferReason;}
-	
+	public Long getTransferReason() {return transferReason;}
+
 	/** Причина взятия */
 	@Comment("Причина взятия")
 	@Persist @Required
-	public Long getObservationReason() {return theObservationReason;}
-	public void setObservationReason(Long aObservationReason) {	theObservationReason = aObservationReason;}
-	
+	public Long getObservationReason() {return observationReason;}
+
 	/** Причина снятия с учета */
 	@Comment("Причина снятия с учета")
 	@Persist
-	public Long getStikeOffReason() {return theStikeOffReason;}
-	public void setStikeOffReason(Long aStikeOffReason) {theStikeOffReason = aStikeOffReason;}
+	public Long getStikeOffReason() {return stikeOffReason;}
 
 	/** Причина снятия с учета */
-	private Long theStikeOffReason;
+	private Long stikeOffReason;
 	/** Причина взятия */
-	private Long theObservationReason;
+	private Long observationReason;
 	/** Причина перевода */
-	private Long theTransferReason;
+	private Long transferReason;
 	/** Дата перевода */
-	private String theTransferDate;
+	private String transferDate;
 	/** Участок ЛПУ (ИНФО) */
-	private String theLpuAreaInfo;
+	private String lpuAreaInfo;
 	
 	 /** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DoDateString @DateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	public String getCreateDate() {return createDate;}
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@Persist @DoDateString @DateString
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	public String getEditDate() {return editDate;}
 	/** Пользователь, создавший запись */
 	@Comment("Пользователь, создавший запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 	/** Пользователь, последний редактировавший запись */
 	@Comment("Пользователь, последний редактировавший запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Пользователь, последний редактировавший запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	
 	/** Наблюдения */
 	@Comment("Наблюдения")
-	public Long getAmbulatoryCare() {return theAmbulatoryCare;}
-	public void setAmbulatoryCare(Long aObservation) {theAmbulatoryCare = aObservation;}
+	public Long getAmbulatoryCare() {return ambulatoryCare;}
 
 	/** Группа */
 	@Comment("Группа")
 	public Long getDispensaryGroup() {
-		return theDispensaryGroup;
-	}
-
-	public void setDispensaryGroup(Long aDispensaryGroup) {
-		theDispensaryGroup = aDispensaryGroup;
+		return dispensaryGroup;
 	}
 
 	/** Группа */
-	private Long theDispensaryGroup;
+	private Long dispensaryGroup;
 	/** Наблюдения */
-	private Long theAmbulatoryCare;
+	private Long ambulatoryCare;
 	
 	/** old date start */
 	@Comment("old date start")
 	public String getOldStartDate() {
-		return theOldStartDate;
+		return oldStartDate;
 	}
 
-	public void setOldStartDate(String aOldStartDate) {
-		theOldStartDate = aOldStartDate;
-	}
-	
 	/** old finish date */
 	@Comment("old finish date")
 	public String getOldFinishDate() {
-		return theOldFinishDate;
-	}
-
-	public void setOldFinishDate(String aOldFinishDate) {
-		theOldFinishDate = aOldFinishDate;
+		return oldFinishDate;
 	}
 
 	/** old finish date */
-	private String theOldFinishDate;
+	private String oldFinishDate;
 	/** old date start */
-	private String theOldStartDate;
+	private String oldStartDate;
 	
 	@Comment("Др.место перевода")
 	@Persist
 	public Long getOtherPlaceTransfer() {
-		return theOtherPlaceTransfer;
-	}
-
-	public void setOtherPlaceTransfer(Long aOtherPlaceTransfer) {
-		theOtherPlaceTransfer = aOtherPlaceTransfer;
+		return otherPlaceTransfer;
 	}
 
 	/** Др.место перевода */
-	private Long theOtherPlaceTransfer;
+	private Long otherPlaceTransfer;
 }

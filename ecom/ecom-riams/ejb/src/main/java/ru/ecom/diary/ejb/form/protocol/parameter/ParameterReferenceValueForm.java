@@ -1,5 +1,7 @@
 package ru.ecom.diary.ejb.form.protocol.parameter;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.diary.ejb.domain.protocol.parameter.ParameterReferenceValue;
 import ru.ecom.diary.ejb.service.protocol.ParameterReferenceValueSaveInterceptor;
 import ru.ecom.ejb.form.simple.IdEntityForm;
@@ -22,68 +24,61 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Parent(parentForm = ParameterForm.class, property = "parameter")
 @ACreateInterceptors(@AEntityFormInterceptor(ParameterReferenceValueSaveInterceptor.class))
 @ASaveInterceptors(@AEntityFormInterceptor(ParameterReferenceValueSaveInterceptor.class))
+@Setter
 public class ParameterReferenceValueForm extends IdEntityForm {
     /** Параметр */
     @Comment("Параметр")
     @Persist @Required
-    public Long getParameter() {return theParameter;}
-    public void setParameter(Long aParameter) {theParameter = aParameter;}
+    public Long getParameter() {return parameter;}
     /** Параметр */
-    private Long theParameter ;
+    private Long parameter ;
 
     /** Пол */
     @Comment("Пол")
     @Persist
-    public Long getSex() {return theSex;}
-    public void setSex(Long aSex) {theSex = aSex;}
+    public Long getSex() {return sex;}
     /** Пол */
-    private Long theSex ;
+    private Long sex ;
 
     /** Возраст от */
     @Comment("Возраст от")
     @Persist
-    public Integer getAgeFrom() {return theAgeFrom;}
-    public void setAgeFrom(Integer aAgeFrom) {theAgeFrom = aAgeFrom;}
+    public Integer getAgeFrom() {return ageFrom;}
     /** Возраст от */
-    private Integer theAgeFrom ;
+    private Integer ageFrom ;
 
     /** Возраст до */
     @Comment("Возраст до")
     @Persist @Required
-    public Integer getAgeTo() {return theAgeTo;}
-    public void setAgeTo(Integer aAgeTo) {theAgeTo = aAgeTo;}
+    public Integer getAgeTo() {return ageTo;}
     /** Возраст до */
-    private Integer theAgeTo ;
+    private Integer ageTo ;
 
     /** Мин норма */
     @Comment("Мин норма")
     @Persist @Required
-    public String getNormaMin() {return theNormaMin;}
-    public void setNormaMin(String aNormaMin) {theNormaMin = aNormaMin;}
+    public String getNormaMin() {return normaMin;}
     /** Мин норма */
-    private String theNormaMin ;
+    private String normaMin ;
 
     /** Мин максимум */
     @Comment("Мин максимум")
     @Persist @Required
-    public String getNormaMax() {return theNormaMax;}
-    public void setNormaMax(String aNormaMax) {theNormaMax = aNormaMax;}
+    public String getNormaMax() {return normaMax;}
     /** Мин максимум */
-    private String theNormaMax ;
+    private String normaMax ;
 
     /** Максимально возможное значение */
     @Comment("Максимально возможное значение")
     @Persist @Required
-    public Long getSuperMax() {return theSuperMax;}
-    public void setSuperMax(Long aSuperMax) {theSuperMax = aSuperMax;}
+    public Long getSuperMax() {return superMax;}
     /** Максимально возможное значение */
-    private Long theSuperMax ;
+    private Long superMax ;
 
     /** Минимально возможное значение */
     @Comment("Минимально возможное значение")
     @Persist @Required
-    public Long getSuperMin() {return theSuperMin;}
-    public void setSuperMin(Long aSuperMin) {theSuperMin = aSuperMin;}
+    public Long getSuperMin() {return superMin;}
     /** Минимально возможное значение */
-    private Long theSuperMin ;
+    private Long superMin ;
 }

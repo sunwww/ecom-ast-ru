@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
 import ru.ecom.expomc.ejb.domain.impdoc.IImportData;
@@ -19,145 +21,126 @@ import ru.nuzmsh.util.StringUtil;
 @Comment("Информация о пациенте из базы П.Г.Шубинка")
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class PatientInfoShubinok extends BaseEntity implements IImportData {
  
-
-    public long getTime() {
-        return theTime  ;
-    }
-
-    public void setTime(long aTime) {
-        theTime = aTime ;
-    }
 
     /** Страховая компания */
     @Comment("Страховая компания")
     @AFormatFieldSuggest("COMPANY")
-    public String getInsuranceCompanyCode() { return theInsuranceCompanyCode ; }
-    public void setInsuranceCompanyCode(String aInsuranceCompanyCode) { theInsuranceCompanyCode = aInsuranceCompanyCode ; }
+    public String getInsuranceCompanyCode() { return insuranceCompanyCode ; }
 
     /** Серия и номер полица */
     @Comment("Серия и номер полица")
     @AFormatFieldSuggest("POLIS")
-    public String getPolicySeriesNumber() { return thePolicySeriesNumber ; }
-    public void setPolicySeriesNumber(String aPolicySeriesNumber) { thePolicySeriesNumber = aPolicySeriesNumber ; }
+    public String getPolicySeriesNumber() { return policySeriesNumber ; }
 
     /** Договор */
     @Comment("Договор")
     @AFormatFieldSuggest("DOGOVOR")
-    public String getDogovor() { return theDogovor ; }
-    public void setDogovor(String aDogovor) { theDogovor = aDogovor ; }
+    public String getDogovor() { return dogovor ; }
 
     /** Фимилия */
     @Comment("Фимилия")
     @AFormatFieldSuggest("FIO")
     public String getLastname() {
-        return theLastname ;
+        return lastname ;
     }
 
     @Transient
     @Comment("Фамилия (убраны лидирующие цифры)")
     public String getLastnameGood() {
-        if(!StringUtil.isNullOrEmpty(theLastname)
-                && theLastname.length()>2
-                && Character.isDefined(theLastname.charAt(0))) {
-            return theLastname.substring(1).toUpperCase() ;
+        if(!StringUtil.isNullOrEmpty(lastname)
+                && lastname.length()>2
+                && Character.isDefined(lastname.charAt(0))) {
+            return lastname.substring(1).toUpperCase() ;
         } else {
-            return theLastname ;
+            return lastname ;
         }
     }
 
-    public void setLastname(String aLastname) { theLastname = aLastname ; }
 
     /** Имя */
     @Comment("Имя")
     @AFormatFieldSuggest("F_NAME")
-    public String getFirstname() { return theFirstname ; }
-    public void setFirstname(String aFirstname) { theFirstname = aFirstname ; }
+    public String getFirstname() { return firstname ; }
 
     /** Отчество */
     @Comment("Отчество")
     @AFormatFieldSuggest("L_NAME")
-    public String getMiddlename() { return theMiddlename ; }
-    public void setMiddlename(String aMiddlename) { theMiddlename = aMiddlename ; }
+    public String getMiddlename() { return middlename ; }
 
     /** Тип страхования */
     @Comment("Тип страхования")
     @AFormatFieldSuggest("TIP_S")
-    public String getInsuranceType() { return theInsuranceType ; }
-    public void setInsuranceType(String aInsuranceType) { theInsuranceType = aInsuranceType ; }
+    public String getInsuranceType() { return insuranceType ; }
 
     /** Дата рождения */
     @Comment("Дата рождения")
     @AFormatFieldSuggest("DATA_R")
-    public Date getBirthdate() { return theBirthdate ; }
-    public void setBirthdate(Date aBirthdate) { theBirthdate = aBirthdate ; }
+    public Date getBirthdate() { return birthdate ; }
 
     /** Район */
     @Comment("Район")
     @AFormatFieldSuggest("ADRES")
-    public String getRegion() { return theRegion ; }
-    public void setRegion(String aRegion) { theRegion = aRegion ; }
+    public String getRegion() { return region ; }
 
     /** Пол */
     @Comment("Пол")
     @AFormatFieldSuggest("SEX")
-    public String getSex() { return theSex ; }
-    public void setSex(String aSex) { theSex = aSex ; }
+    public String getSex() { return sex ; }
 
     /** СНИЛС */
     @Comment("СНИЛС")
     @AFormatFieldSuggest("PENS")
-    public String getSnils() { return theSnils ; }
-    public void setSnils(String aSnils) { theSnils = aSnils ; }
+    public String getSnils() { return snils ; }
 
     /** КЛАДР */
     @Comment("КЛАДР")
     @AFormatFieldSuggest("STREET_GNI")
-    public String getKladr() { return theKladr ; }
-    public void setKladr(String aKladr) { theKladr = aKladr ; }
+    public String getKladr() { return kladr ; }
 
     /** Номер предприятия новый */
     @Comment("Номер предприятия новый")
     @AFormatFieldSuggest("RNUMBER15")
-    public String getOrgCodeNew() { return theOrgCodeNre ; }
-    public void setOrgCodeNew(String aOrgCodeNre) { theOrgCodeNre = aOrgCodeNre ; }
+    public String getOrgCodeNew() { return orgCodeNre ; }
+    public void setOrgCodeNew(String aOrgCodeNre) { orgCodeNre = aOrgCodeNre ; }
 
     /** Удрес (улица, дом, корпус, квартира) */
     @Comment("Удрес (улица, дом, корпус, квартира)")
     @AFormatFieldSuggest("STREET")
-    public String getAddressString() { return theAddressString ; }
-    public void setAddressString(String aAddressString) { theAddressString = aAddressString ; }
+    public String getAddressString() { return addressString ; }
 
 
     @Transient
     @Comment("Дом")
     public String getHouseNumber() {
-        return getPosition(theAddressString, 3, ',') ;
+        return getPosition(addressString, 3, ',') ;
     }
 
     @Transient
     @Comment("Корпус")
     public String getBuildingNumber() {
-        return getPosition(theAddressString, 4, ',') ;
+        return getPosition(addressString, 4, ',') ;
     }
 
     @Transient
     @Comment("Квартира")
     public String getFlatNumber() {
-        return getPosition(theAddressString, 5, ',') ;
+        return getPosition(addressString, 5, ',') ;
     }
 
     @Transient
     @Comment("Серия полиса")
     public String getPolicySeries() {
-        return getPosition(thePolicySeriesNumber, 1, '/') ;
+        return getPosition(policySeriesNumber, 1, '/') ;
     }
 
     @Transient
     @Comment("Номер полиса")
     public String getPolicyNumber() {
-        return getPosition(thePolicySeriesNumber, 2, '/') ;
+        return getPosition(policySeriesNumber, 2, '/') ;
     }
 
     private static String getPosition(String aStr, int aPosition, char aDelimeter) {
@@ -177,34 +160,34 @@ public class PatientInfoShubinok extends BaseEntity implements IImportData {
         return ret !=null ? ret.trim() : null ;
     }
     /** Удрес (улица, дом, корпус, квартира) */
-    private String theAddressString ;
+    private String addressString ;
     /** Номер предприятия новый */
-    private String theOrgCodeNre ;
+    private String orgCodeNre ;
     /** КЛАДР */
-    private String theKladr ;
+    private String kladr ;
     /** СНИЛС */
-    private String theSnils ;
+    private String snils ;
     /** Пол */
-    private String theSex ;
+    private String sex ;
     /** Район */
-    private String theRegion ;
+    private String region ;
     /** Дата рождения */
-    private Date theBirthdate ;
+    private Date birthdate ;
     /** Тип страхования */
-    private String theInsuranceType ;
+    private String insuranceType ;
     /** Отчество */
-    private String theMiddlename ;
+    private String middlename ;
     /** Имя */
-    private String theFirstname ;
+    private String firstname ;
     /** Фимилия */
-    private String theLastname ;
+    private String lastname ;
     /** Договор */
-    private String theDogovor ;
+    private String dogovor ;
     /** Серия и номер полица */
-    private String thePolicySeriesNumber ;
+    private String policySeriesNumber ;
     /** Страховая компания */
-    private String theInsuranceCompanyCode ;
-    private long theTime ;
+    private String insuranceCompanyCode ;
+    private long time ;
  
 
 }

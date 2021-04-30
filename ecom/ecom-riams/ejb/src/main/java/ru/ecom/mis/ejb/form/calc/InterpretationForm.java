@@ -4,6 +4,7 @@ package ru.ecom.mis.ejb.form.calc;
  * Created by Milamesher on 21.11.2018.
  */
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.calc.Interpretation;
@@ -17,25 +18,23 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
         , nameProperties= "id", list="entityParentList-interpretation.do", view="entityParentView-calc_interpretation.do")
 @Parent(property="calculator", parentForm=CalculatorForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Calc/Calculator")
+@Setter
 public class InterpretationForm extends IdEntityForm {
     /** Калькулятор */
     @Comment("Калькулятор")
     @Persist
-    public Long getCalculator() {return theCalculator;}
-    public void setCalculator(Long aCalculator) {theCalculator = aCalculator;}
-    private Long theCalculator;
+    public Long getCalculator() {return calculator;}
+    private Long calculator;
 
     /** Значение */
     @Comment("Значение")
     @Persist
-    public String getValue() {return theValue;}
-    public void setValue(String aValue) {theValue = aValue;	}
-    private String theValue;
+    public String getValue() {return value;}
+    private String value;
 
     /** Результат */
     @Comment("Результат")
     @Persist
-    public String getResult() {return theResult;}
-    public void setResult(String aResult) {theResult = aResult;}
-    private String theResult;
+    public String getResult() {return result;}
+    private String result;
 }

@@ -3,6 +3,8 @@ package ru.ecom.poly.ejb.domain.voc;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -18,40 +20,15 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 @Entity
 @Comment("Тип протокола")
+@Getter
+@Setter
 public class VocTypeProtocol extends VocBaseEntity {
-	/** Печать подписи зав. отделения */
-	@Comment("Печать подписи зав. отделения")
-	public Boolean getIsPrintAdministrator() {return theIsPrintAdministrator;}
-	public void setIsPrintAdministrator(Boolean aIsPrintAdministrator) {theIsPrintAdministrator = aIsPrintAdministrator;}
-	
 	/** Печать заголовка */
-	@Comment("Печать заголовка")
-	public Boolean getIsPrintTitle() {
-		return theIsPrintTitle;
-	}
-
-	public void setIsPrintTitle(Boolean aIsPrintTitle) {
-		theIsPrintTitle = aIsPrintTitle;
-	}
-
-	/** Печать заголовка */
-	private Boolean theIsPrintTitle;
+	private Boolean isPrintTitle;
 	/** Печать подписи зав. отделения */
-	private Boolean theIsPrintAdministrator;
-	
+	private Boolean isPrintAdministrator;
 	/** Префикс к файлу */
-	@Comment("Префикс к файлу")
-	public String getPrefixPrint() {return thePrefixPrint;}
-	public void setPrefixPrint(String aPrefixPrint) {thePrefixPrint = aPrefixPrint;}
-
-	/** Префикс к файлу */
-	private String thePrefixPrint;
-
-	/** Для роддома*/
-	@Comment("Для роддома")
-	public Boolean getIsForMaternity() {return theIsForMaternity;}
-	public void setIsForMaternity(Boolean aIsForMaternity) {theIsForMaternity = aIsForMaternity;}
-
+	private String prefixPrint;
 	/** Для роддома */
-	private Boolean theIsForMaternity;
+	private Boolean isForMaternity;
 }

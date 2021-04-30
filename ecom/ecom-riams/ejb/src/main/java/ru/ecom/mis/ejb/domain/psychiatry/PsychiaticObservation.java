@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.psychiatry;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -22,6 +24,8 @@ import java.sql.Date;
 	,@AIndex(properties={"careCard","startDate"})
 })
 @Table(schema="SQLUser")
+ @Getter
+ @Setter
 public class PsychiaticObservation extends BaseEntity{
  /**
   * Карта обратившегося за психиатрической помощью
@@ -29,127 +33,84 @@ public class PsychiaticObservation extends BaseEntity{
  @Comment("Карта обратившегося за психиатрической помощью")
  @ManyToOne
  public PsychiatricCareCard getCareCard() {
-  return theCareCard;
- }
- public void setCareCard(PsychiatricCareCard aCareCard) {
-  theCareCard = aCareCard;
+  return careCard;
  }
  /**
   * Карта обратившегося за психиатрической помощью
   */
- private PsychiatricCareCard theCareCard;
+ private PsychiatricCareCard careCard;
  
  /** Участок */
 @Comment("Участок")
 @ManyToOne
 public LpuAreaPsychCareCard getLpuAreaPsychCareCard() {
-	return theLpuAreaPsychCareCard;
-}
-
-public void setLpuAreaPsychCareCard(LpuAreaPsychCareCard aLpuAreaPsychCareCard) {
-	theLpuAreaPsychCareCard = aLpuAreaPsychCareCard;
+	return lpuAreaPsychCareCard;
 }
 
 /** Участок */
-private LpuAreaPsychCareCard theLpuAreaPsychCareCard;
+private LpuAreaPsychCareCard lpuAreaPsychCareCard;
  /**
   * 
   */
  @Comment("")
  @OneToOne
  public VocPsychDispensaryGroup getDispensaryGroup() {
-  return theDispensaryGroup;
- }
- public void setDispensaryGroup(VocPsychDispensaryGroup aDispensaryGroup) {
-  theDispensaryGroup = aDispensaryGroup;
+  return dispensaryGroup;
  }
  /**
   * 
   */
- private VocPsychDispensaryGroup theDispensaryGroup;
+ private VocPsychDispensaryGroup dispensaryGroup;
  /**
   * Вид амбулаторного наблюдения
   */
  @Comment("Вид амбулаторного наблюдения")
  @OneToOne
  public VocPsychAmbulatoryCare getAmbulatoryCare() {
-  return theAmbulatoryCare;
- }
- public void setAmbulatoryCare(VocPsychAmbulatoryCare aAmbulatoryCare) {
-  theAmbulatoryCare = aAmbulatoryCare;
+  return ambulatoryCare;
  }
  /**
   * Вид амбулаторного наблюдения
   */
- private VocPsychAmbulatoryCare theAmbulatoryCare;
+ private VocPsychAmbulatoryCare ambulatoryCare;
  /**
   * Дата начала наблюдения
   */
- @Comment("Дата начала наблюдения")
- public Date getStartDate() {
-  return theStartDate;
- }
- public void setStartDate(Date aStartDate) {
-  theStartDate = aStartDate;
- }
- /**
-  * Дата начала наблюдения
-  */
- private Date theStartDate;
+ private Date startDate;
  
  @Comment("Вид амбулаторного наблюдения (ИНФО)	")
  @Transient
  public String getAmbulatoryCareInfo() {
-	 return theAmbulatoryCare!=null? theAmbulatoryCare.getName()
-             //.append(". ").append(theAmbulatoryCare.getName())
+	 return ambulatoryCare!=null? ambulatoryCare.getName()
              : ""  ;
  }
  @Comment("Диспансерная группа (ИНФО)")
  @Transient
  public String getDispensaryGroupInfo() {
-	 return theDispensaryGroup!=null? theDispensaryGroup.getName()
-             //.append(". ").append(theDispensaryGroup.getName())
+	 return dispensaryGroup!=null? dispensaryGroup.getName()
              : "" ;
  }
  
-	 /** Дата окончания наблюдения */
-	@Comment("Дата окончания наблюдения")
-	public Date getFinishDate() {
-		return theFinishDate;
-	}
-	
-	public void setFinishDate(Date aFinishDate) {
-		theFinishDate = aFinishDate;
-	}
-	
 	/** Дата окончания наблюдения */
-	private Date theFinishDate;
+	private Date finishDate;
 	
 	/** Статья уголовного кодекса */
 	@Comment("Статья уголовного кодекса")
 	@OneToOne
 	public VocCriminalCodeArticle getCriminalCodeArticle() {
-		return theCriminalCodeArticle;
-	}
-
-	public void setCriminalCodeArticle(VocCriminalCodeArticle aCriminalCodeArticle) {
-		theCriminalCodeArticle = aCriminalCodeArticle;
+		return criminalCodeArticle;
 	}
 
 	/** Статья уголовного кодекса */
-	private VocCriminalCodeArticle theCriminalCodeArticle;
+	private VocCriminalCodeArticle criminalCodeArticle;
 	
 	/** Причина снятия */
 	@Comment("Причина снятия")
 	@OneToOne
 	public VocPsychStrikeOffReasonAdn getStrikeOffReason() {
-		return theStrikeOffReason;
-	}
-
-	public void setStrikeOffReason(VocPsychStrikeOffReasonAdn aStrikeOffReason) {
-		theStrikeOffReason = aStrikeOffReason;
+		return strikeOffReason;
 	}
 
 	/** Причина снятия */
-	private VocPsychStrikeOffReasonAdn theStrikeOffReason;
+	private VocPsychStrikeOffReasonAdn strikeOffReason;
 }

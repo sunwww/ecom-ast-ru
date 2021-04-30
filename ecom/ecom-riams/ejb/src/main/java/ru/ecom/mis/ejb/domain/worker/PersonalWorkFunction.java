@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.worker;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.jaas.ejb.domain.SecUser;
@@ -22,39 +24,37 @@ import javax.persistence.Transient;
 	,@AIndex(properties={"group"},table="WorkFunction")
 	
 })
+@Getter
+@Setter
 public class PersonalWorkFunction extends WorkFunction {
 	/** Сотрудник */
 	@Comment("Сотрудник")
 	@ManyToOne	
-	public Worker getWorker() {return theWorker;}
-	public void setWorker(Worker aWorkers) {theWorker = aWorkers;}
-	
+	public Worker getWorker() {return worker;}
+
 	/** Пользователь системы */
 	@Comment("Пользователь системы")
 	@OneToOne
-	public SecUser getSecUser() {return theSecUser;}
-	public void setSecUser(SecUser aSecUser) {theSecUser = aSecUser;
-	}
-
+	public SecUser getSecUser() {return secUser;}
 
 	/** Пользователь системы */
-	private SecUser theSecUser;
+	private SecUser secUser;
 	
 	@Transient
 	public String getWorkerLpuInfo() {
-		return (theWorker!=null&&theWorker.getLpu()!=null)? theWorker.getLpu().getFullname() :"";
+		return (worker!=null&&worker.getLpu()!=null)? worker.getLpu().getFullname() :"";
 	}
 	
 	@Transient
 	public MisLpu getLpuRegister() {
-		return theWorker!=null? theWorker.getLpu(): null ;
+		return worker!=null? worker.getLpu(): null ;
 	}
 
 	/** Сотрудник */
-	private Worker theWorker;
+	private Worker worker;
 	@Transient @Comment("Информация о работнике")
 	public String getWorkerInfo() {
-		return theWorker!=null ? theWorker.getDoctorInfo() : "" ;
+		return worker!=null ? worker.getDoctorInfo() : "" ;
 	}
 
 	@Transient @Comment("Информация")
@@ -64,8 +64,7 @@ public class PersonalWorkFunction extends WorkFunction {
 	/** Групповая рабочая функция */
 	@Comment("Групповая рабочая функция")
 	@ManyToOne
-	public GroupWorkFunction getGroup() {return theGroup;}
-	public void setGroup(GroupWorkFunction aGroup) {theGroup = aGroup;}
+	public GroupWorkFunction getGroup() {return group;}
 
 	@Transient
 	public String getInfo() {
@@ -73,14 +72,14 @@ public class PersonalWorkFunction extends WorkFunction {
 	}
 	@Transient
 	public String getGroupInfo() {
-		return theGroup!=null? theGroup.getInfo():"" ;
+		return group!=null? group.getInfo():"" ;
 	}
 	@Transient
 	public boolean getViewDirect() {
-		return theGroup==null;
+		return group==null;
 	}
 	
 	/** Групповая рабочая функция */
-	private GroupWorkFunction theGroup;
+	private GroupWorkFunction group;
 
 }

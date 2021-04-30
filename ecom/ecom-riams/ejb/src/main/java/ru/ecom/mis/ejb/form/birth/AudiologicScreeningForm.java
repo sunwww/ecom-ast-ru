@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.birth.AudiologicScreening;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
@@ -23,13 +24,13 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Аудиологический скрининг", nameProperties= "id", view="entityParentView-preg_audiologicScreening.do", list = "entityParentList-preg_inspection.do")
 @Parent(property="medCase", parentForm= MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Inspection/AudiologicScreening")
+@Setter
 public class AudiologicScreeningForm extends InspectionForm {
 	
 	/** Описание */
 	@Comment("Описание")
 	@Persist @Required
-	public String getNotes() {return theNotes;}
-	public void setNotes(String aNotes) {theNotes = aNotes;}
+	public String getNotes() {return notes;}
 	/** Описание */
-	private String theNotes;
+	private String notes;
 }

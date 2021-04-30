@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 /**
@@ -12,13 +14,13 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Справочник подтипов телефонных сообщений (инфекционное, криминальное)")
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VocPhoneMessageSubType extends VocBaseEntity {
 	/** Тип сообщения */
 	@Comment("Тип сообщения")
 	@OneToOne
-	public VocPhoneMessageType getType() {return theType;}
-	public void setType(VocPhoneMessageType aType) {theType = aType;}
-
+	public VocPhoneMessageType getType() {return type;}
 	/** Тип сообщения */
-	private VocPhoneMessageType theType;
+	private VocPhoneMessageType type;
 }

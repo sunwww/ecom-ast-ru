@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.contract;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -17,34 +19,22 @@ import java.util.List;
 @Entity
 @Table(schema="SQLUser")
 	@AIndexes({
-		@AIndex(unique= false, properties = {"name"})
+		@AIndex(properties = {"name"})
 
 	})
+	@Getter
+	@Setter
 public class ContractMedServiceGroup extends BaseEntity{
 	/**
 	 * Название
 	 */
-	@Comment("Название")
-	
-	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
-	}
-	/**
-	 * Название
-	 */
-	private String theName;
+	private String name;
 	@OneToMany(mappedBy="medServiceGroup", cascade=CascadeType.ALL)
 	public List<MedServiceInterval> getIntervals() {
-		return theIntervals;
-	}
-	public void setIntervals(List<MedServiceInterval> aIntervals) {
-		theIntervals = aIntervals;
+		return intervals;
 	}
 	/**
 	 * Интервалы медицинских услуг
 	 */
-	private List<MedServiceInterval> theIntervals;
+	private List<MedServiceInterval> intervals;
 }

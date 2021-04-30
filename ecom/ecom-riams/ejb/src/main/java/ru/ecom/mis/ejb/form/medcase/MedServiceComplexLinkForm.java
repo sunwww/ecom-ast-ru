@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -30,51 +31,46 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @ASaveInterceptors(
 		@AEntityFormInterceptor(MedServiceComplexLinkSaveInterceptor.class)
 )
+@Setter
 public class MedServiceComplexLinkForm extends IdEntityForm  {
 
 	/** Комплексная мед. услуга */
 	@Comment("Комплексная мед. услуга")
 	@Persist
 	@Required
-	public Long getComplexMedService() {return theComplexMedService;}
-	public void setComplexMedService(Long aComplexMedService) {theComplexMedService = aComplexMedService;}
-	private Long theComplexMedService;
+	public Long getComplexMedService() {return complexMedService;}
+	private Long complexMedService;
 
 	/** Мед. услуга в программе комплексной*/
 	@Comment("Мед. услуга в программе комплексной")
 	@Persist
 	@Required
-	public Long getInnerMedService() {return theInnerMedService;}
-	public void setInnerMedService(Long aInnerMedService) {theInnerMedService = aInnerMedService;}
-	private Long theInnerMedService;
+	public Long getInnerMedService() {return innerMedService;}
+	private Long innerMedService;
 
 	/** Количество */
 	@Comment("Количество")
 	@Persist
 	@Required
-	public Integer getCountInnerMedService() {return theCountInnerMedService;}
-	public void setCountInnerMedService(Integer aCountInnerMedService) {theCountInnerMedService = aCountInnerMedService;}
-	private Integer theCountInnerMedService;
+	public Integer getCountInnerMedService() {return countInnerMedService;}
+	private Integer countInnerMedService;
 
 	/** Специальность врача */
 	@Comment("Специальность врача")
 	@Persist
-	public Long getSpeciality() {return theSpeciality;}
-	public void setSpeciality(Long aSpeciality) {theSpeciality = aSpeciality;}
-	private Long theSpeciality ;
+	public Long getSpeciality() {return speciality;}
+	private Long speciality ;
 
 	/** Выбрана по умолчанию */
 	@Comment("Выбрана по умолчанию")
 	@Persist
-	public Boolean getIsDefault() {return theIsDefault;}
-	public void setIsDefault(Boolean aIsDefault) {theIsDefault = aIsDefault;}
-	private Boolean theIsDefault ;
+	public Boolean getIsDefault() {return isDefault;}
+	private Boolean isDefault ;
 
 	/** Вес */
 	@Comment("Вес")
 	@Persist
-	public Integer getWeight() {return theWeight;}
-	public void setWeight(Integer aWeight) {theWeight = aWeight;}
-	private Integer theWeight ;
+	public Integer getWeight() {return weight;}
+	private Integer weight ;
 
 }

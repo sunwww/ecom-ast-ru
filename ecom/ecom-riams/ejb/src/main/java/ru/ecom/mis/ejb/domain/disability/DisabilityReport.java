@@ -5,6 +5,8 @@ import java.sql.Date;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -13,47 +15,17 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Медико-социальная экспертная комиссия")
 @Entity
 @AIndexes({
-	@AIndex(unique = false, properties= {"lineR"})
-	,@AIndex(unique = false, properties= {"caseR"})
+	@AIndex(properties= {"lineR"})
+	,@AIndex(properties= {"caseR"})
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class DisabilityReport extends BaseEntity {
 	/** Случай нетрудоспособности */
-	@Comment("Случай нетрудоспособности")
-	public Long getCaseR() {
-		return theCaseR;
-	}
-
-	public void setCaseR(Long aCase) {
-		theCaseR = aCase;
-	}
-
-	/** Случай нетрудоспособности */
-	private Long theCaseR;
-	
+	private Long caseR;
 	/** Строка */
-	@Comment("Строка")
-	public Long getLineR() {
-		return theLineR;
-	}
-
-	public void setLineR(Long aLineR) {
-		theLineR = aLineR;
-	}
-
-	/** Строка */
-	private Long theLineR;
-	
+	private Long lineR;
 	/** Дата окончания */
-	@Comment("Дата окончания")
-	public Date getFinishDate() {
-		return theFinishDate;
-	}
-
-	public void setFinishDate(Date aFinishDate) {
-		theFinishDate = aFinishDate;
-	}
-
-	/** Дата окончания */
-	private Date theFinishDate;
+	private Date finishDate;
 }

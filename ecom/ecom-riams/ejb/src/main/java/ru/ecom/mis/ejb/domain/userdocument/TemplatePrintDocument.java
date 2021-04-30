@@ -2,6 +2,8 @@ package ru.ecom.mis.ejb.domain.userdocument;
 
 import javax.persistence.Entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 /**
  * Печатный шаблон протокола (по шаблону протокола)
@@ -10,12 +12,10 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  */
 
 @Entity
+@Getter
+@Setter
 public class TemplatePrintDocument extends UserDocument {
 
 	/** Шаблон протокола */
-	@Comment("Шаблон протокола")
-	public Long getTemplate() {return theTemplate;}
-	public void setTemplate(Long aTemplate) {theTemplate = aTemplate;}
-	/** Шаблон протокола */
-	private Long theTemplate;
+	private Long template;
 }

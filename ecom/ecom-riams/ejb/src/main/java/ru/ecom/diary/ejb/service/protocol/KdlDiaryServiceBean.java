@@ -82,7 +82,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 			for (ExternalCovidAnalysis a : anaList) {
 				if (!StringUtil.isNullOrEmpty(a.getLastname())) {
 					a.setCreateUsername(username);
-					theManager.persist(a);
+					manager.persist(a);
 
 				}
 
@@ -96,7 +96,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	/** Находит либо создает пациента по ФИО
 	 * */
 	private Patient getOrCreatePatient(String lastname, String firstname, String middlename, Date birthday) {
-		List<Patient> pats = theManager.createNamedQuery("Patient.getByLastAndFirstAndMiddleAndBirthday").setParameter("lastname", lastname)
+		List<Patient> pats = manager.createNamedQuery("Patient.getByLastAndFirstAndMiddleAndBirthday").setParameter("lastname", lastname)
 				.setParameter("firstname", firstname).setParameter("middlename", middlename).setParameter("birthday", birthday).getResultList();
 		if (pats.isEmpty()) {
 			Patient patient = new Patient();
@@ -105,14 +105,14 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 			patient.setMiddlename(middlename);
 			patient.setBirthday(birthday);
 			try {
-				VocSexName sexx = (VocSexName) theManager.createNamedQuery("VocSexName.getByName").setParameter("name",firstname).getSingleResult();
+				VocSexName sexx = (VocSexName) manager.createNamedQuery("VocSexName.getByName").setParameter("name",firstname).getSingleResult();
 				patient.setSex(sexx.getSex());
 			} catch (Exception e) {
 				LOG.warn("no vocSex for name "+firstname,e);
 			}
-			theManager.persist(patient);
+			manager.persist(patient);
 			patient.setPatientSync("К"+patient.getId());
-			theManager.persist(patient);
+			manager.persist(patient);
 			return patient;
 		}
 		return pats.size()==1 ? pats.get(0) : null;
@@ -120,7 +120,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 
 	//Имеются ли дубли по пациенту, врачу и дате визита
 	private boolean hasDoubleByPatientAndDoctorAndDate(Long patientId, Long doctorId, Date visitDate ) {
-		List list = theManager.createNativeQuery("select id from medcase where patient_id =:patientId and datestart=:visitDate" +
+		List list = manager.createNativeQuery("select id from medcase where patient_id =:patientId and datestart=:visitDate" +
 				" and workfunctionexecute_id=:doctorId").setParameter("patientId", patientId).setParameter("doctorId", doctorId)
 				.setParameter("visitDate", visitDate).getResultList();
 		return !list.isEmpty();
@@ -131,14 +131,14 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		PolyclinicMedCase pmc;
 		ShortMedCase ticket;
 		Diagnosis diagnosis;
-		PersonalWorkFunction wf = theManager.find(PersonalWorkFunction.class, workFunctionId);
-		VocServiceStream vss = theManager.find(VocServiceStream.class,1L); //ОМС
-		VocVisitResult result = theManager.find(VocVisitResult.class, visitResultId);
-		VocReason reason = theManager.find(VocReason.class, visitReasonId);
-		VocPriorityDiagnosis priorityDiagnosis = theManager.find(VocPriorityDiagnosis.class, 1L) ; //всегда - основной.
-		VocIllnesPrimary primary = theManager.find(VocIllnesPrimary.class, primaryId);
-		VocWorkPlaceType workPlace = theManager.find(VocWorkPlaceType.class, workPlaceId);
-		VocIdc10 mkb = theManager.find(VocIdc10.class,mkbId);
+		PersonalWorkFunction wf = manager.find(PersonalWorkFunction.class, workFunctionId);
+		VocServiceStream vss = manager.find(VocServiceStream.class,1L); //ОМС
+		VocVisitResult result = manager.find(VocVisitResult.class, visitResultId);
+		VocReason reason = manager.find(VocReason.class, visitReasonId);
+		VocPriorityDiagnosis priorityDiagnosis = manager.find(VocPriorityDiagnosis.class, 1L) ; //всегда - основной.
+		VocIllnesPrimary primary = manager.find(VocIllnesPrimary.class, primaryId);
+		VocWorkPlaceType workPlace = manager.find(VocWorkPlaceType.class, workPlaceId);
+		VocIdc10 mkb = manager.find(VocIdc10.class,mkbId);
 		int i=0;
 		for (ExternalCovidAnalysis a : analyses) {
 			if (!StringUtil.isNullOrEmpty(a.getLastname())) {
@@ -156,7 +156,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 					pmc.setUsername(username);
 					pmc.setLpu(wf.getWorker().getLpu());
 					pmc.setIdc10(mkb);
-					theManager.persist(pmc);
+					manager.persist(pmc);
 
 					ticket = new ShortMedCase();
 					ticket.setParent(pmc);
@@ -168,7 +168,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 					ticket.setVisitResult(result);
 					ticket.setVisitReason(reason);
 					ticket.setWorkPlaceType(workPlace);
-					theManager.persist(ticket);
+					manager.persist(ticket);
 
 					diagnosis = new Diagnosis();
 					diagnosis.setEstablishDate(visitDate);
@@ -178,7 +178,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 					diagnosis.setMedCase(ticket);
 					diagnosis.setIllnesPrimary(primary);
 					diagnosis.setCreateUsername(username);
-					theManager.persist(diagnosis);
+					manager.persist(diagnosis);
 					i++;
 				}
 			}
@@ -196,17 +196,17 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	@Override
 	public void parseFile(String aUri) throws Exception {
 		@SuppressWarnings("unchecked")
-		List<ExternalMedservice> list = theManager == null? new ArrayList<>() : theManager.createQuery("FROM Document WHERE dtype='ExternalMedservice' AND referenceTo='"+aUri+"'").getResultList();
+		List<ExternalMedservice> list = manager == null? new ArrayList<>() : manager.createQuery("FROM Document WHERE dtype='ExternalMedservice' AND referenceTo='"+aUri+"'").getResultList();
 		ExternalMedservice externalMedservice = list.isEmpty() ? new ExternalMedservice() : list.get(0) ;
-        theComment = new StringBuilder();
-        theDocumentParameterGroups = new TreeMap<>();
-    	theDocumentParametersTree = new TreeMap<>();
-        theDocumentParameterObj = new HashMap<>();
-    	theDocumentParameterGroupsObj = new HashMap<>();
+        comment = new StringBuilder();
+        documentParameterGroups = new TreeMap<>();
+    	documentParametersTree = new TreeMap<>();
+        documentParameterObj = new HashMap<>();
+    	documentParameterGroupsObj = new HashMap<>();
     	try {
     		printVariable("Start parse",aUri);
 	    	File in = new File(aUri);
-	        theFileUri = aUri;
+	        fileUri = aUri;
 	        Document doc = new SAXBuilder().build(in);
 	        Element root = doc.getRootElement();
 	        Element header = root.getChild("Header");
@@ -278,8 +278,8 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	        if (StringUtil.isNullOrEmpty(lastname)) lastname = "Х" ;
 	        if (StringUtil.isNullOrEmpty(firstname)) firstname = "Х" ;
 	        if (StringUtil.isNullOrEmpty(middlename)) middlename = "Х" ;
-	        if ((birthday!=null) && (theManager != null)) {
-	        	list = theManager.createQuery(patientSql)
+	        if ((birthday!=null) && (manager != null)) {
+	        	list = manager.createQuery(patientSql)
 	        		.setParameter("lastname", lastname)
 	        		.setParameter("firstname", firstname)
 	        		.setParameter("middlename", middlename)
@@ -294,7 +294,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 	        aExternalMedservice.setPatientMiddlename(middlename);
 	        aExternalMedservice.setPatientBirthday(birthday);
 		}
-        aExternalMedservice.setReferenceTo(theFileUri);
+        aExternalMedservice.setReferenceTo(fileUri);
         
 	}
 	@SuppressWarnings("unchecked")
@@ -314,11 +314,11 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		//String pageId = page.getAttributeValue("PageID");
 		String sectionId = aSection.getAttributeValue("SectionID");
 		String sectionName = aSection.getChildText("SectionName");
-		VocDocumentParameterGroup group = theDocumentParameterGroupsObj.get(sectionId) ;
+		VocDocumentParameterGroup group = documentParameterGroupsObj.get(sectionId) ;
 		if (group == null) {
 			
 			@SuppressWarnings("unchecked")
-			List<VocDocumentParameterGroup> list1 = theManager==null? null: theManager.createQuery("FROM VocDocumentParameterGroup WHERE code='"+sectionId+"'").getResultList() ;
+			List<VocDocumentParameterGroup> list1 = manager==null? null: manager.createQuery("FROM VocDocumentParameterGroup WHERE code='"+sectionId+"'").getResultList() ;
 			if (list1 != null && !list1.isEmpty()) {
 				group =list1.get(list1.size()-1) ;
 			} 
@@ -330,8 +330,8 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 				printVariable("GroupSave",sectionId+":"+sectionName);
 			}
 		}
-		theDocumentParameterGroups.put(sectionId, sectionName);
-		theDocumentParameterGroupsObj.put(sectionId, group);
+		documentParameterGroups.put(sectionId, sectionName);
+		documentParameterGroupsObj.put(sectionId, group);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -359,13 +359,13 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		String sectionID = testPosition.getChildText("SectionID");
 		int sectionItem = toInt(testPosition.getChildText("SectionItem"));
 		
-		VocDocumentParameterGroup vocDocumentParameterGroup = theDocumentParameterGroupsObj.get(sectionID);
+		VocDocumentParameterGroup vocDocumentParameterGroup = documentParameterGroupsObj.get(sectionID);
 		if (vocDocumentParameterGroup==null) printVariable("NullGroup",sectionID);
 		
-		VocDocumentParameter vocDocumentParameter = theDocumentParameterObj.get(testShortName) ;
+		VocDocumentParameter vocDocumentParameter = documentParameterObj.get(testShortName) ;
 		if (vocDocumentParameter==null) {
 			@SuppressWarnings("unchecked")
-			List<VocDocumentParameter> list = theManager == null? null : theManager.createQuery("FROM VocDocumentParameter WHERE code='"+testShortName+"'").getResultList();
+			List<VocDocumentParameter> list = manager == null? null : manager.createQuery("FROM VocDocumentParameter WHERE code='"+testShortName+"'").getResultList();
 			if (list != null && !list.isEmpty()) {
 				vocDocumentParameter = list.get(0) ;
 			} else {
@@ -379,7 +379,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 				vocDocumentParameter.setParameterGroup(vocDocumentParameterGroup);
 				persist(vocDocumentParameter) ;
 			}
-			theDocumentParameterObj.put(testShortName, vocDocumentParameter) ;
+			documentParameterObj.put(testShortName, vocDocumentParameter) ;
 		}
 		
 		DocumentParameter documentParameter = new DocumentParameter();
@@ -392,11 +392,11 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		
 		persist(documentParameter);
 		
-		if (theDocumentParametersTree.get(sectionID)==null){
-			theDocumentParametersTree.put(sectionID, new TreeMap<>());
+		if (documentParametersTree.get(sectionID)==null){
+			documentParametersTree.put(sectionID, new TreeMap<>());
 		}
 		
-		theDocumentParametersTree.get(sectionID).put(toString(100+sectionItem).substring(1), documentParameter);
+		documentParametersTree.get(sectionID).put(toString(100+sectionItem).substring(1), documentParameter);
 	}
 	public void prepareComment(ExternalMedservice aExternalMedservice){
 		//prepareCommentHead(aExternalMedservice);
@@ -422,7 +422,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		commentNewLine();
 	}
 	public void prepareTestsComment(ExternalMedservice aExternalMedservice){
-		Set<Entry<String, TreeMap<String, Object>>> parametersTree = theDocumentParametersTree.entrySet();
+		Set<Entry<String, TreeMap<String, Object>>> parametersTree = documentParametersTree.entrySet();
 		Entry<String, TreeMap<String, Object>> tm;
 		Entry<String, Object> pm;
 		String groupKey;
@@ -434,7 +434,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 			i=i+1;
 			tm = ti.next();
 			groupKey=tm.getKey();
-			commentAdd(theDocumentParameterGroups.get(groupKey));
+			commentAdd(documentParameterGroups.get(groupKey));
 			commentNewLine();
 			Set<Entry<String, Object>> parametersSet = tm.getValue().entrySet();
 			Iterator<Entry<String, Object>> pi = parametersSet.iterator();
@@ -460,7 +460,7 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 				commentNewLine();
 			}
 		}
-		aExternalMedservice.setComment(theComment.toString());
+		aExternalMedservice.setComment(comment.toString());
 	} 
 	public static Time toTime(String aString){
 		try {
@@ -502,13 +502,13 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		}
 	}		
 	public void commentNewLine(){
-		theComment.append("\n");
+		comment.append("\n");
 	}
 	public void commentAdd(String arg0){
-		theComment.append(arg0);
+		comment.append(arg0);
 	}
 	public void commentAdd(String arg0, String arg1){
-		theComment.append(arg0).append(": ").append(arg1).append(" ");
+		comment.append(arg0).append(": ").append(arg1).append(" ");
 	}
 	public void printVariable(String variable, String value) {
 		printVariable(variable, value, "");
@@ -529,8 +529,8 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		} catch (Exception e) {}
 	}
 	private void persist(Object object){
-		if (object!=null && theManager!=null) {
-			theManager.persist(object);
+		if (object!=null && manager!=null) {
+			manager.persist(object);
 			
 		}
 	}
@@ -574,12 +574,12 @@ public class KdlDiaryServiceBean extends DefaultHandler implements IKdlDiaryServ
 		}
 	} 
 	
-	@PersistenceContext EntityManager theManager ;
+	@PersistenceContext EntityManager manager ;
 
-    String theFileUri;
-    StringBuilder theComment;
-    TreeMap<String, String> theDocumentParameterGroups;
-    HashMap<String, VocDocumentParameter> theDocumentParameterObj ;
-	HashMap<String, VocDocumentParameterGroup> theDocumentParameterGroupsObj;
-	TreeMap<String, TreeMap<String, Object>> theDocumentParametersTree ;
+    String fileUri;
+    StringBuilder comment;
+    TreeMap<String, String> documentParameterGroups;
+    HashMap<String, VocDocumentParameter> documentParameterObj ;
+	HashMap<String, VocDocumentParameterGroup> documentParameterGroupsObj;
+	TreeMap<String, TreeMap<String, Object>> documentParametersTree ;
 }

@@ -7,19 +7,19 @@ import javax.persistence.EntityManager;
 public class QuickQueryContext {
 
 	public QuickQueryContext(EntityManager aManager, SessionContext aSessionContext) {
-		theManager = aManager ;
-		theContext = aSessionContext;
+		manager = aManager ;
+		context = aSessionContext;
 	}
 	
 	/** Entity Manager */
 	public EntityManager getManager() {
-		return theManager;
+		return manager;
 	}
 
 	public SessionContext getSessionContext() {
-		return theContext ;
+		return context ;
 	}
 
-	private final SessionContext theContext;	/** Entity Manager */
-	private final EntityManager theManager;
+	private final SessionContext context;	/** Entity Manager */
+	private final EntityManager manager;
 }

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.disability;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -32,10 +34,12 @@ import java.util.List;
 		,@AIndex(properties = {"prevDocument"})
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class DisabilityDocument extends BaseEntity{
 
 	/** Дефект экспорта */
-	private String theExportDefect;
+	private String exportDefect;
 	/** Признак дубликата (ЭЛН) **/
 	private Boolean isElnDuplicate;
 	/** Следующий номер (ЭЛН) **/
@@ -45,7 +49,7 @@ public class DisabilityDocument extends BaseEntity{
 	/** Хэш (ЭЛН) **/
 	private String lnHash="null";
 	/** Диагноз из импорта(ЭЛН) **/
-	private String theDiagnos;
+	private String diagnos;
 	/** Экспортировано закрытие (ЭЛН)*/
 	private Boolean isCloseExport=false;
 	/** Является ли электронным */
@@ -54,237 +58,155 @@ public class DisabilityDocument extends BaseEntity{
 	private String anotherLpuName;
 	private String anotherLpuAddress;
 	private String anotherLpuOGRN;
-	private Date theHospitalizedTo;
-	private String theSanatoriumOgrn;
+	private Date hospitalizedTo;
+	private String sanatoriumOgrn;
 
 	/** Статус */
-	private VocDisabilityStatus theStatus;
+	private VocDisabilityStatus status;
 	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 	/** Пользователь, редактировавший документ */
-	private String theEditUsername;
+	private String editUsername;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	/** Пользователь, создавший документ */
-	private String theCreateUsername;
+	private String createUsername;
 	/** № истории болезни */
-	private String theHospitalizedNumber;
+	private String hospitalizedNumber;
 	/** Код изменения причины нетрудоспособности*/
-	private VocDisabilityReason theDisabilityReasonChange;
+	private VocDisabilityReason disabilityReasonChange;
 	/** Закрыт случай */
-	private Boolean theIsClose;
+	private Boolean isClose;
 	/** Предыдущий документ */
-	private DisabilityDocument thePrevDocument;
+	private DisabilityDocument prevDocument;
 	/** Лечебно-профилактическое учреждение */
-	private MisLpu theAnotherLpu;
+	private MisLpu anotherLpu;
 	/** Пациент */
-	private Patient thePatient;
+	private Patient patient;
 	/** Диагноз текст */
-	private String theDiagnosis;
+	private String diagnosis;
 	/** Дата выдачи */
-	private Date theIssueDate;
+	private Date issueDate;
 	/** Режим нетрудоспособности */
-	private VocDisabilityRegime theDisabilityRegime;
+	private VocDisabilityRegime disabilityRegime;
 	/** Первичность */
-	private VocDisabilityDocumentPrimarity thePrimarity;
+	private VocDisabilityDocumentPrimarity primarity;
 	/** Серия документа нетрудоспособности по основному месту работы */
-	private String theMainWorkDocumentSeries;
+	private String mainWorkDocumentSeries;
 	/** Номер документа нетрудоспособности по основному месту работы */
-	private String theMainWorkDocumentNumber;
+	private String mainWorkDocumentNumber;
 	/** Место работы */
-	private VocOrg theWorks;
+	private VocOrg works;
 	/** Больной по уходу */
-	private Patient theNursedPatient;
+	private Patient nursedPatient;
 	/** Медико-социальная экспертная комиссия */
-	private MedSocCommission theMedSocCommission;
+	private MedSocCommission medSocCommission;
 	/** Случай нетрудоспособности */
-	private DisabilityCase theDisabilityCase;
+	private DisabilityCase disabilityCase;
 	/** Серия документа нетрудоспособности по основному месту работы */
-	private String theSeries;
+	private String series;
 	/** Номер */
-	private String theNumber;
+	private String number;
 	/** Причина нетрудоспособности */
-	private VocDisabilityReason theDisabilityReason;
+	private VocDisabilityReason disabilityReason;
 	/** Причина закрытия */
-	private VocDisabilityDocumentCloseReason theCloseReason;
+	private VocDisabilityDocumentCloseReason closeReason;
 	/** Дата начала работы */
-	private Date theBeginWorkDate;
+	private Date beginWorkDate;
 	/** Записи сроков нетрудоспособности */
-	private List<DisabilityRecord> theDisabilityRecords;
+	private List<DisabilityRecord> disabilityRecords;
 	/** Признак недействительности документа */
-	private Boolean theNoActuality;
+	private Boolean noActuality;
 	/** Записи нарушения режима */
-	private List<RegimeViolationRecord> theRegimeViolationRecords;
+	private List<RegimeViolationRecord> regimeViolationRecords;
 	/** Тип документа нетрудоспособности */
-	private VocDisabilityDocumentType theDocumentType;
+	private VocDisabilityDocumentType documentType;
 	/** Номер санаторной путевки */
-	private String theSanatoriumTicketNumber;
+	private String sanatoriumTicketNumber;
 	/** Место нахождения санатория */
-	private String theSanatoriumPlace;
+	private String sanatoriumPlace;
 	/** МКБ10 */
-	private VocIdc10 theIdc10;
+	private VocIdc10 idc10;
 	/** Справочник видов совмещения работ */
-	private VocCombo theWorkComboType;
+	private VocCombo workComboType;
 	/** Предполагаемая дата родов */
-	private Date theSupposeBirthDate;
+	private Date supposeBirthDate;
 	/** Дата начала санаторного лечения */
-	private Date theSanatoriumDateFrom;
+	private Date sanatoriumDateFrom;
 	/** Дата окончания санаторного лечения */
-	private Date theSanatoriumDateTo;
+	private Date sanatoriumDateTo;
 
-	private VocDisabilityReason2 theDisabilityReason2;
-	private Date theHospitalizedFrom;
+	private VocDisabilityReason2 disabilityReason2;
+	private Date hospitalizedFrom;
 
-	private VocIdc10 theIdc10Final;
-	private String theJob;
-	private DisabilityDocument theDuplicate;
-	private Date theOtherCloseDate;
-	private Date theExportDate;
+	private VocIdc10 idc10Final;
+	private String job;
+	private DisabilityDocument duplicate;
+	private Date otherCloseDate;
+	private Date exportDate;
 	private String previouslyIssuedCode;
-
-	@Comment("Экспортировано закрытие (ЭЛН)")
-	public Boolean getCloseExport() {
-		return isCloseExport;
-	}
-	public void setCloseExport(Boolean closeExport) {
-		isCloseExport = closeExport;
-	}
-
-	@Comment("Диагноз из импорта")
-	public String getDiagnos() {
-		return theDiagnos;
-	}
-	public void setDiagnos(String aDiagnos) {
-		theDiagnos = aDiagnos;
-	}
 
 	@Comment("Медико-социальная экспертная комиссия")
 	@OneToOne
-	public MedSocCommission getMedSocCommission() {return theMedSocCommission;}
-	public void setMedSocCommission(MedSocCommission aMedSocCommission) {theMedSocCommission = aMedSocCommission;}
+	public MedSocCommission getMedSocCommission() {return medSocCommission;}
 
 	@Comment("Случай нетрудоспособности")
 	@ManyToOne
-	public DisabilityCase getDisabilityCase() {return theDisabilityCase;}
-	public void setDisabilityCase(DisabilityCase aDisabilityCase) {theDisabilityCase = aDisabilityCase;}
-
-	@Comment("Серия")
-	public String getSeries() {return theSeries;}
-	public void setSeries (String aCloseSeries) {theSeries = aCloseSeries;}
-
-	@Comment("Номер")
-	public String getNumber() {return theNumber;}
-	public void setNumber(String aNumber) {theNumber = aNumber;}
+	public DisabilityCase getDisabilityCase() {return disabilityCase;}
 
 	@Comment("Причина нетрудоспособности")
 	@OneToOne
-	public VocDisabilityReason getDisabilityReason() {return theDisabilityReason;}
-	public void setDisabilityReason(VocDisabilityReason aDisabilityReason) {theDisabilityReason = aDisabilityReason;}
+	public VocDisabilityReason getDisabilityReason() {return disabilityReason;}
 
 	@Comment("Причина закрытия")
 	@OneToOne
-	public VocDisabilityDocumentCloseReason getCloseReason() {return theCloseReason;}
-	public void setCloseReason(VocDisabilityDocumentCloseReason aCloseReason) {theCloseReason = aCloseReason;}
+	public VocDisabilityDocumentCloseReason getCloseReason() {return closeReason;}
 
-	@Comment("Дата начала работы")
-	public Date getBeginWorkDate() {return theBeginWorkDate;}
-	public void setBeginWorkDate(Date aBeginWorkDate) {theBeginWorkDate = aBeginWorkDate;}
 
 	@Comment("Записи сроков нетрудоспособности")
 	@OneToMany(mappedBy="disabilityDocument", cascade=CascadeType.ALL)
-	public List<DisabilityRecord> getDisabilityRecords() {return theDisabilityRecords;}
-	public void setDisabilityRecords(List<DisabilityRecord> aDisabilityRecords) {theDisabilityRecords = aDisabilityRecords;}
+	public List<DisabilityRecord> getDisabilityRecords() {return disabilityRecords;}
 
-	@Comment("Признак недействительности документа")
-	public Boolean getNoActuality() {return theNoActuality;}
-	public void setNoActuality(Boolean aNoActuality) {theNoActuality = aNoActuality;}
 
 	@Comment("Записи нарушения режима")
 	@OneToMany(mappedBy="disabilityDocument", cascade=CascadeType.ALL)
-	public List<RegimeViolationRecord> getRegimeViolationRecords() {return theRegimeViolationRecords;}
-	public void setRegimeViolationRecords(List<RegimeViolationRecord> aRegimeViolationRecords) {theRegimeViolationRecords = aRegimeViolationRecords;}
+	public List<RegimeViolationRecord> getRegimeViolationRecords() {return regimeViolationRecords;}
 
 	@Comment("Тип документа нетрудоспособности")
 	@OneToOne
-	public VocDisabilityDocumentType getDocumentType() {return theDocumentType;}
-	public void setDocumentType(VocDisabilityDocumentType aDocumentType) {theDocumentType = aDocumentType;}
+	public VocDisabilityDocumentType getDocumentType() {return documentType;}
 
 	@Comment("Режим нетрудоспособности")
 	@OneToOne
-	public VocDisabilityRegime getDisabilityRegime() {return theDisabilityRegime;}
-	public void setDisabilityRegime(VocDisabilityRegime aDisabilityRegime) {theDisabilityRegime = aDisabilityRegime;}
+	public VocDisabilityRegime getDisabilityRegime() {return disabilityRegime;}
 
 	@Comment("Первичность")
 	@OneToOne
-	public VocDisabilityDocumentPrimarity getPrimarity() {return thePrimarity;}
-	public void setPrimarity(VocDisabilityDocumentPrimarity aPrimarity) {thePrimarity = aPrimarity;}
+	public VocDisabilityDocumentPrimarity getPrimarity() {return primarity;}
 
-	@Comment("Предыдущий номер ЛН (при импорте)")
-	public String getAnotherprevln() {return theAnotherprevln;}
-	public void setAnotherprevln(String aAnotherprevln) {theAnotherprevln = aAnotherprevln;}
-	private String theAnotherprevln;
+	private String anotherprevln;
 
-	@Comment("Дата выдачи")
-	public Date getIssueDate() {return theIssueDate;}
-	public void setIssueDate(Date aIssueDate) {theIssueDate = aIssueDate;}
-
-	@Comment("Серия документа нетрудоспособности по основному месту работы")
-	public String getMainWorkDocumentSeries() {return theMainWorkDocumentSeries;}
-	public void setMainWorkDocumentSeries(String aSeries) {theMainWorkDocumentSeries = aSeries;}
-
-	@Comment("Номер документа нетрудоспособности по основному месту работы")
-	public String getMainWorkDocumentNumber() {return theMainWorkDocumentNumber;}
-	public void setMainWorkDocumentNumber(String aMainWorkDisabilityDocument) {theMainWorkDocumentNumber = aMainWorkDisabilityDocument;}
-
-	@Comment("Предполагаемая дата родов")
-	public Date getSupposeBirthDate() {return theSupposeBirthDate;}
-	public void setSupposeBirthDate(Date aSupposeBirthDate) {theSupposeBirthDate = aSupposeBirthDate;}
-
-	@Comment("Дата начала санаторного лечения")
-	public Date getSanatoriumDateFrom() {return theSanatoriumDateFrom;}
-	public void setSanatoriumDateFrom(Date aSanatoriumDateFrom) {theSanatoriumDateFrom = aSanatoriumDateFrom;}
-
-	@Comment("Дата окончания санаторного лечения")
-	public Date getSanatoriumDateTo() {return theSanatoriumDateTo;}
-	public void setSanatoriumDateTo(Date aSanatoriumDateTo) {theSanatoriumDateTo = aSanatoriumDateTo;}
-
-	@Comment("Номер санаторной путевки")
-	public String getSanatoriumTicketNumber() {return theSanatoriumTicketNumber;}
-	public void setSanatoriumTicketNumber(String aSanatoriumTicketNumber) {theSanatoriumTicketNumber = aSanatoriumTicketNumber;}
-
-	@Comment("Место нахождения санатория")
-	public String getSanatoriumPlace() {return theSanatoriumPlace;}
-	public void setSanatoriumPlace(String aSanatoriumPlace) {theSanatoriumPlace = aSanatoriumPlace;}
 
 	@Comment("МКБ10")
 	@OneToOne
-	public VocIdc10 getIdc10() {return theIdc10;}
-	public void setIdc10(VocIdc10 aNewProperty) {theIdc10 = aNewProperty;	}
+	public VocIdc10 getIdc10() {return idc10;}
 
 	@Comment("Справочник видов совмещения работ")
 	@OneToOne
-	public VocCombo getWorkComboType() {return theWorkComboType;}
-	public void setWorkComboType(VocCombo aCombo) {theWorkComboType = aCombo;}
+	public VocCombo getWorkComboType() {return workComboType;}
 
 	@Comment("Больной по уходу")
 	@OneToOne
-	public Patient getNursedPatient() {return theNursedPatient;}
-	public void setNursedPatient(Patient aNursedPatient) {theNursedPatient = aNursedPatient;}
+	public Patient getNursedPatient() {return nursedPatient;}
 
 	/** Место работы */
 	@Comment("Место работы")
 	@OneToOne
-	public VocOrg getWorks() {return theWorks;}
-	public void setWorks(VocOrg aWorks) {theWorks = aWorks;}
-
-	@Comment("Диагноз текст")
-	public String getDiagnosis() {return theDiagnosis;}
-	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;	}
+	public VocOrg getWorks() {return works;}
 
 	@Comment("Пациент")
 	@OneToOne
-	public Patient getPatient() {return thePatient;}
-	public void setPatient(Patient aPatient) {thePatient = aPatient;}
+	public Patient getPatient() {return patient;}
 
 	@Comment("Дата начала")
 	@Transient
@@ -324,188 +246,64 @@ public class DisabilityDocument extends BaseEntity{
 	@Transient
 	@Comment("Первичность (текст)")
 	public String getPrimarityInfo() {
-		return thePrimarity!=null? thePrimarity.getName(): "" ;
+		return primarity!=null? primarity.getName(): "" ;
 	}
 
 	@Transient
 	@Comment("Информация о документе")
 	public String getInfo() {
-		return "серия " + theSeries + " номер " + theNumber;
+		return "серия " + series + " номер " + number;
 	}
 
 	@Transient
 	public String getDocumentTypeInfo() {
-		return theDocumentType!=null?theDocumentType.getName():"" ;
+		return documentType!=null?documentType.getName():"" ;
 	}
 
 	@Comment("Пациент ФИО")
 	@Transient
-	public String getPatientFio() {return thePatient!=null?thePatient.getFio():"";}
+	public String getPatientFio() {return patient!=null?patient.getFio():"";}
 
 	@Comment("Пациент ФИО")
 	@Transient
-	public String getPatientAddress() {return thePatient!=null?thePatient.getAddressRegistration():"";}
+	public String getPatientAddress() {return patient!=null?patient.getAddressRegistration():"";}
 
 	@Comment("Лечебно-профилактическое учреждение")
 	@OneToOne
-	public MisLpu getAnotherLpu() {return theAnotherLpu;}
-	public void setAnotherLpu(MisLpu aAnotherLpu) {theAnotherLpu = aAnotherLpu;}
-
-	@Comment("Другое ЛПУ. Название")
-	public String getAnotherLpuName() {	return anotherLpuName;	}
-	public void setAnotherLpuName(String anotherLpuName) {
-		this.anotherLpuName = anotherLpuName;
-	}
-
-	@Comment("Другое ЛПУ. Адрес")
-	public String getAnotherLpuAddress() {
-		return anotherLpuAddress;
-	}
-	public void setAnotherLpuAddress(String anotherLpuAddress) {
-		this.anotherLpuAddress = anotherLpuAddress;
-	}
-
-	@Comment("Другое ЛПУ. ОГРН")
-	public String getAnotherLpuOGRN() {
-		return anotherLpuOGRN;
-	}
-	public void setAnotherLpuOGRN(String anotherLpuOGRN) {
-		this.anotherLpuOGRN = anotherLpuOGRN;
-	}
+	public MisLpu getAnotherLpu() {return anotherLpu;}
 
 	/** Предыдущий документ */
 	@Comment("Предыдущий документ")
 	@OneToOne
-	public DisabilityDocument getPrevDocument() {return thePrevDocument;}
-	public void setPrevDocument(DisabilityDocument aPrevDocument) {thePrevDocument = aPrevDocument;}
-
-	@Comment("Закрыт случай")
-	public Boolean getIsClose() {return theIsClose;}
-	public void setIsClose(Boolean aIsClose) {theIsClose = aIsClose;}
+	public DisabilityDocument getPrevDocument() {return prevDocument;}
 
 	@Comment("Дополнительная причина нетрудоспособности")
 	@OneToOne
-	public VocDisabilityReason2 getDisabilityReason2() {return theDisabilityReason2;}
-	public void setDisabilityReason2(VocDisabilityReason2 aDisabilityReason2) {theDisabilityReason2 = aDisabilityReason2;}
-
-	@Comment("Дата начала госпитализации")
-	public Date getHospitalizedFrom() {return theHospitalizedFrom;}
-	public void setHospitalizedFrom(Date aHospitalizedFrom) {theHospitalizedFrom = aHospitalizedFrom;}
-
-	@Comment("Дата окончания госпитализации")
-	public Date getHospitalizedTo() {return theHospitalizedTo;}
-	public void setHospitalizedTo(Date aHospitalizedTo) {theHospitalizedTo = aHospitalizedTo;}
-
-	@Comment("ОГРН санатория или клиники НИИ")
-	public String getSanatoriumOgrn() {return theSanatoriumOgrn;}
-	public void setSanatoriumOgrn(String aSanatoriumOgrn) {theSanatoriumOgrn = aSanatoriumOgrn;}
+	public VocDisabilityReason2 getDisabilityReason2() {return disabilityReason2;}
 
 	@Comment("Код изменения причины нетрудоспособности")
 	@OneToOne
-	public VocDisabilityReason getDisabilityReasonChange() {return theDisabilityReasonChange;}
-	public void setDisabilityReasonChange(VocDisabilityReason aDisabilityReasonChange) {theDisabilityReasonChange = aDisabilityReasonChange;}
-
-	@Comment("№ истории болезни")
-	public String getHospitalizedNumber() {return theHospitalizedNumber;}
-	public void setHospitalizedNumber(String aHospitalizedNumber) {theHospitalizedNumber = aHospitalizedNumber;}
-
-	@Comment("Пользователь, создавший документ")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aUsernameCreate) {theCreateUsername = aUsernameCreate;}
-
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aDateCreate) {theCreateDate = aDateCreate;}
-
-	@Comment("Пользователь, редактировавший документ")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aUsernameEdit) {theEditUsername = aUsernameEdit;}
-
-	@Comment("Дата редактирования")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aDateEdit) {theEditDate = aDateEdit;}
+	public VocDisabilityReason getDisabilityReasonChange() {return disabilityReasonChange;}
 
 	@Comment("Статус")
 	@OneToOne
-	public VocDisabilityStatus getStatus() {return theStatus;}
-	public void setStatus(VocDisabilityStatus aStatus) {theStatus = aStatus;}
-
-	@Comment("Место работы")
-	public String getJob() {return theJob;}
-	public void setJob(String aJob) {theJob = aJob;}
+	public VocDisabilityStatus getStatus() {return status;}
 
 	@Comment("Заключительный диагноз")
 	@OneToOne
-	public VocIdc10 getIdc10Final() {return theIdc10Final;}
-	public void setIdc10Final(VocIdc10 aIdc10Final) {theIdc10Final = aIdc10Final;}
+	public VocIdc10 getIdc10Final() {return idc10Final;}
 
 	@Comment("Дубликат")
 	@OneToOne
-	public DisabilityDocument getDuplicate() {return theDuplicate;}
-	public void setDuplicate(DisabilityDocument aDuplicate) {theDuplicate = aDuplicate;}
+	public DisabilityDocument getDuplicate() {return duplicate;}
 
 	@Transient
 	public String getStatusInfo() {
 		StringBuilder res = new StringBuilder() ;
-		res.append(theStatus!=null? theStatus.getName(): "") ;
-		if (theDuplicate!=null) {
-			res.append(" заменен на ").append(theDuplicate.getNumber()) ;
+		res.append(status!=null? status.getName(): "") ;
+		if (duplicate!=null) {
+			res.append(" заменен на ").append(duplicate.getNumber()) ;
 		}
 		return  res.toString();
-	}
-
-	@Comment("Дата иное")
-	public Date getOtherCloseDate() {return theOtherCloseDate;}
-	public void setOtherCloseDate(Date aOtherCloseDate) {theOtherCloseDate = aOtherCloseDate;}
-
-	@Comment("Дата экспорта")
-	public Date getExportDate() {return theExportDate;}
-	public void setExportDate(Date aExportDate) {theExportDate = aExportDate;}
-
-	@Comment("Дефект экспорта")
-	public String getExportDefect() {return theExportDefect;}
-	public void setExportDefect(String aExportDefect) {theExportDefect = aExportDefect;}
-
-	public Boolean getElnDuplicate() {
-		return isElnDuplicate;
-	}
-	public void setElnDuplicate(Boolean elnDuplicate) {
-		isElnDuplicate = elnDuplicate;
-	}
-
-	public String getNextElnNumber() {
-		return nextElnNumber;
-	}
-	public void setNextElnNumber(String nextElnNumber) {
-		this.nextElnNumber = nextElnNumber;
-	}
-
-	public String getPervElnNumber() {
-		return pervElnNumber;
-	}
-	public void setPervElnNumber(String pervElnNumber) {
-		this.pervElnNumber = pervElnNumber;
-	}
-
-	public String getLnHash() {
-		return lnHash;
-	}
-	public void setLnHash(String lnHash) {
-		this.lnHash = lnHash;
-	}
-
-	public Boolean getELN() {
-		return isELN;
-	}
-	public void setELN(Boolean ELN) {
-		isELN = ELN;
-	}
-
-	@Comment("Код ранее выданного")
-	public String getPreviouslyIssuedCode() {
-		return previouslyIssuedCode;
-	}
-	public void setPreviouslyIssuedCode(String aPreviouslyIssuedCode) {
-		previouslyIssuedCode = aPreviouslyIssuedCode;
 	}
 }

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -12,6 +14,8 @@ import java.sql.Date;
 	 */
 	@Comment("Алгоритм шаблона рабочего календаря по датам")
 @Entity
+	@Getter
+	@Setter
 public class WorkCalendarDatesAlgorithm extends WorkCalendarAlgorithm{
 
 		/** infoClass */
@@ -20,49 +24,24 @@ public class WorkCalendarDatesAlgorithm extends WorkCalendarAlgorithm{
 		public String getInfoClass() {
 			return "Алгоритм по датам";
 		}
-		/**
-	 * Начиная с даты
-	 */
-	@Comment("Начиная с даты")
-	
-	public Date getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(Date aDateFrom) {
-		theDateFrom = aDateFrom;
-	}
 	/**
 	 * Начиная с даты
 	 */
-	private Date theDateFrom;
+	private Date dateFrom;
 	/**
 	 * Заканчивая датой
 	 */
-	@Comment("Заканчивая датой")
-	
-	public Date getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(Date aDateTo) {
-		theDateTo = aDateTo;
-	}
-	/**
-	 * Заканчивая датой
-	 */
-	private Date theDateTo;
+	private Date dateTo;
 	/**
 	 * Шаблон дня рабочего календаря
 	 */
 	@Comment("Шаблон дня рабочего календаря")
 	@OneToOne
 	public WorkCalendarDayPattern getDayPattern() {
-		return theDayPattern;
-	}
-	public void setDayPattern(WorkCalendarDayPattern aDayPattern) {
-		theDayPattern = aDayPattern;
+		return dayPattern;
 	}
 	/**
 	 * Шаблон дня рабочего календаря
 	 */
-	private WorkCalendarDayPattern theDayPattern;
+	private WorkCalendarDayPattern dayPattern;
 }

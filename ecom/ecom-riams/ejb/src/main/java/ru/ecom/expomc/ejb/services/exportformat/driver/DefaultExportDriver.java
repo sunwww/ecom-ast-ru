@@ -24,41 +24,41 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
     private static final Logger LOG = Logger.getLogger(DefaultExportDriver.class) ;
 
     protected boolean theNative;
-    protected Query theQuery;
+    protected Query query;
     private List resultList;
     private long rows;
     private Class clazz;
     private List<Method> methods;
     private int cols;
 
-    HashMap<String,String> theDriverConfig;
+    HashMap<String,String> driverConfigMap;
 
-    DefaultExportDriver(EntityManager theManager, boolean aNative, String sql,String driverConfig) {
+    DefaultExportDriver(EntityManager manager, boolean aNative, String sql,String driverConfig) {
         theNative = aNative;
         if (theNative) {
-            theQuery = theManager.createNativeQuery(sql);
+            query = manager.createNativeQuery(sql);
         } else {
             String qry = sql.toLowerCase();
             if (!qry.startsWith("select") && !qry.startsWith("from")) {
                 sql = "from "+sql;
             }
-            theQuery = theManager.createQuery(sql);
+            query = manager.createQuery(sql);
         }
 
-        theDriverConfig = new HashMap<>();
+        driverConfigMap = new HashMap<>();
         for (String s : driverConfig.split(";")) {
             String[] keys = (s+"==~").split("=");
             String keyName = keys[0];
             String keyValue = keys[1];
-            theDriverConfig.put(keyName,keyValue);
+            driverConfigMap.put(keyName,keyValue);
         }
     }
 
     public void execute(int maxRecords) {
         if (maxRecords > 0) {
-            resultList = theQuery.setMaxResults(maxRecords).getResultList();
+            resultList = query.setMaxResults(maxRecords).getResultList();
         } else {
-            resultList = theQuery.getResultList();
+            resultList = query.getResultList();
         }
         rows = resultList.size();
     }
@@ -131,33 +131,16 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
     }
 
     private void saveRow(Object o, StringBuilder s)  {
-     //   Object[] nullArgs = {};
         s.append("\t<row>\n");
         saveObject(o,s,0,true);
         s.append("\t</row>\n");
 
-//        if (methods != null) {
-//            for (Method method : methods) {
-//                if(method.isAnnotationPresent(Transient.class)) continue;
-//                Object value = method.invoke(o, nullArgs);
-//                if (value instanceof Collection) continue;
-//                String name = BeanPropertyUtil.getBeanPropertyByGetMethod(method.getName());
-//                s.append("\t\t<" + name + ">" + exportEntity(value) + "</" + name + ">\n");
-//            }
-//        } else {
-//            Object [] row = (Object[]) o;
-//            for (int i = 0; i < row.length; i++) {
-//                s.append("\t\t<col c='" + (i+1) + "'>" + exportEntity(row[i]) + "</col>\n");
-//            }
-//        }
-//        LOG.info("row:'" + s.toString()+"'");
     }
 
     private boolean checkExpand(int level,String name) {
         if (level==0) return true;
-        String expand = ","+theDriverConfig.get("expand")+",";
+        String expand = ","+ driverConfigMap.get("expand")+",";
         String levelString = ""+level;
-//        LOG.info("CheckExpand:"+levelString+"/"+name+" From:"+expand);
         return expand.contains("," + levelString + ",") || expand.indexOf(","+name+",")>=0 ||
                 expand.indexOf(","+levelString+"/"+name+",")>=0;
     }
@@ -166,7 +149,6 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
         if (o == null) return;
         Class clazz = o.getClass();
         List<Method> methods ;
-//        boolean isExpanded = false;
         boolean isEntity = clazz.isAnnotationPresent(Entity.class);
 
         if (isEntity) {
@@ -245,8 +227,6 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
                     Method meth = clazz.getMethod("getId",noclass);
                     Object val = meth.invoke(o,noargs);
                     ret = "<id class='" + clazz.getCanonicalName()+"'>"+val.toString()+"</id>";
-//                    ret = clazz.getCanonicalName()+":"+val.toString();
-//                    ret = ret.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e1) {
                     ret = "***";
                 }
@@ -256,7 +236,6 @@ public class DefaultExportDriver extends AbstractExportFormatDriver {
             }
 
         }
-//        LOG.info("export-entity:'" + ret + "'");
         return ret;
     }
 

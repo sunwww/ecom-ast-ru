@@ -7,19 +7,19 @@ import ru.ecom.mis.ejb.uc.privilege.service.ICellFunction;
 public class SplitFunction implements ICellFunction {
 	
 	public SplitFunction(String aDelimeters, int aPosition) {
-		theDelimeters = aDelimeters ;
-		thePosition = aPosition ;
+		delimeters = aDelimeters ;
+		position = aPosition ;
 	}
 
 	public String invoke(String aValue) {
-		StringTokenizer st = new StringTokenizer(aValue, theDelimeters) ;
+		StringTokenizer st = new StringTokenizer(aValue, delimeters) ;
 		String ret = null ;
-		for(int i=0; i<thePosition && st.hasMoreTokens(); i++) {
+		for(int i=0; i<position && st.hasMoreTokens(); i++) {
 			ret = st.nextToken() ;
 		}
 		return ret ;
 	}
 	
-	private final String theDelimeters ;
-	private final int thePosition ;
+	private final String delimeters ;
+	private final int position ;
 }

@@ -82,12 +82,12 @@ public class CreateReplaceMapHelper {
         r("ConfirmAfterAdd","Подтвержение полиса при его создании") ;
         r("AcquirePatient","Брать ФИО, дату рождения, адрес и др. при создании полиса из паспортных данных") ;
 
-        return theMap ;
+        return map ;
     }
 
     private void r(String s, String s1) {
-        theMap.put(s, s1) ;
+        map.put(s, s1) ;
     }
 
-    private final Map<String, String> theMap = new TreeMap<>();
+    private final Map<String, String> map = new TreeMap<>();
 }

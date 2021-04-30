@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form.voc.federal;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV020;
@@ -19,47 +20,43 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @Comment("Профиль койки")
 @WebTrail(comment = "Профиль койки", nameProperties = "code", view = "entityView-e2_vocFondV020.do")
 @EntityFormSecurityPrefix("/Policy/E2")
+@Setter
 public class VocE2FondV020Form extends IdEntityForm {
 
     /** Название */
     @Comment("Название")
     @Persist
-    public String getName() {return theName;}
-    public void setName(String aName) {theName = aName;}
+    public String getName() {return name;}
     /** Название */
-    private String theName ;
+    private String name ;
 
     /** Код */
     @Comment("Код")
     @Persist
-    public String getCode() {return theCode;}
-    public void setCode(String aCode) {theCode = aCode;}
+    public String getCode() {return code;}
     /** Код */
-    private String theCode ;
+    private String code ;
 
     /** Дата начала действия */
     @Comment("Дата начала действия")
     @Persist @DateString
     @DoDateString
-    public String getStartDate() {return theStartDate;}
-    public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
+    public String getStartDate() {return startDate;}
     /** Дата начала действия */
-    private String theStartDate ;
+    private String startDate ;
 
     /** Дата окончания действия */
     @Comment("Дата окончания действия")
     @Persist @DateString @DoDateString
-    public String getFinishDate() {return theFinishDate;}
-    public void setFinishDate(String aFinishDate) {theFinishDate = aFinishDate;}
+    public String getFinishDate() {return finishDate;}
     /** Дата окончания действия */
-    private String theFinishDate ;
+    private String finishDate ;
 
 
     /** Услуга по профилю для стационар по умолчанию */
     @Comment("Услуга по профилю для стационар по умолчанию")
     @Persist
-    public Long getDefaultStacMedService() {return theDefaultStacMedService;}
-    public void setDefaultStacMedService(Long aDefaultStacMedService) {theDefaultStacMedService = aDefaultStacMedService;}
+    public Long getDefaultStacMedService() {return defaultStacMedService;}
     /** Услуга по профилю для стационар по умолчанию */
-    private Long theDefaultStacMedService ;
+    private Long defaultStacMedService ;
 }

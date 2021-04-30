@@ -42,7 +42,7 @@ public class FoodStuffServiceBean implements IFoodStuffService {
 	QueryClauseBuilder builder = new QueryClauseBuilder();
 	builder.addLike("name", aName +"%");
 	
-	Query query = builder.build(theManager, "from VocFoodStuff where",
+	Query query = builder.build(manager, "from VocFoodStuff where",
 			" order by name");
 	
 	List<VocFoodStuffForm> ret = new LinkedList<>();
@@ -57,7 +57,7 @@ public class FoodStuffServiceBean implements IFoodStuffService {
 
 		for (VocFoodStuff foodStuff : list) {
 			try {
-				ret.add(theEntityFormService.loadForm(VocFoodStuffForm.class, foodStuff));
+				ret.add(entityFormService.loadForm(VocFoodStuffForm.class, foodStuff));
 			} catch (EntityFormException e) {
 				throw new IllegalStateException(e);
 			}
@@ -67,9 +67,9 @@ public class FoodStuffServiceBean implements IFoodStuffService {
 	
 	
 	
-	private @EJB ILocalEntityFormService theEntityFormService;
+	private @EJB ILocalEntityFormService entityFormService;
 
-	private @PersistenceContext EntityManager theManager;
+	private @PersistenceContext EntityManager manager;
 
 	//public void updateFoodStuff(VocFoodStuff aFoodStuffId) {}
 	}

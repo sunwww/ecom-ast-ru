@@ -1,5 +1,7 @@
 package ru.ecom.expert2.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expert2.domain.voc.VocE2BillStatus;
 import ru.ecom.expomc.ejb.domain.registry.RegInsuranceCompany;
@@ -11,49 +13,36 @@ import java.math.BigDecimal;
 import java.sql.Date;
 
 @Entity
+@Getter
+@Setter
 public class E2Bill extends BaseEntity {
 
     /** Номер счета */
-    @Comment("Номер счета")
-    public String getBillNumber() {return theBillNumber;}
-    public void setBillNumber(String aBillNumber) {theBillNumber = aBillNumber;}
-    private String theBillNumber ;
+    private String billNumber;
 
     /** Дата счета */
-    @Comment("Дата счета")
-    public Date getBillDate() {return theBillDate;}
-    public void setBillDate(Date aBillDate) {theBillDate = aBillDate;}
-    private Date theBillDate ;
+    private Date billDate;
 
     /** Статус счета */
     @Comment("Статус счета")
     @OneToOne
-    public VocE2BillStatus getStatus() {return theStatus;}
-    public void setStatus(VocE2BillStatus aStatus) {theStatus = aStatus;}
-    private VocE2BillStatus theStatus ;
+    public VocE2BillStatus getStatus() {return status;}
+    private VocE2BillStatus status;
 
     /** Страховая компания */
     @Comment("Страховая компания")
     @OneToOne
-    public RegInsuranceCompany getCompany() {return theCompany;}
-    public void setCompany(RegInsuranceCompany aCompany) {theCompany = aCompany;}
-    private RegInsuranceCompany theCompany ;
+    public RegInsuranceCompany getCompany() {return company;}
+    private RegInsuranceCompany company;
 
     /** Сумма счета */
     @Comment("Сумма счета")
-    public BigDecimal getSum() {return theSum;}
-    public void setSum(BigDecimal aSum) {theSum = aSum;}
-    private BigDecimal theSum ;
+    public BigDecimal getSum() {return sum;}
+    private BigDecimal sum;
 
     /** Примечание к счету */
-    @Comment("Примечание к счету")
-    public String getComment() {return theComment;}
-    public void setComment(String aComment) {theComment = aComment;}
-    private String theComment ;
+    private String comment;
 
     /** Назначение счета */
-    @Comment("Назначение счета")
-    public String getBillProperty() {return theBillProperty;}
-    public void setBillProperty(String aBillProperty) {theBillProperty = aBillProperty;}
-    private String theBillProperty ;
+    private String billProperty;
 }

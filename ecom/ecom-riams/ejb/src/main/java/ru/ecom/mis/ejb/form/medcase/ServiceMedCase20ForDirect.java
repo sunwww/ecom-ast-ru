@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.ServiceMedCase;
@@ -18,6 +19,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Медицинские услуги", nameProperties= "id", list="entityParentList-smo_direction_medservice.do", view="entityParentView-smo_direction_medservice.do")
 @Parent(property="parent", parentForm=DirectionMedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Direction/MedService")
+@Setter
 public class ServiceMedCase20ForDirect extends IdEntityForm {
 
 	/**
@@ -25,24 +27,22 @@ public class ServiceMedCase20ForDirect extends IdEntityForm {
 	 */
 	@Comment("Мед. Услуги")
 	@Persist @Required
-	public Long getMedService() {return theMedService;}
-	public void setMedService(Long aMedService) {theMedService = aMedService;}
+	public Long getMedService() {return medService;}
 
 	/**
 	 * Мед. Услуги
 	 */
-	private Long theMedService;
+	private Long medService;
 	/**
 	 * Мед. Услуги
 	 */
 	@Comment("Мед. Услуги")
-	public Long getMedService1() {return theMedService1;}
-	public void setMedService1(Long aMedService) {theMedService1 = aMedService;}
+	public Long getMedService1() {return medService1;}
 
 	/**
 	 * Мед. Услуги
 	 */
-	private Long theMedService1;
+	private Long medService1;
 	
 
 	/**
@@ -51,18 +51,12 @@ public class ServiceMedCase20ForDirect extends IdEntityForm {
 	@Comment("Новое свойство")
 	@Persist @Required
 	public Integer getMedServiceAmount() {
-		return theMedServiceAmount;
+		return medServiceAmount;
 	}
 	/**
 	 * Новое свойство
 	 */
-	public void setMedServiceAmount(Integer a_Property) {
-		theMedServiceAmount = a_Property;
-	}
-	/**
-	 * Новое свойство
-	 */
-	private Integer theMedServiceAmount;
+	private Integer medServiceAmount;
 	/**
 	 * Новое свойство
 	 */
@@ -71,280 +65,179 @@ public class ServiceMedCase20ForDirect extends IdEntityForm {
 	 */
 	@Comment("Новое свойство")
 	public Integer getMedServiceAmount1() {
-		return theMedServiceAmount1;
-	}
-	public void setMedServiceAmount1(Integer a_Property) {
-		theMedServiceAmount1 = a_Property;
+		return medServiceAmount1;
 	}
 	/**
 	 * Новое свойство
 	 */
-	private Integer theMedServiceAmount1;
+	private Integer medServiceAmount1;
 	/**
 	 * Новое свойство
 	 */
 	@Comment("Новое свойство")
 	public Integer getMedServiceAmount2() {
-		return theMedServiceAmount2;
+		return medServiceAmount2;
 	}
-	/**
-	 * Новое свойство
-	 */
-	public void setMedServiceAmount2(Integer a_Property) {
-		theMedServiceAmount2 = a_Property;
-	}
-	/**
-	 * Новое свойство
-	 */
-	private Integer theMedServiceAmount2;
-	/**
-	 * Новое свойство
-	 */
+	private Integer medServiceAmount2;
 	@Comment("Новое свойство")
 	public Integer getMedServiceAmount3() {
-		return theMedServiceAmount3;
+		return medServiceAmount3;
 	}
 	/**
 	 * Новое свойство
 	 */
-	public void setMedServiceAmount3(Integer a_Property) {
-		theMedServiceAmount3 = a_Property;
-	}
-	/**
-	 * Новое свойство
-	 */
-	private Integer theMedServiceAmount3;
+	private Integer medServiceAmount3;
 	/**
 	 * Новое свойство
 	 */
 	@Comment("Новое свойство")
 	public Integer getMedServiceAmount4() {
-		return theMedServiceAmount4;
+		return medServiceAmount4;
 	}
 	/**
 	 * Новое свойство
 	 */
-	public void setMedServiceAmount4(Integer a_Property) {
-		theMedServiceAmount4 = a_Property;
-	}
-	/**
-	 * Новое свойство
-	 */
-	private Integer theMedServiceAmount4;
+	private Integer medServiceAmount4;
 	/**
 	 * Новое свойство
 	 */
 	@Comment("Новое свойство")
 	public Integer getMedServiceAmount5() {
-		return theMedServiceAmount5;
+		return medServiceAmount5;
 	}
 	/**
 	 * Новое свойство
 	 */
-	public void setMedServiceAmount5(Integer a_Property) {
-		theMedServiceAmount5 = a_Property;
-	}
-	/**
-	 * Новое свойство
-	 */
-	private Integer theMedServiceAmount5;
+	private Integer medServiceAmount5;
 	/**
 	 * Новое свойство
 	 */
 	@Comment("Новое свойство")
 	public Integer getMedServiceAmount6() {
-		return theMedServiceAmount6;
+		return medServiceAmount6;
 	}
 	/**
 	 * Новое свойство
 	 */
-	public void setMedServiceAmount6(Integer a_Property) {
-		theMedServiceAmount6 = a_Property;
-	}
-	/**
-	 * Новое свойство
-	 */
-	private Integer theMedServiceAmount6;
+	private Integer medServiceAmount6;
 	/**
 	 * Новое свойство
 	 */
 	@Comment("Новое свойство")
 	public Integer getMedServiceAmount7() {
-		return theMedServiceAmount7;
+		return medServiceAmount7;
 	}
 	/**
 	 * Новое свойство
 	 */
-	public void setMedServiceAmount7(Integer a_Property) {
-		theMedServiceAmount7 = a_Property;
-	}
-	/**
-	 * Новое свойство
-	 */
-	private Integer theMedServiceAmount7;
+	private Integer medServiceAmount7;
 	/**
 	 * Новое свойство
 	 */
 	@Comment("Новое свойство")
 	public Integer getMedServiceAmount8() {
-		return theMedServiceAmount8;
+		return medServiceAmount8;
 	}
 	/**
 	 * Новое свойство
 	 */
-	public void setMedServiceAmount8(Integer a_Property) {
-		theMedServiceAmount8 = a_Property;
-	}
-	/**
-	 * Новое свойство
-	 */
-	private Integer theMedServiceAmount8;
+	private Integer medServiceAmount8;
 
 	/**
 	 * Новое свойство
 	 */
 	@Comment("Новое свойство")
 	public Long getMedService2() {
-		return theMedService2;
+		return medService2;
 	}
 	/**
 	 * Новое свойство
 	 */
-	public void setMedService2(Long a_Property) {
-		theMedService2 = a_Property;
-	}
-	/**
-	 * Новое свойство
-	 */
-	private Long theMedService2;
+	private Long medService2;
 	/**
 	 * Новое свойство
 	 */
 	@Comment("Новое свойство")
 	public Long getMedService3() {
-		return theMedService3;
+		return medService3;
 	}
 	/**
 	 * Новое свойство
 	 */
-	public void setMedService3(Long a_Property) {
-		theMedService3 = a_Property;
-	}
-	/**
-	 * Новое свойство
-	 */
-	private Long theMedService3;
+	private Long medService3;
 	/**
 	 * Новое свойство
 	 */
 	@Comment("Новое свойство")
 	public Long getMedService4() {
-		return theMedService4;
+		return medService4;
 	}
 	/**
 	 * Новое свойство
 	 */
-	public void setMedService4(Long a_Property) {
-		theMedService4 = a_Property;
-	}
-	/**
-	 * Новое свойство
-	 */
-	private Long theMedService4;
+	private Long medService4;
 	/**
 	 * Новое свойство
 	 */
 	@Comment("Новое свойство")
 	public Long getMedService5() {
-		return theMedService5;
+		return medService5;
 	}
 	/**
 	 * Новое свойство
 	 */
-	public void setMedService5(Long a_Property) {
-		theMedService5 = a_Property;
-	}
-	/**
-	 * Новое свойство
-	 */
-	private Long theMedService5;
+	private Long medService5;
 	/**
 	 * Новое свойство
 	 */
 	@Comment("Новое свойство")
 	public Long getMedService6() {
-		return theMedService6;
+		return medService6;
 	}
 	/**
 	 * Новое свойство
 	 */
-	public void setMedService6(Long a_Property) {
-		theMedService6 = a_Property;
-	}
-	/**
-	 * Новое свойство
-	 */
-	private Long theMedService6;
+	private Long medService6;
 	/**
 	 * Новое свойство
 	 */
 	@Comment("Новое свойство")
 	public Long getMedService7() {
-		return theMedService7;
+		return medService7;
 	}
 	/**
 	 * Новое свойство
 	 */
-	public void setMedService7(Long a_Property) {
-		theMedService7 = a_Property;
-	}
-	/**
-	 * Новое свойство
-	 */
-	private Long theMedService7;
+	private Long medService7;
 	/**
 	 * Новое свойство
 	 */
 	@Comment("Новое свойство")
 	public Long getMedService8() {
-		return theMedService8;
+		return medService8;
 	}
 	/**
 	 * Новое свойство
 	 */
-	public void setMedService8(Long a_Property) {
-		theMedService8 = a_Property;
-	}
-	/**
-	 * Новое свойство
-	 */
-	private Long theMedService8;
+	private Long medService8;
 	
 	/** Дополнительные медицинские услуги */
 	@Comment("Дополнительные медицинские услуги")
 	public String getAdditionMedService() {
-		return theAdditionMedService;
-	}
-
-	public void setAdditionMedService(String aAdditionMedService) {
-		theAdditionMedService = aAdditionMedService;
+		return additionMedService;
 	}
 
 	/** Дополнительные медицинские услуги */
-	private String theAdditionMedService;
+	private String additionMedService;
 	
 	/** Направление */
 	@Comment("Направление")
 	@Persist
 	public Long getParent() {
-		return theParent;
-	}
-
-	public void setParent(Long aParent) {
-		theParent = aParent;
+		return parent;
 	}
 
 	/** Направление */
-	private Long theParent;
+	private Long parent;
 
 }

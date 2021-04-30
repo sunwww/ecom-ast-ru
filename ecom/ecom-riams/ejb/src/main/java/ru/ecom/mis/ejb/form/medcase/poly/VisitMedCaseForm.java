@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.poly;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.ASaveInterceptors;
@@ -33,164 +34,140 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @ASaveInterceptors(
 		@AEntityFormInterceptor(VisitSaveInterceptor.class)
 )
+@Setter
 public class VisitMedCaseForm extends TicketMedCaseForm {
 	/** Количество выписанных льготных рецептов */
 	@Comment("Количество выписанных льготных рецептов")
 	@Persist
-	public Integer getPrivilegeRecipeAmount() {return thePrivilegeRecipeAmount;	}
-	public void setPrivilegeRecipeAmount(Integer aPrivilegeRecipeAmount) {thePrivilegeRecipeAmount = aPrivilegeRecipeAmount;	}
+	public Integer getPrivilegeRecipeAmount() {return privilegeRecipeAmount;	}
 
 	/** Внешний направитель (ЛПУ) */
 	@Comment("Внешний направитель (ЛПУ)")
 	@Persist
-	public Long getOrderLpu() {return theOrderLpu;}
-	public void setOrderLpu(Long aOrderLpu) {theOrderLpu = aOrderLpu;}
+	public Long getOrderLpu() {return orderLpu;}
 
 	/** Результат визита */
 	@Comment("Результат визита")
 	@Persist @Required
-	public Long getVisitResult() {return theVisitResult;	}
-	public void setVisitResult(Long aResult) {theVisitResult = aResult;}
+	public Long getVisitResult() {return visitResult;	}
 
 	/** Цель визита */
 	@Comment("Цель визита")
 	@Persist @Required
-	public Long getVisitReason() {return theVisitReason;	}
-	public void setVisitReason(Long aReason) {theVisitReason = aReason;	}
+	public Long getVisitReason() {return visitReason;	}
 
 	/** Тип рабочего места обслуживания */
 	@Comment("Тип рабочего места обслуживания")
 	@Persist @Required
-	public Long getWorkPlaceType() {return theWorkPlaceType;}
-	public void setWorkPlaceType(Long aWorkPlaceType) {theWorkPlaceType = aWorkPlaceType;	}
+	public Long getWorkPlaceType() {return workPlaceType;}
 
 	/** Рабочая функция направителя */
 	@Comment("Рабочая функция направителя")
 	@Persist
-	public Long getOrderWorkFunction() {return theOrderWorkFunction;}
-	public void setOrderWorkFunction(Long aNewProperty) {theOrderWorkFunction = aNewProperty;}
+	public Long getOrderWorkFunction() {return orderWorkFunction;}
 
 	 /** Диспансерный учет * */
     @Persist
-    public Long getDispRegistration() {return theDispRegistration;}
-    public void setDispRegistration(Long aVocDispanseryRegistration) {theDispRegistration = aVocDispanseryRegistration;}
-    
+    public Long getDispRegistration() {return dispRegistration;}
+
     /** Дата следующего визита */
 	@Comment("Дата следующего визита")
 	@DateString @DoDateString @Persist @MaxDateCurrent
 	public String getNextVisitDate() {
-		return theNextVisitDate;
+		return nextVisitDate;
 	}
 
-	public void setNextVisitDate(String aNextVisitDate) {
-		theNextVisitDate = aNextVisitDate;
-	}
 	/** Госпитализация (впервые, повторно) */
 	@Comment("Госпитализация (впервые, повторно)")
 	@Persist @Required
-	public Long getHospitalization() {return theHospitalization;}
-	public void setHospitalization(Long aHospitalization) {theHospitalization = aHospitalization;}
+	public Long getHospitalization() {return hospitalization;}
 	/** Дата начала */
 	@Comment("Дата начала")
 	@Persist @DateString @DoDateString @MaxDateCurrent
-	public String getDateStart() {return theDateStart;}
-	public void setDateStart(String aNewProperty) {theDateStart = aNewProperty;}
+	public String getDateStart() {return dateStart;}
 	/** Дата начала */
-	private String theDateStart;
+	private String dateStart;
 	/** Госпитализация (впервые, повторно) */
-	private Long theHospitalization;
+	private Long hospitalization;
 
 	/** Дата следующего визита */
-	private String theNextVisitDate;
-    private Long theDispRegistration;
+	private String nextVisitDate;
+    private Long dispRegistration;
 	/** Рабочая функция направителя */
-	private Long theOrderWorkFunction;
+	private Long orderWorkFunction;
 	/** Тип рабочего места обслуживания */
-	private Long theWorkPlaceType;
+	private Long workPlaceType;
 	/** Цель визита */
-	private Long theVisitReason;
+	private Long visitReason;
 	/** Результат визита */
-	private Long theVisitResult;
+	private Long visitResult;
 	/** Внешний направитель (ЛПУ) */
-	private Long theOrderLpu;
+	private Long orderLpu;
 	/** Количество выписанных льготных рецептов */
-	private Integer thePrivilegeRecipeAmount;
+	private Integer privilegeRecipeAmount;
 	
 	/** Количество оказанных услуг - AOI, 09.08.2016*/
-	private String theMedserviceAmounts;
-	public String getMedserviceAmounts() { return theMedserviceAmounts; }
-	public void setMedserviceAmounts(String aMedserviceAmounts) { this.theMedserviceAmounts = aMedserviceAmounts; }
-	
+	private String medserviceAmounts;
+	public String getMedserviceAmounts() { return medserviceAmounts; }
+
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@Persist @Required
-	public Long getServiceStream() {return theServiceStream;}
-	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+	public Long getServiceStream() {return serviceStream;}
 
 	/** Поток обслуживания */
-	private Long theServiceStream;
+	private Long serviceStream;
 	/** Отделение (текст) */
 	@Comment("Отделение (текст)")
 	@Persist
-	public String getDepartmentInfo() {return theDepartmentInfo;}
-	public void setDepartmentInfo(String aDepartmentInfo) {theDepartmentInfo = aDepartmentInfo;}
+	public String getDepartmentInfo() {return departmentInfo;}
 	/** Отделение */
 	@Comment("Отделение")
 	@Persist
-	public Long getDepartment() {return theDepartment;}
-	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+	public Long getDepartment() {return department;}
 	/** Отделение */
-	private Long theDepartment;
+	private Long department;
 	/** Отделение (текст) */
-	private String theDepartmentInfo;	
+	private String departmentInfo;	
 	
 	/** medServices */
 	@Comment("medServices")
-	public String getMedServices() {return theMedServices;}
-	public void setMedServices(String aMedServices) {theMedServices = aMedServices;}
+	public String getMedServices() {return medServices;}
 
 	/** medServices */
-	private String theMedServices;
+	private String medServices;
 	/** Предварительный прием */
 	@Comment("Предварительный прием")
-	public Boolean getIsPreRecord() {return theIsPreRecord;}
-	public void setIsPreRecord(Boolean aIsPreRecord) {theIsPreRecord = aIsPreRecord;}
+	public Boolean getIsPreRecord() {return isPreRecord;}
 
 	/** Предварительный прием */
-	private Boolean theIsPreRecord;
+	private Boolean isPreRecord;
 
-	
 	/**
 	 * Рабочая функция исполнения
 	 */
 	@Comment("Рабочая функция исполнения")
 	@Persist 
-	public Long getWorkFunctionExecute() {return theWorkFunctionExecute;	}
+	public Long getWorkFunctionExecute() {return workFunctionExecute;	}
 	/** Рабочая функция исполнения */
-	public void setWorkFunctionExecute(Long aNewProperty) {	theWorkFunctionExecute = aNewProperty;}
-
-	/** Рабочая функция исполнения */
-	private Long theWorkFunctionExecute;
+	private Long workFunctionExecute;
 	
 	/** Заключительный диагноз по МКБ-10 */
 	@Comment("Заключительный диагноз по МКБ-10")
 	@Mkb 
-	public Long getConcludingMkb() {return theConcludingMkb;}
-	public void setConcludingMkb(Long aConcludingMkb) {theConcludingMkb = aConcludingMkb;}
+	public Long getConcludingMkb() {return concludingMkb;}
 	/** Заключительный диагноз */
 	@Comment("Заключительный диагноз")
-	public String getConcludingDiagnos() {return theConcludingDiagnos;}
-	public void setConcludingDiagnos(String aConcludingDiagnos) {theConcludingDiagnos = aConcludingDiagnos;}
+	public String getConcludingDiagnos() {return concludingDiagnos;}
 
 	/** Острота диагноза заключительного */
 	@Comment("Острота диагноза клинического")
-	public Long getConcludingActuity() {return theConcludingActuity;}
-	public void setConcludingActuity(Long aClinicalActuity) {theConcludingActuity = aClinicalActuity;}
+	public Long getConcludingActuity() {return concludingActuity;}
 	/** Острота диагноза заключительного */
-	private Long theConcludingActuity;
+	private Long concludingActuity;
 	/** Заключительный диагноз */
-	private String theConcludingDiagnos;
+	private String concludingDiagnos;
 	/** Заключительный диагноз по МКБ-10 */
-	private Long theConcludingMkb;
+	private Long concludingMkb;
 	
 }

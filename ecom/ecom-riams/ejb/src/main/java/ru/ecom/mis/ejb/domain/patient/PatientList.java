@@ -2,60 +2,31 @@ package ru.ecom.mis.ejb.domain.patient;
 
 import javax.persistence.Entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
+@Getter
+@Setter
 public class PatientList extends BaseEntity{
 
 	/** Тип списка */
-	@Comment("Тип списка")
-	public Long getType() {return theType;}
-	public void setType(Long aType) {theType = aType;}
-	/** Тип списка */
-	private Long theType;
+	private Long type;
 	
 	/** Название списка */
-	@Comment("Название списка")
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
-	/** Название списка */
-	private String theName;
+	private String name;
 	
 	/** Цвет сообщения */
-	@Comment("Цвет сообщения")
-	public String getColorName() {return theColorName;}
-	public void setColorName(String aColorName) {theColorName = aColorName;}
-	/** Цвет сообщения */
-	private String theColorName;
+	private String colorName;
 	
-	
-	/** Цвет текста */
-	@Comment("Цвет текста")
-	public String getColorText() {return theColorText;}
-	public void setColorText(String aColorText) {theColorText = aColorText;}
-
-	
-	/** Отображать цвет при поиске */
-	@Comment("Отображать цвет при поиске")
-	public Boolean getIsViewWhenSeaching() {return theIsViewWhenSeaching;}
-	public void setIsViewWhenSeaching(Boolean aIsViewWhenSeaching) {theIsViewWhenSeaching = aIsViewWhenSeaching;}
-
 	/** Отображать цвет в WebTrail */
-	@Comment("Отображать цвет в WebTrail")
-	public Boolean getIsViewInWebTrail() {return theIsViewInWebTrail;}
-	public void setIsViewInWebTrail(Boolean aIsViewInWebTrail) {theIsViewInWebTrail = aIsViewInWebTrail;}
-
-	/** Отображать цвет в WebTrail */
-	private Boolean theIsViewInWebTrail;
+	private Boolean isViewInWebTrail;
 	/** Отображать цвет при поиске */
-	private Boolean theIsViewWhenSeaching;
+	private Boolean isViewWhenSeaching;
 	/** Цвет текста */
-	private String theColorText;
+	private String colorText;
 	/** Сообщение */
-	@Comment("Сообщение")
-	public String getMessage() {return theMessage;}
-	public void setMessage(String aMessage) {theMessage = aMessage;}
-	/** Сообщение */
-	private String theMessage;
+	private String message;
 }

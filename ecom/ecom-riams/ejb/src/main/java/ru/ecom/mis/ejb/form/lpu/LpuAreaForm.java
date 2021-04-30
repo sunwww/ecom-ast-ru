@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.lpu;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdNameCommentEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ADynamicParentSecurityInterceptor;
@@ -18,90 +19,74 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Участок", nameProperties= "name", view="entityView-mis_lpuArea.do")
 @Parent(property="lpu", parentForm=MisLpuForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/LpuArea")
-//@AParentPrepareCreateInterceptors(
-//        @AParentEntityFormInterceptor(LpuAreaPrepareCreateInterceptor.class)
-//)
-
 @ADynamicSecurityInterceptor(LpuAreaDynamicSecurity.class)
 @ADynamicParentSecurityInterceptor(LpuAreaDynamicSecurity.class)
+@Setter
 
 public class LpuAreaForm extends IdNameCommentEntityForm {
     /** ЛПУ для изменения */
 	@Comment("ЛПУ для изменения")
-	public Long getChangeLpu() {return theChangeLpu;}
-	public void setChangeLpu(Long aChangeLpu) {theChangeLpu = aChangeLpu;}
-	/** ЛПУ для изменения */
-	private Long theChangeLpu;
+	public Long getChangeLpu() {return changeLpu;}
+	private Long changeLpu;
 	
 	/** Участок для изменения */
 	@Comment("Участок для изменения")
-	public Long getChangeLpuArea() {return theChangeLpuArea;}
-	public void setChangeLpuArea(Long aChangeLpuArea) {theChangeLpuArea = aChangeLpuArea;}
-	/** Участок для изменения */
-	private Long theChangeLpuArea;
+	public Long getChangeLpuArea() {return changeLpuArea;}
+	private Long changeLpuArea;
 	
 	/** ЛПУ */
     @Persist
-    public Long getLpu() { return theLpu ; }
-    public void setLpu(Long aLpu) { theLpu = aLpu ; }
+    public Long getLpu() { return lpu ; }
 
     @Comment("Название")
     public String getName() {
-        return theTypeName + " № " + theNumber;
+        return typeName + " № " + number;
     }
 
     /** Тип участка */
     @Comment("Тип участка")
     @Persist
     @Required
-    public Long getType() { return theType ; }
-    public void setType(Long aType) { theType = aType ; }
+    public Long getType() { return type ; }
 
     /** Тип участка */
-    private Long theType ;
+    private Long type ;
     /** Номер участка */
     @Required
     @Persist
-    public String getNumber() { return theNumber ; }
-    public void setNumber(String aNumber) { theNumber = aNumber ; }
+    public String getNumber() { return number ; }
 
     /** Название типа участка */
     @Persist
-    public String getTypeName() { return theTypeName ; }
-    public void setTypeName(String aTypeName) { theTypeName = aTypeName ; }
+    public String getTypeName() { return typeName ; }
 
     /** Название типа участка */
-    private String theTypeName ;
+    private String typeName ;
 
     /** Номер участка */
-    private String theNumber ;
+    private String number ;
     /** ЛПУ */
-    private Long theLpu ;
+    private Long lpu ;
     /** Участковый */
 	@Comment("Участковый")
 	@Persist @Required
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public Long getWorkFunction() {return workFunction;}
 
 	/** Участковый */
-	private Long theWorkFunction;
+	private Long workFunction;
 	
 	/** Код подразделения */
 	@Comment("Код подразделения")
 	@Persist @Required
-	public String getCodeDepartment() {return theCodeDepartment;}
-	public void setCodeDepartment(String aCodeDepartment) {theCodeDepartment = aCodeDepartment;}
+	public String getCodeDepartment() {return codeDepartment;}
 
 	/** Код подразделения */
-	private String theCodeDepartment;
+	private String codeDepartment;
 	
 	/** Отображать в пациенте */
 	@Comment("Отображать в пациенте")
 	@Persist
-	public Boolean getIsViewInfoPatient() {return theIsViewInfoPatient;}
-	public void setIsViewInfoPatient(Boolean aIsViewInfoPatient) {theIsViewInfoPatient = aIsViewInfoPatient;}
-
-	/** Отображать в пациенте */
-	private Boolean theIsViewInfoPatient;
+	public Boolean getIsViewInfoPatient() {return isViewInfoPatient;}
+	private Boolean isViewInfoPatient;
 
 }

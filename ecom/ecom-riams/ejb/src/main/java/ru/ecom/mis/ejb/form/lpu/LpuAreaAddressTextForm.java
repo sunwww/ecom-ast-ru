@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.lpu;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ADynamicParentSecurityInterceptor;
@@ -24,62 +25,54 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormSecurityPrefix("/Policy/Mis/LpuAreaAddressText")
 @ADynamicSecurityInterceptor(LpuAreaAddressTextDynamicSecurity.class)
 @ADynamicParentSecurityInterceptor(LpuAreaAddressTextDynamicSecurity.class)
+@Setter
 public class LpuAreaAddressTextForm extends IdEntityForm {
     /** Участок */
     @Persist
-    public Long getArea() { return theArea ; }
-    public void setArea(Long aArea) { theArea = aArea ; }
+    public Long getArea() { return area ; }
 
     /** Адрес */
     @Persist
-    public String getAddressText() { return theAddressText ; }
-    public void setAddressText(String aAddressText) { theAddressText = aAddressText ; }
+    public String getAddressText() { return addressText ; }
 
     /** Улица */
     @Persist
-    public String getStreetName() { return theStreetName ; }
-    public void setStreetName(String aStreetName) { theStreetName = aStreetName ; }
+    public String getStreetName() { return streetName ; }
 
     /** Строка адреса */
     @Comment("Строка адреса")
     @Persist
-    public String getAddressString() { return theAddressString ; }
-    public void setAddressString(String aAddressString) { theAddressString = aAddressString ; }
+    public String getAddressString() { return addressString ; }
 
     /** Адрес */
     @Persist
     @Required
-    public Long getAddress() { return theAddress ; }
-    public void setAddress(Long aAddress) { theAddress = aAddress ; }
+    public Long getAddress() { return address ; }
 
     /** Дом */
-    public String getHouseNumber() { return theHouseNumber ; }
-    public void setHouseNumber(String aHouseNumber) { theHouseNumber = aHouseNumber ; }
+    public String getHouseNumber() { return houseNumber ; }
 
     /** Корпус */
-    public String getHouseBuilding() { return theHouseBuilding ; }
-    public void setHouseBuilding(String aHouseBuilding) { theHouseBuilding = aHouseBuilding ; }
+    public String getHouseBuilding() { return houseBuilding ; }
 
     /** Квартира */
-    public String getFlatNumber() { return theFlatNumber ; }
-    public void setFlatNumber(String aFlatNumber) { theFlatNumber = aFlatNumber ; }
-
+    public String getFlatNumber() { return flatNumber ; }
 
     /** Адрес */
-    private Long theAddress ;
+    private Long address ;
     /** Квартира */
-    private String theFlatNumber ;
+    private String flatNumber ;
     /** Корпус */
-    private String theHouseBuilding ;
+    private String houseBuilding ;
     /** Дом */
-    private String theHouseNumber ;
+    private String houseNumber ;
 
     /** Строка адреса */
-    private String theAddressString ;
+    private String addressString ;
     /** Улица */
-    private String theStreetName ;
+    private String streetName ;
     /** Адрес */
-    private String theAddressText ;
+    private String addressText ;
     /** Участок */
-    private Long theArea ;
+    private Long area ;
 }

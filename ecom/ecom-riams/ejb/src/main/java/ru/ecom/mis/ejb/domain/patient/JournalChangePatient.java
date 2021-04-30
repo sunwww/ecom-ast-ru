@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -21,84 +23,48 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @AIndexes({
 	@AIndex(properties={"patient"})
-    , @AIndex(unique = false, properties= {"lastname","firstname","middlename", "birthday"})
+    , @AIndex(properties= {"lastname","firstname","middlename", "birthday"})
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class JournalChangePatient extends BaseEntity {
 	/** Фамилия */
-	@Comment("Фамилия")
-	public String getLastname() {return theLastname;}
-	public void setLastname(String aLastname) {theLastname = aLastname;}
-
-	/** Фамилия */
-	private String theLastname;
-	
-	/** Имя */
-	@Comment("Имя")
-	public String getFirstname() {return theFirstname;}
-	public void setFirstname(String aFirstname) {theFirstname = aFirstname;}
-
-	/** Отчество */
-	@Comment("Отчество")
-	public String getMiddlename() {return theMiddlename;}
-	public void setMiddlename(String aMiddlename) {theMiddlename = aMiddlename;}
-
-	/** Дата рождения */
-	@Comment("Дата рождения")
-	public Date getBirthday() {return theBirthday;}
-	public void setBirthday(Date aBirthday) {theBirthday = aBirthday;}
+	private String lastname;
 
 	/** Адрес */
 	@Comment("Адрес")
 	@OneToOne
-	public Address getAddress() {return theAddress;}
-	public void setAddress(Address aAddress) {theAddress = aAddress;}
+	public Address getAddress() {return address;}
 
 	/** Адрес проживания */
 	@Comment("Адрес проживания")
 	@OneToOne
-	public Address getRealAddress() {return theRealAddress;}
-	public void setRealAddress(Address aRealAddress) {theRealAddress = aRealAddress;}
+	public Address getRealAddress() {return realAddress;}
 
 	/** Адрес проживания */
-	private Address theRealAddress;
+	private Address realAddress;
 	/** Адрес */
-	private Address theAddress;
+	private Address address;
 	/** Дата рождения */
-	private Date theBirthday;
+	private Date birthday;
 	/** Отчество */
-	private String theMiddlename;
+	private String middlename;
 	/** Имя */
-	private String theFirstname;
+	private String firstname;
 	
 	/** Пациент */
 	@Comment("Пациент")
 	@OneToOne
-	public Patient getPatient() {return thePatient;}
-	public void setPatient(Patient aPatient) {thePatient = aPatient;}
+	public Patient getPatient() {return patient;}
 
 	/** Пациент */
-	private Patient thePatient;
+	private Patient patient;
 	
-	/** Дата изменения */
-	@Comment("Дата изменения")
-	public Date getChangeDate() {return theChangeDate;}
-	public void setChangeDate(Date aChangeDate) {theChangeDate = aChangeDate;}
-
-	/** Время изменения */
-	@Comment("Время изменения")
-	public Time getChangeTime() {return theChangeTime;}
-	public void setChangeTime(Time aChangeTime) {theChangeTime = aChangeTime;}
-
 	/** Пользователь */
-	@Comment("Пользователь")
-	public String getChangeUsername() {return theChangeUsername;}
-	public void setChangeUsername(String aChangeUsername) {theChangeUsername = aChangeUsername;}
-
-	/** Пользователь */
-	private String theChangeUsername;
+	private String changeUsername;
 	/** Время изменения */
-	private Time theChangeTime;
+	private Time changeTime;
 	/** Дата изменения */
-	private Date theChangeDate;
+	private Date changeDate;
 }

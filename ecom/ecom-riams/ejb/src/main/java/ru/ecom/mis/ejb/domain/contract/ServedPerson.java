@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.contract;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -15,9 +17,11 @@ import java.sql.Time;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes({
-	@AIndex(unique= false, properties = {"person"})
-	,@AIndex(unique= false, properties = {"contract"})
+	@AIndex(properties = {"person"})
+	,@AIndex(properties = {"contract"})
 })
+	@Getter
+	@Setter
 public class ServedPerson extends BaseEntity{
 	/**
 	 * Договорная персона
@@ -25,128 +29,58 @@ public class ServedPerson extends BaseEntity{
 	@Comment("Договорная персона")
 	@OneToOne
 	public ContractPerson getPerson() {
-		return thePerson;
-	}
-	public void setPerson(ContractPerson aPerson) {
-		thePerson = aPerson;
+		return person;
 	}
 	/**
 	 * Договорная персона
 	 */
-	private ContractPerson thePerson;
+	private ContractPerson person;
 	/**
 	 * Договор
 	 */
 	@Comment("Договор")
 	@ManyToOne
 	public MedContract getContract() {
-		return theContract;
-	}
-	public void setContract(MedContract aContract) {
-		theContract = aContract;
+		return contract;
 	}
 	/**
 	 * Договор
 	 */
-	private MedContract theContract;
+	private MedContract contract;
 	/**
 	 * Дата начала обслуживания
 	 */
-	@Comment("Дата начала обслуживания")
-	
-	public Date getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(Date aDateFrom) {
-		theDateFrom = aDateFrom;
-	}
-	/**
-	 * Дата начала обслуживания
-	 */
-	private Date theDateFrom;
+	private Date dateFrom;
 	/**
 	 * Дата окончания обслуживания
 	 */
-	@Comment("Дата окончания обслуживания")
-	
-	public Date getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(Date aDateTo) {
-		theDateTo = aDateTo;
-	}
-	/**
-	 * Дата окончания обслуживания
-	 */
-	private Date theDateTo;
+	private Date dateTo;
 
 	/**
 	 * Признак авто создания счета 
-	 */
-	public Boolean getAutoAccount() {
-		return theAutoAccount;
-	}
-	public void setAutoAccount(Boolean aAutoAccount) {
-		theAutoAccount = aAutoAccount;
-	}	
-	/**
-	 * Признак авто создания счета 
 	 */	
-	private Boolean theAutoAccount;
+	private Boolean autoAccount;
 	
 	/** Информация */
 	@Comment("Информация")
 	@Transient
-	public String getInfo() {return thePerson!=null?thePerson.getInformation():"нет информации";}
-	
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	
-	/** Пользователь, создавший запись */
-	@Comment("Пользователь, создавший запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	
-	/** Дата последнего изменения */
-	@Comment("Дата последнего изменения")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-	
-	/** Время, последнего изменения */
-	@Comment("Время, последнего изменения")
-	public Time getEditTime() {return theEditTime;}
-	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-	
+	public String getInfo() {return person!=null?person.getInformation():"нет информации";}
 	/** Пользователь, последний изменивший запись */
-	@Comment("Пользователь, последний изменивший запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-
-	/** Пользователь, последний изменивший запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Время, последнего изменения */
-	private Time theEditTime;
+	private Time editTime;
 	/** Дата последнего изменения */
-	private Date theEditDate;
+	private Date editDate;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	/** Счет */
 	@Comment("Счет")
 	@OneToOne
-	public ContractAccount getAccount() {return theAccount;}
-	public void setAccount(ContractAccount aAccount) {theAccount = aAccount;}
-
+	public ContractAccount getAccount() {return account;}
 	/** Счет */
-	private ContractAccount theAccount;
+	private ContractAccount account;
 }

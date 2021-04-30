@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.form.patient;
 
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.*;
@@ -29,7 +30,7 @@ import ru.nuzmsh.forms.validator.validators.*;
 @WebTrail(comment = "Персона", nameProperties = {"patientInfo","patientSync"}
 	, view = "entityView-mis_patient.do", shortView="entityShortView-mis_patient.do"
 			,journal=true,listStyle={
-		"select case when (deathDate is not null) then cast('border: 2px solid;font-size: 14px; color: black;font-weight:bold;text-decoration:blink' as varchar(200)) when colorType='1' then cast('font-size: 14px; color: red;font-weight:bold;text-decoration:blink' as varchar(200)) end from patient where id=:id"
+		"select case when (deathDate is not null) n cast('border: 2px solid;font-size: 14px; color: black;font-weight:bold;text-decoration:blink' as varchar(200)) when colorType='1' n cast('font-size: 14px; color: red;font-weight:bold;text-decoration:blink' as varchar(200)) end from patient where id=:id"
 		,"select 'background:'||coalesce((select max(pl.colorName) from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'#CDE')||';color:'||coalesce((select max(pl.colorText) from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'black')||';' from SuicideMessage where patient_id=:id group by patient_id"
 		,"select coalesce('background:'||max(pl.colorName)||';','')||coalesce('color:'||max(pl.colorText)||';font-size: 14px;','') from PatientListRecord plr left join PatientList pl on pl.id=plr.PatientList where plr.patient=:id and pl.isViewInWebTrail='1' group by plr.patient"
 		
@@ -48,559 +49,459 @@ import ru.nuzmsh.forms.validator.validators.*;
 @AViewInterceptors(
         @AEntityFormInterceptor(PatientViewInterceptor.class)
 )
+@Setter
 public class PatientForm extends IdEntityForm {
 
     /** Голосует в палате */
     @Comment("Голосует в палате")
     @Persist
-    public Boolean getVoteInRoom() {return theVoteInRoom;}
-    public void setVoteInRoom(Boolean aVoteInRoom) {theVoteInRoom = aVoteInRoom;}
+    public Boolean getVoteInRoom() {return voteInRoom;}
     /** Голосует в палате */
-    private Boolean theVoteInRoom ;
+    private Boolean voteInRoom ;
 
 	/** ППЗ */
 	@Persist
 	@Comment("ППЗ")
-	public Boolean getPpz() {return thePpz;}
-	public void setPpz(Boolean aPpz) {thePpz = aPpz;}
+	public Boolean getPpz() {return ppz;}
 	/** ППЗ */
-	private Boolean thePpz ;
+	private Boolean ppz ;
 
 	/** Номер телефона для мобильного приложения */
 	@Comment("Номер телефона для мобильного приложения")
-	public String getMobileAppPhoneNumber() {return theMobileAppPhoneNumber;}
-	public void setMobileAppPhoneNumber(String aMobileAppPhoneNumber) {theMobileAppPhoneNumber = aMobileAppPhoneNumber;}
+	public String getMobileAppPhoneNumber() {return mobileAppPhoneNumber;}
 	/** Номер телефона для мобильного приложения */
-	private String theMobileAppPhoneNumber ;
+	private String mobileAppPhoneNumber ;
 
 	/** Не голосует */
 	@Comment("Не голосует")
 	@Persist
-	public Boolean getNotVote() {return theNotVote;}
-	public void setNotVote(Boolean aNotVote) {theNotVote = aNotVote;}
+	public Boolean getNotVote() {return notVote;}
 	/** Не голосует */
-	private Boolean theNotVote;
+	private Boolean notVote;
 	    
 	/** Телефон */
 	@Comment("Телефон")
 	@Persist
-	public String getPhone() {return thePhone;}
-	public void setPhone(String aPhone) {thePhone = aPhone;}
+	public String getPhone() {return phone;}
 
 	/** Телефон */
-	private String thePhone;
+	private String phone;
 
     @Comment("Синхронизация пациента")
     @Persist @DoUpperCase
     public String getPatientSync() {
-        return thePatientSync;
+        return patientSync;
     }
     
-    public void setPatientSync(String aPatientSync) {
-        thePatientSync = aPatientSync;
-    }
     /* Синхронизация пациента */
-    private String thePatientSync;
+    private String patientSync;
     /** Название ЛПУ */
     @Persist
     @Comment("Название ЛПУ")
-    public String getLpuName() {    return theLpuName ;}
-    public void setLpuName(String aLpuName ) {  theLpuName = aLpuName ; }
+    public String getLpuName() {    return lpuName ;}
 
     /** Название участка */
     @Persist
     @Comment("Название участка")
     @ADynamicSecurityInterceptor(PatientDynamicSecurityInterceptor.class)
-    public String getLpuAreaName() {    return theLpuAreaName ;}
-    public void setLpuAreaName(String aLpuAreaName ) {  theLpuAreaName = aLpuAreaName ; }
-
+    public String getLpuAreaName() {    return lpuAreaName ;}
 
     /** Участок */
     @Persist
     @Comment("Участок")
-    public Long getLpuArea() {    return theLpuArea ;}
-    public void setLpuArea(Long aLpuArea ) {  theLpuArea = aLpuArea ; }
+    public Long getLpuArea() {    return lpuArea ;}
 
     /** Адрес участка */
     @Persist
     @Comment("Адрес участка")
     @ADynamicSecurityInterceptor(PatientDynamicSecurityInterceptor.class)
-    public Long getLpuAreaAddressText() {    return theLpuAreaAddressText ;}
-    public void setLpuAreaAddressText(Long aLpuAreaAddressText ) {  theLpuAreaAddressText = aLpuAreaAddressText ; }
+    public Long getLpuAreaAddressText() {    return lpuAreaAddressText ;}
 
     /** ЛПУ */
     @Persist
     @Comment("ЛПУ")
-    public Long getLpu() {    return theLpu ;}
-    public void setLpu(Long aLpu ) {  theLpu = aLpu ; }
-
+    public Long getLpu() {    return lpu ;}
 
     /** Имя */
     @Comment("Имя")
     @Persist
     @Required @DoUpperCase @DoInputNonLat @VInputNonLat @DoTrimString
     @VInputFIOByMaskOmc
-    public String getFirstname() { return theFirstname ; }
-    public void setFirstname(String aFirstname) { theFirstname = aFirstname ; }
+    public String getFirstname() { return firstname ; }
 
     /** Фамилия */
     @Comment("Фамилия")
     @Persist
     @Required @DoUpperCase @DoInputNonLat @VInputNonLat @DoTrimString
     @VInputFIOByMaskOmc
-    public String getLastname() { return theLastname ; }
-    public void setLastname(String aLastname) { theLastname = aLastname ; }
+    public String getLastname() { return lastname ; }
 
     /** Отчество */
     @Comment("Отчество")
     @Persist
     @DoUpperCase @DoInputNonLat @VInputNonLat @DoTrimString
     @VInputFIOByMaskOmc
-    public String getMiddlename() { return theMiddlename ; }
-    public void setMiddlename(String aMiddlename) { theMiddlename = aMiddlename ; }
+    public String getMiddlename() { return middlename ; }
 
     /** Пол */
     @Comment("Пол")
     @Persist
     @Required
-    public Long getSex() { return theSex ; }
-    public void setSex(Long aSex) { theSex = aSex ; }
+    public Long getSex() { return sex ; }
 
     /** Дата рождения */
     @Comment("Дата рождения")
     @Persist @MaxDateCurrent
     @Required @DateString @DoDateString
-    public String getBirthday() { return theBirthday ; }
-    public void setBirthday(String aBirthday) { theBirthday = aBirthday ; }
+    public String getBirthday() { return birthday ; }
 
     /** Социальный статус */
     @Comment("Социальный статус")
     @Persist @Required
-    public Long getSocialStatus() { return theSocialStatus ; }
-    public void setSocialStatus(Long aSocialStatus) { theSocialStatus = aSocialStatus ; }
+    public Long getSocialStatus() { return socialStatus ; }
 
     /** Информация о пациенте */
     @Comment("Информация о пациенте")
     @Persist
-    public String getPatientInfo() { return thePatientInfo ; }
-    public void setPatientInfo(String aPatientInfo) { thePatientInfo = aPatientInfo ; }
+    public String getPatientInfo() { return patientInfo ; }
 
     /** Номер паспорта */
     @Persist @DoUpperCase @DoTrimString
     @ADynamicSecurityInterceptor(PatientDynamicSecurityInterceptor.class)
-    public String getPassportNumber() { return thePassportNumber ; }
-    public void setPassportNumber(String aPassportNumber) { thePassportNumber = aPassportNumber ; }
+    public String getPassportNumber() { return passportNumber ; }
 
     /** Серия паспорта */
     @Persist @DoUpperCase @DoTrimString
     @ADynamicSecurityInterceptor(PatientDynamicSecurityInterceptor.class)
-    public String getPassportSeries() { return thePassportSeries ; }
-    public void setPassportSeries(String aPassportSeries) { thePassportSeries = aPassportSeries ; }
+    public String getPassportSeries() { return passportSeries ; }
 
     /** Дата выдачи */
     @Persist @DateString @DoDateString
     @ADynamicSecurityInterceptor(PatientDynamicSecurityInterceptor.class)
-    public String getPassportDateIssued() { return thePassportDateIssue ; }
-    public void setPassportDateIssued(String aPassportDateIssue) { thePassportDateIssue = aPassportDateIssue ; }
+    public String getPassportDateIssued() { return passportDateIssue ; }
 
     /** Кем выдан */
     @Persist @DoUpperCase @DoTrimString
     @ADynamicSecurityInterceptor(PatientDynamicSecurityInterceptor.class)
-    public String getPassportWhomIssued() { return thePassportWhomIssued ; }
-    public void setPassportWhomIssued(String aPassportWhomIssued) { thePassportWhomIssued = aPassportWhomIssued ; }
+    public String getPassportWhomIssued() { return passportWhomIssued ; }
 
     /** СНИЛС */
     @Persist @SnilsString
-    public String getSnils() { return theSnils ; }
-    public void setSnils(String aSnils) { theSnils = aSnils ; }
+    public String getSnils() { return snils ; }
 
     /** Место работы */
     @Comment("Место работы")
     @Persist
     @ADynamicSecurityInterceptor(PatientDynamicSecurityInterceptor.class)
-    public String getWorks() { return theWorks ; }
-    public void setWorks(String aWorks) { theWorks = aWorks ; }
+    public String getWorks() { return works ; }
 
     /** Дом */
     @Persist
     @DoTrimString @DoInputNonLat @VInputNonLat
     @ADynamicSecurityInterceptor(PatientDynamicSecurityInterceptor.class)
-    public String getHouseNumber() { return theHouseNumber ; }
-    public void setHouseNumber(String aHouseNumber) { theHouseNumber = aHouseNumber ; }
+    public String getHouseNumber() { return houseNumber ; }
 
     /** Корпус */
     @Persist
     @DoUpperCase @DoTrimString @DoInputNonLat @VInputNonLat
     @ADynamicSecurityInterceptor(PatientDynamicSecurityInterceptor.class)
-    public String getHouseBuilding() { return theHouseBuilding ; }
-    public void setHouseBuilding(String aHouseBuilding) { theHouseBuilding = aHouseBuilding ; }
+    public String getHouseBuilding() { return houseBuilding ; }
 
     /** Квартира */
     @Persist
     @ADynamicSecurityInterceptor(PatientDynamicSecurityInterceptor.class)
-    public String getFlatNumber() { return theFlatNumber ; }
-    public void setFlatNumber(String aFlatNumber) { theFlatNumber = aFlatNumber ; }
+    public String getFlatNumber() { return flatNumber ; }
 
     /** Адрес */
     @Persist
     @ADynamicSecurityInterceptor(PatientDynamicSecurityInterceptor.class)
-    public Long getAddress() { return theAddress ; }
-    public void setAddress(Long aAddress) { theAddress = aAddress ; }
+    public Long getAddress() { return address ; }
 
     /** Тип удостоверения личности */
     @Persist
     @ADynamicSecurityInterceptor(PatientDynamicSecurityInterceptor.class)
-    public Long getPassportType() { return thePassportType ; }
-    public void setPassportType(Long aPassportType) { thePassportType = aPassportType ; }
+    public Long getPassportType() { return passportType ; }
 
     /** Полис прикрепления */
 	@Comment("Полис прикрепления")
 	
-	public Long getAttachedOmcPolicy() {return theAttachedPolicyOmc;}
-	public void setAttachedOmcPolicy(Long aAttachedPolicyOmc) {theAttachedPolicyOmc = aAttachedPolicyOmc;}
-	
+	public Long getAttachedOmcPolicy() {return attachedPolicyOmc;}
+
 	/** Новые полис для прикрепления */
 	@Comment("Полис для прикрепления")
-	public MedPolicyOmcForm getPolicyOmcForm () {return thePolicyOmcForm ;}
-	public void setPolicyOmcForm (MedPolicyOmcForm aPolicyOmcForm ) {thePolicyOmcForm  = aPolicyOmcForm ;}
+	public MedPolicyOmcForm getPolicyOmcForm () {return policyOmcForm ;}
 
 	/** Создать новый полис ОМС */
-	public boolean getCreateNewOmcPolicy() {return theCreateNewOmcPolicy;}
-	public void setCreateNewOmcPolicy(boolean aCreateNewOmcPolicy) {theCreateNewOmcPolicy = aCreateNewOmcPolicy;}
-	
+	public boolean getCreateNewOmcPolicy() {return createNewOmcPolicy;}
+
 	/** Ведомственное прикрепление */
 	@Comment("Ведомственное прикрепление")
-	public boolean getCreateAttachedByDepartment() {return theCreateAttachedByDepartment;}
-	public void setCreateAttachedByDepartment(boolean aCreateAttachedByDepartment) {theCreateAttachedByDepartment = aCreateAttachedByDepartment;}
+	public boolean getCreateAttachedByDepartment() {return createAttachedByDepartment;}
 
 	/** Дата смерти*/
 	@Comment("Дата смерти")
 	@Persist @DateString @DoDateString
-	public String getDeathDate() {return theDeathDate;}
-	public void setDeathDate(String aNewProperty) {theDeathDate = aNewProperty;}
-	
+	public String getDeathDate() {return deathDate;}
+
 	/** Префикс адреса проживания*/
 	@Comment("Префикс адреса проживания")
 	@Persist
-	public Long getRealAddress() {return theRealAddress;}
-	public void setRealAddress(Long aNewProperty) {theRealAddress = aNewProperty;}
-	
+	public Long getRealAddress() {return realAddress;}
+
 	/**Квартира проживания*/
 	@Comment("Квартира проживания")
 	@Persist
-	public String getRealFlatNumber() {return theRealFlatNumber;}
-	public void setRealFlatNumber(String aNewProperty) {theRealFlatNumber = aNewProperty;}
-	
+	public String getRealFlatNumber() {return realFlatNumber;}
+
 	/**Корпус проживания*/
 	@Persist
 	@Comment("Корпус проживания")
-	public String getRealHouseBuilding() {return theRealHouseBuilding;}
-	public void setRealHouseBuilding(String aNewProperty) {theRealHouseBuilding = aNewProperty;}
-	
+	public String getRealHouseBuilding() {return realHouseBuilding;}
+
 	/** Дом проживания*/
 	@Comment("Дом проживания")
 	@Persist
-	public String getRealHouseNumber() {return theRealHouseNumber;}
-	public void setRealHouseNumber(String aNewProperty) {theRealHouseNumber = aNewProperty;}
-	
+	public String getRealHouseNumber() {return realHouseNumber;}
+
 	/**Недействительность */
 	@Comment("Недействительность")
 	@Persist
-	public Boolean getNoActuality() {return theNoActuality;}
-	public void setNoActuality(Boolean aNewProperty) {theNoActuality = aNewProperty;}
-	
+	public Boolean getNoActuality() {return noActuality;}
+
 	/** Район */
 	@Comment("Район")
 	@Persist
-	public Long getRayon() {return theRayon;}
-	public void setRayon(Long aRayon) {theRayon = aRayon;}
-	
+	public Long getRayon() {return rayon;}
+
 	
 	/** Национальность */
 	@Comment("Национальность")
 	@Persist
-	public Long getEthnicity() {return theEthnicity;}
-	public void setEthnicity(Long aEthnicity) {theEthnicity = aEthnicity;}
-	
+	public Long getEthnicity() {return ethnicity;}
+
 	/** Семейное положение */
 	@Comment("Семейное положение")
 	@Persist
-	public Long getMarriageStatus() {return theMarriageStatus;}
-	public void setMarriageStatus(Long aMarriageStatus) {theMarriageStatus = aMarriageStatus;}
-	
+	public Long getMarriageStatus() {return marriageStatus;}
+
 	/** Вид образования */
 	@Comment("Вид образования")
 	@Persist
-	public Long getEducationType() {return theEducationType;}
-	public void setEducationType(Long aEducationType) {theEducationType = aEducationType;}
+	public Long getEducationType() {return educationType;}
 
 	/** Должность */
 	@Comment("Должность")
 	@Persist
-	public String getWorkPost() {return theWorkPost;}
-	public void setWorkPost(String aWorkPost) {theWorkPost = aWorkPost;}
-	
+	public String getWorkPost() {return workPost;}
+
 	/** Примечание */
 	@Comment("Примечание")
 	@Persist
-	public String getNotice() {return theNotice;}
-	public void setNotice(String aNotice) {theNotice = aNotice;}
-	
+	public String getNotice() {return notice;}
+
 	/** Иностранный адрес регистрации */
 	@Comment("Иностранный адрес регистрации")
 	@Persist
 	public String getForeignRegistrationAddress() {
-		return theForeignRegistrationAddress;
-	}
-
-	public void setForeignRegistrationAddress(String aForeignRegistrationAddress) {
-		theForeignRegistrationAddress = aForeignRegistrationAddress;
+		return foreignRegistrationAddress;
 	}
 
 	/** Иностранный адрес регистрации */
-	private String theForeignRegistrationAddress;
+	private String foreignRegistrationAddress;
 	
 	/** Иностранный адрес проживания */
 	@Comment("Иностранный адрес проживания")
 	@Persist
 	public String getForeignRealAddress() {
-		return theForeignRealAddress;
-	}
-
-	public void setForeignRealAddress(String aForeignRealAddress) {
-		theForeignRealAddress = aForeignRealAddress;
+		return foreignRealAddress;
 	}
 
 	/** Гражданство */
 	@Comment("Гражданство")
 	@Persist
 	public Long getNationality() {
-		return theNationality;
-	}
-
-	public void setNationality(Long aNationality) {
-		theNationality = aNationality;
+		return nationality;
 	}
 
 	/** Территория регистрации  (иногороднего) */
 	@Comment("Территория регистрации")
 	@Persist
 	public Long getTerritoryRegistrationNonresident() {
-		return theTerritoryRegistrationNonresident;
+		return territoryRegistrationNonresident;
 	}
 
-	public void setTerritoryRegistrationNonresident(Long aTerritoryRegistrationNonresident) {
-		theTerritoryRegistrationNonresident = aTerritoryRegistrationNonresident;
-	}
-	
 	/** Район проживания  (иногороднего) */
 	@Comment("Район проживания")
 	@Persist
 	public String getRegionRegistrationNonresident() {
-		return theRegionRegistrationNonresident;
-	}
-
-	public void setRegionRegistrationNonresident(String aRegionRegistrationNonresident) {
-		theRegionRegistrationNonresident = aRegionRegistrationNonresident;
+		return regionRegistrationNonresident;
 	}
 
 	/** Вид населенного пункта  (иногороднего) */
 	@Comment("Вид населенного пункта")
 	@Persist
 	public Long getTypeSettlementNonresident() {
-		return theTypeSettlementNonresident;
-	}
-
-	public void setTypeSettlementNonresident(Long aTypeSettlementNonresident) {
-		theTypeSettlementNonresident = aTypeSettlementNonresident;
+		return typeSettlementNonresident;
 	}
 
 	/** Населенный пункт  (иногороднего) */
 	@Comment("Населенный пункт")
 	@Persist
 	public String getSettlementNonresident() {
-		return theSettlementNonresident;
-	}
-
-	public void setSettlementNonresident(String aSettlementNonresident) {
-		theSettlementNonresident = aSettlementNonresident;
+		return settlementNonresident;
 	}
 
 	/** Тип наименования улицы  (иногороднего) */
 	@Comment("Тип наименования улицы")
 	@Persist
 	public Long getTypeStreetNonresident() {
-		return theTypeStreetNonresident;
-	}
-
-	public void setTypeStreetNonresident(Long aTypeStreetNonresident) {
-		theTypeStreetNonresident = aTypeStreetNonresident;
+		return typeStreetNonresident;
 	}
 
 	/** Наименование улицы  (иногороднего) */
 	@Comment("Наименование улицы")
 	@Persist
 	public String getStreetNonresident() {
-		return theStreetNonresident;
-	}
-
-	public void setStreetNonresident(String aStreetNonresident) {
-		theStreetNonresident = aStreetNonresident;
+		return streetNonresident;
 	}
 
 	/** Дом (иногороднего) */
 	@Comment("Дом (иногороднего)")
 	@Persist
 	public String getHouseNonresident() {
-		return theHouseNonresident;
-	}
-
-	public void setHouseNonresident(String aHouseNonresident) {
-		theHouseNonresident = aHouseNonresident;
+		return houseNonresident;
 	}
 
 	/** Корпус дома (иногороднего) */
 	@Comment("Корпус дома (иногороднего)")
 	@Persist
 	public String getBuildingHousesNonresident() {
-		return theBuildingHousesNonresident;
-	}
-
-	public void setBuildingHousesNonresident(String aBuildingHousesNonresident) {
-		theBuildingHousesNonresident = aBuildingHousesNonresident;
+		return buildingHousesNonresident;
 	}
 
 	/** Квартира (иногороднего) */
 	@Comment("Квартира (иногороднего)")
 	@Persist
 	public String getApartmentNonresident() {
-		return theApartmentNonresident;
+		return apartmentNonresident;
 	}
 
-	public void setApartmentNonresident(String aApartmentNonresident) {
-		theApartmentNonresident = aApartmentNonresident;
-	}
-	
 	/** Дополнительный статус */
 	@Comment("Дополнительный статус")
 	@Persist @Required
-	public Long getAdditionStatus() {return theAdditionStatus;}
-	public void setAdditionStatus(Long aAdditionStatus) {theAdditionStatus = aAdditionStatus;}
-	
+	public Long getAdditionStatus() {return additionStatus;}
+
 	/** Адрес */
 	@Comment("Адрес")
 	@Persist
-	public String getAddressInfo() {return theAddressInfo;}
-	public void setAddressInfo(String aAddressInfo) {theAddressInfo = aAddressInfo;}
+	public String getAddressInfo() {return addressInfo;}
 
 	/** Адрес */
-	private String theAddressInfo;
+	private String addressInfo;
 
 	/** Дополнительный статус */
-	private Long theAdditionStatus;
+	private Long additionStatus;
 	/** Квартира (иногороднего) */
-	private String theApartmentNonresident;
+	private String apartmentNonresident;
 	/** Корпус дома (иногороднего) */
-	private String theBuildingHousesNonresident;
+	private String buildingHousesNonresident;
 	/** Дом (иногороднего) */
-	private String theHouseNonresident;
+	private String houseNonresident;
 	/** Наименование улицы  (иногороднего) */
-	private String theStreetNonresident;
+	private String streetNonresident;
 	/** Тип наименования улицы  (иногороднего) */
-	private Long theTypeStreetNonresident;
+	private Long typeStreetNonresident;
 	/** Населенный пункт  (иногороднего) */
-	private String theSettlementNonresident;
+	private String settlementNonresident;
 	/** Вид населенного пункта  (иногороднего) */
-	private Long theTypeSettlementNonresident;
+	private Long typeSettlementNonresident;
 	/** Район проживания  (иногороднего) */
-	private String theRegionRegistrationNonresident;
+	private String regionRegistrationNonresident;
 	/** Территория регистрации  (иногороднего) */
-	private Long theTerritoryRegistrationNonresident;
+	private Long territoryRegistrationNonresident;
 	/** Гражданство */
-	private Long theNationality;
+	private Long nationality;
 	/** Иностранный адрес проживания */
-	private String theForeignRealAddress;
-	
-	
+	private String foreignRealAddress;
 	/** Ведомственное прикрепление */
-	private boolean theCreateAttachedByDepartment;
+	private boolean createAttachedByDepartment;
 	/** Создать новый полис ОМС */
-	private boolean theCreateNewOmcPolicy;
+	private boolean createNewOmcPolicy;
 	/** Полис для прикрепления */
-	private MedPolicyOmcForm thePolicyOmcForm = new MedPolicyOmcForm();
+	private MedPolicyOmcForm policyOmcForm = new MedPolicyOmcForm();
 	/** Полис прикрепления */
-	private Long theAttachedPolicyOmc;
+	private Long attachedPolicyOmc;
     /** Тип удостоверения личности */
-    private Long thePassportType ;
+    private Long passportType ;
     /** Адрес */
-    private Long theAddress ;
+    private Long address ;
     /** Квартира */
-    private String theFlatNumber ;
+    private String flatNumber ;
     /** Корпус */
-    private String theHouseBuilding ;
+    private String houseBuilding ;
     /** Дом */
-    private String theHouseNumber ;
+    private String houseNumber ;
     /** Место работы */
-    private String theWorks ;
+    private String works ;
     /** СНИЛС */
-    private String theSnils ;
+    private String snils ;
     /** Кем выдан */
-    private String thePassportWhomIssued ;
+    private String passportWhomIssued ;
     /** Дата выдачи */
-    private String thePassportDateIssue ;
+    private String passportDateIssue ;
     /** Серия паспорта */
-    private String thePassportSeries ;
+    private String passportSeries ;
     /** Номер паспорта */
-    private String thePassportNumber ;
+    private String passportNumber ;
     /** Информация о пациенте */
-    private String thePatientInfo ;
+    private String patientInfo ;
     /** Социальный статус */
-    private Long theSocialStatus ;
+    private Long socialStatus ;
    /** Дата рождения */
-    private String theBirthday ;
+    private String birthday ;
     /** Пол */
-    private Long theSex ;
+    private Long sex ;
     /** Отчество */
-    private String theMiddlename ;
+    private String middlename ;
     /** Фамилия */
-    private String theLastname ;
+    private String lastname ;
     /** Имя */
-    private String theFirstname ;
+    private String firstname ;
     /** ЛПУ */
-    private Long theLpu ;
+    private Long lpu ;
     /** Адрес участка */
-    private Long theLpuAreaAddressText ;
+    private Long lpuAreaAddressText ;
     /** Участок */
-    private Long theLpuArea ;
+    private Long lpuArea ;
     /** Название участка */
-    private String theLpuAreaName ;
+    private String lpuAreaName ;
     /** Название ЛПУ */
-    private String theLpuName ;
+    private String lpuName ;
 	/**Дата смерти */
-	private String theDeathDate;
+	private String deathDate;
 	/**Префикс адреса проживания */
-	private Long theRealAddress;
+	private Long realAddress;
 	/**Квартира проживания */
-	private String theRealFlatNumber;
+	private String realFlatNumber;
 	/**Корпус проживания */
-	private String theRealHouseBuilding;
+	private String realHouseBuilding;
 	/**Дом проживания */
-	private String theRealHouseNumber;
+	private String realHouseNumber;
 	/**Недействительность */
-	private Boolean theNoActuality;
+	private Boolean noActuality;
 	/** Район */
-	private Long theRayon;
+	private Long rayon;
 
 	/** Национальность */
-	private Long theEthnicity;
+	private Long ethnicity;
 	/** Семейное положение */
-	private Long theMarriageStatus;
+	private Long marriageStatus;
 	/** Вид образования */
-	private Long theEducationType;
+	private Long educationType;
 	/** Должность */
-	private String theWorkPost;
+	private String workPost;
 	/** Примечание */
-	private String theNotice;
+	private String notice;
 
 
 
@@ -610,309 +511,260 @@ public class PatientForm extends IdEntityForm {
 	 @Comment("Горожанин")
 	 @Persist
 	 public Boolean getTownsman() {
-	  return theTownsman;
-	 }
-	 public void setTownsman(Boolean aTownsman) {
-	  theTownsman = aTownsman;
+	  return townsman;
 	 }
 	 /**
 	  * Горожанин
 	  */
-	 private Boolean theTownsman;
+	 private Boolean townsman;
 	 /**
 	  * Участник ВОВ
 	  */
 	 @Comment("Участник ВОВ")
 	 @Persist
 	 public Boolean getGreatPatrioticWarPaticipant() {
-	  return theGreatPatrioticWarPaticipant;
-	 }
-	 public void setGreatPatrioticWarPaticipant(Boolean aGreatPatrioticWarPaticipant) {
-	  theGreatPatrioticWarPaticipant = aGreatPatrioticWarPaticipant;
+	  return greatPatrioticWarPaticipant;
 	 }
 	 /**
 	  * Участник ВОВ
 	  */
-	 private Boolean theGreatPatrioticWarPaticipant;
+	 private Boolean greatPatrioticWarPaticipant;
 	 /**
 	  * Число законченных классов общеобразовательной школы
 	  */
 	 @Comment("Число законченных классов общеобразовательной школы")
 	 @Persist
 	 public Integer getGeneralEducationGradeNumber() {
-	  return theGeneralEducationGradeNumber;
-	 }
-	 public void setGeneralEducationGradeNumber(Integer aGeneralEducationGradeNumber) {
-	  theGeneralEducationGradeNumber = aGeneralEducationGradeNumber;
+	  return generalEducationGradeNumber;
 	 }
 	 /**
 	  * Число законченных классов общеобразовательной школы
 	  */
-	 private Integer theGeneralEducationGradeNumber;
+	 private Integer generalEducationGradeNumber;
 	 /**
 	  * Источник средств существования
 	  */
 	 @Comment("Источник средств существования")
 	 @Persist
 	 public Long getLivelihoodSource() {
-	  return theLivelihoodSource;
-	 }
-	 public void setLivelihoodSource(Long aLivelihoodSource) {
-	  theLivelihoodSource = aLivelihoodSource;
+	  return livelihoodSource;
 	 }
 	 /**
 	  * Источник средств существования
 	  */
-	 private Long theLivelihoodSource;
+	 private Long livelihoodSource;
 	 /**
 	  * Условия проживания
 	  */
 	 @Comment("Условия проживания")
 	 @Persist
 	 public Long getResidenceConditions() {
-	  return theResidenceConditions;
-	 }
-	 public void setResidenceConditions(Long aRecidenceConditions) {
-	  theResidenceConditions = aRecidenceConditions;
+	  return residenceConditions;
 	 }
 	 /**
 	  * Условия проживания
 	  */
-	 private Long theResidenceConditions;
+	 private Long residenceConditions;
 	 /**
 	  * Проживает в семье
 	  */
 	 @Comment("Проживает в семье")
 	 @Persist
 	 public Boolean getFamilyResident() {
-	  return theFamilyResident;
-	 }
-	 public void setFamilyResident(Boolean aFamilyResident) {
-	  theFamilyResident = aFamilyResident;
+	  return familyResident;
 	 }
 	 /**
 	  * Проживает в семье
 	  */
-	 private Boolean theFamilyResident;
+	 private Boolean familyResident;
 	 /**
 	  * Дееспособный
 	  */
 	 @Comment("Дееспособный")
 	 @Persist
 	 public Boolean getIncapable() {
-	  return theIncapable;
-	 }
-	 public void setIncapable(Boolean aCapable) {
-	  theIncapable = aCapable;
+	  return incapable;
 	 }
 		/** Почтовый индекс */
 		@Comment("Почтовый индекс")
 		@Persist
-		public String getZipcode() {return theZipcode;	}
-		public void setZipcode(String aZipcode) {theZipcode = aZipcode;}
+		public String getZipcode() {return zipcode;	}
 
 		/** Почтовый индекс проживания */
 		@Comment("Почтовый индекс проживания")
 		@Persist
-		public String getRealZipcode() {return theRealZipcode;}
-		public void setRealZipcode(String aRealZipcode) {theRealZipcode = aRealZipcode;}
-		
+		public String getRealZipcode() {return realZipcode;}
+
 		/** Почтовый индекс иногороднего */
 		@Comment("Почтовый индекс иногороднего")
 		@Persist
-		public String getNonresidentZipcode() {return theNonresidentZipcode;}
-		public void setNonresidentZipcode(String aNonresidentZipcode) {theNonresidentZipcode = aNonresidentZipcode;}
+		public String getNonresidentZipcode() {return nonresidentZipcode;}
 
 		/** Почтовый индекс иногороднего */
-		private String theNonresidentZipcode;
+		private String nonresidentZipcode;
 		/** Почтовый индекс проживания */
-		private String theRealZipcode;
+		private String realZipcode;
 		/** Почтовый индекс */
-		private String theZipcode;
+		private String zipcode;
 	 /**
 	  * Дееспособный
 	  */
-	 private Boolean theIncapable;
+	 private Boolean incapable;
 	 /**
 	  * Дата первого заполнения
 	  */
 	 @Comment("Дата первого заполнения")
 	 @Persist @DateString @DoDateString
 	 public String getFirstRegistrationDate() {
-	  return theFirstRegistrationDate;
-	 }
-	 public void setFirstRegistrationDate(String aFirstRegistrationDate) {
-	  theFirstRegistrationDate = aFirstRegistrationDate;
+	  return firstRegistrationDate;
 	 }
 	 /**
 	  * Дата первого заполнения
 	  */
-	 private String theFirstRegistrationDate;
+	 private String firstRegistrationDate;
 	 /** Дата создания */
 	@Comment("Дата создания")
 	@DateString @DoDateString @Persist
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
+
 	/** Пользователь, создавший запись */
 	@Comment("Пользователь, создавший запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 
 	/** Дата последнего редактирования */
 	@Comment("Дата последнего редактирования")
 	@DateString @DoDateString @Persist
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	public String getEditDate() {return editDate;}
 
 	/** Пользователь, последний редактировающий запись */
 	@Comment("Пользователь, последний редактировающий запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Место рождения */
 	@Comment("Место рождения")
 	@Persist @DoUpperCase
-	public String getBirthPlace() {return theBirthPlace;}
-	public void setBirthPlace(String aBirthPlace) {theBirthPlace = aBirthPlace;}
+	public String getBirthPlace() {return birthPlace;}
 
 	/** Новорожденный */
 	@Comment("Новорожденный")
 	@Persist
-	public Long getNewborn() {return theNewborn;}
-	public void setNewborn(Long aNewborn) {theNewborn = aNewborn;}
+	public Long getNewborn() {return newborn;}
 
 	/** Новорожденный */
-	private Long theNewborn;
+	private Long newborn;
 	/** Место рождения */
-	private String theBirthPlace;
+	private String birthPlace;
 	/** Пользователь, последний редактировающий запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Дата последнего редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	
 	/** Код подразделения, выдавшего паспорт */
 	@Comment("Код подразделения, выдавшего паспорт")
 	@Persist
-	public String getPassportCodeDivision() {return thePassportCodeDivision;}
-	public void setPassportCodeDivision(String aPassportCodeDivision) {thePassportCodeDivision = aPassportCodeDivision;}
+	public String getPassportCodeDivision() {return passportCodeDivision;}
 
 	/** Код подразделения, выдавшего паспорт */
-	private String thePassportCodeDivision;
+	private String passportCodeDivision;
 	
 	/** Мед.карта */
 	@Comment("Мед.карта")
-	public Long getMedcardLast() {return theMedcardLast;}
-	public void setMedcardLast(Long aMedcardLast) {theMedcardLast = aMedcardLast;}
+	public Long getMedcardLast() {return medcardLast;}
 
 	/** Мед.карта */
-	private Long theMedcardLast;
+	private Long medcardLast;
 	/** Психиатрическая мед.карта */
 	@Comment("Психиатрическая мед.карта")
-	public Long getCareCard() {return theCareCard;}
-	public void setCareCard(Long aCareCard) {theCareCard = aCareCard;}
-	
-	/** Возраст */
-	@Comment("Возраст")
-	public String getAge() {return theAge;}
-	public void setAge(String aAge) {theAge = aAge;}
+	public Long getCareCard() {return careCard;}
 
 	/** Возраст */
-	private String theAge;
+	@Comment("Возраст")
+	public String getAge() {return age;}
+
+	/** Возраст */
+	private String age;
 	/** Психиатрическая мед.карта */
-	private Long theCareCard;
+	private Long careCard;
 	
 	/** Кем выдан паспорт */
 	@Comment("Кем выдан паспорт")
 	@Persist
 	public Long getPassportDivision() {
-		return thePassportDivision;
+		return passportDivision;
 	}
 
-	public void setPassportDivision(Long aPassportDivision) {
-		thePassportDivision = aPassportDivision;
-	}
 
 	/** Кем выдан паспорт */
-	private Long thePassportDivision;
+	private Long passportDivision;
 	/** Справочник по месту рождения */
 	@Comment("Справочник по месту рождения")
 	@Persist
-	public Long getPassportBirthPlace() {return thePassportBirthPlace;}
-	public void setPassportBirthPlace(Long aPassportBirthPlace) {thePassportBirthPlace = aPassportBirthPlace;}
+	public Long getPassportBirthPlace() {return passportBirthPlace;}
 
 	/** Справочник по месту рождения */
-	private Long thePassportBirthPlace;
+	private Long passportBirthPlace;
 	
 	/** Единый номер застрахованного */
 	@Comment("Единый номер застрахованного")
 	@Persist @MaxLength(value = 16) @MinLength(value = 16)
-	public String getCommonNumber() {return theCommonNumber;}
-	public void setCommonNumber(String aNumber) {theCommonNumber = aNumber;}
+	public String getCommonNumber() {return commonNumber;}
 
 	/** Соотечественник */
 	@Comment("Соотечественник")
 	@Persist
-	public Boolean getIsCompatriot() {return theIsCompatriot;}
-	public void setIsCompatriot(Boolean aIsCompatriot) {theIsCompatriot = aIsCompatriot;}
+	public Boolean getIsCompatriot() {return isCompatriot;}
 
 	/** Соотечественник */
-	private Boolean theIsCompatriot;
+	private Boolean isCompatriot;
 	/** Единый номер застрахованного */
-	private String theCommonNumber;
+	private String commonNumber;
 	/** Категория ребенка */
 	@Comment("Категория ребенка")
 	@Persist
-	public Long getCategoryChild() {return theCategoryChild;}
-	public void setCategoryChild(Long aCategoryChild) {theCategoryChild = aCategoryChild;}
+	public Long getCategoryChild() {return categoryChild;}
 
 	/** Категория ребенка */
-	private Long theCategoryChild;
+	private Long categoryChild;
 	
 	/** Вес новорожденного */
 	@Comment("Вес новорожденного")
 	@Persist
-	public Long getNewbornWeight() {return theNewbornWeight;}
-	public void setNewbornWeight(Long aNewbornWeight) {theNewbornWeight = aNewbornWeight;}
+	public Long getNewbornWeight() {return newbornWeight;}
 
 	/** Вес новорожденного */
-	private Long theNewbornWeight;
+	private Long newbornWeight;
 	/** Район проживания */
 	@Comment("Район проживания")
 	@Persist
-	public Long getRealRayon() {return theRealRayon;}
-	public void setRealRayon(Long aRealRayon) {theRealRayon = aRealRayon;}
+	public Long getRealRayon() {return realRayon;}
 
 	/** Район проживания */
-	private Long theRealRayon;
+	private Long realRayon;
 	/** Цветовая характеристика */
 	@Comment("Цветовая характеристика")
 	@Persist
-	public Boolean getColorType() {return theColorType;}
-	public void setColorType(Boolean aColorType) {theColorType = aColorType;}
+	public Boolean getColorType() {return colorType;}
 
 	/** Цветовая характеристика */
-	private Boolean theColorType;
+	private Boolean colorType;
 	
 	/** Прикрепление по участку */
 	@Comment("Прикрепление по участку")
-	public LpuAttachedByDepartmentForm getAttachedForm() {return theAttachedForm;}
-	public void setAttachedForm(LpuAttachedByDepartmentForm aAttachedForm) {theAttachedForm = aAttachedForm;}
+	public LpuAttachedByDepartmentForm getAttachedForm() {return attachedForm;}
 
 	/** Прикрепление по участку */
-	private LpuAttachedByDepartmentForm theAttachedForm = new LpuAttachedByDepartmentForm();
+	private LpuAttachedByDepartmentForm attachedForm = new LpuAttachedByDepartmentForm();
 	
 	/** Создать прикрепление */
 	@Comment("Создать прикрепление")
-	public Boolean getCreateNewAttachment() {return theCreateNewAttachment;}
-	public void setCreateNewAttachment(Boolean aCreateNewAttachment) {theCreateNewAttachment = aCreateNewAttachment;}
+	public Boolean getCreateNewAttachment() {return createNewAttachment;}
 	/** Создать прикрепление */
-	private Boolean theCreateNewAttachment;
+	private Boolean createNewAttachment;
 	
 }

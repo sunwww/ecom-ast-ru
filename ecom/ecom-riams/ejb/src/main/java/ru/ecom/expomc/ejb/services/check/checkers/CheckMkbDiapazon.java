@@ -50,9 +50,9 @@ public class CheckMkbDiapazon extends AbstractCheckStringProperty {
 
     /** Диапазоны МКБ, разделенные запятыми */
     @Comment("Диапазоны МКБ, разделенные запятыми")
-    public String getDiapasones() { return theDiapasones ; }
-    public void setDiapasones(String aDiapasones) { theDiapasones = aDiapasones ; }
+    public String getDiapasones() { return diapasones ; }
+    public void setDiapasones(String aDiapasones) { diapasones = aDiapasones ; }
 
     /** Диапазоны МКБ, разделенные запятыми */
-    private String theDiapasones ;
+    private String diapasones ;
 }

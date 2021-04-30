@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.extdisp;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -19,21 +21,21 @@ import javax.persistence.Table;
 @Table(schema="SQLUser")
 	@AIndexes({
 		@AIndex(properties="visit")
-	    }) 
+	    })
+	@Getter
+	@Setter
 public class ExtDispServiceIndication extends BaseEntity{
 	/** Визит */
 	@Comment("Визит")
 	@ManyToOne
-	public ExtDispVisit getVisit() {return theVisit;}
-	public void setVisit(ExtDispVisit aVisit) {theVisit = aVisit;}
+	public ExtDispVisit getVisit() {return visit;}
 	/** Визит */
-	private ExtDispVisit theVisit;
+	private ExtDispVisit visit;
 	
 	/** Тип услуги */
 	@Comment("Тип услуги")
 	@OneToOne
-	public VocExtDispService getServiceType() {return theServiceType;}
-	public void setServiceType(VocExtDispService aServiceType) {theServiceType = aServiceType;}
+	public VocExtDispService getServiceType() {return serviceType;}
 	/** Тип услуги */
-	private VocExtDispService theServiceType;
+	private VocExtDispService serviceType;
 }

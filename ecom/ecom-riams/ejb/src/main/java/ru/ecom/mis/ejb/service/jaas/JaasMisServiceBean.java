@@ -26,10 +26,10 @@ public class JaasMisServiceBean implements IJaasMisService {
 	public void updateJaasPolicy(long aMinitorId) {
 
 
-        List<MisLpu> list = theManager.createQuery("from MisLpu").getResultList();
-        List<LpuArea> ares = theManager.createQuery("from LpuArea").getResultList();
+        List<MisLpu> list = manager.createQuery("from MisLpu").getResultList();
+        List<LpuArea> ares = manager.createQuery("from LpuArea").getResultList();
 
-        IMonitor monitor = theMonitorService.startMonitor(aMinitorId, "Синхронизация политик", list.size()+ares.size()) ;
+        IMonitor monitor = monitorService.startMonitor(aMinitorId, "Синхронизация политик", list.size()+ares.size()) ;
         try {
             ISecPolicyImportService service = findPolicyService() ;
 
@@ -68,15 +68,15 @@ public class JaasMisServiceBean implements IJaasMisService {
 
     private ISecPolicyImportService findPolicyService() throws NamingException {
     	//return EjbInjection.getInstance().getLocalService(ISecPolicyImportService.class) ;
-    	return theSecPolicyImportService ;
+    	return secPolicyImportService ;
     }
 
-    private @EJB ISecPolicyImportService theSecPolicyImportService ;
+    private @EJB ISecPolicyImportService secPolicyImportService ;
 //    @EJB(name="jaas-app/SecPolicyImportServiceBean/remote")
-//    ISecPolicyImportService thePolicyImportService ;
+//    ISecPolicyImportService policyImportService ;
 
-    @PersistenceContext EntityManager theManager ;
+    @PersistenceContext EntityManager manager ;
 
-    @EJB ILocalMonitorService theMonitorService;
+    @EJB ILocalMonitorService monitorService;
 
 }

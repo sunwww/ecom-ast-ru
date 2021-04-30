@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.prescription;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -16,6 +18,8 @@ import java.util.Date;
 @Comment("Лист назначений")
 @Entity
 @EntityListeners(DeleteListener.class)
+@Getter
+@Setter
 public class PrescriptList extends AbstractPrescriptionList {
 
 	@PrePersist
@@ -29,13 +33,9 @@ public class PrescriptList extends AbstractPrescriptionList {
 	@Comment("Шаблон листа назначений")
 	@OneToOne
 	public PrescriptListTemplate getTemplate() {
-		return theTemplate;
+		return template;
 	}
 
-	public void setTemplate(PrescriptListTemplate aTemplate) {
-		theTemplate = aTemplate;
-	}
-	
 	/** Период */
 	@Comment("Дата начала-дата окончания")
 	@Transient
@@ -71,6 +71,6 @@ public class PrescriptList extends AbstractPrescriptionList {
 	}
 
 	/** Шаблон листа назначений */
-	private PrescriptListTemplate theTemplate;
+	private PrescriptListTemplate template;
 
 }

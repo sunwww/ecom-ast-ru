@@ -1,5 +1,7 @@
 package ru.ecom.ejb.sequence.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -16,56 +18,25 @@ import javax.persistence.Table;
 @Entity @Comment("Последовательность")
 @AIndexes({@AIndex(unique=true, properties="uniqueName")})
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class SequenceInfo extends BaseEntity {
-	
-	/** Последнее значение */
-	@Comment("Последнее значение")
-	public String getNextValue() {
-		return theNextValue;
-	}
-
-	public void setNextValue(String aNextValue) {
-		theNextValue = aNextValue;
-	}
 
 	
 	/** Последнее значение */
-	private String theNextValue;
-	/** Уникальное название последовательности */
-	@Comment("Уникальное название последовательности")
-	public String getUniqueName() {
-		return theUniqueName;
-	}
-
-	public void setUniqueName(String aUniqueName) {
-		theUniqueName = aUniqueName;
-	}
-
-	/** Описание */
-	@Comment("Описание")
-	public String getComment() {
-		return theComment;
-	}
-
-	public void setComment(String aComment) {
-		theComment = aComment;
-	}
+	private String nextValue;
 
 	/** Скрипт для получения следующего значения */
 	@Comment("Скрипт для получения следующего значения")
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
 	public String getNextValueScript() {
-		return theNextValueScript;
-	}
-
-	public void setNextValueScript(String aNextValueScript) {
-		theNextValueScript = aNextValueScript;
+		return nextValueScript;
 	}
 
 	/** Скрипт для получения следующего значения */
-	private String theNextValueScript;
+	private String nextValueScript;
 	/** Описание */
-	private String theComment;
+	private String comment;
 	/** Уникальное название последовательности */
-	private String theUniqueName;
+	private String uniqueName;
 }

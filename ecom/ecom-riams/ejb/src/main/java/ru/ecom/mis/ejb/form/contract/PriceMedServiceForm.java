@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -27,6 +28,7 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 )
 @Parent(property="pricePosition", parentForm=PricePositionForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/PriceList/PricePosition/PriceMedService")
+@Setter
 public class PriceMedServiceForm extends IdEntityForm{
 	/**
 	 * Позиция прейскуранта
@@ -34,30 +36,24 @@ public class PriceMedServiceForm extends IdEntityForm{
 	@Comment("Позиция прейскуранта")
 	@Persist
 	public Long getPricePosition() {
-		return thePricePosition;
-	}
-	public void setPricePosition(Long aPricePosition) {
-		thePricePosition = aPricePosition;
+		return pricePosition;
 	}
 	/**
 	 * Позиция прейскуранта
 	 */
-	private Long thePricePosition;
+	private Long pricePosition;
 	/**
 	 * Медицинская услуга
 	 */
 	@Comment("Медицинская услуга")
 	@Persist 
 	public Long getMedService() {
-		return theMedService;
-	}
-	public void setMedService(Long aMedService) {
-		theMedService = aMedService;
+		return medService;
 	}
 	/**
 	 * Медицинская услуга
 	 */
-	private Long theMedService;
+	private Long medService;
 	/**
 	 * Дата начала действия
 	 */
@@ -65,15 +61,12 @@ public class PriceMedServiceForm extends IdEntityForm{
 	@Persist
 	@DateString @DoDateString
 	public String getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(String aDateFrom) {
-		theDateFrom = aDateFrom;
+		return dateFrom;
 	}
 	/**
 	 * Дата начала действия
 	 */
-	private String theDateFrom;
+	private String dateFrom;
 	/**
 	 * Дата окончания действия
 	 */
@@ -81,43 +74,34 @@ public class PriceMedServiceForm extends IdEntityForm{
 	@Persist
 	@DateString @DoDateString
 	public String getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(String aDateTo) {
-		theDateTo = aDateTo;
+		return dateTo;
 	}
 	/**
 	 * Дата окончания действия
 	 */
-	private String theDateTo;
+	private String dateTo;
 	
 	/** Медицинская услуга */
 	@Comment("Медицинская услуга")
 	@Persist
 	public String getMedServiceInfo() {
-		return theMedServiceInfo;
-	}
-
-	public void setMedServiceInfo(String aMedServiceInfo) {
-		theMedServiceInfo = aMedServiceInfo;
+		return medServiceInfo;
 	}
 
 	/** Медицинская услуга */
-	private String theMedServiceInfo;
+	private String medServiceInfo;
 	
 	/** Услуга */
 	@Comment("Услуга")
-	public MedServiceForm getMedServiceForm() {return theMedServiceForm;}
-	public void setMedServiceForm(MedServiceForm aMedServiceForm) {theMedServiceForm = aMedServiceForm;}
+	public MedServiceForm getMedServiceForm() {return medServiceForm;}
 
 	/** Услуга */
-	private MedServiceForm theMedServiceForm = new MedServiceForm();
+	private MedServiceForm medServiceForm = new MedServiceForm();
 	
 	/** Создать новую услугу */
 	@Comment("Создать новую услугу")
-	public Boolean getMedServiceIsCreate() {return theMedServiceIsCreate;}
-	public void setMedServiceIsCreate(Boolean aMedServiceIsCreate) {theMedServiceIsCreate = aMedServiceIsCreate;}
+	public Boolean getMedServiceIsCreate() {return medServiceIsCreate;}
 
 	/** Создать новую услугу */
-	private Boolean theMedServiceIsCreate;
+	private Boolean medServiceIsCreate;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.patient;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.patient.PatientList;
@@ -15,65 +16,57 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Список пациентов")
 @WebTrail(comment = "Список пациентов", nameProperties= "name", view="entityView-mis_patientList.do")
 @EntityFormSecurityPrefix("/Policy/Mis/Patient/PatientList")
-
+@Setter
 public class PatientListForm extends IdEntityForm {
 
 	/** Тип списка */
 	@Comment("Тип списка")
 	@Persist @Required
-	public Long getType() {return theType;}
-	public void setType(Long aType) {theType = aType;}
+	public Long getType() {return type;}
 	/** Тип списка */
-	private Long theType;
+	private Long type;
 	
 	/** Название списка */
 	@Comment("Название списка")
 	@Persist @Required
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
+	public String getName() {return name;}
 	/** Название списка */
-	private String theName;
+	private String name;
 	
 	/** Цвет сообщения */
 	@Comment("Цвет сообщения")
 	@Persist @Required
-	public String getColorName() {return theColorName;}
-	public void setColorName(String aColorName) {theColorName = aColorName;}
+	public String getColorName() {return colorName;}
 	/** Цвет сообщения */
-	private String theColorName;
+	private String colorName;
 	
 	/** Сообщение */
 	@Comment("Сообщение")
 	@Persist
-	public String getMessage() {return theMessage;}
-	public void setMessage(String aMessage) {theMessage = aMessage;}
+	public String getMessage() {return message;}
 	/** Сообщение */
-	private String theMessage;
+	private String message;
 	
 	/** Цвет текста */
 	@Comment("Цвет текста")
 	@Persist
-	public String getColorText() {return theColorText;}
-	public void setColorText(String aColorText) {theColorText = aColorText;}
+	public String getColorText() {return colorText;}
 
-	
 	/** Отображать цвет при поиске */
 	@Comment("Отображать цвет при поиске")
 	@Persist
-	public Boolean getIsViewWhenSeaching() {return theIsViewWhenSeaching;}
-	public void setIsViewWhenSeaching(Boolean aIsViewWhenSeaching) {theIsViewWhenSeaching = aIsViewWhenSeaching;}
+	public Boolean getIsViewWhenSeaching() {return isViewWhenSeaching;}
 
 	/** Отображать цвет в WebTrail */
 	@Comment("Отображать цвет в WebTrail")
 	@Persist
-	public Boolean getIsViewInWebTrail() {return theIsViewInWebTrail;}
-	public void setIsViewInWebTrail(Boolean aIsViewInWebTrail) {theIsViewInWebTrail = aIsViewInWebTrail;}
+	public Boolean getIsViewInWebTrail() {return isViewInWebTrail;}
 
 	/** Отображать цвет в WebTrail */
-	private Boolean theIsViewInWebTrail;
+	private Boolean isViewInWebTrail;
 	/** Отображать цвет при поиске */
-	private Boolean theIsViewWhenSeaching;
+	private Boolean isViewWhenSeaching;
 	/** Цвет текста */
-	private String theColorText;
+	private String colorText;
 	
 }

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocDayParity;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkCalendarParity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -13,6 +15,8 @@ import javax.persistence.Transient;
 	 */
 	@Comment("Алгоритм шаблона рабочего календаря по дням недели")
 @Entity
+	@Getter
+	@Setter
 public class WorkCalendarWeekDaysAlgorithm extends WorkCalendarAlgorithm{
 		/** infoClass */
 		@Comment("infoClass")
@@ -26,133 +30,106 @@ public class WorkCalendarWeekDaysAlgorithm extends WorkCalendarAlgorithm{
 	@Comment("Понедельник")
 	@OneToOne
 	public WorkCalendarDayPattern getMonday() {
-		return theMonday;
-	}
-	public void setMonday(WorkCalendarDayPattern aMonday) {
-		theMonday = aMonday;
+		return monday;
 	}
 	/**
 	 * Понедельник
 	 */
-	private WorkCalendarDayPattern theMonday;
+	private WorkCalendarDayPattern monday;
 	/**
 	 * Вторник
 	 */
 	@Comment("Вторник")
 	@OneToOne
 	public WorkCalendarDayPattern getTuesday() {
-		return theTuesday;
-	}
-	public void setTuesday(WorkCalendarDayPattern aTuesday) {
-		theTuesday = aTuesday;
+		return tuesday;
 	}
 	/**
 	 * Вторник
 	 */
-	private WorkCalendarDayPattern theTuesday;
+	private WorkCalendarDayPattern tuesday;
 	/**
 	 * Среда
 	 */
 	@Comment("Среда")
 	@OneToOne
 	public WorkCalendarDayPattern getWednesday() {
-		return theWednesday;
-	}
-	public void setWednesday(WorkCalendarDayPattern aWednesday) {
-		theWednesday = aWednesday;
+		return wednesday;
 	}
 	/**
 	 * Среда
 	 */
-	private WorkCalendarDayPattern theWednesday;
+	private WorkCalendarDayPattern wednesday;
 	/**
 	 * Четверг
 	 */
 	@Comment("Четверг")
 	@OneToOne
 	public WorkCalendarDayPattern getThursday() {
-		return theThursday;
-	}
-	public void setThursday(WorkCalendarDayPattern aThursday) {
-		theThursday = aThursday;
+		return thursday;
 	}
 	/**
 	 * Четверг
 	 */
-	private WorkCalendarDayPattern theThursday;
+	private WorkCalendarDayPattern thursday;
 	/**
 	 * Пятница
 	 */
 	@Comment("Пятница")
 	@OneToOne
 	public WorkCalendarDayPattern getFriday() {
-		return theFriday;
-	}
-	public void setFriday(WorkCalendarDayPattern aFriday) {
-		theFriday = aFriday;
+		return friday;
 	}
 	/**
 	 * Пятница
 	 */
-	private WorkCalendarDayPattern theFriday;
+	private WorkCalendarDayPattern friday;
 	/**
 	 * Суббота
 	 */
 	@Comment("Суббота")
 	@OneToOne
 	public WorkCalendarDayPattern getSaturday() {
-		return theSaturday;
-	}
-	public void setSaturday(WorkCalendarDayPattern aSaturday) {
-		theSaturday = aSaturday;
+		return saturday;
 	}
 	/**
 	 * Суббота
 	 */
-	private WorkCalendarDayPattern theSaturday;
+	private WorkCalendarDayPattern saturday;
 	/**
 	 * Воскресенье
 	 */
 	@Comment("Воскресенье")
 	@OneToOne
 	public WorkCalendarDayPattern getSunday() {
-		return theSunday;
-	}
-	public void setSunday(WorkCalendarDayPattern aSunday) {
-		theSunday = aSunday;
+		return sunday;
 	}
 	/**
 	 * Воскресенье
 	 */
-	private WorkCalendarDayPattern theSunday;
+	private WorkCalendarDayPattern sunday;
 	/**
 	 * Четный день
 	 */
 	@Comment("Четный день")
 	@OneToOne
 	public VocDayParity getParity() {
-		return theParity;
-	}
-	public void setParity(VocDayParity aParity) {
-		theParity = aParity;
+		return parity;
 	}
 	/**
 	 * Четный день
 	 */
-	private VocDayParity theParity;
+	private VocDayParity parity;
 	/**
 	 * Тип четности
 	 */
 	@Comment("Тип четности")
 	@OneToOne
 	public VocWorkCalendarParity getCalendarParity() {
-		return theCalendarParity;
-	}
-	public void setCalendarParity(VocWorkCalendarParity aCalendarParity) {
-		theCalendarParity = aCalendarParity;
+		return calendarParity;
 	}
 	/**
 	 * Тип четности
 	 */
-	private VocWorkCalendarParity theCalendarParity;
+	private VocWorkCalendarParity calendarParity;
 }

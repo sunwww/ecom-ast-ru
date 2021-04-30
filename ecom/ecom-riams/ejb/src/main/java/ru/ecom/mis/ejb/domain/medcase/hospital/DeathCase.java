@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase.hospital;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.document.ejb.domain.certificate.DeathCertificate;
 import ru.ecom.ejb.domain.simple.BaseEntity;
@@ -29,390 +31,209 @@ import java.util.List;
 	@AIndex(properties="patient")
     }) 
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class DeathCase extends BaseEntity {
 	
 	/** Протоколы КИЛИ */
 	@Comment("Протоколы КИЛИ")
 	@OneToMany(mappedBy = "deathCase", cascade = CascadeType.ALL)
-	public List<ProtocolKili> getKiliProtocols() {return theKiliProtocols;}
-	public void setKiliProtocols(List<ProtocolKili> aKiliProtocols) {theKiliProtocols = aKiliProtocols;}
+	public List<ProtocolKili> getKiliProtocols() {return kiliProtocols;}
 	/** Протоколы КИЛИ */
-	private List<ProtocolKili> theKiliProtocols;
+	private List<ProtocolKili> kiliProtocols;
 
 	/** Мед. случай */
 	@Comment("Мед. случай")
 	@OneToOne
-	public MedCase getMedCase() {return theMedCase;}
-	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
+	public MedCase getMedCase() {return medCase;}
 
 	/** Пациент */
 	@Comment("Пациент")
 	@OneToOne
-	public Patient getPatient() {return thePatient;}
-	public void setPatient(Patient aPatient) {thePatient = aPatient;}
+	public Patient getPatient() {return patient;}
 
 	/** Мать */
 	@Comment("Мать")
 	@OneToOne
-	public Patient getMother() {return theMother;}
-	public void setMother(Patient aMother) {theMother = aMother;}
-
-	/** Дата смерти */
-	@Comment("Дата смерти")
-	public Date getDeathDate() {return theDeathDate;	}
-	public void setDeathDate(Date aDateDeath) {theDeathDate = aDateDeath;}
-
-	/** Время смерти */
-	@Comment("Время смерти")
-	public Time getDeathTime() {return theDeathTime;}
-	public void setDeathTime(Time aTimeDeath) {theDeathTime = aTimeDeath;}
+	public Patient getMother() {return mother;}
 
 	/** Доношенность */
 	@Comment("Доношенность")
 	@OneToOne
-	public VocIsPrematurity getIsPrematurity() {return theIsPrematurity;}
-	public void setIsPrematurity(VocIsPrematurity aIsPrematurity) {theIsPrematurity = aIsPrematurity;}
-
-	/** Масса (вес) при рождении (грамм) */
-	@Comment("Масса (вес) при рождении (грамм)")
-	public Integer getBirthWeight() {return theBirthWeight;}
-	public void setBirthWeight(Integer aBirthWeight) {theBirthWeight = aBirthWeight;}
-
-	/** Какой ребенок по счету у матери */
-	@Comment("Какой ребенок по счету у матери")
-	public Integer getBabyNumber() {return theBabyNumber;}
-	public void setBabyNumber(Integer aBabyNumber) {theBabyNumber = aBabyNumber;}
+	public VocIsPrematurity getIsPrematurity() {return isPrematurity;}
 
 	/** Место смерти */
 	@Comment("Место смерти")
 	@OneToOne
-	public VocDeathPlace getDeathPlace() {return theDeathPlace;}
-	public void setDeathPlace(VocDeathPlace aDeathPlace) {theDeathPlace = aDeathPlace;	}
+	public VocDeathPlace getDeathPlace() {return deathPlace;}
 
 	/** Адрес места смерти */
 	@Comment("Адрес места смерти")
 	@OneToOne
-	public Address getDeathPlaceAddress() {return theDeathPlaceAddress;}
-	public void setDeathPlaceAddress(Address aDeathPlaceAddress) {theDeathPlaceAddress = aDeathPlaceAddress;}
+	public Address getDeathPlaceAddress() {return deathPlaceAddress;}
 
 	/** Причина смерти */
 	@Comment("Причина смерти")
 	@OneToOne
-	public VocDeathReason getDeathReason() {return theDeathReason;	}
-	public void setDeathReason(VocDeathReason aDeathReason) {theDeathReason = aDeathReason;}
-
-	/** Дата травмы (отравления) */
-	@Comment("Дата травмы (отравления)")
-	public Date getAccidentDate() {return theAccidentDate;}
-	public void setAccidentDate(Date aAccidentDate) {theAccidentDate = aAccidentDate;}
-
-	/** Место, при которых произошла травма (отравление) */
-	@Comment("Место, при которых произошла травма (отравление)")
-	public String getAccidentPlace() {return theAccidentPlace;}
-	public void setAccidentPlace(String aAccidentPlace) {theAccidentPlace = aAccidentPlace;}
-
-	/** Обстоятельства, при которых произошла травма (отравление) */
-	@Comment("Обстоятельства, при которых произошла травма (отравление)")
-	public String getAccidentCircumstance() {return theAccidentCircumstance;}
-	public void setAccidentCircumstance(String aCircumstance) {theAccidentCircumstance = aCircumstance;}
-
+	public VocDeathReason getDeathReason() {return deathReason;	}
 
 	/** Врач (фельдшер) */
 	@Comment("Врач (фельдшер)")
 	@OneToOne
-	public WorkFunction getDeathWitness() {return theDeathWitness;}
-	public void setDeathWitness(WorkFunction aDeathWitness) {theDeathWitness = aDeathWitness;}
+	public WorkFunction getDeathWitness() {return deathWitness;}
 
 	/** Причина смерти установлена */
 	@Comment("Причина смерти установлена")
 	@OneToOne
-	public VocDeathWitnessFunction getDeathWitnessFunction() {return theDeathWitnessFunction;}
-	public void setDeathWitnessFunction(VocDeathWitnessFunction aDeathWitnessFunction) {theDeathWitnessFunction = aDeathWitnessFunction;}
+	public VocDeathWitnessFunction getDeathWitnessFunction() {return deathWitnessFunction;}
 
 	/** На основании чего установлена смерть */
 	@Comment("На основании чего установлена смерть")
 	@ManyToMany
-	public List<VocDeathEvidence> getDeathEvidence() {return theDeathEvidence;}
-	public void setDeathEvidence(List<VocDeathEvidence> aDeathEvidence) {theDeathEvidence = aDeathEvidence;	}
+	public List<VocDeathEvidence> getDeathEvidence() {return deathEvidence;}
 
 	/** Умерла после окончания родов */
 	@Comment("Умерла после окончания родов")
 	@OneToOne
-	public VocAfterPregnance getAfterPregnance() {return theAfterPregnance;}
-	public void setAfterPregnance(VocAfterPregnance aAfterPregnance) {theAfterPregnance = aAfterPregnance;}
+	public VocAfterPregnance getAfterPregnance() {return afterPregnance;}
 
 	/** Свидетельства о смерти */
 	@Comment("Свидетельства о смерти")
 	@OneToMany(mappedBy = "deathCase", cascade = CascadeType.ALL)
-	public List<DeathCertificate> getDeathCertificate() {return theDeathCertificate;}
-	public void setDeathCertificate(List<DeathCertificate> aDeathCertificate) {	theDeathCertificate = aDeathCertificate;}
+	public List<DeathCertificate> getDeathCertificate() {return deathCertificate;}
 
 	/** Место рождения */
-	@Comment("Место рождения")
-	public String getBirthPlace() {return theBirthPlace;}
-	public void setBirthPlace(String aBirthPlace) {theBirthPlace = aBirthPlace;}
-
-	/** Место рождения */
-	private String theBirthPlace;
+	private String birthPlace;
 	
 	/** Адрес места рождения */
-	@Comment("Адрес места рождения")
-	public String getBirthPlaceAdress() {return theBirthPlaceAdress;}
-	public void setBirthPlaceAdress(String aBirthPlaceAdress) {theBirthPlaceAdress = aBirthPlaceAdress;}
-	
-	/** Адрес места рождения */
-	private String theBirthPlaceAdress;
+	private String birthPlaceAdress;
 	/** Свидетельства о смерти */
-	private List<DeathCertificate> theDeathCertificate;
+	private List<DeathCertificate> deathCertificate;
 	/** Умерла после окончания родов */
-	private VocAfterPregnance theAfterPregnance;
+	private VocAfterPregnance afterPregnance;
 	/** На основании чего установлена смерть */
-	private List<VocDeathEvidence> theDeathEvidence;
+	private List<VocDeathEvidence> deathEvidence;
 	/** Причина смерти установлена */
-	private VocDeathWitnessFunction theDeathWitnessFunction;
+	private VocDeathWitnessFunction deathWitnessFunction;
 	/** Врач (фельдшер) */
-	private WorkFunction theDeathWitness;
+	private WorkFunction deathWitness;
 	/** Обстоятельства, при которых произошла травма (отравление) */
-	private String theAccidentCircumstance;
+	private String accidentCircumstance;
 	/** Место, при которых произошла травма (отравление) */
-	private String theAccidentPlace;
+	private String accidentPlace;
 	/** Дата травмы (отравления) */
-	private Date theAccidentDate;
+	private Date accidentDate;
 	/** Причина смерти */
-	private VocDeathReason theDeathReason;
+	private VocDeathReason deathReason;
 	/** Адрес места смерти */
-	private Address theDeathPlaceAddress;
+	private Address deathPlaceAddress;
 	/** Место смерти */
-	private VocDeathPlace theDeathPlace;
+	private VocDeathPlace deathPlace;
 	/** Какой ребенок по счету у матери */
-	private Integer theBabyNumber;
+	private Integer babyNumber;
 	/** Масса (вес) при рождении (грамм) */
-	private Integer theBirthWeight;
+	private Integer birthWeight;
 	/** Доношенность */
-	private VocIsPrematurity theIsPrematurity;
+	private VocIsPrematurity isPrematurity;
 	/** Время смерти */
-	private Time theDeathTime;
+	private Time deathTime;
 	/** Дата смерти */
-	private Date theDeathDate;
+	private Date deathDate;
 	/** Мать */
-	private Patient theMother;
+	private Patient mother;
 	/** Пациент */
-	private Patient thePatient;
+	private Patient patient;
 	/** Мед. случай */
-	private MedCase theMedCase;
+	private MedCase medCase;
 	
 	/** Ятрогения */
 	@Comment("Ятрогения")
 	@OneToOne
-	public VocDeathCategory getLatrogeny() {return theLatrogeny;}
-	public void setLatrogeny(VocDeathCategory aLatrogeny) {theLatrogeny = aLatrogeny;}
+	public VocDeathCategory getLatrogeny() {return latrogeny;}
 
 	/** Категория расхождения между диагнозами после патан. */
 	@Comment("Категория расхождения между диагнозами после патан.")
 	@OneToOne
-	public VocDeathCategory getCategoryDifference() {return theCategoryDifference;}
-	public void setCategoryDifference(VocDeathCategory aCategoryDifference) {theCategoryDifference = aCategoryDifference;}
-
-	/** Описание причины смерти */
-	@Comment("Описание причины смерти")
-	public String getCommentReason() {return theCommentReason;}
-	public void setCommentReason(String aCommentDeathReason) {theCommentReason = aCommentDeathReason;}
-
-	/** Комментарий к категории смерти */
-	@Comment("Комментарий к категории смерти")
-	public String getCommentCategory() {return theCommentCategory;}
-	public void setCommentCategory(String aCommentCategoryDeath) {theCommentCategory = aCommentCategoryDeath;}
-
-	/** Номер в патологоанатомическом бюро */
-	@Comment("Номер в патологоанатомическом бюро")
-	public String getPostmortemBureauNumber() {return thePostmortemBureauNumber;}
-	public void setPostmortemBureauNumber(String aPostmortemBureauNumber) {thePostmortemBureauNumber = aPostmortemBureauNumber;}
-
-	/** Дата ПАБ */
-	@Comment("Дата ПАБ")
-	public Date getPostmortemBureauDt() {return thePostmortemBureauDt;}
-	public void setPostmortemBureauDt(Date aPostmortemBureauDt) {thePostmortemBureauDt = aPostmortemBureauDt;}
-
-	/** Квартира, где умер человек */
-	@Comment("Квартира, где умер человек")
-	public String getDeathPlaceFlatNumber() {return theDeathPlaceFlatNumber;}
-	public void setDeathPlaceFlatNumber(String aDeathPlaceFlatNumber) {theDeathPlaceFlatNumber = aDeathPlaceFlatNumber;}
-
-	/** Дом, где умер человекhPlaceHouseNumber */
-	@Comment("Дом, где умер человек")
-	public String getDeathPlaceHouseNumber() {return theDeathPlaceHouseNumber;}
-	public void setDeathPlaceHouseNumber(String aDeathPlaceHouseNumber) {theDeathPlaceHouseNumber = aDeathPlaceHouseNumber;}
-
+	public VocDeathCategory getCategoryDifference() {return categoryDifference;}
 	/** Копрус дома, где умер человек */
-	@Comment("Копрус дома, где умер человек")
-	public String getDeathPlaceHouseBuilding() {return theDeathPlaceHouseBuilding;}
-	public void setDeathPlaceHouseBuilding(String aDeathPlaceHouseBuilding) {theDeathPlaceHouseBuilding = aDeathPlaceHouseBuilding;}
-
-	/** Копрус дома, где умер человек */
-	private String theDeathPlaceHouseBuilding;
+	private String deathPlaceHouseBuilding;
 	/** Дом, где умер человекhPlaceHouseNumber */
-	private String theDeathPlaceHouseNumber;
+	private String deathPlaceHouseNumber;
 	/** Квартира, где умер человек */
-	private String theDeathPlaceFlatNumber;
+	private String deathPlaceFlatNumber;
 	/** Дата ПАБ */
-	private Date thePostmortemBureauDt;
+	private Date postmortemBureauDt;
 	/** Номер в патологоанатомическом бюро */
-	private String thePostmortemBureauNumber;
+	private String postmortemBureauNumber;
 	/** Комментарий к категории смерти */
-	private String theCommentCategory;
+	private String commentCategory;
 	/** Описание причины смерти */
-	private String theCommentReason;
+	private String commentReason;
 	/** Категория расхождения между диагнозами после патан. */
-	private VocDeathCategory theCategoryDifference;
+	private VocDeathCategory categoryDifference;
 	/** Ятрогения */
-	private VocDeathCategory theLatrogeny;
-	
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-	
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	/** Время редактрования */
-	@Comment("Время редактрования")
-	public Time getEditTime() {return theEditTime;}
-	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-	/** Пользователь, который создал запись */
-	@Comment("Пользователь, который создал запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	private VocDeathCategory latrogeny;
 	/** Пользователь, который последний редактировал запись */
-	@Comment("Пользователь, который последний редактировал запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-
-	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private Time theEditTime;
+	private Time editTime;
 	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	
 	/** Тип диагноза категории расхождения */
 	@Comment("Тип диагноза категории расхождения")
 	@OneToOne
-	public VocPriorityDiagnosis getDiagnosisDifference() {return theDiagnosisDifference;}
-	public void setDiagnosisDifference(VocPriorityDiagnosis aDiagnosisDifference) {theDiagnosisDifference = aDiagnosisDifference;}
+	public VocPriorityDiagnosis getDiagnosisDifference() {return diagnosisDifference;}
 
-	/** Дата СМЭ */
-	@Comment("Дата СМЭ")
-	public Date getDateForensic() {return theDateForensic;}
-	public void setDateForensic(Date aDateForensic) {theDateForensic = aDateForensic;}
-
-	/** Произведено вскрытие */
-	@Comment("Произведено вскрытие")
-	public Boolean getIsAutopsy() {return theIsAutopsy;}
-	public void setIsAutopsy(Boolean aIsAutopsy) {theIsAutopsy = aIsAutopsy;}
-
-	
 	/** Тип диагноза категории расхождения */
-	private VocPriorityDiagnosis theDiagnosisDifference;
+	private VocPriorityDiagnosis diagnosisDifference;
 	/** Произведено вскрытие */
-	private Boolean theIsAutopsy;
+	private Boolean isAutopsy;
 	/** Дата СМЭ */
-	private Date theDateForensic;
+	private Date dateForensic;
 	
 	/** Код мкб */
 	@Comment("Код мкб")
 	@OneToOne
-	public VocIdc10 getReasonMainMkb() {return theReasonMainMkb;}
-	public void setReasonMainMkb(VocIdc10 aReasonMainMkb) {theReasonMainMkb = aReasonMainMkb;}
+	public VocIdc10 getReasonMainMkb() {return reasonMainMkb;}
 
 	/** Код мкб */
-	private VocIdc10 theReasonMainMkb;
+	private VocIdc10 reasonMainMkb;
 	
 	/** Код мкб осложнения */
 	@Comment("Код мкб осложнения")
 	@OneToOne
-	public VocIdc10 getReasonComplicationMkb() {return theReasonComplicationMkb;}
-	public void setReasonComplicationMkb(VocIdc10 aReasonComplicationMkb) {theReasonComplicationMkb = aReasonComplicationMkb;}
+	public VocIdc10 getReasonComplicationMkb() {return reasonComplicationMkb;}
 
 	/** Код мкб осложнения */
-	private VocIdc10 theReasonComplicationMkb;
+	private VocIdc10 reasonComplicationMkb;
 	
 	/** Код мкб сопутсвующий */
 	@Comment("Код мкб сопутсвующий")
 	@OneToOne
-	public VocIdc10 getReasonConcomitantMkb() {return theReasonConcomitantMkb;}
-	public void setReasonConcomitantMkb(VocIdc10 aReasonConcomitantMkb) {theReasonConcomitantMkb = aReasonConcomitantMkb;}
-
+	public VocIdc10 getReasonConcomitantMkb() {return reasonConcomitantMkb;}
 	/** Код мкб сопутсвующий */
-	private VocIdc10 theReasonConcomitantMkb;
-	
-	/** Текст мкб осложнения */
-	@Comment("Текст мкб осложнения")
-	public String getReasonComplicationText() {return theReasonComplicationText;}
-	public void setReasonComplicationText(String aReasonComplicationText) {theReasonComplicationText = aReasonComplicationText;}
-
-	/** Сопутствующий диагноз текст */
-	@Comment("Сопутствующий диагноз текст")
-	public String getReasonConcomitantText() {return theReasonConcomitantText;}
-	public void setReasonConcomitantText(String aReasonConcomitantText) {theReasonConcomitantText = aReasonConcomitantText;}
-
-	/** Конкурирующее заболевание */
-	@Comment("Конкурирующее заболевание")
-	public String getCompetingDisease() {return theCompetingDisease;}
-	public void setCompetingDisease(String aCompetingDisease) {theCompetingDisease = aCompetingDisease;}
-
-	/** Сочетанное заболевание */
-	@Comment("Сочетанное заболевание")
-	public String getPolypathia() {return thePolypathia;}
-	public void setPolypathia(String aPolypathia) {thePolypathia = aPolypathia;}
-
+	private VocIdc10 reasonConcomitantMkb;
 	/** Фоновое заболевание */
-	@Comment("Фоновое заболевание")
-	public String getBackgroundDisease() {return theBackgroundDisease;}
-	public void setBackgroundDisease(String aBackgroundDisease) {theBackgroundDisease = aBackgroundDisease;}
-
-	/** Фоновое заболевание */
-	private String theBackgroundDisease;
+	private String backgroundDisease;
 	/** Сочетанное заболевание */
-	private String thePolypathia;
+	private String polypathia;
 	/** Конкурирующее заболевание */
-	private String theCompetingDisease;
+	private String competingDisease;
 	/** Сопутствующий диагноз текст */
-	private String theReasonConcomitantText;	
+	private String reasonConcomitantText;	
 	/** Текст мкб осложнения */
-	private String theReasonComplicationText;
+	private String reasonComplicationText;
 	/** Присутствие врача на вскрытие */
-	@Comment("Присутствие врача на вскрытие")
-	public Boolean getIsPresenceDoctorAutopsy() {return theIsPresenceDoctorAutopsy;}	
-	public void setIsPresenceDoctorAutopsy(Boolean aIsPresenceDoctorAutopsy) {theIsPresenceDoctorAutopsy = aIsPresenceDoctorAutopsy;}
-
-	/** Присутствие врача на вскрытие */
-	private Boolean theIsPresenceDoctorAutopsy;
-
+	private Boolean isPresenceDoctorAutopsy;
 	/** Мертворождение */
-	@Comment("Мертворождение")
-	public Boolean getIsNeonatologic() {return theIsNeonatologic;}
-	public void setIsNeonatologic(Boolean aIsNeonatologic) {theIsNeonatologic = aIsNeonatologic;}
-
-	/** Мертворождение */
-	private Boolean theIsNeonatologic;
-
+	private Boolean isNeonatologic;
 	/** История развития новорождённого - только для акушерских случаев */
-	public String getNewBornHistory() {return theNewBornHistory;}
-	public void setNewBornHistory(String aNewBornHistory) { theNewBornHistory=aNewBornHistory;}
-
-	/** История развития новорождённого - только для акушерских случаев */
-	private String theNewBornHistory;
+	private String newBornHistory;
 }

@@ -14,14 +14,14 @@ import java.util.Collection;
 public abstract class AbstractChangeStringProperty implements IChangeCheck {
 
     public CheckResult check(ICheckContext aContext) throws CheckException {
-        Object value = aContext.get(theProperty);
+        Object value = aContext.get(property);
         CheckResult ret = new CheckResult();
         if(value instanceof String) {
             String str = (String) value ;
             String newValue = transform(str) ;
             if(!str.equals(newValue)) {
                 ret.setAccepted(true);
-                ret.set(theProperty, newValue);
+                ret.set(property, newValue);
             }
         }
         return ret ;
@@ -35,9 +35,9 @@ public abstract class AbstractChangeStringProperty implements IChangeCheck {
 
     /** Свойство */
     @Comment("Свойство")
-    public String getProperty() { return theProperty ; }
-    public void setProperty(String aProperty) { theProperty = aProperty ; }
+    public String getProperty() { return property ; }
+    public void setProperty(String aProperty) { property = aProperty ; }
 
     /** Свойство */
-    private String theProperty ;
+    private String property ;
 }

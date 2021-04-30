@@ -7,6 +7,7 @@ package ru.ecom.expomc.ejb.services.form.importformat;
 
 import javax.persistence.Column;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expomc.ejb.domain.format.ImportFormat;
@@ -26,62 +27,55 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Parent(property = "document", parentForm= ImportDocumentForm.class)
 @WebTrail(comment = "Формат", nameProperties={"comment"}, view="entityParentEdit-exp_importformat.do")
 @EntityFormSecurityPrefix("/Policy/Exp/ImportFormat")
-
+@Setter
 public class ImportFormatForm extends IdEntityForm {
 
     /** Дата с которой начинает действовать формат */
     @Persist
     @Required
     @DateString
-    public String getActualDateFrom() { return theActualDateFrom ; }
-    public void setActualDateFrom(String aActualDateFrom) { theActualDateFrom = aActualDateFrom ; }
+    public String getActualDateFrom() { return actualDateFrom ; }
 
     /** Дата, до которой формат действует */
     @Persist
     @DateString
-    public String getActualDateTo() { return theActualDateTo ; }
-    public void setActualDateTo(String aActualDateTo) { theActualDateTo = aActualDateTo ; }
+    public String getActualDateTo() { return actualDateTo ; }
 
     /** Комментарий к формату */
     @Persist
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
+    public String getComment() { return comment ; }
 
     /** Отключен */
     @Persist
-    public boolean isDisabled() { return theDisabled ; }
-    public void setDisabled(boolean aDisabled) { theDisabled = aDisabled ; }
+    public boolean isDisabled() { return disabled ; }
 
     /** Документ */
     @Persist
-    public long getDocument() { return theDocument ; }
-    public void setDocument(long aDocument) { theDocument = aDocument ; }
+    public long getDocument() { return document ; }
 
     /** XML - конфигурации импорта */
     @Persist
     @Column(length = 15000)
-    public String getConfig() { return theConfig ; }
-    public void setConfig(String aConfig) { theConfig = aConfig ; }
+    public String getConfig() { return config ; }
 
     /** Документ */
-    private long theDocument ;
+    private long document ;
     /** Отключен */
-    private boolean theDisabled ;
+    private boolean disabled ;
     /** Комментарий к формату */
-    private String theComment ;
+    private String comment ;
     /** Дата, до которой формат действует */
-    private String theActualDateTo ;
+    private String actualDateTo ;
     /** Дата с которой начинает действовать формат */
-    private String theActualDateFrom ;
+    private String actualDateFrom ;
 
     /** XML - конфигурации импорта */
-    private String theConfig ;
+    private String config ;
     
     /** Служебный формат импорта */
 	@Comment("Служебный формат импорта")
 	@Persist
-	public Boolean getSystemFormat() {return theSystemFormat;}
-	public void setSystemFormat(Boolean aSystemFormat) {theSystemFormat = aSystemFormat;}
+	public Boolean getSystemFormat() {return systemFormat;}
 	/** Служебный формат импорта */
-	private Boolean theSystemFormat;
+	private Boolean systemFormat;
 }

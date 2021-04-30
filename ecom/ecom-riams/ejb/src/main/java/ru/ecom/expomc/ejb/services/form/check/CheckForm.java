@@ -26,86 +26,86 @@ public class CheckForm extends IdEntityForm {
 
     /** Идентификатор */
     @Id
-    public long getId() { return theId ; }
-    public void setId(long aId) { theId = aId ; }
+    public long getId() { return id ; }
+    public void setId(long aId) { id = aId ; }
 
     /** Свойства */
-    public String getProperties() { return theProperties ; }
-    public void setProperties(String aProperties) { theProperties = aProperties ; }
+    public String getProperties() { return properties ; }
+    public void setProperties(String aProperties) { properties = aProperties ; }
 
     /** Свойства */
-    private String theProperties ;
+    private String properties ;
     /** Название */
     @Persist
     @Required
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
+    public String getName() { return name ; }
+    public void setName(String aName) { name = aName ; }
 
     /** Комментарий */
     @Persist
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
+    public String getComment() { return comment ; }
+    public void setComment(String aComment) { comment = aComment ; }
 
     /** Дата действия с */
     @DateString
     @Persist
     @Required
-    public String getActualDateFrom() { return theActualDateFrom ; }
-    public void setActualDateFrom(String aActualDateFrom) { theActualDateFrom = aActualDateFrom ; }
+    public String getActualDateFrom() { return actualDateFrom ; }
+    public void setActualDateFrom(String aActualDateFrom) { actualDateFrom = aActualDateFrom ; }
 
     /** Дата действия по */
     @DateString
     @Persist
-    public String getActualDateTo() { return theActualDateTo ; }
-    public void setActualDateTo(String aActualDateTo) { theActualDateTo = aActualDateTo ; }
+    public String getActualDateTo() { return actualDateTo ; }
+    public void setActualDateTo(String aActualDateTo) { actualDateTo = aActualDateTo ; }
 
     /** Отключен */
     @Persist
-    public boolean getDisabled() { return theDisabled ; }
-    public void setDisabled(boolean aDisabled) { theDisabled = aDisabled ; }
+    public boolean getDisabled() { return disabled ; }
+    public void setDisabled(boolean aDisabled) { disabled = aDisabled ; }
 
     /** Тип проверки */
     @Persist
     @Required
-    public int getCheckType() { return theCheckType ; }
-    public void setCheckType(int aCheckType) { theCheckType = aCheckType ; }
+    public int getCheckType() { return checkType ; }
+    public void setCheckType(int aCheckType) { checkType = aCheckType ; }
 
     /** Проверка */
     @Persist
     @Required
-    public long getCheckId() { return theCheckId ; }
-    public void setCheckId(long aCheckId) { theCheckId = aCheckId ; }
+    public long getCheckId() { return checkId ; }
+    public void setCheckId(long aCheckId) { checkId = aCheckId ; }
 
     /** Документ */
     @Persist
-    public long getDocument() { return theDocument ; }
-    public void setDocument(long aDocument) { theDocument = aDocument ; }
+    public long getDocument() { return document ; }
+    public void setDocument(long aDocument) { document = aDocument ; }
 
     /** Порядковый номер */
     @Persist
-	public Integer getSn() {return theSn;	}
-	public void setSn(Integer aSn) {theSn = aSn;	}
+	public Integer getSn() {return sn;	}
+	public void setSn(Integer aSn) {sn = aSn;	}
 
 	/** Порядковый номер */
-	private Integer theSn;
+	private Integer sn;
     
     /** Документ */
-    private long theDocument ;
+    private long document ;
     /** Отключен */
-    private boolean theDisabled ;
+    private boolean disabled ;
     /** Дата действия по */
-    private String theActualDateTo ;
+    private String actualDateTo ;
     /** Дата действия с */
-    private String theActualDateFrom ;
+    private String actualDateFrom ;
     /** Комментарий */
-    private String theComment ;
+    private String comment ;
     /** Название */
-    private String theName ;
+    private String name ;
     /** Идентификатор */
-    private long theId ;
+    private long id ;
     /** Проверка */
-    private long theCheckId ;
+    private long checkId ;
     /** Тип проверки */
-    private int theCheckType ;
+    private int checkType ;
 
 }

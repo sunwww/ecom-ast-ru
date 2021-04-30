@@ -6,19 +6,19 @@ import javax.persistence.EntityManager;
 public class ListenerContext {
 	
 	protected ListenerContext(EntityManager aManager, SessionContext aContext) {
-		theManager = aManager ;
-		theSessionContext = aContext ;
+		manager = aManager ;
+		sessionContext = aContext ;
 	}
 	
 	public EntityManager getManager() {
-		return theManager ;
+		return manager ;
 	}
 	
 	public SessionContext getSessionContext() {
-		return theSessionContext ;
+		return sessionContext ;
 	}
 	
-	private final EntityManager theManager ;
-	private final SessionContext theSessionContext ;
+	private final EntityManager manager ;
+	private final SessionContext sessionContext ;
 
 }

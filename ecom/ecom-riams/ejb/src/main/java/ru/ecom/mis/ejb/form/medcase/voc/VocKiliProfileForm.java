@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.voc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocKiliProfile;
@@ -15,21 +16,11 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Справочник профилей КИЛИ")
 @WebTrail(comment = "Справочник профилей КИЛИ", nameProperties= "id", view="entityView-voc_kiliProfile.do")
 @EntityFormSecurityPrefix("/Policy/Voc/VocKiliProfile")
+@Setter
 public class VocKiliProfileForm extends IdEntityForm{
 	 /** Название */
     @Comment("Наименование")
     @Persist @Required
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
-    private String theName;
-    
-    /** Код ЛПУ */
-    /**
-	@Comment("Код ЛПУ")
-	@Persist @Required
-	public String getCode() {return theCode;}
-	public void setCode(String aCode) {theCode = aCode;}
-	private String theCode;
-	*/
-
+    public String getName() { return name ; }
+    private String name;
 }

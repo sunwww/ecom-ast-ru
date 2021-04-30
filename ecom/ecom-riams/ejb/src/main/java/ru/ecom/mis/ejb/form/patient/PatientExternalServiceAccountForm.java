@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.patient;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.patient.PatientExternalServiceAccount;
@@ -19,112 +20,100 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @WebTrail(comment = "Учетная запись пациента", nameProperties = {"externalCode"}
         , view = "entityView-mis_patientExternalServiceAccount.do"
        )
+@Setter
 public class PatientExternalServiceAccountForm extends IdEntityForm {
     /** Пациент */
     @Comment("Пациент")
     @Persist
-    public Long getPatient() {return thePatient;}
-    public void setPatient(Long aPatient) {thePatient = aPatient;}
+    public Long getPatient() {return patient;}
     /** Пациент */
-    private Long thePatient ;
+    private Long patient ;
 
     /** Идентификатор во внешней системе */
     @Comment("Идентификатор во внешней системе")
     @Persist
-    public String getExternalCode() {return theExternalCode;}
-    public void setExternalCode(String aExternalCode) {theExternalCode = aExternalCode;}
+    public String getExternalCode() {return externalCode;}
     /** Идентификатор во внешней системе */
-    private String theExternalCode ;
+    private String externalCode ;
 
     /** Дата получения согласия на передачу данных */
     @Comment("Дата получения согласия на передачу данных")
     @DateString @DoDateString
     @Persist
-    public String getDateStart() {return theDateStart;}
-    public void setDateStart(String aDateStart) {theDateStart = aDateStart;}
+    public String getDateStart() {return dateStart;}
     /** Дата получения согласия на передачу данных */
-    private String theDateStart ;
+    private String dateStart ;
 
     /** Дата отзыва согласия на передачу данных */
     @Comment("Дата отзыва согласия на передачу данных")
     @DateString @DoDateString
     @Persist
-    public String getDateTo() {return theDateTo;}
-    public void setDateTo(String aDateTo) {theDateTo = aDateTo;}
+    public String getDateTo() {return dateTo;}
     /** Дата отзыва согласия на передачу данных */
-    private String theDateTo ;
+    private String dateTo ;
 
     /** Номер мобильного телефона */
     @Comment("Номер мобильного телефона")
     @Persist
-    public String getPhoneNumber() {return thePhoneNumber;}
-    public void setPhoneNumber(String aPhoneNumber) {thePhoneNumber = aPhoneNumber;}
+    public String getPhoneNumber() {return phoneNumber;}
     /** Номер мобильного телефона */
-    private String thePhoneNumber ;
+    private String phoneNumber ;
 
     /** Адрес электронной почты */
     @Comment("Адрес электронной почты")
     @Persist
-    public String getEmail() {return theEmail;}
-    public void setEmail(String aEmail) {theEmail = aEmail;}
+    public String getEmail() {return email;}
     /** Адрес электронной почты */
-    private String theEmail ;
+    private String email ;
 
     /** Создатель */
     @Comment("Создатель")
     @Persist
-    public String getUsername() {return theUsername;}
-    public void setUsername(String aUsername) {theUsername = aUsername;}
+    public String getUsername() {return username;}
     /** Создатель */
-    private String theUsername ;
+    private String username ;
 
     /** Дата создания */
     @Comment("Дата создания")
     @DateString @DoDateString
     @Persist
-    public String getCreateDate() {return theCreateDate;}
-    public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+    public String getCreateDate() {return createDate;}
     /** Дата создания */
-    private String theCreateDate ;
+    private String createDate ;
 
     /** Пользователь, редактировавший запись */
     @Comment("Пользователь, редактировавший запись")
     @Persist
-    public String getEditUsername() {return theEditUsername;}
-    public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+    public String getEditUsername() {return editUsername;}
     /** Пользователь, редактировавший запись */
-    private String theEditUsername ;
+    private String editUsername ;
 
     /** Дата редактирования записи */
     @Comment("Дата редактирования записи")
     @DateString @DoDateString
     @Persist
-    public String getEditDate() {return theEditDate;}
-    public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+    public String getEditDate() {return editDate;}
     /** Дата редактирования записи */
-    private String theEditDate ;
+    private String editDate ;
 
     /** Аннулировать согласие */
     @Comment("Аннулировать согласие")
-    public String getDisabled() {return theDisabled;}
-    public void setDisabled(String aDisabled) {theDisabled = aDisabled;}
+    public String getDisabled() {return disabled;}
     /** Аннулировать согласие */
-    private String theDisabled ;
+    private String disabled ;
 
     /** Разрешить выгрузку всей истории болезни */
     @Comment("Разрешить выгрузку всей истории болезни")
     @Persist
-    public Boolean getExportAllHistory() {return theExportAllHistory;}
-    public void setExportAllHistory(Boolean aExportAllHistory) {theExportAllHistory = aExportAllHistory;}
+    public Boolean getExportAllHistory() {return exportAllHistory;}
     /** Разрешить выгрузку всей истории болезни */
-    private Boolean theExportAllHistory ;
+    private Boolean exportAllHistory ;
 
     /** Выгрзуить историю лечения повторно */
     @Comment("Выгрзуить историю лечения повторно")
-    public String getSendHistoryAgain() {return theSendHistoryAgain;}
-    public void setSendHistoryAgain(String aSendHistoryAgain) {theSendHistoryAgain = aSendHistoryAgain;}
+    public String getSendHistoryAgain() {return sendHistoryAgain;}
     /** Выгрзуить историю лечения повторно */
-    private String theSendHistoryAgain ;
+    private String sendHistoryAgain ;
 
 
 }

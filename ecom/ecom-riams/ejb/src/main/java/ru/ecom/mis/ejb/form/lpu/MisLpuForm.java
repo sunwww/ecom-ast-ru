@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.lpu;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdNameEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ADynamicParentSecurityInterceptor;
@@ -29,238 +30,236 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 
 @ADynamicSecurityInterceptor(MisLpuDynamicSecurity.class)
 @ADynamicParentSecurityInterceptor(MisLpuDynamicSecurity.class)
+@Setter
 public class MisLpuForm extends IdNameEntityForm {
 
     /**
      * Признак мобильной поликлиники
      */
-    private Boolean theIsMobilePolyclinic;
+    private Boolean isMobilePolyclinic;
     /**
      * Стандарт оказания мед. помощи
      */
-    private Long theMedicalStandard;
+    private Long medicalStandard;
     /**
      * Не входит в оплату по ОМС
      */
-    private Boolean theIsNoOmc;
+    private Boolean isNoOmc;
     /**
      * Участки
      */
-    private String theAreas;
+    private String areas;
     /**
      * Полное имя
      */
-    private String theFullname;
+    private String fullname;
     /**
      * Родитель
      */
-    private Long theParent;
+    private Long parent;
     /**
      * Функция ЛПУ
      */
-    private Long theLpuFunction;
+    private Long lpuFunction;
     /**
      * Телефон
      */
-    private String thePhone;
+    private String phone;
     /**
      * Руководитель
      */
-    private String theDirector;
+    private String director;
     /**
      * Срок действия лицензии
      */
-    private String theLincenseExpired;
+    private String lincenseExpired;
     /**
      * Номер лицензии
      */
-    private String theLicenseNumber;
+    private String licenseNumber;
     /**
      * Эл. адрес
      */
-    private String theEmail;
+    private String email;
     /**
      * ОГРН
      */
-    private Long theOgrn;
+    private Long ogrn;
     /**
      * ИНН
      */
-    private Long theInn;
+    private Long inn;
     /**
      * Корпус
      */
-    private String theHouseBuilding;
+    private String houseBuilding;
     /**
      * Номер дома
      */
-    private String theHouseNumber;
+    private String houseNumber;
     /**
      * Код адреса отделения
      */
-    private String theDepartmentAddressCode;
+    private String departmentAddressCode;
     /**
      * Адрес
      */
-    private Long theAddress;
+    private Long address;
     /**
      * Код ОМС
      */
-    private String theOmcCode;
+    private String omcCode;
     /**
      * Адрес для печати
      */
-    private String thePrintAddress;
+    private String printAddress;
     /**
      * Название для печати
      */
-    private String thePrintName;
+    private String printName;
     /**
      * Руководитель
      */
-    private Long theManager;
+    private Long manager;
     /**
      * Приемное отделение
      */
-    private Long thePigeonHole;
+    private Long pigeonHole;
     /**
      * Принтер по умолчанию
      */
-    private Long theCopyingEquipmentDefault;
+    private Long copyingEquipmentDefault;
     /**
      * Не показывать удаленным пользователям
      */
-    private Boolean theIsNoViewRemoteUser;
+    private Boolean isNoViewRemoteUser;
     /**
      * Интервал разрешенной регистрации
      */
-    private Integer theRegistrationInterval;
+    private Integer registrationInterval;
     /**
      * Пользователь, который последний редактировал запись
      */
-    private String theEditUsername;
+    private String editUsername;
     /**
      * Пользователь, который создал запись
      */
-    private String theCreateUsername;
+    private String createUsername;
     /**
      * Время редактрования
      */
-    private String theEditTime;
+    private String editTime;
     /**
      * Время создания
      */
-    private String theCreateTime;
+    private String createTime;
     /**
      * Дата редактирования
      */
-    private String theEditDate;
+    private String editDate;
     /**
      * Дата создания
      */
-    private String theCreateDate;
+    private String createDate;
     /**
      * Автогенерация расписания
      */
-    private Boolean theAutoGeneration;
+    private Boolean autoGeneration;
     /**
      * Код федеральный
      */
-    private String theCodef;
+    private String codef;
     /**
      * Номер в ФСС
      */
-    private String theSocCode;
+    private String socCode;
     /**
      * Возможен забор крови
      */
-    private Boolean theIsIntakeBioMaterial;
+    private Boolean isIntakeBioMaterial;
     /**
      * По умолчанию снилс врача генерации направлений для 263 приказа
      */
-    private String theSnilsDoctorDirect263;
+    private String snilsDoctorDirect263;
     /**
      * Код подразделения
      */
-    private String theCodeDepartment;
+    private String codeDepartment;
     /**
      * Короткое наименование
      */
-    private String theShortName;
+    private String shortName;
     /**
      * Доступ на создание операций по отделению
      */
-    private Long theAccessEnterOperation;
+    private Long accessEnterOperation;
     /**
      * Префикс для шаблонов ЛН
      */
-    private String thePrefixForLN;
+    private String prefixForLN;
     /**
      * Экстренный кабинет
      */
-    private Long theEmergencyCabinet;
+    private Long emergencyCabinet;
     /**
      * Отделения для новорожденных
      */
-    private Boolean theIsNewBornDep;
+    private Boolean isNewBornDep;
     /**
      * Родильное отделение
      */
-    private Boolean theIsMaternityWard;
+    private Boolean isMaternityWard;
     /**
      * Отделение патологии беременности
      */
-    private Boolean theIsPatologyPregnant;
+    private Boolean isPatologyPregnant;
     /**
      * Уровень оказания медицинской помощи
      */
-    private Integer theLpuLevel;
+    private Integer lpuLevel;
     /**
      * Профиль КИЛИ
      */
-    private Long theKiliProfile;
+    private Long kiliProfile;
     /**
      * В архиве
      */
-    private Boolean theIsArchive;
+    private Boolean isArchive;
     /**
      * Обсервационное?
      */
-    private Boolean theIsObservable;
+    private Boolean isObservable;
     /**
      * Палата новорождённых?
      */
-    private Boolean theIsNewBorn;
+    private Boolean isNewBorn;
     /**
      * Создают ли кадриоскрининг новорождённым?
      */
-    private Boolean theIsCreateCardiacScreening;
+    private Boolean isCreateCardiacScreening;
     /**
      * Офтальмологическое?
      */
-    private Boolean theIsOphthalmic;
+    private Boolean isOphthalmic;
     /**
      * Учитывать в отчёте по КР?
      */
-    private Boolean theIsReportKMP;
+    private Boolean isReportKMP;
     /**
      * Инфекционное?
      */
-    private Boolean theIsForCovid;
+    private Boolean isForCovid;
     /**
      * Опер. блок?
      */
-    private Boolean theIsOperBlock;
+    private Boolean isOperBlock;
 
     @Comment("Код адреса отделения")
     @Persist
     public String getDepartmentAddressCode() {
-        return theDepartmentAddressCode;
+        return departmentAddressCode;
     }
 
-    public void setDepartmentAddressCode(String theDepartmentAddressCode) {
-        this.theDepartmentAddressCode = theDepartmentAddressCode;
-    }
 
     /**
      * Признак мобильной поликлиники
@@ -268,11 +267,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Признак мобильной поликлиники")
     @Persist
     public Boolean getIsMobilePolyclinic() {
-        return theIsMobilePolyclinic;
-    }
-
-    public void setIsMobilePolyclinic(Boolean aIsMobilePolyclinic) {
-        theIsMobilePolyclinic = aIsMobilePolyclinic;
+        return isMobilePolyclinic;
     }
 
     /**
@@ -281,11 +276,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Стандарт оказания мед. помощи")
     @Persist
     public Long getMedicalStandard() {
-        return theMedicalStandard;
-    }
-
-    public void setMedicalStandard(Long aMedicalStandard) {
-        theMedicalStandard = aMedicalStandard;
+        return medicalStandard;
     }
 
     /**
@@ -294,22 +285,14 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Не входит в оплату по ОМС")
     @Persist
     public Boolean getIsNoOmc() {
-        return theIsNoOmc;
-    }
-
-    public void setIsNoOmc(Boolean aIsNoOmc) {
-        theIsNoOmc = aIsNoOmc;
+        return isNoOmc;
     }
 
     /**
      * Участки
      */
     public String getAreas() {
-        return theAreas;
-    }
-
-    public void setAreas(String aAreas) {
-        theAreas = aAreas;
+        return areas;
     }
 
     @Comment("Название")
@@ -326,11 +309,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Полное имя")
     @Persist
     public String getFullname() {
-        return theFullname;
-    }
-
-    public void setFullname(String aFullname) {
-        theFullname = aFullname;
+        return fullname;
     }
 
     /**
@@ -338,11 +317,7 @@ public class MisLpuForm extends IdNameEntityForm {
      */
     @Persist
     public Long getParent() {
-        return theParent;
-    }
-
-    public void setParent(Long aParent) {
-        theParent = aParent;
+        return parent;
     }
 
     /**
@@ -351,11 +326,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Код ОМС")
     @Persist
     public String getOmcCode() {
-        return theOmcCode;
-    }
-
-    public void setOmcCode(String aOmcCode) {
-        theOmcCode = aOmcCode;
+        return omcCode;
     }
 
     /**
@@ -364,11 +335,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Persist
     @Comment("Адрес")
     public Long getAddress() {
-        return theAddress;
-    }
-
-    public void setAddress(Long aAddress) {
-        theAddress = aAddress;
+        return address;
     }
 
     /**
@@ -377,11 +344,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Номер дома")
     @Persist
     public String getHouseNumber() {
-        return theHouseNumber;
-    }
-
-    public void setHouseNumber(String aHouseNumber) {
-        theHouseNumber = aHouseNumber;
+        return houseNumber;
     }
 
     /**
@@ -390,11 +353,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Корпус")
     @Persist
     public String getHouseBuilding() {
-        return theHouseBuilding;
-    }
-
-    public void setHouseBuilding(String aHouseBuilding) {
-        theHouseBuilding = aHouseBuilding;
+        return houseBuilding;
     }
 
     /**
@@ -403,11 +362,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("ИНН")
     @Persist
     public Long getInn() {
-        return theInn;
-    }
-
-    public void setInn(Long aInn) {
-        theInn = aInn;
+        return inn;
     }
 
     /**
@@ -416,11 +371,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("ОГРН")
     @Persist
     public Long getOgrn() {
-        return theOgrn;
-    }
-
-    public void setOgrn(Long aOgrn) {
-        theOgrn = aOgrn;
+        return ogrn;
     }
 
     /**
@@ -429,11 +380,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Эл. адрес")
     @Persist
     public String getEmail() {
-        return theEmail;
-    }
-
-    public void setEmail(String aEmail) {
-        theEmail = aEmail;
+        return email;
     }
 
     /**
@@ -442,11 +389,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Номер лицензии")
     @Persist
     public String getLicenseNumber() {
-        return theLicenseNumber;
-    }
-
-    public void setLicenseNumber(String aLicenseNumber) {
-        theLicenseNumber = aLicenseNumber;
+        return licenseNumber;
     }
 
     /**
@@ -457,11 +400,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @DateString
     @DoDateString
     public String getLicenseExpired() {
-        return theLincenseExpired;
-    }
-
-    public void setLicenseExpired(String aLincenseExpired) {
-        theLincenseExpired = aLincenseExpired;
+        return lincenseExpired;
     }
 
     /**
@@ -470,11 +409,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Руководитель")
     @Persist
     public String getDirector() {
-        return theDirector;
-    }
-
-    public void setDirector(String aDirector) {
-        theDirector = aDirector;
+        return director;
     }
 
     /**
@@ -483,11 +418,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Телефон")
     @Persist
     public String getPhone() {
-        return thePhone;
-    }
-
-    public void setPhone(String aPhone) {
-        thePhone = aPhone;
+        return phone;
     }
 
     /**
@@ -497,11 +428,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Persist
     @Required
     public Long getLpuFunction() {
-        return theLpuFunction;
-    }
-
-    public void setLpuFunction(Long aLpuFunction) {
-        theLpuFunction = aLpuFunction;
+        return lpuFunction;
     }
 
     /**
@@ -510,11 +437,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Название для печати")
     @Persist
     public String getPrintName() {
-        return thePrintName;
-    }
-
-    public void setPrintName(String aPrintName) {
-        thePrintName = aPrintName;
+        return printName;
     }
 
     /**
@@ -523,11 +446,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Адрес для печати")
     @Persist
     public String getPrintAddress() {
-        return thePrintAddress;
-    }
-
-    public void setPrintAddress(String aPrintAddress) {
-        thePrintAddress = aPrintAddress;
+        return printAddress;
     }
 
     /**
@@ -536,11 +455,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Руководитель")
     @Persist
     public Long getManager() {
-        return theManager;
-    }
-
-    public void setManager(Long aManager) {
-        theManager = aManager;
+        return manager;
     }
 
     /**
@@ -549,11 +464,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Приемное отделение")
     @Persist
     public Long getPigeonHole() {
-        return thePigeonHole;
-    }
-
-    public void setPigeonHole(Long aPigeonHole) {
-        thePigeonHole = aPigeonHole;
+        return pigeonHole;
     }
 
     /**
@@ -562,11 +473,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Интервал разрешенной регистрации")
     @Persist
     public Integer getRegistrationInterval() {
-        return theRegistrationInterval;
-    }
-
-    public void setRegistrationInterval(Integer aRegistrationInterval) {
-        theRegistrationInterval = aRegistrationInterval;
+        return registrationInterval;
     }
 
     /**
@@ -575,11 +482,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Не показывать удаленным пользователям")
     @Persist
     public Boolean getIsNoViewRemoteUser() {
-        return theIsNoViewRemoteUser;
-    }
-
-    public void setIsNoViewRemoteUser(Boolean aNoViewRemoteUser) {
-        theIsNoViewRemoteUser = aNoViewRemoteUser;
+        return isNoViewRemoteUser;
     }
 
     /**
@@ -588,11 +491,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Принтер по умолчанию")
     @Persist
     public Long getCopyingEquipmentDefault() {
-        return theCopyingEquipmentDefault;
-    }
-
-    public void setCopyingEquipmentDefault(Long aCopyingEquipmentDefault) {
-        theCopyingEquipmentDefault = aCopyingEquipmentDefault;
+        return copyingEquipmentDefault;
     }
 
     /**
@@ -603,11 +502,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @DoDateString
     @Persist
     public String getCreateDate() {
-        return theCreateDate;
-    }
-
-    public void setCreateDate(String aCreateDate) {
-        theCreateDate = aCreateDate;
+        return createDate;
     }
 
     /**
@@ -618,11 +513,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @DoDateString
     @Persist
     public String getEditDate() {
-        return theEditDate;
-    }
-
-    public void setEditDate(String aEditDate) {
-        theEditDate = aEditDate;
+        return editDate;
     }
 
     /**
@@ -633,11 +524,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @DoTimeString
     @Persist
     public String getCreateTime() {
-        return theCreateTime;
-    }
-
-    public void setCreateTime(String aCreateTime) {
-        theCreateTime = aCreateTime;
+        return createTime;
     }
 
     /**
@@ -648,11 +535,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @DoTimeString
     @Persist
     public String getEditTime() {
-        return theEditTime;
-    }
-
-    public void setEditTime(String aEditTime) {
-        theEditTime = aEditTime;
+        return editTime;
     }
 
     /**
@@ -661,11 +544,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Пользователь, который создал запись")
     @Persist
     public String getCreateUsername() {
-        return theCreateUsername;
-    }
-
-    public void setCreateUsername(String aCreateUsername) {
-        theCreateUsername = aCreateUsername;
+        return createUsername;
     }
 
     /**
@@ -674,11 +553,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Пользователь, который последний редактировал запись")
     @Persist
     public String getEditUsername() {
-        return theEditUsername;
-    }
-
-    public void setEditUsername(String aEditUsername) {
-        theEditUsername = aEditUsername;
+        return editUsername;
     }
 
     /**
@@ -687,11 +562,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Автогенерация расписания")
     @Persist
     public Boolean getAutoGeneration() {
-        return theAutoGeneration;
-    }
-
-    public void setAutoGeneration(Boolean aAutoGeneration) {
-        theAutoGeneration = aAutoGeneration;
+        return autoGeneration;
     }
 
     /**
@@ -700,11 +571,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Код федеральный")
     @Persist
     public String getCodef() {
-        return theCodef;
-    }
-
-    public void setCodef(String aCodef) {
-        theCodef = aCodef;
+        return codef;
     }
 
     /**
@@ -712,11 +579,7 @@ public class MisLpuForm extends IdNameEntityForm {
      */
     @Persist
     public String getSocCode() {
-        return theSocCode;
-    }
-
-    public void setSocCode(String aSocCode) {
-        theSocCode = aSocCode;
+        return socCode;
     }
 
     /**
@@ -725,11 +588,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Persist
     @Comment("Возможен забор крови")
     public Boolean getIsIntakeBioMaterial() {
-        return theIsIntakeBioMaterial;
-    }
-
-    public void setIsIntakeBioMaterial(Boolean aIsIntakeBioMaterial) {
-        theIsIntakeBioMaterial = aIsIntakeBioMaterial;
+        return isIntakeBioMaterial;
     }
 
     /**
@@ -737,11 +596,7 @@ public class MisLpuForm extends IdNameEntityForm {
      */
     @Comment("По умолчанию снилс врача генерации направлений для 263 приказа")
     public String getSnilsDoctorDirect263() {
-        return theSnilsDoctorDirect263;
-    }
-
-    public void setSnilsDoctorDirect263(String aSnilsDoctorDirect263) {
-        theSnilsDoctorDirect263 = aSnilsDoctorDirect263;
+        return snilsDoctorDirect263;
     }
 
     /**
@@ -750,11 +605,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Код подразделения")
     @Persist
     public String getCodeDepartment() {
-        return theCodeDepartment;
-    }
-
-    public void setCodeDepartment(String aCodeDepartment) {
-        theCodeDepartment = aCodeDepartment;
+        return codeDepartment;
     }
 
     /**
@@ -763,11 +614,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Короткое наименование")
     @Persist
     public String getShortName() {
-        return theShortName;
-    }
-
-    public void setShortName(String aShortName) {
-        theShortName = aShortName;
+        return shortName;
     }
 
     /**
@@ -776,11 +623,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Доступ на создание операций по отделению")
     @Persist
     public Long getAccessEnterOperation() {
-        return theAccessEnterOperation;
-    }
-
-    public void setAccessEnterOperation(Long aAccessEnterOperation) {
-        theAccessEnterOperation = aAccessEnterOperation;
+        return accessEnterOperation;
     }
 
     /**
@@ -789,11 +632,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Префикс для шаблонов ЛН")
     @Persist
     public String getPrefixForLN() {
-        return thePrefixForLN;
-    }
-
-    public void setPrefixForLN(String aPrefixForLN) {
-        thePrefixForLN = aPrefixForLN;
+        return prefixForLN;
     }
 
     /**
@@ -802,11 +641,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Экстренный кабинет")
     @Persist
     public Long getEmergencyCabinet() {
-        return theEmergencyCabinet;
-    }
-
-    public void setEmergencyCabinet(Long aEmergencyCabinet) {
-        theEmergencyCabinet = aEmergencyCabinet;
+        return emergencyCabinet;
     }
 
     /**
@@ -815,11 +650,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Отделения для новорожденных")
     @Persist
     public Boolean getIsNewBornDep() {
-        return theIsNewBornDep;
-    }
-
-    public void setIsNewBornDep(Boolean aIsNewBornDep) {
-        theIsNewBornDep = aIsNewBornDep;
+        return isNewBornDep;
     }
 
     /**
@@ -828,11 +659,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Родильное отделение")
     @Persist
     public Boolean getIsMaternityWard() {
-        return theIsMaternityWard;
-    }
-
-    public void setIsMaternityWard(Boolean aIsMaternityWard) {
-        theIsMaternityWard = aIsMaternityWard;
+        return isMaternityWard;
     }
 
     /**
@@ -841,11 +668,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Отделение патологии беременности")
     @Persist
     public Boolean getIsPatologyPregnant() {
-        return theIsPatologyPregnant;
-    }
-
-    public void setIsPatologyPregnant(Boolean aIsPatologyPregnant) {
-        theIsPatologyPregnant = aIsPatologyPregnant;
+        return isPatologyPregnant;
     }
 
     /**
@@ -854,11 +677,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Уровень оказания медицинской помощи")
     @Persist
     public Integer getLpuLevel() {
-        return theLpuLevel;
-    }
-
-    public void setLpuLevel(Integer aLpuLevel) {
-        theLpuLevel = aLpuLevel;
+        return lpuLevel;
     }
 
     /**
@@ -867,11 +686,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Профиль КИЛИ")
     @Persist
     public Long getKiliProfile() {
-        return theKiliProfile;
-    }
-
-    public void setKiliProfile(Long aKiliProfile) {
-        theKiliProfile = aKiliProfile;
+        return kiliProfile;
     }
 
     /**
@@ -880,11 +695,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("В архиве")
     @Persist
     public Boolean getIsArchive() {
-        return theIsArchive;
-    }
-
-    public void setIsArchive(Boolean aIsArchive) {
-        theIsArchive = aIsArchive;
+        return isArchive;
     }
 
     /**
@@ -893,11 +704,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Обсервационное?")
     @Persist
     public Boolean getIsObservable() {
-        return theIsObservable;
-    }
-
-    public void setIsObservable(Boolean aIsObservable) {
-        theIsObservable = aIsObservable;
+        return isObservable;
     }
 
     /**
@@ -906,11 +713,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Палата новорождённых?")
     @Persist
     public Boolean getIsNewBorn() {
-        return theIsNewBorn;
-    }
-
-    public void setIsNewBorn(Boolean aIsNewBorn) {
-        theIsNewBorn = aIsNewBorn;
+        return isNewBorn;
     }
 
     /**
@@ -919,11 +722,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Создают ли кадриоскрининг новорождённым?")
     @Persist
     public Boolean getIsCreateCardiacScreening() {
-        return theIsCreateCardiacScreening;
-    }
-
-    public void setIsCreateCardiacScreening(Boolean aIsCreateCardiacScreening) {
-        theIsCreateCardiacScreening = aIsCreateCardiacScreening;
+        return isCreateCardiacScreening;
     }
 
     /**
@@ -932,11 +731,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Офтальмологическое?")
     @Persist
     public Boolean getIsOphthalmic() {
-        return theIsOphthalmic;
-    }
-
-    public void setIsOphthalmic(Boolean aIsOphthalmic) {
-        theIsOphthalmic = aIsOphthalmic;
+        return isOphthalmic;
     }
 
     /**
@@ -945,11 +740,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Учитывать в отчёте по КР?")
     @Persist
     public Boolean getIsReportKMP() {
-        return theIsReportKMP;
-    }
-
-    public void setIsReportKMP(Boolean aIsReportKMP) {
-        theIsReportKMP = aIsReportKMP;
+        return isReportKMP;
     }
 
     /**
@@ -958,11 +749,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Инфекционное?")
     @Persist
     public Boolean getIsForCovid() {
-        return theIsForCovid;
-    }
-
-    public void setIsForCovid(Boolean aIsForCovid) {
-        theIsForCovid = aIsForCovid;
+        return isForCovid;
     }
 
     /**
@@ -971,10 +758,6 @@ public class MisLpuForm extends IdNameEntityForm {
     @Comment("Опер. блок?")
     @Persist
     public Boolean getIsOperBlock() {
-        return theIsOperBlock;
-    }
-
-    public void setIsOperBlock(Boolean aIsOperBlock) {
-        theIsOperBlock = aIsOperBlock;
+        return isOperBlock;
     }
 }

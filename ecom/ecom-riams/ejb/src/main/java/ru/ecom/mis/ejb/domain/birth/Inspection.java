@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.birth;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -23,54 +25,33 @@ import java.sql.Time;
 		@AIndex(properties = { "pregnancy" }) 
 	}
 )
+@Getter
+@Setter
 public abstract class Inspection extends BaseEntity{
-	
-	/** Кто проводил осмотр */
-	@Comment("Кто проводил осмотр")
-	public String getInspector() {return theInspector;}
-	public void setInspector(String aInspector) {theInspector = aInspector;}
-
-	
-	/** Дата осмотра */
-	@Comment("Дата осмотра")
-	public Date getInspectionDate() {return theInspectionDate;}
-	public void setInspectionDate(Date aInspectionDate) {theInspectionDate = aInspectionDate;}
-
-
-	/** Время осмотра */
-	@Comment("Время осмотра")
-	public Time getInspectionTime() {return theInspectionTime;}
-	public void setInspectionTime(Time aInspectionTime) {theInspectionTime = aInspectionTime;}
-	
 	/** Беременность */
 	@Comment("Беременность")
 	@ManyToOne
-	public Pregnancy getPregnancy() {return thePregnancy;}
-	public void setPregnancy(Pregnancy aPregnancy) {thePregnancy = aPregnancy;}
+	public Pregnancy getPregnancy() {return pregnancy;}
 
 	/** История родов */
 	@Comment("История родов")
 	@ManyToOne
-	public PregnancyHistory getPregnancyHistory() {return thePregnancyHistory;}
-	public void setPregnancyHistory(PregnancyHistory aPregnancyHistory) {thePregnancyHistory = aPregnancyHistory;}
+	public PregnancyHistory getPregnancyHistory() {return pregnancyHistory;}
 
 	/** Случай медицинского обслуживания */
 	@Comment("Случай медицинского обслуживания")
 	@OneToOne
-	public MedCase getMedCase() {return theMedCase;}
-	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
+	public MedCase getMedCase() {return medCase;}
 
 	/** Специалист, проводивший осмотр */
 	@Comment("Специалист, проводивший осмотр")
 	@OneToOne
-	public WorkFunction getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(WorkFunction aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public WorkFunction getWorkFunction() {return workFunction;}
 
 	/** Описание */
 	@Comment("Описание")
 	@Column(length=255)
-	public String getNotes() {return theNotes;}
-	public void setNotes(String aNotes) {theNotes = aNotes;}
+	public String getNotes() {return notes;}
 
 	@Transient
 	public String getInformation() {
@@ -79,7 +60,7 @@ public abstract class Inspection extends BaseEntity{
 	
 	@Transient
 	public String getWorkFunctionInfo() {
-		return theWorkFunction!=null? theWorkFunction.getWorkFunctionInfo():theInspector ;
+		return workFunction!=null? workFunction.getWorkFunctionInfo():inspector ;
 	}
 	
 	@Transient
@@ -87,20 +68,20 @@ public abstract class Inspection extends BaseEntity{
 		return  this.getClass().getSimpleName();
 	}
 	/** Специалист, проводивший осмотр */
-	private WorkFunction theWorkFunction;
+	private WorkFunction workFunction;
 	/** Случай медицинского обслуживания */
-	private MedCase theMedCase;
+	private MedCase medCase;
 	/** История родов */
-	private PregnancyHistory thePregnancyHistory;
+	private PregnancyHistory pregnancyHistory;
 	/** Беременность */
-	private Pregnancy thePregnancy;
+	private Pregnancy pregnancy;
 	/** Кто проводил осмотр */
-	private String theInspector;
+	private String inspector;
 	/** Дата осмотра */
-	private Date theInspectionDate;
+	private Date inspectionDate;
 	/** Время осмотра */
-	private Time theInspectionTime;
+	private Time inspectionTime;
 	
 	/** Описание */
-	private String theNotes;
+	private String notes;
 }

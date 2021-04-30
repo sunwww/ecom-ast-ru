@@ -76,7 +76,7 @@ public class AssessmentCardServiceBean implements IAssessmentCardService{
 			return null;
 		}
 		
-	@EJB ILocalEntityFormService theEntityFormService ;
+	@EJB ILocalEntityFormService entityFormService ;
     @PersistenceContext
-    EntityManager theManager ;	
+    EntityManager manager ;	
 }

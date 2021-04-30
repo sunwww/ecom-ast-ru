@@ -5,6 +5,8 @@ import javax.persistence.EntityListeners;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -15,44 +17,32 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 @EntityListeners(DeleteListener.class)
+@Getter
+@Setter
 public class Calculations extends BaseEntity{
 
 	/** Калькулятор */
 	@Comment("Калькулятор")
 	@OneToOne
-	public Calculator getCalculator() {return theCalculator;}
-	public void setCalculator(Calculator aCalculator) {theCalculator = aCalculator;	}
-	private Calculator theCalculator;
+	public Calculator getCalculator() {return calculator;}
+	private Calculator calculator;
 	
 	/** Тип */
 	@Comment("Тип")
 	@OneToOne
-	public VocTypeCalc getType() {return theType;}
-	public void setType(VocTypeCalc aType) {theType = aType;}
-	private VocTypeCalc theType;
+	public VocTypeCalc getType() {return type;}
+	private VocTypeCalc type;
 
 	
 	/** Порядок */
-	@Comment("Порядок")
-	public Long getOrderus() {return theOrderus;}
-	public void setOrderus(Long aOrderus) {theOrderus = aOrderus;}
-	private Long theOrderus;
+	private Long orderus;
 	
 	/** Значение */
-	@Comment("Значение")
-	public String getValue() {return theValue;}
-	public void setValue(String aValue) {theValue = aValue;	}
-	private String theValue;
+	private String value;
 	
 	/** Комментарий */
-	@Comment("Комментарий")
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
-	private String theComment;
+	private String comment;
 
     /** Примечание */
-    @Comment("Примечание")
-    public String getNote() {return theNote;}
-    public void setNote(String aNote) {theNote = aNote;}
-    private String theNote;
+    private String note;
 }

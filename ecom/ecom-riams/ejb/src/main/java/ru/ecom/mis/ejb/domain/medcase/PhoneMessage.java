@@ -8,6 +8,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -29,101 +31,46 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
 	@AIndex(properties="medCase")
 })
+@Getter
+@Setter
 public class PhoneMessage extends BaseEntity {
 
 	/**
 	 * Дата регистрации
 	 */
-	@Comment("Дата регистрации")
-	public Date getPhoneDate() {return thePhoneDate;}
-	public void setPhoneDate(Date theDate) {this.thePhoneDate = theDate;}
-	private Date thePhoneDate;
+	private Date phoneDate;
 	
 	/**
 	 * Время регистрации
 	 */
-	@Comment("Время регистрации")
-	public Time getPhoneTime() {return thePhoneTime;}
-	public void setPhoneTime(Time theTime) {this.thePhoneTime = theTime;}
-	private Time thePhoneTime;
+	private Time phoneTime;
 	
-	@Comment("Фамилия принявшего")
-	/**
-	 * Getter of the property <tt>theRecieverFio</tt>
-	 * @return  Returns the theRecieverFio.
-	 */
-	public String getRecieverFio() {return theRecieverFio;}
-	public void setRecieverFio(String aRecieverFio) {theRecieverFio = aRecieverFio;}
 
 	/** Фамилия принявшего сообщение */
 	@Comment("Фамилия принявшего сообщение")
 	@OneToOne
-	public VocPhoneMessageEmploye getRecieverEmploye() {return theRecieverEmploye;}
-	public void setRecieverEmploye(VocPhoneMessageEmploye aRecieverEmploye) {theRecieverEmploye = aRecieverEmploye;}
+	public VocPhoneMessageEmploye getRecieverEmploye() {return recieverEmploye;}
 
 	/** Фамилия принявшего сообщение */
-	private VocPhoneMessageEmploye theRecieverEmploye;
+	private VocPhoneMessageEmploye recieverEmploye;
 	/** Должность принявшего сообщение*/
-	private String theRecieverPost;
+	private String recieverPost;
 	/** Фамилия принявшего */
-	private String theRecieverFio;
-
-	/**
-	 * Getter of the property <tt>theRecieverPost</tt>
-	 */
-	@Comment("Должность принявшего сообщение")
-	public String getRecieverPost() {return theRecieverPost;}
-	public void setRecieverPost(String aRecieverPost) {theRecieverPost = aRecieverPost;}
-
+	private String recieverFio;
 	/** Телефон */
-	@Comment("Телефон")
-	public String getPhone() {return thePhone;}
-	public void setPhone(String aPhone) {thePhone = aPhone;}
-
-	/** Телефон */
-	private String thePhone;
+	private String phone;
 	/** Принявшая сообщение организация */
-	private String theRecieverOrganization = "";
-
-	/**
-	 * Getter of the property <tt>theRecieverOrganization</tt>
-	 */
-	@Comment("Принявшая сообщение организация")
-	public String getRecieverOrganization() {
-		return theRecieverOrganization;
-	}
-
-	/**
-	 * Setter of the property <tt>theRecieverOrganization</tt>
-	 */
-	public void setRecieverOrganization(String theRecieverOrganization) {
-		this.theRecieverOrganization = theRecieverOrganization;
-	}
+	private String recieverOrganization = "";
 
 	/**
 	 * Текст сообщения
 	 */
-	private String theText = "";
-
-	/**
-	 * Getter of the property <tt>theText</tt>
-	 */
-	@Comment("Текст сообщения")
-	public String getText() {
-		return theText;
-	}
-
-	/**
-	 * Setter of the property <tt>theText</tt>
-	 */
-	public void setText(String theText) {
-		this.theText = theText;
-	}
+	private String text = "";
 
 	/**
 	 * Передавший сообщение специалист
 	 */
-	private Worker theWorker;
+	private Worker worker;
 
 	/**
 	 * Getter of the property <tt>theWorker</tt>
@@ -132,24 +79,16 @@ public class PhoneMessage extends BaseEntity {
 	@Comment("Передавший сообщение специалист")
 	@OneToOne
 	public Worker getWorker() {
-		return theWorker;
+		return worker;
 	}
 	
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@OneToOne
-	public WorkFunction getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(WorkFunction aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public WorkFunction getWorkFunction() {return workFunction;}
 
 	/** Рабочая функция */
-	private WorkFunction theWorkFunction;
-
-	/**
-	 * Setter of the property <tt>theWorker</tt>
-	 */
-	public void setWorker(Worker theWorker) {
-		this.theWorker = theWorker;
-	}
+	private WorkFunction workFunction;
 
 	/**
 	 * Тип сообщения
@@ -157,40 +96,18 @@ public class PhoneMessage extends BaseEntity {
 	@Comment("Тип сообщения")
 	@OneToOne
 	public VocPhoneMessageType getPhoneMessageType() {
-		return thePhoneMessageType;
+		return phoneMessageType;
 	}
 
 	/**
 	 * Тип сообщения
 	 */
-	public void setPhoneMessageType(VocPhoneMessageType aNewProperty) {
-		thePhoneMessageType = aNewProperty;
-	}
-
-	/**
-	 * Тип сообщения
-	 */
-	private VocPhoneMessageType thePhoneMessageType;
+	private VocPhoneMessageType phoneMessageType;
 
 	/**
 	 * Номер сообщения
 	 */
-	@Comment("Номер сообщения")
-	public String getNumber() {
-		return theNumber;
-	}
-
-	/**
-	 * Номер сообщения
-	 */
-	public void setNumber(String aNewProperty) {
-		theNumber = aNewProperty;
-	}
-
-	/**
-	 * Номер сообщения
-	 */
-	private String theNumber;
+	private String number;
 
 	/**
 	 * Случай медицинского обслуживания
@@ -198,108 +115,57 @@ public class PhoneMessage extends BaseEntity {
 	@Comment("Случай медицинского обслуживания")
 	@ManyToOne
 	public MedCase getMedCase() {
-		return theMedCase;
+		return medCase;
 	}
 
 	/**
 	 * Случай медицинского обслуживания
 	 */
-	public void setMedCase(MedCase aNewProperty) {
-		theMedCase = aNewProperty;
-	}
-
-	/**
-	 * Случай медицинского обслуживания
-	 */
-	private MedCase theMedCase;
+	private MedCase medCase;
 		
 
 	/** Подтип сообщения*/
 	@Comment("Подтип сообщения")
 	@OneToOne
-	public VocPhoneMessageSubType getPhoneMessageSubType() {return thePhoneMessageSubType;}
-	/** Подтип сообщения*/
-	public void setPhoneMessageSubType(VocPhoneMessageSubType a_Property) {
-		thePhoneMessageSubType = a_Property;
-	}
-
+	public VocPhoneMessageSubType getPhoneMessageSubType() {return phoneMessageSubType;}
 
 	/** Подтип сообщения*/
-	private VocPhoneMessageSubType thePhoneMessageSubType;
-	
-	/** Пользователь, создавший запись */
-	@Comment("Пользователь, создавший запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;	}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-
-	/** Пользователь, которые последним редактировал запись */
-	@Comment("Пользователь, которые последним редактировал запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-
-	/** Дата редакции */
-	@Comment("Дата редакции")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-
+	private VocPhoneMessageSubType phoneMessageSubType;
 	/** Время редакции */
-	
-	@Comment("Время редакции")
-	public Time getEditTime() {return theEditTime;}
-	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-
-	/** Время редакции */
-	private Time theEditTime;
+	private Time editTime;
 	/** Дата редакции */
-	private Date theEditDate;
+	private Date editDate;
 	/** Пользователь, которые последним редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	
 	/** Район */
 	@Comment("Район")
 	@OneToOne
-	public VocRayon getRayon() {return theRayon;}
-	public void setRayon(VocRayon aRayon) {theRayon = aRayon;}
+	public VocRayon getRayon() {return rayon;}
 
 	/** Код МКБ */
 	@Comment("Код МКБ")
 	@OneToOne
-	public VocIdc10 getIdc10() {return theIdc10;}
-	public void setIdc10(VocIdc10 aIdc10) {theIdc10 = aIdc10;}
+	public VocIdc10 getIdc10() {return idc10;}
 
-	/** Диагноз текст */
-	@Comment("Диагноз текст")
-	public String getDiagnosis() {return theDiagnosis;}
-	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
 
 	/** Тяжесть состояния */
 	@Comment("Тяжесть состояния")
 	@OneToOne
-	public VocPhoneMessageState getState() {return theState;}
-	public void setState(VocPhoneMessageState aState) {theState = aState;}
+	public VocPhoneMessageState getState() {return state;}
 
 	/** Тяжесть состояния */
-	private VocPhoneMessageState theState;
+	private VocPhoneMessageState state;
 	/** Диагноз текст */
-	private String theDiagnosis;
+	private String diagnosis;
 	/** Код МКБ */
-	private VocIdc10 theIdc10;
+	private VocIdc10 idc10;
 	/** Район */
-	private VocRayon theRayon;
+	private VocRayon rayon;
 }

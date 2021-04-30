@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -16,29 +18,20 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 		@AIndex(properties = { "numberFond" }),
 		@AIndex(properties = { "importType" })
 		})
+@Getter
+@Setter
 public class FondImportReestr extends BaseEntity{
 	/** Номер направления */
-	@Comment("Номер направления")
-	public String getNumberFond() {return theNumberFond;}
-	public void setNumberFond(String aNumberFond) {theNumberFond = aNumberFond;}
-
-	/** Номер направления */
-	private String theNumberFond;
+	private String numberFond;
 	
 	/** Импорт */
 	@Comment("Импорт")
 	@OneToOne
-	public FondImport getImportType() {return theImportType;}
-	public void setImportType(FondImport aImportType) {theImportType = aImportType;}
+	public FondImport getImportType() {return importType;}
 
 	/** Импорт */
-	private FondImport theImportType;
+	private FondImport importType;
 	
 	/** Результат */
-	@Comment("Результат")
-	public String getImportResult() {return theImportResult;}
-	public void setImportResult(String aImportResult) {theImportResult = aImportResult;}
-
-	/** Результат */
-	private String theImportResult;
+	private String importResult;
 }

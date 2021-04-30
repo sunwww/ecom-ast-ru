@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.form.contract;
 
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -18,6 +19,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Subclasses(value = { ContractGuaranteeLetterForm.class, ContractMedPolicyForm.class, ContractPaymentOrderForm.class })
 @Parent(property="contract", parentForm=MedContractForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ContractGuarantee")
+@Setter
 public class ContractGuaranteeForm extends IdEntityForm{
 	/**
 	 * Договор
@@ -25,103 +27,86 @@ public class ContractGuaranteeForm extends IdEntityForm{
 	@Comment("Договор")
 	@Persist
 	public Long getContract() {
-		return theContract;
-	}
-	public void setContract(Long aContract) {
-		theContract = aContract;
+		return contract;
 	}
 	/**
 	 * Договор
 	 */
-	private Long theContract;
+	private Long contract;
 	/**
 	 * Договорная персона
 	 */
 	@Comment("Договорная персона")
 	@Persist @Required
 	public Long getContractPerson() {
-		return theContractPerson;
-	}
-	public void setContractPerson(Long aContractPerson) {
-		theContractPerson = aContractPerson;
+		return contractPerson;
 	}
 	/**
 	 * Договорная персона
 	 */
-	private Long theContractPerson;
+	private Long contractPerson;
 	
 	/** Лимит денег */
 	@Comment("Лимит денег")
 	@Persist
-	public String getLimitMoney() {return theLimitMoney;}
-	public void setLimitMoney(String aLimitMoney) {theLimitMoney = aLimitMoney;}
+	public String getLimitMoney() {return limitMoney;}
 
 	/** Лимит денег */
-	private String theLimitMoney;
+	private String limitMoney;
 	
 	/** Номер */
 	@Comment("Номер")
 	@Persist @Required
-	public String getNumberDoc() {return theNumberDoc;}
-	public void setNumberDoc(String aNumberDoc) {theNumberDoc = aNumberDoc;}
+	public String getNumberDoc() {return numberDoc;}
 
 	/** Номер */
-	private String theNumberDoc;
+	private String numberDoc;
 	
 	/** Дата выдачи */
 	@Comment("Дата выдачи")
 	@Persist @DateString @DoDateString @Required
-	public String getIssueDate() {return theIssueDate;}
-	public void setIssueDate(String aIssueDate) {theIssueDate = aIssueDate;}
+	public String getIssueDate() {return issueDate;}
 
 	
 	/** Дата действия */
 	@Comment("Дата действия")
 	@Persist @DateString @DoDateString @Required
-	public String getActionDate() {return theActionDate;}
-	public void setActionDate(String aActionDate) {theActionDate = aActionDate;}
+	public String getActionDate() {return actionDate;}
 
 	/** Дата окончания действия */
 	@Comment("Дата окончания действия")
 	@Persist @DateString @DoDateString 
-	public String getActionDateTo() {return theActionDateTo;}
-	public void setActionDateTo(String aActionDateTo) {theActionDateTo = aActionDateTo;}
+	public String getActionDateTo() {return actionDateTo;}
 
 	/** Дата окончания действия */
-	private String theActionDateTo;	
+	private String actionDateTo;	
 	/** Дата действия */
-	private String theActionDate;
+	private String actionDate;
 	/** Дата выдачи */
-	private String theIssueDate;
+	private String issueDate;
 	/** Без лимита */
 	@Comment("Без лимита")
 	@Persist
-	public Boolean getIsNoLimit() {return theIsNoLimit;}
-	public void setIsNoLimit(Boolean aIsNoLimit) {theIsNoLimit = aIsNoLimit;}
+	public Boolean getIsNoLimit() {return isNoLimit;}
 
 	/** Без лимита */
-	private Boolean theIsNoLimit;
+	private Boolean isNoLimit;
 	
 	/** Вид медицинской помощи */
 	@Comment("Вид медицинской помощи")
 	@Persist @Required 
-	public Long getKindHelp() {return theKindHelp;}
-	public void setKindHelp(Long aKindHelp) {theKindHelp = aKindHelp;}
+	public Long getKindHelp() {return kindHelp;}
 
 	/** Вид медицинской помощи */
-	private Long theKindHelp;
+	private Long kindHelp;
 	/** Палата */
 	@Comment("Палата")
 	@Persist 
 	public Long getRoomType() {
-		return theRoomType;
-	}
-
-	public void setRoomType(Long aRoomType) {
-		theRoomType = aRoomType;
+		return roomType;
 	}
 
 	/** Палата */
-	private Long theRoomType;
+	private Long roomType;
 
 }

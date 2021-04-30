@@ -7,6 +7,7 @@ import ru.ecom.web.util.Injection;
 
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -50,7 +51,7 @@ public class CategoryTreeServiceJs {
             fldIsChild = "(select count(*) from " + table + "1 where pp1.parent_id=" + fldId + ")";
         } else if (aTable.equalsIgnoreCase("MEDSERVICE")) {
             if (aViewButton == null) {
-                if (aParent != null && aParent.equals(aParent.valueOf(0))) {
+                if (aParent != null && aParent.equals(0L)) {
                     aParent = 4056L;
                 } //Только лабораторные исследования!
                 table = "MedService ms";
@@ -66,7 +67,7 @@ public class CategoryTreeServiceJs {
                         " left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id and vpts.id='" + aViewButton + "'\n" +
                         " left join vocservicetype vsts on vsts.id=ms.servicetype_id \n" +
                         " and case when ms.dtype='MedServiceGroup' then vsts.code='LABSURVEY' and ms.dtype='MedService' else 1=1 end\n";
-                if (aParent != null && aParent.equals(aParent.valueOf(0))) {
+                if (aParent != null && aParent.equals(0L)) {
                     aParent = 4056L;
                 } //Только лабораторные исследования!
                 viewButton = "case when ms.id not in (select mss.id from medservice mss  left join workfunctionservice wfss on wfss.medservice_id=mss.id  left join vocprescripttype vpts on vpts.id=wfss.prescripttype_id  left join vocservicetype vsts on vsts.id=mss.servicetype_id where vpts.id= '" + aViewButton + "'   and mss.dtype='MedService'  and vsts.code='LABSURVEY'  ) then null else ms.id end as checkbut";
@@ -147,10 +148,8 @@ public class CategoryTreeServiceJs {
     }
 
     public boolean checkId(String[] aArr, String aId) {
-        for (String val : aArr) {
-            if (val.equals(aId)) return true;
-        }
-        return false;
+        return Arrays.asList(aArr).contains(aId);
+
     }
 
 }

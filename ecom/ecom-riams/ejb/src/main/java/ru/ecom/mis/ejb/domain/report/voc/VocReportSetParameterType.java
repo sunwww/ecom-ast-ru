@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -21,57 +23,26 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 @AIndexes(value = { @AIndex(properties = { "className","strCode" })
 })
+@Getter
+@Setter
 public class VocReportSetParameterType extends VocBaseEntity{
-	
-	/** Имя класса данных */
-	@Comment("Имя класса данных")
-	public String getClassName() {
-		return theClassName;
-	}
-
-	public void setClassName(String aClassName) {
-		theClassName = aClassName;
-	}
 	
 	/** Пол */
 	@Comment("Пол")
 	@OneToOne
 	public VocSex getSex() {
-		return theSex;
-	}
-
-	public void setSex(VocSex aSex) {
-		theSex = aSex;
-	}
-	/** Пол код */
-	@Comment("Пол код")
-	public String getSexCode() {
-		return theSexCode;
-	}
-
-	public void setSexCode(String aSexCode) {
-		theSexCode = aSexCode;
+		return sex;
 	}
 
 	/** Пол код */
-	private String theSexCode;
+	private String sexCode;
 
 	/** Строка */
-	@Comment("Строка")
-	public String getStrCode() {
-		return theStrCode;
-	}
-
-	public void setStrCode(String aStr) {
-		theStrCode = aStr;
-	}
-
-	/** Строка */
-	private String theStrCode;
+	private String strCode;
 	/** Пол */
-	private VocSex theSex;
+	private VocSex sex;
 
 	/** Имя класса данных */
-	private String theClassName;
+	private String className;
 
 }

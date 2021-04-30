@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.disability;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.disability.DisabilityCase;
@@ -27,132 +28,113 @@ import ru.nuzmsh.forms.validator.validators.Required;
 		)
 @Parent(property="patient", parentForm=PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Disability/Case")
+@Setter
 public class DisabilityCaseForm extends IdEntityForm {
 
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist @Required
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
-
+	public Long getPatient() {return patient;}
 
 	/** СМО */
 	@Comment("СМО")
 	@Persist
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
-
+	public Long getMedCase() {return medCase;}
 
 	/** Дата начала */
 	@Comment("Дата начала")
 	@DateString @DoDateString @Persist 
-	public String getDateFrom() {return theDateFrom;}
-	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
-
+	public String getDateFrom() {return dateFrom;}
 
 	/** Дата окончания */
 	@Comment("Дата окончания")
 	@DateString @DoDateString @Persist
-	public String getDateTo() {return theDateTo;}
-	public void setDateTo(String aDateTo) {theDateTo = aDateTo;}
-
+	public String getDateTo() {return dateTo;}
 
 	/** Продолжительность */
 	@Comment("Продолжительность")
 	@Persist
-	public String getDuration() {return theDuration;}
-	public void setDuration(String aDuration) {theDuration = aDuration;}
+	public String getDuration() {return duration;}
 
-
-	
 	/** Родительский случай нетрудоспособности */
 	@Comment("Родительский случай нетрудоспособности")
 	@Persist
-	public Long getParentDisabiblityCase() {return theParentDisabiblityCase;}
-	public void setParentDisabiblityCase(Long aParentDisabiblityCase) {theParentDisabiblityCase = aParentDisabiblityCase;}
+	public Long getParentDisabiblityCase() {return parentDisabiblityCase;}
 
 	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	/** СМО */
-	private Long theMedCase;
+	private Long medCase;
 	/** Дата начала */
-	private String theDateFrom;
+	private String dateFrom;
 	/** Дата окончания */
-	private String theDateTo;
+	private String dateTo;
 	/** Продолжительность */
-	private String theDuration;
+	private String duration;
 	/** Родительский случай нетрудоспособности */
-	private Long theParentDisabiblityCase;
+	private Long parentDisabiblityCase;
 	/**
 	 * Состоит на учете в службе занятости
 	 */
 	@Comment("Состоит на учете в службе занятости")
 	@Persist
-	public Boolean getPlacementService() {return thePlacementService;}
-	public void setPlacementService(Boolean aPlacementService) {thePlacementService = aPlacementService;}
+	public Boolean getPlacementService() {return placementService;}
 	/**
 	 * Состоит на учете в службе занятости
 	 */
-	private Boolean thePlacementService;
+	private Boolean placementService;
 	/**
 	 * Поставлена на учет в ранние сроки беременности (до 12 недель)
 	 */
 	@Comment("Поставлена на учет в ранние сроки беременности (до 12 недель)")
 	@Persist
-	public Boolean getEarlyPregnancyRegistration() {return theEarlyPregnancyRegistration;}
-	public void setEarlyPregnancyRegistration(Boolean aEarlyPregnancyRegistration) {theEarlyPregnancyRegistration = aEarlyPregnancyRegistration;}
+	public Boolean getEarlyPregnancyRegistration() {return earlyPregnancyRegistration;}
 	/**
 	 * Поставлена на учет в ранние сроки беременности (до 12 недель)
 	 */
-	private Boolean theEarlyPregnancyRegistration;
+	private Boolean earlyPregnancyRegistration;
 
 
 	/** Лицо по уходу 1*/
 	@Comment("Лицо по уходу 1")
 	@Persist
-	public Long getNursingPerson1() {return theNursingPerson1;}
-	public void setNursingPerson1(Long aNursingPerson1) {theNursingPerson1 = aNursingPerson1;}
+	public Long getNursingPerson1() {return nursingPerson1;}
 
 	/** Лицо по уходу 2*/
 	@Comment("Лицо по уходу 2")
 	@Persist
-	public Long getNursingPerson2() {return theNursingPerson2;}
-	public void setNursingPerson2(Long aNursingPerson2) {theNursingPerson2 = aNursingPerson2;}
+	public Long getNursingPerson2() {return nursingPerson2;}
 
 	/** Лицо по уходу 2*/
-	private Long theNursingPerson2;
+	private Long nursingPerson2;
 	/** Лицо по уходу 1*/
-	private Long theNursingPerson1;
+	private Long nursingPerson1;
 	/** Пользователь, создавший документ */
 	@Comment("Пользователь, создавший документ")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aUsernameCreate) {theCreateUsername = aUsernameCreate;}
+	public String getCreateUsername() {return createUsername;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DateString @DoDateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aDateCreate) {theCreateDate = aDateCreate;}
+	public String getCreateDate() {return createDate;}
 
 	/** Пользователь, редактировавший документ */
 	@Comment("Пользователь, редактировавший документ")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aUsernameEdit) {theEditUsername = aUsernameEdit;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@Persist @DateString @DoDateString
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aDateEdit) {theEditDate = aDateEdit;}
+	public String getEditDate() {return editDate;}
 
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Пользователь, редактировавший документ */
-	private String theEditUsername;
+	private String editUsername;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	/** Пользователь, создавший документ */
-	private String theCreateUsername;
+	private String createUsername;
 }

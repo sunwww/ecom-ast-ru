@@ -23,8 +23,8 @@ public class VocEntityServiceBean implements IVocEntityService {
 	public void removeVocEntity(String aClassname, String aId) {
 		Class clazz = loadVocEntityClass(aClassname);
 		long id = Long.parseLong(aId);
-		Object entity = theManager.find(clazz, id);
-		theManager.remove(entity);
+		Object entity = manager.find(clazz, id);
+		manager.remove(entity);
 	}
 	
 	public Object setVocEntityValue(String aClassname, String aId, String aProperty, String aValue) {
@@ -34,14 +34,14 @@ public class VocEntityServiceBean implements IVocEntityService {
 		if(StringUtil.isNullOrEmpty(aId)) {
 			try {
 				entity = clazz.newInstance() ;
-				theManager.persist(entity);
+				manager.persist(entity);
 				ret = PropertyUtil.getPropertyValue(entity, "id");
 			} catch (Exception e) {
 				throw new IllegalStateException("Ошибка при создании нового: "+e,e) ;
 			}
 		} else {
 			long id = Long.parseLong(aId);
-			entity = theManager.find(clazz, id);
+			entity = manager.find(clazz, id);
 			ret = id ;
 		}
 		try {
@@ -60,11 +60,11 @@ public class VocEntityServiceBean implements IVocEntityService {
 
 	private Class loadVocEntityClass(String aClassname) {
 		try {
-			Class clazz = theClassLoaderHelper.loadClass(aClassname);
+			Class clazz = classLoaderHelper.loadClass(aClassname);
 			if(clazz.isAnnotationPresent(Deprecated.class)) {
 				throw new IllegalStateException("Класс "+aClassname+" устарел") ;
 			}
-			if(theEntityHelper.isVocEntity(clazz)) {
+			if(entityHelper.isVocEntity(clazz)) {
 				return clazz; 
 			} else {
 				throw new IllegalStateException("Класс "+aClassname+" не является справочником") ;
@@ -83,7 +83,7 @@ public class VocEntityServiceBean implements IVocEntityService {
 			if(! m.getName().equals("getId")
 					&& m.getName().startsWith("get")
 					&& !m.getName().equals("getClass")
-					&& theEntityHelper.hasSimpleType(m)) {
+					&& entityHelper.hasSimpleType(m)) {
 				String name = PropertyUtil.getPropertyName(m);
 				Comment commentMethodAnnotation = m.getAnnotation(Comment.class) ;
 				String propComment = commentMethodAnnotation!=null ? commentMethodAnnotation.value()  : name ;
@@ -95,10 +95,10 @@ public class VocEntityServiceBean implements IVocEntityService {
 	}
 	
 	public Collection<VocEntityInfo> listVocEntities() {
-		Collection<Class> entities = theEntityHelper.listAllEntities() ;
+		Collection<Class> entities = entityHelper.listAllEntities() ;
 		ArrayList<VocEntityInfo> ret = new ArrayList<>(entities.size()) ;
 		for(Class clazz : entities) {
-			if(theEntityHelper.isVocEntity(clazz) && !clazz.isAnnotationPresent(Deprecated.class)) {
+			if(entityHelper.isVocEntity(clazz) && !clazz.isAnnotationPresent(Deprecated.class)) {
 				ret.add(getInfo(clazz));
 			}
 		}
@@ -106,49 +106,35 @@ public class VocEntityServiceBean implements IVocEntityService {
 	}
 	
 	private int getCount(Class clazz) {
-		Long totalCount = (Long)theManager.createQuery("select count(*) from "
-				+ theEntityHelper.getEntityName(clazz)).getSingleResult() ;
+		Long totalCount = (Long)manager.createQuery("select count(*) from "
+				+ entityHelper.getEntityName(clazz)).getSingleResult() ;
 		return totalCount.intValue() ;
 	}
 	public String loadJsonValues(String aClassname, int aFrom, int aCount, String aOrderBy, boolean aAscending) {
 		Class clazz = loadVocEntityClass(aClassname);
 		VocEntityInfo info = getInfo(clazz);
-		//String fieldFind = "" ;
-		if(StringUtil.isNullOrEmpty(aOrderBy) ) {aOrderBy = "id"; 
-			//fieldFind="id" ;
+		if(StringUtil.isNullOrEmpty(aOrderBy) ) {aOrderBy = "id";
 		}
-		List <Object> list1 = theManager.createNativeQuery("select id from "+theEntityHelper.getTableName(clazz)
+		List <Object> list1 = manager.createNativeQuery("select id from "+entityHelper.getTableName(clazz)
 		+ " order by "+aOrderBy+" "+(aAscending?"asc":"desc")+", id "+(aAscending?"asc":"desc"))
 		.setMaxResults(aFrom+aCount).getResultList() ;
 
 		StringBuilder ids=new StringBuilder() ;
 		if (list1.size()>aFrom) {
-			//val = list1.get(list1.size()-1) ;
 			for (int i=aFrom;i<list1.size();i++){
 				ids.append(",").append(list1.get(i)) ;
 			}
 		}
 		StringBuilder sql = new StringBuilder() ;
 		
-		/*sql.append("from "+theEntityHelper.getEntityName(clazz)) 
-			.append(" where ").append(fieldFind).append((aAscending?">":"<")).append("'").append(val).append("'")
-			.append(" order by ").append(aOrderBy).append(" ").append((aAscending?"asc":"desc")).append(", id ").append((aAscending?"asc":"desc"));
-		*/
-		
-		sql.append("from ").append(theEntityHelper.getEntityName(clazz))
+
+		sql.append("from ").append(entityHelper.getEntityName(clazz))
 		.append(" where id in (").append(ids.length()>0?ids.substring(1):"").append(")")
 		.append(" order by ").append(aOrderBy).append(" ").append((aAscending?"asc":"desc")).append(", id ").append((aAscending?"asc":"desc"));
-		List  list = theManager.createQuery(sql.toString())
-				//.setParameter("val", val)
+		List  list = manager.createQuery(sql.toString())
 				.setMaxResults(aCount)
 				.getResultList();
 		
-		/*List list = theManager.createQuery("from "+theEntityHelper.getEntityName(clazz) 
-				+ " order by "+aOrderBy+" "+(aAscending?"asc":"desc"))
-			.setFirstResult(aFrom)
-			.setMaxResults(aCount)
-			.getResultList();
-		*/
 		StringBuilder sb = new StringBuilder(2048) ;
 		sb.append("{'totalCount':'").append(getCount(clazz)).append("',");
 		sb.append("'topics':[") ;
@@ -174,7 +160,7 @@ public class VocEntityServiceBean implements IVocEntityService {
 		
 	}
 	
-	private final EntityHelper theEntityHelper = EntityHelper.getInstance();
-	private final ClassLoaderHelper theClassLoaderHelper = ClassLoaderHelper.getInstance();
-    private @PersistenceContext EntityManager theManager ;
+	private final EntityHelper entityHelper = EntityHelper.getInstance();
+	private final ClassLoaderHelper classLoaderHelper = ClassLoaderHelper.getInstance();
+    private @PersistenceContext EntityManager manager ;
 }

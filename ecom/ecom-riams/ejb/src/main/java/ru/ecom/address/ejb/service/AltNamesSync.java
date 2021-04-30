@@ -8,16 +8,16 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 public class AltNamesSync implements ISync {
-    private EntityManager theEntityManager;
+    private EntityManager entityManager;
 	public void sync(SyncContext aContext) {
 
         String clause = " where time = "+aContext.getImportTime().getId();
         String countQueryString = "select count(*) from AltNames " + clause;
 
-        theEntityManager = aContext.getEntityManager();
+        entityManager = aContext.getEntityManager();
 //        UserTransaction tx = aContext.getTransactionManager();
 //        tx.begin();
-        long results = (Long) theEntityManager.createQuery(countQueryString).getSingleResult();
+        long results = (Long) entityManager.createQuery(countQueryString).getSingleResult();
 
         IMonitor monitor = aContext.getMonitorService().startMonitor(aContext.getMonitorId(), "Синхронизация соответствий КЛАДР", results);
         long id =0;
@@ -25,7 +25,7 @@ public class AltNamesSync implements ISync {
         int maxResults = 1000;
         String listSql = "select oldCode, newCode, id from AltNames "+clause +" and id>";
         while (true) {
-        List<Object[]> names = theEntityManager.createNativeQuery(listSql+id+" order by id").setMaxResults(maxResults).getResultList();
+        List<Object[]> names = entityManager.createNativeQuery(listSql+id+" order by id").setMaxResults(maxResults).getResultList();
         if (names.isEmpty()) {break;}
 
        for (Object[] o: names) {	
@@ -33,16 +33,16 @@ public class AltNamesSync implements ISync {
                 monitor.advice(100);
               monitor.setText(i+ " Заменяем устаревший код КЛАДРа "+o[0]+" на новый код "+o[1]);
             }
-        	id = Long.valueOf(""+o[2]);
+        	id = Long.parseLong(""+o[2]);
         	
         	String sql = "update address2 set kladr = '"+o[1]+"' where kladr = '"+o[0]+"'";
 
-        	theEntityManager.createNativeQuery(sql).executeUpdate();
+        	entityManager.createNativeQuery(sql).executeUpdate();
         }
        names.clear();
         }
         monitor.finish(aContext.getImportTime().getId() + "");
-        theEntityManager = null;
+        entityManager = null;
 	}
 
 }

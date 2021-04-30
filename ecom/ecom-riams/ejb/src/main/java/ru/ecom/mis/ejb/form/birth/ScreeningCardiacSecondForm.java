@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -22,62 +23,56 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(ScreeningCardiacFirstPreCreateInterceptor.class)
 )
+@Setter
 public class ScreeningCardiacSecondForm extends ScreeningCardiacFirstForm {
     /** Регистрация АД одновременная - правая рука */
     @Comment("Регистрация АД одновременная - правая рука")
     @Persist
     @Required
-    public Long getRightHandAD() {return theRightHandAD;}
-    public void setRightHandAD(Long aRightHandAD) {theRightHandAD = aRightHandAD;}
+    public Long getRightHandAD() {return rightHandAD;}
     /** Регистрация АД одновременная - нога */
     @Comment("Регистрация АД одновременная - нога")
     @Persist
     @Required
-    public Long getLegAD() {return theLegAD;}
-    public void setLegAD(Long aLegAD) {theLegAD = aLegAD;}
+    public Long getLegAD() {return legAD;}
     /** Локализация верхушечного толчка */
     @Comment("Локализация верхушечного толчка")
     @Persist
     @Required
-    public Long getApicalImpulseLocal() {return theApicalImpulseLocal;}
-    public void setApicalImpulseLocal(Long aApicalImpulseLocal) {theApicalImpulseLocal = aApicalImpulseLocal;}
+    public Long getApicalImpulseLocal() {return apicalImpulseLocal;}
     /** Локализация края печени */
     @Comment("Локализация края печени")
     @Persist
     @Required
-    public Long getLiverEdgeLocal() {return theLiverEdgeLocal;}
-    public void setLiverEdgeLocal(Long aLiverEdgeLocal) {theLiverEdgeLocal = aLiverEdgeLocal;}
+    public Long getLiverEdgeLocal() {return liverEdgeLocal;}
     /** Характеристика диуреза */
     @Comment("Характеристика диуреза")
     @Persist
     @Required
-    public Long getDiuresis() {return theDiuresis;}
-    public void setDiuresis(Long aDiuresis) {theDiuresis = aDiuresis;}
+    public Long getDiuresis() {return diuresis;}
     /** ЭКГ (по показаниям)  */
     @Comment("ЭКГ (по показаниям)")
     @Persist
-    public String getECG() {return theECG;}
-    public void setECG(String aECG) {theECG = aECG;}
+    public String getECG() {return eCG;}
     /** Заключение для выписки  */
     @Comment("Заключение для выписки")
     @Persist
-    public String getConclusion() {return theConclusion;}
-    public void setConclusion(String aConclusion) {theConclusion = aConclusion;}
+    public String getConclusion() {return conclusion;}
 
     /** СМО */
-    private Long theMedCase;
+    private Long medCase;
     /** Регистрация АД одновременная - правая рука*/
-    private Long theRightHandAD;
+    private Long rightHandAD;
     /** Регистрация АД одновременная - нога*/
-    private Long theLegAD;
+    private Long legAD;
     /** Локализация верхушечного толчка */
-    private Long theApicalImpulseLocal;
+    private Long apicalImpulseLocal;
     /** Локализация края печени */
-    private Long theLiverEdgeLocal;
+    private Long liverEdgeLocal;
     /** Характеристика диуреза */
-    private Long theDiuresis;
+    private Long diuresis;
     /** ЭКГ (по показаниям) */
-    private String theECG;
+    private String eCG;
     /** Заключение для выписки */
-    private String theConclusion;
+    private String conclusion;
 }

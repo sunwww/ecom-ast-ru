@@ -1,4 +1,5 @@
 package ru.ecom.mis.ejb.form.contract;
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractGuaranteeGroup;
@@ -12,8 +13,8 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormPersistance(clazz = ContractGuaranteeGroup.class)
 @Comment("Группа гарантийных документов по договору")
 @WebTrail(comment = "Группа гарантийных документов по договору", nameProperties= "id", list="entityParentList-contract_contractGuaranteeGroup.do", view="entityParentView-contract_contractGuaranteeGroup.do")
-//@Parent(property="parent", parentForm=PARENT.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/GroupRules/ContractGuaranteeGroup")
+@Setter
 public class ContractGuaranteeGroupForm extends IdEntityForm{
 	/**
 	 * Название
@@ -21,13 +22,10 @@ public class ContractGuaranteeGroupForm extends IdEntityForm{
 	@Comment("Название")
 	@Persist @Required
 	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
+		return name;
 	}
 	/**
 	 * Название
 	 */
-	private String theName;
+	private String name;
 }

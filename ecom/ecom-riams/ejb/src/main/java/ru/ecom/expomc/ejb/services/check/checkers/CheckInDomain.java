@@ -39,11 +39,11 @@ public class CheckInDomain implements ICheck, INativeSqlSupports {
 			HashValueGetter hash = new HashValueGetter() ;
 			hash.set("CHECK_ID", aContext.getCheckId()) ;
 			hash.set("TIME_ID", aContext.getTimeId()) ;
-			hash.set("EMPTY_VALUE", aContext.getEntitySqlEmptyValue(theProperty)) ;
+			hash.set("EMPTY_VALUE", aContext.getEntitySqlEmptyValue(property)) ;
 			hash.set("TABLE_NAME", aContext.getTableName()) ;
-			hash.set("PROPERTY", "\""+theProperty+"\"") ;
-			hash.set("VOC_TABLE_NAME", aContext.getDocumentSqlTableName(theDocument)) ;
-			hash.set("VOC_CODE", aContext.getDocumentSqlColumnName(theDocument, theDocumentCodeProperty)) ;
+			hash.set("PROPERTY", "\""+property+"\"") ;
+			hash.set("VOC_TABLE_NAME", aContext.getDocumentSqlTableName(document)) ;
+			hash.set("VOC_CODE", aContext.getDocumentSqlColumnName(document, documentCodeProperty)) ;
 			
 			return (String) replaceHelper.replaceWithValues(query, hash) ;
 		} catch (Exception e) {
@@ -52,12 +52,12 @@ public class CheckInDomain implements ICheck, INativeSqlSupports {
 	}
 
     public CheckResult check(ICheckContext aContext) throws CheckException {
-        Object value = aContext.get(theProperty) ;
+        Object value = aContext.get(property) ;
         if(value==null) return CheckResult.createAccepted(false);
         if(StringUtil.isNullOrEmpty(value.toString())) return CheckResult.createAccepted(false); 
         try {
         	
-            Object domain = aContext.findDomain(theDocument, theDocumentCodeProperty, value) ;
+            Object domain = aContext.findDomain(document, documentCodeProperty, value) ;
             return CheckResult.createAccepted(false);
         } catch (NoResultException e) {
             return CheckResult.createAccepted(true);
@@ -70,23 +70,23 @@ public class CheckInDomain implements ICheck, INativeSqlSupports {
     
     /** Поле */
     @Comment("Свойство")
-    public String getProperty() { return theProperty ; }
-    public void setProperty(String aProperty) { theProperty = aProperty ; }
+    public String getProperty() { return property ; }
+    public void setProperty(String aProperty) { property = aProperty ; }
 
     /** Документ */
     @Comment("Документ")
-    public long getDocument() { return theDocument ; }
-    public void setDocument(long aDocument) { theDocument = aDocument ; }
+    public long getDocument() { return document ; }
+    public void setDocument(long aDocument) { document = aDocument ; }
 
     /** Идентификатор */
     @Comment("Идентификатор")
-    public String getDocumentCodeProperty() { return theDocumentCodeProperty ; }
-    public void setDocumentCodeProperty(String aDocumentCodeProperty) { theDocumentCodeProperty = aDocumentCodeProperty ; }
+    public String getDocumentCodeProperty() { return documentCodeProperty ; }
+    public void setDocumentCodeProperty(String aDocumentCodeProperty) { documentCodeProperty = aDocumentCodeProperty ; }
 
     /** Идентификатор */
-    private String theDocumentCodeProperty ;
+    private String documentCodeProperty ;
     /** Документ */
-    private long theDocument ;
+    private long document ;
     /** Поле */
-    private String theProperty ;
+    private String property ;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.patient;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.patient.PatientListRecord;
@@ -14,39 +15,34 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Пациент в списке", nameProperties="patientList", view="entityView-mis_patientListRecord.do")
 @Parent(property="patientList", parentForm= PatientListForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Patient/PatientList")
-
-
+@Setter
 public class PatientListRecordForm extends IdEntityForm {
 
 	/** Список */
 	@Comment("Список")
 	@Persist @Required
-	public Long getPatientList() {return thePatientList;}
-	public void setPatientList(Long aPatientList) {thePatientList = aPatientList;}
+	public Long getPatientList() {return patientList;}
 	/** Список */
-	private Long thePatientList;
+	private Long patientList;
 	
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist @Required
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
+	public Long getPatient() {return patient;}
 	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	
 	/** Сообщение */
 	@Comment("Сообщение")
 	@Persist
-	public String getMessage() {return theMessage;}
-	public void setMessage(String aMessage) {theMessage = aMessage;}
+	public String getMessage() {return message;}
 	/** Сообщение */
-	private String theMessage;
+	private String message;
 
 	/** Номер телефона */
 	@Comment("Номер телефона")
 	@Persist
-	public String getPhoneNumber() {return thePhoneNumber;}
-	public void setPhoneNumber(String aPhoneNumber) {thePhoneNumber = aPhoneNumber;}
+	public String getPhoneNumber() {return phoneNumber;}
 	/** Номер телефона */
-	private String thePhoneNumber ;
+	private String phoneNumber ;
 }

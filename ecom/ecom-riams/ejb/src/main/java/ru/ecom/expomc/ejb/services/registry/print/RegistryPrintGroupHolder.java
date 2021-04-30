@@ -7,29 +7,29 @@ import java.math.BigDecimal;
  */
 public class RegistryPrintGroupHolder {
     /** Название */
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
+    public String getName() { return name ; }
+    public void setName(String aName) { name = aName ; }
 
     /** Количество */
-    public int getCount() { return theCount ; }
-//    public void setCount(int aCount) { theCount = aCount ; }
+    public int getCount() { return count ; }
+//    public void setCount(int aCount) { count = aCount ; }
 
     /** Сумма */
-    public BigDecimal getSumm() { return theSumm ; }
-//    public void setSumm(BigDecimal aSumm) { theSumm = aSumm ; }
+    public BigDecimal getSumm() { return summ ; }
+//    public void setSumm(BigDecimal aSumm) { summ = aSumm ; }
 
     /** Сумма */
-    private BigDecimal theSumm = new BigDecimal(0);
+    private BigDecimal summ = new BigDecimal(0);
     /** Количество */
-    private int theCount = 0 ;
+    private int count = 0 ;
     /** Название */
-    private String theName = "no name";
+    private String name = "no name";
 
     public void addSumm(BigDecimal aPrice) {
-        if(aPrice!=null) theSumm = theSumm.add(aPrice) ;
+        if(aPrice!=null) summ = summ.add(aPrice) ;
     }
 
     public void addCount(int i) {
-        theCount+=i ;
+        count+=i ;
     }
 }

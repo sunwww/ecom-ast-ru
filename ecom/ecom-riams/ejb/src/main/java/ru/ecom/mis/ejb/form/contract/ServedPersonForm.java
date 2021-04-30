@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -27,33 +28,30 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(ServedPersonPreCreateInterceptor.class)
 )
+@Setter
 public class ServedPersonForm extends IdEntityForm{
 	/**
 	 * Договорная персона
 	 */
 	@Comment("Договорная персона")
 	@Persist @Required
-	public Long getPerson() {return thePerson;}
-	public void setPerson(Long aPerson) {thePerson = aPerson;}
+	public Long getPerson() {return person;}
 	/**
 	 * Договорная персона
 	 */
-	private Long thePerson;
+	private Long person;
 	/**
 	 * Договор
 	 */
 	@Comment("Договор")
 	@Persist
 	public Long getContract() {
-		return theContract;
-	}
-	public void setContract(Long aContract) {
-		theContract = aContract;
+		return contract;
 	}
 	/**
 	 * Договор
 	 */
-	private Long theContract;
+	private Long contract;
 	/**
 	 * Дата начала обслуживания
 	 */
@@ -61,15 +59,12 @@ public class ServedPersonForm extends IdEntityForm{
 	@Persist @Required
 	@DateString @DoDateString
 	public String getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(String aDateFrom) {
-		theDateFrom = aDateFrom;
+		return dateFrom;
 	}
 	/**
 	 * Дата начала обслуживания
 	 */
-	private String theDateFrom;
+	private String dateFrom;
 	/**
 	 * Дата окончания обслуживания
 	 */
@@ -77,93 +72,79 @@ public class ServedPersonForm extends IdEntityForm{
 	@Persist
 	@DateString @DoDateString
 	public String getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(String aDateTo) {
-		theDateTo = aDateTo;
+		return dateTo;
 	}
 	/**
 	 * Дата окончания обслуживания
 	 */
-	private String theDateTo;
+	private String dateTo;
 	
 	@Comment("Авто создание счета")
 	@Persist
 	public Boolean getAutoAccount() {
-		return theAutoAccount;
+		return autoAccount;
 	}
-	public void setAutoAccount(Boolean aAutoAccount) {
-		theAutoAccount = aAutoAccount;
-	}	
 	/**
 	 * Признак авто создания счета 
 	 */	
-	private Boolean theAutoAccount;
+	private Boolean autoAccount;
 	
 	/** Информация */
 	@Comment("Информация")
 	@Persist
-	public String getInfo() {return theInfo;}
-	public void setInfo(String aInfo) {theInfo = aInfo;}
+	public String getInfo() {return info;}
 
 	/** Информация */
-	private String theInfo;
+	private String info;
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DoDateString @DateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	public String getCreateDate() {return createDate;}
 	
 	/** Время создания */
 	@Comment("Время создания")
 	@Persist @DoTimeString @TimeString
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;}
 	
 	/** Пользователь, создавший запись */
 	@Comment("Пользователь, создавший запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 	
 	/** Дата последнего изменения */
 	@Comment("Дата последнего изменения")
 	@Persist @DoDateString @DateString
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	public String getEditDate() {return editDate;}
 	
 	/** Время, последнего изменения */
 	@Comment("Время, последнего изменения")
 	@Persist @DoTimeString @TimeString
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+	public String getEditTime() {return editTime;}
 	
 	/** Пользователь, последний изменивший запись */
 	@Comment("Пользователь, последний изменивший запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Пользователь, последний изменивший запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Время, последнего изменения */
-	private String theEditTime;
+	private String editTime;
 	/** Дата последнего изменения */
-	private String theEditDate;
+	private String editDate;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	
 	/** Счет */
 	@Comment("Счет")
 	@Persist
-	public Long getAccount() {return theAccount;}
-	public void setAccount(Long aAccount) {theAccount = aAccount;}
+	public Long getAccount() {return account;}
 
 	/** Счет */
-	private Long theAccount;
+	private Long account;
 
 }

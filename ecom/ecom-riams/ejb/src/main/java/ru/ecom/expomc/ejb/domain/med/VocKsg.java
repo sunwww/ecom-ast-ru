@@ -1,5 +1,7 @@
 package ru.ecom.expomc.ejb.domain.med;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocIdCodeName;
 import ru.ecom.mis.ejb.domain.lpu.voc.VocBedSubType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,76 +18,53 @@ import java.math.BigDecimal;
 @Entity
 @Comment("КСГ")
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VocKsg extends VocIdCodeName {
 
 	/** Группа КСГ */
 	@Comment("Группа КСГ")
 	@OneToOne
-	public VocKsgGroup getGroup() {return theGroup;}
-	public void setGroup(VocKsgGroup aGroup) {theGroup = aGroup;}
-	private VocKsgGroup theGroup ;
+	public VocKsgGroup getGroup() {return group;}
+	private VocKsgGroup group;
 
 	/** Год КСГ */
-	@Comment("Год КСГ")
-	public Integer getYear() {return theYear;}
-	public void setYear(Integer aYear) {theYear = aYear;}
-	private Integer theYear ;
+	private Integer year;
 
 	/** Сверхдлительный КСГ (45 дней)	*/
-	@Comment("Длительный срок лечения КСГ")
-	public Boolean getLongKsg() {return theLongKsg;}
-	public void setLongKsg(Boolean aLongKsg) {theLongKsg = aLongKsg;}
-	private Boolean theLongKsg ;
+	private Boolean longKsg;
 
 	/** Является операцией */
-	@Comment("Является операцией")
-	public Boolean getIsOperation() {return theIsOperation;}
-	public void setIsOperation(Boolean aIsOperation) {theIsOperation = aIsOperation;}
-	private Boolean theIsOperation ;
+	private Boolean isOperation;
 
 	/** Оплачивать в полном объеме */
-	@Comment("Оплачивать в полном объеме")
-	public Boolean getIsFullPayment() {return theIsFullPayment;}
-	public void setIsFullPayment(Boolean aIsFullPayment) {theIsFullPayment = aIsFullPayment;}
-	private Boolean theIsFullPayment ;
+	private Boolean isFullPayment;
 
 	/** Коэффициент затрат */
-	@Comment("Коэффициент затрат")
-	public Double getKZ() {return theKZ;}
-	public void setKZ(Double aKZ) {theKZ = aKZ;}
-	private Double theKZ ;
+	private Double kz;
 
 	/** Профиль помощи */
-	@Comment("Профиль помощи")
-	public String getProfile() {return theProfile;}
-	public void setProfile(String aProfile) {theProfile = aProfile;}
-	private String theProfile ;
+	private String profile;
 
 	/** Тип коек */
 	@Comment("Тип коек")
 	@OneToOne
-	public VocBedSubType getBedSubType() {return theBedSubType;}
-	public void setBedSubType(VocBedSubType aBedSubType) {theBedSubType = aBedSubType;}
-	private VocBedSubType theBedSubType ;
+	public VocBedSubType getBedSubType() {return bedSubType;}
+	private VocBedSubType bedSubType;
 
 	/** Не учитывать КУСмо */
 	@Comment("Не учитывать КУСмо")
-	public Boolean getDoNotUseCusmo() {return theDoNotUseCusmo;}
-	public void setDoNotUseCusmo(Boolean aDoNotUseCusmo) {theDoNotUseCusmo = aDoNotUseCusmo;}
-	private Boolean theDoNotUseCusmo = false;
+	public Boolean getDoNotUseCusmo() {return doNotUseCusmo;}
+	private Boolean doNotUseCusmo = false;
 
 	/** Covid-19 КСГ */
-	@Comment("Covid-19 КСГ")
-	public Boolean getIsCovid19() {return theIsCovid19;}
-	public void setIsCovid19(Boolean aIsCovid19) {theIsCovid19 = aIsCovid19;}
-	private Boolean theIsCovid19 ;
+	private Boolean isCovid19;
 
 
 	@Comment("Доля ЗП врача в КСГ")
 	@Column(precision = 7, scale = 4)
-	public BigDecimal getDoctorCost() { return theDoctorCost;}
-	public void setDoctorCost(BigDecimal aDoctorCost) {theDoctorCost = aDoctorCost;}
-	private BigDecimal theDoctorCost;
+	public BigDecimal getDoctorCost() { return doctorCost;}
+	private BigDecimal doctorCost;
 
 
 }

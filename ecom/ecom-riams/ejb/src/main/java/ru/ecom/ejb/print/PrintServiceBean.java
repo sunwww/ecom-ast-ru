@@ -57,16 +57,14 @@ public class PrintServiceBean implements IPrintService {
 	public static class ValueInit implements IValueInit {
 
 		public ValueInit(Map<String, Object> values) {
-			theValues = values ;
+			this.values = values ;
 		}
 		public void init(Map<String, String> aParams, IValueGetter aGetter) throws SetValueException {
-			for (Map.Entry<String, Object> entry : theValues.entrySet()) {
+			for (Map.Entry<String, Object> entry : values.entrySet()) {
 				aGetter.set(entry.getKey(), entry.getValue());
 			}
 		}
-		private final Map<String, Object> theValues ;
+		private final Map<String, Object> values ;
 		
 	}
-	private @EJB
-    IJbossGetFileLocalService theJbossGetFileLocalService;
 }

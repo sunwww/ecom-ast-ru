@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.Covid19;
@@ -22,381 +23,332 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
         , nameProperties = "cardNumber", view = "entityParentView-smo_covid19.do")
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Covid19")
 @Parent(parentForm = HospitalMedCaseForm.class,  property = "medCase")
+@Setter
 public class Covid19Form extends IdEntityForm {
     /** Пациент */
     @Comment("Пациент")
     @Persist @Required
-    public Long getPatient() {return thePatient;}
-    public void setPatient(Long aPatient) {thePatient = aPatient;}
-    private Long thePatient ;
+    public Long getPatient() {return patient;}
+    private Long patient ;
 
     /** СМО */
     @Comment("СМО")
     @Persist
-    public Long getMedCase() {return theMedCase;}
-    public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
-    private Long theMedCase ;
+    public Long getMedCase() {return medCase;}
+    private Long medCase ;
 
     /** Номер ИБ */
     @Comment("Номер ИБ")
     @Persist
-    public String getCardNumber() {return theCardNumber;}
-    public void setCardNumber(String aCardNumber) {theCardNumber = aCardNumber;}
-    private String theCardNumber ;
+    public String getCardNumber() {return cardNumber;}
+    private String cardNumber ;
 
     /** Дата появления клинических симптомов */
     @Comment("Дата появления клинических симптомов")
     @Persist
     @DateString @DoDateString
     @Required
-    public String getSymptomsDate() {return theSymptomsDate;}
-    public void setSymptomsDate(String aSymptomsDate) {theSymptomsDate = aSymptomsDate;}
-    private String theSymptomsDate ;
+    public String getSymptomsDate() {return symptomsDate;}
+    private String symptomsDate ;
 
     /** Дата постановки диагноза */
     @Comment("Дата постановки диагноза")
     @Persist
     @DateString @DoDateString
-    public String getDiagnosisDate() {return theDiagnosisDate;}
-    public void setDiagnosisDate(String aDiagnosisDate) {theDiagnosisDate = aDiagnosisDate;}
-    private String theDiagnosisDate ;
+    public String getDiagnosisDate() {return diagnosisDate;}
+    private String diagnosisDate ;
 
     /** Дата исследования на COVID */
     @Comment("Дата исследования на COVID")
     @Persist
     @DateString @DoDateString
-    public String getCovidResearchDate() {return theCovidResearchDate;}
-    public void setCovidResearchDate(String aCovidResearchDate) {theCovidResearchDate = aCovidResearchDate;}
-    private String theCovidResearchDate ;
+    public String getCovidResearchDate() {return covidResearchDate;}
+    private String covidResearchDate ;
 
     /** МО, где проводилось ЛИ */
     @Comment("МО, где проводилось ЛИ")
     @Persist
-    public String getLabOrganization() {return theLabOrganization;}
-    public void setLabOrganization(String aLabOrganization) {theLabOrganization = aLabOrganization;}
-    private String theLabOrganization ;
+    public String getLabOrganization() {return labOrganization;}
+    private String labOrganization ;
 
     /** Результаты лабораторных исследования */
     @Comment("Результаты лабораторных исследования")
     @Persist
-    public String getLabResult() {return theLabResult;}
-    public void setLabResult(String aLabResult) {theLabResult = aLabResult;}
-    private String theLabResult ;
+    public String getLabResult() {return labResult;}
+    private String labResult ;
 
     /** Номер анализа */
     @Comment("Номер анализа")
     @Persist
-    public String getLabResultNumber() {return theLabResultNumber;}
-    public void setLabResultNumber(String aLabResultNumber) {theLabResultNumber = aLabResultNumber;}
-    private String theLabResultNumber ;
+    public String getLabResultNumber() {return labResultNumber;}
+    private String labResultNumber ;
 
     /** Вакцинация пневмококком */
     @Comment("Вакцинация пневмококком")
     @Persist
-    public Long getVacPnKok() {return theVacPnKok;}
-    public void setVacPnKok(Long aVacPnKok) {theVacPnKok = aVacPnKok;}
-    private Long theVacPnKok ;
+    public Long getVacPnKok() {return vacPnKok;}
+    private Long vacPnKok ;
 
     /** Вакцинация от гриппа */
     @Comment("Вакцинация от гриппа")
     @Persist
-    public Long getVacFlu() {return theVacFlu;}
-    public void setVacFlu(Long aVacFlu) {theVacFlu = aVacFlu;}
-    private Long theVacFlu ;
+    public Long getVacFlu() {return vacFlu;}
+    private Long vacFlu ;
 
     /** Беременность */
     @Comment("Беременность")
     @Persist
-    public Boolean getIsPregnant() {return theIsPregnant;}
-    public void setIsPregnant(Boolean aIsPregnant) {theIsPregnant = aIsPregnant;}
-    private Boolean theIsPregnant ;
+    public Boolean getIsPregnant() {return isPregnant;}
+    private Boolean isPregnant ;
 
     /** Противовирусное лечение */
     @Comment("Противовирусное лечение")
     @Persist
-    public Long getIsAntivirus() {return theIsAntivirus;}
-    public void setIsAntivirus(Long aIsAntivirus) {theIsAntivirus = aIsAntivirus;}
-    private Long theIsAntivirus ;
+    public Long getIsAntivirus() {return isAntivirus;}
+    private Long isAntivirus ;
 
     /** Респираторная поддержка */
     @Comment("Респираторная поддержка")
     @Persist
-    public Long getIsIvl() {return theIsIvl;}
-    public void setIsIvl(Long aIsIvl) {theIsIvl = aIsIvl;}
-    private Long theIsIvl ;
+    public Long getIsIvl() {return isIvl;}
+    private Long isIvl ;
 
     /** Хронические заболевания бронхолегочной системы */
     @Comment("Хронические заболевания бронхолегочной системы")
     @Persist
-    public String getSoputBronho() {return theSoputBronho;}
-    public void setSoputBronho(String aSoputBronho) {theSoputBronho = aSoputBronho;}
-    private String theSoputBronho ;
+    public String getSoputBronho() {return soputBronho;}
+    private String soputBronho ;
 
     /** Хронические заболевания сердечно-сосудистой системы */
     @Comment("Хронические заболевания сердечно-сосудистой системы")
     @Persist
-    public String getSoputHeart() {return theSoputHeart;}
-    public void setSoputHeart(String aSoputHeart) {theSoputHeart = aSoputHeart;}
-    private String theSoputHeart ;
+    public String getSoputHeart() {return soputHeart;}
+    private String soputHeart ;
 
     /** Хронические заболевания эндокринной системы */
     @Comment("Хронические заболевания эндокринной системы")
     @Persist
-    public String getSoputEndo() {return theSoputEndo;}
-    public void setSoputEndo(String aSoputEndo) {theSoputEndo = aSoputEndo;}
-    private String theSoputEndo ;
+    public String getSoputEndo() {return soputEndo;}
+    private String soputEndo ;
 
     /** Онкологические заболевания */
     @Comment("Онкологические заболевания")
     @Persist
-    public String getSoputOnko() {return theSoputOnko;}
-    public void setSoputOnko(String aSoputOnko) {theSoputOnko = aSoputOnko;}
-    private String theSoputOnko ;
+    public String getSoputOnko() {return soputOnko;}
+    private String soputOnko ;
 
     /** Болезнь, вызванная ВИЧ */
     @Comment("Болезнь, вызванная ВИЧ")
     @Persist
-    public String getSoputSpid() {return theSoputSpid;}
-    public void setSoputSpid(String aSoputSpid) {theSoputSpid = aSoputSpid;}
-    private String theSoputSpid ;
+    public String getSoputSpid() {return soputSpid;}
+    private String soputSpid ;
 
     /** Туберкулез */
     @Comment("Туберкулез")
     @Persist
-    public String getSoputTuber() {return theSoputTuber;}
-    public void setSoputTuber(String aSoputTuber) {theSoputTuber = aSoputTuber;}
-    private String theSoputTuber ;
+    public String getSoputTuber() {return soputTuber;}
+    private String soputTuber ;
 
     /** Иные  */
     @Comment("Иные ")
     @Persist
-    public String getSoputOther() {return theSoputOther;}
-    public void setSoputOther(String aSoputOther) {theSoputOther = aSoputOther;}
-    private String theSoputOther ;
+    public String getSoputOther() {return soputOther;}
+    private String soputOther ;
 
     /** Дата создания */
     @Comment("Дата создания")
     @Persist
     @DateString @DoDateString
-    public String getCreateDate() {return theCreateDate;}
-    public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-    private String theCreateDate ;
+    public String getCreateDate() {return createDate;}
+    private String createDate ;
 
     /** Время создания */
     @Comment("Время создания")
     @Persist
     @TimeString @DoTimeString
-    public String getCreateTime() {return theCreateTime;}
-    public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
-    private String theCreateTime ;
+    public String getCreateTime() {return createTime;}
+    private String createTime ;
 
     /** Создатель */
     @Comment("Создатель")
     @Persist
-    public String getCreateUsername() {return theCreateUsername;}
-    public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-    private String theCreateUsername ;
+    public String getCreateUsername() {return createUsername;}
+    private String createUsername ;
 
     /** Дата выгрузки на портал */
     @Comment("Дата выгрузки на портал")
     @Persist
     @DateString @DoDateString
-    public String getExportDate() {return theExportDate;}
-    public void setExportDate(String aExportDate) {theExportDate = aExportDate;}
-    private String theExportDate ;
+    public String getExportDate() {return exportDate;}
+    private String exportDate ;
 
     /** Время выгузки на портал */
     @Comment("Время выгузки на портал")
     @Persist
     @TimeString @DoTimeString
-    public String getExportTime() {return theExportTime;}
-    public void setExportTime(String aExportTime) {theExportTime = aExportTime;}
-    private String theExportTime ;
+    public String getExportTime() {return exportTime;}
+    private String exportTime ;
 
     /** Пользователь, выгузивший на портал */
     @Comment("Пользователь, выгузивший на портал")
     @Persist
-    public String getExportUsername() {return theExportUsername;}
-    public void setExportUsername(String aExportUsername) {theExportUsername = aExportUsername;}
-    private String theExportUsername ;
+    public String getExportUsername() {return exportUsername;}
+    private String exportUsername ;
 
     /** Карта заменена на новую */
     @Comment("Карта заменена на новую")
     @Persist
-    public Boolean getNoActual() {return theNoActual;}
-    public void setNoActual(Boolean aNoActual) {theNoActual = aNoActual;}
-    private Boolean theNoActual ;
+    public Boolean getNoActual() {return noActual;}
+    private Boolean noActual ;
 
     /** Дата исхода */
     @Comment("Дата исхода")
     @Persist
     @DateString @DoDateString
-    public String getIshodDate() {return theIshodDate;}
-    public void setIshodDate(String aIshodDate) {theIshodDate = aIshodDate;}
-    private String theIshodDate ;
+    public String getIshodDate() {return ishodDate;}
+    private String ishodDate ;
 
     /** Результат исхода */
     @Comment("Результат исхода")
     @Persist
-    public Long getHospResult() {return theHospResult;}
-    public void setHospResult(Long aHospResult) {theHospResult = aHospResult;}
-    private Long theHospResult ;
+    public Long getHospResult() {return hospResult;}
+    private Long hospResult ;
 
     /** Место работы, должность */
     @Comment("Место работы, должность")
     @Persist
     @Required
-    public String getWorkPlace() {return theWorkPlace;}
-    public void setWorkPlace(String aWorkPlace) {theWorkPlace = aWorkPlace;}
-    private String theWorkPlace ;
+    public String getWorkPlace() {return workPlace;}
+    private String workPlace ;
 
     /** Диагноз */
     @Comment("Диагноз")
     @Persist
     @Required
-    public Long getMkb() {return theMkb;}
-    public void setMkb(Long aMkb) {theMkb = aMkb;}
-    private Long theMkb ;
+    public Long getMkb() {return mkb;}
+    private Long mkb ;
 
     /** Номер бригады СМП */
     @Comment("Номер бригады СМП")
     @Persist
-    public String getBrigadeNumber() {return theBrigadeNumber;}
-    public void setBrigadeNumber(String aBrigadeNumber) {theBrigadeNumber = aBrigadeNumber;}
-    private String theBrigadeNumber ;
+    public String getBrigadeNumber() {return brigadeNumber;}
+    private String brigadeNumber ;
 
     /** Эпид. номер */
     @Comment("Эпид. номер")
     @Persist
-    public String getEpidNumber() {return theEpidNumber;}
-    public void setEpidNumber(String aEpidNumber) {theEpidNumber = aEpidNumber;}
-    private String theEpidNumber ;
+    public String getEpidNumber() {return epidNumber;}
+    private String epidNumber ;
     
     /** Форма контакта */
     @Comment("Форма контакта")
-    public Covid19ContactForm getContactForm() {return theContactForm;}
-    public void setContactForm(Covid19ContactForm aContactForm) {theContactForm = aContactForm;}
-    private Covid19ContactForm theContactForm = new Covid19ContactForm() ;
+    public Covid19ContactForm getContactForm() {return contactForm;}
+    private Covid19ContactForm contactForm = new Covid19ContactForm() ;
 
     /** Мед. работник */
     @Comment("Мед. работник")
     @Persist
-    public Boolean getIsDoctor() {return theIsDoctor;}
-    public void setIsDoctor(Boolean aIsDoctor) {theIsDoctor = aIsDoctor;}
-    private Boolean theIsDoctor ;
+    public Boolean getIsDoctor() {return isDoctor;}
+    private Boolean isDoctor ;
 
     /** Дата первичной выгрузки */
     @Comment("Дата первичной выгрузки")
     @DateString @DoDateString
     @Persist
-    public String getExportFirstDate() {return theExportFirstDate;}
-    public void setExportFirstDate(String aExportFirstDate) {theExportFirstDate = aExportFirstDate;}
+    public String getExportFirstDate() {return exportFirstDate;}
     /** Дата первичной выгрузки */
-    private String theExportFirstDate ;
+    private String exportFirstDate ;
 
     /** Время первичной выгрузки */
     @Comment("Время первичной выгрузки")
     @TimeString @DoTimeString
     @Persist
-    public String getExportFirstTime() {return theExportFirstTime;}
-    public void setExportFirstTime(String aExportFirstTime) {theExportFirstTime = aExportFirstTime;}
+    public String getExportFirstTime() {return exportFirstTime;}
     /** Время первичной выгрузки */
-    private String theExportFirstTime ;
+    private String exportFirstTime ;
 
     /** Кто первичную выгрузил? */
     @Comment("Кто первичную выгрузил?")
     @Persist
-    public String getExportFirstUsername() {return theExportFirstUsername;}
-    public void setExportFirstUsername(String aExportFirstUsername) {theExportFirstUsername = aExportFirstUsername;}
+    public String getExportFirstUsername() {return exportFirstUsername;}
     /** Кто первичную выгрузил? */
-    private String theExportFirstUsername ;
+    private String exportFirstUsername ;
 
     /** Дата повторной выгрузки */
     @Comment("Дата повторной выгрузки")
     @DateString @DoDateString
     @Persist
-    public String getExportDoubleDate() {return theExportDoubleDate;}
-    public void setExportDoubleDate(String aExportDoubleDate) {theExportDoubleDate = aExportDoubleDate;}
+    public String getExportDoubleDate() {return exportDoubleDate;}
     /** Дата повторной выгрузки */
-    private String theExportDoubleDate ;
+    private String exportDoubleDate ;
 
     /** Время повторной выгрузки */
     @Comment("Время повторной выгрузки")
     @TimeString @DoTimeString
     @Persist
-    public String getExportDoubleTime() {return theExportDoubleTime;}
-    public void setExportDoubleTime(String aExportDoubleTime) {theExportDoubleTime = aExportDoubleTime;}
+    public String getExportDoubleTime() {return exportDoubleTime;}
     /** Время повторной выгрузки */
-    private String theExportDoubleTime ;
+    private String exportDoubleTime ;
 
     /** Кто повторную выгрузил? */
     @Comment("Кто повторную выгрузил?")
     @Persist
-    public String getExportDoubleUsername() {return theExportDoubleUsername;}
-    public void setExportDoubleUsername(String aExportDoubleUsername) {theExportDoubleUsername = aExportDoubleUsername;}
+    public String getExportDoubleUsername() {return exportDoubleUsername;}
     /** Кто повторную выгрузил? */
-    private String theExportDoubleUsername ;
+    private String exportDoubleUsername ;
 
     /** Дата выписной выгрузки */
     @Comment("Дата выписной выгрузки")
     @DateString @DoDateString
     @Persist
-    public String getExportDischargeDate() {return theExportDischargeDate;}
-    public void setExportDischargeDate(String aExportDischargeDate) {theExportDischargeDate = aExportDischargeDate;}
+    public String getExportDischargeDate() {return exportDischargeDate;}
     /** Дата выписной выгрузки */
-    private String theExportDischargeDate ;
+    private String exportDischargeDate ;
 
     /** Время выписной выгрузки */
     @Comment("Время выписной выгрузки")
     @TimeString @DoTimeString
     @Persist
-    public String getExportDischargeTime() {return theExportDischargeTime;}
-    public void setExportDischargeTime(String aExportDischargeTime) {theExportDischargeTime = aExportDischargeTime;}
+    public String getExportDischargeTime() {return exportDischargeTime;}
     /** Время выписной выгрузки */
-    private String theExportDischargeTime ;
+    private String exportDischargeTime ;
 
     /** Кто при выписке выгрузил? */
     @Comment("Кто при выписке выгрузил?")
     @Persist
-    public String getExportDischargeUsername() {return theExportDischargeUsername;}
-    public void setExportDischargeUsername(String aExportDischargeUsername) {theExportDischargeUsername = aExportDischargeUsername;}
+    public String getExportDischargeUsername() {return exportDischargeUsername;}
     /** Кто при выписке выгрузил? */
-    private String theExportDischargeUsername ;
+    private String exportDischargeUsername ;
 
     /** Диагноз основной выписной */
     @Comment("Диагноз основной выписной")
     @Persist
-    public Long getMkbDischarge() {return theMkbDischarge;}
-    public void setMkbDischarge(Long aMkbDischarge) {theMkbDischarge = aMkbDischarge;}
-    private Long theMkbDischarge ;
+    public Long getMkbDischarge() {return mkbDischarge;}
+    private Long mkbDischarge ;
 
     /** Уровень SpO2(%)(на момент поступления) */
     @Comment("Уровень SpO2(%)(на момент поступления)")
     @Persist
-    public String getSaturationLevel() {return theSaturationLevel;}
-    public void setSaturationLevel(String aSaturationLevel) {theSaturationLevel = aSaturationLevel;}
-    private String theSaturationLevel ;
+    public String getSaturationLevel() {return saturationLevel;}
+    private String saturationLevel ;
 
     /** КТ */
     @Comment("КТ")
     @Persist
-    public Long getCT() {return theCT;}
-    public void setCT(Long aCT) {theCT = aCT;}
-    private Long theCT ;
+    public Long getCt() {return ct;}
+    private Long ct ;
 
     /** Дата проведения КТ */
     @Comment("Дата проведения КТ")
     @DateString @DoDateString
     @Persist
-    public String getDateCT() {return theDateCT;}
-    public void setDateCT(String aDateCT) {theDateCT = aDateCT;}
-    private String theDateCT ;
+    public String getDateCT() {return dateCT;}
+    private String dateCT ;
 
     /** Место проведения КТ */
     @Comment("Место проведения КТ")
     @Persist
-    public String getLpuCT() {return theLpuCT;}
-    public void setLpuCT(String aLpuCT) {theLpuCT = aLpuCT;}
+    public String getLpuCT() {return lpuCT;}
     /** Место проведения КТ */
-    private String theLpuCT ;
+    private String lpuCT ;
 }

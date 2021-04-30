@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.poly;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.*;
 import ru.ecom.mis.ejb.domain.medcase.Visit;
@@ -34,153 +35,127 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AViewInterceptors(
 		@AEntityFormInterceptor(DirectionViewInterceptor.class)
 )
+@Setter
 
 public class DirectionMedCaseForm extends TicketMedCaseForm {
 	
 	/** Количество записей  */
 	@Comment("Количество записей")
 	@DateString @DoDateString
-	public String getAnyDatePlan() {return theAnyDatePlan; }
-	public void setAnyDatePlan(String aAnyDatePlan) {theAnyDatePlan = aAnyDatePlan;	}
-	
-	private String theAnyDatePlan;
+	public String getAnyDatePlan() {return anyDatePlan; }
+
+	private String anyDatePlan;
 	/** Количество записей  */
 	@Comment("Количество записей")
-	public Long getCountDays() {return theCountDays; }
-	public void setCountDays(Long aCountDays) {theCountDays = aCountDays;	}
+	public Long getCountDays() {return countDays; }
 
-	private Long theCountDays;
+	private Long countDays;
 
 	/** Количество выписанных льготных рецептов */
 	@Comment("Количество выписанных льготных рецептов")
 	@Persist
-	public Integer getPrivilegeRecipeAmount() {return thePrivilegeRecipeAmount;	}
-	public void setPrivilegeRecipeAmount(Integer aPrivilegeRecipeAmount) {thePrivilegeRecipeAmount = aPrivilegeRecipeAmount;	}
+	public Integer getPrivilegeRecipeAmount() {return privilegeRecipeAmount;	}
 
 	/** Внешний направитель (ЛПУ) */
 	@Comment("Внешний направитель (ЛПУ)")
 	@Persist
-	public Long getOrderLpu() {return theOrderLpu;}
-	public void setOrderLpu(Long aOrderLpu) {theOrderLpu = aOrderLpu;}
-	private Long theOrderLpu;
-
-
+	public Long getOrderLpu() {return orderLpu;}
+	private Long orderLpu;
 
 	/** Результат визита */
 	@Comment("Результат визита")
 	@Persist
-	public Long getVisitResult() {return theVisitResult;	}
-	public void setVisitResult(Long aResult) {theVisitResult = aResult;}
+	public Long getVisitResult() {return visitResult;	}
 
 	/** Цель визита */
 	@Comment("Цель визита")
 	@Persist
-	public Long getVisitReason() {return theVisitReason;	}
-	public void setVisitReason(Long aReason) {theVisitReason = aReason;	}
+	public Long getVisitReason() {return visitReason;	}
 
 	/** Тип рабочего места обслуживания */
 	@Comment("Тип рабочего места обслуживания")
 	@Persist @Required
-	public Long getWorkPlaceType() {return theWorkPlaceType;}
-	public void setWorkPlaceType(Long aWorkPlaceType) {theWorkPlaceType = aWorkPlaceType;	}
-	
-
+	public Long getWorkPlaceType() {return workPlaceType;}
 
 	/** Рабочая функция направителя */
 	@Comment("Рабочая функция направителя")
 	@Persist
-	public Long getOrderWorkFunction() {return theOrderWorkFunction;}
-	public void setOrderWorkFunction(Long aNewProperty) {theOrderWorkFunction = aNewProperty;}
+	public Long getOrderWorkFunction() {return orderWorkFunction;}
 
 	 /** Диспансерный учет * */
     @Persist
-    public Long getDispRegistration() {return theDispRegistration;}
-    public void setDispRegistration(Long aVocDispanseryRegistration) {
-        theDispRegistration = aVocDispanseryRegistration;
-    }
-    
-    private Long theDispRegistration;
+    public Long getDispRegistration() {return dispRegistration;}
+
+    private Long dispRegistration;
 	/** Рабочая функция направителя */
-	private Long theOrderWorkFunction;
+	private Long orderWorkFunction;
 	/** Тип рабочего места обслуживания */
-	private Long theWorkPlaceType;
+	private Long workPlaceType;
 	/** Цель визита */
-	private Long theVisitReason;
+	private Long visitReason;
 	/** Результат визита */
-	private Long theVisitResult;
+	private Long visitResult;
 
 	/** Количество выписанных льготных рецептов */
-	private Integer thePrivilegeRecipeAmount;
+	private Integer privilegeRecipeAmount;
 	
 	/** Планируемая дата исполнения */
 	@Comment("Планируемая дата исполнения")
 	@Persist @Required
-	public Long getDatePlan() {return theDatePlan;	}
-	public void setDatePlan(Long aNewProperty) {theDatePlan = aNewProperty;	}
+	public Long getDatePlan() {return datePlan;	}
 
 	/** Планируемая рабочая функция исполнения */
 	@Comment("Планируемая рабочая функция исполнения")
 	@Persist @Required
-	public Long getWorkFunctionPlan() {return theWorkFunctionPlan;}
-	public void setWorkFunctionPlan(Long aNewProperty) {theWorkFunctionPlan = aNewProperty;}
-
+	public Long getWorkFunctionPlan() {return workFunctionPlan;}
 
 	/** Планируемое время исполнения */
 	@Comment("Планируемое время исполнения")
 	@Persist @Required
-	public Long getTimePlan() {return theTimePlan;}
-	public void setTimePlan(Long aNewProperty) {	theTimePlan = aNewProperty;	}
+	public Long getTimePlan() {return timePlan;}
 
 	/** Планируемое время исполнения */
-	private Long theTimePlan;
+	private Long timePlan;
 	/** Планируемая рабочая функция исполнения */
-	private Long theWorkFunctionPlan;
+	private Long workFunctionPlan;
 	/** Планируемая дата исполнения */
-	private Long theDatePlan;
+	private Long datePlan;
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@Persist @Required
-	public Long getServiceStream() {return theServiceStream;}
-	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+	public Long getServiceStream() {return serviceStream;}
 	/** Поток обслуживания */
-	private Long theServiceStream;	
+	private Long serviceStream;	
 	/**
 	 * Рабочая функция исполнения
 	 */
 	@Comment("Рабочая функция исполнения")
 	@Persist 
-	public Long getWorkFunctionExecute() {return theWorkFunctionExecute;	}
+	public Long getWorkFunctionExecute() {return workFunctionExecute;	}
 	/** Рабочая функция исполнения */
-	public void setWorkFunctionExecute(Long aNewProperty) {	theWorkFunctionExecute = aNewProperty;}
-
-	/** Рабочая функция исполнения */
-	private Long theWorkFunctionExecute;
+	private Long workFunctionExecute;
 	/** Заключительный диагноз по МКБ-10 */
 	@Comment("Заключительный диагноз по МКБ-10")
 	@Mkb 
-	public Long getConcludingMkb() {return theConcludingMkb;}
-	public void setConcludingMkb(Long aConcludingMkb) {theConcludingMkb = aConcludingMkb;}
+	public Long getConcludingMkb() {return concludingMkb;}
 	/** Заключительный диагноз */
 	@Comment("Заключительный диагноз")
-	public String getConcludingDiagnos() {return theConcludingDiagnos;}
-	public void setConcludingDiagnos(String aConcludingDiagnos) {theConcludingDiagnos = aConcludingDiagnos;}
+	public String getConcludingDiagnos() {return concludingDiagnos;}
 
 	/** Острота диагноза заключительного */
 	@Comment("Острота диагноза клинического")
-	public Long getConcludingActuity() {return theConcludingActuity;}
-	public void setConcludingActuity(Long aClinicalActuity) {theConcludingActuity = aClinicalActuity;}
+	public Long getConcludingActuity() {return concludingActuity;}
 	/** Острота диагноза заключительного */
-	private Long theConcludingActuity;
+	private Long concludingActuity;
 	/** Заключительный диагноз */
-	private String theConcludingDiagnos;
+	private String concludingDiagnos;
 	/** Заключительный диагноз по МКБ-10 */
-	private Long theConcludingMkb;
+	private Long concludingMkb;
 	
 	/** Дата начала */
 	@Comment("Дата начала")
 	@Persist @DateString @DoDateString @MaxDateCurrent
-	public String getDateStart() {return theDateStart;}
-	public void setDateStart(String aNewProperty) {theDateStart = aNewProperty;}
+	public String getDateStart() {return dateStart;}
 	/** Дата начала */
-	private String theDateStart;
+	private String dateStart;
 }

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.lpu;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -33,260 +35,251 @@ import static javax.persistence.CascadeType.ALL;
         , @AIndex(properties = {"parent", "name"})
 })
 @Table(schema = "SQLUser")
+@Getter
+@Setter
 public class MisLpu extends BaseEntity {
 
     /**
      * Признак мобильной поликлиники
      */
-    private Boolean theIsMobilePolyclinic;
+    private Boolean isMobilePolyclinic;
     /**
      * Стандарт оказания мед. помощи
      */
-    private MedicalStandard theMedicalStandard;
+    private MedicalStandard medicalStandard;
     /**
      * Рабочие функции
      */
-    private List<WorkFunction> theWorkFunctions;
+    private List<WorkFunction> workFunctions;
     /**
      * Подразделения ЛПУ
      */
-    private List<MisLpu> theSubdivisions;
+    private List<MisLpu> subdivisions;
     /**
      * Родитель
      */
-    private MisLpu theParent;
+    private MisLpu parent;
     /**
      * Оборудование
      */
-    private List<Equipment> theEquipment;
+    private List<Equipment> equipment;
     /**
      * Коечный фонд
      */
-    private List<BedFund> theBedFund;
+    private List<BedFund> bedFund;
     /**
      * Адрес для печати
      */
-    private String thePrintAddress;
+    private String printAddress;
     /**
      * Название для печати
      */
-    private String thePrintName;
+    private String printName;
     /**
      * Не входит в оплату по ОМС
      */
-    private Boolean theIsNoOmc;
+    private Boolean isNoOmc;
     /**
      * Функция ЛПУ
      */
-    private VocLpuFunction theLpuFunction;
+    private VocLpuFunction lpuFunction;
     /**
      * Телефон
      */
-    private String thePhone;
+    private String phone;
     /**
      * Руководитель
      */
-    private String theDirector;
+    private String director;
     /**
      * Срок действия лицензии
      */
-    private Date theLincenseExpired;
+    private Date lincenseExpired;
     /**
      * Номер лицензии
      */
-    private String theLicenseNumber;
+    private String licenseNumber;
     /**
      * Эл. адрес
      */
-    private String theEmail;
+    private String email;
     /**
      * ОГРН
      */
-    private Long theOgrn;
+    private Long ogrn;
     /**
      * ИНН
      */
-    private Long theInn;
+    private Long inn;
     /**
      * Корпус
      */
-    private String theHouseBuilding;
+    private String houseBuilding;
     /**
      * Номер дома
      */
-    private String theHouseNumber;
+    private String houseNumber;
     /**
      * Адрес
      */
-    private Address theAddress;
+    private Address address;
     /**
      * Код ОМС
      */
-    private String theOmcCode;
+    private String omcCode;
     /**
      * Код адреса отделения
      */
-    private String theDepartmentAddressCode;
+    private String departmentAddressCode;
     /**
      * Терапевтические участки
      */
-    private List<LpuArea> theAreas;
+    private List<LpuArea> areas;
     /**
      * Наименование ЛПУ
      */
-    private String theName;
+    private String name;
     /**
      * Комментарий
      */
-    private String theComment;
+    private String comment;
     /**
      * Работники ЛПУ
      */
-    private List<Worker> theWorker;
+    private List<Worker> worker;
     /**
      * Код федеральный
      */
-    private String theCodef;
+    private String codef;
     /**
      * Руководитель
      */
-    private WorkFunction theManager;
+    private WorkFunction manager;
     /**
      * Интервал разрешенной регистрации
      */
-    private Integer theRegistrationInterval;
+    private Integer registrationInterval;
     /**
      * Приемное отделение
      */
-    private VocPigeonHole thePigeonHole;
+    private VocPigeonHole pigeonHole;
     /**
      * Не показывать удаленным пользователям
      */
-    private Boolean theIsNoViewRemoteUser;
+    private Boolean isNoViewRemoteUser;
     /**
      * Принтер по умолчанию
      */
-    private CopyingEquipment theCopyingEquipmentDefault;
+    private CopyingEquipment copyingEquipmentDefault;
     /**
      * Пользователь, который последний редактировал запись
      */
-    private String theEditUsername;
+    private String editUsername;
     /**
      * Пользователь, который создал запись
      */
-    private String theCreateUsername;
+    private String createUsername;
     /**
      * Время редактрования
      */
-    private Time theEditTime;
+    private Time editTime;
     /**
      * Время создания
      */
-    private Time theCreateTime;
+    private Time createTime;
     /**
      * Дата редактирования
      */
-    private Date theEditDate;
+    private Date editDate;
     /**
      * Дата создания
      */
-    private Date theCreateDate;
+    private Date createDate;
     /**
      * Автогенерация расписания
      */
-    private Boolean theAutoGeneration;
+    private Boolean autoGeneration;
     /**
      * Номер в ФСС
      */
-    private String theSocCode;
+    private String socCode;
     /**
      * Возможен забор крови
      */
-    private Boolean theIsIntakeBioMaterial;
+    private Boolean isIntakeBioMaterial;
     /**
      * Код подразделения
      */
-    private String theCodeDepartment;
+    private String codeDepartment;
     /**
      * Короткое наименование
      */
-    private String theShortName;
+    private String shortName;
     /**
      * Доступ на создание операций по отделению
      */
-    private VocLpuAccessEnterOperation theAccessEnterOperation;
+    private VocLpuAccessEnterOperation accessEnterOperation;
     /**
      * Префикс для шаблонов ЛН
      */
-    private String thePrefixForLN;
+    private String prefixForLN;
     /**
      * Экстренный кабинет
      */
-    private Long theEmergencyCabinet;
+    private Long emergencyCabinet;
     /**
      * Отделения для новорожденных
      */
-    private Boolean theIsNewBornDep;
+    private Boolean isNewBornDep;
     /**
      * Родильное отделение
      */
-    private Boolean theIsMaternityWard;
+    private Boolean isMaternityWard;
     /**
      * Отделение патологии беременности
      */
-    private Boolean theIsPatologyPregnant;
+    private Boolean isPatologyPregnant;
     /**
      * Уровень оказания медицинской помощи
      */
-    private Integer theLpuLevel;
+    private Integer lpuLevel;
     /**
      * Профиль КИЛИ
      */
-    private VocKiliProfile theKiliProfile;
+    private VocKiliProfile kiliProfile;
     /**
      * В архиве
      */
-    private Boolean theIsArchive;
+    private Boolean isArchive;
     /**
      * Обсервационное?
      */
-    private Boolean theIsObservable;
+    private Boolean isObservable;
     /**
      * Палата новорождённых?
      */
-    private Boolean theIsNewBorn;
+    private Boolean isNewBorn;
     /**
      * Создают ли кадриоскрининг новорождённым?
      */
-    private Boolean theIsCreateCardiacScreening;
+    private Boolean isCreateCardiacScreening;
     /**
      * Офтальмологическое?
      */
-    private Boolean theIsOphthalmic;
+    private Boolean isOphthalmic;
     /**
      * Учитывать в отчёте по КР?
      */
-    private Boolean theIsReportKMP;
+    private Boolean isReportKMP;
     /**
      * Инфекционное?
      */
-    private Boolean theIsForCovid;
+    private Boolean isForCovid;
     /**
      * Опер. блок?
      */
-    private Boolean theIsOperBlock;
+    private Boolean isOperBlock;
 
-    /**
-     * Признак мобильной поликлиники
-     */
-    @Comment("Признак мобильной поликлиники")
-    public Boolean getIsMobilePolyclinic() {
-        return theIsMobilePolyclinic;
-    }
-
-    public void setIsMobilePolyclinic(Boolean aIsMobilePolyclinic) {
-        theIsMobilePolyclinic = aIsMobilePolyclinic;
-    }
 
     /**
      * Стандарт оказания мед. помощи
@@ -294,11 +287,7 @@ public class MisLpu extends BaseEntity {
     @Comment("Стандарт оказания мед. помощи")
     @OneToOne
     public MedicalStandard getMedicalStandard() {
-        return theMedicalStandard;
-    }
-
-    public void setMedicalStandard(MedicalStandard aMedicalStandard) {
-        theMedicalStandard = aMedicalStandard;
+        return medicalStandard;
     }
 
     /**
@@ -307,11 +296,7 @@ public class MisLpu extends BaseEntity {
     @Comment("Рабочие функции")
     @OneToMany(mappedBy = "lpu", cascade = CascadeType.ALL)
     public List<WorkFunction> getWorkFunctions() {
-        return theWorkFunctions;
-    }
-
-    public void setWorkFunctions(List<WorkFunction> aWorkFunctions) {
-        theWorkFunctions = aWorkFunctions;
+        return workFunctions;
     }
 
     /**
@@ -319,11 +304,7 @@ public class MisLpu extends BaseEntity {
      */
     @ManyToOne
     public MisLpu getParent() {
-        return theParent;
-    }
-
-    public void setParent(MisLpu aParent) {
-        theParent = aParent;
+        return parent;
     }
 
     /**
@@ -331,23 +312,7 @@ public class MisLpu extends BaseEntity {
      */
     @OneToMany(mappedBy = "parent", cascade = ALL)
     public List<MisLpu> getSubdivisions() {
-        return theSubdivisions;
-    }
-
-    public void setSubdivisions(List<MisLpu> aSubdivisions) {
-        theSubdivisions = aSubdivisions;
-    }
-
-    /**
-     * Наименование ЛПУ
-     */
-    @Comment("Наименование ЛПУ")
-    public String getName() {
-        return theName;
-    }
-
-    public void setName(String aName) {
-        theName = aName;
+        return subdivisions;
     }
 
     /**
@@ -355,38 +320,23 @@ public class MisLpu extends BaseEntity {
      */
     @Transient
     public String getFullname() {
-        if (theParent != null) {
-            return theParent.getName() + " / " + theName;
+        if (parent != null) {
+            return parent.getName() + " / " + name;
         } else {
-            return theName;
+            return name;
         }
     }
 
     public void setFullname(String aFullname) {
     }
 
-    /**
-     * Комментарий
-     */
-    @Comment("Комментарий")
-    public String getComment() {
-        return theComment;
-    }
-
-    public void setComment(String aComment) {
-        theComment = aComment;
-    }
 
     /**
      * Терапевтические участки
      */
     @OneToMany(mappedBy = "lpu", cascade = ALL)
     public List<LpuArea> getAreas() {
-        return theAreas;
-    }
-
-    public void setAreas(List<LpuArea> aAreas) {
-        theAreas = aAreas;
+        return areas;
     }
 
     /**
@@ -394,143 +344,16 @@ public class MisLpu extends BaseEntity {
      */
     @OneToMany(mappedBy = "lpu", cascade = ALL)
     public List<Worker> getWorker() {
-        return theWorker;
+        return worker;
     }
 
-    public void setWorker(List<Worker> aWorker) {
-        theWorker = aWorker;
-    }
-
-    /**
-     * Код ОМС
-     */
-    @Comment("Код ОМС")
-    public String getOmcCode() {
-        return theOmcCode;
-    }
-
-    public void setOmcCode(String aOmcCode) {
-        theOmcCode = aOmcCode;
-    }
 
     /**
      * Адрес
      */
     @OneToOne
     public Address getAddress() {
-        return theAddress;
-    }
-
-    public void setAddress(Address aAddress) {
-        theAddress = aAddress;
-    }
-
-    /**
-     * Номер дома
-     */
-    @Comment("Номер дома")
-    public String getHouseNumber() {
-        return theHouseNumber;
-    }
-
-    public void setHouseNumber(String aHouseNumber) {
-        theHouseNumber = aHouseNumber;
-    }
-
-    /**
-     * Корпус
-     */
-    @Comment("Корпус")
-    public String getHouseBuilding() {
-        return theHouseBuilding;
-    }
-
-    public void setHouseBuilding(String aHouseBuilding) {
-        theHouseBuilding = aHouseBuilding;
-    }
-
-    /**
-     * ИНН
-     */
-    @Comment("ИНН")
-    public Long getInn() {
-        return theInn;
-    }
-
-    public void setInn(Long aInn) {
-        theInn = aInn;
-    }
-
-    /**
-     * ОГРН
-     */
-    @Comment("ОГРН")
-    public Long getOgrn() {
-        return theOgrn;
-    }
-
-    public void setOgrn(Long aOgrn) {
-        theOgrn = aOgrn;
-    }
-
-    /**
-     * Эл. адрес
-     */
-    @Comment("Эл. адрес")
-    public String getEmail() {
-        return theEmail;
-    }
-
-    public void setEmail(String aEmail) {
-        theEmail = aEmail;
-    }
-
-    /**
-     * Номер лицензии
-     */
-    @Comment("Номер лицензии")
-    public String getLicenseNumber() {
-        return theLicenseNumber;
-    }
-
-    public void setLicenseNumber(String aLicenseNumber) {
-        theLicenseNumber = aLicenseNumber;
-    }
-
-    /**
-     * Срок действия лицензии
-     */
-    @Comment("Срок действия лицензии")
-    public Date getLicenseExpired() {
-        return theLincenseExpired;
-    }
-
-    public void setLicenseExpired(Date aLincenseExpired) {
-        theLincenseExpired = aLincenseExpired;
-    }
-
-    /**
-     * Руководитель
-     */
-    @Comment("Руководитель")
-    public String getDirector() {
-        return theDirector;
-    }
-
-    public void setDirector(String aDirector) {
-        theDirector = aDirector;
-    }
-
-    /**
-     * Телефон
-     */
-    @Comment("Телефон")
-    public String getPhone() {
-        return thePhone;
-    }
-
-    public void setPhone(String aPhone) {
-        thePhone = aPhone;
+        return address;
     }
 
     /**
@@ -538,11 +361,7 @@ public class MisLpu extends BaseEntity {
      */
     @OneToMany(mappedBy = "lpu", cascade = ALL)
     public List<Equipment> getEquipment() {
-        return theEquipment;
-    }
-
-    public void setEquipment(List<Equipment> aEquipment) {
-        theEquipment = aEquipment;
+        return equipment;
     }
 
     /**
@@ -551,11 +370,7 @@ public class MisLpu extends BaseEntity {
     @Comment("Коечный фонд")
     @OneToMany(mappedBy = "lpu", cascade = ALL)
     public List<BedFund> getBedFund() {
-        return theBedFund;
-    }
-
-    public void setBedFund(List<BedFund> aBedFund) {
-        theBedFund = aBedFund;
+        return bedFund;
     }
 
     /**
@@ -564,67 +379,7 @@ public class MisLpu extends BaseEntity {
     @Comment("Функция ЛПУ")
     @OneToOne
     public VocLpuFunction getLpuFunction() {
-        return theLpuFunction;
-    }
-
-    public void setLpuFunction(VocLpuFunction aLpuFunction) {
-        theLpuFunction = aLpuFunction;
-    }
-
-    /**
-     * Не входит в оплату по ОМС
-     */
-    @Comment("Не входит в оплату по ОМС")
-    public Boolean getIsNoOmc() {
-        return theIsNoOmc;
-    }
-
-    public void setIsNoOmc(Boolean aIsNoOmc) {
-        theIsNoOmc = aIsNoOmc;
-    }
-
-    /**
-     * Название для печати
-     */
-    @Comment("Название для печати")
-    public String getPrintName() {
-        return thePrintName;
-    }
-
-    public void setPrintName(String aPrintName) {
-        thePrintName = aPrintName;
-    }
-
-    /**
-     * Адрес для печати
-     */
-    @Comment("Адрес для печати")
-    public String getPrintAddress() {
-        return thePrintAddress;
-    }
-
-    public void setPrintAddress(String aPrintAddress) {
-        thePrintAddress = aPrintAddress;
-    }
-
-    public String getDepartmentAddressCode() {
-        return theDepartmentAddressCode;
-    }
-
-    public void setDepartmentAddressCode(String aDepartmentAddressCode) {
-        theDepartmentAddressCode = aDepartmentAddressCode;
-    }
-
-    /**
-     * Код федеральный
-     */
-    @Comment("Код федеральный")
-    public String getCodef() {
-        return theCodef;
-    }
-
-    public void setCodef(String aCodef) {
-        theCodef = aCodef;
+        return lpuFunction;
     }
 
     /**
@@ -633,11 +388,7 @@ public class MisLpu extends BaseEntity {
     @Comment("Руководитель")
     @OneToOne
     public WorkFunction getManager() {
-        return theManager;
-    }
-
-    public void setManager(WorkFunction aManager) {
-        theManager = aManager;
+        return manager;
     }
 
     /**
@@ -646,35 +397,7 @@ public class MisLpu extends BaseEntity {
     @Comment("Приемное отделение")
     @OneToOne
     public VocPigeonHole getPigeonHole() {
-        return thePigeonHole;
-    }
-
-    public void setPigeonHole(VocPigeonHole aPigeonHole) {
-        thePigeonHole = aPigeonHole;
-    }
-
-    /**
-     * Интервал разрешенной регистрации
-     */
-    @Comment("Интервал разрешенной регистрации")
-    public Integer getRegistrationInterval() {
-        return theRegistrationInterval;
-    }
-
-    public void setRegistrationInterval(Integer aRegistrationInterval) {
-        theRegistrationInterval = aRegistrationInterval;
-    }
-
-    /**
-     * Не показывать удаленным пользователям
-     */
-    @Comment("Не показывать удаленным пользователям")
-    public Boolean getIsNoViewRemoteUser() {
-        return theIsNoViewRemoteUser;
-    }
-
-    public void setIsNoViewRemoteUser(Boolean aNoViewRemoteUser) {
-        theIsNoViewRemoteUser = aNoViewRemoteUser;
+        return pigeonHole;
     }
 
     /**
@@ -683,142 +406,7 @@ public class MisLpu extends BaseEntity {
     @Comment("Принтер по умолчанию")
     @OneToOne
     public CopyingEquipment getCopyingEquipmentDefault() {
-        return theCopyingEquipmentDefault;
-    }
-
-    public void setCopyingEquipmentDefault(CopyingEquipment aCopyingEquipmentDefault) {
-        theCopyingEquipmentDefault = aCopyingEquipmentDefault;
-    }
-
-    /**
-     * Дата создания
-     */
-    @Comment("Дата создания")
-    public Date getCreateDate() {
-        return theCreateDate;
-    }
-
-    public void setCreateDate(Date aCreateDate) {
-        theCreateDate = aCreateDate;
-    }
-
-    /**
-     * Дата редактирования
-     */
-    @Comment("Дата редактирования")
-    public Date getEditDate() {
-        return theEditDate;
-    }
-
-    public void setEditDate(Date aEditDate) {
-        theEditDate = aEditDate;
-    }
-
-    /**
-     * Время создания
-     */
-    @Comment("Время создания")
-    public Time getCreateTime() {
-        return theCreateTime;
-    }
-
-    public void setCreateTime(Time aCreateTime) {
-        theCreateTime = aCreateTime;
-    }
-
-    /**
-     * Время редактрования
-     */
-    @Comment("Время редактрования")
-    public Time getEditTime() {
-        return theEditTime;
-    }
-
-    public void setEditTime(Time aEditTime) {
-        theEditTime = aEditTime;
-    }
-
-    /**
-     * Пользователь, который создал запись
-     */
-    @Comment("Пользователь, который создал запись")
-    public String getCreateUsername() {
-        return theCreateUsername;
-    }
-
-    public void setCreateUsername(String aCreateUsername) {
-        theCreateUsername = aCreateUsername;
-    }
-
-    /**
-     * Пользователь, который последний редактировал запись
-     */
-    @Comment("Пользователь, который последний редактировал запись")
-    public String getEditUsername() {
-        return theEditUsername;
-    }
-
-    public void setEditUsername(String aEditUsername) {
-        theEditUsername = aEditUsername;
-    }
-
-    /**
-     * Автогенерация расписания
-     */
-    @Comment("Автогенерация расписания")
-    public Boolean getAutoGeneration() {
-        return theAutoGeneration;
-    }
-
-    public void setAutoGeneration(Boolean aAutoGeneration) {
-        theAutoGeneration = aAutoGeneration;
-    }
-
-    /**
-     * Номер в ФСС
-     */
-    public String getSocCode() {
-        return theSocCode;
-    }
-
-    public void setSocCode(String aSocCode) {
-        theSocCode = aSocCode;
-    }
-
-    /**
-     * Возможен забор крови
-     */
-    @Comment("Возможен забор крови")
-    public Boolean getIsIntakeBioMaterial() {
-        return theIsIntakeBioMaterial;
-    }
-
-    public void setIsIntakeBioMaterial(Boolean aIsIntakeBioMaterial) {
-        theIsIntakeBioMaterial = aIsIntakeBioMaterial;
-    }
-
-    /**
-     * Код подразделения
-     */
-    @Comment("Код подразделения")
-    public String getCodeDepartment() {
-        return theCodeDepartment;
-    }
-
-    public void setCodeDepartment(String aCodeDepartment) {
-        theCodeDepartment = aCodeDepartment;
-    }
-
-    /**
-     * Короткое наименование
-     */
-    @Comment("Короткое наименование")
-    public String getShortName() {
-        return theShortName;
-    }
-
-    public void setShortName(String aShortName) {
-        theShortName = aShortName;
+        return copyingEquipmentDefault;
     }
 
     /**
@@ -827,83 +415,7 @@ public class MisLpu extends BaseEntity {
     @Comment("Доступ на создание операций по отделению")
     @OneToOne
     public VocLpuAccessEnterOperation getAccessEnterOperation() {
-        return theAccessEnterOperation;
-    }
-
-    public void setAccessEnterOperation(VocLpuAccessEnterOperation aAccessEnterOperation) {
-        theAccessEnterOperation = aAccessEnterOperation;
-    }
-
-    /**
-     * Префикс для шаблонов ЛН
-     */
-    @Comment("Префикс для шаблонов ЛН")
-    public String getPrefixForLN() {
-        return thePrefixForLN;
-    }
-
-    public void setPrefixForLN(String aPrefixForLN) {
-        thePrefixForLN = aPrefixForLN;
-    }
-
-    /**
-     * Экстренный кабинет
-     */
-    @Comment("Экстренный кабинет")
-    public Long getEmergencyCabinet() {
-        return theEmergencyCabinet;
-    }
-
-    public void setEmergencyCabinet(Long aEmergencyCabinet) {
-        theEmergencyCabinet = aEmergencyCabinet;
-    }
-
-    /**
-     * Отделения для новорожденных
-     */
-    @Comment("Отделения для новорожденных")
-    public Boolean getIsNewBornDep() {
-        return theIsNewBornDep;
-    }
-
-    public void setIsNewBornDep(Boolean aIsNewBornDep) {
-        theIsNewBornDep = aIsNewBornDep;
-    }
-
-    /**
-     * Родильное отделение
-     */
-    @Comment("Родильное отделение")
-    public Boolean getIsMaternityWard() {
-        return theIsMaternityWard;
-    }
-
-    public void setIsMaternityWard(Boolean aIsMaternityWard) {
-        theIsMaternityWard = aIsMaternityWard;
-    }
-
-    /**
-     * Отделение патологии беременности
-     */
-    @Comment("Отделение патологии беременности")
-    public Boolean getIsPatologyPregnant() {
-        return theIsPatologyPregnant;
-    }
-
-    public void setIsPatologyPregnant(Boolean aIsPatologyPregnant) {
-        theIsPatologyPregnant = aIsPatologyPregnant;
-    }
-
-    /**
-     * Уровень оказания медицинской помощи
-     */
-    @Comment("Уровень оказания медицинской помощи")
-    public Integer getLpuLevel() {
-        return theLpuLevel;
-    }
-
-    public void setLpuLevel(Integer aLpuLevel) {
-        theLpuLevel = aLpuLevel;
+        return accessEnterOperation;
     }
 
     /**
@@ -912,106 +424,6 @@ public class MisLpu extends BaseEntity {
     @Comment("Профиль КИЛИ")
     @ManyToOne
     public VocKiliProfile getKiliProfile() {
-        return theKiliProfile;
-    }
-
-    public void setKiliProfile(VocKiliProfile aKiliProfile) {
-        theKiliProfile = aKiliProfile;
-    }
-
-    /**
-     * В архиве
-     */
-    @Comment("В архиве")
-    public Boolean getIsArchive() {
-        return theIsArchive;
-    }
-
-    public void setIsArchive(Boolean aIsArchive) {
-        theIsArchive = aIsArchive;
-    }
-
-    /**
-     * Обсервационное?
-     */
-    @Comment("Обсервационное?")
-    public Boolean getIsObservable() {
-        return theIsObservable;
-    }
-
-    public void setIsObservable(Boolean aIsObservable) {
-        theIsObservable = aIsObservable;
-    }
-
-    /**
-     * Палата новорождённых?
-     */
-    @Comment("Палата новорождённых?")
-    public Boolean getIsNewBorn() {
-        return theIsNewBorn;
-    }
-
-    public void setIsNewBorn(Boolean aIsNewBorn) {
-        theIsNewBorn = aIsNewBorn;
-    }
-
-    /**
-     * Создают ли кадриоскрининг новорождённым?
-     */
-    @Comment("Создают ли кадриоскрининг новорождённым?")
-    public Boolean getIsCreateCardiacScreening() {
-        return theIsCreateCardiacScreening;
-    }
-
-    public void setIsCreateCardiacScreening(Boolean aIsCreateCardiacScreening) {
-        theIsCreateCardiacScreening = aIsCreateCardiacScreening;
-    }
-
-    /**
-     * Офтальмологическое?
-     */
-    @Comment("Офтальмологическое?")
-    public Boolean getIsOphthalmic() {
-        return theIsOphthalmic;
-    }
-
-    public void setIsOphthalmic(Boolean aIsOphthalmic) {
-        theIsOphthalmic = aIsOphthalmic;
-    }
-
-    /**
-     * Учитывать в отчёте по КР?
-     */
-    @Comment("Учитывать в отчёте по КР?")
-    public Boolean getIsReportKMP() {
-        return theIsReportKMP;
-    }
-
-    public void setIsReportKMP(Boolean aIsReportKMP) {
-        theIsReportKMP = aIsReportKMP;
-    }
-
-    /**
-     * Инфекционное?
-     */
-    @Comment("Инфекционное?")
-    public Boolean getIsForCovid() {
-        return theIsForCovid;
-    }
-
-    public void setIsForCovid(Boolean aIsForCovid) {
-        theIsForCovid = aIsForCovid;
-    }
-
-    /**
-     * Опер. блок?
-     */
-    @Comment("Опер. блок?")
-    public Boolean getIsOperBlock() {
-        return theIsOperBlock;
-    }
-
-    public void setIsOperBlock(Boolean aIsOperBlock) {
-        theIsOperBlock = aIsOperBlock;
+        return kiliProfile;
     }
 }

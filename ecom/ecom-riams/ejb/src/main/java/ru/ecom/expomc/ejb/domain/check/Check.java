@@ -11,11 +11,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * @author esinev
@@ -28,6 +29,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
 	@AIndex(unique=true, properties={"code"})
 })
+@Getter
+@Setter
 public class Check extends BaseEntity {
 
 
@@ -44,98 +47,44 @@ public class Check extends BaseEntity {
         return "Неизвестный тип сообщения: "+aType ;
     }
 
-    /** Название */
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
-
-    /** Комментарий */
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
-
-    /** Проверка */
-    public long getCheckId() { return theCheckId ; }
-    public void setCheckId(long aCheckId) { theCheckId = aCheckId ; }
-
-    /** Тип проверки */
-    public int getCheckType() { return theCheckType ; }
-    public void setCheckType(int aCheckType) { theCheckType = aCheckType ; }
-
     /** Настройка свойств */
     @OneToMany(cascade = ALL, mappedBy = "check")
-    public Collection<CheckProperty> getProperties() { return theProperties ; }
-    public void setProperties(Collection<CheckProperty> aProperties) { theProperties = aProperties ; }
+    public Collection<CheckProperty> getProperties() { return properties; }
 
     /** Документ */
     @ManyToOne
-    public ImportDocument getDocument() { return theDocument ; }
-    public void setDocument(ImportDocument aDocument) { theDocument = aDocument ; }
+    public ImportDocument getDocument() { return document; }
 
-
-    /** Дата действия с  */
-    public Date getActualDateFrom() { return theActualDateFrom ; }
-    public void setActualDateFrom(Date aActualDateFrom) { theActualDateFrom = aActualDateFrom ; }
-
-    /** Дата действия по */
-    public Date getActualDateTo() { return theActualDateTo ; }
-    public void setActualDateTo(Date aActualDateTo) { theActualDateTo = aActualDateTo ; }
-
-    /** Отключен */
-    public boolean getDisabled() { return theDisabled ; }
-    public void setDisabled(boolean aDisabled) { theDisabled = aDisabled ; }
-
-    /** Порядковый номер */
-	public Integer getSn() {return theSn;	}
-	public void setSn(Integer aSn) {theSn = aSn;	}
 
 	/** Порядковый номер */
-	private Integer theSn;
+	private Integer sn;
     /** Документ */
-    private ImportDocument theDocument ;
+    private ImportDocument document;
     /** Отключен */
-    private boolean theDisabled ;
+    private boolean disabled;
     /** Дата действия по */
-    private Date theActualDateTo ;
+    private Date actualDateTo;
     /** Дата действия с  */
-    private Date theActualDateFrom ;
+    private Date actualDateFrom;
     /** Настройка свойств */
-    private Collection<CheckProperty> theProperties ;
+    private Collection<CheckProperty> properties;
     /** Проверка */
-    private long theCheckId ;
+    private long checkId;
     /** Комментарий */
-    private String theComment ;
+    private String comment;
     /** Название */
-    private String theName ;
+    private String name;
     /** Тип проверки */
-    private int theCheckType ;
+    private int checkType;
 
     @Transient
     public String getCheckTypeName() {
-        return getTypeName(theCheckType);
+        return getTypeName(checkType);
     }
     
-    /** Код */
-	@Comment("Код")
-	public String getCode() {
-		return theCode;
-	}
-
-	public void setCode(String aCode) {
-		theCode = aCode;
-	}
-
 	/** Код */
-	private String theCode;
+	private String code;
 	
 	/** Код ОМС */
-	@Comment("Код ОМС")
-	public String getOmcCode() {
-		return theOmcCode;
-	}
-
-	public void setOmcCode(String aOmcCode) {
-		theOmcCode = aOmcCode;
-	}
-
-	/** Код ОМС */
-	private String theOmcCode;
+	private String omcCode;
 }

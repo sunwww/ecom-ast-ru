@@ -13,6 +13,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.util.StringUtil;
@@ -23,32 +25,24 @@ import ru.nuzmsh.util.StringUtil;
 @Entity
 @EntityListeners(AddressTextListener.class)
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class LpuAreaAddressText extends BaseEntity {
  
 
-    /** Улица */
-    public String getStreetName() { return theStreetName ; }
-    public void setStreetName(String aStreetName) { theStreetName = aStreetName ; }
-
-    /** Строка адреса */
-    public String getAddressString() { return theAddressString ; }
-    public void setAddressString(String aAddressString) { theAddressString = aAddressString ; }
-
     /** Терапевтический участок */
     @ManyToOne
-    public LpuArea getArea() { return theArea ; }
-    public void setArea(LpuArea aArea) { theArea = aArea ; }
+    public LpuArea getArea() { return area ; }
 
     /** Список домов */
     @OneToMany(mappedBy = "lpuAreaAddressText", cascade = ALL)
-    public List<LpuAreaAddressPoint> getLpuAreaAddressPoints() { return theLpuAreaAddressPoints ; }
-    public void setLpuAreaAddressPoints(List<LpuAreaAddressPoint> aLpuAreaAddressPoints) { theLpuAreaAddressPoints = aLpuAreaAddressPoints ; }
+    public List<LpuAreaAddressPoint> getLpuAreaAddressPoints() { return lpuAreaAddressPoints ; }
 
     /** Адрес */
     @Transient
     public String getAddressText() {
         StringBuilder sb = new StringBuilder();
-        Address a = theAddress ;
+        Address a = address ;
         //boolean isFirstPassed = false ;
         while(a!=null) {
 
@@ -63,16 +57,14 @@ public class LpuAreaAddressText extends BaseEntity {
             }
             if(a!=null) sb.insert(0, ", ") ;
         }
-//        sb.append(theAddress!=null ? theAddress.getName() : "") ;
-        if(!StringUtil.isNullOrEmpty(theAddressString)) {
+        if(!StringUtil.isNullOrEmpty(addressString)) {
             sb.append(" ( ") ;
-            StringTokenizer st = new StringTokenizer(theAddressString," ,.;:");
+            StringTokenizer st = new StringTokenizer(addressString," ,.;:");
             boolean isFirstPassed = false ;
             while(st.hasMoreTokens()) {
                 if(isFirstPassed) sb.append(", ") ; else isFirstPassed = true ;
                 sb.append(st.nextToken()) ;
             }
-//            sb.append(theAddressString) ;
             sb.append(" )") ;
         }
         return sb.toString() ;
@@ -81,20 +73,19 @@ public class LpuAreaAddressText extends BaseEntity {
 
     /** Адрес */
     @OneToOne
-    public Address getAddress() { return theAddress ; }
-    public void setAddress(Address aAddress) { theAddress = aAddress ; }
+    public Address getAddress() { return address ; }
 
     /** Адрес */
-    private Address theAddress ;
+    private Address address ;
 
     /** Терапевтический участок */
-    private LpuArea theArea ;
+    private LpuArea area ;
     /** Строка адреса */
-    private String theAddressString ;
+    private String addressString ;
     /** Улица */
-    private String theStreetName ;
+    private String streetName ;
 
     /** Список домов */
-    private List<LpuAreaAddressPoint> theLpuAreaAddressPoints ;
+    private List<LpuAreaAddressPoint> lpuAreaAddressPoints ;
 
 }

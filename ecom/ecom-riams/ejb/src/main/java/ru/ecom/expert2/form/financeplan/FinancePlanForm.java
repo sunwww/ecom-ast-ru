@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form.financeplan;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.financeplan.FinancePlan;
@@ -17,65 +18,59 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Финансовый план в стационаре")
 @WebTrail(comment = "Финансовый план ", nameProperties = "id", view = "entityView-e2_stacFinancePlan.do")
 @EntityFormSecurityPrefix("/Policy/E2")
+@Setter
 public class FinancePlanForm extends IdEntityForm {
 
     /** Профиль медицинской помощи */
     @Comment("Профиль медицинской помощи")
     @Persist @Required
-    public Long getProfile() {return theProfile;}
-    public void setProfile(Long aProfile) {theProfile = aProfile;}
+    public Long getProfile() {return profile;}
     /** Профиль медицинской помощи */
-    private Long theProfile ;
+    private Long profile ;
 
     /** Отделение */
     @Comment("Отделение")
     @Persist
-    public Long getDepartment() {return theDepartment;}
-    public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+    public Long getDepartment() {return department;}
     /** Отделение */
-    private Long theDepartment ;
+    private Long department ;
 
     /** Количество случаев */
     @Comment("Количество случаев")
     @Persist @Required
-    public Long getCount() {return theCount;}
-    public void setCount(Long aCount) {theCount = aCount;}
+    public Long getCount() {return count;}
     /** Количество случаев */
-    private Long theCount ;
+    private Long count ;
 
     /** Дата начала периода */
     @Comment("Дата начала периода")
     @Persist @Required
     @DateString @DoDateString
-    public String getStartDate() {return theStartDate;}
-    public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
+    public String getStartDate() {return startDate;}
     /** Дата начала периода */
-    private String theStartDate ;
+    private String startDate ;
 
     /** Дата окончания периода */
     @Comment("Дата окончания периода")
     @Persist @Required
     @DateString @DoDateString
-    public String getFinishDate() {return theFinishDate;}
-    public void setFinishDate(String aFinishDate) {theFinishDate = aFinishDate;}
+    public String getFinishDate() {return finishDate;}
     /** Дата окончания периода */
-    private String theFinishDate ;
+    private String finishDate ;
 
     /** Цена случая */
     @Comment("Цена случая")
     @Persist
-    public String getCost() {return theCost;}
-    public void setCost(String aCost) {theCost = aCost;}
+    public String getCost() {return cost;}
     /** Цена случая */
-    private String theCost ;
+    private String cost ;
 
     /** Вид случай */
     @Comment("Вид случай")
     @Persist @Required
-    public Long getVidSluch() {return theVidSluch;}
-    public void setVidSluch(Long aVidSluch) {theVidSluch = aVidSluch;}
+    public Long getVidSluch() {return vidSluch;}
     /** Вид случай */
-    private Long theVidSluch ;
+    private Long vidSluch ;
 
 
 }

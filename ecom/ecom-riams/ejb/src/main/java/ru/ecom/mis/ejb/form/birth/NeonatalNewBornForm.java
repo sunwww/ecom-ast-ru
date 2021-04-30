@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -25,21 +26,20 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(NewBornPreCreateInterceptor.class)
 )
+@Setter
 public class NeonatalNewBornForm  extends NewBornForm {
 	/** Отделение */
 	@Comment("Отделение")
 	@Persist @Required
-	public Long getDepartment() {return theDepartment;}
-	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+	public Long getDepartment() {return department;}
 
 	/** Отделение */
-	private Long theDepartment;
+	private Long department;
 
 	/** Диабет (браслет)*/
 	@Comment("Диабет (браслет)")
 	@Persist
-	public Long getDiabetIdentity() {return theDiabetIdentity;}
-	public void setDiabetIdentity(Long aDiabetIdentity) {theDiabetIdentity = aDiabetIdentity;}
+	public Long getDiabetIdentity() {return diabetIdentity;}
 	/** Диабет (браслет)*/
-	private Long theDiabetIdentity;
+	private Long diabetIdentity;
 }

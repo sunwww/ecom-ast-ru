@@ -68,7 +68,7 @@ public class LiveListener {
 			if(CAN_DEBUG) LOG.debug("Saving "+clazz) ;
 			LiveEntity entity = new LiveEntity() ;
 			entity.setClassname(clazz.getName()) ;
-			Object entityId = theEntityHelper.getEntityId(aObject) ;
+			Object entityId = entityHelper.getEntityId(aObject) ;
 			entity.setEntityId(entityId!=null ? entityId.toString() : null);
 			entity.setTransaction(transaction) ;
 			entity.setAction(aAction);
@@ -85,7 +85,7 @@ public class LiveListener {
 						if(obj!=null) {
 							if(obj.getClass().isAnnotationPresent(Entity.class)) {
 								// замена объекта на его идентификатор !!!
-								value = String.valueOf(theEntityHelper.getEntityId(obj));
+								value = String.valueOf(entityHelper.getEntityId(obj));
 							} else {
 								value = obj.toString() ;
 							}
@@ -127,6 +127,6 @@ public class LiveListener {
 		update(ACTION_REMOVE, aObject) ;
 	}
 	*/
-	private EntityHelper theEntityHelper = EntityHelper.getInstance() ;
+	private EntityHelper entityHelper = EntityHelper.getInstance() ;
 	
 }

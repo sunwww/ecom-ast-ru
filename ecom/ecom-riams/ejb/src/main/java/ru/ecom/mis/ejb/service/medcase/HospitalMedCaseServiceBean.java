@@ -70,15 +70,15 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
     private static final Logger LOG = Logger.getLogger(HospitalMedCaseServiceBean.class);
     @EJB
-    ILocalEntityFormService theEntityFormService;
+    ILocalEntityFormService entityFormService;
     @PersistenceContext
-    EntityManager theManager;
+    EntityManager manager;
     @Resource
-    SessionContext theContext;
+    SessionContext context;
     @EJB
-    ILocalMonitorService theMonitorService;
+    ILocalMonitorService monitorService;
     @EJB
-    IExpert2Service theExpertService;
+    IExpert2Service expertService;
 
     public static void saveDischargeEpicrisisByCase(MedCase aMedCase, String aDischargeEpicrisis, EntityManager aManager) {
         aManager.createNativeQuery("delete from diary d where d.medcase_id= " + aMedCase.getId() + " and upper(d.dtype)='DISCHARGEEPICRISIS' ").executeUpdate();
@@ -586,26 +586,26 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
             StringBuilder vssSelect = new StringBuilder();
             String vbtSelect2 = "";
             if ("BANK".equals(aReportType)) {
-                ageSelect = " ,case when EXTRACT(YEAR from AGE(pat.birthday))>=18 then 'AGE02' else 'AGE01' end as f_age ";
+                ageSelect = " ,case when EXTRACT(YEAR from AGE(pat.birthday))>=18 n 'AGE02' else 'AGE01' end as f_age ";
                 ageGroup = ", pat.birthday";
-                highTechSelect = " ,case when count(h.id)>0 then 'TMC03' else 'TMC02' end as f7_code_vid_mp";
+                highTechSelect = " ,case when count(h.id)>0 n 'TMC03' else 'TMC02' end as f7_code_vid_mp";
                 highTechJoin.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'")
                         .append(" left join hitechmedicalcase h on h.medcase_id=slo.id ");
-                vbtSelect = " ,case when (vbt.code='78') then 'CMC02 в дневном стационаре' else 'CMC03 стационарно' end as f8_code_usl_mp";
-                emSelect = " ,case when sls.emergency then 'FMC01 экстренная' else 'FMC03 плановая' end as f9_code_form_ok";
+                vbtSelect = " ,case when (vbt.code='78') n 'CMC02 в дневном стационаре' else 'CMC03 стационарно' end as f8_code_usl_mp";
+                emSelect = " ,case when sls.emergency n 'FMC01 экстренная' else 'FMC03 плановая' end as f9_code_form_ok";
                 emGroup = " ,sls.emergency";
-                periodSelect.append(" ,case when sls.datefinish-sls.datestart <=1 then 'DMC01' else")
-                        .append(" case when sls.datefinish-sls.datestart between 2 and 5 then 'DMC02' else")
-                        .append(" case when sls.datefinish-sls.datestart between 6 and 14 then 'DMC03' else")
-                        .append(" case when sls.datefinish-sls.datestart between 15 and 30 then 'DMC04' else")
-                        .append(" case when sls.datefinish-sls.datestart >31 then 'DMC05' end end end end end as f10_count");
+                periodSelect.append(" ,case when sls.datefinish-sls.datestart <=1 n 'DMC01' else")
+                        .append(" case when sls.datefinish-sls.datestart between 2 and 5 n 'DMC02' else")
+                        .append(" case when sls.datefinish-sls.datestart between 6 and 14 n 'DMC03' else")
+                        .append(" case when sls.datefinish-sls.datestart between 15 and 30 n 'DMC04' else")
+                        .append(" case when sls.datefinish-sls.datestart >31 n 'DMC05' end end end end end as f10_count");
                 perGroup = ",sls.datefinish-sls.datestart";
-                vssSelect.append(",case when vss.code='CHARGED' then 'SFC05' else case when vss.code in ('OBLIGATORYINSURANCE','BUDGET') then 'SFC03'")
-                        .append(" else case when vss.code='PRIVATEINSURANCE' then 'SFC04' else 'SFC06' end end end as f11_code_fin_md");
+                vssSelect.append(",case when vss.code='CHARGED' n 'SFC05' else case when vss.code in ('OBLIGATORYINSURANCE','BUDGET') n 'SFC03'")
+                        .append(" else case when vss.code='PRIVATEINSURANCE' n 'SFC04' else 'SFC06' end end end as f11_code_fin_md");
                 vssGroup = " ,vss.code";
                 vbtSelect2 = ", vbt.name as vbtNameNote ";
             }
-            List<Object> listPr = theManager.createNativeQuery("select id from PriceList where isdefault='1'").setMaxResults(1).getResultList();
+            List<Object> listPr = manager.createNativeQuery("select id from PriceList where isdefault='1'").setMaxResults(1).getResultList();
             String priceListId = null;
             if (!listPr.isEmpty()) {
                 priceListId = listPr.get(0).toString();
@@ -637,7 +637,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                     .append(perGroup).append(vssGroup)
                     .append(" order by to_char(sls.datefinish,'yyyy-MM')");
             LOG.info("repotr_stac = " + sql);
-            List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList();
+            List<Object[]> list = manager.createNativeQuery(sql.toString()).getResultList();
             LOG.info("repotr_stac found " + list.size() + " records");
             String region, profile, financeSource, patientCount;
             String[] period, hosps;
@@ -675,7 +675,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                     } else if (financeSource.equals("OBLIGATORY") || "BANK".equals(aReportType)) { //ОМС
                         for (String hosp : hosps) {
                             try {
-                                JSONObject costJson = new JSONObject(theExpertService.getMedcaseCost(Long.valueOf(hosp.trim())));
+                                JSONObject costJson = new JSONObject(expertService.getMedcaseCost(Long.valueOf(hosp.trim())));
                                 if (costJson.has("price")) {
                                     double cost = costJson.getDouble("price");
                                     totalSum += cost;
@@ -761,7 +761,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                     .append(vwfSelect);
 
             LOG.info("===========repotr_pol = " + sql);
-            list = theManager.createNativeQuery(sql.toString()).getResultList();
+            list = manager.createNativeQuery(sql.toString()).getResultList();
             LOG.info("repotr_pol found " + list.size() + " records");
             uslovia = "амбулаторно";
             profileMap = "BANK".equals(aReportType) ?
@@ -785,7 +785,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                         for (String spoId : spoIds) {
                             if (firstSpo.equals(""))
                                 firstSpo = spoId.trim();
-                            JSONObject costJson = new JSONObject(theExpertService.getMedcaseCost(Long.valueOf(spoId.trim())));
+                            JSONObject costJson = new JSONObject(expertService.getMedcaseCost(Long.valueOf(spoId.trim())));
                             if (costJson.has("price")) {
                                 double cost = costJson.getDouble("price");
                                 totalSum += cost;
@@ -876,14 +876,14 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
      * @return String Тип оплаты PAY01 (нал) / PAY03 (безнал)
      */
     private String getPayType(String aMedcaseId, Integer findDays) {
-        String sql = "select case when co.ispaymentterminal =true then '1' else '0' end" +
+        String sql = "select case when co.ispaymentterminal =true n '1' else '0' end" +
                 " from contractaccount c" +
                 " left join contractaccountoperation co on co.account_id =c.id" +
                 " where c.datefrom between (select datestart from medcase where id=" +
                 aMedcaseId + ")-" + findDays + " and" +
                 " (select datestart from medcase where id=" + aMedcaseId +
                 ") limit 1";
-        List<Object> list = theManager.createNativeQuery(sql).getResultList();
+        List<Object> list = manager.createNativeQuery(sql).getResultList();
         //первая оплата
         return !list.isEmpty() && list.get(0).equals("1") ?
                 "PAY03" : "PAY01";
@@ -958,7 +958,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
             if (aPriceListId != null) {
                 priceListId = aPriceListId;
             } else {
-                List<Object> list = theManager.createNativeQuery("select id from pricelist where isdefault='1'").getResultList();
+                List<Object> list = manager.createNativeQuery("select id from pricelist where isdefault='1'").getResultList();
                 if (list != null && !list.isEmpty()) {
                     priceListId = list.get(0).toString();
                 }
@@ -967,7 +967,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
             String dtype;
             long patientId;
             Long serviceStreamId;
-            MedCase mc = (MedCase) theManager.createQuery(" from MedCase where id=:id").setParameter("id", aMedcaseId).getSingleResult();
+            MedCase mc = (MedCase) manager.createQuery(" from MedCase where id=:id").setParameter("id", aMedcaseId).getSingleResult();
             if (mc instanceof HospitalMedCase) {
                 HospitalMedCase hmc = (HospitalMedCase) mc;
                 patientId = hmc.getPatient().getId();
@@ -978,12 +978,12 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
                     StringBuilder sql = new StringBuilder().append("select slo.id as f0,ml.name||' '||vbt.name||' '||vbst.name||' '||vrt.name as sloinfo")
                             .append(" ,list(pp.code||' '||pp.name) as f2_ppname")
-                            .append(" ,case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 then '1'")
-                            .append("else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vbst.code='1' then 0 else 1 end end as f3_cntDays")
+                            .append(" ,case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 n '1'")
+                            .append("else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vbst.code='1' n 0 else 1 end end as f3_cntDays")
                             .append(",max(pp.cost) as f4_ppcost")
                             .append(",max((")
-                            .append("case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 then '1'")
-                            .append("else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vbst.code='1' then 0 else 1 end end")
+                            .append("case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 n '1'")
+                            .append("else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vbst.code='1' n 0 else 1 end end")
                             .append("* pp.cost)) as f5_ppsum,list(ms.code||' '||ms.name) as f6_msifo,ms.code ")
                             .append(" from medcase slo")
                             .append(" left join medcase sls on sls.id=slo.parent_id")
@@ -1006,7 +1006,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                             .append(" where slo.parent_id=").append(mc.getId())
                             .append(" and ms.servicetype_id='").append(idsertypebed).append("' ").append((priceListId != null ? " and pp.priceList_id='" + priceListId + "'" : ""))
                             .append(" group by slo.id,ml.name,vbt.name,vbst.code,vbst.name,vrt.name,slo.datefinish,slo.transferdate,slo.datestart,vht.code,ms.code");
-                    List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList();
+                    List<Object[]> list = manager.createNativeQuery(sql.toString()).getResultList();
                     JSONArray arr = new JSONArray(); //Койко-дни
                     double cost;
                     double sum = 0.0;
@@ -1048,7 +1048,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                     }
                     sql.append(" and (vis.noActuality='0' or vis.noActuality is null)")
                             .append(" order by vis.datestart");
-                    list = theManager.createNativeQuery(sql.toString()).getResultList();
+                    list = manager.createNativeQuery(sql.toString()).getResultList();
                     arr = new JSONArray(); //Диагностика
                     sum = 0.0;
 
@@ -1087,7 +1087,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                             .append(" and (vis.noActuality='0' or vis.noActuality is null) ")
                             .append(ppidNull);//pp.id is not null");
                     //LOG.info("calc price, labsurvey = " + sql);
-                    list = theManager.createNativeQuery(sql.toString()).getResultList();
+                    list = manager.createNativeQuery(sql.toString()).getResultList();
                     arr = new JSONArray();
                     sum = 0.0;
 
@@ -1122,7 +1122,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                             .append(" where (slo.parent_id='").append(aMedcaseId).append("' or slo.id='").append(aMedcaseId).append("') ")
                             .append(ppidNull);
                     //LOG.info("calc price, operation = " + sql);
-                    list = theManager.createNativeQuery(sql.toString()).getResultList();
+                    list = manager.createNativeQuery(sql.toString()).getResultList();
                     arr = new JSONArray();
                     sum = 0.0;
 
@@ -1159,7 +1159,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                             .append(" left join priceposition pp on pp.id=pms.priceposition_id")
                             .append(" where (slo.parent_id='").append(aMedcaseId).append("' or slo.id='").append(aMedcaseId).append("') and pp.priceList_id='").append(priceListId).append("'");
                     //LOG.info("calc price, anathesia = " + sql);
-                    list = theManager.createNativeQuery(sql.toString()).getResultList();
+                    list = manager.createNativeQuery(sql.toString()).getResultList();
                     arr = new JSONArray(); //Операции
                     sum = 0.0;
 
@@ -1200,7 +1200,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                             .append(" and upper(so.dtype)='SERVICEMEDCASE' and upper(slo.dtype)!='VISIT' ")
                             .append(ppidNull);
                     //LOG.info("calc price, dop_uslugi = " + sql);
-                    list = theManager.createNativeQuery(sql.toString()).getResultList();
+                    list = manager.createNativeQuery(sql.toString()).getResultList();
                     arr = new JSONArray(); //Операции
                     sum = 0.0;
 
@@ -1242,12 +1242,12 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
     @Override
     public String getDischargeEpicrisis(long aMedCaseId) {
-        return HospitalMedCaseViewInterceptor.getDischargeEpicrisis(aMedCaseId, theManager);
+        return HospitalMedCaseViewInterceptor.getDischargeEpicrisis(aMedCaseId, manager);
     }
 
     public void addMonitor(long aMonitorId, int aInt) {
         try {
-            IMonitor monitor = theMonitorService.getMonitor(aMonitorId);
+            IMonitor monitor = monitorService.getMonitor(aMonitorId);
             monitor.advice(aInt);
         } catch (Exception ignored) {
 
@@ -1257,7 +1257,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     @Override
     public void finishMonitor(long aMonitorId) {
         try {
-            theMonitorService.getMonitor(aMonitorId).finish("");
+            monitorService.getMonitor(aMonitorId).finish("");
         } catch (Exception ignored) {
 
         }
@@ -1266,7 +1266,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     @Override
     public void startMonitor(long aMonitorId) {
         try {
-            theMonitorService.startMonitor(aMonitorId, "Обработка данных", 100);
+            monitorService.startMonitor(aMonitorId, "Обработка данных", 100);
         } catch (Exception ignored) {
 
         }
@@ -1279,11 +1279,11 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
         java.util.Date dt = new java.util.Date();
         String curDate = DateFormat.formatToDate(dt);
         try {
-            monitor = theMonitorService.startMonitor(aIdMonitor, "Обработка данных за период: " + aEntranceDate + " " + aDischargeDate, 100);
+            monitor = monitorService.startMonitor(aIdMonitor, "Обработка данных за период: " + aEntranceDate + " " + aDischargeDate, 100);
 
             String sqlD = " delete from CompulsoryTreatmentAggregate where entrancehospdate <= (to_date('" + aDischargeDate + "','dd.mm.yyyy')-1)" +
                     " and (dischargehospdate >= (to_date('" + aEntranceDate + "','dd.mm.yyyy')-1) or dischargehospdate is null)";
-            theManager.createNativeQuery(sqlD).executeUpdate();
+            manager.createNativeQuery(sqlD).executeUpdate();
 
             monitor.advice(20);
 
@@ -1292,7 +1292,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                     " where coalesce(ct.registrationdate,ct.DecisionDate)<=to_date('" + aDischargeDate + "','dd.mm.yyyy') " +
                     " and coalesce(ct.RegistrationReplaceDate,ct.Datereplace,to_date('" + aEntranceDate + "','dd.mm.yyyy'))>=to_date('" + aEntranceDate + "','dd.mm.yyyy') and ct.kind_id in (2,3) " +
                     " group by ct.ordernumber,ct.carecard_id,pcc.patient_id";
-            List<Object[]> list = theManager.createNativeQuery(sql).getResultList();
+            List<Object[]> list = manager.createNativeQuery(sql).getResultList();
             int size = list.size() / 80;
 
             for (int ii = 0; ii < list.size(); ii++) {
@@ -1304,7 +1304,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                         ",to_char(ct1.decisiondate,'dd.mm.yyyy') as d2ecisiondate,to_char(ct1.datereplace,'dd.mm.yyyy') as d3atereplace " +
                         " ,(select count(*) from CompulsoryTreatment ct2 where ct2.careCard_id='" + obj[1] + "' and ct2.orderNumber='" + obj[0] + "' and ct2.kind_id in (2,3) and ct1.decisiondate=ct2.datereplace) as p4revCT" +
                         " ,(select list(''||mc.id) from medcase mc where mc.patient_id=pcc.patient_id and upper(mc.dtype)='HOSPITALMEDCASE' and case when (mc.datestart <= coalesce(ct1.datereplace,current_date)" +
-                        " and coalesce(mc.datefinish,current_date) >=ct1.decisiondate  ) then 1 else 0 end = 1) as s5ls" +
+                        " and coalesce(mc.datefinish,current_date) >=ct1.decisiondate  ) n 1 else 0 end = 1) as s5ls" +
                         " ,vs.omcCode as f6sex" +
                         " from CompulsoryTreatment ct1 " +
                         " left join PsychiatricCareCard pcc on pcc.id=ct1.careCard_id" +
@@ -1312,11 +1312,11 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                         " left join VocSex vs on pat.sex_id=vs.id" +
                         " where ct1.careCard_id='" + obj[1] + "' and ct1.orderNumber='" + obj[0] + "' and ct1.kind_id in (2,3)" +
                         " order by ct1.decisiondate";
-                List<Object[]> l1 = theManager.createNativeQuery(sql1).getResultList();
+                List<Object[]> l1 = manager.createNativeQuery(sql1).getResultList();
                 List<Object[]> l2 = new ArrayList<>();
 
                 for (Object[] o1 : l1) {
-                    theManager.createNativeQuery("delete from CompulsoryTreatmentAggregate where sls in (" + o1[5] + ")").executeUpdate();
+                    manager.createNativeQuery("delete from CompulsoryTreatmentAggregate where sls in (" + o1[5] + ")").executeUpdate();
                     boolean prevCT = (o1[4] != null && Integer.parseInt("" + o1[4]) == 1);
                     if (!prevCT) {
                         l2.add(o1);
@@ -1334,17 +1334,17 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                 for (Object[] o2 : l2) {
                     hospInd++;
 
-                    String sql3 = "select mc.parent_id as s0ls,mc.id as s1lo,case when mc.datestart>to_date('" + (o2[2] == null ? curDate : o2[2]) + "','dd.mm.yyyy') then '1' else null end as s2rdate" +
+                    String sql3 = "select mc.parent_id as s0ls,mc.id as s1lo,case when mc.datestart>to_date('" + (o2[2] == null ? curDate : o2[2]) + "','dd.mm.yyyy') n '1' else null end as s2rdate" +
                             ", to_char(mc.datestart,'dd.mm.yyyy') as d3atestart,to_char(mc.transferdate,'dd.mm.yyyy') as t4ransferdate,to_char(mc.datefinish,'dd.mm.yyyy') as d5atefinish,mc.department_id as d6epartment" +
-                            ",case when ('" + (o2[3] == null ? "" : o2[3]) + "'='' or '" + (o2[3] == null ? "" : o2[3]) + "'!='' and coalesce(mc.transferdate,mc.datefinish) is not null and coalesce(mc.transferdate,mc.datefinish)<to_date('" + (o2[3] == null ? curDate : o2[3]) + "','dd.mm.yyyy')) then to_char(coalesce(mc.transferdate,mc.datefinish),'dd.mm.yyyy') else '" + (o2[3] == null ? "" : o2[3]) + "' end  as s7rdate" +
-                            " ,list(distinct case when vdrtD.code='4' and vpdD.code='1' then mkbD.code else null end) as f8depDiag" +
-                            " ,list(distinct case when vdrt.code='2' then mkb.code else null end) as f9orderDiag" +
-                            " ,list(distinct case when vdrt.code='3' and vpd.code='1' then mkb.code else null end) as f10dischargeDiag" +
-                            " ,case when vhr.code='11' then cast('1' as int) else null end as f11isDeath" +
-                            " , case when sls.dateFinish is not null then cast(to_char(sls.dateFinish,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateFinish, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateFinish,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) else null end as f12ageDischarge" +
-                            " , cast(to_char(sls.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) as f13ageEntranceSls" +
-                            " , cast(to_char(mc.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(mc.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(mc.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) as f14ageEntranceSlo" +
-                            " , case when coalesce(mc.transferDate,mc.dateFinish) is not null then cast(to_char(coalesce(mc.transferDate,mc.dateFinish),'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(coalesce(mc.transferDate,mc.dateFinish), 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(coalesce(mc.transferDate,mc.dateFinish),'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) else null end as f15ageDischarge" +
+                            ",case when ('" + (o2[3] == null ? "" : o2[3]) + "'='' or '" + (o2[3] == null ? "" : o2[3]) + "'!='' and coalesce(mc.transferdate,mc.datefinish) is not null and coalesce(mc.transferdate,mc.datefinish)<to_date('" + (o2[3] == null ? curDate : o2[3]) + "','dd.mm.yyyy')) n to_char(coalesce(mc.transferdate,mc.datefinish),'dd.mm.yyyy') else '" + (o2[3] == null ? "" : o2[3]) + "' end  as s7rdate" +
+                            " ,list(distinct case when vdrtD.code='4' and vpdD.code='1' n mkbD.code else null end) as f8depDiag" +
+                            " ,list(distinct case when vdrt.code='2' n mkb.code else null end) as f9orderDiag" +
+                            " ,list(distinct case when vdrt.code='3' and vpd.code='1' n mkb.code else null end) as f10dischargeDiag" +
+                            " ,case when vhr.code='11' n cast('1' as int) else null end as f11isDeath" +
+                            " , case when sls.dateFinish is not null n cast(to_char(sls.dateFinish,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateFinish, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateFinish,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) n -1 else 0 end)<0) n -1 else 0 end) else null end as f12ageDischarge" +
+                            " , cast(to_char(sls.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) n -1 else 0 end)<0) n -1 else 0 end) as f13ageEntranceSls" +
+                            " , cast(to_char(mc.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(mc.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(mc.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) n -1 else 0 end)<0) n -1 else 0 end) as f14ageEntranceSlo" +
+                            " , case when coalesce(mc.transferDate,mc.dateFinish) is not null n cast(to_char(coalesce(mc.transferDate,mc.dateFinish),'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(coalesce(mc.transferDate,mc.dateFinish), 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(coalesce(mc.transferDate,mc.dateFinish),'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) n -1 else 0 end)<0) n -1 else 0 end) else null end as f15ageDischarge" +
                             " , pat.birthday as f16birthday" +
                             " from medcase mc" +
                             " left join medcase sls on mc.parent_id=sls.id" +
@@ -1365,7 +1365,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                             " left join VocHospType vht on vht.id=sls.targetHospType_id" +
                             " left join VocHospType vhtHosp on vhtHosp.id=sls.hospType_id" +
                             " where mc.patient_id='" + obj[2] + "' and upper(mc.dtype)='DEPARTMENTMEDCASE' and case when coalesce(mc.transferdate,mc.datefinish,current_date) >= to_date('" + (o2[0] == null ? curDate : o2[0]) + "','dd.mm.yyyy') and mc.datestart<=to_date('" + (o2[3] == null ? curDate : o2[3]) + "','dd.mm.yyyy') " +
-                            " then 1 else 0 end = 1" +
+                            " n 1 else 0 end = 1" +
                             " group by mc.datestart,mc.datefinish,mc.transferdate" +
                             " ,sls.id,mc.id" +
                             " ,sls.admissionInHospital_id,vh.code" +
@@ -1375,15 +1375,15 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                             " ,mc.entranceTime, mc.dischargeTime,sls.emergency,vht.code,mc.transferTime,vhtHosp.id,vbst.code,sls.datefinish,sls.datestart,mc.parent_id,pat.birthday " +
                             " order by mc.datestart" +
                             "";
-                    List<Object[]> l3 = theManager.createNativeQuery(sql3).getResultList();
+                    List<Object[]> l3 = manager.createNativeQuery(sql3).getResultList();
                     if (l3.isEmpty()) {
                         CompulsoryTreatmentAggregate ahr = new CompulsoryTreatmentAggregate();
                         ahr.setOrderCompTr(ConvertSql.parseString(obj[0]));
                         ahr.setPatient(ConvertSql.parseLong(obj[2]));
-                        ahr.setIsDeath(false);
+                        ahr.setDeath(false);
                         ahr.setEntranceHospDate(ConvertSql.parseDate(o2[3] == null ? curDate : o2[3]));
                         ahr.setNumberHosp(hospInd);
-                        theManager.persist(ahr);
+                        manager.persist(ahr);
                     } else {
                         Date begDate = null;
                         Date endDate = null;
@@ -1428,7 +1428,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                             ahr.setEntranceDepDate(ConvertSql.parseDate(begDateDep));
                             ahr.setDischargeHospDate(ConvertSql.parseDate(endDate));
                             ahr.setDischargeDepDate(ConvertSql.parseDate(endDateDep));
-                            ahr.setIsDeath(o3[11] != null && ConvertSql.parseBoolean(o3[11]));
+                            ahr.setDeath(o3[11] != null && ConvertSql.parseBoolean(o3[11]));
                             ahr.setNumberHosp(hospInd);
                             ahr.setIdcDepartmentCode(ConvertSql.parseString(o3[8]));
                             ahr.setIdcDischarge(ConvertSql.parseString(o3[10]));
@@ -1444,7 +1444,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                             }
                             if (ind < l3.size() - 1)
                                 ahr.setTransferDepartmentIn(ConvertSql.parseLong(l3.get(ind + 1)[6]));
-                            theManager.persist(ahr);
+                            manager.persist(ahr);
                         }
                     }
                 }
@@ -1469,11 +1469,11 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
         LOG.error("ВНИМАНИЕ!! Выполняется неизвестный код. никто не знает что он делает..");
         IMonitor monitor = null;
         try {
-            monitor = theMonitorService.startMonitor(aIdMonitor, "Обработка данных за период: " + aEntranceDate + " " + aDischargeDate, 100);
+            monitor = monitorService.startMonitor(aIdMonitor, "Обработка данных за период: " + aEntranceDate + " " + aDischargeDate, 100);
 
             String sqlD = " delete from AggregateHospitalReport where entrancedate24 <= (to_date('" + aDischargeDate + "','dd.mm.yyyy')-1)" +
                     " and (dischargedate24 >= (to_date('" + aEntranceDate + "','dd.mm.yyyy')-1) or dischargedate24 is null)";
-            theManager.createNativeQuery(sqlD).executeUpdate();
+            manager.createNativeQuery(sqlD).executeUpdate();
 
             monitor.advice(20);
 
@@ -1483,38 +1483,38 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                     " ,vs.omccode as f3assex" +
                     " ,slo.datestart as f4entrancedate" +
                     " ,coalesce(slo.datefinish,slo.transferdate) as f5dischargedate" +
-                    " ,case when a.addressisvillage='1' then cast('1' as int) else null end as f6isvillage" +
-                    " ,case when sls.admissionInHospital_id='1' then cast('1' as int) else null end as f7isFirstLife" +
-                    " ,case when (vh.code='1' or vh.code='2' or sls.admissionInHospital_id='1') then cast('1' as int) else null end as f8isFirstCurrentYear" +
-                    " ,case when sls.admissionOrder_id in (2,4,5,6,7,8,9) then cast('1' as int) else null end as f9isIncompetent" +
-                    " ,case when vhr.code='11' then cast('1' as int) else null end as f10isDeath" +
+                    " ,case when a.addressisvillage='1' n cast('1' as int) else null end as f6isvillage" +
+                    " ,case when sls.admissionInHospital_id='1' n cast('1' as int) else null end as f7isFirstLife" +
+                    " ,case when (vh.code='1' or vh.code='2' or sls.admissionInHospital_id='1') n cast('1' as int) else null end as f8isFirstCurrentYear" +
+                    " ,case when sls.admissionOrder_id in (2,4,5,6,7,8,9) n cast('1' as int) else null end as f9isIncompetent" +
+                    " ,case when vhr.code='11' n cast('1' as int) else null end as f10isDeath" +
                     " ,slo.department_id as f11slodepartment" +
                     " ,nextslo.department_id as f12nextslodepartment" +
                     " ,prevslo.department_id as f13prevslodepartment" +
-                    " ,list(distinct case when vdrtD.code='4' and vpdD.code='1' then mkbD.code else null end) as f14depDiag" +
-                    " ,list(distinct case when vdrt.code='2' then mkb.code else null end) as f15orderDiag" +
-                    " ,list(distinct case when vdrt.code='3' and vpd.code='1' then mkb.code else null end) as f16dischargeDiag" +
-                    " ,case when count(ahr.id)>0 then cast('1' as int) else null end as f17cntAggregate" +
+                    " ,list(distinct case when vdrtD.code='4' and vpdD.code='1' n mkbD.code else null end) as f14depDiag" +
+                    " ,list(distinct case when vdrt.code='2' n mkb.code else null end) as f15orderDiag" +
+                    " ,list(distinct case when vdrt.code='3' and vpd.code='1' n mkb.code else null end) as f16dischargeDiag" +
+                    " ,case when count(ahr.id)>0 n cast('1' as int) else null end as f17cntAggregate" +
                     " ,bf.bedType_id as f18bedType" +
                     " ,bf.bedSubType_id as f19bedSubType" +
                     " ,sls.serviceStream_id as f20serviceStream" +
-                    " , case when slo.entranceTime<cast('07:00' as time) then cast('1' as int) else null end as f21entranceTime7" +
-                    " , case when slo.entranceTime<cast('09:00' as time) then cast('1' as int) else null end as f22entranceTime9" +
-                    " , case when coalesce(slo.dischargeTime,slo.transferTime)<cast('07:00' as time) then cast('1' as int) else null end as f23entranceTime7" +
-                    " , case when coalesce(slo.dischargeTime,slo.transferTime)<cast('09:00' as time) then cast('1' as int) else null end as f24entranceTime9" +
-                    " , case when sls.emergency='1' then cast('1' as int) else null end as f25emergency" +
+                    " , case when slo.entranceTime<cast('07:00' as time) n cast('1' as int) else null end as f21entranceTime7" +
+                    " , case when slo.entranceTime<cast('09:00' as time) n cast('1' as int) else null end as f22entranceTime9" +
+                    " , case when coalesce(slo.dischargeTime,slo.transferTime)<cast('07:00' as time) n cast('1' as int) else null end as f23entranceTime7" +
+                    " , case when coalesce(slo.dischargeTime,slo.transferTime)<cast('09:00' as time) n cast('1' as int) else null end as f24entranceTime9" +
+                    " , case when sls.emergency='1' n cast('1' as int) else null end as f25emergency" +
                     " , cast('0' as int) as f26operation" +
                     " , vht.code as f27transferLpu" +
                     " , vhtHosp.id as f28hospTypeId" +
                     " , vs.id as f29sexId" +
-                    " , case when firstSlo.entranceTime<cast('07:00' as time) then cast('1' as int) else null end as f30entranceTime7" +
-                    " , case when firstSlo.entranceTime<cast('09:00' as time) then cast('1' as int) else null end as f31entranceTime9" +
+                    " , case when firstSlo.entranceTime<cast('07:00' as time) n cast('1' as int) else null end as f30entranceTime7" +
+                    " , case when firstSlo.entranceTime<cast('09:00' as time) n cast('1' as int) else null end as f31entranceTime9" +
                     " , firstSlo.datestart as f32entrancedate" +
-                    " , case when vbst.code='1' then '0' else '1' end  as f33isdayhosp" +
-                    " ,list(distinct case when prevVdrtD.code='4' and prevVpdD.code='1' then prevMkbD.code else null end) as f34prevdepDiag" +
-                    " , case when sls.dateFinish is not null then cast(to_char(sls.dateFinish,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateFinish, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateFinish,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) else null end as f35ageDischarge" +
-                    " , cast(to_char(sls.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) as f36ageEntranceSls" +
-                    " , cast(to_char(slo.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(slo.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(slo.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) as f37ageEntranceSlo" +
+                    " , case when vbst.code='1' n '0' else '1' end  as f33isdayhosp" +
+                    " ,list(distinct case when prevVdrtD.code='4' and prevVpdD.code='1' n prevMkbD.code else null end) as f34prevdepDiag" +
+                    " , case when sls.dateFinish is not null n cast(to_char(sls.dateFinish,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateFinish, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateFinish,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) n -1 else 0 end)<0) n -1 else 0 end) else null end as f35ageDischarge" +
+                    " , cast(to_char(sls.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) n -1 else 0 end)<0) n -1 else 0 end) as f36ageEntranceSls" +
+                    " , cast(to_char(slo.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(slo.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(slo.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) n -1 else 0 end)<0) n -1 else 0 end) as f37ageEntranceSlo" +
                     " , pat.birthday as f38birthday" +
                     " from medcase sls" +
                     " left join medcase slo on sls.id=slo.parent_id" +
@@ -1557,7 +1557,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                     " ,sls.serviceStream_id,bf.bedType_id,bf.bedSubType_id, pat.birthday" +
                     " ,slo.entranceTime, slo.dischargeTime,sls.emergency,vht.code,slo.transferTime,vhtHosp.id,vbst.code,sls.datefinish,pat.birthday,sls.datestart " +
                     " order by sls.id";
-            List<Object[]> list = theManager.createNativeQuery(sql).getResultList();
+            List<Object[]> list = manager.createNativeQuery(sql).getResultList();
             int size = list.size() / 80;
 
             for (int i = 0; i < list.size(); i++) {
@@ -1586,13 +1586,13 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                 ahr.setIdcDischarge(ConvertSql.parseString(obj[16]));
                 ahr.setIdcEntranceCode(ConvertSql.parseString(obj[15]));
                 ahr.setIdcTransferCode(ConvertSql.parseString(obj[34]));
-                ahr.setIsDeath(ConvertSql.parseBoolean(obj[10]));
-                ahr.setIsEmergency(ConvertSql.parseBoolean(obj[25]));
-                ahr.setIsFirstCurrentYear(ConvertSql.parseBoolean(obj[8]));
-                ahr.setIsFirstLife(ConvertSql.parseBoolean(obj[7]));
-                ahr.setIsIncompetent(ConvertSql.parseBoolean(obj[9]));
-                ahr.setIsOperation(ConvertSql.parseBoolean(obj[26]));
-                ahr.setIsVillage(ConvertSql.parseBoolean(obj[8]));
+                ahr.setDeath(ConvertSql.parseBoolean(obj[10]));
+                ahr.setEmergency(ConvertSql.parseBoolean(obj[25]));
+                ahr.setFirstCurrentYear(ConvertSql.parseBoolean(obj[8]));
+                ahr.setFirstLife(ConvertSql.parseBoolean(obj[7]));
+                ahr.setIncompetent(ConvertSql.parseBoolean(obj[9]));
+                ahr.setOperation(ConvertSql.parseBoolean(obj[26]));
+                ahr.setVillage(ConvertSql.parseBoolean(obj[8]));
                 ahr.setPatient(ConvertSql.parseLong(obj[0]));
                 ahr.setServiceStream(ConvertSql.parseLong(obj[20]));
                 ahr.setSexCode(ConvertSql.parseString(obj[3]));
@@ -1605,7 +1605,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                 ahr.setSex(ConvertSql.parseLong(obj[29]));
                 ahr.setAddBedDays(ConvertSql.parseLong(obj[33]));
                 ahr.setBirthday(ConvertSql.parseDate(obj[38]));
-                theManager.persist(ahr);
+                manager.persist(ahr);
                 if (i % 10 == 0)
                     monitor.setText("Импортируется: " + ConvertSql.parseLong(obj[0]) + " " + ConvertSql.parseLong(obj[2]) + "...");
                 if (i % size == 0) monitor.advice(1);
@@ -1628,24 +1628,24 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
         protocol.setTitle(aTitle);
         protocol.setUsername(aUsername);
         protocol.setDate(new java.sql.Date(new java.util.Date().getTime()));
-        theManager.persist(protocol);
+        manager.persist(protocol);
     }
 
     @Override
     public void updateDataFromParameterConfig(Long aDepartment, boolean aIsLowerCase, String aIds, boolean aIsRemoveExist) {
         String[] obj = aIds.split(",");
         String aTableSql = "VocDocumentParameterConfig where department_id='" + aDepartment + "' and documentParameter_id ";
-        MisLpu department = theManager.find(MisLpu.class, aDepartment);
+        MisLpu department = manager.find(MisLpu.class, aDepartment);
         for (String jsId : obj) {
             if (jsId != null && !jsId.equals("") && !jsId.equals("0")) {
 
                 Long jsonId = Long.valueOf(jsId);
 
                 String sql = "from " + aTableSql + " ='" + jsonId + "' ";
-                List<VocDocumentParameterConfig> count = theManager.createQuery(sql).setMaxResults(1).getResultList();
+                List<VocDocumentParameterConfig> count = manager.createQuery(sql).setMaxResults(1).getResultList();
                 VocDocumentParameterConfig vdpc;
                 if (count.isEmpty()) {
-                    VocDocumentParameter documentParameter = theManager.find(VocDocumentParameter.class, jsonId);
+                    VocDocumentParameter documentParameter = manager.find(VocDocumentParameter.class, jsonId);
                     vdpc = new VocDocumentParameterConfig();
                     vdpc.setDepartment(department);
                     vdpc.setDocumentParameter(documentParameter);
@@ -1653,12 +1653,12 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                     vdpc = count.get(0);
                 }
                 vdpc.setIsLowerCase(aIsLowerCase);
-                theManager.persist(vdpc);
+                manager.persist(vdpc);
             }
         }
         if (aIsRemoveExist && aIds.length() > 0) {
             String sql = "delete " + aTableSql + " not in (" + aIds + ") ";
-            theManager.createNativeQuery(sql).executeUpdate();
+            manager.createNativeQuery(sql).executeUpdate();
         }
     }
 
@@ -1666,12 +1666,12 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     public void removeDataFromParameterConfig(Long aDepartment, String aIds) {
         String aTableSql = "VocDocumentParameterConfig where department_id='" + aDepartment + "' and documentParameter_id ";
         String sql = "delete from " + aTableSql + " in (" + aIds + ") ";
-        theManager.createNativeQuery(sql).executeUpdate();
+        manager.createNativeQuery(sql).executeUpdate();
     }
 
     @Override
     public void changeServiceStreamBySmo(Long aSmo, Long aServiceStream) {
-        List<Object[]> list = theManager.createNativeQuery("select sls.dtype,count(distinct slo.id) from medcase sls" +
+        List<Object[]> list = manager.createNativeQuery("select sls.dtype,count(distinct slo.id) from medcase sls" +
                 " left join MedCase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'" +
                 " where sls.id=" + aSmo + " group by sls.id,sls.dtype").getResultList();
         if (!list.isEmpty()) {
@@ -1680,7 +1680,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                 String dtype = obj[0].toString();
                 switch (dtype) {
                     case "HospitalMedCase": {
-                        List<Object[]> listBedFund = theManager.createNativeQuery("select slo.id as sloid,bfNew.id as bfNewid from MedCase slo"
+                        List<Object[]> listBedFund = manager.createNativeQuery("select slo.id as sloid,bfNew.id as bfNewid from MedCase slo"
                                 + " left join BedFund bf on bf.id=slo.bedFund_id"
                                 + " left join BedFund bfNew on bfNew.lpu_id=bf.lpu_id"
                                 + " where slo.parent_id='" + aSmo + "' and slo.dtype='DepartmentMedCase'"
@@ -1691,18 +1691,18 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                         Long cntSlo = ConvertSql.parseLong(obj[1]);
                         if (cntSlo.intValue() == listBedFund.size()) {
                             for (Object[] slo : listBedFund) {
-                                theManager.createNativeQuery("update MedCase set serviceStream_id='" + aServiceStream + "',bedFund_id='" + slo[1] + "' where id='" + slo[0] + "'").executeUpdate();
-                                theManager.createNativeQuery("update SurgicalOperation set serviceStream_id='" + aServiceStream + "' where medCase_id='" + slo[0] + "'").executeUpdate();
+                                manager.createNativeQuery("update MedCase set serviceStream_id='" + aServiceStream + "',bedFund_id='" + slo[1] + "' where id='" + slo[0] + "'").executeUpdate();
+                                manager.createNativeQuery("update SurgicalOperation set serviceStream_id='" + aServiceStream + "' where medCase_id='" + slo[0] + "'").executeUpdate();
                             }
-                            theManager.createNativeQuery("update MedCase set serviceStream_id='" + aServiceStream + "' where id='" + aSmo + "'").executeUpdate();
-                            theManager.createNativeQuery("update SurgicalOperation set serviceStream_id='" + aServiceStream + "' where medCase_id='" + aSmo + "'").executeUpdate();
+                            manager.createNativeQuery("update MedCase set serviceStream_id='" + aServiceStream + "' where id='" + aSmo + "'").executeUpdate();
+                            manager.createNativeQuery("update SurgicalOperation set serviceStream_id='" + aServiceStream + "' where medCase_id='" + aSmo + "'").executeUpdate();
                         } else {
                             throw new IllegalArgumentException("По данному потоку обслуживания не во всех отделениях, в которых производилось лечение, заведен коечный фонд");
                         }
                         break;
                     }
                     case "DepartmentMedCase": { // не будет случаться, убрать
-                        List<Object[]> listBedFund = theManager.createNativeQuery("select slo.id as sloid,bfNew.id as bfNewid from MedCase slo"
+                        List<Object[]> listBedFund = manager.createNativeQuery("select slo.id as sloid,bfNew.id as bfNewid from MedCase slo"
                                 + " left join BedFund bf on bf.id=slo.bedFund_id"
                                 + " left join BedFund bfNew on bfNew.lpu_id=bf.lpu_id"
                                 + " where slo.id='" + aSmo + "' and slo.dtype='DepartmentMedCase'"
@@ -1712,20 +1712,20 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                                 .getResultList();
                         Object[] slo = listBedFund.get(0);
                         if (listBedFund.size() == 1) {
-                            theManager.createNativeQuery("update MedCase set serviceStream_id='" + aServiceStream + "',bedFund_id='" + slo[1] + "' where id='" + aSmo + "'").executeUpdate();
-                            theManager.createNativeQuery("update SurgicalOperation set serviceStream_id='" + aServiceStream + "' where medCase_id='" + aSmo + "'").executeUpdate();
+                            manager.createNativeQuery("update MedCase set serviceStream_id='" + aServiceStream + "',bedFund_id='" + slo[1] + "' where id='" + aSmo + "'").executeUpdate();
+                            manager.createNativeQuery("update SurgicalOperation set serviceStream_id='" + aServiceStream + "' where medCase_id='" + aSmo + "'").executeUpdate();
                         } else {
                             throw new IllegalArgumentException("По данному потоку обслуживания в отделение не заведен коечный фонд");
                         }
                         break;
                     }
                     case "Visit":
-                        theManager.createNativeQuery("update MedCase set serviceStream_id='" + aServiceStream + "' where id='" + aSmo + "'").executeUpdate();
+                        manager.createNativeQuery("update MedCase set serviceStream_id='" + aServiceStream + "' where id='" + aSmo + "'").executeUpdate();
                         break;
                     case "PolyclinicMedCase":
-                        theManager.createNativeQuery("update MedCase set serviceStream_id='" + aServiceStream + "' where parent_id='" + aSmo + "' and (dtype='Visit' or dtype='ShortMedCase')").executeUpdate();
+                        manager.createNativeQuery("update MedCase set serviceStream_id='" + aServiceStream + "' where parent_id='" + aSmo + "' and (dtype='Visit' or dtype='ShortMedCase')").executeUpdate();
                         //Milamesher update spo after visits
-                        theManager.createNativeQuery("update MedCase set serviceStream_id='" + aServiceStream + "' where id='" + aSmo + "'").executeUpdate();
+                        manager.createNativeQuery("update MedCase set serviceStream_id='" + aServiceStream + "' where id='" + aSmo + "'").executeUpdate();
                         break;
                 }
             }
@@ -1734,9 +1734,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
     @Override
     public void unionSloWithNextSlo(Long aSlo) {
-        List<Object[]> list = theManager.createNativeQuery("select  "
+        List<Object[]> list = manager.createNativeQuery("select  "
                 + "case when sloNext1.department_id is not null and"
-                + " sloNext1.department_id=slo.department_id then '1' else null end equalsDep"
+                + " sloNext1.department_id=slo.department_id n '1' else null end equalsDep"
                 + " ,sloNext.id as sloNext,sloNext1.id as sloNext1,sloNext2.id as sloNext2"
                 + " ,sloNext.dateFinish as sloNextDateFinish,sloNext.dischargeTime as sloNextDischargeTime"
                 + " ,sloNext.transferDate as sloNextTransferDate,sloNext.transferTime as sloNextTransferTime"
@@ -1754,30 +1754,30 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
             if (obj[1] != null) {
                 if (obj[0] != null) { // если КАРДИО -  невр - КАРДИО
                     // Отд next1=current (объединять 2 отделения)
-                    theManager.createNativeQuery("update assessmentCard cb set medcase_id='" + aSlo + "' where cb.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
-                    theManager.createNativeQuery("update qualityestimationcard set medcase_id='" + aSlo + "' where medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
-                    theManager.createNativeQuery("update childBirth cb set medcase_id='" + aSlo + "' where cb.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
-                    theManager.createNativeQuery("update newBorn cb set medcase_id='" + aSlo + "' where cb.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
-                    theManager.createNativeQuery("update medcase  set parent_id='" + aSlo + "' where parent_id='" + obj[1] + "' or parent_id=" + obj[2]).executeUpdate();
+                    manager.createNativeQuery("update assessmentCard cb set medcase_id='" + aSlo + "' where cb.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
+                    manager.createNativeQuery("update qualityestimationcard set medcase_id='" + aSlo + "' where medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
+                    manager.createNativeQuery("update childBirth cb set medcase_id='" + aSlo + "' where cb.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
+                    manager.createNativeQuery("update newBorn cb set medcase_id='" + aSlo + "' where cb.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
+                    manager.createNativeQuery("update medcase  set parent_id='" + aSlo + "' where parent_id='" + obj[1] + "' or parent_id=" + obj[2]).executeUpdate();
 
                     //Закрытие диет и Режимов из объединяемого.Копирование назначений из листа назначения объединяемого СЛО и затем его удаление.
-                    theManager.createNativeQuery("update prescription" +
+                    manager.createNativeQuery("update prescription" +
                             " set planEndDate=planStartDate, planEndTime=planStartTime" +
                             " where prescriptionlist_id in (select id from prescriptionlist where medcase_id = " + obj[1] + " or medcase_id=" + aSlo + ") and (dtype='DietPrescription' or dtype='ModePrescription')").executeUpdate();
-                    theManager.createNativeQuery("update prescription " +
+                    manager.createNativeQuery("update prescription " +
                             " set prescriptionlist_id = (select id from prescriptionlist where medcase_id = " + aSlo + ") " +
                             " where prescriptionlist_id in (select id from prescriptionlist where medcase_id = '" + obj[2] + "' or medcase_id=" + obj[1] + ")").executeUpdate();
-                    theManager.createNativeQuery("delete from prescriptionlist where medcase_id =" + obj[2] + " or medcase_id=" + obj[1]).executeUpdate();
-                    theManager.createNativeQuery("update screeningcardiac cd set medcase_id='" + aSlo + "' where cd.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
-                    theManager.createNativeQuery("update diary d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
-                    theManager.createNativeQuery("update diagnosis d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
-                    theManager.createNativeQuery("update SurgicalOperation d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
-                    theManager.createNativeQuery("update ClinicExpertCard d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
-                    theManager.createNativeQuery("update transfusion d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
-                    theManager.createNativeQuery("update hitechmedicalcase d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
-                    theManager.createNativeQuery("update robsonclass d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
-                    theManager.createNativeQuery("update calculationsresult cr set departmentmedcase_id='" + aSlo + "' where cr.departmentmedcase_id='" + obj[1] + "' or departmentmedcase_id=" + obj[2]).executeUpdate();
-                    theManager.createNativeQuery("update medcase set dateFinish=(select dateFinish from medcase where id='" + obj[2] + "') "
+                    manager.createNativeQuery("delete from prescriptionlist where medcase_id =" + obj[2] + " or medcase_id=" + obj[1]).executeUpdate();
+                    manager.createNativeQuery("update screeningcardiac cd set medcase_id='" + aSlo + "' where cd.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
+                    manager.createNativeQuery("update diary d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
+                    manager.createNativeQuery("update diagnosis d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
+                    manager.createNativeQuery("update SurgicalOperation d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
+                    manager.createNativeQuery("update ClinicExpertCard d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
+                    manager.createNativeQuery("update transfusion d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
+                    manager.createNativeQuery("update hitechmedicalcase d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
+                    manager.createNativeQuery("update robsonclass d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
+                    manager.createNativeQuery("update calculationsresult cr set departmentmedcase_id='" + aSlo + "' where cr.departmentmedcase_id='" + obj[1] + "' or departmentmedcase_id=" + obj[2]).executeUpdate();
+                    manager.createNativeQuery("update medcase set dateFinish=(select dateFinish from medcase where id='" + obj[2] + "') "
                             + " ,transferDate=(select transferDate from medcase where id='" + obj[2] + "')"
                             + " ,transferTime=(select transferTime from medcase where id='" + obj[2] + "')"
                             + " ,dischargeTime=(select dischargeTime from medcase where id='" + obj[2] + "')"
@@ -1785,36 +1785,36 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                             + " ,targetHospType_id=(select targetHospType_id from medcase where id='" + obj[2] + "')"
                             + " where id='" + aSlo + "'").executeUpdate();
                     if (obj[3] != null) {
-                        theManager.createNativeQuery("update MedCase set prevMedCase_id='" + aSlo + "' where id='" + obj[3] + "'").executeUpdate();
+                        manager.createNativeQuery("update MedCase set prevMedCase_id='" + aSlo + "' where id='" + obj[3] + "'").executeUpdate();
                     }
-                    theManager.createNativeQuery("delete from medcase m where m.id='" + obj[2] + "'").executeUpdate();
-                    theManager.createNativeQuery("delete from medcase m where m.id='" + obj[1] + "'").executeUpdate();
+                    manager.createNativeQuery("delete from medcase m where m.id='" + obj[2] + "'").executeUpdate();
+                    manager.createNativeQuery("delete from medcase m where m.id='" + obj[1] + "'").executeUpdate();
                 } else {
-                    theManager.createNativeQuery("update robsonclass d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
-                    theManager.createNativeQuery("update assessmentCard cb set medcase_id='" + aSlo + "' where cb.medCase_id='" + obj[1] + "'").executeUpdate();
-                    theManager.createNativeQuery("update qualityestimationcard set medcase_id='" + aSlo + "' where medCase_id='" + obj[1] + "'").executeUpdate();
-                    theManager.createNativeQuery("update childBirth cb set medcase_id='" + aSlo + "' where cb.medCase_id='" + obj[1] + "' and '1'=(select case when dep.isMaternityWard='1' then '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='" + aSlo + "')").executeUpdate();
-                    theManager.createNativeQuery("update newBorn nb    set medcase_id='" + aSlo + "' where nb.medCase_id='" + obj[1] + "' and '1'=(select case when dep.isMaternityWard='1' then '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='" + aSlo + "')").executeUpdate();
-                    theManager.createNativeQuery("update medcase  set parent_id='" + aSlo + "' where parent_id='" + obj[1] + "'").executeUpdate();
+                    manager.createNativeQuery("update robsonclass d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
+                    manager.createNativeQuery("update assessmentCard cb set medcase_id='" + aSlo + "' where cb.medCase_id='" + obj[1] + "'").executeUpdate();
+                    manager.createNativeQuery("update qualityestimationcard set medcase_id='" + aSlo + "' where medCase_id='" + obj[1] + "'").executeUpdate();
+                    manager.createNativeQuery("update childBirth cb set medcase_id='" + aSlo + "' where cb.medCase_id='" + obj[1] + "' and '1'=(select case when dep.isMaternityWard='1' n '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='" + aSlo + "')").executeUpdate();
+                    manager.createNativeQuery("update newBorn nb    set medcase_id='" + aSlo + "' where nb.medCase_id='" + obj[1] + "' and '1'=(select case when dep.isMaternityWard='1' n '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='" + aSlo + "')").executeUpdate();
+                    manager.createNativeQuery("update medcase  set parent_id='" + aSlo + "' where parent_id='" + obj[1] + "'").executeUpdate();
 
-                    theManager.createNativeQuery("update prescription " +
+                    manager.createNativeQuery("update prescription " +
                             "set planEndDate=planStartDate, planEndTime=planStartTime " +
                             "where (dtype='DietPrescription' or dtype='ModePrescription') " +
                             "and prescriptionlist_id = (select id from prescriptionlist where medcase_id = '" + aSlo + "')").executeUpdate();
-                    theManager.createNativeQuery("update prescription " +
+                    manager.createNativeQuery("update prescription " +
                             "set prescriptionlist_id = (select id from prescriptionlist where medcase_id = '" + aSlo + "') " +
                             "where prescriptionlist_id in (select id from prescriptionlist where medcase_id = '" + obj[1] + "')").executeUpdate();
-                    theManager.createNativeQuery("delete from prescriptionlist where medcase_id ='" + obj[1] + "'").executeUpdate();
+                    manager.createNativeQuery("delete from prescriptionlist where medcase_id ='" + obj[1] + "'").executeUpdate();
 
 
-                    theManager.createNativeQuery("update screeningcardiac cd set medcase_id='" + aSlo + "' where cd.medCase_id='" + obj[1] + "'").executeUpdate();
-                    theManager.createNativeQuery("update diary d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
-                    theManager.createNativeQuery("update diagnosis d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
-                    theManager.createNativeQuery("update SurgicalOperation d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
-                    theManager.createNativeQuery("update ClinicExpertCard d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
-                    theManager.createNativeQuery("update transfusion d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
-                    theManager.createNativeQuery("update hitechmedicalcase d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
-                    theManager.createNativeQuery("update medcase set dateFinish=(select dateFinish from medcase where id='" + obj[1] + "') "
+                    manager.createNativeQuery("update screeningcardiac cd set medcase_id='" + aSlo + "' where cd.medCase_id='" + obj[1] + "'").executeUpdate();
+                    manager.createNativeQuery("update diary d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
+                    manager.createNativeQuery("update diagnosis d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
+                    manager.createNativeQuery("update SurgicalOperation d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
+                    manager.createNativeQuery("update ClinicExpertCard d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
+                    manager.createNativeQuery("update transfusion d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
+                    manager.createNativeQuery("update hitechmedicalcase d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
+                    manager.createNativeQuery("update medcase set dateFinish=(select dateFinish from medcase where id='" + obj[1] + "') "
                             + " ,transferDate=(select transferDate from medcase where id='" + obj[1] + "')"
                             + " ,transferTime=(select transferTime from medcase where id='" + obj[1] + "')"
                             + " ,dischargeTime=(select dischargeTime from medcase where id='" + obj[1] + "')"
@@ -1822,14 +1822,14 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                             + " ,targetHospType_id=(select targetHospType_id from medcase where id='" + obj[1] + "')"
                             + " where id='" + aSlo + "'").executeUpdate();
                     if (obj[2] != null) {
-                        theManager.createNativeQuery("update MedCase set prevMedCase_id='" + aSlo + "' where id='" + obj[2] + "'").executeUpdate();
+                        manager.createNativeQuery("update MedCase set prevMedCase_id='" + aSlo + "' where id='" + obj[2] + "'").executeUpdate();
                     }
-                    if (!theManager.createNativeQuery("select id from newborn where medcase_id='" + obj[1] + "'").getResultList().isEmpty()
-                            || !theManager.createNativeQuery("select id from childbirth where medcase_id='" + obj[1] + "'").getResultList().isEmpty()) {
+                    if (!manager.createNativeQuery("select id from newborn where medcase_id='" + obj[1] + "'").getResultList().isEmpty()
+                            || !manager.createNativeQuery("select id from childbirth where medcase_id='" + obj[1] + "'").getResultList().isEmpty()) {
                         throw new IllegalArgumentException("Невозможность объединить СЛО, т.к. имеются данные по родам!");
                     }
-                    theManager.createNativeQuery("update calculationsresult cr set departmentmedcase_id='" + aSlo + "' where cr.departmentmedcase_id='" + obj[1] + "'").executeUpdate();
-                    theManager.createNativeQuery("delete from medcase m where m.id='" + obj[1] + "'").executeUpdate();
+                    manager.createNativeQuery("update calculationsresult cr set departmentmedcase_id='" + aSlo + "' where cr.departmentmedcase_id='" + obj[1] + "'").executeUpdate();
+                    manager.createNativeQuery("delete from medcase m where m.id='" + obj[1] + "'").executeUpdate();
                 }
             } else {
                 throw new IllegalArgumentException("Нет след. СЛО");
@@ -1839,35 +1839,35 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
     @Override
     public void deniedHospitalizatingSls(Long aMedCaseId, Long aDeniedHospitalizating) {
-        theManager.createNativeQuery("update diary d set medcase_id='" + aMedCaseId + "' where d.medCase_id in (select m.id from medcase m where m.parent_id='" + aMedCaseId + "')").executeUpdate();
-        theManager.createNativeQuery("update diagnosis d set medcase_id='" + aMedCaseId + "' where d.medCase_id in (select m.id from medcase m where m.parent_id='" + aMedCaseId + "')").executeUpdate();
-        theManager.createNativeQuery("update SurgicalOperation d set medcase_id='" + aMedCaseId + "' where d.medCase_id in (select m.id from medcase m where m.parent_id='" + aMedCaseId + "')").executeUpdate();
-        theManager.createNativeQuery("update ClinicExpertCard d set medcase_id='" + aMedCaseId + "' where d.medCase_id in (select m.id from medcase m where m.parent_id='" + aMedCaseId + "')").executeUpdate();
-        theManager.createNativeQuery("update PrescriptionList d set medcase_id='" + aMedCaseId + "' where d.medCase_id in (select m.id from medcase m where m.parent_id='" + aMedCaseId + "')").executeUpdate();
-        theManager.createNativeQuery("delete from medcase m where m.parent_id='" + aMedCaseId + "' and m.dtype='DepartmentMedCase'").executeUpdate();
-        theManager.createNativeQuery("update medcase set deniedHospitalizating_id='" + aDeniedHospitalizating + "',ambulanceTreatment='1' where id='" + aMedCaseId + "'").executeUpdate();
-        HospitalMedCase medCase = theManager.find(HospitalMedCase.class, aMedCaseId);
-        StatisticStubStac.removeStatCardNumber(theManager, theContext, medCase);
+        manager.createNativeQuery("update diary d set medcase_id='" + aMedCaseId + "' where d.medCase_id in (select m.id from medcase m where m.parent_id='" + aMedCaseId + "')").executeUpdate();
+        manager.createNativeQuery("update diagnosis d set medcase_id='" + aMedCaseId + "' where d.medCase_id in (select m.id from medcase m where m.parent_id='" + aMedCaseId + "')").executeUpdate();
+        manager.createNativeQuery("update SurgicalOperation d set medcase_id='" + aMedCaseId + "' where d.medCase_id in (select m.id from medcase m where m.parent_id='" + aMedCaseId + "')").executeUpdate();
+        manager.createNativeQuery("update ClinicExpertCard d set medcase_id='" + aMedCaseId + "' where d.medCase_id in (select m.id from medcase m where m.parent_id='" + aMedCaseId + "')").executeUpdate();
+        manager.createNativeQuery("update PrescriptionList d set medcase_id='" + aMedCaseId + "' where d.medCase_id in (select m.id from medcase m where m.parent_id='" + aMedCaseId + "')").executeUpdate();
+        manager.createNativeQuery("delete from medcase m where m.parent_id='" + aMedCaseId + "' and m.dtype='DepartmentMedCase'").executeUpdate();
+        manager.createNativeQuery("update medcase set deniedHospitalizating_id='" + aDeniedHospitalizating + "',ambulanceTreatment='1' where id='" + aMedCaseId + "'").executeUpdate();
+        HospitalMedCase medCase = manager.find(HospitalMedCase.class, aMedCaseId);
+        StatisticStubStac.removeStatCardNumber(manager, context, medCase);
     }
 
     @Override
     public void preRecordDischarge(Long aMedCaseId, String aDischargeEpicrisis) {
 
-        saveDischargeEpicrisis(aMedCaseId, aDischargeEpicrisis, theManager);
+        saveDischargeEpicrisis(aMedCaseId, aDischargeEpicrisis, manager);
     }
 
     @Override
     public void updateDischargeDateByInformationBesk(String aIds, String aDate) {
         String[] ids = aIds.split(",");
         for (String id : ids) {
-            Object cnt = theManager.createNativeQuery("select count(*) from medcase where id='" + id + "' and dateStart<=to_date('" + aDate + "','dd.mm.yyyy') and dischargeTime is null and deniedHospitalizating_id is null")
+            Object cnt = manager.createNativeQuery("select count(*) from medcase where id='" + id + "' and dateStart<=to_date('" + aDate + "','dd.mm.yyyy') and dischargeTime is null and deniedHospitalizating_id is null")
                     .getSingleResult();
             Long cntL = ConvertSql.parseLong(cnt);
             if (cntL > 0L) {
-                theManager.createNativeQuery("update MedCase set dateFinish=to_date('" + aDate + "','dd.mm.yyyy') where id='" + id + "' and dtype='HospitalMedCase' and dischargeTime is null")
+                manager.createNativeQuery("update MedCase set dateFinish=to_date('" + aDate + "','dd.mm.yyyy') where id='" + id + "' and dtype='HospitalMedCase' and dischargeTime is null")
                         .executeUpdate();
             } else {
-                List<Object[]> list = theManager.createNativeQuery("select p.lastname||' '||p.firstname||' '||coalesce(p.middlename)||' '||to_char(p.birthday,'dd.mm.yyyy'),ss.code,case when sls.deniedHospitalizating_id is not null then 'при отказе от госпитализации дата выписки не ставится' when sls.dischargeTime is not null then 'Изменение даты выписки у оформленных историй болезни производится через выписку' when sls.dateStart>to_date('" + aDate + "','dd.mm.yyyy') then 'Дата выписки должна быть больше, чем дата поступления' else '' end from medcase sls left join patient p on p.id=sls.patient_id left join statisticstub ss on ss.id=sls.statisticstub_id where sls.id='" + id + "'")
+                List<Object[]> list = manager.createNativeQuery("select p.lastname||' '||p.firstname||' '||coalesce(p.middlename)||' '||to_char(p.birthday,'dd.mm.yyyy'),ss.code,case when sls.deniedHospitalizating_id is not null n 'при отказе от госпитализации дата выписки не ставится' when sls.dischargeTime is not null n 'Изменение даты выписки у оформленных историй болезни производится через выписку' when sls.dateStart>to_date('" + aDate + "','dd.mm.yyyy') n 'Дата выписки должна быть больше, чем дата поступления' else '' end from medcase sls left join patient p on p.id=sls.patient_id left join statisticstub ss on ss.id=sls.statisticstub_id where sls.id='" + id + "'")
                         //.setParameter("dat", date)
                         .getResultList();
                 if (!list.isEmpty()) {
@@ -1894,7 +1894,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
         if (aAddress[4] != null) {
             Long id1 = ConvertSql.parseLong(aAddress[4]);
-            List<Object[]> list = theManager.createNativeQuery("select a.addressid,a.fullname,a.name,att.shortName,a.parent_addressid from address2 a left join AddressType att on att.id=a.type_id where a.addressid=" + id1 + " order by a.addressid")
+            List<Object[]> list = manager.createNativeQuery("select a.addressid,a.fullname,a.name,att.shortName,a.parent_addressid from address2 a left join AddressType att on att.id=a.type_id where a.addressid=" + id1 + " order by a.addressid")
                     .setMaxResults(1)
                     .getResultList();
             if (!list.isEmpty()) {
@@ -1909,19 +1909,19 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
     @Override
     public void addressClear() {
-        theManager.createNativeQuery("update Address2 set fullname=null").executeUpdate();
+        manager.createNativeQuery("update Address2 set fullname=null").executeUpdate();
     }
 
     @Override
     public long addressUpdate(long id) {
         List<Object[]> list;
-        list = theManager.createNativeQuery("select a.addressid,a.fullname,a.name,att.shortName,a.parent_addressid from address2 a left join AddressType att on att.id=a.type_id where a.addressid>" + id + " and a.fullname is null order by a.addressid")
+        list = manager.createNativeQuery("select a.addressid,a.fullname,a.name,att.shortName,a.parent_addressid from address2 a left join AddressType att on att.id=a.type_id where a.addressid>" + id + " and a.fullname is null order by a.addressid")
                 .setMaxResults(450)
                 .getResultList();
         if (!list.isEmpty()) {
             for (Object[] adr : list) {
                 id = ConvertSql.parseLong(adr[0]);
-                addressInfo(theManager, id, adr);
+                addressInfo(manager, id, adr);
             }
         } else {
             id = -1;
@@ -1932,9 +1932,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     @Override
     public String getTypeDiagByAccoucheur() {
         StringBuilder ret = new StringBuilder();
-        List<VocPrimaryDiagnosis> prDiag = theManager.createQuery("from VocPrimaryDiagnosis where code=1").getResultList();
-        List<VocAcuityDiagnosis> actDiag = theManager.createQuery("from VocAcuityDiagnosis where code=1 or omcCode=1").getResultList();
-        List<VocDiagnosisRegistrationType> regTypeDiag = theManager.createQuery("from VocDiagnosisRegistrationType where code=4").getResultList();
+        List<VocPrimaryDiagnosis> prDiag = manager.createQuery("from VocPrimaryDiagnosis where code=1").getResultList();
+        List<VocAcuityDiagnosis> actDiag = manager.createQuery("from VocAcuityDiagnosis where code=1 or omcCode=1").getResultList();
+        List<VocDiagnosisRegistrationType> regTypeDiag = manager.createQuery("from VocDiagnosisRegistrationType where code=4").getResultList();
         if (!prDiag.isEmpty()) {
             VocPrimaryDiagnosis pr = prDiag.get(0);
             ret.append(pr.getId()).append("#").append(pr.getName()).append("#");
@@ -1960,7 +1960,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     public String findDoubleServiceByPatient(Long aMedService, Long aPatient, Long aService, String aDate) throws ParseException {
         StringBuilder sql = new StringBuilder();
         Date date = DateFormat.parseSqlDate(aDate);
-        sql.append("select smc.id,to_char(smc.dateExecute,'dd.mm.yyyy') as dateexecute,smc.timeExecute,vss.name,'Оказана в '|| case when p.DTYPE='DepartmentMedCase' then ' отделении '||d.name when p.DTYPE='HospitalMedCase' then 'приемном отделении ' else 'поликлинике' end from medcase as smc ")
+        sql.append("select smc.id,to_char(smc.dateExecute,'dd.mm.yyyy') as dateexecute,smc.timeExecute,vss.name,'Оказана в '|| case when p.DTYPE='DepartmentMedCase' n ' отделении '||d.name when p.DTYPE='HospitalMedCase' n 'приемном отделении ' else 'поликлинике' end from medcase as smc ")
                 .append(" left join medcase as p on p.id=smc.parent_id ")
                 .append(" left join mislpu as d on d.id=p.department_id ")
                 .append(" left join vocservicestream as vss on vss.id=smc.servicestream_id")
@@ -1968,7 +1968,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
         if (aMedService != null && aMedService > 0) {
             sql.append(" and smc.id!='").append(aMedService).append("'");
         }
-        List<Object[]> doubles = theManager.createNativeQuery(
+        List<Object[]> doubles = manager.createNativeQuery(
                 sql.toString())
                 .setParameter("pat", aPatient)
                 .setParameter("usl", aService)
@@ -1997,7 +1997,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     public String findDoubleOperationByPatient(Long aSurOperation, Long aParentMedCase, Long aOperation, String aDate) throws ParseException {
         StringBuilder sql = new StringBuilder();
         Date date = DateFormat.parseSqlDate(aDate);
-        sql.append("select so.id,to_char(so.operationDate,'dd.mm.yyyy'),so.operationTime,to_char(so.operationDateTo,'dd.mm.yyyy'),so.operationTimeTo,'Зарегистрирована в '|| case when p.DTYPE='DepartmentMedCase' then ' отделении '||d.name when p.DTYPE='HospitalMedCase' then 'приемном отделении ' else 'поликлинике' end ")
+        sql.append("select so.id,to_char(so.operationDate,'dd.mm.yyyy'),so.operationTime,to_char(so.operationDateTo,'dd.mm.yyyy'),so.operationTimeTo,'Зарегистрирована в '|| case when p.DTYPE='DepartmentMedCase' n ' отделении '||d.name when p.DTYPE='HospitalMedCase' n 'приемном отделении ' else 'поликлинике' end ")
                 .append(" from medcase as mc")
                 .append(" left join SurgicalOperation as so on so.patient_id=mc.patient_id")
                 .append(" left join medcase as p on p.id=so.medcase_id ")
@@ -2007,7 +2007,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
             sql.append(" and so.id!='").append(aSurOperation).append("'");
         }
 
-        List<Object[]> doubles = theManager.createNativeQuery(
+        List<Object[]> doubles = manager.createNativeQuery(
                 sql.toString())
                 .setParameter("mcid", aParentMedCase)
                 .setParameter("usl", aOperation)
@@ -2036,13 +2036,13 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
         String sql = "update MedCase set dischargeTime=null,dateFinish=null" +
                 " where (id=:idMC and DTYPE='HospitalMedCase')" +
                 " or (parent_id=:idMC and DTYPE='DepartmentMedCase' and dateFinish is not null)";
-        int result = theManager.createNativeQuery(sql).setParameter("idMC", aMedCaseId).executeUpdate();
+        int result = manager.createNativeQuery(sql).setParameter("idMC", aMedCaseId).executeUpdate();
         return "Запрос выполнен: " + result;
     }
 
     @Override
     public void setPatientByExternalMedservice(String aNumberDoc, String aOrderDate, String aPatient) {
-        theManager.createNativeQuery("update Document set patient_id='" + aPatient + "' where NumberDoc='" + aNumberDoc + "' and OrderDate=to_date('" + aOrderDate + "','dd.mm.yyyy')").executeUpdate();
+        manager.createNativeQuery("update Document set patient_id='" + aPatient + "' where NumberDoc='" + aNumberDoc + "' and OrderDate=to_date('" + aOrderDate + "','dd.mm.yyyy')").executeUpdate();
     }
 
     /**
@@ -2056,7 +2056,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
         String sql = "select mc.id,ml.name from MedCase as mc" +
                 " left join MisLpu as ml on ml.id=mc.department_id" +
                 " where mc.parent_id=:idsls and mc.DTYPE='DepartmentMedCase' and mc.dateFinish is null and mc.transferDate is null";
-        List<Object[]> list = theManager.createNativeQuery(sql).setParameter("idsls", aIdSls).getResultList();
+        List<Object[]> list = manager.createNativeQuery(sql).setParameter("idsls", aIdSls).getResultList();
         if (!list.isEmpty()) {
             StringBuilder ret = new StringBuilder();
             Object[] row = list.get(0);
@@ -2069,21 +2069,21 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
     @Override
     public Long getPatient(long aIdSsl) {
-        HospitalMedCase hospital = theManager.find(HospitalMedCase.class, aIdSsl);
+        HospitalMedCase hospital = manager.find(HospitalMedCase.class, aIdSsl);
         if (hospital == null) throw new IllegalArgumentException("Нет стационарного случая лечения с ИД " + aIdSsl);
         return hospital.getPatient().getId();
     }
 
     @Override
     public String getChangeStatCardNumber(Long aMedCase, String aNewStatCardNumber, boolean aAlwaysCreate) {
-        HospitalMedCase hospital = theManager.find(HospitalMedCase.class, aMedCase);
+        HospitalMedCase hospital = manager.find(HospitalMedCase.class, aMedCase);
         try {
             if (!aAlwaysCreate) {
                 if (hospital.getDeniedHospitalizating() != null) {
                     throw new IllegalArgumentException("Нельзя изменить номер стат.карты при отказе госпитализации");
                 }
             }
-            StatisticStubStac.changeStatCardNumber(aMedCase, aNewStatCardNumber, theManager, theContext);
+            StatisticStubStac.changeStatCardNumber(aMedCase, aNewStatCardNumber, manager, context);
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage());
         }
@@ -2092,9 +2092,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
     @Override
     public Collection<MedPolicyForm> listPolicies(Long aMedCase) {
-        HospitalMedCase hospital = theManager.find(HospitalMedCase.class, aMedCase);
+        HospitalMedCase hospital = manager.find(HospitalMedCase.class, aMedCase);
         List<MedPolicy> listPolicies = new ArrayList<>();
-        List<MedCaseMedPolicy> hospmp = theManager.createQuery("from MedCaseMedPolicy where medCase=:mc").setParameter("mc", hospital).getResultList();
+        List<MedCaseMedPolicy> hospmp = manager.createQuery("from MedCaseMedPolicy where medCase=:mc").setParameter("mc", hospital).getResultList();
         for (MedCaseMedPolicy mp : hospmp) {
             listPolicies.add(mp.getPolicies());
         }
@@ -2103,10 +2103,10 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
     @Override
     public Collection<MedPolicyForm> listPoliciesToAdd(Long aMedCase) {
-        HospitalMedCase hospital = theManager.find(HospitalMedCase.class, aMedCase);
-        List<Object[]> listPolicies = theManager.createNativeQuery("select p.id,count(case when mp.medCase_id='"
+        HospitalMedCase hospital = manager.find(HospitalMedCase.class, aMedCase);
+        List<Object[]> listPolicies = manager.createNativeQuery("select p.id,count(case when mp.medCase_id='"
                 + aMedCase
-                + "' then 1 else null end) from MedPolicy p left join MedCase_MedPolicy mp on p.id=mp.policies_id left join MedCase m on m.id=mp.medCase_id where p.patient_id='"
+                + "' n 1 else null end) from MedPolicy p left join MedCase_MedPolicy mp on p.id=mp.policies_id left join MedCase m on m.id=mp.medCase_id where p.patient_id='"
                 + hospital.getPatient().getId() + "' group by p.id")
                 .getResultList();
         List<MedPolicy> allPolicies = new ArrayList<>();
@@ -2114,7 +2114,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
             Long cnt = ConvertSql.parseLong(obj[1]);
             if (cnt == null || cnt.equals(0L)) {
                 Long pId = ConvertSql.parseLong(obj[0]);
-                MedPolicy p = theManager.find(MedPolicy.class, pId);
+                MedPolicy p = manager.find(MedPolicy.class, pId);
                 allPolicies.add(p);
             }
         }
@@ -2123,38 +2123,38 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
     @Override
     public void addPolicies(long aMedCaseId, long[] aPolicies) {
-        HospitalMedCase hospital = theManager.find(HospitalMedCase.class, aMedCaseId);
+        HospitalMedCase hospital = manager.find(HospitalMedCase.class, aMedCaseId);
         for (long policyId : aPolicies) {
             if (!checkExistsAttachedPolicy(aMedCaseId, policyId)) {
                 MedCaseMedPolicy mp = new MedCaseMedPolicy();
                 mp.setMedCase(hospital);
-                MedPolicy p = theManager.find(MedPolicy.class, policyId);
+                MedPolicy p = manager.find(MedPolicy.class, policyId);
                 mp.setPolicies(p);
-                theManager.persist(mp);
+                manager.persist(mp);
             }
         }
-        theManager.persist(hospital);
+        manager.persist(hospital);
     }
 
     private boolean checkExistsAttachedPolicy(long aMedCaseId, long aPolicy) {
         String sql = " select count(*) from MedCase_MedPolicy where medCase_id='" +
                 aMedCaseId +
                 "' and policies_id='" + aPolicy + "'";
-        Object res = theManager.createNativeQuery(sql).getSingleResult();
+        Object res = manager.createNativeQuery(sql).getSingleResult();
         return ConvertSql.parseLong(res) > 0L;
     }
 
     @Override
     public void removePolicies(long aMedCaseId, long[] aPolicies) {
         for (long policyId : aPolicies) {
-            theManager.createNativeQuery("delete from MedCase_MedPolicy where medCase_id='" +
+            manager.createNativeQuery("delete from MedCase_MedPolicy where medCase_id='" +
                     aMedCaseId + "' and policies_id='" + policyId + "'").executeUpdate();
         }
     }
 
     @Override
     public String getTemperatureCurve(long aMedCaseId) {
-        List<TemperatureCurve> list = theManager.createQuery("from TemperatureCurve where medCase_id=:medCase").setParameter("medCase", aMedCaseId).getResultList();
+        List<TemperatureCurve> list = manager.createQuery("from TemperatureCurve where medCase_id=:medCase").setParameter("medCase", aMedCaseId).getResultList();
 
         StringBuilder json = new StringBuilder();
         json.append("{\"childs\":[");

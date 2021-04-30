@@ -59,8 +59,6 @@ public class VocValueServiceBean implements IVocService, IVocInfoService {
 	    		}
         	} catch (Exception e) {
         		LOG.error("Error while initializing vocs: "+e.getMessage(),e);
-        		// HIDE ERROR to allow service starts
-        		// throw new IllegalStateException("Error while initializing vocs: "+e.getMessage(),e) ; 
         	}
     	}
     	
@@ -85,7 +83,7 @@ public class VocValueServiceBean implements IVocService, IVocInfoService {
 
 
     private VocContext createContext() {
-    	return new VocContext(theEntityManager, theSessionContext) ;
+    	return new VocContext(entityManager, sessionContext) ;
     }
     
     /**
@@ -104,10 +102,8 @@ public class VocValueServiceBean implements IVocService, IVocInfoService {
         return service ;
     }
 
-    private @PersistenceContext EntityManager theEntityManager ;
-//    private @PersistenceUnit  EntityManagerFactory theFactory;
-
-    private @Resource SessionContext theSessionContext;
+    private @PersistenceContext EntityManager entityManager ;
+    private @Resource SessionContext sessionContext;
 
 
 	public IVocContextService getVocService(String aVocKey) {

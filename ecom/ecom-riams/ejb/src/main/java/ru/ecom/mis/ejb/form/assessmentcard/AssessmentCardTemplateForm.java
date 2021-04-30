@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.assessmentcard;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.assessmentcard.AssessmentCardTemplate;
@@ -17,40 +18,37 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Вид карты оценки")
 @WebTrail(comment = "Вид карты оценки", nameProperties= "name", view="entityView-mis_assessmentCardTemplate.do" ,list = "entityList-mis_assessmentCardTemplate.do")
 @EntityFormSecurityPrefix("/Policy/Mis/AssessmentCard")
+@Setter
 public class AssessmentCardTemplateForm extends IdEntityForm{
 	
 	/** Название */
 	@Comment("Название")
 	@Required @Persist
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
+	public String getName() {return name;}
 	/** Название */
-	private String theName;
+	private String name;
 	
 	
 	/** Группировать параметры по группам */
 	@Comment("Группировать параметры по группам")
 	@Persist
-	public Boolean	getIsGroupParameters() {return theIsGroupParameters;}
-	public void setIsGroupParameters(Boolean aIsGroupParameters) {theIsGroupParameters = aIsGroupParameters;}
+	public Boolean	getIsGroupParameters() {return isGroupParameters;}
 	/** Группировать параметры по группам */
-	private Boolean theIsGroupParameters;	
+	private Boolean isGroupParameters;	
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DateString @DoDateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	public String getCreateDate() {return createDate;}
 
 	/** Пользователь создавший запись */
 	@Comment("Пользователь создавший запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 
 	/** Пользователь создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -24,6 +25,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 		,WorkCalendarWeekDaysAlgorithmForm.class
 })
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/WorkCalendar/Pattern/Algorithm")
+@Setter
 public class WorkCalendarAlgorithmForm extends IdEntityForm{
 	/**
 	 * Шаблон рабочего календаря
@@ -31,35 +33,24 @@ public class WorkCalendarAlgorithmForm extends IdEntityForm{
 	@Comment("Шаблон рабочего календаря")
 	@Persist @Required
 	public Long getPattern() {
-		return thePattern;
-	}
-	public void setPattern(Long aPattern) {
-		thePattern = aPattern;
+		return pattern;
 	}
 	@Persist
 	public String getInfoClass() {
-		return theInfoClass;
-	}
-	
-	public void setInfoClass(String aInfoClass) {
-		theInfoClass = aInfoClass;
+		return infoClass;
 	}
 	
 	/** infoClass */
-	private String theInfoClass;
+	private String infoClass;
 	@Persist
 	public String getInfo() {
-		return theInfo;
-	}
-
-	public void setInfo(String aInfo) {
-		theInfo = aInfo;
+		return info;
 	}
 
 	/** info */
-	private String theInfo;
+	private String info;
 	/**
 	 * Шаблон рабочего календаря
 	 */
-	private Long thePattern;
+	private Long pattern;
 }

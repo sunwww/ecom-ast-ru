@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.disability;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentExportStatus;
 import ru.ecom.mis.ejb.domain.disability.voc.VocAnnulReason;
@@ -16,99 +18,59 @@ import java.sql.Time;
  */
 @Comment("Сведения о номере больничного листа")
 @Entity
+@Getter
+@Setter
 public class ElectronicDisabilityDocumentNumber extends BaseEntity {
 
     /** Номер электронного больничного листа */
-    @Comment("Номер электронного больничного листа")
-    public String getNumber() {return theNumber;}
-    public void setNumber(String aNumber) {theNumber = aNumber;}
-    /** Номер электронного больничного листа */
-    private String theNumber ;
+    private String number ;
 
     /** Документ нетрудоспособности */
     @Comment("Документ нетрудоспособности")
     @OneToOne
-    public DisabilityDocument getDisabilityDocument() {return theDisabilityDocument;}
-    public void setDisabilityDocument(DisabilityDocument aDisabilityDocument) {theDisabilityDocument = aDisabilityDocument;}
+    public DisabilityDocument getDisabilityDocument() {return disabilityDocument;}
     /** Документ нетрудоспособности */
-    private DisabilityDocument theDisabilityDocument ;
+    private DisabilityDocument disabilityDocument ;
 
     /** Пользователь, занявший номер ЭЛН */
-    @Comment("Пользователь, занявший номер ЭЛН")
-    public String getUsername() {return theUsername;}
-    public void setUsername(String aUsername) {theUsername = aUsername;}
-    /** Пользователь, занявший номер ЭЛН */
-    private String theUsername ;
+    private String username ;
 
     /** Статус экспорта */
     @Comment("Статус экспорта")
     @ManyToOne
-    public VocDisabilityDocumentExportStatus getStatus() {return theStatus;}
-    public void setStatus(VocDisabilityDocumentExportStatus aStatus) {theStatus = aStatus;}
+    public VocDisabilityDocumentExportStatus getStatus() {return status;}
     /** Статус экспорта */
-    private VocDisabilityDocumentExportStatus theStatus ;
+    private VocDisabilityDocumentExportStatus status ;
 
     /** Дата последнего экспорта */
-    @Comment("Дата последнего экспорта")
-    public Date getExportDate() {return theExportDate;}
-    public void setExportDate(Date aExportDate) {theExportDate = aExportDate;}
-    /** Дата последнего экспорта */
-    private Date theExportDate ;
+    private Date exportDate ;
     
     /** Время последнего экспорта */
-    @Comment("Время последнего экспорта")
-    public Time getExportTime() {return theExportTime;}
-    public void setExportTime(Time aExportTime) {theExportTime = aExportTime;}
-    private Time theExportTime;
+    private Time exportTime;
 
 
     /** Дата резерва */
-    @Comment("Дата резерва")
-    public Date getReserveDate() {return theReserveDate;}
-    public void setReserveDate(Date aReserveDate) {theReserveDate = aReserveDate;}
-    /** Дата резерва */
-    private Date theReserveDate ;
+    private Date reserveDate ;
 
     /** Время резерва */
-    @Comment("Время резерва")
-    public Time getReserveTime() {return theReserveTime;}
-    public void setReserveTime(Time aReserveTime) {theReserveTime = aReserveTime;}
-    /** Время резерва */
-    private Time theReserveTime ;
+    private Time reserveTime ;
 
     /** Дата получения номера от ФСС */
-    @Comment("Дата получения номера от ФСС")
-    public Date getCreateDate() {return theCreateDate;}
-    public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-    /** Дата получения номера от ФСС */
-    private Date theCreateDate ;
+    private Date createDate ;
 
     /** Последний ХЕШ ЭЛН */
-    @Comment("Последний ХЕШ ЭЛН")
-    public String getLastHash() {return theLastHash;}
-    public void setLastHash(String aLastHash) {theLastHash = aLastHash;}
-    /** Последний ХЕШ ЭЛН */
-    private String theLastHash ;
+    private String lastHash ;
 
     /** Дата аннулирования документа */
-    @Comment("Дата аннулирования документа ")
-    public Date getAnnulDate() {return theAnnulDate;}
-    public void setAnnulDate(Date aAnnulDate) {theAnnulDate = aAnnulDate;}
-    /** Дата аннулирования документа */
-    private Date theAnnulDate ;
+    private Date annulDate ;
 
     /** Комментарий */
-    @Comment("Комментарий")
-    public String getComment() {return theComment;}
-    public void setComment(String aComment) {theComment = aComment;}
-    /** Комментарий */
-    private String theComment ;
+    private String comment ;
 
     /** Причина аннулирования */
     @Comment("Причина аннулирования")
     @OneToOne
-    public VocAnnulReason getAnnulReason() {return theAnnulReason;}
-    public void setAnnulReason(VocAnnulReason aAnnulReason) {theAnnulReason = aAnnulReason;}
+    public VocAnnulReason getAnnulReason() {return annulReason;}
     /** Причина аннулирования */
-    private VocAnnulReason theAnnulReason ;
+    private VocAnnulReason annulReason ;
 }

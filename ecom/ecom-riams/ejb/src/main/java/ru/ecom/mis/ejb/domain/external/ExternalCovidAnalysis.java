@@ -2,6 +2,8 @@ package ru.ecom.mis.ejb.domain.external;
 
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvDate;
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -15,6 +17,8 @@ import java.sql.Time;
 @AIndexes(value = {
         @AIndex(properties={"uniqNumber"})
 })
+@Getter
+@Setter
 //TODO Убрать после изчезновения ковида
 public class ExternalCovidAnalysis extends BaseEntity {
     @CsvBindByName(column = "firstname")
@@ -46,118 +50,6 @@ public class ExternalCovidAnalysis extends BaseEntity {
     String createUsername;
     Time createTime;
     String uniqNumber;
-
-    public String getUniqNumber() {
-        return uniqNumber;
-    }
-
-    public void setUniqNumber(String uniqNumber) {
-        this.uniqNumber = uniqNumber;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
-    public String getCreateUsername() {
-        return createUsername;
-    }
-
-    public void setCreateUsername(String createUsername) {
-        this.createUsername = createUsername;
-    }
-
-    public Time getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Time createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public String getMiddlename() {
-        return middlename;
-    }
-
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public String getResultText() {
-        return resultText;
-    }
-
-    public Date getDateDirect() {
-        return dateDirect;
-    }
-
-    public Date getDateResult() {
-        return dateResult;
-    }
-
-    public String getProtocolNumber() {
-        return protocolNumber;
-    }
-
-    public Date getDateProtocol() {
-        return dateProtocol;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public void setMiddlename(String middlename) {
-        this.middlename = middlename;
-    }
-
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
-
-    public void setResultText(String resultText) {
-        this.resultText = resultText;
-    }
-
-    public void setDateDirect(Date dateDirect) {
-        this.dateDirect = dateDirect;
-    }
-
-    public void setDateResult(Date dateResult) {
-        this.dateResult = dateResult;
-    }
-
-    public void setProtocolNumber(String protocolNumber) {
-        this.protocolNumber = protocolNumber;
-    }
-
-    public void setDateProtocol(Date dateProtocol) {
-        this.dateProtocol = dateProtocol;
-    }
-
-    public void setLaboratory(String laboratory) {
-        this.laboratory = laboratory;
-    }
-
-    public String getLaboratory() {
-        return laboratory;
-    }
 
     @PrePersist
     private void prePersist() {

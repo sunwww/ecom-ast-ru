@@ -15,17 +15,17 @@ import javax.persistence.PersistenceUnit;
 public class LiveServiceBean implements ILiveService{
 
 	public EntityManagerFactory getEntityManagerFactory() {
-		return theManagerFactory ;
+		return managerFactory ;
 	}
 	
 	public String getUsername() {
-		return theContext.getCallerPrincipal().getName() ;
+		return context.getCallerPrincipal().getName() ;
 	}
 	
 
 	
-	private @PersistenceUnit EntityManagerFactory theManagerFactory;	
-	private @Resource SessionContext theContext;
+	private @PersistenceUnit EntityManagerFactory managerFactory;	
+	private @Resource SessionContext context;
 	
 
 	

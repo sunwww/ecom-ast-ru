@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractRule;
@@ -20,6 +21,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Договорное правило", nameProperties= {"id","dateFrom","dateTo"}, list="entityParentList-contract_rule.do", view="entityParentView-contract_rule.do")
 @Parent(property="contract", parentForm=MedContractForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ContractRule")
+@Setter
 public class ContractRuleForm extends IdEntityForm{
 	/**
 	 * Договор
@@ -27,135 +29,108 @@ public class ContractRuleForm extends IdEntityForm{
 	@Comment("Договор")
 	@Persist
 	public Long getContract() {
-		return theContract;
-	}
-	public void setContract(Long aContract) {
-		theContract = aContract;
+		return contract;
 	}
 	/**
 	 * Договор
 	 */
-	private Long theContract;
+	private Long contract;
 	/**
 	 * Нозологическая группа
 	 */
 	@Comment("Нозологическая группа")
 	@Persist
 	public Long getNosologyGroup() {
-		return theNosologyGroup;
-	}
-	public void setNosologyGroup(Long aNosologyGroup) {
-		theNosologyGroup = aNosologyGroup;
+		return nosologyGroup;
 	}
 	/**
 	 * Нозологическая группа
 	 */
-	private Long theNosologyGroup;
+	private Long nosologyGroup;
 	/**
 	 * Группа медицинских услуг
 	 */
 	@Comment("Группа медицинских услуг")
 	@Persist
 	public Long getMedServiceGroup() {
-		return theMedServiceGroup;
-	}
-	public void setMedServiceGroup(Long aMedServiceGroup) {
-		theMedServiceGroup = aMedServiceGroup;
+		return medServiceGroup;
 	}
 	/**
 	 * Группа медицинских услуг
 	 */
-	private Long theMedServiceGroup;
+	private Long medServiceGroup;
 	/**
 	 * Группа гарантийных документов
 	 */
 	@Comment("Группа гарантийных документов")
 	@Persist
 	public Long getGuaranteeGroup() {
-		return theGuaranteeGroup;
-	}
-	public void setGuaranteeGroup(Long aGuaranteeGroup) {
-		theGuaranteeGroup = aGuaranteeGroup;
+		return guaranteeGroup;
 	}
 	/**
 	 * Группа гарантийных документов
 	 */
-	private Long theGuaranteeGroup;
+	private Long guaranteeGroup;
 	/**
 	 * Период действия
 	 */
 	@Comment("Период действия")
 	@Persist
 	public Long getPeriod() {
-		return thePeriod;
-	}
-	public void setPeriod(Long aPeriod) {
-		thePeriod = aPeriod;
+		return period;
 	}
 	/**
 	 * Период действия
 	 */
-	private Long thePeriod;
+	private Long period;
 	/**
 	 * Количество медицинских услуг
 	 */
 	@Comment("Количество медицинских услуг")
 	@Persist
 	public Integer getMedserviceAmount() {
-		return theMedserviceAmount;
-	}
-	public void setMedserviceAmount(Integer aMedserviceAmount) {
-		theMedserviceAmount = aMedserviceAmount;
+		return medserviceAmount;
 	}
 	/**
 	 * Количество медицинских услуг
 	 */
-	private Integer theMedserviceAmount;
+	private Integer medserviceAmount;
 	/**
 	 * Количество курсов
 	 */
 	@Comment("Количество курсов")
 	@Persist
 	public Integer getCourseAmount() {
-		return theCourseAmount;
-	}
-	public void setCourseAmount(Integer aCourseAmount) {
-		theCourseAmount = aCourseAmount;
+		return courseAmount;
 	}
 	/**
 	 * Количество курсов
 	 */
-	private Integer theCourseAmount;
+	private Integer courseAmount;
 	/**
 	 * Количество медицинских услуг на курс
 	 */
 	@Comment("Количество медицинских услуг на курс")
 	@Persist
 	public Integer getMedserviceCourseAmount() {
-		return theMedserviceCourseAmount;
-	}
-	public void setMedserviceCourseAmount(Integer aMedserviceCourseAmount) {
-		theMedserviceCourseAmount = aMedserviceCourseAmount;
+		return medserviceCourseAmount;
 	}
 	/**
 	 * Количество медицинских услуг на курс
 	 */
-	private Integer theMedserviceCourseAmount;
+	private Integer medserviceCourseAmount;
 	/**
 	 * Разрешение
 	 */
 	@Comment("Разрешение")
 	@Persist @Required
 	public Long getPermission() {
-		return thePermission;
-	}
-	public void setPermission(Long aPermission) {
-		thePermission = aPermission;
+		return permission;
 	}
 	/**
 	 * Разрешение
 	 */
-	private Long thePermission;
+	private Long permission;
 	/**
 	 * Дата начала действия
 	 */
@@ -163,15 +138,12 @@ public class ContractRuleForm extends IdEntityForm{
 	@Persist
 	@DateString @DoDateString
 	public String getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(String aDateFrom) {
-		theDateFrom = aDateFrom;
+		return dateFrom;
 	}
 	/**
 	 * Дата начала действия
 	 */
-	private String theDateFrom;
+	private String dateFrom;
 	/**
 	 * Дата окончания действия
 	 */
@@ -179,49 +151,41 @@ public class ContractRuleForm extends IdEntityForm{
 	@Persist
 	@DateString @DoDateString
 	public String getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(String aDateTo) {
-		theDateTo = aDateTo;
+		return dateTo;
 	}
 	/**
 	 * Дата окончания действия
 	 */
-	private String theDateTo;
+	private String dateTo;
 	/**
 	 * Обслуживаемая персона
 	 */
 	@Comment("Обслуживаемая персона")
 	@Persist
 	public Long getServedPerson() {
-		return theServedPerson;
-	}
-	public void setServedPerson(Long aServedPerson) {
-		theServedPerson = aServedPerson;
+		return servedPerson;
 	}
 	/**
 	 * Обслуживаемая персона
 	 */
-	private Long theServedPerson;
+	private Long servedPerson;
 	
 	/** Название правила */
 	@Comment("Название правила")
 	@Persist @Required @DoUpperCase
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
+	public String getName() {return name;}
 
 	/** Название правила */
-	private String theName;
+	private String name;
 	
 	/**
 	 * Договорная персона
 	 */
 	@Comment("Договорная персона")
-	public Long getPerson() {return thePerson;}
-	public void setPerson(Long aPerson) {thePerson = aPerson;}
+	public Long getPerson() {return person;}
 	/**
 	 * Договорная персона
 	 */
-	private Long thePerson;
+	private Long person;
 
 }

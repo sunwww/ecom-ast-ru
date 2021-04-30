@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.uc.privilege.form.voc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.uc.privilege.domain.voc.VocLicensedName;
@@ -14,20 +15,19 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormPersistance(clazz= VocLicensedName.class)
 @WebTrail(comment = "Лекарственное средство (патен.)", nameProperties= "name", view="entityView-voc_drugLN.do")
 @EntityFormSecurityPrefix("/Policy/Voc/VocDrugLicensedName")
+@Setter
 public class VocDrugLicensedNameForm extends IdEntityForm {
 	/** Название */
 	@Comment("Название")
 	@Persist @Required 
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
+	public String getName() {return name;}
 
 	@Comment("Внешний код")
 	@Persist
-	public String getCode() {return theCode;}
-	public void setCode(String aCode) {theCode = aCode;}
+	public String getCode() {return code;}
 
 	/** Внешний код */
-	private String theCode;
+	private String code;
 	/** Название */
-	private String theName;
+	private String name;
 }

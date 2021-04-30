@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -13,6 +15,8 @@ import javax.persistence.Table;
 	@Comment("Шаблон резерва рабочего календаря")
 @Entity
 @Table(schema="SQLUser")
+	@Getter
+	@Setter
 public class WorkCalendarReservePattern extends BaseEntity{
 	/**
 	 * Шаблон времени
@@ -20,13 +24,10 @@ public class WorkCalendarReservePattern extends BaseEntity{
 	@Comment("Шаблон времени")
 	@ManyToOne
 	public WorkCalendarTimePattern getTimePattern() {
-		return theTimePattern;
-	}
-	public void setTimePattern(WorkCalendarTimePattern aTimePattern) {
-		theTimePattern = aTimePattern;
+		return timePattern;
 	}
 	/**
 	 * Шаблон времени
 	 */
-	private WorkCalendarTimePattern theTimePattern;
+	private WorkCalendarTimePattern timePattern;
 }

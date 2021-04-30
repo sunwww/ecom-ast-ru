@@ -61,14 +61,15 @@ public class QuickQueryServiceBean implements IQuickQueryService {
 			DataSource dataSource = ApplicationDataSourceHelper.getInstance().findDataSource() ;
 			ret.setName(config.getName());
 			for(ConfigQuery configQuery : config.getQueries()) {
-				Connection con = dataSource.getConnection() ;
-				try {
-					QuickQuery query = new QuickQuery() ;
-					query.setName(configQuery.getName()) ;
-					executeQuery(con, query,configQuery,config) ;
-					ret.getQueries().add(query) ;
-				} finally {
-					con.close() ;
+				try (Connection con = dataSource.getConnection()) {
+					try {
+						QuickQuery query = new QuickQuery();
+						query.setName(configQuery.getName());
+						executeQuery(con, query, configQuery, config);
+						ret.getQueries().add(query);
+					} finally {
+						con.close();
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -82,8 +83,8 @@ public class QuickQueryServiceBean implements IQuickQueryService {
 		String ret = aQuery ;
 		ConfigWhereClause cwc = aConfig.getWhereClauseConfig() ;
 		if(cwc.getWhereClause()!=null) {
-			QuickQueryContext context = new QuickQueryContext(theManager, theContext) ;
-			ret = ret.replace("${where."+cwc.getKey()+"}", cwc.getWhereClause().createWhereClause(context)) ;
+			QuickQueryContext quickQueryContext = new QuickQueryContext(manager, context) ;
+			ret = ret.replace("${where."+cwc.getKey()+"}", cwc.getWhereClause().createWhereClause(quickQueryContext)) ;
 		}
 		LOG.info("query ="+ret) ;
 		return ret ;
@@ -130,6 +131,6 @@ public class QuickQueryServiceBean implements IQuickQueryService {
 		return ret ;
 	}
 	
-	private @PersistenceContext EntityManager theManager ;  
-	private @Resource SessionContext theContext;
+	private @PersistenceContext EntityManager manager ;  
+	private @Resource SessionContext context;
 }

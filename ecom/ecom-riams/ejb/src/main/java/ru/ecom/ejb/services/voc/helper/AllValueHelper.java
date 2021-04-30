@@ -22,13 +22,13 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
 
 
     public AllValueHelper(IAllValue aAllValue) {
-        theAllValue = aAllValue;
+        allValue = aAllValue;
     }
 
     public String getNameById(String aId, String aVocName, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
         AllValueContext ctx = new AllValueContext(
                 aAdditional, aContext.getEntityManager(), aContext.getSessionContext());
-        return theAllValue.getNameById(aId, aVocName, aAdditional, ctx);
+        return allValue.getNameById(aId, aVocName, aAdditional, ctx);
     }
 
     public Collection<VocValue> findVocValueByQuery(String aVocName, String aQuery, int aCount, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
@@ -101,7 +101,7 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
     private Collection<VocValue> listAll(VocAdditional aAdditional, VocContext aContext) {
         AllValueContext ctx = new AllValueContext(
                 aAdditional, aContext.getEntityManager(), aContext.getSessionContext());
-        return theAllValue.listAll(ctx);
+        return allValue.listAll(ctx);
     }
 
     public void destroy() {
@@ -109,5 +109,5 @@ public class AllValueHelper implements IVocContextService, IVocServiceManagement
     }
 
 
-    private final IAllValue theAllValue;
+    private final IAllValue allValue;
 }

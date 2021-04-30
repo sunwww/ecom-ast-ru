@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.psychiatry;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.psychiatry.PsychiatricExamination;
@@ -20,6 +21,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Психиатрическая экспертиза", nameProperties= "actNumber",list="entityParentList-psych_examination.do", listComment="список по пациенту", view="entityParentView-psych_examination.do")
 @Parent(property="careCard", parentForm=PsychiatricCareCardForm.class, orderBy="expertDecision")
 @EntityFormSecurityPrefix("/Policy/Mis/Psychiatry/CareCard/PsychiatricExamination")
+@Setter
 public class PsychiatricExaminationForm extends IdEntityForm {
 	 /**
 	  * Номер акта
@@ -27,204 +29,158 @@ public class PsychiatricExaminationForm extends IdEntityForm {
 	 @Comment("Номер акта")
 	 @Persist @Required
 	 public String getActNumber() {
-	  return theActNumber;
-	 }
-	 public void setActNumber(String aActNumber) {
-	  theActNumber = aActNumber;
+	  return actNumber;
 	 }
 	 /**
 	  * Номер акта
 	  */
-	 private String theActNumber;
+	 private String actNumber;
 	 /**
 	  * Дата экспертизы
 	  */
 	 @Comment("Дата экспертизы")
 	 @Persist @DoDateString @DateString @Required
 	 public String getExaminationDate() {
-	  return theExaminationDate;
-	 }
-	 public void setExaminationDate(String aExaminationDate) {
-	  theExaminationDate = aExaminationDate;
+	  return examinationDate;
 	 }
 	 /**
 	  * Дата экспертизы
 	  */
-	 private String theExaminationDate;
+	 private String examinationDate;
 	 /**
 	  * Экспертное заключение
 	  */
 	 @Comment("Экспертное заключение")
 	 @Persist @Required
 	 public String getExpertDecision() {
-	  return theExpertDecision;
-	 }
-	 public void setExpertDecision(String aExpertDecision) {
-	  theExpertDecision = aExpertDecision;
+	  return expertDecision;
 	 }
 	 /**
 	  * Экспертное заключение
 	  */
-	 private String theExpertDecision;
+	 private String expertDecision;
 	 /**
 	  * Докладчик
 	  */
 	 @Comment("Докладчик")
 	 @Persist @DoUpperCase @Required
 	 public String getReporter() {
-	  return theReporter;
-	 }
-	 public void setReporter(String aReporter) {
-	  theReporter = aReporter;
+	  return reporter;
 	 }
 	 /**
 	  * Докладчик
 	  */
-	 private String theReporter;
+	 private String reporter;
 	 /**
 	  * Описание акта
 	  */
 	 @Comment("Описание акта")
 	 @Persist
 	 public String getActNotes() {
-	  return theActNotes;
-	 }
-	 public void setActNotes(String aActNotes) {
-	  theActNotes = aActNotes;
+	  return actNotes;
 	 }
 	 /**
 	  * Описание акта
 	  */
-	 private String theActNotes;
+	 private String actNotes;
 	 /**
 	  * Карта обратившихся за психиатрической помощью
 	  */
 	 @Comment("Карта обратившихся за психиатрической помощью")
 	 @Persist @Required
 	 public Long getCareCard() {
-	  return theCareCard;
-	 }
-	 public void setCareCard(Long aCareCard) {
-	  theCareCard = aCareCard;
+	  return careCard;
 	 }
 	 /**
 	  * Карта обратившихся за психиатрической помощью
 	  */
-	 private Long theCareCard;
+	 private Long careCard;
 	 /**
 	  * Вид экспертизы
 	  */
 	 @Comment("Вид экспертизы")
 	 @Persist @Required
 	 public Long getKind() {
-	  return theKind;
-	 }
-	 public void setKind(Long aKind) {
-	  theKind = aKind;
+	  return kind;
 	 }
 	 /**
 	  * Вид экспертизы
 	  */
-	 private Long theKind;
+	 private Long kind;
 	 /**
 	  * Вид уголовного дела
 	  */
 	 @Comment("Вид уголовного дела")
 	 @Persist @Required
 	 public Long getCriminalCase() {
-	  return theCriminalCase;
-	 }
-	 public void setCriminalCase(Long aCriminalCase) {
-	  theCriminalCase = aCriminalCase;
+	  return criminalCase;
 	 }
 	 /**
 	  * Вид уголовного дела
 	  */
-	 private Long theCriminalCase;
+	 private Long criminalCase;
 	 /**
 	  * Статья уголовного кодекса
 	  */
 	 @Comment("Статья уголовного кодекса")
 	 @Persist @Required
 	 public Long getCriminalCodeArtical() {
-	  return theCriminalCodeArtical;
-	 }
-	 public void setCriminalCodeArtical(Long aCriminalCodeArtical) {
-	  theCriminalCodeArtical = aCriminalCodeArtical;
+	  return criminalCodeArtical;
 	 }
 	 /**
 	  * Статья уголовного кодекса
 	  */
-	 private Long theCriminalCodeArtical;
+	 private Long criminalCodeArtical;
 	 /**
 	  * Вид участия в экспертизе
 	  */
 	 @Comment("Вид участия в экспертизе")
 	 @Persist @Required
 	 public Long getPaticipation() {
-	  return thePaticipation;
-	 }
-	 public void setPaticipation(Long aPaticipation) {
-	  thePaticipation = aPaticipation;
+	  return paticipation;
 	 }
 	 /**
 	  * Вид участия в экспертизе
 	  */
-	 private Long thePaticipation;
+	 private Long paticipation;
 	 
 	 /** Вид уголовного дела (ИНФО) */
 	@Comment("Вид уголовного дела (ИНФО)")
 	@Persist
 	public String getCriminalCaseInfo() {
-		return theCriminalCaseInfo;
-	}
-
-	public void setCriminalCaseInfo(String aCriminalCaseInfo) {
-		theCriminalCaseInfo = aCriminalCaseInfo;
+		return criminalCaseInfo;
 	}
 
 	/** Вид уголовного дела (ИНФО) */
-	private String theCriminalCaseInfo;
+	private String criminalCaseInfo;
 	
 	/** Вид уголовного дела (ИНФО) */
 	@Comment("Вид уголовного дела (ИНФО)")
 	@Persist
 	public String getCriminalCodeArticalInfo() {
-		return theCriminalCodeArticalInfo;
-	}
-
-	public void setCriminalCodeArticalInfo(String aCriminalCodeArticalInfo) {
-		theCriminalCodeArticalInfo = aCriminalCodeArticalInfo;
+		return criminalCodeArticalInfo;
 	}
 
 	/** Вид уголовного дела (ИНФО) */
-	private String theCriminalCodeArticalInfo;
+	private String criminalCodeArticalInfo;
 	
 	/** Вид экспертизы */
 	@Comment("Вид экспертизы")
 	@Persist
 	public String getKindInfo() {
-		return theKindInfo;
-	}
-
-	public void setKindInfo(String aKindInfo) {
-		theKindInfo = aKindInfo;
+		return kindInfo;
 	}
 
 	/** Вид экспертизы */
-	private String theKindInfo;
+	private String kindInfo;
 	
 	/** Вид участия в экспертизе */
 	@Comment("Вид участия в экспертизе")
 	@Persist
 	public String getPaticipationInfo() {
-		return thePaticipationInfo;
-	}
-
-	public void setPaticipationInfo(String aPaticipationInfo) {
-		thePaticipationInfo = aPaticipationInfo;
+		return paticipationInfo;
 	}
 
 	/** Вид участия в экспертизе */
-	private String thePaticipationInfo;
+	private String paticipationInfo;
 }

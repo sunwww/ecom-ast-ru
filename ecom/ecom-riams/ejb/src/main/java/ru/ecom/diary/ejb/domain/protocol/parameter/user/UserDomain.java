@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -16,28 +18,21 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  */
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class UserDomain extends BaseEntity{
 	
 	/** Код */
-	@Comment("Код")
-	public String getCode() {return theCode;}
-	public void setCode(String aCode) {theCode = aCode;}
-	/** Код */
-	private String theCode;
+	private String code;
 	
-	/** Название */
-	@Comment("Название")
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
 
 	/** Список значений */
 	@Comment("Список значений")
 	@OneToMany(mappedBy="domain")
-	public List<UserValue> getValues() {return theValues;}
-	public void setValues(List<UserValue> aValues) {theValues = aValues;}
+	public List<UserValue> getValues() {return values;}
 
 	/** Список значений */
-	private List<UserValue> theValues;
+	private List<UserValue> values;
 	/** Название */
-	private String theName;
+	private String name;
 }

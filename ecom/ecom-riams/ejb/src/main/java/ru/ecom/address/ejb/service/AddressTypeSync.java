@@ -16,7 +16,7 @@ public class AddressTypeSync implements ISync {
 
     @SuppressWarnings("unchecked")
 	private AddressType findByShortName(String aShortName) {
-        List<AddressType> list = theEntityManager.createQuery("from AddressType where shortName = :shortName")
+        List<AddressType> list = entityManager.createQuery("from AddressType where shortName = :shortName")
                 .setParameter("shortName", aShortName).getResultList();
         return list!=null && list.size()==1 ? list.iterator().next() : null ;
     }
@@ -24,9 +24,9 @@ public class AddressTypeSync implements ISync {
 
     @SuppressWarnings("unchecked")
 	public void sync(SyncContext aContext) {
-        theEntityManager = aContext.getEntityManager();
+        entityManager = aContext.getEntityManager();
 //        aContext.getTransactionManager().begin();
-        List<KladrSocr> list = theEntityManager.createQuery("from KladrSocr").getResultList();
+        List<KladrSocr> list = entityManager.createQuery("from KladrSocr").getResultList();
         IMonitor monitor = aContext.getMonitorService().startMonitor(aContext.getMonitorId(), "Синхронизация ",list.size()) ;
         for (KladrSocr socr : list) {
             monitor.advice(1);
@@ -37,12 +37,12 @@ public class AddressTypeSync implements ISync {
             }
             type.setName(socr.getName());
             type.setShortName(socr.getShortName());
-            theEntityManager.persist(type);
+            entityManager.persist(type);
         }
         monitor.finish(aContext.getImportTime().getId()+"");
-        theEntityManager = null ;
+        entityManager = null ;
 //        aContext.getTransactionManager().commit();
     }
 
-    private EntityManager theEntityManager ;
+    private EntityManager entityManager ;
 }

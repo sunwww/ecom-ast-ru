@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -18,63 +20,32 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
 	@AIndex(properties="transfusion")
     })
+
+@Getter
+@Setter
 public class TransfusionMonitoring extends BaseEntity{
-	/** Кол-во часов */
-	@Comment("Кол-во часов")
-	public Integer getHourAfterTransfusion() {return theHourAfterTransfusion;}
-	public void setHourAfterTransfusion(Integer aHourAfterTransfusion) {theHourAfterTransfusion = aHourAfterTransfusion;}
-
-	/** Частота пульса */
-	@Comment("Частота пульса")
-	public Integer getPulseRate() {return thePulseRate;}
-	public void setPulseRate(Integer aPulseRate) {thePulseRate = aPulseRate;}
-
-	/** Температура */
-	@Comment("Температура")
-	public BigDecimal getTemperature() {return theTemperature;}
-	public void setTemperature(BigDecimal aTemperature) {theTemperature = aTemperature;}
-
-	/** Артериальное давление (верхнее) */
-	@Comment("Артериальное давление (верхнее)")
-	public Integer getBloodPressureTop() {return theBloodPressureTop;}
-	public void setBloodPressureTop(Integer aBloodPressureTop) {theBloodPressureTop = aBloodPressureTop;}
-
-	/** Артериальное давление (нижнее) */
-	@Comment("Артериальное давление (нижнее)")
-	public Integer getBloodPressureLower() {return theBloodPressureLower;}
-	public void setBloodPressureLower(Integer aBloodPressureLower) {theBloodPressureLower = aBloodPressureLower;}
-
 	/** Переливание */
 	@Comment("Переливание")
 	@OneToOne
-	public Transfusion getTransfusion() {return theTransfusion;}
-	public void setTransfusion(Transfusion aTransfusion) {theTransfusion = aTransfusion;}
-
+	public Transfusion getTransfusion() {return transfusion;}
 	/** Моча */
 	@Comment("Моча")
 	@OneToOne
-	public VocUrineColor getUrineColor() {return theUrineColor;}
-	public void setUrineColor(VocUrineColor aUrineColor) {theUrineColor = aUrineColor;}
-
-	/** Диурез */
-	@Comment("Диурез")
-	public Integer getDiuresis() {return theDiuresis;}
-	public void setDiuresis(Integer aDiuresis) {theDiuresis = aDiuresis;}
-
+	public VocUrineColor getUrineColor() {return urineColor;}
 	/** Моча */
-	private VocUrineColor theUrineColor;
+	private VocUrineColor urineColor;
 	/** Переливание */
-	private Transfusion theTransfusion;
+	private Transfusion transfusion;
 	/** Артериальное давление (нижнее) */
-	private Integer theBloodPressureLower;
+	private Integer bloodPressureLower;
 	/** Артериальное давление (верхнее) */
-	private Integer theBloodPressureTop;
+	private Integer bloodPressureTop;
 	/** Температура */
-	private BigDecimal theTemperature;
+	private BigDecimal temperature;
 	/** Частота пульса */
-	private Integer thePulseRate;
+	private Integer pulseRate;
 	/** Кол-во часов */
-	private Integer theHourAfterTransfusion;
+	private Integer hourAfterTransfusion;
 	/** Диурез */
-	private Integer theDiuresis;
+	private Integer diuresis;
 }

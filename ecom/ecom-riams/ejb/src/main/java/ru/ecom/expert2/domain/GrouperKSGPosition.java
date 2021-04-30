@@ -1,6 +1,8 @@
 package ru.ecom.expert2.domain;
 
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -21,85 +23,53 @@ import javax.persistence.OneToOne;
         , @AIndex(properties= {"serviceCode"})
 
 })
+@Getter
+@Setter
 public class GrouperKSGPosition extends BaseEntity {
 
     /** Код позиции группировщика */
-    @Comment("Код позиции группировщика")
-    public String getCode() {return theCode;}
-    public void setCode(String aCode) {theCode = aCode;}
-    /** Код позиции группировщика */
-    private String theCode ;
+    private String code ;
 
     /** Группировщик КСГ */
     @Comment("Группировщик КСГ")
     @OneToOne
-    public GrouperKSG getKSGGrouper() {return theKSGGrouper;}
-    public void setKSGGrouper(GrouperKSG aKSGGrouper) {theKSGGrouper = aKSGGrouper;}
-    /** Группировщик КСГ */
-    private GrouperKSG theKSGGrouper ;
+    public GrouperKSG getKSGGrouper() {return kSGGrouper;}
+    private GrouperKSG kSGGrouper ;
 
     /** Код МКБ основной */
     @Comment("Код МКБ основной")
-    public String getMainMKB() {return theMainMKB;}
-    public void setMainMKB(String aMainMKB) {theMainMKB = aMainMKB;}
-    /** Код МКБ */
-    private String theMainMKB ;
+    public String getMainMKB() {return mainMKB;}
+    private String mainMKB ;
 
     /** Код МКБ сопутствующий */
     @Comment("Код МКБ сопутствующий")
-    public String getAnotherMKB() {return theAnotherMKB;}
-    public void setAnotherMKB(String aAnotherMKB) {theAnotherMKB = aAnotherMKB;}
-    /** Код МКБ сопутствующий */
-    private String theAnotherMKB ;
+    public String getAnotherMKB() {return anotherMKB;}
+    private String anotherMKB ;
 
     /** Код услуги */
     @Comment("Код услуги")
-    public String getServiceCode() {return theServiceCode;}
-    public void setServiceCode(String aServiceCode) {theServiceCode = aServiceCode;}
-    /** Код услуги */
-    private String theServiceCode ;
+    public String getServiceCode() {return serviceCode;}
+    private String serviceCode ;
 
     /** Возраст */
-    @Comment("Возраст")
-    public Integer getAge() {return theAge;}
-    public void setAge(Integer aAge) {theAge = aAge;}
-    /** Возраст */
-    private Integer theAge ;
+    private Integer age ;
 
     /** Длительность */
-    @Comment("Длительность")
-    public Integer getDuration() {return theDuration;}
-    public void setDuration(Integer aDuration) {theDuration = aDuration;}
-    /** Длительность */
-    private Integer theDuration ;
+    private Integer duration ;
 
     /** Значение КСГ */
     @Comment("Значение КСГ")
     @OneToOne
-    public VocKsg getKSGValue() {return theKSGValue;}
-    public void setKSGValue(VocKsg aKSGValue) {theKSGValue = aKSGValue;}
-    /** Значение КСГ */
-    private VocKsg theKSGValue ;
+    public VocKsg getKsgValue() {return ksgValue;}
+    private VocKsg ksgValue;
 
     /** Пол (код */
-    @Comment("Пол (код")
-    public String getSex() {return theSex;}
-    public void setSex(String aSex) {theSex = aSex;}
-    /** Пол (код */
-    private String theSex ;
+    private String sex ;
     /** Дополнительный признак */
-    @Comment("Дополнительный признак")
-    public String getDopPriznak() {return theDopPriznak;}
-    public void setDopPriznak(String aDopPriznak) {theDopPriznak = aDopPriznak;}
-    /** Дополнительный признак */
-    private String theDopPriznak ;
+    private String dopPriznak ;
 
     /** Код КСГ (для упрощения импорта) */
-    @Comment("Код КСГ (для упрощения импорта)")
-    public String getKsgCode() {return theKsgCode;}
-    public void setKsgCode(String aKsgCode) {theKsgCode = aKsgCode;}
-    /** Код КСГ (для упрощения импорта) */
-    private String theKsgCode;
+    private String ksgCode;
 
 
 }

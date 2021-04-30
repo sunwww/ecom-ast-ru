@@ -34,9 +34,9 @@ public class LoginServiceBean implements ILoginService {
     public String[] getConfigUrl() {
     	String ret = null ;
     	String ret1 = null ;
-    	List<Object> l = theManager.createNativeQuery("select sf.KeyValue from SoftConfig sf where sf.key='config_url_main'").getResultList() ;
+    	List<Object> l = manager.createNativeQuery("select sf.KeyValue from SoftConfig sf where sf.key='config_url_main'").getResultList() ;
     	if (!l.isEmpty()) {ret = ""+l.get(0);}
-    	List<Object> l1 = theManager.createNativeQuery("select sf.KeyValue from SoftConfig sf where sf.key='config_url_report'").getResultList() ;
+    	List<Object> l1 = manager.createNativeQuery("select sf.KeyValue from SoftConfig sf where sf.key='config_url_report'").getResultList() ;
     	if (!l1.isEmpty()) {ret1 = ""+l1.get(0);}
     	String[] rets = new String[2] ;
     	rets[0]=ret ;rets[1]=ret1 ;
@@ -46,7 +46,7 @@ public class LoginServiceBean implements ILoginService {
 
     @PermitAll
     public Set getUserRoles() {
-        String user = theContext.getCallerPrincipal().getName();
+        String user = context.getCallerPrincipal().getName();
         Properties prop = new Properties();
         HashSet<String> ret = new HashSet<>();
         try (FileInputStream inputStream = new FileInputStream(JBossConfigUtil.getConfigDirname()+"/roles.properties")) {
@@ -84,7 +84,7 @@ public class LoginServiceBean implements ILoginService {
     	authJour.setServerName(aServerName) ;
     	authJour.setErrorMessage(aError) ;
     	authJour.setErrorPassword(aErrorPassword);
-    	theManager.persist(authJour) ;
+    	manager.persist(authJour) ;
     }
 
     public Long createSystemMessage(String aTitle, String aText, String aRecipient) {
@@ -100,28 +100,28 @@ public class LoginServiceBean implements ILoginService {
     	mes.setRecipient(aRecipient) ;
     	mes.setIsSystem(true) ;
     	mes.setIsEmergency(false) ;
-    	theManager.persist(mes) ;
+    	manager.persist(mes) ;
     	return mes.getId() ;
     }
     public void dispatchMessage(Long aIdMessage) {
-    	CustomMessage mes = theManager.find(CustomMessage.class, aIdMessage) ;
+    	CustomMessage mes = manager.find(CustomMessage.class, aIdMessage) ;
     	if (mes==null) return;
     	long date = new java.util.Date().getTime() ;
     	mes.setDateReceipt(new Date(date)) ;
     	mes.setTimeReceipt(new Time(date)) ;
-    	theManager.persist(mes) ;
+    	manager.persist(mes) ;
     }
     public void checkMessage(Long aIdMessage) {
     	java.util.Date date = new java.util.Date() ;
     	SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
     	SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
-    	theManager.createNativeQuery("update CustomMessage set readDate=to_date('"+formatD.format(date)+"','dd.mm.yyyy'),readTime=cast('"+formatT.format(date)+"' as time) where id="+aIdMessage).executeUpdate() ;
+    	manager.createNativeQuery("update CustomMessage set readDate=to_date('"+formatD.format(date)+"','dd.mm.yyyy'),readTime=cast('"+formatT.format(date)+"' as time) where id="+aIdMessage).executeUpdate() ;
     }
 	public void hideMessage(Long aIdMessage) {
-    	theManager.createNativeQuery("update CustomMessage set isHidden='1' where id="+aIdMessage).executeUpdate() ;
+    	manager.createNativeQuery("update CustomMessage set isHidden='1' where id="+aIdMessage).executeUpdate() ;
 	}
-    @Resource SessionContext theContext ;
-    private @PersistenceContext EntityManager theManager;
+    @Resource SessionContext context ;
+    private @PersistenceContext EntityManager manager;
 
 }
 

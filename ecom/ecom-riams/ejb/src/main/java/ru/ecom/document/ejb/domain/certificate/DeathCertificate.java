@@ -1,5 +1,7 @@
 package ru.ecom.document.ejb.domain.certificate;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.medcase.hospital.DeathCase;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -12,16 +14,14 @@ import javax.persistence.ManyToOne;
  *
  */
 @Entity
+@Setter
 public class DeathCertificate  extends Certificate {
 
 	/** Случай смерти */
 	@Comment("Случай смерти")
 	@ManyToOne
 	public DeathCase getDeathCase() {
-		return theDeathCase;
+		return deathCase;
 	}
-	public void setDeathCase(DeathCase aDeathCase) {
-		theDeathCase = aDeathCase;
-	}
-	private DeathCase theDeathCase;
+	private DeathCase deathCase;
 }

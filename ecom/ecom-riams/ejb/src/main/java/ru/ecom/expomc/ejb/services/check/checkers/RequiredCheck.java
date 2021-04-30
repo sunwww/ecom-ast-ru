@@ -25,12 +25,12 @@ public class RequiredCheck implements ICheck, INativeSqlSupports {
 	
 	public String getNativeSql(NativeSqlContext aContext) {
 		try {
-			String emptyValue = aContext.getEntitySqlEmptyValue(theProperty) ;
+			String emptyValue = aContext.getEntitySqlEmptyValue(property) ;
 			
 			StringBuilder sb = new StringBuilder() ;
 			sb.append("insert into MESSAGE (dataId,check_Id,importTime_id) ") ;
 			sb.append(" select id, ").append(aContext.getCheckId()).append(", ").append(aContext.getTimeId()).append(" from ").append(aContext.getTableName());
-			String p = "\""+aContext.getColumnName(theProperty)+"\"" ;
+			String p = "\""+aContext.getColumnName(property)+"\"" ;
 			sb.append(" where (").append(p).append("=").append(emptyValue).append(" or ")
 				.append(p).append(" is null or ")
 				.append(p).append(" = null )") ;
@@ -46,7 +46,7 @@ public class RequiredCheck implements ICheck, INativeSqlSupports {
 	
     public CheckResult check(ICheckContext aContext) throws CheckException {
         boolean accepted = false ;
-        Object obj = aContext.get(theProperty) ;
+        Object obj = aContext.get(property) ;
         if(obj==null) {
             accepted = true ;
         } else {
@@ -65,9 +65,9 @@ public class RequiredCheck implements ICheck, INativeSqlSupports {
 
     /** Свойство */
     @Comment("Свойство")
-    public String getProperty() { return theProperty ; }
-    public void setProperty(String aProperty) { theProperty = aProperty ; }
+    public String getProperty() { return property ; }
+    public void setProperty(String aProperty) { property = aProperty ; }
 
     /** Свойство */
-    private String theProperty ;
+    private String property ;
 }

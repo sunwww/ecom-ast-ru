@@ -228,11 +228,6 @@ public class E2Entry extends BaseEntity {
     }
 
     @OneToOne
-    public VocDiagnosticVisit getKdpVisit() {
-        return kdpVisit;
-    }
-
-    @OneToOne
     public VocE2FondV020 getBedProfile() {
         return bedProfile;
     }
@@ -1053,12 +1048,6 @@ public class E2Entry extends BaseEntity {
      */
 
     private List<E2EntryError> errorList;
-
-    /**
-     * КДП
-     */
-
-    private VocDiagnosticVisit kdpVisit;
 
     /**
      * Профиль койки

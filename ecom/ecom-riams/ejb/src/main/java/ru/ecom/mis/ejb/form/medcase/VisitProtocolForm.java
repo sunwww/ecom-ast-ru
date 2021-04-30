@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -40,186 +41,159 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(ProtocolPreCreateInterceptor.class)
 )
+@Setter
 public class VisitProtocolForm extends ProtocolForm {
 	
 	/** Медицинская услуга */
 	@Comment("Медицинская услуга")
-	public Long getMedService() {return theMedService;}
-	public void setMedService(Long aMedService) {theMedService = aMedService;}
+	public Long getMedService() {return medService;}
 	/** Медицинская услуга */
-	private Long theMedService;
+	private Long medService;
 
 	/** Шаблон, на основе которого создано заключение */
 	@Comment("Шаблон, на основе которого создано заключение")
 	@Persist
-	public Long getTemplateProtocol() {return theTemplateProtocol;}
-	public void setTemplateProtocol(Long aTemplateProtocol) {theTemplateProtocol = aTemplateProtocol;}
+	public Long getTemplateProtocol() {return templateProtocol;}
 	/** Шаблон, на основе которого создано заключение */
-	private Long theTemplateProtocol;
+	private Long templateProtocol;
 	
 	/** Параметры шаблона */
 	@Comment("Параметры шаблона")
-	public String getParams() {return theParams;}
-	public void setParams(String aParams) {theParams = aParams;}
+	public String getParams() {return params;}
 	/** Параметры шаблона */
-	private String theParams;
+	private String params;
 
 	/** Визит */
 	@Comment("Визит")
 	@Persist
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+	public Long getMedCase() {return medCase;}
 
 	/** Тип протокола */
 	@Comment("Тип протокола")
 	@Persist 
-	public Long getType() {return theType;}
-	public void setType(Long aType) {theType = aType;}
+	public Long getType() {return type;}
 
 	/** Тип протокола инфо */
 	@Comment("Тип протокола инфо")
 	@Persist
-	public String getTypeInfo() {return theTypeInfo;}
-	public void setTypeInfo(String aTypeInfo) {theTypeInfo = aTypeInfo;}
+	public String getTypeInfo() {return typeInfo;}
 
 	/** Для выписки */
 	@Comment("Для выписки")
 	@Persist
-	public Boolean getIsDischarge() {return theIsDischarge;}
-	public void setIsDischarge(Boolean aIsDischange) {theIsDischarge = aIsDischange;}
+	public Boolean getIsDischarge() {return isDischarge;}
 
 	/** Время регистрации */
 	@Comment("Время регистрации")
 	@Persist @Required
 	@TimeString @DoTimeString
-	public String getTimeRegistration() {return theTimeRegistration;}
-	public void setTimeRegistration(String aTimeRegistration) {theTimeRegistration = aTimeRegistration;}
-	
+	public String getTimeRegistration() {return timeRegistration;}
+
 	/** Дата печати */
 	@Comment("Дата печати")
 	@Persist @DateString @DoDateString
-	public String getPrintDate() {return thePrintDate;}
-	public void setPrintDate(String aPrintDate) {thePrintDate = aPrintDate;}
-	
+	public String getPrintDate() {return printDate;}
+
 	/** Время печати */
 	@Comment("Время печати")
 	@Persist @DoTimeString @TimeString
-	public String getPrintTime() {return thePrintTime;}
-	public void setPrintTime(String aPrintTime) {thePrintTime = aPrintTime;}
+	public String getPrintTime() {return printTime;}
 
 	/** Время печати */
-	private String thePrintTime;
+	private String printTime;
 	/** Дата печати */
-	private String thePrintDate;
+	private String printDate;
 	/** Время регистрации */
-	private String theTimeRegistration;	
+	private String timeRegistration;	
 	/** Для выписки */
-	private Boolean theIsDischarge;
+	private Boolean isDischarge;
 	/** Тип протокола инфо */
-	private String theTypeInfo;
+	private String typeInfo;
 	/** Тип протокола */
-	private Long theType;
+	private Long type;
 	/** Визит */
-	private Long theMedCase;
+	private Long medCase;
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@Persist @DoDateString @DateString
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	public String getEditDate() {return editDate;}
 
 	/** Пользователь последний, изменявший запись */
 	@Comment("Пользователь последний, изменявший запись")
 	@Persist
 	public String getEditUsername() {
-		return theEditUsername;
-	}
-
-	public void setEditUsername(String aEditUsername) {
-		theEditUsername = aEditUsername;
+		return editUsername;
 	}
 
 	/** Пользователь последний, изменявший запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	
 	/** Тяжесть состояния */
 	@Comment("Тяжесть состояния")
 	@Persist
-	public Long getState() {return theState;}
-	public void setState(Long aState) {theState = aState;}
+	public Long getState() {return state;}
 
 	/** Тяжесть состояния */
-	private Long theState;
+	private Long state;
 	
 	/** Режим */
 	@Comment("Режим")
 	@Persist
-	public Long getMode() {return theMode;}
-	public void setMode(Long aMode) {theMode = aMode;}
+	public Long getMode() {return mode;}
 
 	/** Режим */
-	private Long theMode;
+	private Long mode;
 
 	/** Приоритет диагноза */
 	@Comment("Приоритет диагноза")
-	public Long getDiagnosisPriority() {return theDiagnosisPriority;}
-	public void setDiagnosisPriority(Long aDiagnosisPriority) {theDiagnosisPriority = aDiagnosisPriority;}
+	public Long getDiagnosisPriority() {return diagnosisPriority;}
 	/** Приоритет диагноза */
-	private Long theDiagnosisPriority ;
+	private Long diagnosisPriority ;
 
 	/** Код МКБ-10 диагноза */
 	@Comment("Код МКБ-10 диагноза")
 	@Mkb
-	public Long getDiagnosisIdc10() {return theDiagnosisIdc10;}
-	public void setDiagnosisIdc10(Long aDiagnosisIdc10) {theDiagnosisIdc10 = aDiagnosisIdc10;}
+	public Long getDiagnosisIdc10() {return diagnosisIdc10;}
 	/** Код МКБ-10 диагноза */
-	private Long theDiagnosisIdc10 ;
+	private Long diagnosisIdc10 ;
 
 	/** Текст диагноза */
 	@Comment("Текст диагноза")
-	public String getDiagnosisText() {return theDiagnosisText;}
-	public void setDiagnosisText(String aDiagnosisText) {theDiagnosisText = aDiagnosisText;}
+	public String getDiagnosisText() {return diagnosisText;}
 	/** Текст диагноза */
-	private String theDiagnosisText ;
+	private String diagnosisText ;
 
 	/** Характер заболевания */
 	@Comment("Характер заболевания")
-	public Long getDiagnosisIllnessPrimary() {return theDiagnosisIllnessPrimary;}
-	public void setDiagnosisIllnessPrimary(Long aDiagnosisIllnessPrimary) {theDiagnosisIllnessPrimary = aDiagnosisIllnessPrimary;}
+	public Long getDiagnosisIllnessPrimary() {return diagnosisIllnessPrimary;}
 	/** Характер заболевания */
-	private Long theDiagnosisIllnessPrimary ;
+	private Long diagnosisIllnessPrimary ;
 
 	/** Тип регистрации диагноза */
 	@Comment("Тип регистрации диагноза")
-	public Long getDiagnosisRegistrationType() {return theDiagnosisRegistrationType;}
-	public void setDiagnosisRegistrationType(Long aDiagnosisRegistrationType) {theDiagnosisRegistrationType = aDiagnosisRegistrationType;}
+	public Long getDiagnosisRegistrationType() {return diagnosisRegistrationType;}
 	/** Тип регистрации диагноза */
-	private Long theDiagnosisRegistrationType ;
+	private Long diagnosisRegistrationType ;
 	
 	/** isCreateDiagnosis */
 	@Comment("isCreateDiagnosis")
 	public Boolean getIsCreateDiagnosis() {
-		return theIsCreateDiagnosis;
-	}
-
-	public void setIsCreateDiagnosis(Boolean aIsCreateDiagnosis) {
-		theIsCreateDiagnosis = aIsCreateDiagnosis;
+		return isCreateDiagnosis;
 	}
 
 	/** isCreateDiagnosis */
-	private Boolean theIsCreateDiagnosis;
+	private Boolean isCreateDiagnosis;
 
 	/** Поток обслуживания случая */
 	@Comment("Поток обслуживания случая")
-	public Long getServiceStream() {return theServiceStream;}
-	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+	public Long getServiceStream() {return serviceStream;}
 	/** Поток обслуживания случая */
-	private Long theServiceStream ;
+	private Long serviceStream ;
 
 	/** Заголовок дневника */
 	@Comment("Заголовок дневника")
-	public String getTitle() {return theTitle;}
-	public void setTitle(String aTitle) {theTitle = aTitle;}
-	private String theTitle ="";
+	public String getTitle() {return title;}
+	private String title ="";
 }

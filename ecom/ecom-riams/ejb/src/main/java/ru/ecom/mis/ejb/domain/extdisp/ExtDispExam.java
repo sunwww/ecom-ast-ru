@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.extdisp;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -9,16 +11,11 @@ import javax.persistence.Entity;
 	 */
 	@Comment("Исследование по дополнительной диспансеризации")
 @Entity
+	@Getter
+	@Setter
 public class ExtDispExam extends ExtDispService {
 	/**
 	 * Выявлена патология
 	 */
-	@Comment("Выявлена патология")
-	public Boolean getIsPathology() {
-		return theIsPathology;
-	}
-	public void setIsPathology(Boolean aIsPathology) {
-		theIsPathology = aIsPathology;
-	}
-	private Boolean theIsPathology;
+	private Boolean isPathology;
 }

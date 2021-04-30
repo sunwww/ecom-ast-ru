@@ -1,5 +1,7 @@
 package ru.ecom.oncological.ejb.form;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.oncological.ejb.domain.OncologyDirection;
@@ -21,6 +23,7 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 )
 @Parent(property="oncologyCase", parentForm=OncologyCaseReestrForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Oncology/Direction")
+@Setter
 public class OncologyDirectionForm extends IdEntityForm {
 
     /** Случай окологического лечения */
@@ -38,32 +41,20 @@ public class OncologyDirectionForm extends IdEntityForm {
     public Long getOncologyCase() {
         return oncologyCase;
     }
-    public void setOncologyCase(Long oncologyCase) {
-        this.oncologyCase = oncologyCase;
-    }
 
     @Persist
     public Long getMethodDiagTreat() {
         return methodDiagTreat;
-    }
-    public void setMethodDiagTreat(Long methodDiagTreat) {
-        this.methodDiagTreat = methodDiagTreat;
     }
 
     @Persist
     public Long getTypeDirection() {
         return typeDirection;
     }
-    public void setTypeDirection(Long typeDirection) {
-        this.typeDirection = typeDirection;
-    }
 
     @Persist
     public Long getMedService() {
         return medService;
-    }
-    public void setMedService(Long medService) {
-        this.medService = medService;
     }
 
     @Persist
@@ -72,15 +63,11 @@ public class OncologyDirectionForm extends IdEntityForm {
     public String getDate() {
         return date;
     }
-    public void setDate(String date) {
-        this.date = date;
-    }
 
     /** ЛПУ, куда сделано направление */
     @Comment("ЛПУ, куда сделано направление")
     @Persist
-    public Long getDirectLpu() {return theDirectLpu;}
-    public void setDirectLpu(Long aDirectLpu) {theDirectLpu = aDirectLpu;}
+    public Long getDirectLpu() {return directLpu;}
     /** ЛПУ, куда сделано направление */
-    private Long theDirectLpu ;
+    private Long directLpu ;
 }

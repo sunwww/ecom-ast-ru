@@ -32,24 +32,24 @@ public class ImportDocumentForm extends IdEntityForm {
 
     /** Идентификатор */
     @Id
-    public long getId() { return theId ; }
-    public void setId(long aId) { theId = aId ; }
+    public long getId() { return id ; }
+    public void setId(long aId) { id = aId ; }
 
     /** Ключ импорта */
     @Persist
     @DoUpperCase @DoTrimString
-    public String getKeyName() { return theKeyName ; }
-    public void setKeyName(String aKeyName) { theKeyName = aKeyName ; }
+    public String getKeyName() { return keyName ; }
+    public void setKeyName(String aKeyName) { keyName = aKeyName ; }
 
     /** Комментарий */
     @Persist
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
+    public String getComment() { return comment ; }
+    public void setComment(String aComment) { comment = aComment ; }
 
     /** Клас для сохранения */
     @Persist
-    public String getEntityClassName() { return theEntityClassName ; }
-    public void setEntityClassName(String aEntityClassName) { theEntityClassName = aEntityClassName ; }
+    public String getEntityClassName() { return entityClassName ; }
+    public void setEntityClassName(String aEntityClassName) { entityClassName = aEntityClassName ; }
 
     /** Поддержка импорта по времени */
     public boolean getImportTimeSupports() {
@@ -74,28 +74,28 @@ public class ImportDocumentForm extends IdEntityForm {
         return isTimeSupports(aClass.getSuperclass()) ;
     }
 //    public void setImportTimeSupports(boolean aImportTimeSupports) {
-//        theImportTimeSupports = aImportTimeSupports ;
+//        importTimeSupports = aImportTimeSupports ;
 //    }
 
     public String getPrettyClassName() {
         String ret ;
-        if(!StringUtil.isNullOrEmpty(theEntityClassName)) {
-            int pos = theEntityClassName.indexOf("domain.") ;
+        if(!StringUtil.isNullOrEmpty(entityClassName)) {
+            int pos = entityClassName.indexOf("domain.") ;
             if(pos>=0) {
-                ret = theEntityClassName.substring(pos+"domain.".length()) ;
+                ret = entityClassName.substring(pos+"domain.".length()) ;
             } else {
-                ret = theEntityClassName ;
+                ret = entityClassName ;
             }
 
         } else ret = null ;
             return ret ;
     }
     /** Клас для сохранения */
-    private String theEntityClassName ;
+    private String entityClassName ;
     /** Комментарий */
-    private String theComment ;
+    private String comment ;
     /** Ключ импорта */
-    private String theKeyName ;
+    private String keyName ;
     /** Идентификатор */
-    private long theId ;
+    private long id ;
 }

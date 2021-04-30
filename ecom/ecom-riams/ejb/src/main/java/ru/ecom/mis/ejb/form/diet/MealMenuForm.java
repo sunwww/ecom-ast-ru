@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.form.diet;
 
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -27,91 +28,77 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @Parent(property="diet", parentForm=DietForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/InvalidFood/MealMenu")
 @Subclasses(value = { MealMenuOrderForm.class, MealMenuTemplateForm.class, ChildMealMenuTemplateForm.class })
+@Setter
 public class MealMenuForm extends IdEntityForm{
 	
 	/** Название диеты */
 	@Comment("Название диеты")
 	@Persist
-	public String getDietName() {return theDietName;}
-	public void setDietName(String aDietName) {theDietName = aDietName ;}
-			
+	public String getDietName() {return dietName;}
+
 	/** Дата начала действия */
 	@Comment("Дата начала действия")
 	@DateString @DoDateString @Persist
-	public String getDateFrom() {return theDateFrom;}
-	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
-	
+	public String getDateFrom() {return dateFrom;}
+
 	/** Вид приема пищи */
 	@Comment("Вид приема пищи")
 	@Persist
-	public Long getMealTime() {return theMealTime;}
-	public void setMealTime(Long aMealTime) {theMealTime = aMealTime;}
-	
+	public Long getMealTime() {return mealTime;}
+
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@Persist
-	public Long getServiceStream() {return theServiceStream;}
-	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
-	
+	public Long getServiceStream() {return serviceStream;}
+
 	/** Поток обслуживания название */
 	@Comment("Поток обслуживания название")
 	@Persist
-	public String getServiceStreamName() {return theServiceStreamName;}
-	public void setServiceStreamName(String aServiceStreamName) {theServiceStreamName = aServiceStreamName;	}
+	public String getServiceStreamName() {return serviceStreamName;}
 
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@Persist
-	public Long getLpu() {return theLpu;}
-	public void setLpu(Long aLpu) {theLpu = aLpu;}
-	
+	public Long getLpu() {return lpu;}
+
 	/** Диета */
 	@Comment("Диета")
 	@Persist
-	public Long getDiet() {return theDiet;}
-	public void setDiet(Long aDiet) {theDiet = aDiet;}
+	public Long getDiet() {return diet;}
 
 	/** Список блюд */
 	@Comment("Список блюд")
 	@Persist
 	public String getListDishes() {
-		return theListDishes;
+		return listDishes;
 	}
 
-	public void setListDishes(String aListDishes) {
-		theListDishes = aListDishes;
-	}
-	
 	/** Название приема пищи */
 	@Comment("Название приема пищи")
 	@Persist
 	public String getMealTimeName() {
-		return theMealTimeName;
-	}
-
-	public void setMealTimeName(String aMealMenuName) {
-		theMealTimeName = aMealMenuName;
+		return mealTimeName;
 	}
 
 	/** Название приема пищи */
-	private String theMealTimeName;
+	private String mealTimeName;
 
 	/** Список блюд */
-	private String theListDishes;
+	private String listDishes;
 	/** Дата начала действия */
-	private String theDateFrom;
+	private String dateFrom;
 	/** Вид приема пищи */
-	private Long theMealTime;
+	private Long mealTime;
 	/** Поток обслуживания */
-	private Long theServiceStream;
+	private Long serviceStream;
 	/** Поток обслуживания название */
-	private String theServiceStreamName;
+	private String serviceStreamName;
 	/** ЛПУ */
-	private Long theLpu;
+	private Long lpu;
 	/** Диета */
-	private Long theDiet;
+	private Long diet;
 	/** Название диеты */
-	private String theDietName;
+	private String dietName;
 	
 	
 

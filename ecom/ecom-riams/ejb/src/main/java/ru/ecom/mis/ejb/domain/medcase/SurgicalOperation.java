@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -33,443 +35,299 @@ import java.util.List;
     }) 
 @Table(schema="SQLUser")
 @EntityListeners(DeleteListener.class)
+@Getter
+@Setter
 public class SurgicalOperation extends BaseEntity {
-	/** Дата операции */
-	@Comment("Дата операции")
-	public Date getOperationDate() {return theOperationDate;}
-	public void setOperationDate(Date aOperationDate) {theOperationDate = aOperationDate;	}
-
-	/** Время операции */
-	@Comment("Время операции")
-	public Time getOperationTime() {return theOperationTime;}
-	public void setOperationTime(Time aOperationTime) {theOperationTime = aOperationTime;	}
 
 	/** Отделение */
 	@Comment("Отделение")
 	@OneToOne
-	public MisLpu getDepartment() {return theDepartment;}
-	public void setDepartment(MisLpu aDepartment) {theDepartment = aDepartment;}
+	public MisLpu getDepartment() {return department;}
 
 	/** Операция */
 	@Comment("Операция")
 	@OneToOne @Deprecated
-	public VocOperation getOperation() {return theOperation;}
-	public void setOperation(VocOperation aOperation) {theOperation = aOperation;}
+	public VocOperation getOperation() {return operation;}
 
 	/** Анестизия */
 	@Comment("Анестезия")
 	@OneToOne
-	public VocAnesthesia getAnesthesia() {return theAnesthesia;}
-	public void setAnesthesia(VocAnesthesia aAnesthesia) {theAnesthesia = aAnesthesia;	}
-
-	/** Флаг основной операции */
-	@Comment("Флаг основной операции")
-	public boolean getBase() {return theBase;	}
-	public void setBase(boolean aBase) {theBase = aBase;}
-
-	/** Флаг использования эндоскопии */
-	@Comment("Флаг использования эндоскопии")
-	public boolean getEndoscopyUse() {return theEndoscopyUse;	}
-	public void setEndoscopyUse(boolean aEndoscopyUse) {theEndoscopyUse = aEndoscopyUse;	}
-
-	/** Флаг использования лазерной аппаратуры */
-	@Comment("Флаг использования лазерной аппаратуры")
-	public boolean getLaserUse() {	return theLaserUse;	}
-	public void setLaserUse(boolean aLaserUse) {theLaserUse = aLaserUse;}
-
-	/** Использование криогенной аппаратуры */
-	@Comment("Использование криогенной аппаратуры")
-	public boolean getCryogenicUse() {return theCryogenicUse;	}
-	public void setCryogenicUse(boolean aCryogenicUse) {theCryogenicUse = aCryogenicUse;	}
+	public VocAnesthesia getAnesthesia() {return anesthesia;}
 
 	/** Случай медицинского обслуживания */
 	@Comment("Случай медицинского обслуживания")
 	@ManyToOne
-	public MedCase getMedCase() {return theMedCase;}
-	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
+	public MedCase getMedCase() {return medCase;}
 
 	/** Пациент */
 	@Comment("Пациент")
 	@OneToOne
-	public Patient getPatient() {return thePatient;}
-	public void setPatient(Patient aPatient) {thePatient = aPatient;}
-	
-	/** Кол-во  анастезии */
-	@Comment("Кол-во  анастезии")
-	public BigDecimal getAnesthesiaAmount() {return theAnesthesiaAmount;}
-	public void setAnesthesiaAmount(BigDecimal aAnesthesiaAmount) {theAnesthesiaAmount = aAnesthesiaAmount;}
+	public Patient getPatient() {return patient;}
 
-	/** Хирург инфо 
-	@Comment("Хирург инфо")
-	@Transient
-	public String getSurgeonsInfo() {
-		StringBuilder ret = new StringBuilder() ;
-		for (WorkFunction wf: theSurgeonFunctions) {
-			ret.append(", ").append(wf.getWorkFunctionInfo()) ;
-		}
-		return ret.length()>2?ret.substring(2):"" ;
-		//return theSurgeon!=null ? theSurgeon.getDoctorInfo(): "";	
-	}*/
-	
+
 	/**Рабочая функция врача, проводившего операцию info */
 	@Comment("Рабочая функция врача, проводившего операцию info")
 	@Transient
 	public String getSurgeonInfo(){
-		return theSurgeon!=null?theSurgeon.getWorkFunctionInfo():"";
+		return surgeon!=null?surgeon.getWorkFunctionInfo():"";
 	}
 
 	/** Лечебное учреждение */
 	@Comment("Лечебное учреждение")
 	@OneToOne
-	public MisLpu getLpu() {return theLpu;}
-	public void setLpu(MisLpu aLpu) {theLpu = aLpu;}
-	
-	/** Дата операции по */
-	@Comment("Дата операции по")
-	public Date getOperationDateTo() {return theOperationDateTo;}
-	public void setOperationDateTo(Date aOperationDateTo) {theOperationDateTo = aOperationDateTo;}
-	
+	public MisLpu getLpu() {return lpu;}
+
 	/** Анестезиолог */
 	@Comment("Анестезиолог")
 	@OneToOne
-	public WorkFunction getAnaesthetist() {return theAnaesthetist;}
-	public void setAnaesthetist(WorkFunction aAnaesthetist) {theAnaesthetist = aAnaesthetist;}
+	public WorkFunction getAnaesthetist() {return anaesthetist;}
 
 	/** Операционная медсестра */
 	@Comment("Операционная медсестра")
 	@OneToOne
-	public WorkFunction getOperatingNurse() {return theOperatingNurse;}
-	public void setOperatingNurse(WorkFunction aOperatingNurse) {theOperatingNurse = aOperatingNurse;}
-	
+	public WorkFunction getOperatingNurse() {return operatingNurse;}
+
 	/** Предоперационный эпикриз */
 	@Comment("Предоперационный эпикриз")
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
-	public String getPreoperativeEpicrisis() {return thePreoperativeEpicrisis;}
-	public void setPreoperativeEpicrisis(String aPreoperativeEpicrisis) {thePreoperativeEpicrisis = aPreoperativeEpicrisis;}
-	
+	public String getPreoperativeEpicrisis() {return preoperativeEpicrisis;}
+
 	/** Описание операции */
 	@Comment("Описание операции")
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
-	public String getOperationText() {return theOperationText;}
-	public void setOperationText(String aOperationText) {theOperationText = aOperationText;}
+	public String getOperationText() {return operationText;}
 
 	
 	/** МКБ до операции */
 	@Comment("МКБ до операции")
 	@OneToOne
-	public VocIdc10 getIdc10Before() {return theIdc10Before;}
-	public void setIdc10Before(VocIdc10 aIdc10Before) {theIdc10Before = aIdc10Before;}
-	
+	public VocIdc10 getIdc10Before() {return idc10Before;}
+
 	@Transient
-	public String getIdc10BeforeInfo() {return theIdc10Before!=null?theIdc10Before.getCode():"" ;}
+	public String getIdc10BeforeInfo() {return idc10Before!=null?idc10Before.getCode():"" ;}
 	@Transient
-	public String getIdc10AfterInfo() {return theIdc10After!=null?theIdc10After.getCode():"" ;}
+	public String getIdc10AfterInfo() {return idc10After!=null?idc10After.getCode():"" ;}
 	
 	/** МКБ после операции */
 	@Comment("МКБ после операции")
 	@OneToOne
-	public VocIdc10 getIdc10After() {return theIdc10After;}
-	public void setIdc10After(VocIdc10 aIdc10After) {theIdc10After = aIdc10After;}
+	public VocIdc10 getIdc10After() {return idc10After;}
 
 	
 	/** Гистологическое исследование */
 	@Comment("Гистологическое исследование")
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
-	public String getHistologicalStudy() {return theHistologicalStudy;}
-	public void setHistologicalStudy(String aHistologicalStudy) {theHistologicalStudy = aHistologicalStudy;}
+	public String getHistologicalStudy() {return histologicalStudy;}
 
-	
-	/** Время операции по */
-	@Comment("Время операции по")
-	public Time getOperationTimeTo() {return theOperationTimeTo;}
-	public void setOperationTimeTo(Time aOperationTimeTo) {theOperationTimeTo = aOperationTimeTo;}
 	
 	/** Хирурги */
 	@Comment("Хирурги")
 	@ManyToMany
-	public List<WorkFunction> getSurgeonFunctions() {return theSurgeonFunctions;}
-	public void setSurgeonFunctions(List<WorkFunction> aSurgeonFunctions) {theSurgeonFunctions = aSurgeonFunctions;}
+	public List<WorkFunction> getSurgeonFunctions() {return surgeonFunctions;}
 
 	@Comment("Информации")
 	@Transient
 	public String getInformation() {
-		return "Период: " + theOperationDate + " " + theOperationTime + " - " +
-				theOperationDateTo + " " + theOperationTimeTo +
-				"Операция: " + theOperation +
+		return "Период: " + operationDate + " " + operationTime + " - " +
+				operationDateTo + " " + operationTimeTo +
+				"Операция: " + operation +
 				"Хирург: " + getSurgeonInfo();
 	}
 		
 		@Comment("Период")
 		@Transient
 		public String getPeriod() {
-			return theOperationDate + " " + theOperationTime + " - " +
-					theOperationDateTo + " " + theOperationTimeTo;
+			return operationDate + " " + operationTime + " - " +
+					operationDateTo + " " + operationTimeTo;
 	}
 		
 		 /** Информация о пациенте */
 	    @Comment("Информация о пациенте")
 	    @Transient
-	    public String getPatientInfo() {return thePatient!=null ? thePatient.getPatientInfo() : "";}
+	    public String getPatientInfo() {return patient!=null ? patient.getPatientInfo() : "";}
 	
 	 /** Экстренность */
-	@Comment("Экстренность")
-	public Boolean getEmergency() {return theEmergency;}
-	public void setEmergency(Boolean aEmergency) {theEmergency = aEmergency;}
-    private Boolean theEmergency;
+    private Boolean emergency;
 
 	/** Показания для операции */
 	@Comment("Показания для операции")
 	@OneToOne
-	public VocHospitalAspect getAspect() {return theAspect;}
-	public void setAspect(VocHospitalAspect aAspect) {theAspect = aAspect;}
-	private VocHospitalAspect theAspect;
+	public VocHospitalAspect getAspect() {return aspect;}
+	private VocHospitalAspect aspect;
 
 	/** Малая */
-	@Comment("Малая")
-	public Boolean getMinor() {return theMinor;}
-	public void setMinor(Boolean aMinor) {theMinor = aMinor;}
-	private Boolean theMinor;
+	private Boolean minor;
 	
 	/** Анестезии */
 	@Comment("Анестезии")
 	@OneToMany(mappedBy="surgicalOperation", cascade=CascadeType.ALL)
-	public List<Anesthesia> getAnesthesies() {return theAnesthesies;}
-	public void setAnesthesies(List<Anesthesia> aAnesthesies) {theAnesthesies = aAnesthesies;}
-	
-	/** Номер в журнале */
-	@Comment("Номер в журнале")
-	public String getNumberInJournal() {return theNumberInJournal;}
-	public void setNumberInJournal(String aNumberInJournal) {theNumberInJournal = aNumberInJournal;}
-	
+	public List<Anesthesia> getAnesthesies() {return anesthesies;}
+
 	/** Хирург */
 	@Comment("Хирург")
 	@OneToOne
-	public WorkFunction getSurgeon() {return theSurgeon;}
-	public void setSurgeon(WorkFunction aSurgeon) {theSurgeon = aSurgeon;}
-	
+	public WorkFunction getSurgeon() {return surgeon;}
+
 	/** Профиль */
 	@Comment("Профиль")
 	@OneToOne
-	public VocSurgicalProfile getProfile() {return theProfile;}
-	public void setProfile(VocSurgicalProfile aProfile) {theProfile = aProfile;}
+	public VocSurgicalProfile getProfile() {return profile;}
 
 	/** Операция с использованием высоких медицинских технологий */
 	@Comment("Операция с использованием высоких медицинских технологий")
 	@OneToOne
-	public VocOperationTechnology getTechnology() {return theTechnology;}
-	public void setTechnology(VocOperationTechnology aTechnology) {theTechnology = aTechnology;}
-	
+	public VocOperationTechnology getTechnology() {return technology;}
+
 	/** Исход операции */
 	@Comment("Исход операции")
 	@OneToOne
-	public VocOperationOutcome getOutcome() {return theOutcome;}
-	public void setOutcome(VocOperationOutcome aOutcome) {theOutcome = aOutcome;}
+	public VocOperationOutcome getOutcome() {return outcome;}
 
-	
 	/** Метод операции */
 	@Comment("Метод операции")
 	@OneToOne
-	public VocOperationMethod getMethod() {return theMethod;}
-	public void setMethod(VocOperationMethod aMethod) {theMethod = aMethod;}
+	public VocOperationMethod getMethod() {return method;}
 
 	/** Метод операции */
-	private VocOperationMethod theMethod;
+	private VocOperationMethod method;
 	/** Исход операции */
-	private VocOperationOutcome theOutcome;
+	private VocOperationOutcome outcome;
 
 	/** Операция с использованием высоких медицинских технологий */
-	private VocOperationTechnology theTechnology;
+	private VocOperationTechnology technology;
 	/** Профиль */
-	private VocSurgicalProfile theProfile;
+	private VocSurgicalProfile profile;
 
 	/** Хирург */
-	private WorkFunction theSurgeon;
+	private WorkFunction surgeon;
 
 	/** Номер в журнале */
-	private String theNumberInJournal;
+	private String numberInJournal;
 
 	/** Анестезии */
-	private List<Anesthesia> theAnesthesies;
+	private List<Anesthesia> anesthesies;
 	
 	    
 	/** Кол-во  анастезии */
-	private BigDecimal theAnesthesiaAmount;
+	private BigDecimal anesthesiaAmount;
 	/** Хирурги */
-	private List<WorkFunction> theSurgeonFunctions;
+	private List<WorkFunction> surgeonFunctions;
 	/** Анестезиолог */
-	private WorkFunction theAnaesthetist;
+	private WorkFunction anaesthetist;
 	/** Дата операции по */
-	private Date theOperationDateTo;
+	private Date operationDateTo;
 	/** Предоперационный эпикриз */
-	private String thePreoperativeEpicrisis;
+	private String preoperativeEpicrisis;
 	/** Описание операции */
-	private String theOperationText;
+	private String operationText;
 	/** МКБ до операции */
-	private VocIdc10 theIdc10Before;
+	private VocIdc10 idc10Before;
 	/** Операционная медсестра */
-	private WorkFunction theOperatingNurse;
+	private WorkFunction operatingNurse;
 	/** МКБ после операции */
-	private VocIdc10 theIdc10After;
+	private VocIdc10 idc10After;
 	/** Гистологическое исследование */
-	private String theHistologicalStudy;
+	private String histologicalStudy;
 	/** Время операции по */
-	private Time theOperationTimeTo;
+	private Time operationTimeTo;
 
 	/** Лечебное учреждение */
-	private MisLpu theLpu;
+	private MisLpu lpu;
 	/** Пациент */
-	private Patient thePatient;
+	private Patient patient;
 	/** Случай медицинского обслуживания */
-	private MedCase theMedCase;
+	private MedCase medCase;
 	/** Использование криогенной аппаратуры */
-	private boolean theCryogenicUse;
+	private boolean cryogenicUse;
 	/** Флаг использования лазерной аппаратуры */
-	private boolean theLaserUse;
+	private boolean laserUse;
 	/** Флаг использования эндоскопии */
-	private boolean theEndoscopyUse;
+	private boolean endoscopyUse;
 	/** Флаг основной операции */
-	private boolean theBase;
+	private boolean base;
 	/** Анестезия */
-	private VocAnesthesia theAnesthesia;
+	private VocAnesthesia anesthesia;
 	/** Операция */
-	private VocOperation theOperation;
+	private VocOperation operation;
 	/** Отделение */
-	private MisLpu theDepartment;
+	private MisLpu department;
 	/** Время операции */
-	private Time theOperationTime;
+	private Time operationTime;
 	/** Дата операции */
-	private Date theOperationDate;
-	
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Пользователь, создавший запись */
-	@Comment("Пользователь, создавший запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aUsername) {theCreateUsername = aUsername;}
-	
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
+	private Date operationDate;
 	
 	/** Пользователь, последний изменявший запись */
-	@Comment("Пользователь, последний изменявший запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-
-	/** Пользователь, последний изменявший запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@OneToOne
-	public VocServiceStream getServiceStream() {return theServiceStream;}
-	public void setServiceStream(VocServiceStream aServiceStream) {theServiceStream = aServiceStream;}
+	public VocServiceStream getServiceStream() {return serviceStream;}
 
 	/** Поток обслуживания */
-	private VocServiceStream theServiceStream;
+	private VocServiceStream serviceStream;
 	
 	/** Мед. услуга */
 	@Comment("Мед. услуга")
 	@OneToOne
-	public MedService getMedService() {return theMedService;}
-	public void setMedService(MedService aMedService) {theMedService = aMedService;}
+	public MedService getMedService() {return medService;}
 
 	/** Мед. услуга */
-	private MedService theMedService;
+	private MedService medService;
 	
 	/** Аборта */
 	@Comment("Аборта")
 	@OneToOne
-	public VocAbortion getAbortion() {return theAbortion;}
-	public void setAbortion(VocAbortion aAbortion) {theAbortion = aAbortion;}
+	public VocAbortion getAbortion() {return abortion;}
 
 	/** Аборта */
-	private VocAbortion theAbortion;
+	private VocAbortion abortion;
 	
 	/** Дата печати */
-	@Comment("Дата печати")
-	public Date getPrintDate() {return thePrintDate;}
-	public void setPrintDate(Date aPrintDate) {thePrintDate = aPrintDate;}
-
-	/** Дата печати */
-	private Date thePrintDate;
+	private Date printDate;
 	
 	/** Время печати */
-	@Comment("Время печати")
-	public Time getPrintTime() {return thePrintTime;}
-	public void setPrintTime(Time aPrintTime) {thePrintTime = aPrintTime;}
-
-	/** Время печати */
-	private Time thePrintTime;
+	private Time printTime;
 	
 	/** Пользователь, посл. распечат. документ */
-	@Comment("Пользователь, посл. распечат. документ")
-	public String getPrintUsername() {return thePrintUsername;}
-	public void setPrintUsername(String aPrintUsername) {thePrintUsername = aPrintUsername;}
-
-	/** Пользователь, посл. распечат. документ */
-	private String thePrintUsername;
+	private String printUsername;
 
 	/** На какой конечности была сделана операция */
 	@Comment("На какой конечности была сделана операция")
 	@OneToOne
-	public VocLeftRight getLeftRight() {return theLeftRight;}
-	public void setLeftRight(VocLeftRight aLeftRight) {theLeftRight = aLeftRight;}
-	/** На какой конечности была сделана операция */
-	private VocLeftRight theLeftRight ;
+	public VocLeftRight getLeftRight() {return leftRight;}
+	private VocLeftRight leftRight ;
 
 	/** Класс раны */
 	@Comment("Класс раны")
 	@OneToOne
-	public VocClassWound getClassWound() {return theClassWound;}
-	public void setClassWound(VocClassWound aClassWound) {theClassWound = aClassWound;}
-	/** Класс раны */
-	private VocClassWound theClassWound ;
+	public VocClassWound getClassWound() {return classWound;}
+	private VocClassWound classWound ;
 
 	/** Препарат периоперационной антибиотикопрофилактики */
 	@Comment("Препарат периоперационной антибиотикопрофилактики")
 	@OneToOne
-	public VocAntibioticDrug getAntibioticDrug() {return theAntibioticDrug;}
-	public void setAntibioticDrug(VocAntibioticDrug aAntibioticDrug) {theAntibioticDrug = aAntibioticDrug;}
-	/** Препарат периоперационной антибиотикопрофилактики */
-	private VocAntibioticDrug theAntibioticDrug ;
+	public VocAntibioticDrug getAntibioticDrug() {return antibioticDrug;}
+	private VocAntibioticDrug antibioticDrug ;
 
 	/** Доза (мл) */
-	@Comment("Доза (мл)")
-	public Double getDose() {return theDose;}
-	public void setDose(Double aDose) {theDose = aDose;}
-	/** Доза (мл) */
-	private Double theDose;
+	private Double dose;
 
 	/** Способы введения препаратов при периоперационной антибиотикопрофилактике */
 	@Comment("Способы введения препаратов при периоперационной антибиотикопрофилактике")
 	@OneToOne
-	public VocMethodsDrugAdm getMethodsDrugAdm() {return theMethodsDrugAdm;}
-	public void setMethodsDrugAdm(VocMethodsDrugAdm aMethodsDrugAdm) {theMethodsDrugAdm = aMethodsDrugAdm;}
-	/** Способы введения препаратов при периоперационной антибиотикопрофилактике */
-	private VocMethodsDrugAdm theMethodsDrugAdm ;
+	public VocMethodsDrugAdm getMethodsDrugAdm() {return methodsDrugAdm;}
+	private VocMethodsDrugAdm methodsDrugAdm ;
 	
 	/** Время первой дозы */
-	@Comment("Время первой дозы")
-	public Time getFirstDoseTime() {return theFirstDoseTime;}
-	public void setFirstDoseTime(Time aFirstDoseTime) {theFirstDoseTime = aFirstDoseTime;	}
-	/** Время первой дозы */
-	private Time theFirstDoseTime;
+	private Time firstDoseTime;
 
 	/** Время повторной (при необходимости) дозы */
-	@Comment("Время повторной (при необходимости) дозы")
-	public Time getSecondDoseTime() {return theSecondDoseTime;}
-	public void setSecondDoseTime(Time aSecondDoseTime) {theSecondDoseTime = aSecondDoseTime;	}
-	/** Время повторной (при необходимости) дозы */
-	private Time theSecondDoseTime;
+	private Time secondDoseTime;
 }

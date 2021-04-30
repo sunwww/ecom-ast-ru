@@ -30,15 +30,15 @@ public class SecRoleServiceBean implements ISecRoleService {
     private static final Logger LOG = Logger.getLogger(SecRoleServiceBean.class);
 
     public String getRoleInfo(long aRoleId) {
-    	SecRole role = theManager.find(SecRole.class, aRoleId) ;
+    	SecRole role = manager.find(SecRole.class, aRoleId) ;
     	return role!=null? role.getName() : "" ;
     }
 
 	public List<SecUserForm>listUsersByRole(long aRoleId, boolean aIsSystemView) {
-	//	SecRole role = theManager.find(SecRole.class, aRoleId) ;
+	//	SecRole role = manager.find(SecRole.class, aRoleId) ;
 		String add="" ;
 		if (!aIsSystemView) add=" and (su.isSystems is null or su.isSystems='0') " ;
-        List<Object[]> roles = theManager.createNativeQuery("select su.id,su.fullname,su.login,su.comment from SecUser_SecRole as susr"
+        List<Object[]> roles = manager.createNativeQuery("select su.id,su.fullname,su.login,su.comment from SecUser_SecRole as susr"
         	+" inner join SecUser as su on su.id=secuser_id"
         	+" where susr.roles_id=:idRole and (su.disabled is null or su.disabled='0')"+add+" order by su.login").setParameter("idRole", aRoleId).getResultList() ;
 		return convert(roles) ;
@@ -47,7 +47,7 @@ public class SecRoleServiceBean implements ISecRoleService {
 	public List<SecUserForm> listUsersToAdd(long aRoleId, boolean aIsSystemView) {
 		String add="" ;
 		if (!aIsSystemView) add=" and (su.isSystems is null or su.isSystems='0') " ;
-		List<Object[]> roles = theManager.createNativeQuery("select su.id,su.fullname,su.login,su.comment from SecUser as su where (su.disabled is null or su.disabled='0')"+add+" and (select count(*) from SecUser_SecRole as susr where susr.roles_id=:idRole and susr.secUser_id=su.id)=0  order by su.login")
+		List<Object[]> roles = manager.createNativeQuery("select su.id,su.fullname,su.login,su.comment from SecUser as su where (su.disabled is null or su.disabled='0')"+add+" and (select count(*) from SecUser_SecRole as susr where susr.roles_id=:idRole and susr.secUser_id=su.id)=0  order by su.login")
 			.setParameter("idRole", aRoleId).getResultList() ;
 		return convert(roles) ;		
 	}
@@ -55,8 +55,8 @@ public class SecRoleServiceBean implements ISecRoleService {
 	public void removeUsersFromRole(long aRoleId, long[] aUsersId) {
 		String ids =convertArrayToString(aUsersId);
 		java.util.Date date = new java.util.Date() ;
-		String username = theContext.getCallerPrincipal().getName() ;
-		theManager.createNativeQuery("delete from SecUser_SecRole where roles_id=:idRole and secuser_id in ("+ids+")")
+		String username = context.getCallerPrincipal().getName() ;
+		manager.createNativeQuery("delete from SecUser_SecRole where roles_id=:idRole and secuser_id in ("+ids+")")
 			.setParameter("idRole", aRoleId)
 			//.setParameter("idUsers", ids)
 			.executeUpdate() ;
@@ -70,22 +70,22 @@ public class SecRoleServiceBean implements ISecRoleService {
 			jour.setComment(" remove role userid="+user+" roleid="+aRoleId) ;
 			jour.setSerializationAfter("user:"+user) ;
 			jour.setSerializationBefore("role:"+aRoleId) ;
-			theManager.persist(jour) ;
+			manager.persist(jour) ;
 		}
 	}
 	public void addUsersToRole(long aRoleId, long[] aUsersId) {
 		//LOG.info("ids="+convertArrayToString(aUsersId)) ;
 		java.util.Date date = new java.util.Date() ;
-		String username = theContext.getCallerPrincipal().getName() ;
+		String username = context.getCallerPrincipal().getName() ;
 		for (long user:aUsersId) {
-			Object check = theManager.createNativeQuery("select count(*) from SecUser_SecRole where roles_id=:idRole and secuser_id=:idUser")
+			Object check = manager.createNativeQuery("select count(*) from SecUser_SecRole where roles_id=:idRole and secuser_id=:idUser")
 			.setParameter("idRole", aRoleId)
 			.setParameter("idUser", user)
 			.getSingleResult() ;
 			Long ch = PersistList.parseLong(check) ;
 			
 			if (ch.intValue()==0) {
-				int result = theManager.createNativeQuery("insert into SecUser_SecRole (roles_id,secuser_id) values (:idRole,:idUser)")
+				int result = manager.createNativeQuery("insert into SecUser_SecRole (roles_id,secuser_id) values (:idRole,:idUser)")
 					.setParameter("idRole", aRoleId)
 					.setParameter("idUser", user)
 					.executeUpdate() ;
@@ -98,7 +98,7 @@ public class SecRoleServiceBean implements ISecRoleService {
 				jour.setComment(" add role userid="+user+" roleid="+aRoleId) ;
 				jour.setSerializationAfter("user:"+user) ;
 				jour.setSerializationBefore("role:"+aRoleId) ;
-				theManager.persist(jour) ;
+				manager.persist(jour) ;
 			}
 		}
 		
@@ -125,28 +125,28 @@ public class SecRoleServiceBean implements ISecRoleService {
     }
 
     public void saveRolePolicies(long aRoleId, long[] aAdded, long[] aRemoved) {
-        SecRole role = theManager.find(SecRole.class, aRoleId) ;
+        SecRole role = manager.find(SecRole.class, aRoleId) ;
         Collection<SecPolicy> policies = role.getSecPolicies() ;
         for (long idPolicy : aAdded) {
-            SecPolicy policy = theManager.find(SecPolicy.class, idPolicy) ;
+            SecPolicy policy = manager.find(SecPolicy.class, idPolicy) ;
             if(policy!=null && !policies.contains(policy)) {
                LOG.info("idPolicy = " + idPolicy);
                 policies.add(policy) ;
             }
         }
         for (long idPolicy : aRemoved) {
-            SecPolicy policy = theManager.find(SecPolicy.class, idPolicy) ;
+            SecPolicy policy = manager.find(SecPolicy.class, idPolicy) ;
             if(policy!=null) {
                 policies.remove(policy) ;
             }
         }
         role.setSecPolicies(policies) ;
-        theManager.persist(role);
+        manager.persist(role);
     }
 
     public CheckNode loadPoliciesByRole(long aRoleId) {
     	TreeSet<Long> policiesSet  = new TreeSet<>();
-    	SecRole role = theManager.find(SecRole.class, aRoleId) ;
+    	SecRole role = manager.find(SecRole.class, aRoleId) ;
     	for (SecPolicy policy : role.getSecPolicies()) {
     		policiesSet.add(policy.getId()) ;
     	}
@@ -167,7 +167,7 @@ public class SecRoleServiceBean implements ISecRoleService {
 
     private SecPolicy findRootPolicy() {
     	try {
-        	return  (SecPolicy) theManager.createQuery("from SecPolicy where parentSecPolicy is null").getSingleResult() ;
+        	return  (SecPolicy) manager.createQuery("from SecPolicy where parentSecPolicy is null").getSingleResult() ;
     	} catch(NonUniqueResultException | org.hibernate.NonUniqueResultException e) {
     		throw new IllegalStateException("Должна быть одна головная политика (SecPolicy, где parentSecPolicy is null)")   ;
     	}
@@ -184,6 +184,6 @@ public class SecRoleServiceBean implements ISecRoleService {
     }
 
     @PersistenceContext
-    private EntityManager theManager ;
-    @Resource SessionContext theContext ;
+    private EntityManager manager ;
+    @Resource SessionContext context ;
 }

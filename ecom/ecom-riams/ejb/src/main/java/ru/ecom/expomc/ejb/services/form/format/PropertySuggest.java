@@ -9,18 +9,18 @@ import java.io.Serializable;
  */
 public class PropertySuggest implements Serializable {
     public PropertySuggest(String aProperty, String aComment) {
-        theProperty = aProperty;
-        theComment = aComment ;
+        property = aProperty;
+        comment = aComment ;
     }
 
     /** Комментарий */
-    public String getComment() { return theComment ; }
+    public String getComment() { return comment ; }
 
     /** Комментарий */
-    private final String theComment ;
+    private final String comment ;
     /** Свойство */
-    public String getProperty() { return theProperty ; }
+    public String getProperty() { return property ; }
 
     /** Свойство */
-    private final String theProperty ;
+    private final String property ;
 }

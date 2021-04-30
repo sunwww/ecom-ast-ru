@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.licence;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -21,53 +22,48 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(DocumentPrepareCreateInterceptor.class)
 )
+@Setter
 public class RequitDirectionDocumentForm extends InternalDocumentsForm{
 	/** Номер направления */
 	@Comment("Номер направления")
 	@Persist
-	public String getOrderNumber() {return theOrderNumber;}
-	public void setOrderNumber(String aOrderNumber) {theOrderNumber = aOrderNumber;}
+	public String getOrderNumber() {return orderNumber;}
 	/** Номер направления */
-	private String theOrderNumber;
+	private String orderNumber;
 
 	/** Дата направления */
 	@Comment("Дата направления")
 	@Persist @DateString @DoDateString
-	public String getOrderDate() {return theOrderDate;}
-	public void setOrderDate(String aOrderDate) {theOrderDate = aOrderDate;}
+	public String getOrderDate() {return orderDate;}
 	/** Дата направления */
-	private String theOrderDate;
+	private String orderDate;
 	
 	/** Направитель */
 	@Comment("Направитель")
 	@Persist
-	public String getOrderOffice() {return theOrderOffice;}
-	public void setOrderOffice(String aOrderOffice) {theOrderOffice = aOrderOffice;}
+	public String getOrderOffice() {return orderOffice;}
 	/** Направитель */
-	private String theOrderOffice;
+	private String orderOffice;
 
 	/** Данные объективного исследования */
 	@Comment("Данные объективного исследования")
 	@Persist
-	public String getResearch() {return theResearch;}
-	public void setResearch(String aResearch) {theResearch = aResearch;}
+	public String getResearch() {return research;}
 	/** Данные объективного исследования */
-	private String theResearch;
+	private String research;
 	
 	/** Результаты диагностических исследований */
 	@Comment("Результаты диагностических исследований")
 	@Persist
-	public String getLabResearch() {return theLabResearch;}
-	public void setLabResearch(String aLabResearch) {theLabResearch = aLabResearch;}
+	public String getLabResearch() {return labResearch;}
 	/** Результаты диагностических исследований */
-	private String theLabResearch;
+	private String labResearch;
 	
 	/** Жалобы */
 	@Comment("Жалобы")
 	@Persist
-	public String getAbuses() {return theAbuses;}
-	public void setAbuses(String aAbuses) {theAbuses = aAbuses;}
+	public String getAbuses() {return abuses;}
 	/** Жалобы */
-	private String theAbuses;
+	private String abuses;
 
 }

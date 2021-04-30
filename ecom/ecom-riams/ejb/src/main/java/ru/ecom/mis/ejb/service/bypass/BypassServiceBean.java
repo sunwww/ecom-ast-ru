@@ -45,17 +45,17 @@ public class BypassServiceBean implements IBypassService {
 
     private void printByClause(long aMonitorId, long aFileId, String aClause) {
 
-        IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к экспорту обходного листка");
+        IMonitor monitor = monitorService.acceptMonitor(aMonitorId, "Подготовка к экспорту обходного листка");
 
-        long count = (Long)theManager.createQuery("select count(*) from Patient where "+aClause).getSingleResult() ;
+        long count = (Long)manager.createQuery("select count(*) from Patient where "+aClause).getSingleResult() ;
 
-        Query query = theManager.createQuery("from Patient where "+aClause) ;
+        Query query = manager.createQuery("from Patient where "+aClause) ;
         Iterator<Patient> iterator = QueryIteratorUtil.iterate(Patient.class, query) ;
 
-        File file = theJbossGetFileLocalService.createFile(aFileId, "reg.xls");
+        File file = jbossGetFileLocalService.createFile(aFileId, "reg.xls");
 
         try {
-            monitor = theMonitorService.startMonitor(aMonitorId, "Экспорт обходного листка", count);
+            monitor = monitorService.startMonitor(aMonitorId, "Экспорт обходного листка", count);
             Workbook template = Workbook.getWorkbook(JBossConfigUtil.getDataFile("reg.xls")) ;
             WritableWorkbook workbook = Workbook.createWorkbook(file, template);
             WritableSheet sheet = workbook.getSheet(0) ;
@@ -128,9 +128,9 @@ public class BypassServiceBean implements IBypassService {
         return r ;
     }
 
-    private @PersistenceContext EntityManager theManager;
-    private @EJB IJbossGetFileLocalService theJbossGetFileLocalService ;
-    private @EJB ILocalMonitorService theMonitorService;
+    private @PersistenceContext EntityManager manager;
+    private @EJB IJbossGetFileLocalService jbossGetFileLocalService ;
+    private @EJB ILocalMonitorService monitorService;
 
 
 }

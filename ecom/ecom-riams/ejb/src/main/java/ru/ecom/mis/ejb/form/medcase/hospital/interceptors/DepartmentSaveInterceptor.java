@@ -81,8 +81,8 @@ public class DepartmentSaveInterceptor implements IFormInterceptor {
 		VocIdc10 mkb = manager.find(VocIdc10.class, clinicalMkb);
 		boolean ret = true;
 		boolean isPermitted = false;
-		String sql = "select ni.id as f1, case when ldr.permissionrule='1' then '1' else '0' end as f2" +
-				" ,case when '" + mkb.getCode() + "' between ni.fromidc10code and ni.toidc10code then '1' else '0' end as f3" +
+		String sql = "select ni.id as f1, case when ldr.permissionrule='1' n '1' else '0' end as f2" +
+				" ,case when '" + mkb.getCode() + "' between ni.fromidc10code and ni.toidc10code n '1' else '0' end as f3" +
 				" from lpudiagnosisrule ldr" +
 				" left join lpucontractnosologygroup lcng on lcng.lpudiagnosisrule = ldr.id" +
 				" left join contractnosologygroup cng on cng.id=lcng.nosologygroup" +

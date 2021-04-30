@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.contract;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -17,128 +19,58 @@ import java.sql.Date;
 @Entity
 @Table(schema="SQLUser")
 	@AIndexes({
-		@AIndex(unique= false, properties = {"contract"})
-		,@AIndex(unique= false, properties = {"servedPerson"})
+		@AIndex(properties = {"contract"})
+		,@AIndex(properties = {"servedPerson"})
 	})
+	@Getter
+	@Setter
 public class ContractAccountRule extends BaseEntity{
 	/**
 	 * Скидка
 	 */
-	@Comment("Скидка")
-	
-	public BigDecimal getDiscount() {
-		return theDiscount;
-	}
-	public void setDiscount(BigDecimal aDiscount) {
-		theDiscount = aDiscount;
-	}
-	/**
-	 * Скидка
-	 */
-	private BigDecimal theDiscount;
+	private BigDecimal discount;
 	/**
 	 * Предел платежей
 	 */
-	@Comment("Предел платежей")
-	
-	public BigDecimal getPaymentLimit() {
-		return thePaymentLimit;
-	}
-	public void setPaymentLimit(BigDecimal aPaymentLimit) {
-		thePaymentLimit = aPaymentLimit;
-	}
-	/**
-	 * Предел платежей
-	 */
-	private BigDecimal thePaymentLimit;
+	private BigDecimal paymentLimit;
 	/**
 	 * Предел блокирования платежей
 	 */
-	@Comment("Предел блокирования платежей")
-	
-	public BigDecimal getBlockLimit() {
-		return theBlockLimit;
-	}
-	public void setBlockLimit(BigDecimal aBlockLimit) {
-		theBlockLimit = aBlockLimit;
-	}
-	/**
-	 * Предел блокирования платежей
-	 */
-	private BigDecimal theBlockLimit;
+	private BigDecimal blockLimit;
 	/**
 	 * Автоматическое создание счета
 	 */
-	@Comment("Автоматическое создание счета")
-	
-	public Boolean getAutocreateAccount() {
-		return theAutocreateAccount;
-	}
-	public void setAutocreateAccount(Boolean aAutocreateAccount) {
-		theAutocreateAccount = aAutocreateAccount;
-	}
-	/**
-	 * Автоматическое создание счета
-	 */
-	private Boolean theAutocreateAccount;
+	private Boolean autocreateAccount;
 	/**
 	 * Дата начала действия
 	 */
-	@Comment("Дата начала действия")
-	
-	public Date getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(Date aDateFrom) {
-		theDateFrom = aDateFrom;
-	}
-	/**
-	 * Дата начала действия
-	 */
-	private Date theDateFrom;
+	private Date dateFrom;
 	/**
 	 * Дата окончания действия
 	 */
-	@Comment("Дата окончания действия")
-	
-	public Date getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(Date aDateTo) {
-		theDateTo = aDateTo;
-	}
-	/**
-	 * Дата окончания действия
-	 */
-	private Date theDateTo;
+	private Date dateTo;
 	/**
 	 * Договор
 	 */
 	@Comment("Договор")
 	@OneToOne
 	public MedContract getContract() {
-		return theContract;
-	}
-	public void setContract(MedContract aContract) {
-		theContract = aContract;
+		return contract;
 	}
 	/**
 	 * Договор
 	 */
-	private MedContract theContract;
+	private MedContract contract;
 	/**
 	 * Обслуживаемая персона
 	 */
 	@Comment("Обслуживаемая персона")
 	@OneToOne
 	public ServedPerson getServedPerson() {
-		return theServedPerson;
-	}
-	public void setServedPerson(ServedPerson aServedPerson) {
-		theServedPerson = aServedPerson;
+		return servedPerson;
 	}
 	/**
 	 * Обслуживаемая персона
 	 */
-	private ServedPerson theServedPerson;
+	private ServedPerson servedPerson;
 }

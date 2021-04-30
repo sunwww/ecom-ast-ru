@@ -16,15 +16,12 @@ import java.lang.reflect.Method;
 @Remote(IHibernateCacheConfigService.class)
 public class HibernateCacheConfigServiceBean implements IHibernateCacheConfigService {
 
+	@Override
 	public String generateHibernateCacheProperties() {
 		try {
 			StringBuilder sb = new StringBuilder() ;
-			for(Class clazz : theEntityHelper.getInstance().listAllEntities()) {
+			for(Class clazz : EntityHelper.getInstance().listAllEntities()) {
 				if(isCacheable(clazz)) {
-				//	String comment = theEntityHelper.getComment(clazz) ;
-				//	if(StringUtil.isNullOrEmpty(comment)) comment = clazz.getSimpleName();
-					//sb.append("# ").append(comment+" , количество "+getRowsCount(clazz)) ;
-					//sb.append("\n") ;
 					sb.append("hibernate.ejb.classcache.") ;
 					sb.append(clazz.getName()) ;
 					sb.append("=transactional\n") ;
@@ -35,60 +32,19 @@ public class HibernateCacheConfigServiceBean implements IHibernateCacheConfigSer
 							sb.append("=transactional\n") ;
 						}
 					}
-					
 				}
 			}
 			return sb.toString();
 		} catch (Exception e) {
 			throw new RuntimeException("Ошибка создания списка кешированных классов :"+e,e) ;
 		}
-	} 
+	}
 
-	public String generateEhCache() {
-		try {
-			StringBuilder sb = new StringBuilder() ;
-			
-			for(Class clazz : theEntityHelper.getInstance().listAllEntities()) {
-				if(isCacheable(clazz)) {
-				//	String comment = theEntityHelper.getComment(clazz) ;
-				//	if(StringUtil.isNullOrEmpty(comment)) comment = clazz.getSimpleName();
-					//sb.append("# ").append(comment+" , количество "+getRowsCount(clazz)) ;
-					//sb.append("\n") ;
-					sb.append("hibernate.ejb.classcache.") ;
-					sb.append(clazz.getName()) ;
-					sb.append("=read-write\n") ;
-					
-				}
-			}
-			return sb.toString();
-		} catch (Exception e) {
-			throw new RuntimeException("Ошибка создания списка кешированных классов :"+e,e) ;
-		}
-	} 
-	
-	private long getRowsCount(Class aEntityClass) {
-		return (Long) theManager.createQuery("select count(*) from "+aEntityClass.getName())
-		.getSingleResult();
-	}
-	
 	public static boolean isCacheable(Class aEntityClass) {
-		return theEntityHelper.isCacheable(aEntityClass);
+		return entityHelper.isCacheable(aEntityClass);
 	}
-	
-	private static boolean isVoc(Class aClass) {
-		Class superClass = aClass.getSuperclass() ;
-		if(superClass==null) {
-			return false ;
-		} if(superClass.equals(VocIdCodeName.class)) {
-			return true ;
-		} else {
-			return isVoc(superClass);
-		}
-	}
-	
-	
-	private static final EntityHelper theEntityHelper = EntityHelper.getInstance();
-    private @PersistenceContext EntityManager theManager ;
-   
+
+	private static final EntityHelper entityHelper = EntityHelper.getInstance();
+
 
 }

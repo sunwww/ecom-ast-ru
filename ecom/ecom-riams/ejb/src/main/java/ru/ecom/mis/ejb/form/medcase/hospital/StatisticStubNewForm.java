@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.StatisticStubNew;
@@ -21,64 +22,58 @@ import ru.nuzmsh.forms.validator.validators.Required;
 			,list = "entityParentList-stac_statisticStub.do")
 @Parent(property="lpu", parentForm= MisLpuForm.class)
 @EntityFormSecurityPrefix("/Policy/Config/Hospital/StatisticStubNew")
+@Setter
 public class StatisticStubNewForm extends IdEntityForm{
 	/** Год */
 	@Comment("Год")
 	@Persist @Required
-	public Long getYear() {return theYear;}
-	public void setYear(Long aYear) {theYear = aYear;}
+	public Long getYear() {return year;}
 
 	/** Код */
 	@Comment("Код")
 	@Persist @Required
-	public String getCode() {return theCode;}
-	public void setCode(String aCode) {theCode = aCode;}
+	public String getCode() {return code;}
 
 	/** Информация */
 	@Comment("Информация")
 	@Persist
-	public String getInfo() {return theInfo;}
-	public void setInfo(String aInfo) {theInfo = aInfo;}
+	public String getInfo() {return info;}
 
 	/** Лечебное учреждение */
 	@Comment("Лечебное учреждение")
 	@Persist 
-	public Long getLpu() {return theLpu;}
-	public void setLpu(Long aLpu) {theLpu = aLpu;}
+	public Long getLpu() {return lpu;}
 
 	/** Лечебное учреждение */
-	private Long theLpu;
+	private Long lpu;
 	/** Информация */
-	private String theInfo;
+	private String info;
 	/** Код */
-	private String theCode;
+	private String code;
 	/** Год */
-	private Long theYear;
+	private Long year;
 	
 	
 	/** Приемник */
 	@Comment("Приемник")
 	@Persist
-	public Long getPigeonHole() {return thePigeonHole;}
-	public void setPigeonHole(Long aPigeonHole) {thePigeonHole = aPigeonHole;}
+	public Long getPigeonHole() {return pigeonHole;}
 
 	/** Экстренно */
 	@Comment("Экстренно")
 	@Persist
-	public Boolean getIsEmergency() {return theIsEmergency;}
-	public void setIsEmergency(Boolean aIsEmergency) {theIsEmergency = aIsEmergency;}
+	public Boolean getIsEmergency() {return isEmergency;}
 
 	/** Планово */
 	@Comment("Планово")
 	@Persist
-	public Boolean getIsPlan() {return theIsPlan;}
-	public void setIsPlan(Boolean aIsPlan) {theIsPlan = aIsPlan;}
+	public Boolean getIsPlan() {return isPlan;}
 
 	/** Планово */
-	private Boolean theIsPlan;
+	private Boolean isPlan;
 	/** Экстренно */
-	private Boolean theIsEmergency;
+	private Boolean isEmergency;
 	/** Приемник */
-	private Long thePigeonHole;
+	private Long pigeonHole;
 
 }

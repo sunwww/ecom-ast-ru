@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocCT;
@@ -14,243 +16,149 @@ import java.sql.Time;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 public class Covid19 extends BaseEntity {
     /** Пациент */
     @Comment("Пациент")
     @OneToOne
-    public Patient getPatient() {return thePatient;}
-    public void setPatient(Patient aPatient) {thePatient = aPatient;}
-    private Patient thePatient ;
+    public Patient getPatient() {return patient;}
+    private Patient patient ;
 
     /** СМО */
     @Comment("СМО")
     @OneToOne
-    public MedCase getMedCase() {return theMedCase;}
-    public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
-    private MedCase theMedCase ;
+    public MedCase getMedCase() {return medCase;}
+    private MedCase medCase ;
 
     /** Номер ИБ */
-    @Comment("Номер ИБ")
-    public String getCardNumber() {return theCardNumber;}
-    public void setCardNumber(String aCardNumber) {theCardNumber = aCardNumber;}
-    private String theCardNumber ;
+    private String cardNumber ;
 
     /** Место работы, должность */
-    @Comment("Место работы, должность")
-    public String getWorkPlace() {return theWorkPlace;}
-    public void setWorkPlace(String aWorkPlace) {theWorkPlace = aWorkPlace;}
-    private String theWorkPlace ;
+    private String workPlace ;
     
     /** Дата появления клинических симптомов */
-    @Comment("Дата появления клинических симптомов")
-    public Date getSymptomsDate() {return theSymptomsDate;}
-    public void setSymptomsDate(Date aSymptomsDate) {theSymptomsDate = aSymptomsDate;}
-    private Date theSymptomsDate ;
+    private Date symptomsDate ;
 
    /** Диагноз */
-   @Comment("Диагноз")
-   public String getDiagnosis() {return theDiagnosis;}
-   public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
-   private String theDiagnosis ;
+   private String diagnosis ;
 
    /** Дата постановки диагноза */
-   @Comment("Дата постановки диагноза")
-   public Date getDiagnosisDate() {return theDiagnosisDate;}
-   public void setDiagnosisDate(Date aDiagnosisDate) {theDiagnosisDate = aDiagnosisDate;}
-   private Date theDiagnosisDate ;
+   private Date diagnosisDate ;
 
    /** Дата исследования на COVID */
-   @Comment("Дата исследования на COVID")
-   public Date getCovidResearchDate() {return theCovidResearchDate;}
-   public void setCovidResearchDate(Date aCovidResearchDate) {theCovidResearchDate = aCovidResearchDate;}
-   private Date theCovidResearchDate ;
+   private Date covidResearchDate ;
 
    /** МО, где проводилось ЛИ */
-   @Comment("МО, где проводилось ЛИ")
-   public String getLabOrganization() {return theLabOrganization;}
-   public void setLabOrganization(String aLabOrganization) {theLabOrganization = aLabOrganization;}
-   private String theLabOrganization ;
+   private String labOrganization ;
 
    /** Результаты лабораторных исследования */
-   @Comment("Результаты лабораторных исследования")
-   public String getLabResult() {return theLabResult;}
-   public void setLabResult(String aLabResult) {theLabResult = aLabResult;}
-   private String theLabResult ;
+   private String labResult ;
 
     /** Номер анализа */
-    @Comment("Номер анализа")
-    public String getLabResultNumber() {return theLabResultNumber;}
-    public void setLabResultNumber(String aLabResultNumber) {theLabResultNumber = aLabResultNumber;}
-    private String theLabResultNumber ;
+    private String labResultNumber ;
 
    /** Вакцинация пневмококком */
    @Comment("Вакцинация пневмококком")
    @OneToOne
-   public VocYesNoMaybe getVacPnKok() {return theVacPnKok;}
-   public void setVacPnKok(VocYesNoMaybe aVacPnKok) {theVacPnKok = aVacPnKok;}
-   private VocYesNoMaybe theVacPnKok ;
+   public VocYesNoMaybe getVacPnKok() {return vacPnKok;}
+   private VocYesNoMaybe vacPnKok ;
 
    /** Вакцинация от гриппа */
    @Comment("Вакцинация от гриппа")
    @OneToOne
-   public VocYesNoMaybe getVacFlu() {return theVacFlu;}
-   public void setVacFlu(VocYesNoMaybe aVacFlu) {theVacFlu = aVacFlu;}
-   private VocYesNoMaybe theVacFlu ;
+   public VocYesNoMaybe getVacFlu() {return vacFlu;}
+   private VocYesNoMaybe vacFlu ;
    
    /** Беременность */
-   @Comment("Беременность")
-   public Boolean getIsPregnant() {return theIsPregnant;}
-   public void setIsPregnant(Boolean aIsPregnant) {theIsPregnant = aIsPregnant;}
-   private Boolean theIsPregnant ;
+   private Boolean isPregnant ;
    
    /** Противовирусное лечение */
    @Comment("Противовирусное лечение")
    @OneToOne
-   public VocYesNoMaybe getIsAntivirus() {return theIsAntivirus;}
-   public void setIsAntivirus(VocYesNoMaybe aIsAntivirus) {theIsAntivirus = aIsAntivirus;}
-   private VocYesNoMaybe theIsAntivirus ;
+   public VocYesNoMaybe getIsAntivirus() {return isAntivirus;}
+   private VocYesNoMaybe isAntivirus ;
    
    /** Респираторная поддержка */
    @Comment("Респираторная поддержка")
    @OneToOne
-   public VocYesNoMaybe getIsIvl() {return theIsIvl;}
-   public void setIsIvl(VocYesNoMaybe aIsIvl) {theIsIvl = aIsIvl;}
-   private VocYesNoMaybe theIsIvl ;
+   public VocYesNoMaybe getIsIvl() {return isIvl;}
+   private VocYesNoMaybe isIvl ;
    
    /** Хронические заболевания бронхолегочной системы */
-   @Comment("Хронические заболевания бронхолегочной системы")
-   public String getSoputBronho() {return theSoputBronho;}
-   public void setSoputBronho(String aSoputBronho) {theSoputBronho = aSoputBronho;}
-   private String theSoputBronho ;
+   private String soputBronho ;
 
    /** Хронические заболевания сердечно-сосудистой системы */
-   @Comment("Хронические заболевания сердечно-сосудистой системы")
-   public String getSoputHeart() {return theSoputHeart;}
-   public void setSoputHeart(String aSoputHeart) {theSoputHeart = aSoputHeart;}
-   private String theSoputHeart ;
+   private String soputHeart ;
    
    /** Хронические заболевания эндокринной системы */
-   @Comment("Хронические заболевания эндокринной системы")
-   public String getSoputEndo() {return theSoputEndo;}
-   public void setSoputEndo(String aSoputEndo) {theSoputEndo = aSoputEndo;}
-   private String theSoputEndo ;
+   private String soputEndo ;
    
    /** Онкологические заболевания */
-   @Comment("Онкологические заболевания")
-   public String getSoputOnko() {return theSoputOnko;}
-   public void setSoputOnko(String aSoputOnko) {theSoputOnko = aSoputOnko;}
-   private String theSoputOnko ;
+   private String soputOnko ;
 
    /** Болезнь, вызванная ВИЧ */
-   @Comment("Болезнь, вызванная ВИЧ")
-   public String getSoputSpid() {return theSoputSpid;}
-   public void setSoputSpid(String aSoputSpid) {theSoputSpid = aSoputSpid;}
-   private String theSoputSpid ;
+   private String soputSpid ;
    
    /** Туберкулез */
-   @Comment("Туберкулез")
-   public String getSoputTuber() {return theSoputTuber;}
-   public void setSoputTuber(String aSoputTuber) {theSoputTuber = aSoputTuber;}
-   private String theSoputTuber ;
+   private String soputTuber ;
    
    /** Иные  */
-   @Comment("Иные ")
-   public String getSoputOther() {return theSoputOther;}
-   public void setSoputOther(String aSoputOther) {theSoputOther = aSoputOther;}
-   private String theSoputOther ;
+   private String soputOther ;
 
    /** Уровень SpO2(%)(на момент поступления) */
-   @Comment("Уровень SpO2(%)(на момент поступления)")
-   public String getSaturationLevel() {return theSaturationLevel;}
-   public void setSaturationLevel(String aSaturationLevel) {theSaturationLevel = aSaturationLevel;}
-   private String theSaturationLevel ;
+   private String saturationLevel ;
 
    /** Контактные лица */
    @Comment("Контактные лица")
    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
-   public List<Covid19Contact> getContactList() {return theContactList;}
-   public void setContactList(List<Covid19Contact> aContactList) {theContactList = aContactList;}
-   private List<Covid19Contact> theContactList ;
+   public List<Covid19Contact> getContactList() {return contactList;}
+   private List<Covid19Contact> contactList ;
 
    /** Дата создания */
-   @Comment("Дата создания")
-   public Date getCreateDate() {return theCreateDate;}
-   public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-   private Date theCreateDate ;
+   private Date createDate ;
 
    /** Время создания */
-   @Comment("Время создания")
-   public Time getCreateTime() {return theCreateTime;}
-   public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-   private Time theCreateTime ;
+   private Time createTime ;
 
    /** Создатель */
-   @Comment("Создатель")
-   public String getCreateUsername() {return theCreateUsername;}
-   public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-   private String theCreateUsername ;
+   private String createUsername ;
 
    /** Дата выгрузки на портал */
-   @Comment("Дата выгрузки на портал")
-   public Date getExportDate() {return theExportDate;}
-   public void setExportDate(Date aExportDate) {theExportDate = aExportDate;}
-   private Date theExportDate ;
+   private Date exportDate ;
 
    /** Время выгузки на портал */
-   @Comment("Время выгузки на портал")
-   public Time getExportTime() {return theExportTime;}
-   public void setExportTime(Time aExportTime) {theExportTime = aExportTime;}
-   private Time theExportTime ;
+   private Time exportTime ;
 
    /** Пользователь, выгузивший на портал */
-   @Comment("Пользователь, выгузивший на портал")
-   public String getExportUsername() {return theExportUsername;}
-   public void setExportUsername(String aExportUsername) {theExportUsername = aExportUsername;}
-   private String theExportUsername ;
+   private String exportUsername ;
 
     /** Карта заменена на новую */
-    @Comment("Карта заменена на новую")
-    public Boolean getNoActual() {return theNoActual;}
-    public void setNoActual(Boolean aNoActual) {theNoActual = aNoActual;}
-    private Boolean theNoActual ;
+    private Boolean noActual ;
 
     /** Дата исхода */
-    @Comment("Дата исхода")
-    public Date getIshodDate() {return theIshodDate;}
-    public void setIshodDate(Date aIshodDate) {theIshodDate = aIshodDate;}
-    private Date theIshodDate ;
+    private Date ishodDate ;
 
     /** Результат исхода */
     @Comment("Результат исхода")
     @OneToOne
-    public VocHospitalizationResult getHospResult() {return theHospResult;}
-    public void setHospResult(VocHospitalizationResult aHospResult) {theHospResult = aHospResult;}
-    private VocHospitalizationResult theHospResult ;
+    public VocHospitalizationResult getHospResult() {return hospResult;}
+    private VocHospitalizationResult hospResult ;
 
     /** Диагноз */
     @Comment("Диагноз")
     @OneToOne
-    public VocIdc10 getMkb() {return theMkb;}
-    public void setMkb(VocIdc10 aMkb) {theMkb = aMkb;}
-    private VocIdc10 theMkb ;
+    public VocIdc10 getMkb() {return mkb;}
+    private VocIdc10 mkb ;
     
     /** Номер бригады СМП */
-    @Comment("Номер бригады СМП")
-    public String getBrigadeNumber() {return theBrigadeNumber;}
-    public void setBrigadeNumber(String aBrigadeNumber) {theBrigadeNumber = aBrigadeNumber;}
-    private String theBrigadeNumber ;
+    private String brigadeNumber ;
 
     /** Эпид. номер */
-    @Comment("Эпид. номер")
-    public String getEpidNumber() {return theEpidNumber;}
-    public void setEpidNumber(String aEpidNumber) {theEpidNumber = aEpidNumber;}
-    private String theEpidNumber ;
+    private String epidNumber ;
 
     /** Мед. работник */
-    @Comment("Мед. работник")
-    public Boolean getIsDoctor() {return theIsDoctor;}
-    public void setIsDoctor(Boolean aIsDoctor) {theIsDoctor = aIsDoctor;}
-    private Boolean theIsDoctor ;
+    private Boolean isDoctor ;
 
     @PrePersist
     void onPrePersist() {
@@ -260,92 +168,47 @@ public class Covid19 extends BaseEntity {
     }
 
     /** Дата первичной выгрузки */
-    @Comment("Дата первичной выгрузки")
-    public Date getExportFirstDate() {return theExportFirstDate;}
-    public void setExportFirstDate(Date aExportFirstDate) {theExportFirstDate = aExportFirstDate;}
-    /** Дата первичной выгрузки */
-    private Date theExportFirstDate ;
+    private Date exportFirstDate ;
     
     /** Время первичной выгрузки */
-    @Comment("Время первичной выгрузки")
-    public Time getExportFirstTime() {return theExportFirstTime;}
-    public void setExportFirstTime(Time aExportFirstTime) {theExportFirstTime = aExportFirstTime;}
-    /** Время первичной выгрузки */
-    private Time theExportFirstTime ;
+    private Time exportFirstTime ;
 
     /** Кто первичную выгрузил? */
-    @Comment("Кто первичную выгрузил?")
-    public String getExportFirstUsername() {return theExportFirstUsername;}
-    public void setExportFirstUsername(String aExportFirstUsername) {theExportFirstUsername = aExportFirstUsername;}
-    /** Кто первичную выгрузил? */
-    private String theExportFirstUsername ;
+    private String exportFirstUsername ;
 
     /** Дата повторной выгрузки */
-    @Comment("Дата повторной выгрузки")
-    public Date getExportDoubleDate() {return theExportDoubleDate;}
-    public void setExportDoubleDate(Date aExportDoubleDate) {theExportDoubleDate = aExportDoubleDate;}
-    /** Дата повторной выгрузки */
-    private Date theExportDoubleDate ;
+    private Date exportDoubleDate ;
 
     /** Время повторной выгрузки */
-    @Comment("Время повторной выгрузки")
-    public Time getExportDoubleTime() {return theExportDoubleTime;}
-    public void setExportDoubleTime(Time aExportDoubleTime) {theExportDoubleTime = aExportDoubleTime;}
-    /** Время повторной выгрузки */
-    private Time theExportDoubleTime ;
+    private Time exportDoubleTime ;
 
     /** Кто повторную выгрузил? */
-    @Comment("Кто повторную выгрузил?")
-    public String getExportDoubleUsername() {return theExportDoubleUsername;}
-    public void setExportDoubleUsername(String aExportDoubleUsername) {theExportDoubleUsername = aExportDoubleUsername;}
-    /** Кто повторную выгрузил? */
-    private String theExportDoubleUsername ;
+    private String exportDoubleUsername ;
 
     /** Дата выписной выгрузки */
-    @Comment("Дата выписной выгрузки")
-    public Date getExportDischargeDate() {return theExportDischargeDate;}
-    public void setExportDischargeDate(Date aExportDischargeDate) {theExportDischargeDate = aExportDischargeDate;}
-    /** Дата выписной выгрузки */
-    private Date theExportDischargeDate ;
+    private Date exportDischargeDate ;
 
     /** Время выписной выгрузки */
-    @Comment("Время выписной выгрузки")
-    public Time getExportDischargeTime() {return theExportDischargeTime;}
-    public void setExportDischargeTime(Time aExportDischargeTime) {theExportDischargeTime = aExportDischargeTime;}
-    /** Время выписной выгрузки */
-    private Time theExportDischargeTime ;
+    private Time exportDischargeTime ;
 
     /** Кто при выписке выгрузил? */
-    @Comment("Кто при выписке выгрузил?")
-    public String getExportDischargeUsername() {return theExportDischargeUsername;}
-    public void setExportDischargeUsername(String aExportDischargeUsername) {theExportDischargeUsername = aExportDischargeUsername;}
-    /** Кто при выписке выгрузил? */
-    private String theExportDischargeUsername ;
+    private String exportDischargeUsername ;
 
     /** Диагноз основной выписной */
     @Comment("Диагноз основной выписной")
     @OneToOne
-    public VocIdc10 getMkbDischarge() {return theMkbDischarge;}
-    public void setMkbDischarge(VocIdc10 aMkbDischarge) {theMkbDischarge = aMkbDischarge;}
-    private VocIdc10 theMkbDischarge ;
+    public VocIdc10 getMkbDischarge() {return mkbDischarge;}
+    private VocIdc10 mkbDischarge ;
 
     /** КТ */
     @Comment("КТ")
     @OneToOne
-    public VocCT getCT() {return theCT;}
-    public void setCT(VocCT aCT) {theCT = aCT;}
-    private VocCT theCT ;
+    public VocCT getCt() {return ct;}
+    private VocCT ct;
 
     /** Дата проведения КТ */
-    @Comment("Дата проведения КТ")
-    public Date getDateCT() {return theDateCT;}
-    public void setDateCT(Date aDateCT) {theDateCT = aDateCT;}
-    private Date theDateCT ;
+    private Date dateCT ;
 
     /** Место проведения КТ */
-    @Comment("Место проведения КТ")
-    public String getLpuCT() {return theLpuCT;}
-    public void setLpuCT(String aLpuCT) {theLpuCT = aLpuCT;}
-    /** Место проведения КТ */
-    private String theLpuCT ;
+    private String lpuCT ;
 }

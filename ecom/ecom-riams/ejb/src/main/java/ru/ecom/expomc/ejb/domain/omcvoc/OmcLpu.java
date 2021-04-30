@@ -3,6 +3,8 @@ package ru.ecom.expomc.ejb.domain.omcvoc;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
 import ru.ecom.expomc.ejb.services.exportformat.security.EntitySecurityPrefix;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -14,86 +16,78 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(name = "OMC_LPU",schema="SQLUser")
 @EntitySecurityPrefix("/Policy/Mis/MisLpu")
+@Getter
+@Setter
 public class OmcLpu extends OmcAbstractVoc {
 
     /** Адрес */
     @Comment("Адрес")
     @AFormatFieldSuggest({"ADDRESS","ADRESS"})
-    public String getAddress() { return theAddress ; }
-    public void setAddress(String aAddress) { theAddress = aAddress ; }
+    public String getAddress() { return address; }
 
     /** Директор */
     @Comment("Директор")
     @AFormatFieldSuggest({"DIRECTOR"})
-    public String getDirector() { return theDirector ; }
-    public void setDirector(String aDirector) { theDirector = aDirector ; }
+    public String getDirector() { return director; }
 
     /** Телефон */
     @Comment("Телефон")
     @AFormatFieldSuggest({"PHONE"})
-    public String getPhone() { return thePhone ; }
-    public void setPhone(String aPhone) { thePhone = aPhone ; }
+    public String getPhone() { return phone; }
 
     /** ИНН */
     @Comment("ИНН")
     @AFormatFieldSuggest({"INN"})
-    public String getInn() { return theInn ; }
-    public void setInn(String aInn) { theInn = aInn ; }
+    public String getInn() { return inn; }
 
     /** ОКПО */
     @Comment("ОКПО")
     @AFormatFieldSuggest({"OKPO"})
-    public String getOkpo() { return theOkpo ; }
-    public void setOkpo(String aOkpo) { theOkpo = aOkpo ; }
+    public String getOkpo() { return okpo; }
 
     /** ОКОНХ */
     @Comment("ОКОНХ")
     @AFormatFieldSuggest({"OKONH"})
-    public String getOkonh() { return theOkonh ; }
-    public void setOkonh(String aOkonh) { theOkonh = aOkonh ; }
+    public String getOkonh() { return okonh; }
 
     /** Эл. почта АОТФОМС */
     @Comment("Эл. почта АОТФОМС")
     @AFormatFieldSuggest({"MAIL"})
-    public String getMail() { return theMail ; }
-    public void setMail(String aMail) { theMail = aMail ; }
+    public String getMail() { return mail; }
 
     /** Ведомственное подчинение */
     @Comment("Ведомственное подчинение")
     @AFormatFieldSuggest({"VEDPODCHIN"})
-    public String getVedPodchin() { return theVedPodchin ; }
-    public void setVedPodchin(String aVedPodchin) { theVedPodchin = aVedPodchin ; }
+    public String getVedPodchin() { return vedPodchin; }
 
     /** ОГРН */
 	@Comment("ОГРН")
 	@AFormatFieldSuggest({"M_OGRN"})
-	public String getOgrn() {return theOgrn;}
-	public void setOgrn(String aOgrn) {theOgrn = aOgrn;}
+	public String getOgrn() {return ogrn;}
 
 	/** Код федеральный */
 	@Comment("Код федеральный")
 	@AFormatFieldSuggest({"N_REESTR"})
-	public String getCodef() {return theCodef;}
-	public void setCodef(String aCodef) {theCodef = aCodef;}
+	public String getCodef() {return codef;}
 
 	/** Код федеральный */
-	private String theCodef;
+	private String codef;
 	/** ОГРН */
-	private String theOgrn;
+	private String ogrn;
     /** Ведомственное подчинение */
-    private String theVedPodchin ;
+    private String vedPodchin;
     /** Эл. почта АОТФОМС */
-    private String theMail ;
+    private String mail;
     /** ОКОНХ */
-    private String theOkonh ;
+    private String okonh;
     /** ОКПО */
-    private String theOkpo ;
+    private String okpo;
     /** ИНН */
-    private String theInn ;
+    private String inn;
     /** Телефон */
-    private String thePhone ;
+    private String phone;
     /** Директор */
-    private String theDirector ;
+    private String director;
     /** Адрес */
-    private String theAddress ;
+    private String address;
 }

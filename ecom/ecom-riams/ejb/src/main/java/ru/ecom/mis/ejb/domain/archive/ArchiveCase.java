@@ -5,52 +5,32 @@ import java.sql.Time;
 
 import javax.persistence.Entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
+@Getter
+@Setter
 public class ArchiveCase extends BaseEntity {
 
 	/** Номер стат. карты */
-	@Comment("Номер стат. карты")
-	public Long getStatCard() {return theStatCard;}
-	public void setStatCard(Long aStatCard) {theStatCard = aStatCard;}
-	/** Номер стат. карты */
-	private Long theStatCard;
+	private Long statCard;
 	
 	/** Пациент */
-	@Comment("Пациент")
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
-	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	
 	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	
 	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	
 	/** Пользователь, создавший запись */
-	@Comment("Пользователь, создавший запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	
 	/** Рабочая функция создателя */
-	@Comment("Рабочая функция создателя")
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
-	/** Рабочая функция создателя */
-	private Long theWorkFunction;
+	private Long workFunction;
 	
 }

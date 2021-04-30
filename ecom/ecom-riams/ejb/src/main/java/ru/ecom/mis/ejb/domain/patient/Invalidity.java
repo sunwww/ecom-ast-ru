@@ -8,6 +8,8 @@ import javax.persistence.EntityListeners;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -34,411 +36,196 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 )
 @Table(schema="SQLUser")
 @EntityListeners(DeleteListener.class)
+@Getter
+@Setter
 public class Invalidity extends BaseEntity{
 	 /**
 	  * Инвалид ВОВ
 	  */
 	 @Comment("Инвалид ВОВ")
 	 public Boolean getGreatePatrioticWarInvalid() {
-	  return theGreatePatrioticWarInvalid;
-	 }
-	 public void setGreatePatrioticWarInvalid(Boolean aGreatePatrioticWarInvalid) {
-	  theGreatePatrioticWarInvalid = aGreatePatrioticWarInvalid;
+	  return greatePatrioticWarInvalid;
 	 }
 	 /**
 	  * Инвалид ВОВ
 	  */
-	 private Boolean theGreatePatrioticWarInvalid;
+	 private Boolean greatePatrioticWarInvalid;
 	 /**
 	  * Главное нарушение состояния здоровья
 	  */
 	 @Comment("Главное нарушение состояния здоровья")
 	 @OneToOne
 	 public VocInvalidityHealthViolation getHealthViolation() {
-	  return theHealthViolation;
-	 }
-	 public void setHealthViolation(VocInvalidityHealthViolation aHealthViolation) {
-	  theHealthViolation = aHealthViolation;
+	  return healthViolation;
 	 }
 	 /**
 	  * Главное нарушение состояния здоровья
 	  */
-	 private VocInvalidityHealthViolation theHealthViolation;
+	 private VocInvalidityHealthViolation healthViolation;
 	 /**
 	  * Ведущее ограничение жизнедеятельности
 	  */
 	 @Comment("Ведущее ограничение жизнедеятельности")
 	 @OneToOne
 	 public VocInvalidityVitalRestriction getVitalRestriction() {
-	  return theVitalRestriction;
-	 }
-	 public void setVitalRestriction(VocInvalidityVitalRestriction aVitalRestriction) {
-	  theVitalRestriction = aVitalRestriction;
+	  return vitalRestriction;
 	 }
 	 /**
 	  * Ведущее ограничение жизнедеятельности
 	  */
-	 private VocInvalidityVitalRestriction theVitalRestriction;
+	 private VocInvalidityVitalRestriction vitalRestriction;
 	 /**
 	  * Место работы
 	  */
 	 @Comment("Место работы")
 	 @OneToOne
 	 public VocInvalidWorkPlace getWorkPlace() {
-	  return theWorkPlace;
-	 }
-	 public void setWorkPlace(VocInvalidWorkPlace aWorkPlace) {
-	  theWorkPlace = aWorkPlace;
+	  return workPlace;
 	 }
 	 /**
 	  * Место работы
 	  */
-	 private VocInvalidWorkPlace theWorkPlace;
+	 private VocInvalidWorkPlace workPlace;
 	 /**
 	  * Дата начала
 	  */
-	 @Comment("Дата начала")
-	 public Date getDateFrom() {
-	  return theDateFrom;
-	 }
-	 public void setDateFrom(Date aDateFrom) {
-	  theDateFrom = aDateFrom;
-	 }
-	 /**
-	  * Дата начала
-	  */
-	 private Date theDateFrom;
+	 private Date dateFrom;
 	 /**
 	  * Дата окончания
 	  */
-	 @Comment("Дата окончания")
-	 public Date getDateTo() {
-	  return theDateTo;
-	 }
-	 public void setDateTo(Date aDateTo) {
-	  theDateTo = aDateTo;
-	 }
-	 /**
-	  * Дата окончания
-	  */
-	 private Date theDateTo;
+	 private Date dateTo;
 	 /**
 	  * Группа
 	  */
 	 @Comment("Группа")
 	 @OneToOne
 	 public VocInvalidity getGroup() {
-	  return theGroup;
-	 }
-	 public void setGroup(VocInvalidity aGroup) {
-	  theGroup = aGroup;
+	  return group;
 	 }
 	 /**
 	  * Группа
 	  */
-	 private VocInvalidity theGroup;
+	 private VocInvalidity group;
 	 /**
 	  * Пациент
 	  */
 	 @Comment("Пациент")
 	 @OneToOne
 	 public Patient getPatient() {
-	  return thePatient;
-	 }
-	 public void setPatient(Patient aPatient) {
-	  thePatient = aPatient;
+	  return patient;
 	 }
 	 /**
 	  * Пациент
 	  */
-	 private Patient thePatient;
+	 private Patient patient;
 	 /**
 	  * Мкб10
 	  */
 	 @Comment("Мкб10")
 	 @OneToOne
 	 public VocIdc10 getIdc10() {
-	  return theIdc10;
-	 }
-	 public void setIdc10(VocIdc10 aIdc10) {
-	  theIdc10 = aIdc10;
+	  return idc10;
 	 }
 	 /**
 	  * Мкб10
 	  */
-	 private VocIdc10 theIdc10;
+	 private VocIdc10 idc10;
 	 /**
 	  * Диагноз
 	  */
-	 @Comment("Диагноз")
-	 public String getDiagnosis() {
-	  return theDiagnosis;
-	 }
-	 public void setDiagnosis(String aDiagnosis) {
-	  theDiagnosis = aDiagnosis;
-	 }
-	 /**
-	  * Диагноз
-	  */
-	 private String theDiagnosis;
+	 private String diagnosis;
 	 /**
 	  * Дата последнего пересмотра
 	  */
-	 @Comment("Дата последнего пересмотра")
-	 public Date getLastRevisionDate() {
-	  return theLastRevisionDate;
-	 }
-	 public void setLastRevisionDate(Date aLastRevisionDate) {
-	  theLastRevisionDate = aLastRevisionDate;
-	 }
-	 /**
-	  * Дата последнего пересмотра
-	  */
-	 private Date theLastRevisionDate;
+	 private Date lastRevisionDate;
 	 /**
 	  * Дата следующего пересмотра
 	  */
-	 @Comment("Дата следующего пересмотра")
-	 public Date getNextRevisionDate() {
-	  return theNextRevisionDate;
-	 }
-	 public void setNextRevisionDate(Date aNextRevisionDate) {
-	  theNextRevisionDate = aNextRevisionDate;
-	 }
-	 /**
-	  * Дата следующего пересмотра
-	  */
-	 private Date theNextRevisionDate;
+	 private Date nextRevisionDate;
 	 /**
 	  * Инвалид с детства
 	  */
-	 @Comment("Инвалид с детства")
-	 public Boolean getChildhoodInvalid() {
-	  return theChildhoodInvalid;
-	 }
-	 public void setChildhoodInvalid(Boolean aChildhoodInvalid) {
-	  theChildhoodInvalid = aChildhoodInvalid;
-	 }
-	 /**
-	  * Инвалид с детства
-	  */
-	 private Boolean theChildhoodInvalid;
+	 private Boolean childhoodInvalid;
 	 
-	 /** Дата постановки (впервые) */
-	@Comment("Дата постановки (впервые)")
-	public Date getFirstDiscloseDate() {
-		return theFirstDiscloseDate;
-	}
-
-	public void setFirstDiscloseDate(Date aNAME) {
-		theFirstDiscloseDate = aNAME;
-	}
-
 	/** Дата постановки (впервые) */
-	private Date theFirstDiscloseDate;
+	private Date firstDiscloseDate;
 	
 	/** Дата освидетельствования */
-	@Comment("Дата освидетельствования")
-	public Date getRevisionDate() {
-		return theRevisionDate;
-	}
-
-	public void setRevisionDate(Date aRevisionDate) {
-		theRevisionDate = aRevisionDate;
-	}
-
-	/** Дата освидетельствования */
-	private Date theRevisionDate;
+	private Date revisionDate;
 	
 	/** Категория работника */
 	@Comment("Категория работника")
 	@OneToOne
 	public VocCategoryWorker getCategoryWorker() {
-		return theCategoryWorker;
-	}
-
-	public void setCategoryWorker(VocCategoryWorker aCategoryWorker) {
-		theCategoryWorker = aCategoryWorker;
+		return categoryWorker;
 	}
 
 	/** Категория работника */
-	private VocCategoryWorker theCategoryWorker;
+	private VocCategoryWorker categoryWorker;
 	
 	/** Место регистрации */
 	@Comment("Место регистрации")
 	@OneToOne
 	public MisLpu getRegistrationPlace() {
-		return theRegistrationPlace;
-	}
-
-	public void setRegistrationPlace(MisLpu aRegistrationPlace) {
-		theRegistrationPlace = aRegistrationPlace;
+		return registrationPlace;
 	}
 
 	/** Место регистрации */
-	private MisLpu theRegistrationPlace;
+	private MisLpu registrationPlace;
 	
 	/** Профиль заболевания */
 	@Comment("Профиль заболевания")
 	@OneToOne
 	public VocProfileIllness getProfileIllness() {
-		return theProfileIllness;
-	}
-
-	public void setProfileIllness(VocProfileIllness aProfileIllness) {
-		theProfileIllness = aProfileIllness;
+		return profileIllness;
 	}
 
 	/** Профиль заболевания */
-	private VocProfileIllness theProfileIllness;
-	
-	/** Работа в условиях профвредности */
-	@Comment("Работа в условиях профвредности")
-	public Boolean getWorkProfDisutility() {
-		return theWorkProfDisutility;
-	}
-
-	public void setWorkProfDisutility(Boolean aWorkProf) {
-		theWorkProfDisutility = aWorkProf;
-	}
+	private VocProfileIllness profileIllness;
 
 	/** Работа в условиях профвредности */
-	private Boolean theWorkProfDisutility;
+	private Boolean workProfDisutility;
 	
 	/** Стаж работы в отрасли */
-	@Comment("Стаж работы в отрасли")
-	public Integer getSeniority() {
-		return theSeniority;
-	}
-
-	public void setSeniority(Integer aSeniority) {
-		theSeniority = aSeniority;
-	}
-
-	/** Стаж работы в отрасли */
-	private Integer theSeniority;
+	private Integer seniority;
 	
 	/** Стаж работы в нефтегазовой промышленности */
-	@Comment("Стаж работы в нефтегазовой промышленности")
-	public Integer getSeniorityNGP() {
-		return theSeniorityNGP;
-	}
-
-	public void setSeniorityNGP(Integer aSeniorityNGP) {
-		theSeniorityNGP = aSeniorityNGP;
-	}
-
-	/** Стаж работы в нефтегазовой промышленности */
-	private Integer theSeniorityNGP;
+	private Integer seniorityNGP;
 	
 	/** Трудоспособен */
-	@Comment("Трудоспособен")
-	public Boolean getIsWorking() {
-		return theIsWorking;
-	}
-
-	public void setIsWorking(Boolean aIsWorking) {
-		theIsWorking = aIsWorking;
-	}
-
-	/** Трудоспособен */
-	private Boolean theIsWorking;
+	private Boolean isWorking;
 	
 	/** Есть другая инвалидность */
-	@Comment("Есть другая инвалидность")
-	public Boolean getIsOtherInvalidity() {
-		return theIsOtherInvalidity;
-	}
-
-	public void setIsOtherInvalidity(Boolean aIsOtherInvalidity) {
-		theIsOtherInvalidity = aIsOtherInvalidity;
-	}
-
-	/** Есть другая инвалидность */
-	private Boolean theIsOtherInvalidity;
+	private Boolean isOtherInvalidity;
 	
 	/** Первичность */
-	@Comment("Первичность")
-	public Boolean getInitial() {
-		return theInitial;
-	}
-
-	public void setInitial(Boolean aPrimary) {
-		theInitial = aPrimary;
-	}
-
-	/** Первичность */
-	private Boolean theInitial;
+	private Boolean initial;
 	
 	/** Без переосвидетельствования */
-	@Comment("Без переосвидетельствования")
-	public Boolean getWithoutExam() {return theWithoutExam;}
-	public void setWithoutExam(Boolean aWithoutExam) {theWithoutExam = aWithoutExam;}
-
-	/** Без переосвидетельствования */
-	private Boolean theWithoutExam;
+	private Boolean withoutExam;
 
 	/** Недееспособный */
-	@Comment("Недееспособный")
-	public Boolean getIncapable() {return theIncapable;}
-	public void setIncapable(Boolean aIncapable) {theIncapable = aIncapable;}
-
-	/** Недееспособный */
-	private Boolean theIncapable;
+	private Boolean incapable;
 	
 	/** Суд */
 	@Comment("Суд")
 	@OneToOne
-	public VocLawCourt getLawCourt() {return theLawCourt;}
-	public void setLawCourt(VocLawCourt aLawCourt) {theLawCourt = aLawCourt;}
+	public VocLawCourt getLawCourt() {return lawCourt;}
 
 	/** Дата суда */
-	@Comment("Дата суда")
-	public Date getLawCourtDate() {return theLawCourtDate;}
-	public void setLawCourtDate(Date aLawCourtDate) {theLawCourtDate = aLawCourtDate;}
-
-	/** Дата суда */
-	private Date theLawCourtDate;
+	private Date lawCourtDate;
 	/** Суд */
-	private VocLawCourt theLawCourt;
-
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-	
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	/** Время редактрования */
-	@Comment("Время редактрования")
-	public Time getEditTime() {return theEditTime;}
-	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-	/** Пользователь, который создал запись */
-	@Comment("Пользователь, который создал запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	private VocLawCourt lawCourt;
 	/** Пользователь, который последний редактировал запись */
-	@Comment("Пользователь, который последний редактировал запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-
-	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private Time theEditTime;
+	private Time editTime;
 	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 }

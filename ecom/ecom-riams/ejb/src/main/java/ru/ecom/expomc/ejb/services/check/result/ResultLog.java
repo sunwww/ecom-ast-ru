@@ -10,17 +10,17 @@ package ru.ecom.expomc.ejb.services.check.result;
 public class ResultLog {
 
     public ResultLog(int aType, String aMessage) {
-        theType = aType;
-        theMessage = aMessage;
+        type = aType;
+        message = aMessage;
     }
     /** Тип */
-    public int getType() { return theType ; }
+    public int getType() { return type ; }
 
     /** Сообщение */
-    public String getMessage() { return theMessage ; }
+    public String getMessage() { return message ; }
 
     /** Сообщение */
-    private final String theMessage ;
+    private final String message ;
     /** Тип */
-    private final int theType ;
+    private final int type ;
 }

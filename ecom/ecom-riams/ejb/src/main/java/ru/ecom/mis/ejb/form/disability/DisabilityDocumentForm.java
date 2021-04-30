@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.disability;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -28,6 +29,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(DocumentPreCreate.class)
 )
+@Setter
 public class DisabilityDocumentForm extends IdEntityForm{
 
 
@@ -43,540 +45,469 @@ public class DisabilityDocumentForm extends IdEntityForm{
 
 	/** Первичность предыдущего листа нетрудоспособности  */
 	@Comment("Первичность предыдущего листа нетрудоспособности ")
-	public String getAnotherPrevPrimarity() {return theAnotherPrevPrimarity;}
-	public void setAnotherPrevPrimarity(String aAnotherPrevPrimarity) {theAnotherPrevPrimarity = aAnotherPrevPrimarity;}
+	public String getAnotherPrevPrimarity() {return anotherPrevPrimarity;}
 	/** Первичность предыдущего листа нетрудоспособности  */
-	private String theAnotherPrevPrimarity ;
+	private String anotherPrevPrimarity ;
 
 	/** Номер первичного листа нетрудоспособности другого ЛПУ*/
 	@Comment("Номер первичного листа нетрудоспособности")
-	public String getAnotherPrevNumber() {return theAnotherPrevNumber;}
-	public void setAnotherPrevNumber(String aAnotherPrevNumber) {theAnotherPrevNumber= aAnotherPrevNumber;}
+	public String getAnotherPrevNumber() {return anotherPrevNumber;}
 	/** Номер первичного листа нетрудоспособности */
-	private String theAnotherPrevNumber;
+	private String anotherPrevNumber;
 
 	/** Дата экспорта */
 	@Comment("Дата экспорта")
 	@DateString @DoDateString @Persist
-	public String getExportDate() {return theExportDate;}
-	public void setExportDate(String aExportDate) {theExportDate = aExportDate;}
+	public String getExportDate() {return exportDate;}
 	/** Дата экспорта */
-	private String theExportDate;
+	private String exportDate;
 	
 	/** Дефект экспорта */
 	@Comment("Дефект экспорта")
 	@Persist
-	public String getExportDefect() {return theExportDefect;}
-	public void setExportDefect(String aExportDefect) {theExportDefect = aExportDefect;	}
+	public String getExportDefect() {return exportDefect;}
 	/** Дефект экспорта */
-	private String theExportDefect;
+	private String exportDefect;
 	
 	/** Медико-социальная экспертная комиссия */
 	@Comment("Медико-социальная экспертная комиссия")
 	@Persist
-	public Long getMedSocCommission() {return theMedSocCommission;}
-	public void setMedSocCommission(Long aMedSocCommission) {theMedSocCommission = aMedSocCommission;}
+	public Long getMedSocCommission() {return medSocCommission;}
 
 	/** Случай нетрудоспособности */
 	@Comment("Случай нетрудоспособности")
 	@Persist
-	public Long getDisabilityCase() {return theDisabilityCase;}
-	public void setDisabilityCase(Long aDisabilityCase) {theDisabilityCase = aDisabilityCase;}
+	public Long getDisabilityCase() {return disabilityCase;}
 
 	/** Серия */
 	@Comment("Серия")
 	@Persist
-	public String getSeries() {return theSeries;}
-	public void setSeries (String aCloseSeries) {theSeries = aCloseSeries;}
-	
+	public String getSeries() {return series;}
+
 	/** Номер */
 	@Comment("Номер")
 	@Persist
-	public String getNumber() {return theNumber;}
-	public void setNumber(String aNumber) {theNumber = aNumber;}
+	public String getNumber() {return number;}
 
 	/** Дата начала работы */
 	@Comment("Дата начала работы")
 	@DateString @DoDateString @Persist
-	public String getBeginWorkDate() { return theBeginWorkDate;}
-	public void setBeginWorkDate(String aBeginWorkDate) { this.theBeginWorkDate = aBeginWorkDate;}
-	private String theBeginWorkDate;
+	public String getBeginWorkDate() { return beginWorkDate;}
+	private String beginWorkDate;
 	
 	/** Причина нетрудоспособности */
 	@Comment("Причина нетрудоспособности")
 	@Persist @Required
-	public Long getDisabilityReason() {return theDisabilityReason;}
-	public void setDisabilityReason(Long aDisabilityReason) {theDisabilityReason = aDisabilityReason;}
+	public Long getDisabilityReason() {return disabilityReason;}
 
 	/** Причина закрытия */
 	@Comment("Причина закрытия")
 	@Persist
-	public Long getCloseReason() {return theCloseReason;}
-	public void setCloseReason(Long aCloseReason) {theCloseReason = aCloseReason;}
+	public Long getCloseReason() {return closeReason;}
 
 	/** Признак недействительности документа */
 	@Comment("Признак недействительности документа")
 	@Persist
-	public Boolean getNoActuality() {return theNoActuality;}
-	public void setNoActuality(Boolean aNoActuality) {theNoActuality = aNoActuality;}
+	public Boolean getNoActuality() {return noActuality;}
 
 	/** Тип документа нетрудоспособности */
 	@Comment("Тип документа нетрудоспособности")
 	@Persist @Required
-	public Long getDocumentType() {return theDocumentType;}
-	public void setDocumentType(Long aDocumentType) {theDocumentType = aDocumentType;}
+	public Long getDocumentType() {return documentType;}
 
 	/** Режим нетрудоспособности */
 	@Comment("Режим нетрудоспособности")
 	@Persist
-	public Long getDisabilityRegime() {return theDisabilityRegime;}
-	public void setDisabilityRegime(Long aDisabilityRegime) {theDisabilityRegime = aDisabilityRegime;}
+	public Long getDisabilityRegime() {return disabilityRegime;}
 
 	/** Первичность */
 	@Comment("Первичность")
 	@Persist @Required
-	public Long getPrimarity() {return thePrimarity;}
-	public void setPrimarity(Long aPrimarity) {thePrimarity = aPrimarity;}
+	public Long getPrimarity() {return primarity;}
 
 	/** Дата выдачи */
 	@Comment("Дата выдачи")
 	@DateString @DoDateString @Persist @Required
-	public String getIssueDate() {return theIssueDate;}
-	public void setIssueDate(String aIssueDate) {theIssueDate = aIssueDate;}
+	public String getIssueDate() {return issueDate;}
 
 	/** Серия документа нетрудоспособности по основному месту работы */
 	@Comment("Серия документа нетрудоспособности по основному месту работы")
 	@Persist
-	public String getMainWorkDocumentSeries() {return theMainWorkDocumentSeries;}
-	public void setMainWorkDocumentSeries(String aSeries) {theMainWorkDocumentSeries = aSeries;}
+	public String getMainWorkDocumentSeries() {return mainWorkDocumentSeries;}
 	/** Серия документа нетрудоспособности по основному месту работы */
-	private String theMainWorkDocumentSeries;
+	private String mainWorkDocumentSeries;
 	
 	/** Номер документа нетрудоспособности по основному месту работы */
 	@Comment("Номер документа нетрудоспособности по основному месту работы")
 	@Persist
-	public String getMainWorkDocumentNumber() {return theMainWorkDocumentNumber;}
-	public void setMainWorkDocumentNumber(String aMainWorkDisabilityDocument) {theMainWorkDocumentNumber = aMainWorkDisabilityDocument;}
+	public String getMainWorkDocumentNumber() {return mainWorkDocumentNumber;}
 
 	/** Предполагаемая дата родов */
 	@Comment("Предполагаемая дата родов")
 	@DateString @DoDateString @Persist
-	public String getSupposeBirthDate() {return theSupposeBirthDate;}
-	public void setSupposeBirthDate(String aSupposeBirthDate) {theSupposeBirthDate = aSupposeBirthDate;}
+	public String getSupposeBirthDate() {return supposeBirthDate;}
 
 	/** Больной по уходу */
 	@Comment("Больной по уходу")
 	@Persist
-	public Long getNursedPatient() {return theNursedPatient;}
-	public void setNursedPatient(Long aNursingPatientAge) {theNursedPatient = aNursingPatientAge;}
-	
+	public Long getNursedPatient() {return nursedPatient;}
+
 	/** Дата начала санаторного лечения */
 	@Comment("Дата начала санаторного лечения")
 	@DateString @DoDateString @Persist
-	public String getSanatoriumDateFrom() {return theSanatoriumDateFrom;}
-	public void setSanatoriumDateFrom(String aSanatoriumDateFrom) {theSanatoriumDateFrom = aSanatoriumDateFrom;}
+	public String getSanatoriumDateFrom() {return sanatoriumDateFrom;}
 
 	/** Дата окончания санаторного лечения */
 	@Comment("Дата окончания санаторного лечения")
 	@DateString @DoDateString @Persist
-	public String getSanatoriumDateTo() {return theSanatoriumDateTo;}
-	public void setSanatoriumDateTo(String aSanatoriumDateTo) {theSanatoriumDateTo = aSanatoriumDateTo;}
+	public String getSanatoriumDateTo() {return sanatoriumDateTo;}
 
 	/** Номер санаторной путевки */
 	@Comment("Номер санаторной путевки")
 	@Persist
-	public String getSanatoriumTicketNumber() {return theSanatoriumTicketNumber;}
-	public void setSanatoriumTicketNumber(String aSanatoriumTicketNumber) {theSanatoriumTicketNumber = aSanatoriumTicketNumber;}
+	public String getSanatoriumTicketNumber() {return sanatoriumTicketNumber;}
 
 	/** Место нахождения санатория */
 	@Comment("Место нахождения санатория")
 	@Persist
-	public String getSanatoriumPlace() {return theSanatoriumPlace;}
-	public void setSanatoriumPlace(String aSanatoriumPlace) {theSanatoriumPlace = aSanatoriumPlace;}
-	
+	public String getSanatoriumPlace() {return sanatoriumPlace;}
+
 	/** МКБ10*/
 	@Comment("МКБ10")
 	@Persist 
-	public Long getIdc10() {return theIdc10;}
-	public void setIdc10(Long aNewProperty) {theIdc10 = aNewProperty;	}
+	public Long getIdc10() {return idc10;}
 
 	/** Первичность (текст) */
 	@Comment("Первичность (текст)")
 	@Persist
-	public String getPrimarityInfo() {return thePrimarityInfo;}
-	public void setPrimarityInfo(String aPrimarityText) {thePrimarityInfo = aPrimarityText;}
+	public String getPrimarityInfo() {return primarityInfo;}
 
 	
 	/** Справочник видов совмещения работ */
 	@Comment("Справочник видов совмещения работ")
 	@Persist 
-	public Long getWorkComboType() {return theWorkComboType;}
-	public void setWorkComboType(Long aCombo) {theWorkComboType = aCombo;}
+	public Long getWorkComboType() {return workComboType;}
 
 	/** Диагноз текст */
 	@Comment("Диагноз текст")
 	@Persist 
-	public String getDiagnosis() {return theDiagnosis;}
-	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;	}
+	public String getDiagnosis() {return diagnosis;}
 
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
+	public Long getPatient() {return patient;}
 
 	/** Информация о документе */
 	@Comment("Информация о документе")
 	@Persist
-	public String getInfo() {return theInfo;}
-	public void setInfo(String aInfo) {theInfo = aInfo;}
+	public String getInfo() {return info;}
 
 	/** Дата начала */
 	@Comment("Дата начала")
 	@Persist @DateString @DoDateString
-	public String getDateFrom() {return theDateFrom;}
-	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
+	public String getDateFrom() {return dateFrom;}
 
 	/** Дата окончания */
 	@Comment("Дата окончания")
 	@Persist @DateString @DoDateString 
-	public String getDateTo() {return theDateTo;}
-	public void setDateTo(String aDateTo) {theDateTo = aDateTo;}
+	public String getDateTo() {return dateTo;}
 
 	/** Тип документа инфо */
 	@Comment("Тип документа инфо")
 	@Persist
-	public String getDocumentTypeInfo() {return theDocumentTypeInfo;}
-	public void setDocumentTypeInfo(String aDocumentTypeInfo) {theDocumentTypeInfo = aDocumentTypeInfo;}
+	public String getDocumentTypeInfo() {return documentTypeInfo;}
 
 	/** Режим нетрудоспособности */
 	@Comment("Режим нетрудоспособности")
-	public Long getRegime() {return theRegime;}
-	public void setRegime(Long aRegime) {theRegime = aRegime;}
+	public Long getRegime() {return regime;}
 
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public Long getWorkFunction() {return workFunction;}
 
 	/** Пациент ФИО */
 	@Comment("Пациент ФИО")
 	@Persist
-	public String getPatientFio() {return thePatientFio;}
-	public void setPatientFio(String aPatientFio) {thePatientFio = aPatientFio;}
+	public String getPatientFio() {return patientFio;}
 
 	/** Лечебно-профилактическое учреждение */
 	@Comment("Лечебно-профилактическое учреждение")
 	@Persist
-	public Long getAnotherLpu() {return theAnotherLpu;}
-	public void setAnotherLpu(Long aAnotherLpu) {theAnotherLpu = aAnotherLpu;}
+	public Long getAnotherLpu() {return anotherLpu;}
 
 	/** Предыдущий документ */
 	@Comment("Предыдущий документ")
 	@Persist
-	public Long getPrevDocument() {return thePrevDocument;}
-	public void setPrevDocument(Long aPrevDocument) {thePrevDocument = aPrevDocument;}
+	public Long getPrevDocument() {return prevDocument;}
 
 	/** Закрыт случай */
 	@Comment("Закрыт случай")
 	@Persist
-	public Boolean getIsClose() {return theIsClose;}
-	public void setIsClose(Boolean aIsClose) {theIsClose = aIsClose;}
+	public Boolean getIsClose() {return isClose;}
 
 	/** Статус */
 	@Comment("Статус")
 	@Persist @Required
-	public Long getStatus() {return theStatus;}
-	public void setStatus(Long aStatus) {theStatus = aStatus;}
+	public Long getStatus() {return status;}
 
 	/** Статус */
-	private Long theStatus;
+	private Long status;
 	/** Закрыт случай */
-	private Boolean theIsClose;
+	private Boolean isClose;
 	/** Предыдущий документ */
-	private Long thePrevDocument;
+	private Long prevDocument;
 	/** Лечебно-профилактическое учреждение */
-	private Long theAnotherLpu;
+	private Long anotherLpu;
 	/** Пациент ФИО */
-	private String thePatientFio;
+	private String patientFio;
 	/** Рабочая функция */
-	private Long theWorkFunction;
+	private Long workFunction;
 	/** Режим нетрудоспособности */
-	private Long theRegime;
+	private Long regime;
 	/** Тип документа инфо */
-	private String theDocumentTypeInfo;
+	private String documentTypeInfo;
 	/** Дата окончания */
-	private String theDateTo;
+	private String dateTo;
 	/** Дата начала */
-	private String theDateFrom;
+	private String dateFrom;
 	/** Информация о документе */
-	private String theInfo;
+	private String info;
 	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	/** Диагноз текст */
-	private String theDiagnosis;
+	private String diagnosis;
 	/** Больной по уходу */
-	private Long theNursedPatient;
+	private Long nursedPatient;
 	/** Дата начала санаторного лечения */
-	private String theSanatoriumDateFrom;
+	private String sanatoriumDateFrom;
 	/** Дата окончания санаторного лечения */
-	private String theSanatoriumDateTo;
+	private String sanatoriumDateTo;
 	/** Место нахождения санатория */
-	private String theSanatoriumPlace;
+	private String sanatoriumPlace;
 	/** МКБ10 */
-	private Long theIdc10;
+	private Long idc10;
 	/** Первичность (текст) */
-	private String thePrimarityInfo;
+	private String primarityInfo;
 	/** Справочник видов совмещения работ */
-	private Long theWorkComboType;
+	private Long workComboType;
 	/** Номер санаторной путевки */
-	private String theSanatoriumTicketNumber;
+	private String sanatoriumTicketNumber;
 	/** Медико-социальная экспертная комиссия */
-	private Long theMedSocCommission;
+	private Long medSocCommission;
 	/** Случай нетрудоспособности */
-	private Long theDisabilityCase;
+	private Long disabilityCase;
 	/** Серия */
-	private String theSeries; 
+	private String series; 
 	/** Номер */
-	private String theNumber;
+	private String number;
 	/** Причина нетрудоспособности */
-	private Long theDisabilityReason;
+	private Long disabilityReason;
 	/** Причина закрытия */
-	private Long theCloseReason;
+	private Long closeReason;
 	/** Признак недействительности документа */
-	private Boolean theNoActuality;
+	private Boolean noActuality;
 	/** Тип документа нетрудоспособности */
-	private Long theDocumentType;
+	private Long documentType;
 	/** Режим нетрудоспособности */
-	private Long theDisabilityRegime;
+	private Long disabilityRegime;
 	/** Первичность */
-	private Long thePrimarity;
+	private Long primarity;
 	/** Дата выдачи */
-	private String theIssueDate;
+	private String issueDate;
 	/** Номер документа нетрудоспособности по основному месту работы */
-	private String theMainWorkDocumentNumber;
+	private String mainWorkDocumentNumber;
 	/** Предполагаемая дата родов */
-	private String theSupposeBirthDate;
+	private String supposeBirthDate;
 
 	/**
 	 * Дополнительная причина нетрудоспособности
 	 */
 	@Comment("Дополнительная причина нетрудоспособности")
 	@Persist
-	public Long getDisabilityReason2() {return theDisabilityReason2;}
-	public void setDisabilityReason2(Long aDisabilityReason2) {theDisabilityReason2 = aDisabilityReason2;}
+	public Long getDisabilityReason2() {return disabilityReason2;}
 	/**
 	 * Дополнительная причина нетрудоспособности
 	 */
-	private Long theDisabilityReason2;
+	private Long disabilityReason2;
 
 	/**
 	 * Дата начала госпитализации
 	 */
 	@Comment("Дата начала госпитализации")
 	@Persist @DateString @DoDateString
-	public String getHospitalizedFrom() {return theHospitalizedFrom;}
-	public void setHospitalizedFrom(String aHospitalizedFrom) {theHospitalizedFrom = aHospitalizedFrom;}
+	public String getHospitalizedFrom() {return hospitalizedFrom;}
 	/**
 	 * Дата начала госпитализации
 	 */
-	private String theHospitalizedFrom;
+	private String hospitalizedFrom;
 	/**
 	 * Дата окончания госпитализации
 	 */
 	@Comment("Дата окончания госпитализации")	
 	@Persist @DateString @DoDateString
-	public String getHospitalizedTo() {return theHospitalizedTo;}
-	public void setHospitalizedTo(String aHospitalizedTo) {theHospitalizedTo = aHospitalizedTo;}
+	public String getHospitalizedTo() {return hospitalizedTo;}
 	/**
 	 * Дата окончания госпитализации
 	 */
-	private String theHospitalizedTo;
+	private String hospitalizedTo;
 	/**
 	 * ОГРН санатория или клиники НИИ
 	 */
 	@Comment("ОГРН санатория или клиники НИИ")	
 	@Persist
-	public String getSanatoriumOgrn() {return theSanatoriumOgrn;}
-	public void setSanatoriumOgrn(String aSanatoriumOgrn) {theSanatoriumOgrn = aSanatoriumOgrn;}
+	public String getSanatoriumOgrn() {return sanatoriumOgrn;}
 	/**
 	 * ОГРН санатория или клиники НИИ
 	 */
-	private String theSanatoriumOgrn;
+	private String sanatoriumOgrn;
 	/**
 	 * Код изменения причины нетрудоспособности
 	 */
 	@Comment("Код изменения причины нетрудоспособности")
 	@Persist
-	public Long getDisabilityReasonChange() {return theDisabilityReasonChange;}
-	public void setDisabilityReasonChange(Long aDisabilityReasonChange) {theDisabilityReasonChange = aDisabilityReasonChange;}
+	public Long getDisabilityReasonChange() {return disabilityReasonChange;}
 	/**
 	 * Код изменения причины нетрудоспособности
 	 */
-	private Long theDisabilityReasonChange;	
+	private Long disabilityReasonChange;	
 	/** № истории болезни */
 	@Comment("№ истории болезни")
 	@Persist
-	public String getHospitalizedNumber() {return theHospitalizedNumber;}
-	public void setHospitalizedNumber(String aHospitalizedNumber) {theHospitalizedNumber = aHospitalizedNumber;}
+	public String getHospitalizedNumber() {return hospitalizedNumber;}
 
 	/** № истории болезни */
-	private String theHospitalizedNumber;
+	private String hospitalizedNumber;
 	
 	/** Пользователь, создавший документ */
 	@Comment("Пользователь, создавший документ")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aUsernameCreate) {theCreateUsername = aUsernameCreate;}
+	public String getCreateUsername() {return createUsername;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DateString @DoDateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aDateCreate) {theCreateDate = aDateCreate;}
+	public String getCreateDate() {return createDate;}
 
 	/** Пользователь, редактировавший документ */
 	@Comment("Пользователь, редактировавший документ")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aUsernameEdit) {theEditUsername = aUsernameEdit;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@Persist @DateString @DoDateString
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aDateEdit) {theEditDate = aDateEdit;}
+	public String getEditDate() {return editDate;}
 
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Пользователь, редактировавший документ */
-	private String theEditUsername;
+	private String editUsername;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	/** Пользователь, создавший документ */
-	private String theCreateUsername;
+	private String createUsername;
 	
 	/** Место работы */
 	@Comment("Место работы")
 	@Persist
-	public String getJob() {return theJob;}
-	public void setJob(String aJob) {theJob = aJob;}
+	public String getJob() {return job;}
 
 	/** Место работы */
-	private String theJob;
+	private String job;
 	
 	/** Обновить место работы */
 	@Comment("Обновить место работы")
-	public Boolean getIsUpdateWork() {return theIsUpdateWork;}
-	public void setIsUpdateWork(Boolean aIsUpdateWork) {theIsUpdateWork = aIsUpdateWork;}
+	public Boolean getIsUpdateWork() {return isUpdateWork;}
 
 	/** Обновить место работы */
-	private Boolean theIsUpdateWork;
+	private Boolean isUpdateWork;
 	
 	/** Специалист 2 */
 	@Comment("Специалист 2")
-	public Long getWorkFunctionAdd() {return theWorkFunctionAdd;}
-	public void setWorkFunctionAdd(Long aWorkFunctionAdd) {theWorkFunctionAdd = aWorkFunctionAdd;}
+	public Long getWorkFunctionAdd() {return workFunctionAdd;}
 
 	/** Специалист 2 */
-	private Long theWorkFunctionAdd;
+	private Long workFunctionAdd;
 	/** Заключительный диагноз */
 	@Comment("Заключительный диагноз")
 	@Persist
-	public Long getIdc10Final() {return theIdc10Final;}
-	public void setIdc10Final(Long aIdc10Final) {theIdc10Final = aIdc10Final;}
+	public Long getIdc10Final() {return idc10Final;}
 
 	/** Заключительный диагноз */
-	private Long theIdc10Final;	
+	private Long idc10Final;	
 	/** Диагноз заключительный */
 	@Comment("Диагноз заключительный")
-	public String getDiagnosisFinal() {return theDiagnosisFinal;}
-	public void setDiagnosisFinal(String aDiagnosisFinal) {theDiagnosisFinal = aDiagnosisFinal;}
+	public String getDiagnosisFinal() {return diagnosisFinal;}
 
 	/** Диагноз заключительный */
-	private String theDiagnosisFinal;
+	private String diagnosisFinal;
 	/** Продолжительность */
 	@Comment("Продолжительность")
-	public String getDuration() {return theDuration;}
-	public void setDuration(String aDuration) {theDuration = aDuration;}
+	public String getDuration() {return duration;}
 	/** Продолжительность */
-	private String theDuration;
+	private String duration;
 	
 	/** Причина закрытия инфо */
 	@Comment("Причина закрытия инфо")
-	public String getCloseReasonInfo() {return theCloseReasonInfo;}
-	public void setCloseReasonInfo(String aCloseReasonInfo) {theCloseReasonInfo = aCloseReasonInfo;}
+	public String getCloseReasonInfo() {return closeReasonInfo;}
 
 	/** Причина закрытия инфо */
-	private String theCloseReasonInfo;
+	private String closeReasonInfo;
 	
 	/** Адрес пациента */
 	@Comment("Адрес пациента")
 	//@Persist
 	public String getPatientAddress() {
-		return thePatientAddress;
-	}
-
-	public void setPatientAddress(String aPatientAddress) {
-		thePatientAddress = aPatientAddress;
+		return patientAddress;
 	}
 
 	/** Адрес пациента */
-	private String thePatientAddress;
+	private String patientAddress;
 	
 	/** Номер БЛ выданный др. ЛПУ */
 	@Comment("Номер БЛ выданный др. ЛПУ")
 	public String getOtherNumber() {
-		return theOtherNumber;
-	}
-
-	public void setOtherNumber(String aOtherNumber) {
-		theOtherNumber = aOtherNumber;
+		return otherNumber;
 	}
 
 	/** Номер БЛ выданный др. ЛПУ */
-	private String theOtherNumber;
+	private String otherNumber;
 	
 	/** Дубликат */
 	@Comment("Дубликат")
 	@Persist
-	public Long getDuplicate() {return theDuplicate;}
-	public void setDuplicate(Long aDuplicate) {theDuplicate = aDuplicate;}
-
+	public Long getDuplicate() {return duplicate;}
 	/** Дубликат */
-	private Long theDuplicate;
+	private Long duplicate;
 	
 	/** Статус информация */
 	@Comment("Статус информация")
 	@Persist
-	public String getStatusInfo() {return theStatusInfo;}
-	public void setStatusInfo(String aStatusInfo) {theStatusInfo = aStatusInfo;}
+	public String getStatusInfo() {return statusInfo;}
 
 	/** Статус информация */
-	private String theStatusInfo;
+	private String statusInfo;
 	
 	/** Дата иное */
 	@Comment("Дата иное")
 	@Persist @DateString @DoDateString
-	public String getOtherCloseDate() {return theOtherCloseDate;}
-	public void setOtherCloseDate(String aOtherCloseDate) {theOtherCloseDate = aOtherCloseDate;}
+	public String getOtherCloseDate() {return otherCloseDate;}
 
 	/** Дата иное */
-	private String theOtherCloseDate;
+	private String otherCloseDate;
 
 	/** Статус экспорта в ФСС */
 	@Comment("Статус экспорта в ФСС")
-	public String getExportStatus() {return theExportStatus;}
-	public void setExportStatus(String aExportStatus) {theExportStatus = aExportStatus;}
+	public String getExportStatus() {return exportStatus;}
 	/** Статус экспорта в ФСС */
-	private String theExportStatus ;
+	private String exportStatus ;
 
 	/** Возраст пациента на дату начала случая */
 	@Comment("Возраст пациента на дату начала случая")
-	public String getPatientAgeYear() {return thePatientAgeYear;}
-	public void setPatientAgeYear(String aPatientAgeYear) {thePatientAgeYear = aPatientAgeYear;}
+	public String getPatientAgeYear() {return patientAgeYear;}
 	/** Возраст пациента на дату начала случая */
-	private String thePatientAgeYear ;
+	private String patientAgeYear ;
 
 
 }

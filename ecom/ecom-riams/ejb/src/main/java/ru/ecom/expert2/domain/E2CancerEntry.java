@@ -1,5 +1,7 @@
 package ru.ecom.expert2.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -13,153 +15,109 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 /**Случай онкологического лечения*/
 public class E2CancerEntry extends BaseEntity {
 
     /** Запись */
     @Comment("Запись")
     @ManyToOne
-    public E2Entry getEntry() {return theEntry;}
-    public void setEntry(E2Entry aEntry) {theEntry = aEntry;}
-    /** Запись */
-    private E2Entry theEntry ;
+    public E2Entry getEntry() {return entry;}
+    private E2Entry entry;
 
   /** Признак подозрения на на ЗО */
-  @Comment("Признак подозрения на на ЗО")
-  public Boolean getMaybeCancer() {return theMaybeCancer;}
-  public void setMaybeCancer(Boolean aMaybeCancer) {theMaybeCancer = aMaybeCancer;}
-  private Boolean theMaybeCancer =false;
+  private Boolean maybeCancer =false;
   
   /** Повод обращения */
-  @Comment("Повод обращения")
-  public String getOccasion() {return theOccasion;}
-  public void setOccasion(String aOccasion) {theOccasion = aOccasion;}
-  private String theOccasion ;
+  private String occasion;
 
   /** Стадия */
-  @Comment("Стадия")
-  public String getStage() {return theStage;}
-  public void setStage(String aStage) {theStage = aStage;}
-  private String theStage ;
+  private String stage;
 
   /** Tumor */
-  @Comment("Tumor")
-  public String getTumor() {return theTumor;}
-  public void setTumor(String aTumor) {theTumor = aTumor;}
-  private String theTumor ;
+  private String tumor;
 
   /** Nodus */
-  @Comment("Nodus")
-  public String getNodus() {return theNodus;}
-  public void setNodus(String aNodus) {theNodus = aNodus;}
-  private String theNodus ;
+  private String nodus;
 
   /** Metastasis */
-  @Comment("Metastasis")
-  public String getMetastasis() {return theMetastasis;}
-  public void setMetastasis(String aMetastasis) {theMetastasis = aMetastasis;}
-  private String theMetastasis ;
+  private String metastasis;
 
   /** Выявлены отдаленные метастазы */
-  @Comment("Выявлены отдаленные метастазы")
-  public Boolean getIsMetastasisFound() {return theIsMetastasisFound;}
-  public void setIsMetastasisFound(Boolean aIsMetastasisFound) {theIsMetastasisFound = aIsMetastasisFound;}
-  private Boolean theIsMetastasisFound =false;
+  private Boolean isMetastasisFound =false;
 
   /** Суммарная очаговая доза */
-  @Comment("Суммарная очаговая доза")
-  public BigDecimal getSod() {return theSod;}
-  public void setSod(BigDecimal aSod) {theSod = aSod;}
-  private BigDecimal theSod ;
+  private BigDecimal sod;
 
   /** Сведения о решении консилиума */
-  @Comment("Сведения о решении консилиума")
-  public String getConsiliumResult() {return theConsiliumResult;}
-  public void setConsiliumResult(String aConsiliumResult) {theConsiliumResult = aConsiliumResult;}
-  private String theConsiliumResult ;
+  private String consiliumResult;
 
   /** Дата проведения консилиума */
-  @Comment("Дата проведения консилиума")
-  public Date getConsiliumDate() {return theConsiliumDate;}
-  public void setConsiliumDate(Date aConsiliumDate) {theConsiliumDate = aConsiliumDate;}
-  private Date theConsiliumDate ;
+  private Date consiliumDate;
   
   /** Тип услуги */
-  @Comment("Тип услуги")
-  public String getServiceType() {return theServiceType;}
-  public void setServiceType(String aServiceType) {theServiceType = aServiceType;}
-  private String theServiceType ;
+  private String serviceType;
   
   /** Тип хирургического лечения */
-  @Comment("Тип хирургического лечения")
-  public String getSurgicalType() {return theSurgicalType;}
-  public void setSurgicalType(String aSurgicalType) {theSurgicalType = aSurgicalType;}
-  private String theSurgicalType ;
+  private String surgicalType;
   
   /** Линия лекарственной терапии */
-  @Comment("Линия лекарственной терапии")
-  public String getDrugLine() {return theDrugLine;}
-  public void setDrugLine(String aDrugLine) {theDrugLine = aDrugLine;}
-  private String theDrugLine ;
+  private String drugLine;
   
   /** Цикл лекарственной терапии */
-  @Comment("Цикл лекарственной терапии")
-  public String getDrugCycle() {return theDrugCycle;}
-  public void setDrugCycle(String aDrugCycle) {theDrugCycle = aDrugCycle;}
-  private String theDrugCycle ;
+  private String drugCycle;
   
   /** Тип лучевой терапии */
-  @Comment("Тип лучевой терапии")
-  public String getRadiationTherapy() {return theRadiationTherapy;}
-  public void setRadiationTherapy(String aRadiationTherapy) {theRadiationTherapy = aRadiationTherapy;}
-  private String theRadiationTherapy ;
+  private String radiationTherapy;
 
-  public E2CancerEntry(E2Entry aEntry) {theEntry=aEntry;}
+  public E2CancerEntry(E2Entry aEntry) {
+    entry =aEntry;}
   public E2CancerEntry(E2CancerEntry aCancerEntry, E2Entry aEntry) {
-    theEntry = aEntry;
-    theMaybeCancer = aCancerEntry.theMaybeCancer;
-    theOccasion=aCancerEntry.theOccasion;
-    theStage=aCancerEntry.theStage;
-    theTumor=aCancerEntry.theTumor;
-    theNodus=aCancerEntry.theNodus;
-    theMetastasis=aCancerEntry.theMetastasis;
-    theIsMetastasisFound=aCancerEntry.theIsMetastasisFound;
-    theSod=aCancerEntry.theSod;
-    theConsiliumResult=aCancerEntry.theConsiliumResult;
-    theConsiliumDate=aCancerEntry.theConsiliumDate;
-    theServiceType=aCancerEntry.theServiceType;
-    theSurgicalType=aCancerEntry.theSurgicalType;
-    theDrugLine=aCancerEntry.theDrugLine;
-    theDrugCycle=aCancerEntry.theDrugCycle;
-    theRadiationTherapy=aCancerEntry.theRadiationTherapy;
-    if (aCancerEntry.theDirections!=null && !aCancerEntry.theDirections.isEmpty()) {
+    entry = aEntry;
+    maybeCancer = aCancerEntry.maybeCancer;
+    occasion =aCancerEntry.occasion;
+    stage =aCancerEntry.stage;
+    tumor =aCancerEntry.tumor;
+    nodus =aCancerEntry.nodus;
+    metastasis =aCancerEntry.metastasis;
+    isMetastasisFound =aCancerEntry.isMetastasisFound;
+    sod =aCancerEntry.sod;
+    consiliumResult =aCancerEntry.consiliumResult;
+    consiliumDate =aCancerEntry.consiliumDate;
+    serviceType =aCancerEntry.serviceType;
+    surgicalType =aCancerEntry.surgicalType;
+    drugLine =aCancerEntry.drugLine;
+    drugCycle =aCancerEntry.drugCycle;
+    radiationTherapy =aCancerEntry.radiationTherapy;
+    if (aCancerEntry.directions !=null && !aCancerEntry.directions.isEmpty()) {
       List<E2CancerDirection> directions = new ArrayList<>();
       for (E2CancerDirection direction : aCancerEntry.getDirections()) {
         directions.add(new E2CancerDirection(direction, this));
       }
-      theDirections = directions;
+      this.directions = directions;
     }
-    if (aCancerEntry.theDiagnostics!=null && !aCancerEntry.theDiagnostics.isEmpty()) {
+    if (aCancerEntry.diagnostics !=null && !aCancerEntry.diagnostics.isEmpty()) {
       List<E2CancerDiagnostic> diagnostics = new ArrayList<>();
       for (E2CancerDiagnostic diagnostic : aCancerEntry.getDiagnostics()) {
         diagnostics.add(new E2CancerDiagnostic(diagnostic, this));
       }
-      theDiagnostics = diagnostics;
+      this.diagnostics = diagnostics;
     }
-    if (aCancerEntry.theRefusals!=null && !aCancerEntry.theRefusals.isEmpty()) {
+    if (aCancerEntry.refusals !=null && !aCancerEntry.refusals.isEmpty()) {
       List<E2CancerRefusal> refusals = new ArrayList<>();
       for (E2CancerRefusal refusal : aCancerEntry.getRefusals()) {
         refusals.add(new E2CancerRefusal(refusal,this));
       }
-      theRefusals = refusals;
+      this.refusals = refusals;
 
     }
-    if (aCancerEntry.theDrugs!=null && !aCancerEntry.theDrugs.isEmpty()) {
+    if (aCancerEntry.drugs !=null && !aCancerEntry.drugs.isEmpty()) {
       List<E2CancerDrug> drugs = new ArrayList<>();
       for (E2CancerDrug drug : aCancerEntry.getDrugs()) {
         drugs.add(new E2CancerDrug(drug,this));
       }
-      theDrugs = drugs;
+      this.drugs = drugs;
     }
   }
 
@@ -168,29 +126,25 @@ public class E2CancerEntry extends BaseEntity {
   /** Список направления */
   @Comment("Список направления")
   @OneToMany(mappedBy = "cancerEntry", cascade = CascadeType.ALL)
-  public List<E2CancerDirection> getDirections() {return theDirections;}
-  public void setDirections(List<E2CancerDirection> aDirections) {theDirections = aDirections;}
-  private List<E2CancerDirection> theDirections ;
+  public List<E2CancerDirection> getDirections() {return directions;}
+  private List<E2CancerDirection> directions;
 
   /** Диагностические блоки */
   @Comment("Диагностические блоки")
   @OneToMany(mappedBy = "cancerEntry", cascade = CascadeType.ALL)
-  public List<E2CancerDiagnostic> getDiagnostics() {return theDiagnostics;}
-  public void setDiagnostics(List<E2CancerDiagnostic> aDiagnostics) {theDiagnostics = aDiagnostics;}
-  private List<E2CancerDiagnostic> theDiagnostics ;
+  public List<E2CancerDiagnostic> getDiagnostics() {return diagnostics;}
+  private List<E2CancerDiagnostic> diagnostics;
 
   /** Противопоказания */
   @Comment("Противопоказания")
   @OneToMany(mappedBy = "cancerEntry", cascade = CascadeType.ALL)
-  public List<E2CancerRefusal> getRefusals() {return theRefusals;}
-  public void setRefusals(List<E2CancerRefusal> aRefusals) {theRefusals = aRefusals;}
-  private List<E2CancerRefusal> theRefusals ;
+  public List<E2CancerRefusal> getRefusals() {return refusals;}
+  private List<E2CancerRefusal> refusals;
 
   /** Лекарства */
   @Comment("Лекарства")
   @OneToMany(mappedBy = "cancerEntry", cascade = CascadeType.ALL)
-  public List<E2CancerDrug> getDrugs() {return theDrugs;}
-  public void setDrugs(List<E2CancerDrug> aDrugs) {theDrugs = aDrugs;}
-  private List<E2CancerDrug> theDrugs ;
+  public List<E2CancerDrug> getDrugs() {return drugs;}
+  private List<E2CancerDrug> drugs;
 
 }

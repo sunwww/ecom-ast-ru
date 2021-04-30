@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.patient;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -22,57 +23,50 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(MedPolicyPreCreate.class)
 )
+@Setter
 public class MedPolicyOmcForeignForm extends MedPolicyForm {
 	/** Город СМО */
 	@Comment("Город СМО")
 	@Persist @DoUpperCase
-	public String getInsuranceCompanyCity() {return theInsuranceCompanyCity;}
-	public void setInsuranceCompanyCity(String aOMCCity) {theInsuranceCompanyCity = aOMCCity;}
+	public String getInsuranceCompanyCity() {return insuranceCompanyCity;}
 
 	/** Название СМО */
 	@Comment("Название СМО")
 	@Persist @DoUpperCase
-	public String getInsuranceCompanyName() {return theInsuranceCompanyName;}
-	public void setInsuranceCompanyName(String aOMCName) {theInsuranceCompanyName = aOMCName;}
+	public String getInsuranceCompanyName() {return insuranceCompanyName;}
 
 	/** Область нахождения СМО */
 	@Comment("Область нахождения СМО")
 	@Persist @Required
-	public Long getInsuranceCompanyArea() {return theInsuranceCompanyArea;}
-	public void setInsuranceCompanyArea(Long aInsuranceCompanyArea) {
-		theInsuranceCompanyArea = aInsuranceCompanyArea;
-	}
+	public Long getInsuranceCompanyArea() {return insuranceCompanyArea;}
 
 	/** ОГРН СМО, выдавшей паспорт */
 	@Comment("ОГРН СМО, выдавшей паспорт")
 	@Persist 
-	public Long getInsuranceCompanyCode() {return theInsuranceCompanyCode;}
-	public void setInsuranceCompanyCode(Long aInsuranceCompanyOgrn) {theInsuranceCompanyCode = aInsuranceCompanyOgrn;}
+	public Long getInsuranceCompanyCode() {return insuranceCompanyCode;}
 
 	/** Тип полиса */
 	@Comment("Тип полиса")
 	@Persist @Required
-	public Long getType() {return theType;}
-	public void setType(Long aType) {theType = aType;}
-	
+	public Long getType() {return type;}
+
 	/** Тип полиса */
-	private Long theType;
+	private Long type;
 	/** ОГРН СМО, выдавшей паспорт */
-	private Long theInsuranceCompanyCode;
+	private Long insuranceCompanyCode;
 	/** Область нахождения СМО */
-	private Long theInsuranceCompanyArea;
+	private Long insuranceCompanyArea;
 	/** Название СМО */
-	private String theInsuranceCompanyName;
+	private String insuranceCompanyName;
 	/** Город СМО */
-	private String theInsuranceCompanyCity;
+	private String insuranceCompanyCity;
 	
 	/** ОГРН */
 	@Comment("ОГРН")
 	@Persist
-	public String getOgrn() {return theOgrn;}
-	public void setOgrn(String aOgrn) {theOgrn = aOgrn;}
+	public String getOgrn() {return ogrn;}
 
 	/** ОГРН */
-	private String theOgrn;
+	private String ogrn;
 
 }

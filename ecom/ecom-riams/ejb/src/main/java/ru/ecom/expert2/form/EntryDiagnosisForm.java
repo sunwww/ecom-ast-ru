@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.EntryDiagnosis;
@@ -13,59 +14,53 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Диагноз по записи", nameProperties = "id", view = "entityParentView-e2_entryDiagnosis.do")
 @EntityFormSecurityPrefix("/Policy/E2")
 @Parent(property = "entry", parentForm = E2EntryForm.class)
+@Setter
 public class EntryDiagnosisForm extends IdEntityForm {
 
 
     /** Запись */
-    private Long theEntry ;
+    private Long entry ;
     /** Характер заболевания */
-    private String theIllnessPrimary ;
+    private String illnessPrimary ;
     /** Диагноз */
-    private Long theMkb ;
+    private Long mkb ;
     /** Тип регистрации */
-    private Long theRegistrationType ;
+    private Long registrationType ;
     /** Приоритет */
-    private Long thePriority ;
+    private Long priority ;
     /** Доп. код МКБ */
-    private String theDopMkb ;
+    private String dopMkb ;
     /** Справочник характеров заболевания */
-    private Long theVocIllnessPrimary ;
+    private Long vocIllnessPrimary ;
 
     @Comment("Запись")
     @Persist
-    public Long getEntry() {return theEntry;}
-    public void setEntry(Long aEntry) {theEntry = aEntry;}
+    public Long getEntry() {return entry;}
 
     @Comment("Диагноз")
     @Persist
-    public Long getMkb() {return theMkb;}
-    public void setMkb(Long aMkb) {theMkb = aMkb;}
+    public Long getMkb() {return mkb;}
 
     @Comment("Тип регистрации")
     @Persist
-    public Long getRegistrationType() {return theRegistrationType;}
-    public void setRegistrationType(Long aRegistrationType) {theRegistrationType = aRegistrationType;}
+    public Long getRegistrationType() {return registrationType;}
 
     @Comment("Приоритет")
     @Persist
-    public Long getPriority() {return thePriority;}
-    public void setPriority(Long aPriority) {thePriority = aPriority;}
+    public Long getPriority() {return priority;}
 
     @Comment("Доп. код МКБ")
     @Persist
-    public String getDopMkb() {return theDopMkb;}
-    public void setDopMkb(String aDopMkb) {theDopMkb = aDopMkb;}
+    public String getDopMkb() {return dopMkb;}
 
     @Comment("Характер заболевания")
     @Persist
-    public String getIllnessPrimary() {return theIllnessPrimary;}
-    public void setIllnessPrimary(String aIllnessPrimary) {theIllnessPrimary = aIllnessPrimary;}
+    public String getIllnessPrimary() {return illnessPrimary;}
 
     /** Справочник характеров заболевания */
     @Comment("Справочник характеров заболевания")
     @Persist
-    public Long getVocIllnessPrimary() {return theVocIllnessPrimary;}
-    public void setVocIllnessPrimary(Long aVocIllnessPrimary) {theVocIllnessPrimary = aVocIllnessPrimary;}
+    public Long getVocIllnessPrimary() {return vocIllnessPrimary;}
 
 
 

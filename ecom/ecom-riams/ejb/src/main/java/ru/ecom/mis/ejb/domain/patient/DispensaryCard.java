@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.patient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.patient.voc.VocDispensaryEnd;
@@ -13,93 +15,59 @@ import java.sql.Time;
 
 /**Карта диспансерного наблюдения*/
 @Entity
+@Getter
+@Setter
 public class DispensaryCard extends BaseEntity {
     /** Пациент */
     @Comment("Пациент")
     @OneToOne
-    public Patient getPatient() {return thePatient;}
-    public void setPatient(Patient aPatient) {thePatient = aPatient;}
+    public Patient getPatient() {return patient;}
     /** Пациент */
-    private Patient thePatient ;
+    private Patient patient ;
     
     /** Дата постановки на Д учет */
-    @Comment("Дата постановки на Д учет")
-    public Date getStartDate() {return theStartDate;}
-    public void setStartDate(Date aStartDate) {theStartDate = aStartDate;}
-    /** Дата постановки на Д учет */
-    private Date theStartDate ;
+    private Date startDate ;
     
     /** Дата снятия с учета */
-    @Comment("Дата снятия с учета")
-    public Date getFinishDate() {return theFinishDate;}
-    public void setFinishDate(Date aFinishDate) {theFinishDate = aFinishDate;}
-    /** Дата снятия с учета */
-    private Date theFinishDate ;
+    private Date finishDate ;
     
     /** Диагноз постановки на Д учет */
     @Comment("Диагноз постановки на Д учет")
     @OneToOne
-    public VocIdc10 getDiagnosis() {return theDiagnosis;}
-    public void setDiagnosis(VocIdc10 aDiagnosis) {theDiagnosis = aDiagnosis;}
+    public VocIdc10 getDiagnosis() {return diagnosis;}
     /** Диагноз постановки на Д учет */
-    private VocIdc10 theDiagnosis ;
+    private VocIdc10 diagnosis ;
 
     /** Рабочая функция врача установившего наблюдение */
     @Comment("Рабочая функция врача установившего наблюдение")
     @OneToOne
-    public WorkFunction getWorkFunction() {return theWorkFunction;}
-    public void setWorkFunction(WorkFunction aWorkFunction) {theWorkFunction = aWorkFunction;}
+    public WorkFunction getWorkFunction() {return workFunction;}
     /** Рабочая функция врача установившего наблюдение */
-    private WorkFunction theWorkFunction ;
+    private WorkFunction workFunction ;
 
     /** Причина снятия с учета */
     @Comment("Причина снятия с учета")
     @OneToOne
-    public VocDispensaryEnd getEndReason() {return theEndReason;}
-    public void setEndReason(VocDispensaryEnd aEndReason) {theEndReason = aEndReason;}
+    public VocDispensaryEnd getEndReason() {return endReason;}
     /** Причина снятия с учета */
-    private VocDispensaryEnd theEndReason ;
+    private VocDispensaryEnd endReason ;
 
     /** Дата создания */
-    @Comment("Дата создания")
-    public Date getCreateDate() {return theCreateDate;}
-    public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-    /** Дата создания */
-    private Date theCreateDate ;
+    private Date createDate ;
 
     /** Время создания */
-    @Comment("Время создания")
-    public Time getCreateTime() {return theCreateTime;}
-    public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-    /** Время создания */
-    private Time theCreateTime ;
+    private Time createTime ;
 
     /** Создатель */
-    @Comment("Создатель")
-    public String getCreateUsername() {return theCreateUsername;}
-    public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-    /** Создатель */
-    private String theCreateUsername ;
+    private String createUsername ;
 
     /** Редактировал */
-    @Comment("Редактировал")
-    public String getEditUsername() {return theEditUsername;}
-    public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-    /** Редактировал */
-    private String theEditUsername ;
+    private String editUsername ;
 
     /** Дата редактирования */
-    @Comment("Дата редактирования")
-    public Date getEditDate() {return theEditDate;}
-    public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-    /** Дата редактирования */
-    private Date theEditDate ;
+    private Date editDate ;
 
     /** Время редактирования */
-    @Comment("Время редактирования")
-    public Time getEditTime() {return theEditTime;}
-    public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-    /** Время редактирования */
-    private Time theEditTime ;
+    private Time editTime ;
 
 }

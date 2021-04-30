@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form.voc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.voc.VocCoefficient;
@@ -20,29 +21,27 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @Comment("Коэффициент")
 @WebTrail(comment = "Коэффициент", nameProperties = "id", view = "entityView-e2_vocCofficient.do")
 @EntityFormSecurityPrefix("/Policy/E2")
+@Setter
 public class VocCoefficientForm extends IdEntityForm {
 
     /** Дата начала действия */
     @Comment("Дата начала действия")
     @Persist @DateString @DoDateString
-    public String getStartDate() {return theStartDate;}
-    public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
+    public String getStartDate() {return startDate;}
     /** Дата начала действия */
-    private String theStartDate ;
+    private String startDate ;
 
     /** Дата окончания действия */
     @Comment("Дата окончания действия")
     @Persist @DateString @DoDateString
-    public String getFinishDate() {return theFinishDate;}
-    public void setFinishDate(String aFinishDate) {theFinishDate = aFinishDate;}
+    public String getFinishDate() {return finishDate;}
     /** Дата окончания действия */
-    private String theFinishDate ;
+    private String finishDate ;
 
     /** Значение коэффициента */
     @Comment("Значение коэффициента")
     @Persist
-    public String getValue() {return theValue;}
-    public void setValue(String aValue) {theValue = aValue;}
+    public String getValue() {return value;}
     /** Значение коэффициента */
-    private String theValue ;
+    private String value ;
 }

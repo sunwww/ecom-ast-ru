@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.E2MedHelpProfileBedType;
@@ -20,59 +21,53 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Заполнение", nameProperties = "id", view = "entityParentView-e2_medHelpBedType.do")
 @Parent(property = "bedProfile", parentForm = VocE2FondV020Form.class)
 @EntityFormSecurityPrefix("/Policy/E2")
+@Setter
 public class E2MedHelpProfileBedTypeForm extends IdEntityForm {
 
     /** Профиль мед. помощи */
     @Comment("Профиль мед. помощи")
     @Persist @Required
-    public Long getProfile() {return theProfile;}
-    public void setProfile(Long aProfile) {theProfile = aProfile;}
+    public Long getProfile() {return profile;}
     /** Профиль мед. помощи */
-    private Long theProfile ;
+    private Long profile ;
 
     /** Профиль койки V020 */
     @Comment("Профиль койки V020")
     @Persist @Required
-    public Long getBedProfile() {return theBedProfile;}
-    public void setBedProfile(Long aBedProfile) {theBedProfile = aBedProfile;}
+    public Long getBedProfile() {return bedProfile;}
     /** Профиль койки V020 */
-    private Long theBedProfile ;
+    private Long bedProfile ;
 
     /** Профиль коек */
     @Comment("Профиль коек")
     @Persist
-    public Long getBedType() {return theBedType;}
-    public void setBedType(Long aBedType) {theBedType = aBedType;}
+    public Long getBedType() {return bedType;}
     /** Профиль коек */
-    private Long theBedType ;
+    private Long bedType ;
 
     /** Подтип коек */
     @Comment("Подтип коек")
     @Persist
-    public Long getSubType() {return theSubType;}
-    public void setSubType(Long aSubType) {theSubType = aSubType;}
+    public Long getSubType() {return subType;}
     /** Подтип коек */
-    private Long theSubType ;
+    private Long subType ;
 
     /** Дата действия с */
     @Comment("Дата действия с")
     @Persist @DateString
     @DoDateString
     @Required
-    public String getStartDate() {return theStartDate;}
-    public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
+    public String getStartDate() {return startDate;}
     /** Дата действия с */
-    private String theStartDate ;
+    private String startDate ;
 
     /** Дата действия по */
     @Comment("Дата действия по")
     @Persist @DateString @DoDateString
-    public String getFinishDate() {return theFinishDate;}
-    public void setFinishDate(String aFinishDate) {theFinishDate = aFinishDate;}
+    public String getFinishDate() {return finishDate;}
     /** Дата действия по */
-    private String theFinishDate ;
+    private String finishDate ;
 
-    public Long getNewMedHelpProfile() {return theNewMedHelpProfile;}
-    public void setNewMedHelpProfile(Long aNewMedHelpProfile) {theNewMedHelpProfile = aNewMedHelpProfile;}
-    private Long theNewMedHelpProfile ;
+    public Long getNewMedHelpProfile() {return newMedHelpProfile;}
+    private Long newMedHelpProfile ;
 }

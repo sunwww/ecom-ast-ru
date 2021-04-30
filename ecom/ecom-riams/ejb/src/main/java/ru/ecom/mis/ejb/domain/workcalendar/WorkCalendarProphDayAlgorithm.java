@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWeekDay;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWeekMonthOrder;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkWeek;
@@ -14,6 +16,8 @@ import javax.persistence.Transient;
 	 */
 	@Comment("Алгоритм шаблога рабочего календаря по профилактическому дню")
 @Entity
+	@Getter
+	@Setter
 public class WorkCalendarProphDayAlgorithm extends WorkCalendarAlgorithm{
 		/** infoClass */
 		@Comment("infoClass")
@@ -27,71 +31,48 @@ public class WorkCalendarProphDayAlgorithm extends WorkCalendarAlgorithm{
 	@Comment("Порядок недели в месяце")
 	@OneToOne
 	public VocWeekMonthOrder getMonthOrder() {
-		return theMonthOrder;
-	}
-	public void setMonthOrder(VocWeekMonthOrder aMonthOrder) {
-		theMonthOrder = aMonthOrder;
+		return monthOrder;
 	}
 	/**
 	 * Порядок недели в месяце
 	 */
-	private VocWeekMonthOrder theMonthOrder;
+	private VocWeekMonthOrder monthOrder;
 	/**
 	 * Шаблон дня
 	 */
 	@Comment("Шаблон дня")
 	@OneToOne
 	public WorkCalendarDayPattern getDayPattern() {
-		return theDayPattern;
-	}
-	public void setDayPattern(WorkCalendarDayPattern aDayPattern) {
-		theDayPattern = aDayPattern;
+		return dayPattern;
 	}
 	/**
 	 * Шаблон дня
 	 */
-	private WorkCalendarDayPattern theDayPattern;
+	private WorkCalendarDayPattern dayPattern;
 	/**
 	 * Тип рабочей недели
 	 */
 	@Comment("Тип рабочей недели")
 	@OneToOne
 	public VocWorkWeek getWorkWeek() {
-		return theWorkWeek;
-	}
-	public void setWorkWeek(VocWorkWeek aWorkWeek) {
-		theWorkWeek = aWorkWeek;
+		return workWeek;
 	}
 	/**
 	 * Тип рабочей недели
 	 */
-	private VocWorkWeek theWorkWeek;
+	private VocWorkWeek workWeek;
 
 	/** День недели */
 	@Comment("День недели")
 	@OneToOne
 	public VocWeekDay getWeekDay() {
-		return theWeekDay;
-	}
-
-	public void setWeekDay(VocWeekDay aWeekDay) {
-		theWeekDay = aWeekDay;
+		return weekDay;
 	}
 
 	/** День недели */
-	private VocWeekDay theWeekDay;
+	private VocWeekDay weekDay;
 	
 	/** День месяца */
-	@Comment("День месяца")
-	public Integer getMonthDay() {
-		return theMonthDay;
-	}
-
-	public void setMonthDay(Integer aMonthDay) {
-		theMonthDay = aMonthDay;
-	}
-
-	/** День месяца */
-	private Integer theMonthDay;
+	private Integer monthDay;
 	
 }

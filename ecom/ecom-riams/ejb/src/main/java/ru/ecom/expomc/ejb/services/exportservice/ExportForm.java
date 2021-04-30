@@ -10,17 +10,17 @@ public class ExportForm extends BaseValidatorForm {
 
     /** Формат */
     @Required
-    public Long getFormat() { return theFormat ; }
-    public void setFormat(Long aFormat) { theFormat = aFormat ; }
+    public Long getFormat() { return format ; }
+    public void setFormat(Long aFormat) { format = aFormat ; }
 
     /** Документ */
     @Required
-    public Long getDocument() { return theDocument ; }
-    public void setDocument(Long aDocument) { theDocument = aDocument ; }
+    public Long getDocument() { return document ; }
+    public void setDocument(Long aDocument) { document = aDocument ; }
 
     
     /** Документ */
-    private Long theDocument ;
+    private Long document ;
     /** Формат */
-    private Long theFormat ;
+    private Long format ;
 }

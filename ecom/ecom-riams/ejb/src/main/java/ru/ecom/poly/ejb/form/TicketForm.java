@@ -1,5 +1,6 @@
 package ru.ecom.poly.ejb.form;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
@@ -51,326 +52,287 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AViewInterceptors(
         @AEntityFormInterceptor(TicketViewInterceptor.class)
 )
+@Setter
 public class TicketForm extends IdEntityForm {
 
 	/** КСГ */
 	@Comment("КСГ")
 	@Persist
-	public Long getKsg() {return theKsg;}
-	public void setKsg(Long aKsg) {theKsg = aKsg;}
+	public Long getKsg() {return ksg;}
 
 	/** Сопутствующие заболевания */
 	@Comment("Сопутствующие заболевания")
 	@Persist @PersistManyToManyOneProperty(collectionGenericType=VocIdc10.class)
-	public String getConcomitantDiseases() {return theConcomitantDiseases;}
-	public void setConcomitantDiseases(String aConcomitantDiseases) {theConcomitantDiseases = aConcomitantDiseases;}
+	public String getConcomitantDiseases() {return concomitantDiseases;}
 
     @Comment("Медицинская карта")
     @Persist @Required
-    public Long getMedcard() {return theMedcard;}
-    public void setMedcard(Long aMedcard) {theMedcard = aMedcard;}
+    public Long getMedcard() {return medcard;}
 
     @Comment("Дата приема")
     @Required @Persist
     @DateString @DoDateString @MaxDateCurrent
-    public String getDate() {return theDate;}
-    public void setDate(String aDate) {theDate = aDate;}
+    public String getDate() {return date;}
 
     @Comment("Время приема")
     @Required @Persist
     @TimeString @DoTimeString
-    public String getTime() { return theTime; }
-    public void setTime(String aTime) { theTime = aTime; }
+    public String getTime() { return time; }
 
     @Comment("Вид оплаты")
     @Persist @Required
-    public Long getVocPaymentType() {return theVocPaymentType;}
-    public void setVocPaymentType(Long aVocPaymentType) {theVocPaymentType = aVocPaymentType;}
+    public Long getVocPaymentType() {return vocPaymentType;}
 
     @Comment("Место обслуживания")
     @Persist @Required
-    public Long getVocServicePlace() {return theVocServicePlace;}
-    public void setVocServicePlace(Long aVocServicePlace) {theVocServicePlace = aVocServicePlace;}
+    public Long getVocServicePlace() {return vocServicePlace;}
 
 
     @Comment("Цель посещения")
     @Persist @Required
-    public Long getVocReason() {return theVocReason;}
-    public void setVocReason(Long aVocReason) {theVocReason = aVocReason;}
+    public Long getVocReason() {return vocReason;}
 
     @Comment("Результат обращения")
     @Persist
-    public Long getVocVisitResult() {return theVocVisitResult;}
-    public void setVocVisitResult(Long aVocVisitResult) {theVocVisitResult = aVocVisitResult;}
+    public Long getVocVisitResult() {return vocVisitResult;}
 
     @Comment("Код мед. услуги (посещения, СМП, КЭС)  -  несколько")
     @Persist
-    public Long getVocMedUsluga() {return theVocMedUsluga;}
-    public void setVocMedUsluga(Long aVocMedUsluga) {theVocMedUsluga = aVocMedUsluga;}
+    public Long getVocMedUsluga() {return vocMedUsluga;}
 
     @Comment("Характер заболевания")
     @Persist
-    public Long getVocIllnesType() {return theVocIllnesType;}
-    public void setVocIllnesType(Long aVocIllnesType) {theVocIllnesType = aVocIllnesType;}
+    public Long getVocIllnesType() {return vocIllnesType;}
 
     @Comment("Первичность")
     @Persist
-    public Long getDispRegistration() {return theDispRegistration;}
-    public void setDispRegistration(Long aVocDispanseryRegistration) {theDispRegistration = aVocDispanseryRegistration;}
+    public Long getDispRegistration() {return dispRegistration;}
 
-    @Comment("Травма") @Persist
-    public Long getVocTrauma() {return theVocTrauma;}
-    public void setVocTrauma(Long aVocTrauma) {theVocTrauma = aVocTrauma;}
-    
+    @Comment("Травма")
+	@Persist
+    public Long getVocTrauma() {return vocTrauma;}
+
     /** Статус документа нетрудоспособности*/
 	@Comment("Статус документа нетрудоспособности")
 	@Persist
-	public Long getDisabilityDocumentStatus() {return theDisabilityDocumentStatus;}
-	public void setDisabilityDocumentStatus(Long aDisabilityDocumentStatus) {theDisabilityDocumentStatus = aDisabilityDocumentStatus;}
+	public Long getDisabilityDocumentStatus() {return disabilityDocumentStatus;}
 
 
     /** Причина нетрудоспособности */
 	@Comment("Причина нетрудоспособности")
 	@Persist
-	public Long getDisabilityReason() {return theDisabilityReason;}
-	public void setDisabilityReason(Long aDisabilityReason) {theDisabilityReason = aDisabilityReason;}
+	public Long getDisabilityReason() {return disabilityReason;}
 
 	
     /** @return Пациент **/
     @Persist
     @Comment("ФИО пациента")
-    public String getPatientName() { return thePatientName; }
-    public void setPatientName(String aPatientName) { thePatientName = aPatientName; }
+    public String getPatientName() { return patientName; }
 
     
     @Comment("Статус пациента")
     @Persist
     /** @return Статус пациента **/
-    public String getStatusName() { return theStatusName; }
-    public void setStatusName(String aStatusName) { theStatusName = aStatusName; }
+    public String getStatusName() { return statusName; }
 
     /** Информация по талону */
 	@Comment("Информация по талону")
 	@Persist
-	public String getTicketInfo() {return theTicketInfo;}
-	public void setTicketInfo(String aTicketInfo) {theTicketInfo = aTicketInfo;}
+	public String getTicketInfo() {return ticketInfo;}
 
     @Comment("Метка")
     @Persist
-    public Long getSpecialLabel() { return theLabel; }
-    public void setSpecialLabel(Long aLabel) { theLabel = aLabel; }
-    
+    public Long getSpecialLabel() { return label; }
+
     /** Закрыть талон? */
 	@Comment("Закрыть талон?")
 	@Persist
-	public Boolean getIsTicketClosed() {return theIsTicketClosed;}
-	public void setIsTicketClosed(Boolean aIsTicketClosed) {theIsTicketClosed = aIsTicketClosed;}
+	public Boolean getIsTicketClosed() {return isTicketClosed;}
 
     @Persist
     @Comment("Ранее зарегистрированный диагноз")
-    public Long getPrevIdc10() {return thePreviousDiagnosisIdc;}
-    public void setPrevIdc10(Long idc10) {thePreviousDiagnosisIdc = idc10;}
+    public Long getPrevIdc10() {return previousDiagnosisIdc;}
 
     @Comment("Дата ранее зарегистрированного диагноза")
     @Persist @DateString @DoDateString
-    public String getPrevIdc10Date(){return thePrevIdc10Date;}
-    public void setPrevIdc10Date(String aPrevDate){thePrevIdc10Date = aPrevDate;}
+    public String getPrevIdc10Date(){return prevIdc10Date;}
 
     @Comment("Диагноз по МКБ10")
     @Mkb @Persist @Required
-    public Long getIdc10() {return theVocIdc10;}
-    public void setIdc10(Long idc10) {theVocIdc10 = idc10;}
+    public Long getIdc10() {return vocIdc10;}
 
 	/** Рабочая функция исполнения */
 	@Comment("Рабочая функция исполнения")
 	@Persist @Required
-	public Long getWorkFunction() {	return theWorkFunction;}
-	public void setWorkFunction(Long aNewProperty) {theWorkFunction = aNewProperty;}
-	
+	public Long getWorkFunction() {	return workFunction;}
+
 	/**Рабочая функция исполнения(Инфо) */
 	@Comment("Рабочая функция исполнения(Инфо)")
 	@Persist
-	public String getWorkFunctionInfo() {return theWorkFunctionInfo;}
-	public void setWorkFunctionInfo(String aNewProperty) {theWorkFunctionInfo = aNewProperty;}
-	
+	public String getWorkFunctionInfo() {return workFunctionInfo;}
+
 	/** Справочник по ДТП*/
 	@Comment("Справочник по ДТП")
 	@Persist
-	public Long  getRoadTrafficInjury() {return theRoadTrafficInjury;}
-	public void setRoadTrafficInjury(Long aNewProperty) {theRoadTrafficInjury = aNewProperty;}
-	
+	public Long getRoadTrafficInjury() {return roadTrafficInjury;}
+
 	/** Первичность */
 	@Comment("Первичность")
 	@Persist 
-	public Long getPrimary() {return thePrimary;}
-	public void setPrimary(Long aNewProperty) {thePrimary = aNewProperty;}
+	public Long getPrimary() {return primary;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DateString @DoDateString
-	public String getDateCreate() {return theDateCreate;}
-	public void setDateCreate(String aDateCreate) {theDateCreate = aDateCreate;}
+	public String getDateCreate() {return dateCreate;}
 
 	/** Время создания */
 	@Comment("Время создания")
 	@Persist @TimeString @DoTimeString
-	public String getTimeCreate() {return theTimeCreate;}
-	public void setTimeCreate(String aTimeCreate) {theTimeCreate = aTimeCreate;}
+	public String getTimeCreate() {return timeCreate;}
 
 	/** Пользователь, создавший запись */
 	@Comment("Пользователь, создавший запись")
 	@Persist
-	public String getUsernameCreate() {return theUsernameCreate;}
-	public void setUsernameCreate(String aUsernameCreate) {theUsernameCreate = aUsernameCreate;}
+	public String getUsernameCreate() {return usernameCreate;}
 
 	/** Представитель */
 	@Comment("Представитель")
 	@Persist
-	public Long getKinsman() {return theKinsman;}
-	public void setKinsman(Long aKinsman) {theKinsman = aKinsman;}
-	
+	public Long getKinsman() {return kinsman;}
+
 	@Comment("Обращение по поводу данного заболевания в текущем году (впервые, повторно)")
 	@Persist @Required
-	public Long getHospitalization() {return theHospitalization;}
-	public void setHospitalization(Long aHospitalization) {theHospitalization = aHospitalization;}
-	
+	public Long getHospitalization() {return hospitalization;}
+
 	/** Условная единица трудоемкости */
 	@Comment("Условная единица трудоемкости")
 	@Persist
-	public String getUet() {return theUet;}
-	public void setUet(String aUet) {theUet = aUet;}
+	public String getUet() {return uet;}
 
 	/** Направлен на стац. лечение */
 	@Comment("Направлен на стац. лечение")
 	@Persist
-	public Boolean getDirectHospital() {return theDirectHospital;}
-	public void setDirectHospital(Boolean aDirectHospital) {theDirectHospital = aDirectHospital;}
+	public Boolean getDirectHospital() {return directHospital;}
 
 	/** Разговор с родственником */
 	@Comment("Разговор с родственником")
 	@Persist
-	public Boolean getTalk() {return theTalk;}
-	public void setTalk(Boolean aTalk) {theTalk = aTalk;}
+	public Boolean getTalk() {return talk;}
 
 	/** Неотложная помощь */
 	@Comment("Неотложная помощь")
 	@Persist
-	public Boolean getEmergency() {return theEmergency;}
-	public void setEmergency(Boolean aEmergency) {theEmergency = aEmergency;}
+	public Boolean getEmergency() {return emergency;}
 
 	/** Мед.услуги */
 	@Comment("Мед.услуги")
 	@Persist @PersistManyToManyOneProperty(collectionGenericType=MedService.class
 			,valueProperty="medService_id",parentProperty="ticket_id",tableName="RenderedService")
-	public String getMedServices() {return theMedServices;}
-	public void setMedServices(String aMedServices) {theMedServices = aMedServices;}
+	public String getMedServices() {return medServices;}
 
 	/** Мед.услуги */
-	private String theMedServices;
+	private String medServices;
 	/** Неотложная помощь */
-	private Boolean theEmergency;
+	private Boolean emergency;
 	/** Разговор с родственником */
-	private Boolean theTalk;
+	private Boolean talk;
 	/** Направлен на стац. лечение */
-	private Boolean theDirectHospital;
+	private Boolean directHospital;
 	/** Условная единица трудоемкости */
-	private String theUet;
-	private Long theHospitalization;
+	private String uet;
+	private Long hospitalization;
 	/** Представитель */
-	private Long theKinsman;
+	private Long kinsman;
 	/** Пользователь, создавший запись */
-	private String theUsernameCreate;
+	private String usernameCreate;
 	/** Время создания */
-	private String theTimeCreate;
+	private String timeCreate;
 	/** Дата создания */
-	private String theDateCreate;
+	private String dateCreate;
 	/** Статус документа нетрудоспособности */
-	private Long theDisabilityDocumentStatus;
+	private Long disabilityDocumentStatus;
 	/** Причина нетрудоспособности */
-	private Long theDisabilityReason;
+	private Long disabilityReason;
 	/** Закрыть талон? */
-	private Boolean theIsTicketClosed;
+	private Boolean isTicketClosed;
     /** Метка **/
-    private Long theLabel;
+    private Long label;
     /** Статус пациента **/
-    private String theStatusName;
+    private String statusName;
     /** Пациент **/
-    private String thePatientName;
+    private String patientName;
     /** Травма */
-    private Long theVocTrauma;
+    private Long vocTrauma;
     /** Первичность */
-    private Long theDispRegistration;
+    private Long dispRegistration;
     /** Характер заболевания */
-    private Long theVocIllnesType;
+    private Long vocIllnesType;
     /** Код мед. услуги (посещения, СМП, КЭС) */
-    private Long theVocMedUsluga;
+    private Long vocMedUsluga;
     /** Результат обращения */
-    private Long theVocVisitResult;
+    private Long vocVisitResult;
     /** Цель посещения */
-    private Long theVocReason;
+    private Long vocReason;
     /**Место обслуживания */
-    private Long theVocServicePlace;
+    private Long vocServicePlace;
     /** Вид оплаты */
-    private Long theVocPaymentType;
+    private Long vocPaymentType;
     /** Дата выдачи/создания(?) талона */
-    private String theDate;
+    private String date;
     /** Медицинская карта */
-    private Long theMedcard;
+    private Long medcard;
 	/** Рабочая функция исполнения */
-	private Long theWorkFunction;
+	private Long workFunction;
 	/** Первичность */
-	private Long thePrimary;
+	private Long primary;
 	/** Рабочая функция исполнения(Инфо) */
-	private String theWorkFunctionInfo;
+	private String workFunctionInfo;
 	/** Справочник по ДТП*/
-	private Long theRoadTrafficInjury;
+	private Long roadTrafficInjury;
 	/** КСГ */
-	private Long theKsg;
+	private Long ksg;
     /** Диагноз по МКБ10 */
-    private Long theVocIdc10;
+    private Long vocIdc10;
 	/** Сопутствующие заболевания */
-	private String theConcomitantDiseases;
+	private String concomitantDiseases;
 	/** Дата ранее зарегистрированного диагноза */
-	private String thePrevIdc10Date;
+	private String prevIdc10Date;
 	/** Дата ранее зарегистрированного диагноза MKБ10 */
-	private Long thePreviousDiagnosisIdc;
+	private Long previousDiagnosisIdc;
     /** Время приема **/
-    private String theTime;
+    private String time;
 	/** Информация по талону */
-	private String theTicketInfo;
+	private String ticketInfo;
     
 	/** Диагноз */
 	@Comment("Диагноз")
 	@Persist @Required
-	public Long getIllnesPrimary() {return theIllnesPrimary;}
-	public void setIllnesPrimary(Long aIllnesPrimary) {theIllnesPrimary = aIllnesPrimary;}
+	public Long getIllnesPrimary() {return illnesPrimary;}
 
 	/** Диагноз */
-	private Long theIllnesPrimary;
+	private Long illnesPrimary;
 
 	/** СПО */
 	@Comment("СПО")
 	@Persist
-	public Long getParent() {return theParent;}
-	public void setParent(Long aParent) {theParent = aParent;}
+	public Long getParent() {return parent;}
 
 	/** СПО */
-	private Long theParent;
+	private Long parent;
 	/** Бригада скорой помощи */
 	@Comment("Бригада скорой помощи")
 	@Persist
-	public Long getAmbulance() {return theAmbulance;}
-	public void setAmbulance(Long aAmbulance) {theAmbulance = aAmbulance;}
+	public Long getAmbulance() {return ambulance;}
 
 	/** Исход визита */
 	@Comment("Исход визита")
 	@Persist
-	public Long getVisitOutcome() {return theVisitOutcome;}
-	public void setVisitOutcome(Long aVisitOutcome) {theVisitOutcome = aVisitOutcome;}
+	public Long getVisitOutcome() {return visitOutcome;}
 
 	/** Исход визита */
-	private Long theVisitOutcome;
+	private Long visitOutcome;
 	/** Бригада скорой помощи */
-	private Long theAmbulance;
+	private Long ambulance;
 
 }

@@ -40,12 +40,12 @@ public class ExportFormatServiceBean implements IExportFormatService {
     private static final Logger LOG = Logger.getLogger(ExportFormatServiceBean.class);
 
     private ExportFormat getExportFormat(Long anId) {
-        return theManager.find(ExportFormat.class, anId);
+        return manager.find(ExportFormat.class, anId);
     }
 
     /** Максимальное кол-во записей 0 - б.ограничений */
-    public int getMaxRecords() { return theMaxRecords ; }
-    public void setMaxRecords(int aMaxRecords) { theMaxRecords = aMaxRecords ; }
+    public int getMaxRecords() { return maxRecords ; }
+    public void setMaxRecords(int aMaxRecords) { maxRecords = aMaxRecords ; }
 
 
     public String getResultSet(Long anId) {
@@ -89,7 +89,7 @@ public class ExportFormatServiceBean implements IExportFormatService {
                     LOG.info("QUERY driver: `default' qry:`" + driverQuery + "'");
                 }
 
-                IExportFomatDriver driver = DriverManager.getDriver(driverName, theManager, exportFormat.isNative(), driverQuery);
+                IExportFomatDriver driver = DriverManager.getDriver(driverName, manager, exportFormat.isNative(), driverQuery);
                 driver.execute(getMaxRecords());
                 driver.saveXml(s);
             }
@@ -137,7 +137,7 @@ public class ExportFormatServiceBean implements IExportFormatService {
                     LOG.info("QUERY driver: `default' qry:`" + params + "'");
                 }
 
-                IExportFomatDriver driver = DriverManager.getDriver(driverName, theManager, exportFormat.isNative(), params);
+                IExportFomatDriver driver = DriverManager.getDriver(driverName, manager, exportFormat.isNative(), params);
                 driver.execute(getMaxRecords());
                 driver.saveXml(writer);
             }
@@ -243,7 +243,7 @@ public class ExportFormatServiceBean implements IExportFormatService {
 
     public void exportAsXml(Long anId, long aFileId) {
         try {
-            File file = theJbossGetFileLocalService.createFile(aFileId, "exportdata.xml");
+            File file = jbossGetFileLocalService.createFile(aFileId, "exportdata.xml");
             transform(anId, new StreamResult(file));
 
         } catch (IllegalMonitorStateException e) {
@@ -258,13 +258,13 @@ public class ExportFormatServiceBean implements IExportFormatService {
         IMonitor monitor = null;
 
         try {
-            monitor = theMonitorService.startMonitor(aMonitorId, "Экспорт данных", 100);
+            monitor = monitorService.startMonitor(aMonitorId, "Экспорт данных", 100);
             File xmlFile = File.createTempFile("export",".xml");
             LOG.info("Create output:'" + xmlFile.getAbsolutePath() + "'");
             monitor.advice(25);
             transform(anId, new StreamResult(xmlFile));
 
-            File zipFile = theJbossGetFileLocalService.createFile(aFileId, "exportdata.xml.zip");
+            File zipFile = jbossGetFileLocalService.createFile(aFileId, "exportdata.xml.zip");
             LOG.info("Archiving started to "+zipFile.getAbsolutePath());
             sun.tools.jar.Main m = new sun.tools.jar.Main(System.out, System.err, "jar");
 //            LOG.info("jar "+"cfM "+zipFile.getAbsolutePath()+ " -C "+xmlFile.getParentFile().getCanonicalPath()+" "+ xmlFile.getName());
@@ -292,18 +292,18 @@ public class ExportFormatServiceBean implements IExportFormatService {
     }
 
     /** Максимальное кол-во записей 0 - б.ограничений */
-    private int theMaxRecords ;
+    private int maxRecords ;
 
 
     @PersistenceContext
-    private EntityManager theManager;
+    private EntityManager manager;
 
     private
     @EJB
-    IJbossGetFileLocalService theJbossGetFileLocalService;
+    IJbossGetFileLocalService jbossGetFileLocalService;
     private
     @EJB
-    ILocalMonitorService theMonitorService;
+    ILocalMonitorService monitorService;
 
 
 }

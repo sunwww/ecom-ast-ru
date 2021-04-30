@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.extdispplan;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.extdispplan.ExtDispPlanPopulationRecord;
@@ -16,38 +17,35 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @Parent(property="plan", parentForm=ExtDispPlanPopulationForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card")
 
+@Setter
 public class ExtDispPlanPopulationRecordForm extends IdEntityForm {
 
     /** План диспансеризации */
     @Comment("План диспансеризации")
     @Persist
-    public Long getPlan() {return thePlan;}
-    public void setPlan(Long aPlan) {thePlan = aPlan;}
+    public Long getPlan() {return plan;}
     /** План диспансеризации */
-    private Long thePlan ;
+    private Long plan ;
 
     /** Дата планируемой диспансеризации */
     @Comment("Дата планируемой диспансеризации")
     @Persist @DateString @DoDateString
-    public String getPlanDispDate() {return thePlanDispDate;}
-    public void setPlanDispDate(String aPlanDispDate) {thePlanDispDate = aPlanDispDate;}
+    public String getPlanDispDate() {return planDispDate;}
     /** Дата планируемой диспансеризации */
-    private String thePlanDispDate ;
+    private String planDispDate ;
 
     /** Пациент */
     @Comment("Пациент")
     @Persist
-    public Long getPatient() {return thePatient;}
-    public void setPatient(Long aPatient) {thePatient = aPatient;}
+    public Long getPatient() {return patient;}
     /** Пациент */
-    private Long thePatient ;
+    private Long patient ;
 
     /** Удалено */
     @Comment("Удалено")
     @Persist
-    public Boolean getIsDeleted() {return theIsDeleted;}
-    public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
+    public Boolean getIsDeleted() {return isDeleted;}
     /** Удалено */
-    private Boolean theIsDeleted ;
+    private Boolean isDeleted ;
 
 }

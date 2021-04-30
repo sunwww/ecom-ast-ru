@@ -63,16 +63,12 @@ public class AddressPointServiceBean implements IAddressPointService {
 
     private final WebQueryResult res = new WebQueryResult();
     private final Collection<WebQueryResult> errList = new ArrayList<>();
-    private final AddressPointCheckHelper thePointCheckHelper = new AddressPointCheckHelper();
+    private final AddressPointCheckHelper pointCheckHelper = new AddressPointCheckHelper();
     private @EJB
     IAddressService addressService;
     private @PersistenceContext
     EntityManager entityManager;
 
-    /* public static void main(String[] args) {
-        AddressPointServiceBean bean = new AddressPointServiceBean();
-        bean.createCsv("d:/java/", "123", bean.makeTest(), "301234");
-    }*/
 
     @Override
     public WebQueryResult exportExtDispPlanAll(String ageString, String filenamePrefix
@@ -85,7 +81,7 @@ public class AddressPointServiceBean implements IAddressPointService {
         if (ageString != null) {
             addSql.append("and cast(to_char(to_date('").append(dateTo).append("','dd.mm.yyyy'),'yyyy') as int) -cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('")
                     .append(dateTo).append("','dd.mm.yyyy'), 'mm') as int) -cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('")
-                    .append(dateTo).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end) <0) then -1 else 0 end) ").append(ageString);
+                    .append(dateTo).append("','dd.mm.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) n -1 else 0 end) <0) n -1 else 0 end) ").append(ageString);
         }
         EjbEcomConfig config = EjbEcomConfig.getInstance();
         String workDir = config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
@@ -94,9 +90,9 @@ public class AddressPointServiceBean implements IAddressPointService {
         List<Object[]> listPat;
         String[][] props = new String[][]{
                 {"ltrim(to_char(p.birthday,'MM'),'0')", "PERIOD", "p.birthday", "1", "Месяц планируемого проведения ДД"}
-                , {" cast(to_char(to_date('" + dateTo + "','dd.MM.yyyy'),'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('" + dateTo + "','dd.MM.yyyy'), 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('" + dateTo + "','dd.MM.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end)", "TIP_DATA", "", "1", "Возраст (полных лет)"}
+                , {" cast(to_char(to_date('" + dateTo + "','dd.MM.yyyy'),'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(to_date('" + dateTo + "','dd.MM.yyyy'), 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(to_date('" + dateTo + "','dd.MM.yyyy'),'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) n -1 else 0 end)<0) n -1 else 0 end)", "TIP_DATA", "", "1", "Возраст (полных лет)"}
                 , {"p.lastname", "FAM", "p.lastname", "1", "Фамилия"}, {"p.firstname", "IM", "p.firstname", "1", "Имя"}
-                , {"case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end", "OT", "p.middlename", null, "Отчество"}
+                , {"case when p.middlename='' or p.middlename='Х' or p.middlename is null n '' else p.middlename end", "OT", "p.middlename", null, "Отчество"}
                 , {"vs.omccode", "W", "vs.omccode", "Пол"}
                 , {"to_char(p.birthday,'yyyy-mm-dd')", "DR", "p.birthday", "1", "Дата рождение"}, {"p.snils", "SNILS", "p.snils", null, "СНИЛС"}
                 , {"vic.omcCode", "DOCTYPE", "vic.omcCode", null, "Тип документа"}, {"p.passportSeries", "DOCSER", "p.passportSeries", null, "Серия документа"}
@@ -206,7 +202,7 @@ public class AddressPointServiceBean implements IAddressPointService {
             props = new String[][]{
                     {"p.lastname", "FAM", "p.lastname", "1", "Фамилия"}
                     , {"p.firstname", "IM", "p.firstname", "1", "Имя"}
-                    , {"case when p.middlename='' or p.middlename='Х' or p.middlename is null then '' else p.middlename end", "OT", "p.middlename", null, "Отчество"}
+                    , {"case when p.middlename='' or p.middlename='Х' or p.middlename is null n '' else p.middlename end", "OT", "p.middlename", null, "Отчество"}
                     , {"to_char(p.birthday,'yyyy-mm-dd')", "DR", "p.birthday", "1", "Дата рождение"}
                     , {"p.snils", "SNILS", "p.snils", null, "СНИЛС"}
                     , {"vic.omcCode", "DOCTYPE", "vic.omcCode", null, "Тип документа"}
@@ -215,11 +211,11 @@ public class AddressPointServiceBean implements IAddressPointService {
                     , {"to_char(p.passportdateissued,'yyyy-mm-dd')", "DOCDT", "p.passportdateissued", null, "Дата выдачи документа"}
                     , {"cast('' as varchar(1))", "TEL", "p.phone", null, "Телефон"}
                     , {"p.commonNumber", "RZ", "p.commonNumber", null, "ЕПН"}
-                    , {" case when lp.id is null then '1' else coalesce(vat.code,'2') end", "SP_PRIK", "lp.id,vat.code", "1", "Тип прикрепления"}
-                    , {"case when lp.dateTo is null then '1' else '2' end", "T_PRIK", "lp.dateTo", "1", "прикрепление/открепление"}
+                    , {" case when lp.id is null n '1' else coalesce(vat.code,'2') end", "SP_PRIK", "lp.id,vat.code", "1", "Тип прикрепления"}
+                    , {"case when lp.dateTo is null n '1' else '2' end", "T_PRIK", "lp.dateTo", "1", "прикрепление/открепление"}
                     , {"to_char(lp.dateFrom,'yyyy-mm-dd')", "DATE_1", "lp.dateFrom", "1", "Дата прикрепления"}
-                    , {"case when lp.newAddress='1' then '1' else '0' end", "N_ADR", "lp.newAddress", null, ""}
-                    , {"case when la.codeDepartment!='' then la.codeDepartment else ml3.codeDepartment end", "KODPODR", "la.codeDepartment,ml3.codeDepartment", "1", "Код подразделения"}
+                    , {"case when lp.newAddress='1' n '1' else '0' end", "N_ADR", "lp.newAddress", null, ""}
+                    , {"case when la.codeDepartment!='' n la.codeDepartment else ml3.codeDepartment end", "KODPODR", "la.codeDepartment,ml3.codeDepartment", "1", "Код подразделения"}
                     , {"la.number", "LPUUCH", "la.number", null}
                     , {"wp.snils", "SSD", "wp.snils", "1", "СНИЛС врача"}
                     , {"cast('1' as varchar(1))", "MEDRAB", "", null, "Врач/медработник"}
@@ -276,8 +272,8 @@ public class AddressPointServiceBean implements IAddressPointService {
 
                 sql.setLength(0);
                 sql.append("select ").append(fld)
-                        .append(",case when vmpt.code='1' then mp.series ||' № '||mp.polnumber when vmpt.code='2' then mp.series ||mp.polnumber end as mpNumber")
-                        .append(", case when vmpt.code ='1' then 'С' when vmpt.code ='2' then 'В' else 'П' end as medpolicytype")
+                        .append(",case when vmpt.code='1' n mp.series ||' № '||mp.polnumber when vmpt.code='2' n mp.series ||mp.polnumber end as mpNumber")
+                        .append(", case when vmpt.code ='1' n 'С' when vmpt.code ='2' n 'В' else 'П' end as medpolicytype")
                         .append(" ,to_char(lp.dateTo,'yyyy-mm-dd') as f21_detachDate")
                         .append(" ,p.id as pid, lp.id as lpid")
                         .append(" from Patient p")
@@ -322,8 +318,8 @@ public class AddressPointServiceBean implements IAddressPointService {
             filenames.append("#").append(filename).append(".").append(fileType);
             sql.setLength(0);
             sql.append("select ").append(fld)
-                    .append(",case when vmpt.code='1' then mp.series ||' № '||mp.polnumber when vmpt.code='2' then mp.series ||mp.polnumber end as f19_mpNumber")
-                    .append(", case when vmpt.code ='1' then 'С' when vmpt.code ='2' then 'В' else 'П' end as f20_medpolicytype")
+                    .append(",case when vmpt.code='1' n mp.series ||' № '||mp.polnumber when vmpt.code='2' n mp.series ||mp.polnumber end as f19_mpNumber")
+                    .append(", case when vmpt.code ='1' n 'С' when vmpt.code ='2' n 'В' else 'П' end as f20_medpolicytype")
                     .append(" ,to_char(lp.dateTo,'yyyy-mm-dd') as f21_detachDate")
                     .append(" ,p.id as pid, lp.id as lpid")
                     .append(" from Patient p")
@@ -588,7 +584,7 @@ public class AddressPointServiceBean implements IAddressPointService {
                 manager.clear();
             }
         } else {
-            List<AddressPointCheck> checks = thePointCheckHelper.parsePoints(aLpuAreaAddressText.getAddressString());
+            List<AddressPointCheck> checks = pointCheckHelper.parsePoints(aLpuAreaAddressText.getAddressString());
             // нет домов, прикрепляем по всех улице
             if (checks.isEmpty()) {
                 LpuAreaAddressPoint point = new LpuAreaAddressPoint();

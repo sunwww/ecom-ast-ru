@@ -9,6 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -20,53 +22,37 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Классификатор лекарственных средств")
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class DrugClassificator extends BaseEntity{
 	
-	/** Наименование */
-	@Comment("Наименование")
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
 
-	
 	/** Дети */
 	@Comment("Дети")
 	@OneToMany(mappedBy="parent", cascade=CascadeType.ALL)
-	public List<DrugClassificator> getChildren() {return theChildren;}
-	public void setChildren(List<DrugClassificator> aChildren) {theChildren = aChildren;}
-	
+	public List<DrugClassificator> getChildren() {return children;}
+
 	/** Родитель */
 	@Comment("Родитель")
 	@ManyToOne
-	public DrugClassificator getParent() {return theParent;}
-	public void setParent(DrugClassificator aParent) {theParent = aParent;}
-	
+	public DrugClassificator getParent() {return parent;}
+
 	/** Позиции классификаторов лекарственных средств */
 	@Comment("Позиции классификаторов лекарственных средств")
 	@OneToMany(mappedBy="drugClassificator", cascade=CascadeType.ALL)
-	public List<DrugClassificatorPosition> getDrugClassificatorPosition() {return theDrugClassificatorPosition;}
-	public void setDrugClassificatorPosition(List<DrugClassificatorPosition> aDrugClassificatorPosition) {theDrugClassificatorPosition = aDrugClassificatorPosition;}
-
-	/** Пользователь */
-	@Comment("Пользователь")
-	public String getUsername() {return theUsername;}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
+	public List<DrugClassificatorPosition> getDrugClassificatorPosition() {return drugClassificatorPosition;}
 
 	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-
-	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	/** Пользователь */
-	private String theUsername;
+	private String username;
 	/** Наименование */
-	private String theName;
+	private String name;
 	/** Дети */
-	private List<DrugClassificator> theChildren;
+	private List<DrugClassificator> children;
 	/** Родитель */
-	private DrugClassificator theParent;
+	private DrugClassificator parent;
 	/** Позиции классификаторов лекарственных средств */
-	private List<DrugClassificatorPosition> theDrugClassificatorPosition;
+	private List<DrugClassificatorPosition> drugClassificatorPosition;
 
 }

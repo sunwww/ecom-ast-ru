@@ -1,5 +1,7 @@
 package ru.ecom.expert2.domain.voc;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -10,44 +12,32 @@ import java.math.BigDecimal;
 import java.sql.Date;
 
 @Entity
+@Getter
+@Setter
 public class VocCoefficient extends BaseEntity {
     
     /** Дата начала действия */
-    @Comment("Дата начала действия")
-    public Date getStartDate() {return theStartDate;}
-    public void setStartDate(Date aStartDate) {theStartDate = aStartDate;}
-    /** Дата начала действия */
-    private Date theStartDate ;
+    private Date startDate;
     
     /** Дата окончания действия */
-    @Comment("Дата окончания действия")
-    public Date getFinishDate() {return theFinishDate;}
-    public void setFinishDate(Date aFinishDate) {theFinishDate = aFinishDate;}
-    /** Дата окончания действия */
-    private Date theFinishDate ;
+    private Date finishDate;
 
     /** Значение коэффициента */
     @Comment("Значение коэффициента")
     @Column( precision = 15, scale = 5)
-    public BigDecimal getValue() {return theValue;}
-    public void setValue(BigDecimal aValue) {theValue = aValue;}
-    /** Значение коэффициента */
-    private BigDecimal theValue ;
+    public BigDecimal getValue() {return value;}
+    private BigDecimal value;
 
     /** Вид случая */
     @Comment("Вид случая")
     @OneToOne
-    public VocE2VidSluch getVidSluch() {return theVidSluch;}
-    public void setVidSluch(VocE2VidSluch aVidSluch) {theVidSluch = aVidSluch;}
-    /** Вид случая */
-    private VocE2VidSluch theVidSluch ;
+    public VocE2VidSluch getVidSluch() {return vidSluch;}
+    private VocE2VidSluch vidSluch;
 
     /** Профиль мед. помощи */
     @Comment("Профиль мед. помощи")
     @OneToOne
-    public VocE2MedHelpProfile getProfile() {return theProfile;}
-    public void setProfile(VocE2MedHelpProfile aProfile) {theProfile = aProfile;}
-    /** Медицинская специальность */
-    private VocE2MedHelpProfile theProfile ;
+    public VocE2MedHelpProfile getProfile() {return profile;}
+    private VocE2MedHelpProfile profile;
 
 }

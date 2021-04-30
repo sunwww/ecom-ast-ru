@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.prescription;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.prescription.DrugPrescription;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
@@ -24,140 +25,101 @@ import javax.persistence.Transient;
 @WebTrail(comment = "Назначение лекарства", nameProperties= "drug",list="entityParentList-pres_drugPrescription.do", view="entityParentView-pres_drugPrescription.do")
 @Parent(property="prescriptionList", parentForm=AbstractPrescriptionListForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Prescription/DrugPrescription")
+@Setter
 public class DrugPrescriptionForm extends PrescriptionForm{
 
-	private Long theDrug;
-	private Long theVocDrug;
-	private Long theMethod;
-	private Long theFrequencyUnit;
-	private String theFrequency;
-	private Long theOrderType;
-	private String theOrderTime;
-	private Long theAmountUnit;
-	private String theDrugInfo;
-	private Float theAmount;
-	private String theDescriptionInfo;
-	private String thePlanEndDate;
-	private String thePlanEndTime;
+	private Long drug;
+	private Long vocDrug;
+	private Long method;
+	private Long frequencyUnit;
+	private String frequency;
+	private Long orderType;
+	private String orderTime;
+	private Long amountUnit;
+	private String drugInfo;
+	private Float amount;
+	private String descriptionInfo;
+	private String planEndDate;
+	private String planEndTime;
 
 
 	/** Плановая дата окончания */
 	@Comment("Плановая дата окончания")
 	@Persist @DateString @DoDateString
-	public String getPlanEndDate() {return thePlanEndDate;}
-	public void setPlanEndDate(String aPlanEndDate) {thePlanEndDate = aPlanEndDate;}
+	public String getPlanEndDate() {return planEndDate;}
 
 	/** Плановое время окончания */
 	@Comment("Плановое время окончания")
 	@Persist @TimeString @DoTimeString
-	public String getPlanEndTime() {return thePlanEndTime;}
-	public void setPlanEndTime(String aPlanEndTime) {thePlanEndTime = aPlanEndTime;}
+	public String getPlanEndTime() {return planEndTime;}
 
 	@Comment("Лекарство")
 	@Persist
 	public Long getDrug() {
-		return theDrug;
-	}
-	public void setDrug(Long aDrug) {
-		theDrug = aDrug;
+		return drug;
 	}
 
 	@Comment("Метод введения")
 	@Persist
 	public Long getMethod() {
-		return theMethod;
-	}
-	public void setMethod(Long aMethod) {
-		theMethod = aMethod;
+		return method;
 	}
 
 	@Comment("Единица частоты использования")
 	@Persist
 	public Long getFrequencyUnit() {
-		return theFrequencyUnit;
-	}
-	public void setFrequencyUnit(Long aFrequencyUnit) {
-		theFrequencyUnit = aFrequencyUnit;
+		return frequencyUnit;
 	}
 
 	@Comment("Частота использования")
 	@Persist
 	public String getFrequency() {
-		return theFrequency;
-	}
-	public void setFrequency(String aFrequency) {
-		theFrequency = aFrequency;
+		return frequency;
 	}
 
 	@Comment("Тип порядка использования")
 	@Persist
 	public Long getOrderType() {
-		return theOrderType;
-	}
-	public void setOrderType(Long aOrderType) {
-		theOrderType = aOrderType;
+		return orderType;
 	}
 
 	@Comment("Время порядка использования")
 	@Persist
 	public String getOrderTime() {
-		return theOrderTime;
-	}
-	public void setOrderTime(String aOrderTime) {
-		theOrderTime = aOrderTime;
+		return orderTime;
 	}
 
 	@Comment("Единица измерения количества")
 	@Persist
 	public Long getAmountUnit() {
-		return theAmountUnit;
-	}
-	public void setAmountUnit(Long aAmountUnit) {
-		theAmountUnit = aAmountUnit;
+		return amountUnit;
 	}
 
 	@Comment("Количество")
 	@Persist
 	public Float getAmount() {
-		return theAmount;
+		return amount;
 	}
-	public void setAmount(Float aAmount) {
-		theAmount = aAmount;
-	}
-
-	///** Краткий справочник лекарственных средств */
-	//@Comment("Краткий справочник лекарственных средств")
-	//@Persist
-	//public Long getDrugName() {return theDrugName;}
-	//public void setDrugName(Long aDrugName) {theDrugName = aDrugName;}
-
-	///** Краткий справочник лекарственных средств */
-	//private Long theDrugName;
 
 	@Comment("Наименование лекарственного препарата")
 	@Persist
-	public String getDrugInfo() {return theDrugInfo;}
-	public void setDrugInfo(String aDrugInfo) {theDrugInfo = aDrugInfo;}
+	public String getDrugInfo() {return drugInfo;}
 
 	@Comment("Описание лекарственного назначения")
 	@Transient
 	public String getDescriptionInfo() {
-		return theDescriptionInfo;
+		return descriptionInfo;
 	}
-	public void setDescriptionInfo (String aDescriptionInfo) { theDescriptionInfo = aDescriptionInfo;}
-
 
 	/** Лекарство */
 	@Comment("Лекарство")
 	@Persist @Required
-	public Long getVocDrug() {return theVocDrug;}
-	public void setVocDrug(Long aVocDrug) {theVocDrug = aVocDrug;}
+	public Long getVocDrug() {return vocDrug;}
 
 	/** форма выполнения */
 	@Comment("форма выполнения")
-	public PrescriptionFulfilmentForm getFulfilmentForm() {return theFulfilmentForm;}
-	public void setFulfilmentForm(PrescriptionFulfilmentForm aFulfilmentForm) {theFulfilmentForm = aFulfilmentForm;}
-	private PrescriptionFulfilmentForm theFulfilmentForm = new PrescriptionFulfilmentForm();
+	public PrescriptionFulfilmentForm getFulfilmentForm() {return fulfilmentForm;}
+	private PrescriptionFulfilmentForm fulfilmentForm = new PrescriptionFulfilmentForm();
 
 
 }

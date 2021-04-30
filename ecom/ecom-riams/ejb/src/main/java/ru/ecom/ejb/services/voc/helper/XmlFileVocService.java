@@ -27,7 +27,7 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
 		
 	}
     public XmlFileVocService(String aFilename) {
-    	theFileDiaryParameter = aFilename;
+    	fileDiaryParameter = aFilename;
     }
 
 
@@ -35,7 +35,7 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
 	public List<VocValue> loadParameterType(VocContext aContext)  {
 		List<VocValue> list = new LinkedList<>()  ;
 		try {
-			loadFile(theFileDiaryParameter ,list,aContext);
+			loadFile(fileDiaryParameter ,list,aContext);
 		}catch (Exception e) {
 		}
 
@@ -51,8 +51,6 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
                     if("parameter".equals(parElement.getName())) {
                     	VocValue vocValue = put(parElement,aContext) ;
                     	if (vocValue!=null) aList.add(vocValue);
-                    //} else if("vocFile".equals(vocElement.getName())) {
-                        //loadFile(aHash, vocElement.getTextTrim());
                     } else {
                         LOG.warn("Нет поддержки элемента "+parElement.getName());
                     }
@@ -60,9 +58,6 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
             }catch(Exception e) {
             	LOG.error(e.getMessage());
             } 
-
-     //   LOG.info("Done.") ;
-
     }
 	 private VocValue put(Element aElement,VocContext aContext) {
 		String key = aElement.getAttributeValue("id");
@@ -75,24 +70,16 @@ public class XmlFileVocService implements IVocContextService, IVocServiceManagem
 	    if (StringUtil.isNullOrEmpty(key)) {
 	    	throw new IllegalArgumentException("Нет атрибута name");
 	    }
-//	    String type = aElement.getAttributeValue("type");
-	    /*LOG.info(new StringBuilder().append(" Parameter ").append(key)
-	        		.append(" (name = ").append(name).append("")
-	        		.append(" type= ").append(type).append(")")
-	        		.toString());*/
-	//    StringBuilder vocname = new StringBuilder() ;
-	//	vocname.append(name).append(" (").append(type).append(")") ;
 	    return new VocValue(key, name);
 	    } else {
 	    	return null ;
 	    }
 	 }
 	private InputStream getInputStream(String aResourceString) throws FileNotFoundException {
-		//return theEcomConfig.getInputStream(aResourceString, "diary.dir.prefix",true);
-    	return theEcomConfig.getInputStream(aResourceString, "",true);
+    	return ecomConfig.getInputStream(aResourceString, "",true);
     }
-	EjbEcomConfig theEcomConfig = EjbEcomConfig.getInstance(); 
-	final String theFileDiaryParameter ;
+	EjbEcomConfig ecomConfig = EjbEcomConfig.getInstance(); 
+	final String fileDiaryParameter ;
 
 
 

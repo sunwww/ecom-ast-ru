@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.lpu;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.lpu.LpuDiagnosisRule;
@@ -17,54 +18,46 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Правило установки диагноза по отделению", nameProperties= "id", list="entityList-mis_LpuDiagnosisRule.do", view="entityView-mis_LpuDiagnosisRule.do")
 @EntityFormSecurityPrefix("/Policy/Mis/MisLpu/LpuDiagnosisRule")
 @Parent(property="department", parentForm=MisLpuForm.class)
+@Setter
 
 public class LpuDiagnosisRuleForm extends IdEntityForm {
 	
 	/** Разрешающее правило */
 	@Comment("Разрешающее правило")
 	@Persist
-	public Boolean getPermissionRule() {return thePermissionRule;}
-	public void setPermissionRule(Boolean aPermissionRule) {thePermissionRule = aPermissionRule;}
+	public Boolean getPermissionRule() {return permissionRule;}
 	/** Разрешающее правило */
-	private Boolean thePermissionRule;
+	private Boolean permissionRule;
 
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@Persist
-	public Long getServiceStream() {return theServiceStream;}
-	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+	public Long getServiceStream() {return serviceStream;}
 	/** Поток обслуживания */
-	private Long theServiceStream;
+	private Long serviceStream;
 	
 	/** Отделение */
 	@Comment("Отделение")
 	@Persist
-	public Long getDepartment() {return theDepartment;}
-	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+	public Long getDepartment() {return department;}
 	/** Отделение */
-	private Long theDepartment;
+	private Long department;
 	
 	/** Тип регистрации диагноза */
 	@Comment("Тип регистрации диагноза")
 	@Persist
-	public Long getDiagnosisRegistrationType() {return theDiagnosisRegistrationType;}
-	public void setDiagnosisRegistrationType(Long aDiagnosisRegistrationType) {theDiagnosisRegistrationType = aDiagnosisRegistrationType;}
-	/** Тип регистрации диагноза */
-	private Long theDiagnosisRegistrationType;
+	public Long getDiagnosisRegistrationType() {return diagnosisRegistrationType;}
+	private Long diagnosisRegistrationType;
 	
 	/** Приоритет диагноза */
 	@Comment("Приоритет диагноза")
 	@Persist
-	public Long getDiagnosisPriority() {return theDiagnosisPriority;}
-	public void setDiagnosisPriority(Long aDiagnosisPriority) {theDiagnosisPriority = aDiagnosisPriority;}
-	/** Приоритет диагноза */
-	private Long theDiagnosisPriority;
+	public Long getDiagnosisPriority() {return diagnosisPriority;}
+	private Long diagnosisPriority;
 	
 	/** Пол */
 	@Comment("Пол")
 	@Persist
-	public Long getSex() {return theSex;}
-	public void setSex(Long aSex) {theSex = aSex;}
-	/** Пол */
-	private Long theSex;
+	public Long getSex() {return sex;}
+	private Long sex;
 }

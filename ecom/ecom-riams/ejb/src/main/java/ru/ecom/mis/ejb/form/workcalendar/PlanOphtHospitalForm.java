@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -29,136 +30,121 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(PlanOphtHospitalCreate.class)
 )
+@Setter
 public class PlanOphtHospitalForm extends IdEntityForm {
     /** Отделение */
     @Comment("Отделение")
     @Persist
     @Required
-    public Long getDepartment() {return theDepartment;}
-    public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+    public Long getDepartment() {return department;}
 
     /** Телефон пациента */
     @Comment("Телефон пациента")
     @Persist @Required
-    public String getPhone() {return thePhone;}
-    public void setPhone(String aPhone) {thePhone = aPhone;}
+    public String getPhone() {return phone;}
 
     /** Пациент */
     @Comment("Пациент")
     @Persist @Required
-    public Long getPatient() {return thePatient;}
-    public void setPatient(Long aPatient) {thePatient = aPatient;}
+    public Long getPatient() {return patient;}
 
     /** Примечание */
     @Comment("Примечание")
     @Persist
-    public String getComment() {return theComment;}
-    public void setComment(String aComment) {theComment = aComment;}
+    public String getComment() {return comment;}
 
     /** Дата ОКТ */
     @Comment("Дата ОКТ")
     @Persist @DateString
     @DoDateString
     @Required
-    public String getDateOKT() {return theDateOKT;}
-    public void setDateOKT(String aDateOKT) {theDateOKT = aDateOKT;}
+    public String getDateOKT() {return dateOKT;}
 
     /** Глаз, в который будут вводить ингибиторы ангиогенеза */
     @Comment("Глаз, в который будут вводить ингибиторы ангиогенеза")
     @Persist @Required
-    public Long getEye() {return theEye;}
-    public void setEye(Long aEye) {theEye = aEye;}
+    public Long getEye() {return eye;}
 
     /** СМО */
     @Comment("СМО")
     @Persist
-    public Long getVisit() {return theVisit;}
-    public void setVisit(Long aVisit) {theVisit = aVisit;}
+    public Long getVisit() {return visit;}
 
     /** Дата создания */
     @Comment("Дата создания")
     @DateString @DoDateString @Persist
-    public String getCreateDate() {return theCreateDate;}
-    public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+    public String getCreateDate() {return createDate;}
 
     /** Дата редактирования */
     @Comment("Дата редактирования")
     @DateString @DoDateString @Persist
-    public String getEditDate() {return theEditDate;}
-    public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+    public String getEditDate() {return editDate;}
 
     /** Время создания */
     @Comment("Время создания")
     @TimeString
     @DoTimeString
     @Persist
-    public String getCreateTime() {return theCreateTime;}
-    public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+    public String getCreateTime() {return createTime;}
     /** Время редактрования */
     @Comment("Время редактрования")
     @TimeString @DoTimeString @Persist
-    public String getEditTime() {return theEditTime;}
-    public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+    public String getEditTime() {return editTime;}
     /** Пользователь, который создал запись */
     @Comment("Пользователь, который создал запись")
     @Persist
-    public String getCreateUsername() {return theCreateUsername;}
-    public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+    public String getCreateUsername() {return createUsername;}
     /** Пользователь, который последний редактировал запись */
     @Comment("Пользователь, который последний редактировал запись")
     @Persist
-    public String getEditUsername() {return theEditUsername;}
-    public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+    public String getEditUsername() {return editUsername;}
 
     /** Фактическая госпитализация */
     @Comment("Фактическая госпитализация")
     @Persist
-    public Long getMedCase() {return theMedCase;}
-    public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+    public Long getMedCase() {return medCase;}
 
     /** Рабочая функция */
     @Comment("Рабочая функция")
     @Persist
-    public Long getWorkFunction() {return theWorkFunction;}
-    public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+    public Long getWorkFunction() {return workFunction;}
 
     /** Предполагаемая дата начала госпитализации */
     @Comment("Предполагаемая дата начала госпитализации")
     @Persist @DateString
     @DoDateString
-    public String getDateFrom() {return theDateFrom;}
-    public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
+    public String getDateFrom() {return dateFrom;}
 
     /** Отделение */
-    private Long theDepartment;
+    private Long department;
     /** Телефон пациента */
-    private String thePhone;
+    private String phone;
     /** Пациент */
-    private Long thePatient;
+    private Long patient;
     /** Примечание */
-    private String theComment;
+    private String comment;
     /** Дата ОКТ */
-    private String theDateOKT;
+    private String dateOKT;
     /** Глаз, в который будут вводить ингибиторы ангиогенеза */
-    private Long theEye;
+    private Long eye;
     /** Пользователь, который последний редактировал запись */
-    private String theEditUsername;
+    private String editUsername;
     /** Пользователь, который создал запись */
-    private String theCreateUsername;
+    private String createUsername;
     /** Время редактрования */
-    private String theEditTime;
+    private String editTime;
     /** Время создания */
-    private String theCreateTime;
+    private String createTime;
     /** Дата редактирования */
-    private String theEditDate;
+    private String editDate;
     /** Дата создания */
-    private String theCreateDate;
+    private String createDate;
     /** СМО */
-    private Long theVisit;
+    private Long visit;
     /** Фактическая госпитализация */
-    private Long theMedCase;
+    private Long medCase;
     /** Рабочая функция */
-    private Long theWorkFunction;
+    private Long workFunction;
     /** Предполагаемая дата начала госпитализации */
-    private String theDateFrom;
+    private String dateFrom;
 }

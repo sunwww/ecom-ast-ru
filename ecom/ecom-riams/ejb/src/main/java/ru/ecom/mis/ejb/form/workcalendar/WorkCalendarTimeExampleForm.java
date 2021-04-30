@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTimeExample;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
@@ -15,6 +16,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 		, view="entityParentView-cal_timeExample.do")
 @Parent(property="dayPattern", parentForm=WorkCalendarDayPatternForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/WorkCalendar/Pattern/Day/Time")
+@Setter
 public class WorkCalendarTimeExampleForm extends WorkCalendarTimePatternForm {
 	/**
 	 * Время
@@ -23,13 +25,10 @@ public class WorkCalendarTimeExampleForm extends WorkCalendarTimePatternForm {
 	@Persist
 	@TimeString @DoTimeString
 	public String getCalendarTime() {
-		return theCalendarTime;
-	}
-	public void setCalendarTime(String aCalendarTime) {
-		theCalendarTime = aCalendarTime;
+		return calendarTime;
 	}
 	/**
 	 * Время
 	 */
-	private String theCalendarTime;
+	private String calendarTime;
 }

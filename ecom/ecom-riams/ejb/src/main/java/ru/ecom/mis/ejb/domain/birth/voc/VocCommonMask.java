@@ -3,6 +3,8 @@ package ru.ecom.mis.ejb.domain.birth.voc;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -10,21 +12,12 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 // Общие оценки
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VocCommonMask extends VocBaseEntity{
-	
 	/** Балл */
-	@Comment("Балл")
-	public Integer getMinBall() {return theMinBall;}
-	public void setMinBall(Integer aBall) {theMinBall = aBall;}
-
+	private Integer maxBall;
 	/** Балл */
-	@Comment("Балл")
-	public Integer getMaxBall() {return theMaxBall;}
-	public void setMaxBall(Integer aBall) {theMaxBall = aBall;}
-
-	/** Балл */
-	private Integer theMaxBall;
-	/** Балл */
-	private Integer theMinBall;
+	private Integer minBall;
 
 }

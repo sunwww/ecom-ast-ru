@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.patient;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -20,13 +21,13 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(MedPolicyPreCreate.class)
 )
+@Setter
 public class MedPolicyDmcForeignForm extends MedPolicyOmcForeignForm {
 	/** Тип полиса */
 	@Comment("Тип полиса")
 	@Persist 
-	public Long getType() {return theType;}
-	public void setType(Long aType) {theType = aType;}
+	public Long getType() {return type;}
 
 	/** Тип полиса */
-	private Long theType;
+	private Long type;
 }

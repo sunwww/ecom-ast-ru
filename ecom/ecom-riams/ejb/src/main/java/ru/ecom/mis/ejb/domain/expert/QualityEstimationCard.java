@@ -9,6 +9,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -30,190 +32,124 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	 ,@AIndex(properties="kind")
 	 ,@AIndex(properties={"kind","medcase"})
  })
+ @Getter
+ @Setter
 public class QualityEstimationCard extends BaseEntity{
  /**
   * Номер карты
   */
- @Comment("Номер карты")
- public String getCardNumber() {
-  return theCardNumber;
- }
- public void setCardNumber(String aCardNumber) {
-  theCardNumber = aCardNumber;
- }
- /**
-  * Номер карты
-  */
- private String theCardNumber;
+ private String cardNumber;
  /**
   * Случай медицинского обслуживания
   */
  @Comment("Случай медицинского обслуживания")
  @OneToOne
  public MedCase getMedcase() {
-  return theMedcase;
- }
- public void setMedcase(MedCase aMedcase) {
-  theMedcase = aMedcase;
+  return medcase;
  }
  /**
   * Случай медицинского обслуживания
   */
- private MedCase theMedcase;
+ private MedCase medcase;
  /**
   * Оценки качества
   */
  @Comment("Оценки качества")
  @OneToMany(mappedBy="card", cascade=CascadeType.ALL)
  public List<QualityEstimation> getEstimations() {
-  return theEstimations;
- }
- public void setEstimations(List<QualityEstimation> aEstimations) {
-  theEstimations = aEstimations;
+  return estimations;
  }
  /**
   * Оценки качества
   */
- private List<QualityEstimation> theEstimations;
+ private List<QualityEstimation> estimations;
  /**
   * Вид оценки качества
   */
  @Comment("Вид оценки качества")
  @OneToOne
  public VocQualityEstimationKind getKind() {
-  return theKind;
- }
- public void setKind(VocQualityEstimationKind aKind) {
-  theKind = aKind;
+  return kind;
  }
  /**
   * Вид оценки качества
   */
- private VocQualityEstimationKind theKind;
+ private VocQualityEstimationKind kind;
  
  /** Пациент */
 @Comment("Пациент")
 @OneToOne
 public Patient getPatient() {
-	return thePatient;
-}
-
-public void setPatient(Patient aPatient) {
-	thePatient = aPatient;
+	return patient;
 }
 
 /** Пациент */
-private Patient thePatient;
-	
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {
-		return theCreateDate;
-	}
-
-	public void setCreateDate(Date aNAME) {
-		theCreateDate = aNAME;
-	}
-	/** Пользователь, создавший экспертную карту */
-	@Comment("Пользователь, создавший экспертную карту")
-	public String getCreateUsername() {
-		return theCreateUsername;
-	}
-
-	public void setCreateUsername(String aCreateUsername) {
-		theCreateUsername = aCreateUsername;
-	}
+private Patient patient;
 	
 	/** Лечащий врач */
 	@Comment("Лечащий врач")
 	@OneToOne
 	public WorkFunction getDoctorCase() {
-		return theDoctorCase;
+		return doctorCase;
 	}
 
-	public void setDoctorCase(WorkFunction aLechDoctor) {
-		theDoctorCase = aLechDoctor;
-	}
-	
 	/** Отделение */
 	@Comment("Отделение")
 	@OneToOne
 	public MisLpu getDepartment() {
-		return theDepartment;
+		return department;
 	}
 
-	public void setDepartment(MisLpu aDepartment) {
-		theDepartment = aDepartment;
-	}
-	
 	/** Диагноз */
 	@Comment("Диагноз")
 	@OneToOne
 	public VocIdc10 getIdc10() {
-		return theIdc10;
+		return idc10;
 	}
 
-	public void setIdc10(VocIdc10 aIdc10) {
-		theIdc10 = aIdc10;
-	}
-	
-	/** Текст диагноза */
-	@Comment("Текст диагноза")
-	public String getDiagnosis() {
-		return theDiagnosis;
-	}
-
-	public void setDiagnosis(String aDiagnosis) {
-		theDiagnosis = aDiagnosis;
-	}
 	@Transient
 	public String getDepartmentInfo() {
-		return theDepartment!=null? theDepartment.getName():"" ;
+		return department!=null? department.getName():"" ;
 	}
 	@Transient
 	public String getPatientInfo() {
-		return thePatient!=null?thePatient.getFio():"" ;
+		return patient!=null?patient.getFio():"" ;
 	}
 	@Transient
 	public String getDoctorCaseInfo() {
-		return theDoctorCase!=null? theDoctorCase.getWorkFunctionInfo():"" ;
+		return doctorCase!=null? doctorCase.getWorkFunctionInfo():"" ;
 	}
 	@Transient
 	public String getIdc10Info() {
-		return theIdc10!=null? theIdc10.getCode():"" ;
+		return idc10!=null? idc10.getCode():"" ;
 	}
 	@Transient
 	public String getKindInfo() {
-		return theKind!=null? theKind.getName():"" ;
+		return kind!=null? kind.getName():"" ;
 	}
 	@Transient
 	public String getSmoInfo() {
-		return theMedcase!=null?theMedcase.getInfo():"" ;
+		return medcase!=null?medcase.getInfo():"" ;
 	}
 	
-	 /** Оценка */
-	@Comment("Оценка")
-	public BigDecimal getMarkTransient() {return theMarkTransient;}
-	public void setMarkTransient(BigDecimal aMarkTransient) {theMarkTransient = aMarkTransient;}
-
 	/** Оценка */
-	private BigDecimal theMarkTransient;
+	private BigDecimal markTransient;
 
 	/** Текст диагноза */
-	private String theDiagnosis;
+	private String diagnosis;
 
 	/** Диагноз */
-	private VocIdc10 theIdc10;
+	private VocIdc10 idc10;
 
 	/** Отделение */
-	private MisLpu theDepartment;
+	private MisLpu department;
 
 	/** Лечащий врач */
-	private WorkFunction theDoctorCase;
+	private WorkFunction doctorCase;
 
 	/** Пользователь, создавший экспертную карту */
-	private String theCreateUsername;
+	private String createUsername;
 
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 }

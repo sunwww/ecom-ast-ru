@@ -898,7 +898,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 " and (e2.isDiagnosticSpo is null or e2.isDiagnosticSpo='0') " +
                 " and e2.medhelpprofile_id is not null" +
                 " group by " + (isGroupBySpo ? "e2.externalparentid" : "e2.externalpatientid , e2.medhelpprofile_id, e2.servicestream") +
-                " having count(e2.id)>1 " + (isGroupBySpo ? "" : "and count(case when substring(e2.mainmkb,1,1)='Z' then 1 else null end)<count(e2.id)")).setParameter("listId", listEntryId).getResultList();
+                " having count(e2.id)>1 " + (isGroupBySpo ? "" : "and count(case when substring(e2.mainmkb,1,1)='Z' n 1 else null end)<count(e2.id)")).setParameter("listId", listEntryId).getResultList();
         //   LOG.info("sql = "+searchSql+", size = "+list.size());
         int i = 0;
         for (Object[] spo : list) {
@@ -1494,6 +1494,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
                     code = (isTrue(entry.getIsMobilePolyclinic()) ? "MOBILE_" : isConsultativePolyclinic ? "CONS_" : "TERR_") + code;
                     code += "_" + (workPlace != null ? workPlace : "NO_WORKPLACE");
+                    entry.setIsDentalCase(entry.getFondDoctorSpecV021() != null && isTrue(entry.getFondDoctorSpecV021().getIsDentalDoctor()));
                 }
                 break;
             case VMPTYPE:
@@ -1938,9 +1939,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                         if (service.has("uet")) {
                             BigDecimal uet = BigDecimal.valueOf(service.getDouble("uet"));
                             ms.setUet(uet);
-                            if (uet.compareTo(BigDecimal.ZERO) > 0) {
-                                entry.setIsDentalCase(true);
-                            }
                         }
                         ms.setCost(cost);
                         if (isNotLogicalNull(workfunction)) {
@@ -2213,7 +2211,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             List<GrouperKSGPosition> justServicePositions = new ArrayList<>(); //24.09.18 * Если нашли дорогие позиции КСГ, но выбраи более дешевое КСГ, сохраним информацию для эксперта Аношкина
             for (BigInteger o : results) {
                 GrouperKSGPosition ksgPosition = manager.find(GrouperKSGPosition.class, o.longValue());
-                VocKsg ksg = ksgPosition.getKSGValue();
+                VocKsg ksg = ksgPosition.getKsgValue();
                 weight = 0; //Вес найденного КСГ
                 if (isEquals(ksgPosition.getDopPriznak(), entry.getDopKritKSG())) {
                     weight = 6;
@@ -2226,7 +2224,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 if (mainDiagnosis.contains(ksgPosition.getMainMKB())) {
                     weight++;
                     if (isLogicalNull(ksgPosition.getServiceCode())) { //Находим терапевтичесое КСГ
-                        therapicKsgPosition = therapicKsgPosition != null && therapicKsgPosition.getKSGValue().getKZ() > ksgPosition.getKSGValue().getKZ() ? therapicKsgPosition : ksgPosition;
+                        therapicKsgPosition = therapicKsgPosition != null && therapicKsgPosition.getKsgValue().getKz() > ksgPosition.getKsgValue().getKz() ? therapicKsgPosition : ksgPosition;
                     }
 
                 } else if (isCancer && isOneOf(ksgPosition.getMainMKB(), "C.", cancerDiagnosis)) {
@@ -2241,7 +2239,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
                 if (serviceCodes.contains(ksgPosition.getServiceCode())) {
                     weight++;
-                    surgicalKsgPosition = surgicalKsgPosition != null && surgicalKsgPosition.getKSGValue().getKZ() > ksgPosition.getKSGValue().getKZ() ? surgicalKsgPosition : ksgPosition;
+                    surgicalKsgPosition = surgicalKsgPosition != null && surgicalKsgPosition.getKsgValue().getKz() > ksgPosition.getKsgValue().getKz() ? surgicalKsgPosition : ksgPosition;
                     //Если коронарография и у нас есть диагноз, берем дешевое КСГ! 09-02-2018
                     if ("A16.12.033".equals(ksgPosition.getServiceCode())) {
                         if (mainDiagnosis.contains(ksgPosition.getMainMKB())) {
@@ -2263,7 +2261,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     weight++;
                 }
                 //st02.012 , st02.013 круче родов и кесарева
-                double currentKZ = ksg.getKZ();
+                double currentKZ = ksg.getKz();
                 if (weight > maxWeight || (weight == maxWeight && currentKZ > maxKZ)) { // || (currentKZ == maxKZ && isNotNull(ksg.getServiceCode()) )) { // не помню зачем я так делал, попробуем убрать это 26.12.2019
                     if (weight > maxWeight) maxWeight = weight;
                     maxKZ = currentKZ;
@@ -2281,7 +2279,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
 
             if (pos != null) {
-                VocKsg ksg = pos.getKSGValue();
+                VocKsg ksg = pos.getKsgValue();
                 entry.setKsgPosition(pos);
                 if (isNotLogicalNull(pos.getMainMKB())) entry.setMainMkb(pos.getMainMKB());
                 if (isNotLogicalNull(pos.getServiceCode())) entry.setMainService(pos.getServiceCode());
@@ -2290,7 +2288,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 if (!justServicePositions.isEmpty()) {
                     StringBuilder err = new StringBuilder("Предполагаемые КСГ: ");
                     for (GrouperKSGPosition k : justServicePositions) {
-                        err.append(k.getKSGValue().getCode()).append(" КЗ=").append(k.getKSGValue().getKZ()).append("; ");
+                        err.append(k.getKsgValue().getCode()).append(" КЗ=").append(k.getKsgValue().getKz()).append("; ");
                     }
                     manager.persist(new E2EntryError(entry, "MAYBE_OTHER_KSG", err.toString()));
                 }
@@ -2329,8 +2327,8 @@ public class Expert2ServiceBean implements IExpert2Service {
     /**
      * Проверяем, является ли пара КСГ исключением из случая
      */
-    private GrouperKSGPosition checkIsKsgException(GrouperKSGPosition surgicalKsgPosition, GrouperKSGPosition therapicalKsgPosition) {
-        String key = therapicalKsgPosition.getKSGValue().getCode() + "#" + surgicalKsgPosition.getKSGValue().getCode();
+    private GrouperKSGPosition checkIsKsgException(GrouperKSGPosition surgicalKsgPosition, GrouperKSGPosition rapicalKsgPosition) {
+        String key = rapicalKsgPosition.getKsgValue().getCode() + "#" + surgicalKsgPosition.getKsgValue().getCode();
         for (String str : ksgExceptions) {
             if (str.equals(key)) { //Если есть КСГ по услуге, подаем его
                 return surgicalKsgPosition;
@@ -2391,15 +2389,17 @@ public class Expert2ServiceBean implements IExpert2Service {
         return diagnosisList;
     }
 
-    private BigDecimal calculateTariff(E2Entry aEntry) {
+    private BigDecimal calculateTariff(E2Entry entry) {
         String key, sqlAdd;
-        String entryType = aEntry.getEntryType();
-        String mmYYYY = new SimpleDateFormat("MMyyyy").format(aEntry.getFinishDate());
-        if (isNotLogicalNull(aEntry.getVmpKind())) { //Если в СЛО есть ВМП, цена = ВМП
-            return aEntry.getCost();
+        String entryType = entry.getEntryType();
+        String mmYYYY = new SimpleDateFormat("MMyyyy").format(entry.getFinishDate());
+        if (isNotLogicalNull(entry.getVmpKind())) { //Если в СЛО есть ВМП, цена = ВМП
+            return entry.getCost();
         }
         if (isOneOf(entryType, POLYCLINICTYPE, KDPTYPE, HOSPITALTYPE)) {
-            String tariffCode = aEntry.getSubType() != null ? aEntry.getSubType().getTariffCodeString() : "_NULLENTRYSUBTYPE_";
+
+            String tariffCode = entry.getSubType() != null ? entry.getSubType().getTariffCodeString() : "_NULLENTRYSUBTYPE_";
+            if (isTrue(entry.getIsDentalCase())) tariffCode = "DENTAL_CASE";
             key = entryType + "#" + tariffCode + "#" + mmYYYY;
             sqlAdd = " type.code='" + tariffCode + "'";
         } else {
@@ -2409,7 +2409,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
 
         if (!tariffMap.containsKey(key)) {
-            VocE2BaseTariff tariff = getActualVocByClassName(VocE2BaseTariff.class, aEntry.getFinishDate(), sqlAdd);
+            VocE2BaseTariff tariff = getActualVocByClassName(VocE2BaseTariff.class, entry.getFinishDate(), sqlAdd);
             if (tariff != null) {
                 tariffMap.put(key, tariff.getValue());
             }
@@ -2494,7 +2494,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 VocKsg ksg = entry.getKsg();
                 if (ksg != null) {  //Нет КСГ - нечего расчитывать всё остальное
                     BigDecimal kz, tarif, cusmo, kslp, km, kpr, kuksg;
-                    kz = BigDecimal.valueOf(ksg.getKZ());
+                    kz = BigDecimal.valueOf(ksg.getKz());
                     kuksg = getActualKsgUprCoefficient(ksg, entry.getFinishDate());
                     tarif = calculateTariff(entry);
                     cusmo = calculateCusmo(entry);
@@ -2786,12 +2786,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         BigDecimal tariff;
         BigDecimal km = calculateKm();
         tariff = calculateTariff(entry);
-        BigDecimal kUet;
-        if (isTrue(entry.getIsDentalCase()) && isNotEmpty(entry.getMedServices())) {
-            kUet = getSumKuet(entry);
-        } else {
-            kUet = BigDecimal.ONE;
-        }
+        BigDecimal kUet = getSumKuet(entry);
         String costFormula = "Тариф=" + tariff + ", КЗ=" + kz + ", Кп(Кпд)=" + kp + ", КМ=" + km + (kUet.compareTo(BigDecimal.ONE) > 0 ? ", Кует=" + kUet : "");
         if (isAnyIsNull(tariff, kz, km)) {
             LOG.warn("Не удалось расчитать цену случая");
@@ -2807,18 +2802,22 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     //максимальные УЕТ по случаю
-    private BigDecimal getSumKuet(E2Entry entry) {
+    @Override
+    public BigDecimal getSumKuet(E2Entry entry) {
+        if (isNotTrue(entry.getIsDentalCase()) || isEmpty(entry.getMedServices())) {
+            return BigDecimal.ONE;
+        }
         List<EntryMedService> medServices = entry.getMedServices();
         String diagnosis = entry.getMainMkb();
-        BigDecimal theBest = BigDecimal.ONE;
+        BigDecimal bestUet = BigDecimal.ONE;
         boolean isShortCase = entry.getStartDate().equals(entry.getFinishDate());
         for (EntryMedService medService : medServices) {
             BigDecimal uet = medService.getUet();
             if (uet != null && uet.compareTo(BigDecimal.ZERO) > 0) {
-                theBest = theBest.add(uet);
+                bestUet = bestUet.add(uet);
             }
         }
-        return theBest.min(getStomUetByDiagnosis(diagnosis, isShortCase));
+        return bestUet.min(getStomUetByDiagnosis(diagnosis, isShortCase));
     }
 
     private BigDecimal getStomUetByDiagnosis(String diagnosis, boolean shortCase) {
@@ -3121,11 +3120,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             entryCode = VMPTYPE;
         } else if (entryCode.equals(HOSPITALPEREVODTYPE)) {
             entryCode = HOSPITALTYPE;
-        } /*else if (aCode.equals(EXTDISPTYPE)) {
-            aCode=EXTDISPTYPE;
-        } else if (aCode.equals(SERVICETYPE)) {
-            aCode=SERVICETYPE;
-        } */ else if (entryCode.equals(POLYCLINICTYPE) && (entry.getDepartmentId() != null && entry.getDepartmentId().equals(416L))) { //телемедицина амокб
+        } else if (entryCode.equals(POLYCLINICTYPE) && (entry.getDepartmentId() != null && entry.getDepartmentId().equals(416L))) { //телемедицина амокб
             entryCode = SERVICETYPE;
         }
         if (isNotLogicalNull(entry.getInsuranceCompanyCode())) {
@@ -3785,8 +3780,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                     long slsId = medCase instanceof DepartmentMedCase ? medCase.getParent().getId() : medcaseId;
 
                     // находим койкодни
-                    String sql = "select list(''||(case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 then '1'" +
-                            " else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vbst.code='1' then 0 else 1 end end" +
+                    String sql = "select list(''||(case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 n '1'" +
+                            " else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vbst.code='1' n 0 else 1 end end" +
                             " * pp.cost)) as ppsum" +
                             " from medcase slo" +
                             " left join bedfund bf on bf.id=slo.bedfund_id" +

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarStreamPattern;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,6 +17,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 	, list="entityParentList-cal_streamPattern.do", view="entityParentView-cal_streamPattern.do")
 @Parent(property="timePattern", parentForm=WorkCalendarTimePatternForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/WorkCalendar/Pattern/Day/Time/Reserve")
+@Setter
 public class WorkCalendarStreamPatternForm extends WorkCalendarReservePatternForm {
 	/**
 	 * Поток обслуживания
@@ -23,28 +25,22 @@ public class WorkCalendarStreamPatternForm extends WorkCalendarReservePatternFor
 	@Comment("Поток обслуживания")
 	@Persist
 	public Long getServiceStream() {
-		return theServiceStream;
-	}
-	public void setServiceStream(Long aServiceStream) {
-		theServiceStream = aServiceStream;
+		return serviceStream;
 	}
 	/**
 	 * Поток обслуживания
 	 */
-	private Long theServiceStream;
+	private Long serviceStream;
 	/**
 	 * Процент резерва
 	 */
 	@Comment("Процент резерва")
 	@Persist
 	public Integer getPercent() {
-		return thePercent;
-	}
-	public void setPercent(Integer aPercent) {
-		thePercent = aPercent;
+		return percent;
 	}
 	/**
 	 * Процент резерва
 	 */
-	private Integer thePercent;
+	private Integer percent;
 }

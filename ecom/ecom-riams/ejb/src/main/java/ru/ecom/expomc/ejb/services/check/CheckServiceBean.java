@@ -47,13 +47,13 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
     /// удалить, нигде не используется
     private static final Logger LOG = Logger.getLogger(CheckServiceBean.class);
     private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
-    private final AllowedChecksAllValues theAllowedChecksAllValues = new AllowedChecksAllValues();
+    private final AllowedChecksAllValues allowedChecksAllValues = new AllowedChecksAllValues();
     @PersistenceContext
-    public EntityManager theManager;
+    public EntityManager manager;
     private @EJB
-    ILocalMonitorService theMonitorService;
+    ILocalMonitorService monitorService;
     private @PersistenceUnit
-    EntityManagerFactory theFactory;
+    EntityManagerFactory factory;
 
     private static void setPropertyValue(Object aObject, String aProperty, Object aValue) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, ParseException {
         PropertyUtil.setPropertyValue(aObject, aProperty, aValue);
@@ -75,7 +75,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
             StringBuilder sb = new StringBuilder();
             Format format;
             try {
-                format = (Format) theManager.createQuery("from Format where comment=:name")
+                format = (Format) manager.createQuery("from Format where comment=:name")
                         .setParameter("name", aFormatName).getSingleResult();
             } catch (Exception e) {
                 throw new IllegalStateException("Ошибка при поиске формата с комментарием " + aFormatName, e);
@@ -97,7 +97,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
                 }
             }
 
-            CheckContext ctx = new CheckContext(format, map, allowedFields, new java.sql.Date(new Date().getTime()), theManager, entity);
+            CheckContext ctx = new CheckContext(format, map, allowedFields, new java.sql.Date(new Date().getTime()), manager, entity);
 
             // проверки
             Collection<Check> list = format.getDocument().getChecks();
@@ -106,7 +106,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
                 ICheck icheck = (ICheck) findCheckClass(check).newInstance();
                 setCheckProperties(check, icheck);
                 try {
-                    if (!check.getDisabled()) {
+                    if (!check.isDisabled()) {
                         CheckResult result = icheck.check(ctx);
 
                         if (result.isAccepted()) {
@@ -147,7 +147,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
     private Collection<CheckPair> createIteratorsChecks(Collection<Check> aChecks, boolean aSqlSupports) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, ParseException {
         LinkedList<CheckPair> ret = new LinkedList<>();
         for (Check check : aChecks) {
-            if (!check.getDisabled()) {
+            if (!check.isDisabled()) {
                 ICheck icheck = (ICheck) findCheckClass(check).newInstance();
                 boolean checkImplementsSqlSupports = icheck instanceof ISqlSupports;
                 boolean canAdd = false;
@@ -168,11 +168,11 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
     }
 
     public void checkDocumentData(long aMonitorId, long aTime) throws CheckDocumentDataException {
-        IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Начало проверки ...");
+        IMonitor monitor = monitorService.acceptMonitor(aMonitorId, "Начало проверки ...");
         if (CAN_DEBUG) LOG.debug("monitor=" + aMonitorId);
         if (CAN_DEBUG) LOG.debug("time=" + aTime);
         try {
-            ImportTime time = theManager.find(ImportTime.class, aTime);
+            ImportTime time = manager.find(ImportTime.class, aTime);
             if (CAN_DEBUG) LOG.debug("checkDocumentData: time = " + time);
 
             ImportDocument document = time.getDocument();
@@ -186,17 +186,17 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
             if (CAN_DEBUG) LOG.debug(" Определение количества записей...");
             Query countQuery;
             if (document.isTimeSupport()) {
-                countQuery = theManager.createQuery("select count(*) from " + document.getEntityClassName() + " where time =:time")
+                countQuery = manager.createQuery("select count(*) from " + document.getEntityClassName() + " where time =:time")
                         .setParameter("time", aTime);
             } else {
-                countQuery = theManager.createQuery("select count(*) from " + document.getEntityClassName());
+                countQuery = manager.createQuery("select count(*) from " + document.getEntityClassName());
             }
             Long count = (Long) countQuery.getSingleResult();
             if (CAN_DEBUG) LOG.debug(" Количество = " + count);
 
-            monitor = theMonitorService.startMonitor(aMonitorId, "Проверка", count);
+            monitor = monitorService.startMonitor(aMonitorId, "Проверка", count);
             monitor.setText("Удаление старых проверок ...");
-            theManager.persist(time);
+            manager.persist(time);
 
 
             monitor.setText("Создание списка полей...");
@@ -218,9 +218,9 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
             monitor.setText("Другие проверки...");
             Query query;
             if (document.isTimeSupport()) {
-                query = theManager.createQuery("from " + document.getEntityClassName() + " c where time =:time").setParameter("time", aTime);
+                query = manager.createQuery("from " + document.getEntityClassName() + " c where time =:time").setParameter("time", aTime);
             } else {
-                query = theManager.createQuery("from " + document.getEntityClassName());
+                query = manager.createQuery("from " + document.getEntityClassName());
             }
             Iterator iterator = QueryIteratorUtil.iterate(query);
             while (iterator.hasNext()) {
@@ -234,7 +234,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
                 // копируем все в MAP
                 HashMap<String, Object> map = new HashMap<>();
                 copyToMap(entity, map, entityClass);
-                CheckContext ctx = new CheckContext(format, map, allowedFields, time.getActualDateFrom(), theManager, entity);
+                CheckContext ctx = new CheckContext(format, map, allowedFields, time.getActualDateFrom(), manager, entity);
 
                 // проверки
                 for (CheckPair pair : list) {
@@ -270,8 +270,8 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
                     }
                 }
                 //theManager.persist(entity) ;
-                theManager.flush();
-                theManager.clear();
+                manager.flush();
+                manager.clear();
             }
             monitor.finish(String.valueOf(aTime));
         } catch (Exception e) {
@@ -286,7 +286,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
         for (CheckPair pair : sqlPairs) {
             if (aMonitor.isCancelled()) throw new IllegalMonitorStateException("Прервано пользователем");
             long checkId = pair.check.getId();
-            NativeSqlContext ctx = new NativeSqlContext(theManager);
+            NativeSqlContext ctx = new NativeSqlContext(manager);
             ctx.setCheckId(checkId);
             ctx.setTimeId(aTimeId);
             ctx.setTableName(tableName);
@@ -309,7 +309,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
     private void executeUpdate(IMonitor aMonitor, String aQuery, CheckPair aPair) {
         aMonitor.setText(aPair.check.getName() + "<span style='margin-left: 1em; color: gray; font-weight: normal;'>" + aQuery + "</query>");
         LOG.debug(aQuery);
-        int i = theManager.createNativeQuery(aQuery).executeUpdate();
+        int i = manager.createNativeQuery(aQuery).executeUpdate();
         LOG.debug("count = " + i);
     }
 
@@ -320,11 +320,11 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
     }
 
     private Class findCheckClass(Check aCheck) {
-        return theAllowedChecksAllValues.getCheckClassById(aCheck.getCheckId());
+        return allowedChecksAllValues.getCheckClassById(aCheck.getCheckId());
     }
 
     public Collection<CheckPropertyRow> listProperties(long aCheckId) throws ClassNotFoundException {
-        Check check = theManager.find(Check.class, aCheckId);
+        Check check = manager.find(Check.class, aCheckId);
 
         Collection<CheckProperty> properties = check.getProperties();
 
@@ -388,15 +388,15 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
         CheckPropertyForm fromBaseForm = loadForm(aForm.getCheck(), aForm.getProperty());
         CheckProperty property;
         if (fromBaseForm.getId() != null) {
-            property = theManager.find(CheckProperty.class, fromBaseForm.getId());
+            property = manager.find(CheckProperty.class, fromBaseForm.getId());
         } else {
-            Check check = theManager.find(Check.class, aForm.getCheck());
+            Check check = manager.find(Check.class, aForm.getCheck());
             property = new CheckProperty();
             property.setCheck(check);
             property.setProperty(aForm.getProperty());
         }
         property.setValue(aForm.getValue());
-        theManager.persist(property);
+        manager.persist(property);
     }
 
     private void storeResult(Object aEntity, CheckResult aResult, Check aCheck, Map<String, Object> aOldValues) throws IllegalAccessException, NoSuchMethodException, ParseException, InvocationTargetException {

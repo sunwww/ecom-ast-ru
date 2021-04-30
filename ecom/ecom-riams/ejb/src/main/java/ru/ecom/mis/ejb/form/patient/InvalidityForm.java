@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.patient;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.patient.Invalidity;
@@ -24,6 +25,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Инвалидность", nameProperties = "id", view = "entityParentView-mis_invalidity.do")
 @Parent(property = "patient", parentForm =PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Patient/Invalidity")
+@Setter
 public class InvalidityForm extends IdEntityForm{
 	 /**
 	  * Инвалид ВОВ
@@ -31,417 +33,330 @@ public class InvalidityForm extends IdEntityForm{
 	 @Comment("Инвалид ВОВ")
 	 @Persist
 	 public Boolean getGreatePatrioticWarInvalid() {
-	  return theGreatePatrioticWarInvalid;
-	 }
-	 public void setGreatePatrioticWarInvalid(Boolean aGreatePatrioticWarInvalid) {
-	  theGreatePatrioticWarInvalid = aGreatePatrioticWarInvalid;
+	  return greatePatrioticWarInvalid;
 	 }
 	 /**
 	  * Инвалид ВОВ
 	  */
-	 private Boolean theGreatePatrioticWarInvalid;
+	 private Boolean greatePatrioticWarInvalid;
 	 /**
 	  * Главное нарушение состояния здоровья
 	  */
 	 @Comment("Главное нарушение состояния здоровья")
 	 @Persist
 	 public Long getHealthViolation() {
-	  return theHealthViolation;
-	 }
-	 public void setHealthViolation(Long aHealthViolation) {
-	  theHealthViolation = aHealthViolation;
+	  return healthViolation;
 	 }
 	 /**
 	  * Главное нарушение состояния здоровья
 	  */
-	 private Long theHealthViolation;
+	 private Long healthViolation;
 	 /**
 	  * Ведущее ограничение жизнедеятельности
 	  */
 	 @Comment("Ведущее ограничение жизнедеятельности")
 	 @Persist
 	 public Long getVitalRestriction() {
-	  return theVitalRestriction;
-	 }
-	 public void setVitalRestriction(Long aVitalRestriction) {
-	  theVitalRestriction = aVitalRestriction;
+	  return vitalRestriction;
 	 }
 	 /**
 	  * Ведущее ограничение жизнедеятельности
 	  */
-	 private Long theVitalRestriction;
+	 private Long vitalRestriction;
 	 /**
 	  * Место работы
 	  */
 	 @Comment("Место работы")
 	 @Persist
 	 public Long getWorkPlace() {
-	  return theWorkPlace;
-	 }
-	 public void setWorkPlace(Long aWorkPlace) {
-	  theWorkPlace = aWorkPlace;
+	  return workPlace;
 	 }
 	 /**
 	  * Место работы
 	  */
-	 private Long theWorkPlace;
+	 private Long workPlace;
 	 /**
 	  * Дата начала
 	  */
 	 @Comment("Дата начала")
 	 @Persist @DateString @DoDateString @Required
 	 public String getDateFrom() {
-	  return theDateFrom;
-	 }
-	 public void setDateFrom(String aDateFrom) {
-	  theDateFrom = aDateFrom;
+	  return dateFrom;
 	 }
 	 /**
 	  * Дата начала
 	  */
-	 private String theDateFrom;
+	 private String dateFrom;
 	 /**
 	  * Дата окончания
 	  */
 	 @Comment("Дата окончания")
 	 @Persist @DateString @DoDateString
 	 public String getDateTo() {
-	  return theDateTo;
-	 }
-	 public void setDateTo(String aDateTo) {
-	  theDateTo = aDateTo;
+	  return dateTo;
 	 }
 	 /**
 	  * Дата окончания
 	  */
-	 private String theDateTo;
+	 private String dateTo;
 	 /**
 	  * Группа
 	  */
 	 @Comment("Группа")
 	 @Persist @Required
 	 public Long getGroup() {
-	  return theGroup;
-	 }
-	 public void setGroup(Long aGroup) {
-	  theGroup = aGroup;
+	  return group;
 	 }
 	 /**
 	  * Группа
 	  */
-	 private Long theGroup;
+	 private Long group;
 	 /**
 	  * Пациент
 	  */
 	 @Comment("Пациент")
 	 @Persist @Required
 	 public Long getPatient() {
-	  return thePatient;
-	 }
-	 public void setPatient(Long aPatient) {
-	  thePatient = aPatient;
+	  return patient;
 	 }
 	 /**
 	  * Пациент
 	  */
-	 private Long thePatient;
+	 private Long patient;
 	 /**
 	  * Мкб10
 	  */
 	 @Comment("Мкб10")
 	 @Persist 
 	 public Long getIdc10() {
-	  return theIdc10;
-	 }
-	 public void setIdc10(Long aIdc10) {
-	  theIdc10 = aIdc10;
+	  return idc10;
 	 }
 	 /**
 	  * Мкб10
 	  */
-	 private Long theIdc10;
+	 private Long idc10;
 	 /**
 	  * Диагноз
 	  */
 	 @Comment("Диагноз")
 	 @Persist
 	 public String getDiagnosis() {
-	  return theDiagnosis;
-	 }
-	 public void setDiagnosis(String aDiagnosis) {
-	  theDiagnosis = aDiagnosis;
+	  return diagnosis;
 	 }
 	 /**
 	  * Диагноз
 	  */
-	 private String theDiagnosis;
+	 private String diagnosis;
 	 /**
 	  * Дата последнего пересмотра
 	  */
 	 @Comment("Дата последнего пересмотра")
 	 @Persist @DateString @DoDateString
 	 public String getLastRevisionDate() {
-	  return theLastRevisionDate;
-	 }
-	 public void setLastRevisionDate(String aLastRevisionDate) {
-	  theLastRevisionDate = aLastRevisionDate;
+	  return lastRevisionDate;
 	 }
 	 /**
 	  * Дата последнего пересмотра
 	  */
-	 private String theLastRevisionDate;
+	 private String lastRevisionDate;
 	 /**
 	  * Дата следующего пересмотра
 	  */
 	 @Comment("Дата следующего пересмотра")
 	 @Persist @DateString @DoDateString
 	 public String getNextRevisionDate() {
-	  return theNextRevisionDate;
-	 }
-	 public void setNextRevisionDate(String aNextRevisionDate) {
-	  theNextRevisionDate = aNextRevisionDate;
+	  return nextRevisionDate;
 	 }
 	 /**
 	  * Дата следующего пересмотра
 	  */
-	 private String theNextRevisionDate;
+	 private String nextRevisionDate;
 	 /**
 	  * Инвалид с детства
 	  */
 	 @Comment("Инвалид с детства")
 	 @Persist
 	 public Boolean getChildhoodInvalid() {
-	  return theChildhoodInvalid;
-	 }
-	 public void setChildhoodInvalid(Boolean aChildhoodInvalid) {
-	  theChildhoodInvalid = aChildhoodInvalid;
+	  return childhoodInvalid;
 	 }
 	 /**
 	  * Инвалид с детства
 	  */
-	 private Boolean theChildhoodInvalid;
+	 private Boolean childhoodInvalid;
 	 
 	 /** Дата постановки (впервые) */
 	@Comment("Дата постановки (впервые)")
 	@Persist @DateString @DoDateString
 	public String getFirstDiscloseDate() {
-		return theFirstDiscloseDate;
-	}
-
-	public void setFirstDiscloseDate(String aNAME) {
-		theFirstDiscloseDate = aNAME;
+		return firstDiscloseDate;
 	}
 
 	/** Дата постановки (впервые) */
-	private String theFirstDiscloseDate;
+	private String firstDiscloseDate;
 	
 	/** Дата освидетельствования */
 	@Comment("Дата освидетельствования")
 	@Persist @DateString @DoDateString
 	public String getRevisionDate() {
-		return theRevisionDate;
-	}
-
-	public void setRevisionDate(String aRevisionDate) {
-		theRevisionDate = aRevisionDate;
+		return revisionDate;
 	}
 
 	/** Дата освидетельствования */
-	private String theRevisionDate;
+	private String revisionDate;
 	
 	/** Категория работника */
 	@Comment("Категория работника")
 	@Persist
 	public Long getCategoryWorker() {
-		return theCategoryWorker;
-	}
-
-	public void setCategoryWorker(Long aCategoryWorker) {
-		theCategoryWorker = aCategoryWorker;
+		return categoryWorker;
 	}
 
 	/** Категория работника */
-	private Long theCategoryWorker;
+	private Long categoryWorker;
 	
 	/** Место регистрации */
 	@Comment("Место регистрации")
 	@Persist @Required
 	public Long getRegistrationPlace() {
-		return theRegistrationPlace;
-	}
-
-	public void setRegistrationPlace(Long aRegistrationPlace) {
-		theRegistrationPlace = aRegistrationPlace;
+		return registrationPlace;
 	}
 
 	/** Место регистрации */
-	private Long theRegistrationPlace;
+	private Long registrationPlace;
 	
 	/** Профиль заболевания */
 	@Comment("Профиль заболевания")
 	@Persist 
 	public Long getProfileIllness() {
-		return theProfileIllness;
-	}
-
-	public void setProfileIllness(Long aProfileIllness) {
-		theProfileIllness = aProfileIllness;
+		return profileIllness;
 	}
 
 	/** Профиль заболевания */
-	private Long theProfileIllness;
+	private Long profileIllness;
 	
 	/** Работа в условиях профвредности */
 	@Comment("Работа в условиях профвредности")
 	@Persist
 	public Boolean getWorkProfDisutility() {
-		return theWorkProfDisutility;
-	}
-
-	public void setWorkProfDisutility(Boolean aWorkProf) {
-		theWorkProfDisutility = aWorkProf;
+		return workProfDisutility;
 	}
 
 	/** Работа в условиях профвредности */
-	private Boolean theWorkProfDisutility;
+	private Boolean workProfDisutility;
 	
 	/** Стаж работы в отрасли */
 	@Comment("Стаж работы в отрасли")
 	@Persist
 	public Integer getSeniority() {
-		return theSeniority;
-	}
-
-	public void setSeniority(Integer aSeniority) {
-		theSeniority = aSeniority;
+		return seniority;
 	}
 
 	/** Стаж работы в отрасли */
-	private Integer theSeniority;
+	private Integer seniority;
 	
 	/** Стаж работы в нефтегазовой промышленности */
 	@Comment("Стаж работы в нефтегазовой промышленности")
 	@Persist
 	public Integer getSeniorityNGP() {
-		return theSeniorityNGP;
-	}
-
-	public void setSeniorityNGP(Integer aSeniorityNGP) {
-		theSeniorityNGP = aSeniorityNGP;
+		return seniorityNGP;
 	}
 
 	/** Стаж работы в нефтегазовой промышленности */
-	private Integer theSeniorityNGP;
+	private Integer seniorityNGP;
 	
 	/** Трудоспособен */
 	@Comment("Трудоспособен")
 	@Persist
 	public Boolean getIsWorking() {
-		return theIsWorking;
-	}
-
-	public void setIsWorking(Boolean aIsWorking) {
-		theIsWorking = aIsWorking;
+		return isWorking;
 	}
 
 	/** Трудоспособен */
-	private Boolean theIsWorking;
+	private Boolean isWorking;
 	
 	/** Первичность */
 	@Comment("Первичность")
 	@Persist
-	public Boolean getInitial() {return theInitial;}
-	public void setInitial(Boolean aPrimary) {theInitial = aPrimary;}
-	
+	public Boolean getInitial() {return initial;}
+
 	/** Без переосвидетельствования */
 	@Comment("Без переосвидетельствования")
 	@Persist
-	public Boolean getWithoutExam() {return theWithoutExam;}
-	public void setWithoutExam(Boolean aWithoutExam) {theWithoutExam = aWithoutExam;}
+	public Boolean getWithoutExam() {return withoutExam;}
 
 	/** Без переосвидетельствования */
-	private Boolean theWithoutExam;
+	private Boolean withoutExam;
 	
 	/** Недееспособный */
 	@Comment("Недееспособный")
 	@Persist
-	public Boolean getIncapable() {return theIncapable;}
-	public void setIncapable(Boolean aIncapable) {theIncapable = aIncapable;}
+	public Boolean getIncapable() {return incapable;}
 
 	/** Первичность */
-	private Boolean theInitial;
+	private Boolean initial;
 	/** Недееспособный */
-	private Boolean theIncapable;
+	private Boolean incapable;
 	/** Суд */
 	@Comment("Суд")
 	@Persist
-	public Long getLawCourt() {return theLawCourt;}
-	public void setLawCourt(Long aLawCourt) {theLawCourt = aLawCourt;}
+	public Long getLawCourt() {return lawCourt;}
 
 	/** Дата суда */
 	@Comment("Дата суда")
 	@Persist @DoDateString @DateString
-	public String getLawCourtDate() {return theLawCourtDate;}
-	public void setLawCourtDate(String aLawCourtDate) {theLawCourtDate = aLawCourtDate;}
+	public String getLawCourtDate() {return lawCourtDate;}
 
 	/** Дата суда */
-	private String theLawCourtDate;
+	private String lawCourtDate;
 	/** Суд */
-	private Long theLawCourt;
+	private Long lawCourt;
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@DateString @DoDateString @Persist
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
+
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@DateString @DoDateString @Persist
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
-	
+	public String getEditDate() {return editDate;}
+
 	/** Время создания */
 	@Comment("Время создания")
 	@TimeString @DoTimeString @Persist
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;}
 	/** Время редактрования */
 	@Comment("Время редактрования")
 	@TimeString @DoTimeString @Persist
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+	public String getEditTime() {return editTime;}
 	/** Пользователь, который создал запись */
 	@Comment("Пользователь, который создал запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 	/** Пользователь, который последний редактировал запись */
 	@Comment("Пользователь, который последний редактировал запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private String theEditTime;
+	private String editTime;
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	
 	/** Есть другая инвалидность */
 	@Comment("Есть другая инвалидность")
 	@Persist
-	public Boolean getIsOtherInvalidity() {return theIsOtherInvalidity;}
-	public void setIsOtherInvalidity(Boolean aIsOtherInvalidity) {theIsOtherInvalidity = aIsOtherInvalidity;}
+	public Boolean getIsOtherInvalidity() {return isOtherInvalidity;}
 
 	/** Есть другая инвалидность */
-	private Boolean theIsOtherInvalidity;
+	private Boolean isOtherInvalidity;
 
 }

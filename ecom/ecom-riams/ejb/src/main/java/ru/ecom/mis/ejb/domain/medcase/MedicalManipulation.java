@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -35,267 +37,184 @@ import java.util.List;
 })
 @Table(schema="SQLUser")
 @EntityListeners(DeleteListener.class)
+@Getter
+@Setter
 public class MedicalManipulation extends BaseEntity {
-    /** Дата начала*/
-    @Comment("Дата начала")
-    public Date getStartDate() {return theStartDate;}
-    public void setStartDate(Date aStartDate) {theStartDate = aStartDate;	}
-
-    /** Время начала */
-    @Comment("Время начала")
-    public Time getStartTime() {return theStartTime;}
-    public void setStartTime(Time aStartTime) {theStartTime = aStartTime;	}
 
     /** Отделение */
     @Comment("Отделение")
     @OneToOne
-    public MisLpu getDepartment() {return theDepartment;}
-    public void setDepartment(MisLpu aDepartment) {theDepartment = aDepartment;}
+    public MisLpu getDepartment() {return department;}
 
     /** Анестизия */
     @Comment("Анестезия")
     @OneToOne
-    public VocAnesthesia getAnesthesia() {return theAnesthesia;}
-    public void setAnesthesia(VocAnesthesia aAnesthesia) {theAnesthesia = aAnesthesia;	}
+    public VocAnesthesia getAnesthesia() {return anesthesia;}
 
     /** Случай медицинского обслуживания */
     @Comment("Случай медицинского обслуживания")
     @ManyToOne
-    public MedCase getMedCase() {return theMedCase;}
-    public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
+    public MedCase getMedCase() {return medCase;}
 
     /** Пациент */
     @Comment("Пациент")
     @OneToOne
-    public Patient getPatient() {return thePatient;}
-    public void setPatient(Patient aPatient) {thePatient = aPatient;}
-
-    /** Кол-во  анастезии */
-    @Comment("Кол-во  анастезии")
-    public BigDecimal getAnesthesiaAmount() {return theAnesthesiaAmount;}
-    public void setAnesthesiaAmount(BigDecimal aAnesthesiaAmount) {theAnesthesiaAmount = aAnesthesiaAmount;}
+    public Patient getPatient() {return patient;}
 
     /**Рабочая функция врача, проводившего манипуляцию info */
     @Comment("Рабочая функция врача, проводившего манипуляцию info")
     @Transient
     public String getSurgeonInfo(){
-        return theSurgeon!=null?theSurgeon.getWorkFunctionInfo():"";
+        return surgeon!=null?surgeon.getWorkFunctionInfo():"";
     }
 
     /** Лечебное учреждение */
     @Comment("Лечебное учреждение")
     @OneToOne
-    public MisLpu getLpu() {return theLpu;}
-    public void setLpu(MisLpu aLpu) {theLpu = aLpu;}
-
-    /** Дата окончания */
-    @Comment("Дата окончания")
-    public Date getEndDate() {return theEndDate;}
-    public void setEndDate(Date aEndDate) {theEndDate = aEndDate;}
+    public MisLpu getLpu() {return lpu;}
 
     /** Анестезиолог */
     @Comment("Анестезиолог")
     @OneToOne
-    public WorkFunction getAnaesthetist() {return theAnaesthetist;}
-    public void setAnaesthetist(WorkFunction aAnaesthetist) {theAnaesthetist = aAnaesthetist;}
+    public WorkFunction getAnaesthetist() {return anaesthetist;}
 
     /** Медсестра */
     @Comment("Медсестра")
     @OneToOne
-    public WorkFunction getNurse() {return theNurse;}
-    public void setNurse(WorkFunction aNurse) {theNurse = aNurse;}
+    public WorkFunction getNurse() {return nurse;}
 
     /** Эпикриз */
     @Comment("Эпикриз")
     @Column(length= ColumnConstants.TEXT_MAXLENGHT)
-    public String getEpicrisis() {return theEpicrisis;}
-    public void setEpicrisis(String aEpicrisis) {theEpicrisis = aEpicrisis;}
+    public String getEpicrisis() {return epicrisis;}
 
     /** Описание */
     @Comment("Описание")
     @Column(length=ColumnConstants.TEXT_MAXLENGHT)
-    public String getText() {return theText;}
-    public void setText(String aText) {theText = aText;}
-
-    /** Время окончания */
-    @Comment("Время окончания")
-    public Time getEndTime() {return theEndTime;}
-    public void setEndTime(Time aEndTime) {theEndTime = aEndTime;}
+    public String getText() {return text;}
 
     @Comment("Информация")
     @Transient
     public String getInformation() {
-        //ret.append("Анестезиолог: ").append(theAnaesthetist) ;
-        //ret.append("Анестезия: ").append(theAnesthesia).append(" кол-во:").append(theAnesthesiaAmount);
-
-        return "Период: " + theEndTime + " " + theEndTime + " - " +
-                theEndDate +
-                " " + theEndTime +
-                "Услуга: " + theMedService +
+        return "Период: " + endTime + " " + endTime + " - " +
+                endDate +
+                " " + endTime +
+                "Услуга: " + medService +
                 "Хирург: " + getSurgeonInfo();
-
     }
 
     @Comment("Период")
     @Transient
     public String getPeriod() {
-        return theEndDate + " " + theStartDate + " - " +
-                theEndDate +
-                " " + theEndTime;
+        return endDate + " " + startDate + " - " +
+                endDate +
+                " " + endTime;
     }
 
     /** Информация о пациенте */
     @Comment("Информация о пациенте")
     @Transient
     public String getPatientInfo() {
-
-        return thePatient!=null?thePatient.getPatientInfo():"";
+        return patient!=null?patient.getPatientInfo():"";
     }
 
     /** Показания*/
     @Comment("Показания")
     @OneToOne
-    public VocHospitalAspect getAspect() {return theAspect;}
-    public void setAspect(VocHospitalAspect aAspect) {theAspect = aAspect;}
+    public VocHospitalAspect getAspect() {return aspect;}
 
     /** Показания */
-    private VocHospitalAspect theAspect;
+    private VocHospitalAspect aspect;
 
     /** Анестезии */
     @Comment("Анестезии")
     @OneToMany(mappedBy="manipulation", cascade=CascadeType.ALL)
     public List<Anesthesia> getAnesthesies() {
-        return theAnesthesies;
-    }
-
-    public void setAnesthesies(List<Anesthesia> aAnesthesies) {
-        theAnesthesies = aAnesthesies;
+        return anesthesies;
     }
 
     /** Номер в журнале */
     @Comment("Номер в журнале")
     public String getNumberInJournal() {
-        return theNumberInJournal;
-    }
-
-    public void setNumberInJournal(String aNumberInJournal) {
-        theNumberInJournal = aNumberInJournal;
+        return numberInJournal;
     }
 
     /** Хирург */
     @Comment("Хирург")
     @OneToOne
-    public WorkFunction getSurgeon() {return theSurgeon;}
-    public void setSurgeon(WorkFunction aSurgeon) {theSurgeon = aSurgeon;}
+    public WorkFunction getSurgeon() {return surgeon;}
 
     /** Хирург */
-    private WorkFunction theSurgeon;
+    private WorkFunction surgeon;
 
     /** Номер в журнале */
-    private String theNumberInJournal;
+    private String numberInJournal;
 
     /** Анестезии */
-    private List<Anesthesia> theAnesthesies;
+    private List<Anesthesia> anesthesies;
 
 
     /** Кол-во  анастезии */
-    private BigDecimal theAnesthesiaAmount;
+    private BigDecimal anesthesiaAmount;
     /** Анестезиолог */
-    private WorkFunction theAnaesthetist;
+    private WorkFunction anaesthetist;
     /** Дата манипуляции по */
-    private Date theEndDate;
+    private Date endDate;
     /** Эпикриз */
-    private String theEpicrisis;
+    private String epicrisis;
     /** Описание */
-    private String theText;
+    private String text;
     /** Медсестра */
-    private WorkFunction theNurse;
+    private WorkFunction nurse;
     /** Время окончания */
-    private Time theEndTime;
+    private Time endTime;
 
     /** Лечебное учреждение */
-    private MisLpu theLpu;
+    private MisLpu lpu;
     /** Пациент */
-    private Patient thePatient;
+    private Patient patient;
     /** Случай медицинского обслуживания */
-    private MedCase theMedCase;
+    private MedCase medCase;
     /** Анестезия */
-    private VocAnesthesia theAnesthesia;
+    private VocAnesthesia anesthesia;
     /** Отделение */
-    private MisLpu theDepartment;
+    private MisLpu department;
     /** Время манипуляции */
-    private Time theStartTime;
+    private Time startTime;
     /** Дата манипуляции */
-    private Date theStartDate;
-
-    /** Дата создания */
-    @Comment("Дата создания")
-    public Date getCreateDate() {return theCreateDate;}
-    public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-
-    /** Пользователь, создавший запись */
-    @Comment("Пользователь, создавший запись")
-    public String getCreateUsername() {return theCreateUsername;}
-    public void setCreateUsername(String aUsername) {theCreateUsername = aUsername;}
-
-    /** Дата редактирования */
-    @Comment("Дата редактирования")
-    public Date getEditDate() {return theEditDate;}
-    public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
+    private Date startDate;
 
     /** Пользователь, последний изменявший запись */
-    @Comment("Пользователь, последний изменявший запись")
-    public String getEditUsername() {return theEditUsername;}
-    public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-
-    /** Пользователь, последний изменявший запись */
-    private String theEditUsername;
+    private String editUsername;
     /** Дата редактирования */
-    private Date theEditDate;
+    private Date editDate;
     /** Пользователь, создавший запись */
-    private String theCreateUsername;
+    private String createUsername;
     /** Дата создания */
-    private Date theCreateDate;
+    private Date createDate;
 
     /** Поток обслуживания */
     @Comment("Поток обслуживания")
     @OneToOne
-    public VocServiceStream getServiceStream() {return theServiceStream;}
-    public void setServiceStream(VocServiceStream aServiceStream) {theServiceStream = aServiceStream;}
+    public VocServiceStream getServiceStream() {return serviceStream;}
 
     /** Поток обслуживания */
-    private VocServiceStream theServiceStream;
+    private VocServiceStream serviceStream;
 
     /** Мед. услуга */
     @Comment("Мед. услуга")
     @OneToOne
-    public MedService getMedService() {return theMedService;}
-    public void setMedService(MedService aMedService) {theMedService = aMedService;}
+    public MedService getMedService() {return medService;}
 
     /** Мед. услуга */
-    private MedService theMedService;
+    private MedService medService;
 
     /** Дата печати */
-    @Comment("Дата печати")
-    public Date getPrintDate() {return thePrintDate;}
-    public void setPrintDate(Date aPrintDate) {thePrintDate = aPrintDate;}
-
-    /** Дата печати */
-    private Date thePrintDate;
+    private Date printDate;
 
     /** Время печати */
-    @Comment("Время печати")
-    public Time getPrintTime() {return thePrintTime;}
-    public void setPrintTime(Time aPrintTime) {thePrintTime = aPrintTime;}
-
-    /** Время печати */
-    private Time thePrintTime;
+    private Time printTime;
 
     /** Пользователь, посл. распечат. документ */
-    @Comment("Пользователь, посл. распечат. документ")
-    public String getPrintUsername() {return thePrintUsername;}
-    public void setPrintUsername(String aPrintUsername) {thePrintUsername = aPrintUsername;}
-
-    /** Пользователь, посл. распечат. документ */
-    private String thePrintUsername;
+    private String printUsername;
 }

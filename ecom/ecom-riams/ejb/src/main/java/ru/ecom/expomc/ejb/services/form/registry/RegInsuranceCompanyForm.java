@@ -19,26 +19,26 @@ import javax.persistence.Id;
 public class RegInsuranceCompanyForm extends IdEntityForm {
     /** Идентификатор */
     @Id
-    public long getId() { return theId ; }
-    public void setId(long aId) { theId = aId ; }
+    public long getId() { return id ; }
+    public void setId(long aId) { id = aId ; }
 
     /** Название страховой компании */
     @Required
     @Persist
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
+    public String getName() { return name ; }
+    public void setName(String aName) { name = aName ; }
 
     /** Код страховой компании в ОМС */
     @Persist
     @Required
-    public String getOmcCode() { return theOmcCode ; }
-    public void setOmcCode(String aOmcCode) { theOmcCode = aOmcCode ; }
+    public String getOmcCode() { return omcCode ; }
+    public void setOmcCode(String aOmcCode) { omcCode = aOmcCode ; }
 
     /** Код страховой компании в ОМС */
-    private String theOmcCode ;
+    private String omcCode ;
     /** Название страховой компании */
-    private String theName ;
+    private String name ;
     /** Идентификатор */
-    private long theId ;
+    private long id ;
 
 }

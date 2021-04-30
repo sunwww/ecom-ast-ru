@@ -23,10 +23,8 @@ import java.util.HashSet;
 @Service
 @Local(IIndexService.class)
 public class IndexServiceBean implements IIndexService, IIndexServiceManagement {
-
+//НЕ КОММИТИТЬ!!!!!!!
 	private static final Logger LOG = Logger.getLogger(IndexServiceBean.class);
-
-	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 	private HashSet<String> getIndexNames(Connection aCon) throws SQLException {
 		HashSet<String> ret = new HashSet<>();
@@ -91,9 +89,8 @@ public class IndexServiceBean implements IIndexService, IIndexServiceManagement 
 		return ApplicationDataSourceHelper.getInstance().findDataSource();
 	}
 
+	@Override
 	public void destroy() {
-		if (CAN_DEBUG)
-			LOG.debug("Destoying ...");
 	}
 
 	private void createIndexes(Class aEntitClass, AIndexes aIndexes,
@@ -173,7 +170,7 @@ public class IndexServiceBean implements IIndexService, IIndexServiceManagement 
 	private void createIndex(Class aEntityClass, String aTableName,
 			AIndex aIndex, Statement aStatement, boolean aAppendDtype,
 			HashSet<String> indexes) throws NoSuchMethodException {
-		StringBuilder indexName = new StringBuilder(theEntityHelper
+		StringBuilder indexName = new StringBuilder(entityHelper
 				.getEntityName(aEntityClass));
 		if ("".equals(aIndex.name() ) ) {
 			for (String property : aIndex.properties()) {
@@ -219,22 +216,11 @@ public class IndexServiceBean implements IIndexService, IIndexServiceManagement 
 			aStatement.executeUpdate(query.toString());
 		} catch (Exception e) {
 			String m = e.getMessage();
-//			if (m
-//					.indexOf("Index with this name already defined for this table") < 0
-//					&& m.indexOf("уже существует") < 0
-//					&& !(aAppendDtype && (m
-//							.indexOf("колонка \"dtype\" не существует") >= 0 || m
-//							.indexOf("Field not") >= 0))) {
-//				LOG.error(query, e);
-//			}
-			LOG.error(m+" : "+query.toString());
+			LOG.error(m+" : "+ query);
 		}
 	}
 
-	private String getColumnName(Class aEntityClass, String aProperty)
-			throws NoSuchMethodException {
-		// String methodName =
-		// PropertyUtil.getGetterMethodNameForProperty(aProperty) ;
+	private String getColumnName(Class aEntityClass, String aProperty) {
 		if ("dtype".equalsIgnoreCase(aProperty)) {
 			return "dtype"; // FIXME временно
 		}

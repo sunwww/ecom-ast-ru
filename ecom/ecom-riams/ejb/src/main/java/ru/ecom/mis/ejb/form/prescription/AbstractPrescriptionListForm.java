@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.prescription;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -24,227 +25,183 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Parent(property = "medCase", parentForm = MedCaseForm.class)
 @Subclasses({ru.ecom.mis.ejb.form.prescription.PrescriptListForm.class, ru.ecom.mis.ejb.form.prescription.template.PrescriptListForm.class})
 @EntityFormSecurityPrefix("/Policy/Mis/Prescription")
+@Setter
 public class AbstractPrescriptionListForm extends IdEntityForm {
 	/** Название шаблона */
 	@Comment("Название шаблона")
 	@Persist 
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
+	public String getName() {return name;}
 
 	/** Комментарии */
 	@Comment("Комментарии")
 	@Persist
-	public String getComments() {return theComments;}
-	public void setComments(String aComments) {theComments = aComments;	}
+	public String getComments() {return comments;}
 
 	/** Владелец */
 	@Comment("Владелец")
 	@Persist 
-	public Long getOwner() {return theOwner;}
-	public void setOwner(Long aOwner) {theOwner = aOwner;	}
+	public Long getOwner() {return owner;}
 
 	/** Владелец (инфо) */
 	@Comment("Владелец (инфо)")
 	@Persist
-	public String getOwnerInfo() {return theOwnerInfo;}
-	public void setOwnerInfo(String aOwnerInfo) {theOwnerInfo = aOwnerInfo;}
+	public String getOwnerInfo() {return ownerInfo;}
 
 	/** Случай медицинского обслуживания */
 	@Comment("Случай медицинского обслуживания")
 	@Persist
-	public Long getMedCase() {return theMedCase;	}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;	}
-	
+	public Long getMedCase() {return medCase;	}
+
 	/** Тип назначения */
 	@Comment("Тип назначения")
 	@Persist @Required
-	public Long getPrescriptType() {return thePrescriptType;}
-	public void setPrescriptType(Long aPrescriptType) {thePrescriptType = aPrescriptType;}
+	public Long getPrescriptType() {return prescriptType;}
 
 	/** Тип назначений инфо */
 	@Comment("Тип назначений инфо")
 	@Persist
-	public String getPrescriptTypeInfo() {return thePrescriptTypeInfo;}
-	public void setPrescriptTypeInfo(String aPrescriptTypeInfo) {thePrescriptTypeInfo = aPrescriptTypeInfo;}
+	public String getPrescriptTypeInfo() {return prescriptTypeInfo;}
 
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@Persist @Required
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public Long getWorkFunction() {return workFunction;}
 
 	/** Рабочая функция инфо */
 	@Comment("Рабочая функция инфо")
 	@Persist
-	public String getWorkFunctionInfo() {return theWorkFunctionInfo;}
-	public void setWorkFunctionInfo(String aWorkFunctionInfo) {theWorkFunctionInfo = aWorkFunctionInfo;}
+	public String getWorkFunctionInfo() {return workFunctionInfo;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@DateString @DoDateString @Persist
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
+
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@DateString @DoDateString @Persist
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
-	
+	public String getEditDate() {return editDate;}
+
 	/** Время создания */
 	@Comment("Время создания")
 	@TimeString @DoTimeString @Persist
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;}
 	/** Время редактрования */
 	@Comment("Время редактрования")
 	@TimeString @DoTimeString @Persist
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+	public String getEditTime() {return editTime;}
 	/** Пользователь, который создал запись */
 	@Comment("Пользователь, который создал запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 	/** Пользователь, который последний редактировал запись */
 	@Comment("Пользователь, который последний редактировал запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Список услуг по лаборатории */
 	@Comment("Список услуг по лаборатории")
-	public String getLabList() {return theLabList;}
-	public void setLabList(String aLabList) {theLabList = aLabList;}
+	public String getLabList() {return labList;}
 
 	/** Список услуг по лаборатории */
-	private String theLabList;
+	private String labList;
 	
 	/** Список лаб. назначений (полный, нужен только для edit.jsp) */
 	@Comment("Список лаб. назначений (полный, нужен только для edit.jsp)")
 	public String getAllDrugList() {
-		return theAllDrugList;
-	}
-
-	public void setAllDrugList(String aAllDrugList) {
-		theAllDrugList = aAllDrugList;
+		return allDrugList;
 	}
 
 	/** Список лаб. назначений (полный, нужен только для edit.jsp) */
-	private String theAllDrugList;
+	private String allDrugList;
 	
 	/** Список лекарственных назначений */
 	@Comment("Список лекарственных назначений")
 	public String getDrugList() {
-		return theDrugList;
-	}
-
-	public void setDrugList(String aDrugList) {
-		theDrugList = aDrugList;
+		return drugList;
 	}
 
 	/** Список лекарственных назначений */
-	private String theDrugList;
+	private String drugList;
 	/** Лабораторные исследования */
 	@Comment("Лабораторные исследования")
 	public String getLabServicies() {
-		return theLabServicies;
+		return labServicies;
 	}
 
-	public void setLabServicies(String aLabServicies) {
-		theLabServicies = aLabServicies;
-	}
-	
 	/** Лабораторные исследования */
-	private String theLabServicies;
+	private String labServicies;
 	
 	/** Дата по лаб. исследованию */
 	@Comment("Дата по лаб. исследованию")
 	@DateString @DoDateString
-	public String getLabDate() {return theLabDate;}
-	public void setLabDate(String aLabDate) {theLabDate = aLabDate;}
-
+	public String getLabDate() {return labDate;}
 	/** Дата по лаб. исследованию */
-	private String theLabDate;
+	private String labDate;
 
 	/** Функциональные исследования */
 	@Comment("Функциональные исследования")
 	public String getFuncServicies() {
-		return theFuncServicies;
+		return funcServicies;
 	}
 
-	public void setFuncServicies(String aFuncServicies) {
-		theFuncServicies = aFuncServicies;
-	}
 	/** Кабинет для лабораторных исследования*/
 	@Comment("Кабинет для лабораторных исследования")
 	public String getLabCabinet() {
-		return theLabCabinet;
-	}
-
-	public void setLabCabinet(String aLabCabinet) {
-		theLabCabinet = aLabCabinet;
+		return labCabinet;
 	}
 
 	/** Кабинет для лабораторных исследования */
-	private String theLabCabinet;
+	private String labCabinet;
 	/** Функциональные исследования */
-	private String theFuncServicies;
+	private String funcServicies;
 	
 	/** Дата функционального исследования */
 	@Comment("Дата функционального исследования")
 	@DateString @DoDateString
 	public String getFuncDate() {
-		return theFuncDate;
-	}
-
-	public void setFuncDate(String aFuncDate) {
-		theFuncDate = aFuncDate;
+		return funcDate;
 	}
 
 	/** Дата функционального исследования */
-	private String theFuncDate;
+	private String funcDate;
 	/** Кабинет для функ. исследования */
 	@Comment("Кабинет для функ. исследования")
 	public String getFuncCabinet() {
-		return theFuncCabinet;
-	}
-
-	public void setFuncCabinet(String aFuncCabinet) {
-		theFuncCabinet = aFuncCabinet;
+		return funcCabinet;
 	}
 
 	/** Кабинет для функ. исследования */
-	private String theFuncCabinet;
+	private String funcCabinet;
 	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private String theEditTime;
+	private String editTime;
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	/** Рабочая функция инфо */
-	private String theWorkFunctionInfo;
+	private String workFunctionInfo;
 	/** Рабочая функция */
-	private Long theWorkFunction;
+	private Long workFunction;
 	/** Тип назначений инфо */
-	private String thePrescriptTypeInfo;
+	private String prescriptTypeInfo;
 	/** Тип назначения */
-	private Long thePrescriptType;
+	private Long prescriptType;
 	/** Случай медицинского обслуживания */
-	private Long theMedCase;	
+	private Long medCase;	
 	/** Владелец (инфо) */
-	private String theOwnerInfo;
+	private String ownerInfo;
 	/** Владелец */
-	private Long theOwner;
+	private Long owner;
 	/** Комментарии */
-	private String theComments;
+	private String comments;
 	/** Название шаблона */
-	private String theName;
+	private String name;
 
 }

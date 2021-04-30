@@ -1,5 +1,7 @@
 package ru.ecom.diary.ejb.domain.protocol.template;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -28,62 +30,34 @@ import java.util.List;
     ,@AIndex(properties="medService")
     }) 
 @EntityListeners(DeleteListener.class)
+@Setter
+@Getter
 public class TemplateProtocol extends BaseEntity {
 
 	/** Создавать браслет по шаблону */
-	@Comment("Создавать браслет по шаблону")
-	public Boolean getCreateBracelet() {return theCreateBracelet;}
-	public void setCreateBracelet(Boolean aCreateBracelet) {theCreateBracelet = aCreateBracelet;}
-	private Boolean theCreateBracelet ;
+	private Boolean createBracelet ;
 	
 	/** Создавать дневник по умолчанию при приеме в лабораторию */
-	@Comment("Создавать дневник по умолчанию при приеме в лабораторию")
-	public Boolean getCreateDiaryByDefault() {return theCreateDiaryByDefault;}
-	public void setCreateDiaryByDefault(Boolean aCreateDiaryByDefault) {theCreateDiaryByDefault = aCreateDiaryByDefault;}
-	/** Создавать дневник по умолчанию при приеме в лабораторию */
-	private Boolean theCreateDiaryByDefault;
+	private Boolean createDiaryByDefault;
 	
 	/** Запрет на ручное редактирование */
-	@Comment("Запрет на ручное редактирование")
-	public Boolean getDisableEdit() {return theDisableEdit;}
-	public void setDisableEdit(Boolean aDisableEdit) {theDisableEdit = aDisableEdit;}
-	/** Запрет на ручное редактирование */
-	private Boolean theDisableEdit;
+	private Boolean disableEdit;
 	
-	/** Заголовок */
-    public String getTitle() { return theTitle ; }
-    public void setTitle(String aTitle) { theTitle = aTitle ; }
 
     /** Текст */
     @Column(length = ColumnConstants.TEXT_MAXLENGHT)
-    public String getText() { return theText ; }
-    public void setText(String aText) { theText = aText ; }
-
-    /** Ключевые слова */
-    public String getKeyWord() { return theKeyWord ; }
-    public void setKeyWord(String aKeyWord) { theKeyWord = aKeyWord ; }
+    public String getText() { return text ; }
 
     /** Категории шаблона */
 	@Comment("Категории шаблона")
 	@ManyToMany
-	public List<TemplateCategory> getCategories() {return theCategories;}
-	public void setCategories(List<TemplateCategory> aCategories) {theCategories = aCategories;}
+	public List<TemplateCategory> getCategories() {return categories;}
 
-	@Comment("Пользователь")
-	/** Пользователь */
-	public String getUsername() {return theUsername;}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
-
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getDate() {return theDate;}
-	public void setDate(Date aDate) {theDate = aDate;}
 
 	/** Медицинская услуга */
 	@Comment("Медицинская услуга")
 	@ManyToOne
-	public MedService getMedService() {return theMedService;}
-	public void setMedService(MedService aMedService) {theMedService = aMedService;}
+	public MedService getMedService() {return medService;}
 
 	/** Информация по шаблону протокола */
 	@Comment("Информация по шаблону протокола")
@@ -95,7 +69,7 @@ public class TemplateProtocol extends BaseEntity {
 	@Transient
 	public String getCategoriesInfo() {
 		StringBuilder ret = new StringBuilder() ;
-		for (TemplateCategory categ : theCategories) {
+		for (TemplateCategory categ : categories) {
 			ret.append(", ").append(categ.getFullname()).append("<br>") ;
 		}
 		return ret.length()>2 ? ret.substring(2) : ret.toString() ;
@@ -104,26 +78,25 @@ public class TemplateProtocol extends BaseEntity {
 	/** Группы пользователей */
 	@Comment("Группы пользователей")
 	@ManyToMany
-	public List<SecGroup> getSecGroups() {return theSecGroups;}
-	public void setSecGroups(List<SecGroup> aSecGroups) {theSecGroups = aSecGroups;}
+	public List<SecGroup> getSecGroups() {return secGroups;}
 
 	/** Группы пользователей */
-	private List<SecGroup> theSecGroups;
+	private List<SecGroup> secGroups;
 
 	
 	/** Медицинская услуга */
-	private MedService theMedService;
+	private MedService medService;
 	/** Дата создания */
-	private Date theDate;
+	private Date date;
 	/** Пользователь */
-	private String theUsername;
+	private String username;
 	/** Категории шаблона */
-	private List<TemplateCategory> theCategories;
+	private List<TemplateCategory> categories;
     /** Ключевые слова */
-    private String theKeyWord ;
+    private String keyWord ;
     /** Текст */    
-    private String theText ;
+    private String text ;
     /** Заголовок */
-    private String theTitle ;
+    private String title ;
 
 }

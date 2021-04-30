@@ -3,6 +3,8 @@ package ru.ecom.mis.ejb.domain.medcase.voc;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -14,27 +16,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Справочник исходов госпитализации")
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VocHospitalizationOutcome extends VocBaseEntity {
-	/** Не отображать при выписке */
-	@Comment("Не отображать при выписке")
-	public Boolean getIsNotViewDischarge() {return theIsNotViewDischarge;}
-	public void setIsNotViewDischarge(Boolean aIsNotViewDischarge) {theIsNotViewDischarge = aIsNotViewDischarge;}
-
-	/** Не отображать при поступлении */
-	@Comment("Не отображать при поступлении")
-	public Boolean getIsNotViewAdmission() {return theIsNotViewAdmission;}
-	public void setIsNotViewAdmission(Boolean aIsNotViewAdmission) {theIsNotViewAdmission = aIsNotViewAdmission;}
-
 	/** Псих.код */
-	@Comment("Псих.код")
-	public String getPsychCode() {return thePsychCode;}
-	public void setPsychCode(String aPsychCode) {thePsychCode = aPsychCode;}
-
-	/** Псих.код */
-	private String thePsychCode;
+	private String psychCode;
 	/** Не отображать при поступлении */
-	private Boolean theIsNotViewAdmission;
+	private Boolean isNotViewAdmission;
 	/** Не отображать при выписке */
-	private Boolean theIsNotViewDischarge;
+	private Boolean isNotViewDischarge;
 
 }

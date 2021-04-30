@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.patient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
@@ -22,6 +24,8 @@ import java.sql.Date;
 	@AIndex(properties = { "lastname","firstname","middlename","birthday" }),
 	@AIndex(properties = { "commonNumber" })
 })
+@Getter
+@Setter
 public class PatientAttachedImport extends BaseEntity implements IImportData {
 
 	public static final String STATUS_CHECK_TYPE_AUTOMATIC="A" ;
@@ -31,433 +35,332 @@ public class PatientAttachedImport extends BaseEntity implements IImportData {
     /** Единый номер застрахованного */
 	@Comment("Единый номер застрахованного")
     @AFormatFieldSuggest({"ENP" })
-	public String getCommonNumber() {return theCommonNumber;}
-	public void setCommonNumber(String aCommonNumber) {theCommonNumber = aCommonNumber;}
+	public String getCommonNumber() {return commonNumber;}
 
 	/** Фамилия */
 	@Comment("Фамилия")
 	@AFormatFieldSuggest({"FAM" })
-	public String getLastname() {return theLastname;}
-	public void setLastname(String aLastname) {theLastname = aLastname;}
+	public String getLastname() {return lastname;}
 
 	/** Имя */
 	@Comment("Имя")
 	@AFormatFieldSuggest({"IM" })
-	public String getFirstname() {return theFirstname;}
-	public void setFirstname(String aFirstname) {theFirstname = aFirstname;}
+	public String getFirstname() {return firstname;}
 
 	/** Отчество */
 	@Comment("Отчество")
 	@AFormatFieldSuggest({"OT" })
-	public String getMiddlename() {return theMiddlename;}
-	public void setMiddlename(String aMiddlename) {theMiddlename = aMiddlename;}
+	public String getMiddlename() {return middlename;}
 
 	/** Пол */
 	@Comment("Пол")
 	@AFormatFieldSuggest({"CW" })
-	public String getSex() {return theSex;}
-	public void setSex(String aSex) {theSex = aSex;}
+	public String getSex() {return sex;}
 
 	/** Дата рождения */
 	@Comment("Дата рождения")
 	@AFormatFieldSuggest({"DR" })
-	public Date getBirthday() {return theBirthday;}
-	public void setBirthday(Date aBirthday) {theBirthday = aBirthday;}
+	public Date getBirthday() {return birthday;}
 
 	/** СНИЛС */
 	@Comment("СНИЛС")
 	@AFormatFieldSuggest({"SS" })
-	public String getSnils() {return theSnils;}
-	public void setSnils(String aSnils) {theSnils = aSnils;}
+	public String getSnils() {return snils;}
 
 	/** Тип документа */
 	@Comment("Тип документа")
 	@AFormatFieldSuggest({"DOCTP" })
-	public String getDocType() {return theDocType;}
-	public void setDocType(String aDocType) {theDocType = aDocType;}
+	public String getDocType() {return docType;}
 
 	/** Серия документа */
 	@Comment("Серия документа")
 	@AFormatFieldSuggest({"DOCS" })
-	public String getDocSeries() {return theDocSeries;}
-	public void setDocSeries(String aDocSeries) {theDocSeries = aDocSeries;}
+	public String getDocSeries() {return docSeries;}
 
 	/** Номер документа */
 	@Comment("Номер документа")
 	@AFormatFieldSuggest({"DOCN" })
-	public String getDocNumber() {return theDocNumber;}
-	public void setDocNumber(String aDocNumber) {theDocNumber = aDocNumber;}
+	public String getDocNumber() {return docNumber;}
 
 	/** Дата выдачи документа */
 	@Comment("Дата выдачи документа")
 	@AFormatFieldSuggest({"DOCDT" })
-	public Date getDocDateIssued() {return theDocDateIssued;}
-	public void setDocDateIssued(Date aDocDateIssued) {theDocDateIssued = aDocDateIssued;}
+	public Date getDocDateIssued() {return docDateIssued;}
 
 	/** Место рождения */
 	@Comment("Место рождения")
 	@AFormatFieldSuggest({"MR" })
-	public String getBirthPlace() {return theBirthPlace;}
-	public void setBirthPlace(String aBirthPlace) {theBirthPlace = aBirthPlace;}
+	public String getBirthPlace() {return birthPlace;}
 
 	/** Бомж */
 	@Comment("Бомж")
 	@AFormatFieldSuggest({"BOMJ" })
-	public String getBomj() {return theBomj;}
-	public void setBomj(String aBomj) {theBomj = aBomj;}
+	public String getBomj() {return bomj;}
 
 	/** Область */
 	@Comment("Область")
 	@AFormatFieldSuggest({"SUBJ" })
-	public String getRegion() {return theRegion;}
-	public void setRegion(String aRegion) {theRegion = aRegion;}
+	public String getRegion() {return region;}
 
 	/** RN& */
 	@Comment("RN&")
 	@AFormatFieldSuggest({"RN" })
-	public String getRn() {return theRn;}
-	public void setRn(String aRn) {theRn = aRn;}
+	public String getRn() {return rn;}
 
 	/** Индекс */
 	@Comment("Индекс")
 	@AFormatFieldSuggest({"INDX" })
-	public String getIndex() {return theIndex;}
-	public void setIndex(String aIndex) {theIndex = aIndex;}
+	public String getIndex() {return index;}
 
 	/** Район наименование */
 	@Comment("Район наименование")
 	@AFormatFieldSuggest({"RNNAME" })
-	public String getRayonName() {return theRayonName;}
-	public void setRayonName(String aRayonName) {theRayonName = aRayonName;}
+	public String getRayonName() {return rayonName;}
 
 	/** Город */
 	@Comment("Город")
 	@AFormatFieldSuggest({"CITY" })
-	public String getCity() {return theCity;}
-	public void setCity(String aCity) {theCity = aCity;}
+	public String getCity() {return city;}
 
 	/** NP& */
 	@Comment("NP&")
 	@AFormatFieldSuggest({"NP" })
-	public String getNp() {return theNp;}
-	public void setNp(String aNp) {theNp = aNp;}
+	public String getNp() {return np;}
 
 	/** Улица */
 	@Comment("Улица")
 	@AFormatFieldSuggest({"UL" })
-	public String getStreet() {return theStreet;}
-	public void setStreet(String aStreet) {theStreet = aStreet;}
+	public String getStreet() {return street;}
 
 	/** Дом */
 	@Comment("Дом")
 	@AFormatFieldSuggest({"DOM" })
-	public String getHouse() {return theHouse;}
-	public void setHouse(String aHouse) {theHouse = aHouse;}
+	public String getHouse() {return house;}
 
 	/** Корпус */
 	@Comment("Корпус")
 	@AFormatFieldSuggest({"KOR" })
-	public String getHousing() {return theHousing;}
-	public void setHousing(String aHousing) {theHousing = aHousing;}
+	public String getHousing() {return housing;}
 
 	/** Квартира */
 	@Comment("Квартира")
 	@AFormatFieldSuggest({"KV" })
-	public String getApartment() {return theApartment;}
-	public void setApartment(String aApartment) {theApartment = aApartment;}
+	public String getApartment() {return apartment;}
 
 	/** Страховая компания */
 	@Comment("Страховая компания")
 	@AFormatFieldSuggest({"Q" })
-	public String getInsCompName() {return theInsCompName;}
-	public void setInsCompName(String aInsCompName) {theInsCompName = aInsCompName;}
+	public String getInsCompName() {return insCompName;}
 
 	/** Тип полиса */
 	@Comment("Тип полиса")
 	@AFormatFieldSuggest({"OPDOC" })
-	public String getPolicyType() {return thePolicyType;}
-	public void setPolicyType(String aPolicyType) {thePolicyType = aPolicyType;}
+	public String getPolicyType() {return policyType;}
 
 	/** Серия полиса */
 	@Comment("Серия полиса")
 	@AFormatFieldSuggest({"SPOL" })
-	public String getPolicySeries() {return thePolicySeries;}
-	public void setPolicySeries(String aPolicySeries) {thePolicySeries = aPolicySeries;}
+	public String getPolicySeries() {return policySeries;}
 
 	/** Номер полиса */
 	@Comment("Номер полиса")
 	@AFormatFieldSuggest({"NPOL" })
-	public String getPolicyNumber() {return thePolicyNumber;}
-	public void setPolicyNumber(String aPolicyNumber) {thePolicyNumber = aPolicyNumber;}
+	public String getPolicyNumber() {return policyNumber;}
 
 	/** Дата начала действия полиса */
 	@Comment("Дата начала действия полиса")
 	@AFormatFieldSuggest({"DBEG" })
-	public Date getPolicyDateFrom() {return thePolicyDateFrom;}
-	public void setPolicyDateFrom(Date aPolicyDateFrom) {thePolicyDateFrom = aPolicyDateFrom;}
+	public Date getPolicyDateFrom() {return policyDateFrom;}
 
 	/** Дата окончания действия полиса */
 	@Comment("Дата окончания действия полиса")
 	@AFormatFieldSuggest({"DEND" })
-	public Date getPolicyDateTo() {return thePolicyDateTo;}
-	public void setPolicyDateTo(Date aPolicyDateTo) {thePolicyDateTo = aPolicyDateTo;}
+	public Date getPolicyDateTo() {return policyDateTo;}
 
 	/** Дата окончания действия полиса */
-	private Date thePolicyDateTo;
+	private Date policyDateTo;
 	/** Дата начала действия полиса */
-	private Date thePolicyDateFrom;
+	private Date policyDateFrom;
 	/** Номер полиса */
-	private String thePolicyNumber;
+	private String policyNumber;
 	/** Серия полиса */
-	private String thePolicySeries;
+	private String policySeries;
 	/** Тип полиса */
-	private String thePolicyType;
+	private String policyType;
 	/** Страховая компания */
-	private String theInsCompName;
+	private String insCompName;
 	/** Квартира */
-	private String theApartment;
+	private String apartment;
 	/** Корпус */
-	private String theHousing;
+	private String housing;
 	/** Дом */
-	private String theHouse;
+	private String house;
 	/** Улица */
-	private String theStreet;
+	private String street;
 	/** NP& */
-	private String theNp;
+	private String np;
 	/** Город */
-	private String theCity;
+	private String city;
 	/** Район наименование */
-	private String theRayonName;
+	private String rayonName;
 	/** Индекс */
-	private String theIndex;
+	private String index;
 	/** RN& */
-	private String theRn;
+	private String rn;
 	/** Область */
-	private String theRegion;
+	private String region;
 	/** Бомж */
-	private String theBomj;
+	private String bomj;
 	/** Место рождения */
-	private String theBirthPlace;
+	private String birthPlace;
 	/** Дата выдачи документа */
-	private Date theDocDateIssued;
+	private Date docDateIssued;
 	/** Номер документа */
-	private String theDocNumber;
+	private String docNumber;
 	/** Серия документа */
-	private String theDocSeries;
+	private String docSeries;
 	/** Тип документа */
-	private String theDocType;
+	private String docType;
 	/** СНИЛС */
-	private String theSnils;
+	private String snils;
 	/** Дата рождения */
-	private Date theBirthday;
+	private Date birthday;
 	/** Пол */
-	private String theSex;
+	private String sex;
 	/** Отчество */
-	private String theMiddlename;
+	private String middlename;
 	/** Имя */
-	private String theFirstname;
+	private String firstname;
 	/** Фамилия */
-	private String theLastname;
+	private String lastname;
 	/** Единый номер застрахованного */
-	private String theCommonNumber;
+	private String commonNumber;
 	
-    /** Пациент */
-	@Comment("Пациент")
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
 
 	/** Полис */
 	@Comment("Полис")
 	@OneToOne
-	public MedPolicy getMedPolicy() {return theMedPolicy;}
-	public void setMedPolicy(MedPolicy aMedPolicy) {theMedPolicy = aMedPolicy;}
+	public MedPolicy getMedPolicy() {return medPolicy;}
 
 	/** Адрес */
 	@Comment("Адрес")
 	@OneToOne
-	public Address getAddressRegistration() {return theAddressRegistration;}
-	public void setAddressRegistration(Address aAddressRegistration) {theAddressRegistration = aAddressRegistration;}
+	public Address getAddressRegistration() {return addressRegistration;}
+
 
 	/** Город врем */
-	@Comment("Город врем")
-	public String getCityT() {return theCityT;}
-	public void setCityT(String aCityT) {theCityT = aCityT;}
-
-	/** Город врем */
-	private String theCityT;
+	private String cityT;
 	/** Адрес */
-	private Address theAddressRegistration;
+	private Address addressRegistration;
 	/** Полис */
-	private MedPolicy theMedPolicy;
+	private MedPolicy medPolicy;
 	/** Пациент */
-	private Long thePatient;
-	
-	/** Создан новый пациент */
-	@Comment("Создан новый пациент")
-	public Boolean getIsCreateNewPatient() {return theIsCreateNewPatient;}
-	public void setIsCreateNewPatient(Boolean aIsCreateNewPatient) {theIsCreateNewPatient = aIsCreateNewPatient;}
+	private Long patient;
 
 	/** Обновлен пациент */
-	@Comment("Обновлен пациент")
-	public Boolean getIsUpdatePatient() {return theIsUpdatePatient;}
-	public void setIsUpdatePatient(Boolean aIsUpdatePatient) {theIsUpdatePatient = aIsUpdatePatient;}
-
-	/** Обновлен пациент */
-	private Boolean theIsUpdatePatient;
+	private Boolean isUpdatePatient;
 	/** Создан новый пациент */
-	private Boolean theIsCreateNewPatient;
+	private Boolean isCreateNewPatient;
 
-    public long getTime() {return theTime  ;}
-    public void setTime(long aTime) {theTime = aTime ;}
-    private long theTime ;
+    private long time ;
     
-    /** Серия полиса измененная */
-	@Comment("Серия полиса измененная")
-	public String getPolicySeriesEdit() {return thePolicySeriesEdit;}
-	public void setPolicySeriesEdit(String aPolicySeriesEdit) {thePolicySeriesEdit = aPolicySeriesEdit;}
-
 	/** Номер полиса измененный */
-	@Comment("Номер полиса измененный")
-	public String getPolicyNumberEdit() {return thePolicyNumberEdit;}
-	public void setPolicyNumberEdit(String aPolicyNumberEdit) {thePolicyNumberEdit = aPolicyNumberEdit;}
-
-	/** Номер полиса измененный */
-	private String thePolicyNumberEdit;
+	private String policyNumberEdit;
 	/** Серия полиса измененная */
-	private String thePolicySeriesEdit;
+	private String policySeriesEdit;
 	
 	/** Страховая компания */
 	@Comment("Страховая компания")
 	@OneToOne
 	public RegInsuranceCompany getInsuranceCompany() {
-		return theInsuranceCompany;
-	}
-
-	public void setInsuranceCompany(RegInsuranceCompany aInsuranceCompany) {
-		theInsuranceCompany = aInsuranceCompany;
+		return insuranceCompany;
 	}
 
 	/** Страховая компания */
-	private RegInsuranceCompany theInsuranceCompany;
+	private RegInsuranceCompany insuranceCompany;
 	/** Район */
 	@Comment("Район")
 	@OneToOne
-	public VocRayon getRayon() {return theRayon;}
-	public void setRayon(VocRayon aRayon) {theRayon = aRayon;}
+	public VocRayon getRayon() {return rayon;}
 
 	/** Район */
-	private VocRayon theRayon;
+	private VocRayon rayon;
 	
 	/** Страна */
 	@Comment("Страна")
 	@AFormatFieldSuggest({"CN" })
 	public String getCountry() {
-		return theCountry;
-	}
-
-	public void setCountry(String aCountry) {
-		theCountry = aCountry;
+		return country;
 	}
 
 	/** Страна */
-	private String theCountry;
+	private String country;
 	
 	/** Lpuauto */
 	@Comment("Lpuauto")
 	@AFormatFieldSuggest({"LPUAUTO" })
-	public String getLpuauto() {return theLpuauto;}
-	public void setLpuauto(String aLpuauto) {theLpuauto = aLpuauto;}
+	public String getLpuauto() {return lpuauto;}
 
 	/** Lpuauto */
-	private String theLpuauto;
+	private String lpuauto;
 	
 	/** Lpu */
 	@Comment("Lpu")
 	@AFormatFieldSuggest({"LPU" })
-	public String getLpu() {return theLpu;}
-	public void setLpu(String aLpu) {theLpu = aLpu;}
+	public String getLpu() {return lpu;}
 
 	/** Lpu */
-	private String theLpu;
+	private String lpu;
 	
 	/** Дата прикрепления */
 	@Comment("Дата прикрепления")
 	@AFormatFieldSuggest({"LPUDT" })
-	public Date getLpuDateFrom() {return theLpuDateFrom;}
-	public void setLpuDateFrom(Date aLpuDateFrom) {theLpuDateFrom = aLpuDateFrom;}
+	public Date getLpuDateFrom() {return lpuDateFrom;}
 
 	/** Дата прикрепления */
-	private Date theLpuDateFrom;
+	private Date lpuDateFrom;
 	
 	/** Дата открепления */
 	@Comment("Дата открепления")
 	@AFormatFieldSuggest({"LPUDX" })
-	public Date getLpuDateTo() {return theLpuDateTo;}
-	public void setLpuDateTo(Date aLpuDateTo) {theLpuDateTo = aLpuDateTo;}
+	public Date getLpuDateTo() {return lpuDateTo;}
 
 	/** Дата открепления */
-	private Date theLpuDateTo;
+	private Date lpuDateTo;
 	/** Кем выдан паспорт */
 	@Comment("Кем выдан паспорт")
 	@AFormatFieldSuggest({"DOCORG" })
 	public String getDocWhom() {
-		return theDocWhom;
-	}
-
-	public void setDocWhom(String aDocWhom) {
-		theDocWhom = aDocWhom;
+		return docWhom;
 	}
 
 	/** Кем выдан паспорт */
-	private String theDocWhom;
+	private String docWhom;
 
 	/** Идентификатор ФОМС */
 	@Comment("Идентификатор ФОМС")
 	@AFormatFieldSuggest({"PID"})
-	public String getFondId() {return theFondId;}
-	public void setFondId(String aFondId) {theFondId = aFondId;}
+	public String getFondId() {return fondId;}
 	/** Идентификатор ФОМС */
-	private String theFondId;
+	private String fondId;
 	
 	/** Код подразделения */
 	@Comment("Код подразделения")
 	@AFormatFieldSuggest({"KODPODR"})
-	public String getDepartment() {return theDepartment;}
-	public void setDepartment(String aDepartment) {theDepartment = aDepartment;}
+	public String getDepartment() {return department;}
 	/** Код подразделения */
-	private String theDepartment;
+	private String department;
 	
 	/** СНИЛС участкового врача */
 	@Comment("СНИЛС участкового врача")
 	@AFormatFieldSuggest({"SSD"})
-	public String getDoctorSnils() {return theDoctorSnils;}
-	public void setDoctorSnils(String aDoctorSnils) {theDoctorSnils = aDoctorSnils;}
+	public String getDoctorSnils() {return doctorSnils;}
 	/** СНИЛС участкового врача */
-	private String theDoctorSnils;
+	private String doctorSnils;
 	
 	/** Телефон */
-	@Comment("Телефон")
-	public String getPhone() {
-		return thePhone;
-	}
-
-	public void setPhone(String aPhone) {
-		thePhone = aPhone;
-	}
-
-	/** Телефон */
-	private String thePhone;
+	private String phone;
 	
 	/** Участок */
-	@Comment("Участок")
-	public String getAreaNumber() {
-		return theAreaNumber;
-	}
-
-	public void setAreaNumber(String aAreaNumber) {
-		theAreaNumber = aAreaNumber;
-	}
-
-	/** Участок */
-	private String theAreaNumber;
+	private String areaNumber;
 }

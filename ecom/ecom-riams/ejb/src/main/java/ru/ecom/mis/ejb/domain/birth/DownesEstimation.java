@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.birth;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.birth.voc.*;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -15,73 +17,57 @@ import javax.persistence.Transient;
 
 @Comment("Оценка респираторного дистресса новорожденного по Downes")
 @Entity
+@Getter
+@Setter
 public class DownesEstimation extends Inspection {
 	
 	/** Частота дыхательных движений */
 	@Comment("Частота дыхательных движений")
 	@OneToOne
 	public VocDownesRespirationRate getRespirationRate() {
-		return theRespirationRate;
+		return respirationRate;
 	}
-	public void setRespirationRate(VocDownesRespirationRate aRespirationRate) {
-		theRespirationRate = aRespirationRate;
-	}
-	private VocDownesRespirationRate theRespirationRate;
+	private VocDownesRespirationRate respirationRate;
 	
 	/** Цианоз */
 	@Comment("Цианоз")
 	@OneToOne
 	public VocDownesCyanosis getCyanosis() {
-		return theCyanosis;
+		return cyanosis;
 	}
-	public void setCyanosis(VocDownesCyanosis aCyanosis) {
-		theCyanosis = aCyanosis;
-	}
-	private VocDownesCyanosis theCyanosis;
+	private VocDownesCyanosis cyanosis;
 	
 	/** Втяжение межреберных промежутков */
 	@Comment("Втяжение межреберных промежутков")
 	@OneToOne
 	public VocDownesIntercostalRet getIntercostalRetraction() {
-		return theIntercostalRetraction;
+		return intercostalRetraction;
 	}
-	public void setIntercostalRetraction(VocDownesIntercostalRet aIntercostalRetraction) {
-		theIntercostalRetraction = aIntercostalRetraction;
-	}
-	private VocDownesIntercostalRet theIntercostalRetraction;
+	private VocDownesIntercostalRet intercostalRetraction;
 	
 	/** Затрудненный выдох */
 	@Comment("Затрудненный выдох")
 	@OneToOne
 	public VocDownesDifExhalation getDifficultExhalation() {
-		return theDifficultExhalation;
+		return difficultExhalation;
 	}
-	public void setDifficultExhalation(VocDownesDifExhalation aDifficultExhalation) {
-		theDifficultExhalation = aDifficultExhalation;
-	}
-	private VocDownesDifExhalation theDifficultExhalation;
+	private VocDownesDifExhalation difficultExhalation;
 	
 	/** Аускультация */
 	@Comment("Аускультация")
 	@OneToOne
 	public VocDownesAuscultation getAuscultation() {
-		return theAuscultation;
+		return auscultation;
 	}
-	public void setAuscultation(VocDownesAuscultation aAuscultation) {
-		theAuscultation = aAuscultation;
-	}
-	private VocDownesAuscultation theAuscultation;
+	private VocDownesAuscultation auscultation;
 	
 	/** Общая оценка */
 	@Comment("Общая оценка")
 	@OneToOne
 	public VocCommonMask getCommonMark() {
-		return theCommonMark;
+		return commonMark;
 	}
-	public void setCommonMark(VocCommonMask aCommonMark) {
-		theCommonMark = aCommonMark;
-	}
-	private VocCommonMask theCommonMark;
+	private VocCommonMask commonMark;
 	
 	@Transient
 	public String getTypeInformation() {
@@ -89,6 +75,6 @@ public class DownesEstimation extends Inspection {
 	}
 	@Transient
 	public String getInformation() {
-		return "Общая оценка (балл): " + (theCommonMark != null ? theCommonMark.getCode() : "") + " " + (theCommonMark != null ? theCommonMark.getName() : "");
+		return "Общая оценка (балл): " + (commonMark != null ? commonMark.getCode() : "") + " " + (commonMark != null ? commonMark.getName() : "");
 	}
 }

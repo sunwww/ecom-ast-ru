@@ -2,6 +2,8 @@ package ru.ecom.mis.ejb.domain.birth;/**
  * Created by Milamesher on 23.01.2019.
  */
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -21,144 +23,75 @@ import java.sql.Time;
         @AIndex(properties = { "medCase" })
 }
 )
+@Getter
+@Setter
 public class ScreeningCardiac extends BaseEntity {
     /** СМО */
     @Comment("СМО")
     @OneToOne
-    public MedCase getMedCase() {return theMedCase;}
-    public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
-    /** Дата создания */
-    @Comment("Дата создания")
-    public Date getCreateDate() {return theCreateDate;}
-    public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-    /** Дата редактирования */
-    @Comment("Дата редактирования")
-    public Date getEditDate() {return theEditDate;}
-    public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-    /** Время создания */
-    @Comment("Время создания")
-    public Time getCreateTime() {return theCreateTime;}
-    public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-    /** Время редактрования */
-    @Comment("Время редактирования")
-    public Time getEditTime() {return theEditTime;}
-    public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-    /** Пользователь, который создал запись */
-    @Comment("Пользователь, который создал запись")
-    public String getCreateUsername() {return theCreateUsername;}
-    public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-    /** Пользователь, который последний редактировал запись */
-    @Comment("Пользователь, который последний редактировал запись")
-    public String getEditUsername() {return theEditUsername;}
-    public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+    public MedCase getMedCase() {return medCase;}
     /** Кожные покровы */
     @Comment("Кожные покровы")
     @OneToOne
-    public VocScreeningSkin getSkin() {return theSkin;}
-    public void setSkin(VocScreeningSkin aSkin) {theSkin = aSkin;}
+    public VocScreeningSkin getSkin() {return skin;}
     /** Пульсация артерий правой руки */
     @Comment("Пульсация артерий правой руки")
     @OneToOne
-    public VocScreeningArterialPulsation getRightHandAP() {return theRightHandAP;}
-    public void setRightHandAP(VocScreeningArterialPulsation aRightHandAP) {theRightHandAP = aRightHandAP;}
+    public VocScreeningArterialPulsation getRightHandAP() {return rightHandAP;}
     /** Пульсация артерий ноги */
     @Comment("Пульсация артерий ноги")
     @OneToOne
-    public VocScreeningArterialPulsation getLegAP() {return theLegAP;}
-    public void setLegAP(VocScreeningArterialPulsation aLegAP) {theLegAP = aLegAP;}
-    /** Пульсоксиметрия на конечностях одновременная - правая рука */
-    @Comment("Пульсоксиметрия на конечностях одновременная - правая рука")
-    public Long getRightHandPulse() {return theRightHandPulse;}
-    public void setRightHandPulse(Long aRightHandPulse) {theRightHandPulse = aRightHandPulse;}
-    /** Пульсоксиметрия на конечностях одновременная - нога */
-    @Comment("Пульсоксиметрия на конечностях одновременная - нога")
-    public Long getLegPulse() {return theLegPulse;}
-    public void setLegPulse(Long aLegPulse) {theLegPulse = aLegPulse;}
-    /** Частота дыхания в мин. */
-    @Comment("Частота дыхания в мин.")
-    public Long getBreathingRate() {return theBreathingRate;}
-    public void setBreathingRate(Long aBreathingRate) {theBreathingRate = aBreathingRate;}
-    /** Втяжение межрёберных промежутков */
-    @Comment("Втяжение межрёберных промежутков")
-    public Boolean getRetractionIntercostalGaps() {return theRetractionIntercostalGaps;}
-    public void setRetractionIntercostalGaps(Boolean aRetractionIntercostalGaps) {theRetractionIntercostalGaps = aRetractionIntercostalGaps;}
-    /** Движение крыльев носа */
-    @Comment("Движение крыльев носа")
-    public Boolean getNoseWingsMovement() {return theNoseWingsMovement;}
-    public void setNoseWingsMovement(Boolean aNoseWingsMovement) {theNoseWingsMovement = aNoseWingsMovement;}
-    /** Шумное дыхание */
-    @Comment("Шумное дыхание")
-    public Boolean getNoisyBreathing() {return theNoisyBreathing;}
-    public void setNoisyBreathing(Boolean aNoisyBreathing) {theNoisyBreathing = aNoisyBreathing;}
-    /** Хрипы */
-    @Comment("Хрипы")
-    public Boolean getWheezing() {return theWheezing;}
-    public void setWheezing(Boolean aWheezing) {theWheezing = aWheezing;}
+    public VocScreeningArterialPulsation getLegAP() {return legAP;}
     /** Характеристика ЦНС */
     @Comment("Характеристика ЦНС")
     @OneToOne
-    public VocScreeningCNS getCNS() {return theCNS;}
-    public void setCNS(VocScreeningCNS aCNS) {theCNS = aCNS;}
-    /** Частота СД в мин. */
-    @Comment("Частота СД в мин.")
-    public Long getHeartRate() {return theHeartRate;}
-    public void setHeartRate(Long aHeartRate) {theHeartRate = aHeartRate;}
+    public VocScreeningCNS getCns() {return cns;}
     /** Характеристика СД */
     @Comment("Характеристика СД")
     @OneToOne
-    public VocScreeningCardiacActivity getCardiacActivity() {return theCardiacActivity;}
-    public void setCardiacActivity(VocScreeningCardiacActivity aCardiacActivity) {theCardiacActivity = aCardiacActivity;}
-    /** Наличие шума  */
-    @Comment("Наличие шума")
-    public Boolean getNoisePresence() {return theNoisePresence;}
-    public void setNoisePresence(Boolean aNoisePresence) {theNoisePresence = aNoisePresence;}
-    /** Доп. информация  */
-    @Comment("Доп. информация")
-    public String getExtraInfo() {return theExtraInfo;}
-    public void setExtraInfo(String aExtraInfo) {theExtraInfo = aExtraInfo;}
-
+    public VocScreeningCardiacActivity getCardiacActivity() {return cardiacActivity;}
     /** СМО */
-    private MedCase theMedCase;
+    private MedCase medCase;
     /** Пользователь, который последний редактировал запись */
-    private String theEditUsername;
+    private String editUsername;
     /** Пользователь, который создал запись */
-    private String theCreateUsername;
+    private String createUsername;
     /** Время редактрования */
-    private Time theEditTime;
+    private Time editTime;
     /** Время создания */
-    private Time theCreateTime;
+    private Time createTime;
     /** Дата редактирования */
-    private Date theEditDate;
+    private Date editDate;
     /** Дата создания */
-    private Date theCreateDate;
+    private Date createDate;
     /** Кожные покровы */
-    private VocScreeningSkin theSkin;
+    private VocScreeningSkin skin;
     /** Пульсация артерий правой руки */
-    private VocScreeningArterialPulsation theRightHandAP;
+    private VocScreeningArterialPulsation rightHandAP;
     /** Пульсация артерий ноги */
-    private VocScreeningArterialPulsation theLegAP;
+    private VocScreeningArterialPulsation legAP;
     /** Пульсоксиметрия на конечностях одновременная - правая рука*/
-    private Long theRightHandPulse;
+    private Long rightHandPulse;
     /** Пульсоксиметрия на конечностях одновременная - нога*/
-    private Long theLegPulse;
+    private Long legPulse;
     /** Частота дыхания в мин. */
-    private Long theBreathingRate;
+    private Long breathingRate;
     /** Втяжение межрёберных промежутков */
-    private Boolean theRetractionIntercostalGaps;
+    private Boolean retractionIntercostalGaps;
     /** Движение крыльев носа */
-    private Boolean theNoseWingsMovement;
+    private Boolean noseWingsMovement;
     /** Шумное дыхание */
-    private Boolean theNoisyBreathing;
+    private Boolean noisyBreathing;
     /** Хрипы */
-    private Boolean theWheezing;
+    private Boolean wheezing;
     /** Характеристика ЦНС */
-    private VocScreeningCNS theCNS;
+    private VocScreeningCNS cns;
     /** Частота СД в минуту */
-    private Long theHeartRate;
+    private Long heartRate;
     /** Характеристика СД */
-    private VocScreeningCardiacActivity theCardiacActivity;
+    private VocScreeningCardiacActivity cardiacActivity;
     /** Наличие шума */
-    private Boolean theNoisePresence;
+    private Boolean noisePresence;
     /** Доп. информация */
-    private String theExtraInfo;
+    private String extraInfo;
 }

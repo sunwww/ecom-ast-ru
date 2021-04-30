@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.Anesthesia;
@@ -16,162 +17,121 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Анестезия", nameProperties= "id", view="entityParentView-stac_anesthesia.do")
 @Parent(property="surgicalOperation", parentForm= SurgicalOperationForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/SurOper/Anesthesia")
+@Setter
 public class AnesthesiaForm extends IdEntityForm {
 
 	/** Метод */
 	@Comment("Метод")
 	@Persist @Required
 	public Long getMethod() {
-		return theMethod;
+		return method;
 	}
 
-	public void setMethod(Long aMethod) {
-		theMethod = aMethod;
-	}
-	
 	/** Вид анестезии */
 	@Comment("Вид анестезии")
 	@Persist
-	public Long getType() {return theType;}
-	public void setType(Long aType) {theType = aType;}
+	public Long getType() {return type;}
 
 	/** Вид анестезии */
-	private Long theType;
+	private Long type;
 	/** Метод */
-	private Long theMethod;
+	private Long method;
 	
 	/** Длительность в минутах */
 	@Comment("Длительность в минутах")
 	@Persist @Required @IntegerString
 	public Integer getDuration() {
-		return theDuration;
-	}
-
-	public void setDuration(Integer aDuration) {
-		theDuration = aDuration;
+		return duration;
 	}
 
 	/** Длительность в минутах */
-	private Integer theDuration;
+	private Integer duration;
 	
 	/** Описание */
 	@Comment("Описание")
 	@Persist 
 	public String getDescription() {
-		return theDescription;
-	}
-
-	public void setDescription(String aDescription) {
-		theDescription = aDescription;
+		return description;
 	}
 
 	/** Описание */
-	private String theDescription;
+	private String description;
 	
 	/** Хирургическая операция */
 	@Comment("Хирургическая операция")
 	@Persist @Required
 	public Long getSurgicalOperation() {
-		return theSurgicalOperation;
-	}
-
-	public void setSurgicalOperation(Long aSurgicalOperation) {
-		theSurgicalOperation = aSurgicalOperation;
+		return surgicalOperation;
 	}
 
 	/** Хирургическая операция */
-	private Long theSurgicalOperation;
+	private Long surgicalOperation;
 	
 	/** Анестезиолог */
 	@Comment("Анестезист")
 	@Persist @Required
 	public Long getAnesthesist() {
-		return theAnesthesist;
-	}
-
-	public void setAnesthesist(Long aAnesthesist) {
-		theAnesthesist = aAnesthesist;
+		return anesthesist;
 	}
 
 	/** Анестезиолог */
-	private Long theAnesthesist;
+	private Long anesthesist;
 	
 	/** Анестезист инфо */
 	@Comment("Анестезист инфо")
 	@Persist
 	public String getAnesthesistInfo() {
-		return theAnesthesistInfo;
-	}
-
-	public void setAnesthesistInfo(String aAnesthesistInfo) {
-		theAnesthesistInfo = aAnesthesistInfo;
+		return anesthesistInfo;
 	}
 
 	/** Анестезист инфо */
-	private String theAnesthesistInfo;
+	private String anesthesistInfo;
 	
 	/** Метод инфо */
 	@Comment("Метод инфо")
 	@Persist
 	public String getMethodInfo() {
-		return theMethodInfo;
-	}
-
-	public void setMethodInfo(String aMethodInfo) {
-		theMethodInfo = aMethodInfo;
+		return methodInfo;
 	}
 
 	/** Метод инфо */
-	private String theMethodInfo;
+	private String methodInfo;
 	
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist
 	public String getCreateDate() {
-		return theCreateDate;
-	}
-
-	public void setCreateDate(String aCreateDate) {
-		theCreateDate = aCreateDate;
+		return createDate;
 	}
 
 	/** Пользователь создавший запись */
 	@Comment("Пользователь создавший запись")
 	@Persist
 	public String getCreateUsername() {
-		return theCreateUsername;
-	}
-
-	public void setCreateUsername(String aCreateUsername) {
-		theCreateUsername = aCreateUsername;
+		return createUsername;
 	}
 
 	/** Пользователь создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	
 	/** Мед.услуга */
 	@Comment("Мед.услуга")
 	@Persist
 	public Long getMedService() {
-		return theMedService;
-	}
-
-	public void setMedService(Long aMedService) {
-		theMedService = aMedService;
+		return medService;
 	}
 
 	/** Мед.услуга */
-	private Long theMedService;
+	private Long medService;
 	
 	/** Время создания */
 	@Comment("Время создания")
 	@Persist @DoTimeString @TimeString
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;}
 
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 
 }

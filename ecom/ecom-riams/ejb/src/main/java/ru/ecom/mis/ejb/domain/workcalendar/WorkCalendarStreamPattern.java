@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -11,6 +13,8 @@ import javax.persistence.OneToOne;
 	 */
 	@Comment("Шаблон потока обслуживания рабочего календаря")
 @Entity
+	@Getter
+	@Setter
 public class WorkCalendarStreamPattern extends WorkCalendarReservePattern{
 	/**
 	 * Поток обслуживания
@@ -18,28 +22,14 @@ public class WorkCalendarStreamPattern extends WorkCalendarReservePattern{
 	@Comment("Поток обслуживания")
 	@OneToOne
 	public VocServiceStream getServiceStream() {
-		return theServiceStream;
-	}
-	public void setServiceStream(VocServiceStream aServiceStream) {
-		theServiceStream = aServiceStream;
+		return serviceStream;
 	}
 	/**
 	 * Поток обслуживания
 	 */
-	private VocServiceStream theServiceStream;
+	private VocServiceStream serviceStream;
 	/**
 	 * Процент резерва
 	 */
-	@Comment("Процент резерва")
-	
-	public Integer getPercent() {
-		return thePercent;
-	}
-	public void setPercent(Integer aPercent) {
-		thePercent = aPercent;
-	}
-	/**
-	 * Процент резерва
-	 */
-	private Integer thePercent;
+	private Integer percent;
 }

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase.hospital;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.medcase.DepartmentMedCase;
 import ru.ecom.mis.ejb.domain.medcase.HospitalMedCase;
@@ -25,6 +27,8 @@ import java.sql.Time;
 @Comment("Температурная кривая")
 @Entity
 @Table(schema = "SQLUser")
+@Getter
+@Setter
 public class TemperatureCurve extends BaseEntity {
 
     /**
@@ -33,51 +37,23 @@ public class TemperatureCurve extends BaseEntity {
     @Comment("Время суток")
     @OneToOne
     public VocDayTime getDayTime() {
-        return theDayTime;
-    }
-
-    public void setDayTime(VocDayTime aDayTime) {
-        theDayTime = aDayTime;
+        return dayTime;
     }
 
     /**
      * Время суток
      */
-    private VocDayTime theDayTime;
+    private VocDayTime dayTime;
 
     /**
      * Температурный градус
      */
-    @Comment("Температурный градус")
-    public BigDecimal getDegree() {
-        return theDegree;
-    }
-
-    public void setDegree(BigDecimal aDegree) {
-        theDegree = aDegree;
-    }
-
-    /**
-     * Температурный градус
-     */
-    private BigDecimal theDegree;
+    private BigDecimal degree;
 
     /**
      * Дата измерения температуры
      */
-    @Comment("Дата измерения температуры")
-    public Date getTakingDate() {
-        return theTakingDate;
-    }
-
-    public void setTakingDate(Date aTakingDate) {
-        theTakingDate = aTakingDate;
-    }
-
-    /**
-     * Дата измерения температуры
-     */
-    private Date theTakingDate;
+    private Date takingDate;
 
     /**
      * Случай медицинского обслуживания
@@ -85,17 +61,13 @@ public class TemperatureCurve extends BaseEntity {
     @Comment("Случай медицинского обслуживания")
     @OneToOne
     public MedCase getMedCase() {
-        return theMedCase;
-    }
-
-    public void setMedCase(MedCase aMedCase) {
-        theMedCase = aMedCase;
+        return medCase;
     }
 
     /**
      * Случай медицинского обслуживания
      */
-    private MedCase theMedCase;
+    private MedCase medCase;
 
     /**
      * День пребывания в стационаре
@@ -103,37 +75,25 @@ public class TemperatureCurve extends BaseEntity {
     @Comment("День пребывания в стационаре")
     @Transient
     public Integer getHospDayNumber() {
-        Long dateFinish = theTakingDate.getTime();
-        Long dateStart = dateFinish;
-        if (theMedCase instanceof HospitalMedCase) {
-            dateStart = theMedCase.getDateStart().getTime();
+        long dateFinish = takingDate.getTime();
+        long dateStart = dateFinish;
+        if (medCase instanceof HospitalMedCase) {
+            dateStart = medCase.getDateStart().getTime();
         }
-        if (theMedCase instanceof DepartmentMedCase) {
-            dateStart = theMedCase.getParent().getDateStart().getTime();
+        if (medCase instanceof DepartmentMedCase) {
+            dateStart = medCase.getParent().getDateStart().getTime();
         }
 
         final int msecinday = 1000 * 60 * 60 * 24;
 
-        return Integer.valueOf((int) (1 + ((dateFinish - dateStart) / msecinday)));
+        return (int) (1 + ((dateFinish - dateStart) / msecinday));
     }
 
 
     /**
      * День болезни
      */
-    @Comment("День болезни")
-    public Integer getIllnessDayNumber() {
-        return theIllnessDayNumber;
-    }
-
-    public void setIllnessDayNumber(Integer aIllnessDayNumber) {
-        theIllnessDayNumber = aIllnessDayNumber;
-    }
-
-    /**
-     * День болезни
-     */
-    private Integer theIllnessDayNumber;
+    private Integer illnessDayNumber;
 
 
     /**
@@ -142,109 +102,40 @@ public class TemperatureCurve extends BaseEntity {
     @Comment("Время суток (текст)")
     @Transient
     public String getDayTimeText() {
-        return theDayTime != null ? theDayTime.getName() : "";
+        return dayTime != null ? dayTime.getName() : "";
     }
 
     /**
      * Дата создания
      */
-    @Comment("Дата создания")
-    public Date getDate() {
-        return theDate;
-    }
+    private Date date;
 
-    public void setDate(Date aDate) {
-        theDate = aDate;
-    }
-
-    /**
-     * Дата создания
-     */
-    private Date theDate;
 
     /**
      * Время создания
      */
-    @Comment("Время создания")
-    public Time getTime() {
-        return theTime;
-    }
+    private Time time;
 
-    public void setTime(Time aTime) {
-        theTime = aTime;
-    }
-
-    /**
-     * Время создания
-     */
-    private Time theTime;
 
     /**
      * Время редактирования
      */
-    @Comment("Время редактирования")
-    public Time getEditTime() {
-        return theEditTime;
-    }
+    private Time editTime;
 
-    public void setEditTime(Time aEditTime) {
-        theEditTime = aEditTime;
-    }
-
-    /**
-     * Время редактирования
-     */
-    private Time theEditTime;
 
     /**
      * Дата редактирования
      */
-    @Comment("Дата редактирования")
-    public Date getEditDate() {
-        return theEditDate;
-    }
+    private Date editDate;
 
-    public void setEditDate(Date aEditDate) {
-        theEditDate = aEditDate;
-    }
-
-    /**
-     * Дата редактирования
-     */
-    private Date theEditDate;
 
     /**
      * Пользователь последний, изменявший запись
      */
-    @Comment("Пользователь последний, изменявший запись")
-    public String getEditUsername() {
-        return theEditUsername;
-    }
-
-    public void setEditUsername(String aEditUsername) {
-        theEditUsername = aEditUsername;
-    }
-
-    /**
-     * Пользователь последний, изменявший запись
-     */
-    private String theEditUsername;
+    private String editUsername;
 
     /**
      * Пользователь
      */
-    @Comment("Пользователь")
-    public String getUsername() {
-        return theUsername;
-    }
-
-    public void setUsername(String aUsername) {
-        theUsername = aUsername;
-    }
-
-    /**
-     * Пользователь
-     */
-    private String theUsername;
-
+    private String username;
 }

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -20,22 +22,14 @@ import javax.persistence.Transient;
     @AIndex(properties="code")
     }) 
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public abstract class StatisticStub extends BaseEntity {
-	/** Год */
-	@Comment("Год")
-	public Long getYear() {return theYear;}
-	public void setYear(Long aYear) {theYear = aYear;}
-
-	/** Код */
-	@Comment("Код")
-	public String getCode() {return theCode;}
-	public void setCode(String aCode) {theCode = aCode;}
 
 	/** СМО */
 	@Comment("СМО")
 	@OneToOne
-	public MedCase getMedCase() {return theMedCase;}
-	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
+	public MedCase getMedCase() {return medCase;}
 
 	/**Информация (текст)*/
 	@Transient
@@ -47,14 +41,12 @@ public abstract class StatisticStub extends BaseEntity {
 	/** Лечебное учреждение */
 	@Comment("Лечебное учреждение")
 	@OneToOne
-	public MisLpu getLpu() {return theLpu;}
-	public void setLpu(MisLpu aLpu) {theLpu = aLpu;}
+	public MisLpu getLpu() {return lpu;}
 
 	/**Лечебное учреждение инфо */
 	@Transient
 	@Comment("Лечебное учреждение инфо")
 	public String getLpuInfo() {
-		//return theLpu!=null ? theLpu.getFullname() : "" ;
 		return "";
 	}
 	
@@ -62,100 +54,51 @@ public abstract class StatisticStub extends BaseEntity {
 	/** Приемник */
 	@Comment("Приемник")
 	@OneToOne
-	public VocPigeonHole getPigeonHole() {return thePigeonHole;}
-	public void setPigeonHole(VocPigeonHole aPigeonHole) {thePigeonHole = aPigeonHole;}
-
-	/** Экстренно */
-	@Comment("Экстренно")
-	public Boolean getIsEmergency() {return theIsEmergency;}
-	public void setIsEmergency(Boolean aIsEmergency) {theIsEmergency = aIsEmergency;}
+	public VocPigeonHole getPigeonHole() {return pigeonHole;}
 
 	/** Планово */
-	@Comment("Планово")
-	public Boolean getIsPlan() {return theIsPlan;}
-	public void setIsPlan(Boolean aIsPlan) {theIsPlan = aIsPlan;}
-
-	/** Планово */
-	private Boolean theIsPlan;
+	private Boolean isPlan;
 	/** Экстренно */
-	private Boolean theIsEmergency;
+	private Boolean isEmergency;
 	/** Приемник */
-	private VocPigeonHole thePigeonHole;
+	private VocPigeonHole pigeonHole;
 	/** Лечебное учреждение */
-	private MisLpu theLpu;
+	private MisLpu lpu;
 	/** СМО */
-	private MedCase theMedCase;
+	private MedCase medCase;
 	/** Код */
-	private String theCode;
+	private String code;
 	/** Год */
-	private Long theYear;
+	private Long year;
 	/** Причина выписки */
 	@Comment("Причина выписки")
 	@OneToOne
-	public VocReasonDischarge getReasonDischarge() {return theReasonDischarge;}
-	public void setReasonDischarge(VocReasonDischarge aReasonDischarge) {theReasonDischarge = aReasonDischarge;}
+	public VocReasonDischarge getReasonDischarge() {return reasonDischarge;}
 
 	/** Причина выписки */
-	private VocReasonDischarge theReasonDischarge;
+	private VocReasonDischarge reasonDischarge;
 	
 	/** Итог лечения */
 	@Comment("Итог лечения")
 	@OneToOne
-	public VocResultDischarge getResultDischarge() {return theResultDischarge;}
-	public void setResultDischarge(VocResultDischarge aResultDischarge) {theResultDischarge = aResultDischarge;}
+	public VocResultDischarge getResultDischarge() {return resultDischarge;}
 
 	/** Итог лечения */
-	private VocResultDischarge theResultDischarge;
+	private VocResultDischarge resultDischarge;
 	
 	/** Номер архивного дела */
-	@Comment("Номер архивного дела")
-	public Long getArchiveCase() {return theArchiveCase;}
-	public void setArchiveCase(Long aArchiveCase) {theArchiveCase = aArchiveCase;}
-	/** Номер архивного дела */
-	private Long theArchiveCase;
+	private Long archiveCase;
 
 	/** Рост */
-	@Comment("Рост")
-	public Integer getHeight() {
-		return theHeight;
-	}
-
-	public void setHeight(Integer aHeight) {
-		theHeight = aHeight;
-	}
-
-	/** Рост */
-	private Integer theHeight;
+	private Integer height;
 
 	/** Вес */
-	@Comment("Вес")
-	public Integer getWeight() { return theWeight; }
-
-	public void setWeight(Integer aWeight) {
-		theWeight = aWeight;
-	}
-
-	/** Вес */
-	private Integer theWeight;
+	private Integer weight;
 
 	/** Индекс массы тела */
-	@Comment("Индекс массы тела")
-	public Double getIMT() { return theIMT; }
-
-	public void setIMT(Double aIMT) {
-		theIMT = aIMT;
-	}
-
-	/** Индекс массы тела */
-	private Double theIMT;
+	private Double iMT;
 
 	/** Визит оформлен диетологом */
-	@Comment("Визит оформлен диетологом")
-	public Boolean getDietDone() { return theDietDone; }
-
-	public void setDietDone(Boolean aDietDone) { theDietDone = aDietDone; }
-
-	/** Визит оформлен диетологом */
-	private Boolean theDietDone;
+	private Boolean dietDone;
 
 }

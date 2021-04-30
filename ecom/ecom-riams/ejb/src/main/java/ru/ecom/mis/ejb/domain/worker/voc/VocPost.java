@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.worker.voc;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.patient.voc.VocIdName;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -12,44 +14,33 @@ import java.util.List;
 @Entity
 @Comment("Справочник должностей")
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VocPost extends VocIdName {
 	
     /** Код профиля отделения для стационара или специалиста для поликлиники */
 	@Comment("Код профиля отделения для стационара или специалиста для поликлиники")
 	@OneToOne
 	public VocOmcDepType getOmcDepType() {
-		return theOmcDepType;
-	}
-
-	public void setOmcDepType(VocOmcDepType aOmcDepType) {
-		theOmcDepType = aOmcDepType;
+		return omcDepType;
 	}
 	/** Код профиля отделения для стационара или специалиста для поликлиники */
-	private VocOmcDepType theOmcDepType;
+	private VocOmcDepType omcDepType;
 	
 	/** Врачебная должность по ОМС */
 	@Comment("Врачебная должность по ОМС")
 	@OneToOne
 	public VocOmcDoctorPost getOmcDoctorPost() {
-		return theOmcDoctorPost;
+		return omcDoctorPost;
 	}
-	public void setOmcDoctorPost(VocOmcDoctorPost aOmcDoctorPost) {
-		theOmcDoctorPost = aOmcDoctorPost;
-	}
-	/** Врачебная должность по ОМС */
-	private VocOmcDoctorPost theOmcDoctorPost;
+	private VocOmcDoctorPost omcDoctorPost;
 	
 	/** Рабочие функции */
 	@Comment("Рабочие функции")
 	@OneToMany(mappedBy="vocPost", cascade=CascadeType.ALL)
 	public List<VocWorkFunction> getVocWorkFunctions() {
-		return theVocWorkFunctions;
+		return vocWorkFunctions;
 	}
-
-	public void setVocWorkFunctions(List<VocWorkFunction> aVocWorkFunctions) {
-		theVocWorkFunctions = aVocWorkFunctions;
-	}
-
 	/** Рабочие функции */
-	private List<VocWorkFunction> theVocWorkFunctions;
+	private List<VocWorkFunction> vocWorkFunctions;
 }

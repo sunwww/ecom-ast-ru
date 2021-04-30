@@ -361,7 +361,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             for (String slId : slIds) {
                 Element sl = new Element("SL");
                 E2Entry currentEntry = manager.find(E2Entry.class, Long.valueOf(slId.trim()));
-                String edCol = "1";
+                String edCol = isTrue(entry.getIsDentalCase()) ? calculateDentalEdcol(entry) : "1";
 
                 if (isPoliclinic) {
                     children = manager.createQuery("from E2Entry where parentEntry_id=:id and coalesce(isDeleted, false) = false and coalesce(doNotSend, false) = false order by startDate").setParameter("id", currentEntry.getId()).getResultList();
@@ -556,7 +556,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(ksgKpg, "N_KSG", ksg.getCode());
                     add(ksgKpg, "VER_KSG", ksg.getYear());
                     add(ksgKpg, "KSG_PG", "0");
-                    add(ksgKpg, "KOEF_Z", ksg.getKZ());
+                    add(ksgKpg, "KOEF_Z", ksg.getKz());
                     add(ksgKpg, "KOEF_UP", expertService.getActualKsgUprCoefficient(ksg, currentEntry.getFinishDate()));
                     add(ksgKpg, "BZTSZ", currentEntry.getBaseTarif());
                     add(ksgKpg, "KOEF_D", "1");
@@ -597,7 +597,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(naz, "NAZ_V", "1");
                     sl.addContent(naz);
                 }
-                add(sl, "ED_COL", edCol);
+                add(sl, "ED_COL", edCol); //для стомов - кол-во УЕТ
                 if (isPoliclinicKdp) {
                     add(sl, "TARIF", entry.getCost());
                     add(sl, "SUM_M", entry.getCost());
@@ -679,12 +679,12 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     }
                 } else if (!isVmp) { //стационар //нах все услуги с ВМП
                     List<Object[]> list = manager.createNativeQuery("select vms.code as ms, cast(count(ems.id) as varchar) as cnt" +
-                            ", coalesce(cast(case when ems.serviceDate>e.finishdate then e.finishdate else ems.servicedate end as varchar(10)),'') as serviceDate" +
+                            ", coalesce(cast(case when ems.serviceDate>e.finishdate n e.finishdate else ems.servicedate end as varchar(10)),'') as serviceDate" +
                             " from EntryMedService ems" +
                             " left join e2entry e on ems.entry_id = e.id" +
                             " left join vocMedService vms on vms.id=ems.medService_id" +
                             " where (e.id=:id or e.parententry_id=:id) and ems.serviceDate>=:entryDate" + //выгружаем только услуги
-                            " group by vms.code, case when ems.serviceDate>e.finishdate then e.finishdate else ems.servicedate end")
+                            " group by vms.code, case when ems.serviceDate>e.finishdate n e.finishdate else ems.servicedate end")
                             .setParameter("id", currentEntry.getId()).setParameter("entryDate", currentEntry.getStartDate()).getResultList();
 
                     if (!list.isEmpty()) {
@@ -721,6 +721,11 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             LOG.error("Entry #" + entry.getId() + ", error = " + e.getLocalizedMessage(), e);
             throw new IllegalStateException("Entry #" + entry.getId() + ", error = " + e.getLocalizedMessage(), e);
         }
+    }
+
+    private String calculateDentalEdcol(E2Entry entry) {
+        LOG.debug(" = " + isEmpty(entry.getMedServices()));
+        return expertService.getSumKuet(entry).toString();
     }
 
     //stom //пока заколхозим

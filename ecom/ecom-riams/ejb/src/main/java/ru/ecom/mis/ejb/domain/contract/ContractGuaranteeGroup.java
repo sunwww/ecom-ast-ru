@@ -18,27 +18,27 @@ public class ContractGuaranteeGroup extends BaseEntity{
  @Comment("Интервалы гарантийных документов")
  @OneToOne
  public GuaranteeInterval getIntervals() {
-  return theIntervals;
+  return intervals;
  }
  public void setIntervals(GuaranteeInterval aIntervals) {
-  theIntervals = aIntervals;
+  intervals = aIntervals;
  }
  /**
   * Интервалы гарантийных документов
   */
- private GuaranteeInterval theIntervals;
+ private GuaranteeInterval intervals;
  /**
   * Название
   */
  @Comment("Название")
  public String getName() {
-  return theName;
+  return name;
  }
  public void setName(String aName) {
-  theName = aName;
+  name = aName;
  }
  /**
   * Название
   */
- private String theName;
+ private String name;
 }

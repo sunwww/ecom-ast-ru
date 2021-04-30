@@ -38,7 +38,7 @@ public class DiaryServiceBean implements IDiaryService {
     @Override
     public CheckNode loadParametersByMedService(long aTemplateId, String aUsername, String aField) {
         TreeSet<Long> parametersSet = new TreeSet<>();
-        List<Object> list = theManager.createNativeQuery("select p.parameter_id from ParameterByForm p where " + aField + " =:temp order by p.position").setParameter("temp", aTemplateId).getResultList();
+        List<Object> list = manager.createNativeQuery("select p.parameter_id from ParameterByForm p where " + aField + " =:temp order by p.position").setParameter("temp", aTemplateId).getResultList();
         for (Object param : list) {
             if (param != null) parametersSet.add(ConvertSql.parseLong(param));
         }
@@ -58,7 +58,7 @@ public class DiaryServiceBean implements IDiaryService {
     }
 
     private List<Object[]> findRootGroups(String aLogin) {
-        return theManager.createNativeQuery("select pg.id,pg.name from ParameterGroup pg" +
+        return manager.createNativeQuery("select pg.id,pg.name from ParameterGroup pg" +
                 " left join parametergroup_secgroup pgsg on pgsg.parametergroup_id=pg.id" +
                 " left join secgroup_secuser sgsu on sgsu.secgroup_id=pgsg.secgroups_id" +
                 " left join secuser su on su.id=sgsu.secusers_id" +
@@ -66,7 +66,7 @@ public class DiaryServiceBean implements IDiaryService {
     }
 
     private void addGroups(Long aGroup, CheckNode aNode, TreeSet<Long> aParameters, String aUsername) {
-        List<Object[]> listChild = theManager.createNativeQuery("select pg.id, pg.name from ParameterGroup pg " +
+        List<Object[]> listChild = manager.createNativeQuery("select pg.id, pg.name from ParameterGroup pg " +
                 " left join parametergroup_secgroup pgsg on pgsg.parametergroup_id=pg.id" +
                 " left join secgroup_secuser sgsu on sgsu.secgroup_id=pgsg.secgroups_id" +
                 " left join secuser su on su.id=sgsu.secusers_id" +
@@ -83,7 +83,7 @@ public class DiaryServiceBean implements IDiaryService {
     }
 
     private void addParameters(Long aGroup, CheckNode aNode, TreeSet<Long> aParameters) {
-        List<Object[]> listChild = theManager.createNativeQuery("select par.id,par.name||' ('||case when par.type='1' then 'Числовой' when par.type='4' then 'Числовой с плавающей точкой зн.'||par.cntDecimal when par.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when par.type='3' then 'Текстовое поле' when par.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end||') - '||coalesce(vmu.name,''),par.type as partype from Parameter par left join userDomain vd on vd.id=par.valueDomain_id left join vocMeasureUnit vmu on vmu.id=par.measureUnit_id where par.group_id = :parent order by par.name").setParameter("parent", aGroup).getResultList();
+        List<Object[]> listChild = manager.createNativeQuery("select par.id,par.name||' ('||case when par.type='1' n 'Числовой' when par.type='4' n 'Числовой с плавающей точкой зн.'||par.cntDecimal when par.type='2' n 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when par.type='3' n 'Текстовое поле' when par.type='5' n 'Текстовое поле с ограничением' else 'неизвестный' end||') - '||coalesce(vmu.name,''),par.type as partype from Parameter par left join userDomain vd on vd.id=par.valueDomain_id left join vocMeasureUnit vmu on vmu.id=par.measureUnit_id where par.group_id = :parent order by par.name").setParameter("parent", aGroup).getResultList();
 
         for (Object[] param : listChild) {
             CheckNodeByParameter node = new CheckNodeByParameter("p" + param[0],
@@ -103,39 +103,39 @@ public class DiaryServiceBean implements IDiaryService {
         int i = 0;
         for (long idParam : aAdded) {
             i++;
-            List<ParameterByForm> list = theManager.createQuery("from ParameterByForm where " + aIdFieldName + "='" + aProtocolId + "' and parameter_id='" + idParam + "'").getResultList();
+            List<ParameterByForm> list = manager.createQuery("from ParameterByForm where " + aIdFieldName + "='" + aProtocolId + "' and parameter_id='" + idParam + "'").getResultList();
             if (list.isEmpty()) {
-                Parameter param = theManager.find(Parameter.class, idParam);
+                Parameter param = manager.find(Parameter.class, idParam);
                 ParameterByForm frm = new ParameterByForm();
                 frm.setParameter(param);
                 if (aIdFieldName.equals("template_id")) {
-                    TemplateProtocol protocol = theManager.find(TemplateProtocol.class, aProtocolId);
+                    TemplateProtocol protocol = manager.find(TemplateProtocol.class, aProtocolId);
                     frm.setTemplate(protocol);
                 } else if (aIdFieldName.equals("assessmentCard")) {
                     frm.setAssessmentCard(aProtocolId);
                 }
                 frm.setPosition((long) i);
-                theManager.persist(frm);
+                manager.persist(frm);
             } else {
                 ParameterByForm frm = list.get(0);
                 frm.setPosition((long) i);
-                theManager.persist(frm);
+                manager.persist(frm);
                 if (list.size() > 1) {
                     for (int j = 1; j < list.size(); j++) {
                         ParameterByForm fr = list.get(i);
-                        theManager.remove(fr);
+                        manager.remove(fr);
                     }
                 }
 
             }
         }
         for (long idParam : aRemoved) {
-            theManager.createNativeQuery("delete from ParameterByForm where " + aIdFieldName + "='" + aProtocolId + "' and parameter_id='" + idParam + "'").executeUpdate();
+            manager.createNativeQuery("delete from ParameterByForm where " + aIdFieldName + "='" + aProtocolId + "' and parameter_id='" + idParam + "'").executeUpdate();
         }
     }
 
     @EJB
-    ILocalEntityFormService theEntityFormService;
+    ILocalEntityFormService entityFormService;
     @PersistenceContext
-    EntityManager theManager;
+    EntityManager manager;
 }

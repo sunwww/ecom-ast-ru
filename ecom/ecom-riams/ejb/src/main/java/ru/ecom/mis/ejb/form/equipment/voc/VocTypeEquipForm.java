@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.equipment.voc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.equipment.voc.VocTypeEquip;
@@ -16,19 +17,18 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Тип оборудования", nameProperties= "name", view="entityView-voc_typeEquip.do")
 @EntityFormSecurityPrefix("/Policy/Mis/Equipment/Equipment")
 
+@Setter
 public class VocTypeEquipForm extends IdEntityForm{
 	/** Наименование */
 	@Comment("Наименование")
 	@Persist
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
-	private String theName;
+	public String getName() {return name;}
+	private String name;
 	/** Код */
 	@Comment("Код")
 	@Persist
-	public String getCode() {return theCode;}
-	public void setCode(String aCode) {theCode = aCode;}
+	public String getCode() {return code;}
 
 	/** Код */
-	private String theCode;
+	private String code;
 }

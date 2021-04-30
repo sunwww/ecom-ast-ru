@@ -28,21 +28,21 @@ public class EntityVocAllValue implements IAllValue {
         return ret;
     }
     public EntityVocAllValue(String aEntity, String aId, String aProperties, String aSortBy) {
-        theId = aId ;
-        theNameProperties = aProperties ;
-        theEntity = aEntity ;
-        theSortBy = aSortBy ;
+        id = aId ;
+        nameProperties = aProperties ;
+        entity = aEntity ;
+        sortBy = aSortBy ;
     }
 
     public Collection<VocValue> listAll(AllValueContext aContext) {
         EntityManager manager = aContext.getEntityManager() ;
-        List list = manager.createQuery("from "+theEntity+" c order by "+theSortBy).getResultList();
+        List list = manager.createQuery("from "+entity+" c order by "+sortBy).getResultList();
         LinkedList<VocValue> ret = new LinkedList<VocValue>();
 
         for (Object obj : list) {
-            String id = getProperty(obj, theId) ;
-            String name = getProperties(obj, theNameProperties) ;
-            ret.add(new VocValue(id, name)) ;
+            String ids = getProperty(obj, id) ;
+            String name = getProperties(obj, nameProperties) ;
+            ret.add(new VocValue(ids, name)) ;
         }
         return ret ;
     }
@@ -57,21 +57,21 @@ public class EntityVocAllValue implements IAllValue {
         return sb.toString() ;
     }
 
-    private String getProperty(Object obj, String theId)  {
+    private String getProperty(Object obj, String id)  {
         try {
-            return PropertyUtil.getPropertyValue(obj, theId)+"" ;
+            return PropertyUtil.getPropertyValue(obj, id)+"" ;
         } catch (Exception e) {
-            throw new IllegalStateException("Ошибка получение значения свойства "+theId+" у объекта "+obj,e) ;
+            throw new IllegalStateException("Ошибка получение значения свойства "+id+" у объекта "+obj,e) ;
         }
     }
 
     public void destroy() {
     }
 
-    private final String theEntity ;
-    private final String theSortBy ;
-    private final String theId ;
-    private final String theNameProperties ;
+    private final String entity ;
+    private final String sortBy ;
+    private final String id ;
+    private final String nameProperties ;
 	public Collection<VocValue> findVocValueByQuery(String aVocName,
 			String aQuery, int aCount, VocAdditional aAdditional,
 			AllValueContext aContext) throws VocServiceException {
@@ -97,11 +97,11 @@ public class EntityVocAllValue implements IAllValue {
                         }
                     }
                 }
-                if (name != null && name.toUpperCase().indexOf(query) > -1) {
+                if (name != null && name.toUpperCase().contains(query)) {
                     findedId = id;
                     finded=true;
                 }
-                if (id != null && id.toUpperCase().indexOf(query) > -1) {
+                if (id != null && id.toUpperCase().contains(query)) {
                     findedId = id;
                     finded=true;
                 }

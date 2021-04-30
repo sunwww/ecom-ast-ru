@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -32,241 +34,158 @@ import java.sql.Time;
 		, @AIndex(properties={"visit"}) 
 		, @AIndex(properties={"medCase"}) 
 		})
+@Getter
+@Setter
 public class WorkCalendarHospitalBed extends BaseEntity {
 
-	/** Внутренний номер направления */
-	@Comment("Внутренний номер направления")
-	public String getInternalCode() {return theInternalCode;}
-	public void setInternalCode(String aInternalCode) {theInternalCode = aInternalCode;}
 	/** Внутренний номер направлания */
-	private String theInternalCode ;
+	private String internalCode ;
 
 	/** Отделение */
 	@Comment("Отделение")
 	@OneToOne
-	public MisLpu getDepartment() {return theDepartment;}
-	public void setDepartment(MisLpu aDepartment) {theDepartment = aDepartment;}
+	public MisLpu getDepartment() {return department;}
 
 	/** Пациент */
 	@Comment("Пациент")
 	@OneToOne
-	public Patient getPatient() {return thePatient;}
-	public void setPatient(Patient aPatient) {thePatient = aPatient;}
+	public Patient getPatient() {return patient;}
 
 	/** Палата */
 	@Comment("Палата")
 	@OneToOne
-	public HospitalRoom getHospitalRoom() {return theHospitalRoom;}
-	public void setHospitalRoom(HospitalRoom aHospitalRoom) {theHospitalRoom = aHospitalRoom;}
+	public HospitalRoom getHospitalRoom() {return hospitalRoom;}
 
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@OneToOne
-	public VocServiceStream getServiceStream() {return theServiceStream;}
-	public void setServiceStream(VocServiceStream aServiceStream) {theServiceStream = aServiceStream;}
+	public VocServiceStream getServiceStream() {return serviceStream;}
 
 	/** Примечание */
 	@Comment("Примечание")
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
+	public String getComment() {return comment;}
 
-	/** Предполагается операция */
-	@Comment("Предполагается операция")
-	public Boolean getIsOperation() {return theIsOperation;}
-	public void setIsOperation(Boolean aIsOperation) {theIsOperation = aIsOperation;}
 
 	/** Диагноз */
 	@Comment("Диагноз")
 	@OneToOne
-	public VocIdc10 getIdc10() {return theIdc10;}
-	public void setIdc10(VocIdc10 aIdc10) {theIdc10 = aIdc10;}
-
-	/** Текст диагноза */
-	@Comment("Текст диагноза")
-	public String getDiagnosis() {return theDiagnosis;}
-	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
+	public VocIdc10 getIdc10() {return idc10;}
 
 	/** Фактическая госпитализация */
 	@Comment("Фактическая госпитализация")
 	@OneToOne
-	public MedCase getMedCase() {return theMedCase;}
-	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
-
-	/** Предполагаемая дата начала госпитализации */
-	@Comment("Предполагаемая дата начала госпитализации")
-	public Date getDateFrom() {return theDateFrom;}
-	public void setDateFrom(Date aDateFrom) {theDateFrom = aDateFrom;}
-
-	/** Предполагаемая дата окончания госпитализации */
-	@Comment("Предсполагаемая дата окончания госпитализации")
-	public Date getDateTo() {return theDateTo;}
-	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;}
-
-	/** Предполагаемое количество дней госпитализации */
-	@Comment("Предполагаемое количество дней госпитализации")
-	public Long getCntDays() {return theCntDays;}
-	public void setCntDays(Long aCntDays) {theCntDays = aCntDays;}
-
-	/** ФИО пациента */
-	@Comment("ФИО пациента")
-	public String getFio() {return theFio;}
-	public void setFio(String aFio) {theFio = aFio;}
-
-	/** Телефон пациента */
-	@Comment("Телефон пациента")
-	public String getPhone() {return thePhone;}
-	public void setPhone(String aPhone) {thePhone = aPhone;}
+	public MedCase getMedCase() {return medCase;}
 
 	/** Пол */
 	@Comment("Пол")
 	@OneToOne
-	public VocSex getSex() {return theSex;}
-	public void setSex(VocSex aSex) {theSex = aSex;}
+	public VocSex getSex() {return sex;}
 
 	/** Койка */
 	@Comment("Койка")
 	@OneToOne
-	public HospitalBed getHospitalBed() {return theHospitalBed;}
-	public void setHospitalBed(HospitalBed aHospitalBed) {theHospitalBed = aHospitalBed;}
+	public HospitalBed getHospitalBed() {return hospitalBed;}
 
 	/** Койка */
-	private HospitalBed theHospitalBed;
+	private HospitalBed hospitalBed;
 	/** Пол */
-	private VocSex theSex;
+	private VocSex sex;
 	/** Телефон пациента */
-	private String thePhone;
+	private String phone;
 	/** ФИО пациента */
-	private String theFio;
+	private String fio;
 	/** Предполагаемое количество дней госпитализации */
-	private Long theCntDays;
+	private Long cntDays;
 	/** Предполагаемая дата окончания госпитализации */
-	private Date theDateTo;
+	private Date dateTo;
 	/** Предполагаемая дата начала госпитализации */
-	private Date theDateFrom;
+	private Date dateFrom;
 	/** Фактическая госпитализация */
-	private MedCase theMedCase;
+	private MedCase medCase;
 	/** Текст диагноза */
-	private String theDiagnosis;
+	private String diagnosis;
 	/** Диагноз */
-	private VocIdc10 theIdc10;
+	private VocIdc10 idc10;
 	/** Предполагается операция */
-	private Boolean theIsOperation;
+	private Boolean isOperation;
 	/** Примечание */
-	private String theComment;
+	private String comment;
 	/** Поток обслуживания */
-	private VocServiceStream theServiceStream;
+	private VocServiceStream serviceStream;
 	/** Палата */
-	private HospitalRoom theHospitalRoom;
+	private HospitalRoom hospitalRoom;
 	/** Пациент */
-	private Patient thePatient;
+	private Patient patient;
 	/** Отделение */
-	private MisLpu theDepartment;
+	private MisLpu department;
 	
 	/** СМО */
 	@Comment("СМО")
 	@OneToOne
 	public MedCase getVisit() {
-		return theVisit;
-	}
-
-	public void setVisit(MedCase aVisit) {
-		theVisit = aVisit;
+		return visit;
 	}
 
 	/** СМО */
-	private MedCase theVisit;
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-	
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	/** Время редактрования */
-	@Comment("Время редактрования")
-	public Time getEditTime() {return theEditTime;}
-	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-	/** Пользователь, который создал запись */
-	@Comment("Пользователь, который создал запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	/** Пользователь, который последний редактировал запись */
-	@Comment("Пользователь, который последний редактировал запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	private MedCase visit;
 
 	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private Time theEditTime;
+	private Time editTime;
 	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@OneToOne
-	public WorkFunction getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(WorkFunction aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public WorkFunction getWorkFunction() {return workFunction;}
 
 	/** Рабочая функция */
-	private WorkFunction theWorkFunction;
+	private WorkFunction workFunction;
 	
 	/** Профиль коек */
 	@Comment("Профиль коек")
 	@OneToOne
-	public VocBedType getBedType() {return theBedType;}
-	public void setBedType(VocBedType aBedType) {theBedType = aBedType;}
+	public VocBedType getBedType() {return bedType;}
 
 	/** Тип коек */
 	@Comment("Тип коек")
 	@OneToOne
-	public VocBedSubType getBedSubType() {return theBedSubType;}
-	public void setBedSubType(VocBedSubType aBedSubType) {theBedSubType = aBedSubType;}
+	public VocBedSubType getBedSubType() {return bedSubType;}
 
 	/** Тип коек */
-	private VocBedSubType theBedSubType;
+	private VocBedSubType bedSubType;
 	/** Профиль коек */
-	private VocBedType theBedType;
+	private VocBedType bedType;
 	
 	/** Откуда направление */
 	@Comment("Откуда направление")
 	@OneToOne
 	public MisLpu getOrderLpu() {
-		return theOrderLpu;
-	}
-	public void setOrderLpu(MisLpu aOrderLpu) {
-		theOrderLpu = aOrderLpu;
+		return orderLpu;
 	}
 	/** Откуда направление */
-	private MisLpu theOrderLpu;
+	private MisLpu orderLpu;
 
 	/** ЛПУ куда направляется */
 	@Comment("ЛПУ куда направляется")
 	@OneToOne
-	public MisLpu getDirectLpu() {return theDirectLpu;}
-	public void setDirectLpu(MisLpu aDirectLpu) {theDirectLpu = aDirectLpu;}
+	public MisLpu getDirectLpu() {return directLpu;}
 	/** ЛПУ куда направляется */
-	private MisLpu theDirectLpu ;
+	private MisLpu directLpu ;
 	
 	/** Показания для госпитализации */
 	@Comment("Показания для госпитализации")
 	@OneToOne
-	public VocIndicationHospitalization getIndicationToHosp() {return theIndicationToHosp;}
-	public void setIndicationToHosp(VocIndicationHospitalization aIndicationToHosp) {theIndicationToHosp = aIndicationToHosp;}
+	public VocIndicationHospitalization getIndicationToHosp() {return indicationToHosp;}
 	/** Показания для госпитализации */
-	private VocIndicationHospitalization theIndicationToHosp;
+	private VocIndicationHospitalization indicationToHosp;
 }

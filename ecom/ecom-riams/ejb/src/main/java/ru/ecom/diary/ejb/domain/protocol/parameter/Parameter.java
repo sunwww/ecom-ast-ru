@@ -1,5 +1,7 @@
 package ru.ecom.diary.ejb.domain.protocol.parameter;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.diary.ejb.domain.protocol.parameter.user.UserDomain;
 import ru.ecom.diary.ejb.domain.protocol.parameter.voc.VocMeasureUnit;
 import ru.ecom.ejb.domain.simple.BaseEntity;
@@ -23,162 +25,85 @@ import java.util.List;
     @AIndex(properties="group")
     }) 
 @EntityListeners(DeleteListener.class)
+@Getter
+@Setter
 public class Parameter extends BaseEntity{
 	
 	/** Внешний код */
-	@Comment("Внешний код")
-	public String getExternalCode() {return theExternalCode;}
-	public void setExternalCode(String aExternalCode) {theExternalCode = aExternalCode;}
-	/** Внешний код */
-	private String theExternalCode;
-
+	private String externalCode;
 	/** Код */
-	@Comment("Код")
-	public String getCode() {return theCode;}
-	public void setCode(String aCode) {theCode = aCode;}
-	/** Код */
-	private String theCode;
+	private String code;
 
-	/** Наименование */
-	@Comment("Наименование")
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
 
 	/** Единица измерения */
 	@Comment("Единица измерения")
 	@OneToOne
-	public VocMeasureUnit getMeasureUnit() {return theMeasureUnit;}
-	public void setMeasureUnit(VocMeasureUnit aMeasureUnit) {theMeasureUnit = aMeasureUnit;}
-
-	/** Максимальное значение */
-	@Comment("Максимальное значение")
-	@Deprecated
-	public Long getMaximum() {return theMaximum;}
-	public void setMaximum(Long aMaximum) {theMaximum = aMaximum;}
-
-	/** Минимальное значение */
-	@Comment("Минимальное значение")
-	@Deprecated
-	public Long getMinimum() {return theMinimum;}
-	public void setMinimum(Long aMinimum) {theMinimum = aMinimum;}
-
-	/** Норма - максимальное значение */
-	@Comment("Норма - максимальное значение")
-	@Deprecated
-	public Long getNormMaximum() {return theNormMaximum;}
-	public void setNormMaximum(Long aNormMaximum) {theNormMaximum = aNormMaximum;}
-
-	/** Норма - минимальное значение */
-	@Comment("Норма - минимальное значение")
-	@Deprecated
-	public Long getNormMinimum() {return theNormMinimum;}
-	public void setNormMinimum(Long aNormMinimum) {theNormMinimum = aNormMinimum;}
-
-	/** Короткое имя */
-	@Comment("Короткое имя")
-	public String getShortName() {return theShortName;}
-	public void setShortName(String aShortName) {theShortName = aShortName;}
+	public VocMeasureUnit getMeasureUnit() {return measureUnit;}
 
 	/** Группа */
 	@Comment("Группа")
 	@ManyToOne
-	public ParameterGroup getGroup() {return theGroup;}
-	public void setGroup(ParameterGroup aGroup) {theGroup = aGroup;}
+	public ParameterGroup getGroup() {return group;}
 
 	/** Пользовательский справочник */
 	@Comment("Пользовательский справочник")
 	@OneToOne
-	public UserDomain getValueDomain() {return theValueDomain;}
-	public void setValueDomain(UserDomain aValueDomain) {theValueDomain = aValueDomain;}
+	public UserDomain getValueDomain() {return valueDomain;}
 
 	/** Тип параметра */
-	@Comment("Тип параметра")
-	public Long getType() {return theType;}
-	public void setType(Long aType) {theType = aType;}
-
-
-	/** Тип параметра */
-	private Long theType;
+	private Long type;
 	/** Пользовательский справочник */
-	private UserDomain theValueDomain;
+	private UserDomain valueDomain;
 	/** Группа */
-	private ParameterGroup theGroup;
+	private ParameterGroup group;
 	/** Короткое имя */
-	private String theShortName;
+	private String shortName;
 	/** Норма - минимальное значение */
-	private Long theNormMinimum;
+	@Deprecated
+	private Long normMinimum;
 	/** Норма - максимальное значение */
-	private Long theNormMaximum;
+	@Deprecated
+	private Long normMaximum;
 	/** Минимальное значение */
-	private Long theMinimum;
+	@Deprecated
+	private Long minimum;
 	/** Максимальное значение */
-	private Long theMaximum;
+	@Deprecated
+	private Long maximum;
 	
-	/** Норма - минимальное значение */
-	@Comment("Норма - минимальное значение")
-	@Deprecated
-	public String getNormMinimumBD() {return theNormMinimumBD;}
-	public void setNormMinimumBD(String aNormMinimumBD) {theNormMinimumBD = aNormMinimumBD;}
-
-	/** Норма - максимальное значение */
-	@Comment("Норма - максимальное значение")
-	@Deprecated
-	public String getNormMaximumBD() {return theNormMaximumBD;}
-	public void setNormMaximumBD(String aNormMaximumBD) {theNormMaximumBD = aNormMaximumBD;}
-
-	/** Максимальное значение */
-	@Comment("Максимальное значение")
-	@Deprecated
-	public String getMaximumBD() {return theMaximumBD;}
-	public void setMaximumBD(String aMaximumBD) {theMaximumBD = aMaximumBD;}
-
-	/** Минимальное значение */
-	@Comment("Минимальное значение")
-	@Deprecated
-	public String getMinimumBD() {return theMinimumBD;}
-	public void setMinimumBD(String aMinimumBD) {theMinimumBD = aMinimumBD;}
-
 	/** Кол-во знаков после запятой */
-	@Comment("Кол-во знаков после запятой")
-	public Long getCntDecimal() {return theCntDecimal;}
-	public void setCntDecimal(Long aCntDecimal) {theCntDecimal = aCntDecimal;}
-
-	/** Кол-во знаков после запятой */
-	private Long theCntDecimal;
+	private Long cntDecimal;
 	/** Минимальное значение */
-	private String theMinimumBD;
+	@Deprecated
+	private String minimumBD;
 	/** Максимальное значение */
-	private String theMaximumBD;
+	@Deprecated
+	private String maximumBD;
 	/** Норма - максимальное значение */
-	private String theNormMaximumBD;
+	@Deprecated
+	private String normMaximumBD;
 	/** Норма - минимальное значение */
-	private String theNormMinimumBD;
+	@Deprecated
+	private String normMinimumBD;
 	/** Единица измерения */
-	private VocMeasureUnit theMeasureUnit;
+	private VocMeasureUnit measureUnit;
 	/** Наименование */
-	private String theName;
-	
-	/** Значение по умолчанию для текстового поля */
-	@Comment("Значение по умолчанию для текстового поля")
-	public String getValueTextDefault() {return theValueTextDefault;}
-	public void setValueTextDefault(String aValueTextDefault) {theValueTextDefault = aValueTextDefault;}
+	private String name;
 
 	/** Значение по умолчанию для текстового поля */
-	private String theValueTextDefault;
+	private String valueTextDefault;
 
 	/** Список референтных значений */
 	@Comment("Список референтных значений")
 	@OneToMany (mappedBy = "parameter", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	public List<ParameterReferenceValue> getReferenceValues() {return theReferenceValues;}
-	public void setReferenceValues(List<ParameterReferenceValue> aReferenceValues) {theReferenceValues = aReferenceValues;}
+	public List<ParameterReferenceValue> getReferenceValues() {return referenceValues;}
 	/** Список референтных значений */
-	private List<ParameterReferenceValue> theReferenceValues ;
+	private List<ParameterReferenceValue> referenceValues ;
 
 	/** Только для пола */
 	@Comment("Только для пола")
 	@OneToOne
-	public VocSex getForSex() {return theForSex;}
-	public void setForSex(VocSex aForSex) {theForSex = aForSex;}
+	public VocSex getForSex() {return forSex;}
 	/** Только для пола */
-	private VocSex theForSex ;
+	private VocSex forSex ;
 }

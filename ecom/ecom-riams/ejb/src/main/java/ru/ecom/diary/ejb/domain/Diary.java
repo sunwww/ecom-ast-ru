@@ -10,6 +10,8 @@ import javax.persistence.EntityListeners;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.ejb.services.util.ColumnConstants;
@@ -23,74 +25,37 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @EntityListeners(DeleteListener.class)
 @Table(schema="SQLUser")
+@Setter
+@Getter
 public class Diary extends BaseEntity {
-    /** Дата создания */
-	@Comment("Дата создания")
-    public Date getDate() { return theDate ; }
-    public void setDate(Date aDate) { theDate = aDate ; }
 
     /** Запись дневника (протокола) */
     @Comment("Запись дневника")
     @Column(length=ColumnConstants.TEXT_MAXLENGHT)
-    public String getRecord() { return theRecord ; }
-    public void setRecord(String aRecord) { theRecord = aRecord ; }
-    
-    /** Ключевые слова */
-    @Comment("Ключевые слова")
-    public String getKeyWord() { return theKeyWord ; }
-    public void setKeyWord(String aKeyWord) { theKeyWord = aKeyWord ; }
+    public String getRecord() { return record ; }
 
-    /** Время создания */
-	@Comment("Время создания")
-	public Time getTime() {return theTime;}
-	public void setTime(Time aTime) {theTime = aTime;}
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
 
 	/** Пользователь последний, изменявший запись */
-	@Comment("Пользователь последний, изменявший запись")
-	public String getEditUsername() {
-		return theEditUsername;
-	}
-
-	public void setEditUsername(String aEditUsername) {
-		theEditUsername = aEditUsername;
-	}
-
-	/** Пользователь последний, изменявший запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 	/** Время создания */
-	private Time theTime;
+	private Time time;
     /** Ключевые слова */
-    private String theKeyWord ;
+    private String keyWord ;
     /** Запись дневника (протокол) */
-    private String theRecord ;
+    private String record ;
     /** Дата создания */
-    private Date theDate ;
+    private Date date ;
 	/** Тяжесть состояния */
 	@Comment("Тяжесть состояния")
 	@OneToOne
-	public VocPhoneMessageState getState() {return theState;}
-	public void setState(VocPhoneMessageState aState) {theState = aState;}
+	public VocPhoneMessageState getState() {return state;}
 
 	/** Тяжесть состояния */
-	private VocPhoneMessageState theState;
+	private VocPhoneMessageState state;
 	
 	/** Время редактирования */
-	@Comment("Время редактирования")
-	public Time getEditTime() {
-		return theEditTime;
-	}
-
-	public void setEditTime(Time aEditTime) {
-		theEditTime = aEditTime;
-	}
-
-	/** Время редактирования */
-	private Time theEditTime;
+	private Time editTime;
  
  }

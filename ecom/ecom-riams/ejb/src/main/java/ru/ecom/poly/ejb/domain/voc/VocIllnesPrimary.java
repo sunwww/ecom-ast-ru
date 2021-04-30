@@ -1,5 +1,7 @@
 package ru.ecom.poly.ejb.domain.voc;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAcuityDiagnosis;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPrimaryDiagnosis;
@@ -10,40 +12,26 @@ import javax.persistence.OneToOne;
 
 
 @Entity
+@Getter
+@Setter
 public class VocIllnesPrimary extends VocBaseEntity {
 	/** Первичность */
 	@Comment("Первичность")
 	@OneToOne
-	public VocPrimaryDiagnosis getPrimary() {return thePrimary;}
+	public VocPrimaryDiagnosis getPrimary() {return primary;}
 
-	public void setPrimary(VocPrimaryDiagnosis aPrimary){thePrimary = aPrimary;}
-	
 	/** Острота */
 	@Comment("Острота")
 	@OneToOne
-	public VocAcuityDiagnosis getIllnesType() {return theIllnesType;}
-
-	public void setIllnesType(VocAcuityDiagnosis aIllnesType) {theIllnesType = aIllnesType;}
-	
+	public VocAcuityDiagnosis getIllnesType() {return illnesType;}
 	/** Устарел */
-	@Comment("Устарел")
-	public Boolean getDeprecated() {return theDeprecated;}
-	public void setDeprecated(Boolean aDeprecated) {theDeprecated = aDeprecated;}
-
-	/** Устарел */
-	private Boolean theDeprecated;
-
+	private Boolean deprecated;
 	/** Острота */
-	private VocAcuityDiagnosis theIllnesType;
+	private VocAcuityDiagnosis illnesType;
 	/** Первичность */
-	private VocPrimaryDiagnosis thePrimary;
-
+	private VocPrimaryDiagnosis primary;
 	/** Код ОМС */
-	@Comment("Код ОМС")
-	public String getOmcCode() {return theOmcCode;}
-	public void setOmcCode(String aOmcCode) {theOmcCode = aOmcCode;}
-	/** Код ОМС */
-	private String theOmcCode ;
+	private String omcCode ;
 
 
 }

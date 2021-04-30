@@ -1,6 +1,8 @@
 package ru.ecom.mis.ejb.domain.patient;
 
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcKodTer;
@@ -20,18 +22,9 @@ import javax.persistence.Transient;
  */
 @Entity
 @AIndexes(value = {@AIndex(properties = {"insuranceCompanyCode"}, table = "MedPolicy")})
+@Getter
+@Setter
 public class MedPolicyOmcForeign extends MedPolicy {
-    /**
-     * Город Страховщика
-     */
-    @Comment("Город Страховщика")
-    public String getInsuranceCompanyCity() {
-        return theInsuranceCompanyCity;
-    }
-
-    public void setInsuranceCompanyCity(String aOMCCity) {
-        theInsuranceCompanyCity = aOMCCity;
-    }
 
     /**
      * Область Страховщика
@@ -39,25 +32,8 @@ public class MedPolicyOmcForeign extends MedPolicy {
     @Comment("Область Страховщика")
     @OneToOne
     public OmcKodTer getInsuranceCompanyRegion() {
-        return theInsuranceCompanyRegion;
+        return insuranceCompanyRegion;
     }
-
-    public void setInsuranceCompanyRegion(OmcKodTer aOMCRegion) {
-        theInsuranceCompanyRegion = aOMCRegion;
-    }
-
-    /**
-     * Название Страховщика
-     */
-    @Comment("Название Страховщика")
-    public String getInsuranceCompanyName() {
-        return theInsuranceCompanyName;
-    }
-
-    public void setInsuranceCompanyName(String aOMCName) {
-        theInsuranceCompanyName = aOMCName;
-    }
-
 
     /**
      * СМО, выдавшей паспорт
@@ -65,19 +41,14 @@ public class MedPolicyOmcForeign extends MedPolicy {
     @Comment("СМО, выдавшей паспорт")
     @OneToOne
     public OmcSprSmo getInsuranceCompanyCode() {
-        return theInsuranceCompanyCode;
-    }
-
-    public void setInsuranceCompanyCode(OmcSprSmo aInsuranceCompanyOgrn) {
-        theInsuranceCompanyCode = aInsuranceCompanyOgrn;
+        return insuranceCompanyCode;
     }
 
     /**
      * СМО, выдавшей паспорт
      */
-    private OmcSprSmo theInsuranceCompanyCode;
+    private OmcSprSmo insuranceCompanyCode;
 
-    ///Вычисляемые поля
     @Transient
     public String getText() {
         StringBuilder sb = new StringBuilder();
@@ -94,17 +65,17 @@ public class MedPolicyOmcForeign extends MedPolicy {
             }
         }
         sb.append("Страховщика:");
-        if (theInsuranceCompanyRegion != null && !theInsuranceCompanyRegion.getName().equals("")) {
+        if (insuranceCompanyRegion != null && !insuranceCompanyRegion.getName().equals("")) {
             sb.append(" область: ");
-            sb.append(theInsuranceCompanyRegion.getName());
+            sb.append(insuranceCompanyRegion.getName());
         }
-        if (theInsuranceCompanyCity != null && !theInsuranceCompanyCity.equals("")) {
+        if (insuranceCompanyCity != null && !insuranceCompanyCity.equals("")) {
             sb.append(" город: ");
-            sb.append(theInsuranceCompanyCity);
+            sb.append(insuranceCompanyCity);
         }
-        if (theInsuranceCompanyName != null && !theInsuranceCompanyName.equals("")) {
+        if (insuranceCompanyName != null && !insuranceCompanyName.equals("")) {
             sb.append(" наименование: ");
-            sb.append(theInsuranceCompanyName);
+            sb.append(insuranceCompanyName);
         }
         return sb.toString();
     }
@@ -115,50 +86,35 @@ public class MedPolicyOmcForeign extends MedPolicy {
     @Comment("Тип полиса")
     @OneToOne
     public VocMedPolicyOmc getType() {
-        return theType;
-    }
-
-    public void setType(VocMedPolicyOmc aType) {
-        theType = aType;
+        return type;
     }
 
     /**
      * Тип полиса
      */
-    private VocMedPolicyOmc theType;
+    private VocMedPolicyOmc type;
     /**
      * Название Страховщика
      */
-    private String theInsuranceCompanyName;
+    private String insuranceCompanyName;
     /**
      * Область Страховщика
      */
-    private OmcKodTer theInsuranceCompanyRegion;
+    private OmcKodTer insuranceCompanyRegion;
     /**
      * Город Страховщика
      */
-    private String theInsuranceCompanyCity;
+    private String insuranceCompanyCity;
+
 
     /**
      * ОГРН страховщика
      */
-    @Comment("ОГРН страховщика")
-    public String getInsuranceCompanyOgrn() {
-        return theInsuranceCompanyOgrn;
-    }
-
-    public void setInsuranceCompanyOgrn(String aInsuranceCompanyOgrn) {
-        theInsuranceCompanyOgrn = aInsuranceCompanyOgrn;
-    }
-
-    /**
-     * ОГРН страховщика
-     */
-    private String theInsuranceCompanyOgrn;
+    private String insuranceCompanyOgrn;
 
     @Transient
     public String getOgrn() {
-        if (theInsuranceCompanyCode != null) return theInsuranceCompanyCode.getCode();
+        if (insuranceCompanyCode != null) return insuranceCompanyCode.getCode();
         return getCompany() == null ? "" : getCompany().getOgrn();
     }
 
