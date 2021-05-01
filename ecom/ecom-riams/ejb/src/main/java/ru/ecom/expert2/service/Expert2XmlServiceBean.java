@@ -361,7 +361,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             for (String slId : slIds) {
                 Element sl = new Element("SL");
                 E2Entry currentEntry = manager.find(E2Entry.class, Long.valueOf(slId.trim()));
-                String edCol = "1";
+                String edCol = isTrue(entry.getIsDentalCase()) ? calculateDentalEdcol(entry) : "1";
 
                 if (isPoliclinic) {
                     children = manager.createQuery("from E2Entry where parentEntry_id=:id and coalesce(isDeleted, false) = false and coalesce(doNotSend, false) = false order by startDate").setParameter("id", currentEntry.getId()).getResultList();
@@ -556,7 +556,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(ksgKpg, "N_KSG", ksg.getCode());
                     add(ksgKpg, "VER_KSG", ksg.getYear());
                     add(ksgKpg, "KSG_PG", "0");
-                    add(ksgKpg, "KOEF_Z", ksg.getKZ());
+                    add(ksgKpg, "KOEF_Z", ksg.getKz());
                     add(ksgKpg, "KOEF_UP", expertService.getActualKsgUprCoefficient(ksg, currentEntry.getFinishDate()));
                     add(ksgKpg, "BZTSZ", currentEntry.getBaseTarif());
                     add(ksgKpg, "KOEF_D", "1");
@@ -723,12 +723,17 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         }
     }
 
+    private String calculateDentalEdcol(E2Entry entry) {
+        LOG.debug(" = " + isEmpty(entry.getMedServices()));
+        return expertService.getSumKuet(entry).toString();
+    }
+
     //stom //пока заколхозим
     private String calcCodeMes(E2Entry entry) {
         String mainMkb = entry.getMainMkb();
-        if (isOneOf(mainMkb,"K02.0","K02.1","K02.3")) return "1";
-        if (isOneOf(mainMkb,"K04.0")) return "2";
-        if (isOneOf(mainMkb,"K04.5","K04.6","K04.7")) return "4";
+        if (isOneOf(mainMkb, "K02.0", "K02.1", "K02.3")) return "1";
+        if (isOneOf(mainMkb, "K04.0")) return "2";
+        if (isOneOf(mainMkb, "K04.5", "K04.6", "K04.7")) return "4";
 
         return null;
 

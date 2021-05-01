@@ -1,7 +1,7 @@
 package ru.ecom.expert2.domain;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -20,64 +20,92 @@ import java.sql.Date;
 @AIndexes({
         @AIndex(properties = {"entry"})
 })
-@Data
-@Accessors(prefix = "the")
+@Getter
+@Setter
 public class EntryMedService extends BaseEntity {
 
-    /** Запись */
-    @Comment("Запись")
-    @ManyToOne
-    public E2Entry getEntry() {return theEntry;}
-    /** Запись */
-    private E2Entry theEntry ;
-
-    /** Мед. услуга */
-    @Comment("Мед. услуга")
-    @OneToOne
-    public VocMedService getMedService() {return theMedService;}
-    /** Мед. услуга */
-    private VocMedService theMedService ;
+    /**
+     * Запись
+     */
+    private E2Entry entry;
+    /**
+     * Мед. услуга
+     */
+    private VocMedService medService;
+    /**
+     * СНИЛС специалиста, выполневшего услугу
+     */
+    private String doctorSnils;
+    /**
+     * Дата оказания мед. услуги
+     */
+    private Date serviceDate;
+    private VocE2FondV021 doctorSpeciality;
+    private VocIdc10 mkb;
+    /**
+     * Цена
+     */
+    private BigDecimal cost;
+    /**
+     * Коммент
+     */
+    private String comment;
+    /**
+     * Цена
+     */
+    private BigDecimal uet;
 
     public EntryMedService(E2Entry aEntry, VocMedService aMedService) {
-        theEntry=aEntry;
-        theMedService=aMedService;
+        entry = aEntry;
+        medService = aMedService;
     }
+
     public EntryMedService(E2Entry aEntry, EntryMedService aMedService) {
-        theEntry=aEntry;
-        theMedService=aMedService.getMedService();
-        theServiceDate=aMedService.getServiceDate();
-        theDoctorSpeciality=aMedService.getDoctorSpeciality();
-        theMkb=aMedService.getMkb();
-        theCost = aMedService.getCost();
+        entry = aEntry;
+        medService = aMedService.getMedService();
+        serviceDate = aMedService.getServiceDate();
+        doctorSpeciality = aMedService.getDoctorSpeciality();
+        mkb = aMedService.getMkb();
+        cost = aMedService.getCost();
     }
 
-    /** СНИЛС специалиста, выполневшего услугу */
-    private String theDoctorSnils ;
+    /**
+     * Запись
+     */
+    @Comment("Запись")
+    @ManyToOne
+    public E2Entry getEntry() {
+        return entry;
+    }
 
-    /** Дата оказания мед. услуги */
-    private Date theServiceDate ;
+    /**
+     * Мед. услуга
+     */
+    @Comment("Мед. услуга")
+    @OneToOne
+    public VocMedService getMedService() {
+        return medService;
+    }
 
-    /** Специальность врача */
+    public EntryMedService() {
+    }
+
+    /**
+     * Специальность врача
+     */
     @Comment("Специальность врача")
     @OneToOne
-    public VocE2FondV021 getDoctorSpeciality() {return theDoctorSpeciality;}
-    private VocE2FondV021 theDoctorSpeciality ;
+    public VocE2FondV021 getDoctorSpeciality() {
+        return doctorSpeciality;
+    }
 
-    /** Диагноз, выявленный при оказании услуги */
+    /**
+     * Диагноз, выявленный при оказании услуги
+     */
     @Comment("Диагноз, выявленный при оказании услуги")
     @OneToOne
-    public VocIdc10 getMkb() {return theMkb;}
-    private VocIdc10 theMkb ;
-
-    /** Цена */
-    private BigDecimal theCost ;
-
-    public EntryMedService(){}
-
-    /** Коммент */
-    private String theComment ;
-
-    /** Цена */
-    private BigDecimal theUet ;
+    public VocIdc10 getMkb() {
+        return mkb;
+    }
 
 }

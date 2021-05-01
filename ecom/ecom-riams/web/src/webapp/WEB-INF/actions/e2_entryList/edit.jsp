@@ -47,9 +47,6 @@
                 <option value="SNILS_REPLACE_STRING">СНИЛСы из настроек</option>
                 <option value="MEDSERVICE_REPLACE_STRING">Мед.услуги из настроек</option>
                 <option value="DEPARTMENT_BY_SERVICE">Поменять департаменты по профилям из настроек</option>
-                <option value="DEPARTMENT_ADDRESS_BY_SERVICE">Поменять длинные коды департаментов по профилям из
-                    настроек
-                </option>
             </select>
             <input type="text" name="replaceFrom" id="replaceFrom" placeholder="Заменить с">
             <input type="text" name="replaceTo" id="replaceTo" placeholder="Заменить на">

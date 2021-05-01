@@ -103,7 +103,7 @@ public class FinanceServiceBean implements IFinanceService {
                                 VocE2BaseTariff tariff = expert2Service.getActualVocByClassName(VocE2BaseTariff.class, currentMonth, sql);
                                 BigDecimal baseTariff = tariff.getValue();
                                 cost = baseTariff
-                                        .multiply(BigDecimal.valueOf(ksg.getKZ())
+                                        .multiply(BigDecimal.valueOf(ksg.getKz())
                                                 .multiply(expert2Service.getActualKsgUprCoefficient(ksg, currentMonth))
                                                 .multiply(expert2Service.calculateCusmo(monthPlan.getBedSubType().getCode(), monthPlan.getDepartment().getId(), monthPlan.getProfile().getId(), currentMonth)));
                                 cost = cost.setScale(2, RoundingMode.HALF_UP);
@@ -291,7 +291,7 @@ public class FinanceServiceBean implements IFinanceService {
                     .append(" and e.servicestream='").append(aServiceStream).append("'").append(" and bill.status_id=3 and plan.id is null")
                     .append(" group by ksg.group_id, e.vidSluch_id, cast(date_part('month',e.finishDate)as int) , cast(date_part('year',e.finishDate)as int), e.medhelpprofile_id, cast('0'||e.departmentid as int), cast('0'||e.bedsubtype as int), vmp.code, vmp.name");
             sql.append(")");
-            LOG.info("sql=" + sql.toString());
+            LOG.info("sql=" + sql);
             cleanAggregateTable(aType, calendar.getTime());
             ret += theManager.createNativeQuery(sql.toString()).executeUpdate();
             calendar.add(Calendar.MONTH, 1);
