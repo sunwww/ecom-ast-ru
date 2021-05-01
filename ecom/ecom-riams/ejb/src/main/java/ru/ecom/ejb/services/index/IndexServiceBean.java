@@ -73,7 +73,7 @@ public class IndexServiceBean implements IIndexService, IIndexServiceManagement 
 			HashSet<String> indexes = getIndexNames(con);
 			Statement stmt = con.createStatement();
 			try {
-				for (Class entityClass : theEntityHelper.listAllEntities()) {
+				for (Class entityClass : entityHelper.listAllEntities()) {
 					createIndexes(entityClass, stmt, indexes);
 				}
 			} finally {
