@@ -79,11 +79,14 @@
                               action="/javascript:showCreatePrescriptList('${param.id}','.do')"
                               title="Лист назначений"/>
                 <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Create" name="Температурный лист"
-                              action="/javascript:showNewCurve()" title="Добавить температурный лист"/>
+                              action="/javascript:showNewCurve(${param.id})" title="Добавить температурный лист"/>
 
                 <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id"
                               action="/javascript:initSelectPrinter('print-transfusionAgreement.do?s=HospitalPrintService&m=printTransfusionAgreement&patId='+$('patient').value);"
                               name="Печать согласия на переливание" title="Печать согласия на переливание"/>
+                <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id"
+                              action="/javascript:initSelectPrinter('print-emlAgreement.do?s=HospitalPrintService&m=printTransfusionAgreement&patId='+$('patient').value);"
+                              name="Печать согласия на ЭМЛ" title="Печать согласия на ЭМЛ"/>
                 <msh:sideLink roles="/Policy/Mis/MedCase/Transfusion/Blood/Create" params="id"
                               action="/entityParentPrepareCreate-trans_blood" name="Протокол трансфузии"
                               title="Добавить донорской крови и её компонентов"/>

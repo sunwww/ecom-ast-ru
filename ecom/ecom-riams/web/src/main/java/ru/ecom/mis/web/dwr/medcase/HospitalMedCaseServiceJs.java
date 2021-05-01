@@ -294,6 +294,7 @@ public class HospitalMedCaseServiceJs {
     }
 
     private Float parseFloat(String value) throws ParseException {
+        value = value.replace(",",".");
         if(value == null || value.length()==0)
             return null;
         try {
@@ -323,7 +324,11 @@ public class HospitalMedCaseServiceJs {
      * @return результат insert
      */
     public String createTemperatureCurve(Long aMedCase, String aTempData, HttpServletRequest aRequest) throws NamingException, ParseException {
-        Long identTemp = 18L;
+        String identTempStr = getSettingsKeyValueByKey("identTemp", aRequest);
+        if (identTempStr.length() == 0)
+            identTempStr = "19";
+        Long identTemp = Long.valueOf(identTempStr);
+
         Integer daysToFinish = 2;
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
@@ -331,12 +336,10 @@ public class HospitalMedCaseServiceJs {
         String takingDate = getString(obj, "takingDate");
         String degreeStr = getString(obj, "degree");
         float degree = parseFloat(degreeStr);
-        String illnessdaynumberStr = getString(obj, "illnessDayNumber");
-        int illnessdaynumber = parseInt(illnessdaynumberStr);
         String dayTime = getString(obj, "dayTime");
 
-        String sql = "insert into temperatureCurve (takingDate, degree, illnessdaynumber, daytime_id, medcase_id,date,time,username) values (" +
-                "to_date('" + takingDate + "','dd.MM.yyyy')," + degree + "," + illnessdaynumber + "," + dayTime +
+        String sql = "insert into temperatureCurve (takingDate, degree, daytime_id, medcase_id,date,time,username) values (" +
+                "to_date('" + takingDate + "','dd.MM.yyyy')," + degree + "," + dayTime +
                 ", " + aMedCase + ",current_date,current_time,'" + LoginInfo.find(aRequest.getSession(true)).getUsername() + "') returning id";
         String tempCurveId = "";
         Collection<WebQueryResult> res = service.executeNativeSql(sql);

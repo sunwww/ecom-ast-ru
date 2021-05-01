@@ -156,9 +156,6 @@
                   params="id" action="/entityParentList-stac_diagnosis" title="Показать все диагнозы ССЛ"
                   styleId="stac_diagnosis"
     />
-    <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/View" name="Температурных листов"
-                  params="id" action="/entityParentList-stac_temperatureCurve" title="Показать все температурные листы"
-                  styleId="stac_temperatureCurve"/>
 
     <msh:sideLink roles="/Policy/Mis/MedCase/Stac/Ssl/Slo/View" name="Отделения"
                   params="id" action='/entityParentList-stac_slo' key='Alt+6' title='Лечение в отделениях'

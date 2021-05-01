@@ -22,7 +22,6 @@
                     <msh:textField property="takingDate" label="Дата"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="illnessDayNumber" label="День болезни "/>
                     <msh:ifFormTypeIsView formName="stac_temperatureCurveForm">
                         <msh:textField property="hospDayNumber" label="День пребывания в стационаре "/>
                     </msh:ifFormTypeIsView>

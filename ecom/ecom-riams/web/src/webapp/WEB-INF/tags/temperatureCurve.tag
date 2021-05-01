@@ -24,9 +24,6 @@
                     <msh:textField property="takingDate" label="Дата" viewOnlyField="true"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="illnessDayNumber" label="День болезни "/>
-                </msh:row>
-                <msh:row>
                     <msh:autoComplete vocName="vocDayTime" property="dayTime" label="Время суток" fieldColSpan="5"
                                       horizontalFill="true"/>
                 </msh:row>
@@ -51,7 +48,7 @@
     var theIs${name}CurveDialogInitialized = false;
     new dateutil.DateField($('takingDate'));
     var the${name}CurveDialog = new msh.widget.Dialog($('${name}CurveDialog'));
-
+    var sloId${name};
 
     function checkFields(aFields) {
 
@@ -70,13 +67,12 @@
         if (checkFields(requiredFields)) {
             var obj = {
                 takingDate: $('takingDate').value,
-                illnessDayNumber: $('illnessDayNumber').value,
                 dayTime: $('dayTime').value,
                 degree: $('degree').value
             };
             $('resultText').innerHTML = "...";
             var data = JSON.stringify(obj);
-            HospitalMedCaseService.createTemperatureCurve('${param.id}', data, {
+            HospitalMedCaseService.createTemperatureCurve(sloId${name}, data, {
                 callback: function (a) {
                     if (a == '1') {
                         $('resultText').innerHTML = "Успешно создано";
@@ -94,10 +90,11 @@
         }
     }
 
-    function show${name}Curve() {
+    function show${name}Curve(sloId) {
         the${name}CurveDialog.show();
         $('takingDate').value = getCurrentDate();
         $('takingDateReadOnly').value = getCurrentDate();
+        sloId${name} = sloId;
     }
 
     function cancel${name}Curve() {

@@ -113,7 +113,7 @@
         <msh:sideLink
                 styleId="stac_directionsByUserDepartment"
                 roles="/Policy/Mis/MedCase/Stac/Journal/HIVDirection" key="ALT+0"
-                action="/stac_directionsByUserDepartment" name="Направления на исследования"/>
+                action="/stac_directionsByUserDepartment" name="Направления на исследования и темп. листы"/>
         <msh:sideLink
                 styleId="stac_directionCovidByUserDepartment"
                 roles="/Policy/Mis/MedCase/Covid19/View"

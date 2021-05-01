@@ -13,14 +13,15 @@
     <tiles:put name="side" type="string">
         <tags:temperatureCurve name="New"/>
         <msh:sideMenu title="Добавить">
-            <msh:sideLink params="id" action="/javascript:showNewCurve()"
+            <msh:sideLink params="" action="/javascript:showNewCurve(${param.id})"
                           name="Новые показатели температурного листа"
                           title="Добавить новые показатели температурного листа"
                           roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Create"/>
         </msh:sideMenu>
         <msh:sideMenu title="Перейти">
             <msh:sideLink params="id" action="/js-stac_temperatureCurve-graph" name="График температурного листа"
-                          title="Показать график температурного листа"/>
+                          title="Показать график температурного листа"
+                          roles="/Policy/Mis/MedCase/Stac/Ssl/TemperatureCurve/Graph"/>
         </msh:sideMenu>
     </tiles:put>
     <tiles:put name="body" type="string">
