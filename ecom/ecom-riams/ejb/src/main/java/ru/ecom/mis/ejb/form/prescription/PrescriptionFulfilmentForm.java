@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.prescription;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -33,91 +34,69 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(FulfilmentPreCreate.class)
 )
+@Setter
 public class PrescriptionFulfilmentForm extends IdEntityForm{
 	
 	/** Дата выполнения */
 	@Comment("Дата выполнения")
 	@Persist @Required
 	@DateString @DoDateString
-	public String getFulfilDate() {return theFulfilDate;}
-	public void setFulfilDate(String aFulfilDate) {theFulfilDate = aFulfilDate;}
+	public String getFulfilDate() {return fulfilDate;}
 
 	/** Дата выполнения */
-	private String theFulfilDate;
+	private String fulfilDate;
 	
 	/** Время выполнения */
 	@Comment("Время выполнения")
 	@Persist @Required
 	@TimeString @DoTimeString
-	public String getFulfilTime() {return theFulfilTime;}
-	public void setFulfilTime(String aFulfilTime) {theFulfilTime = aFulfilTime;}
+	public String getFulfilTime() {return fulfilTime;}
 
 	/** Время выполнения */
-	private String theFulfilTime;
+	private String fulfilTime;
 	
 	/** Исполнитель */
 	@Comment("Исполнитель")
 	@Persist @Required
-	public Long getExecutorWorkFunction() {return theExecutorWorkFunction;}
-	public void setExecutorWorkFunction(Long aExecutor) {theExecutorWorkFunction = aExecutor;}
+	public Long getExecutorWorkFunction() {return executorWorkFunction;}
 
 	/** Исполнитель */
-	private Long theExecutorWorkFunction;
+	private Long executorWorkFunction;
 	
 	/** Комментарии */
 	@Comment("Комментарии")
 	@Persist
-	public String getComments() {return theComments;}
-	public void setComments(String aComments) {theComments = aComments;}
+	public String getComments() {return comments;}
 
 	/** Комментарии */
-	private String theComments;
+	private String comments;
 	
 	/** Назначение */
 	@Comment("Назначение")
 	@Persist
-	public Long getPrescription() {return thePrescription;}
-	public void setPrescription(Long aPrescription) {thePrescription = aPrescription;}
+	public Long getPrescription() {return prescription;}
 
 	/** Назначение */
-	private Long thePrescription;
+	private Long prescription;
 	
 	/** Исполнитель (text) */
 	@Comment("Исполнитель (text)")
 	@Persist
-		public String getExecutorInfo() {return theExecutorInfo;}
-		public void setExecutorInfo(String aExecutorInfo) {theExecutorInfo = aExecutorInfo;}
-		
+		public String getExecutorInfo() {return executorInfo;}
+
 	/** Пользователь */
 	@Comment("Пользователь")
 	@Persist
-	public String getUsername() {return theUsername;	}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
+	public String getUsername() {return username;	}
 
-	
 	/** Дата создания записи */
 	@Comment("Дата создания записи")
 	@Persist @DoDateString @DateString
-	public String getDateCreate() {return theDateCreate;}
-	public void setDateCreate(String aDateCreate) {theDateCreate = aDateCreate;}
+	public String getDateCreate() {return dateCreate;}
 
 	/** Дата создания записи */
-	private String theDateCreate;
+	private String dateCreate;
 	/** Пользователь */
-	private String theUsername;
-        private String theExecutorInfo;
-        
-//        /** Стационарный? */
-//		@Comment("Стационарный?")
-//		@Persist
-//		public boolean isInHospitalMedCase() {
-//			return theInHospitalMedCase;
-//		}
-//
-//		public void setInHospitalMedCase(boolean aInHospitalMedCase) {
-//			theInHospitalMedCase = aInHospitalMedCase;
-//		}
-//
-//		/** Стационарный? */
-//		private boolean theInHospitalMedCase;
+	private String username;
+        private String executorInfo;
 }

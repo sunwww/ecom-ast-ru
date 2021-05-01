@@ -27,8 +27,6 @@ import java.util.List;
 @SecurityDomain("other")
 public class MedcardServiceBean implements IMedcardService{
 
-    private static final Logger LOG = Logger.getLogger(MedcardServiceBean.class);
-
     /**
      * Поиск мед. карты по номеру
      */
@@ -40,7 +38,7 @@ public class MedcardServiceBean implements IMedcardService{
         	builder.add("number", aNumber);
         }
         
-        Query query = builder.build(theManager, "from Medcard where", " order by Number");
+        Query query = builder.build(manager, "from Medcard where", " order by Number");
         return createList(query);
     }
 
@@ -49,7 +47,7 @@ public class MedcardServiceBean implements IMedcardService{
         List<MedcardForm> ret = new LinkedList<>();
         for (Medcard medcard : list) {
             try {
-                ret.add(theEntityFormService.loadForm(MedcardForm.class, medcard));
+                ret.add(entityFormService.loadForm(MedcardForm.class, medcard));
             } catch (EntityFormException e) {
                 throw new IllegalStateException(e);
             }
@@ -62,7 +60,7 @@ public class MedcardServiceBean implements IMedcardService{
      * FIXME НЕ ПОДХОДИТ ДЛЯ МНОГОПОЛЬЗОВАТЕЛЬСКОЙ СРЕДЫ!!!
      */
 	public String getNewMedcardNumber() {
-		Query query = theManager.createNativeQuery("SELECT * from Medcard WHERE id = (SELECT max(id) from Medcard)", Medcard.class);
+		Query query = manager.createNativeQuery("SELECT * from Medcard WHERE id = (SELECT max(id) from Medcard)", Medcard.class);
 		List<Medcard> list = query.setMaxResults(1).getResultList();
 		if(list.size() == 1){
 			try {
@@ -78,8 +76,8 @@ public class MedcardServiceBean implements IMedcardService{
 		}
 	}
 
-    private @EJB ILocalEntityFormService theEntityFormService;
-    private @PersistenceContext EntityManager theManager;
+    private @EJB ILocalEntityFormService entityFormService;
+    private @PersistenceContext EntityManager manager;
 
 
 }

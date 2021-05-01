@@ -3,6 +3,8 @@ package ru.ecom.mis.ejb.domain.prescription.voc;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -15,19 +17,12 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment ("Справочник типов назначений")
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VocPrescriptType extends VocBaseEntity {
 	/** Сокращенное название */
-	@Comment("Сокращенное название")
-	public String getShortName() {return theShortName;}
-	public void setShortName(String aShortName) {theShortName = aShortName;}
-	/** Сокращенное название */
-	private String theShortName;
-	
+	private String shortName;
 	/** Назначения с указанным типом можно назначать только на текущий день */
-	@Comment("Назначения с указанным типом можно назначать только на текущий день")
-	public Boolean getIsOnlyCurrentDate() {return theIsOnlyCurrentDate;}
-	public void setIsOnlyCurrentDate(Boolean aIsOnlyCurrentDate) {theIsOnlyCurrentDate = aIsOnlyCurrentDate;}
-	/** Назначения с указанным типом можно назначать только на текущий день */
-	private Boolean theIsOnlyCurrentDate;
+	private Boolean isOnlyCurrentDate;
 
 }

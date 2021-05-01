@@ -43,7 +43,7 @@ public class PatientDynamicSecurityInterceptor implements IDynamicSecurityInterc
 						MisLpu lpu = patient.getAttachedOmcPolicy()!=null
 							? patient.getAttachedOmcPolicy().getAttachedLpu() 
 							: patient.getLpu() ;
-						if(lpu!=null) theMisLpuDynamicSecurity.check(aPolicyAction, lpu.getId(), aContext) ;
+						if(lpu!=null) misLpuDynamicSecurity.check(aPolicyAction, lpu.getId(), aContext) ;
 						// FIXME если нет прикрепленного ЛПУ
 						else throw new IllegalStateException("Не прикреплен") ;
 					}*/
@@ -52,5 +52,5 @@ public class PatientDynamicSecurityInterceptor implements IDynamicSecurityInterc
 	//	}
 	}
 
-	private final MisLpuDynamicSecurity theMisLpuDynamicSecurity = new MisLpuDynamicSecurity() ;
+	private final MisLpuDynamicSecurity misLpuDynamicSecurity = new MisLpuDynamicSecurity() ;
 }

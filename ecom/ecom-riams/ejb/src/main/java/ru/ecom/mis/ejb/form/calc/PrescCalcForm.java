@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.calc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.calc.CalcRisk;
@@ -19,26 +20,24 @@ import javax.persistence.OneToOne;
         , nameProperties= "id", list="entityParentList-calc_presc.do", view="entityParentView-calc_presc.do")
 @Parent(property="calculator", parentForm=CalculatorForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Calc/Calculation")
+@Setter
 public class PrescCalcForm  extends IdEntityForm {
     /** Калькулятор */
     @Comment("Калькулятор")
     @Persist
-    public Long getCalculator() {return theCalculator;}
-    public void setCalculator(Long aCalculator) {theCalculator = aCalculator;}
-    private Long theCalculator;
+    public Long getCalculator() {return calculator;}
+    private Long calculator;
 
     /** Назначение */
     @Comment("Назначение")
     @Persist
-    public String getPrescValue() {return thePrescValue;}
-    public void setPrescValue(String aPrescValue) {thePrescValue = aPrescValue;	}
-    private String thePrescValue;
+    public String getPrescValue() {return prescValue;}
+    private String prescValue;
 
     /** Риск */
     @Comment("Риск")
     @Persist
     @OneToOne
-    public Long getCalcRisk() {return theCalcRisk;}
-    public void setCalcRisk(Long aCalcRisk) {theCalcRisk = aCalcRisk;	}
-    private Long theCalcRisk;
+    public Long getCalcRisk() {return calcRisk;}
+    private Long calcRisk;
 }

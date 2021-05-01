@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -19,40 +21,38 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 @Comment("Сокращения КЛАДР")
+@Setter
+@Getter
 public class KladrSocr extends BaseEntity implements Serializable {
      /** Идентификатор */
      @Id @GeneratedValue(strategy = GenerationType.AUTO)
-     public long getId() { return theId ; }
-     public void setId(long aId) { theId = aId ; }
+     public long getId() { return id ; }
 
     /** Название */
     @Comment("Название")
     @Column(length = 29)
     @AFormatFieldSuggest("SOCRNAME")
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
+    public String getName() { return name ; }
 
     /** Сокращение */
     @Comment("Сокращение")
     @Column(length = 10)
     @AFormatFieldSuggest("SCNAME")
-    public String getShortName() { return theShortName ; }
-    public void setShortName(String aShortName) { theShortName = aShortName ; }
+    public String getShortName() { return shortName ; }
 
     /** Уровень */
     @Comment("Уровень")
     @Column(length = 5, name="KLADR_LEVEL")
     @AFormatFieldSuggest("LEVEL")
-    public String getLevel() { return theLevel ; }
-    public void setLevel(String aLevel) { theLevel = aLevel ; }
+    public String getLevel() { return level ; }
 
     /** Уровень */
-    private String theLevel ;
+    private String level ;
     /** Сокращение */
-    private String theShortName ;
+    private String shortName ;
     /** Название */
-    private String theName ;
+    private String name ;
      /** Идентификатор */
-    private long theId ;
+    private long id ;
 
 }

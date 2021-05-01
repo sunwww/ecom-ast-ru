@@ -2,6 +2,9 @@ package ru.ecom.mis.ejb.domain.contract.voc;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.mis.ejb.domain.contract.JuridicalPerson;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -11,18 +14,15 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  @Comment("Справочник статусов обслуживаемой персоны")
 @Entity
 @Table(schema="SQLUser")
+ @Getter
+ @Setter
 public class VocServedPersonStatus extends VocBaseEntity{
 	 /** Юридическая персона */
 	 @OneToOne
 	@Comment("Юридическая персона")
 	public JuridicalPerson getPerson() {
-		return thePerson;
+		return person;
 	}
-
-	public void setPerson(JuridicalPerson aPerson) {
-		thePerson = aPerson;
-	}
-
 	/** Юридическая персона */
-	private JuridicalPerson thePerson;
+	private JuridicalPerson person;
 }

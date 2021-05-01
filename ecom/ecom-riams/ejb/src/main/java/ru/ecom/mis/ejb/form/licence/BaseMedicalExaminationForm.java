@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.licence;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -20,21 +21,20 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(DocumentPrepareCreateInterceptor.class)
 )
+@Setter
 public class BaseMedicalExaminationForm extends InternalDocumentsForm {
 	/** Профессия */
 	@Comment("Профессия")
 	@Persist @Required
-	public Long getProfession() {return theProfession;}
-	public void setProfession(Long aProfession) {theProfession = aProfession;}
+	public Long getProfession() {return profession;}
 
 	/** Отделение */
 	@Comment("Отделение")
 	@Persist @Required
-	public Long getDepartmentWork() {return theDepartmentWork;}
-	public void setDepartmentWork(Long aDepartmentWork) {theDepartmentWork = aDepartmentWork;}
+	public Long getDepartmentWork() {return departmentWork;}
 
 	/** Отделение */
-	private Long theDepartmentWork;
+	private Long departmentWork;
 	/** Профессия */
-	private Long theProfession;
+	private Long profession;
 }

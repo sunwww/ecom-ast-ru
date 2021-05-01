@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountRule;
@@ -18,6 +19,7 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @WebTrail(comment = "Правило договорного счета", nameProperties= "id", list="entityParentList-contract_contractAccountRule.do", view="entityParentView-contract_contractAccountRule.do")
 @Parent(property="contract", parentForm=MedContractForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ContractAccountRule")
+@Setter
 public class ContractAccountRuleForm extends IdEntityForm{
 	/**
 	 * Скидка
@@ -25,60 +27,48 @@ public class ContractAccountRuleForm extends IdEntityForm{
 	@Comment("Скидка")
 	@Persist
 	public String getDiscount() {
-		return theDiscount;
-	}
-	public void setDiscount(String aDiscount) {
-		theDiscount = aDiscount;
+		return discount;
 	}
 	/**
 	 * Скидка
 	 */
-	private String theDiscount;
+	private String discount;
 	/**
 	 * Предел платежей
 	 */
 	@Comment("Предел платежей")
 	@Persist
 	public String getPaymentLimit() {
-		return thePaymentLimit;
-	}
-	public void setPaymentLimit(String aPaymentLimit) {
-		thePaymentLimit = aPaymentLimit;
+		return paymentLimit;
 	}
 	/**
 	 * Предел платежей
 	 */
-	private String thePaymentLimit;
+	private String paymentLimit;
 	/**
 	 * Предел блокирования платежей
 	 */
 	@Comment("Предел блокирования платежей")
 	@Persist
 	public String getBlockLimit() {
-		return theBlockLimit;
-	}
-	public void setBlockLimit(String aBlockLimit) {
-		theBlockLimit = aBlockLimit;
+		return blockLimit;
 	}
 	/**
 	 * Предел блокирования платежей
 	 */
-	private String theBlockLimit;
+	private String blockLimit;
 	/**
 	 * Автоматическое создание счета
 	 */
 	@Comment("Автоматическое создание счета")
 	@Persist
 	public Boolean getAutocreateAccount() {
-		return theAutocreateAccount;
-	}
-	public void setAutocreateAccount(Boolean aAutocreateAccount) {
-		theAutocreateAccount = aAutocreateAccount;
+		return autocreateAccount;
 	}
 	/**
 	 * Автоматическое создание счета
 	 */
-	private Boolean theAutocreateAccount;
+	private Boolean autocreateAccount;
 	/**
 	 * Дата начала действия
 	 */
@@ -86,15 +76,12 @@ public class ContractAccountRuleForm extends IdEntityForm{
 	@Persist
 	@DateString @DoDateString
 	public String getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(String aDateFrom) {
-		theDateFrom = aDateFrom;
+		return dateFrom;
 	}
 	/**
 	 * Дата начала действия
 	 */
-	private String theDateFrom;
+	private String dateFrom;
 	/**
 	 * Дата окончания действия
 	 */
@@ -102,43 +89,34 @@ public class ContractAccountRuleForm extends IdEntityForm{
 	@Persist
 	@DateString @DoDateString
 	public String getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(String aDateTo) {
-		theDateTo = aDateTo;
+		return dateTo;
 	}
 	/**
 	 * Дата окончания действия
 	 */
-	private String theDateTo;
+	private String dateTo;
 	/**
 	 * Договор
 	 */
 	@Comment("Договор")
 	@Persist
 	public Long getContract() {
-		return theContract;
-	}
-	public void setContract(Long aContract) {
-		theContract = aContract;
+		return contract;
 	}
 	/**
 	 * Договор
 	 */
-	private Long theContract;
+	private Long contract;
 	/**
 	 * Обслуживаемая персона
 	 */
 	@Comment("Обслуживаемая персона")
 	@Persist
 	public Long getServedPerson() {
-		return theServedPerson;
-	}
-	public void setServedPerson(Long aServedPerson) {
-		theServedPerson = aServedPerson;
+		return servedPerson;
 	}
 	/**
 	 * Обслуживаемая персона
 	 */
-	private Long theServedPerson;
+	private Long servedPerson;
 }

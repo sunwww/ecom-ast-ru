@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -23,6 +24,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Parent(property="medCase", parentForm= MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage")
 @Subclasses(value = { CriminalPhoneMessageForm.class, InfectiousPhoneMessageForm.class })
+@Setter
 public class PhoneMessageForm extends IdEntityForm {
 
 	/**
@@ -30,79 +32,68 @@ public class PhoneMessageForm extends IdEntityForm {
 	 */
 	@Comment("Дата регистрации")
 	@Persist @DateString @DoDateString
-	public String getPhoneDate() {return thePhoneDate;}
-	public void setPhoneDate(String theDate) {this.thePhoneDate = theDate;}
-	private String thePhoneDate;
+	public String getPhoneDate() {return phoneDate;}
+	private String phoneDate;
 	
 	/**
 	 * Время регистрации
 	 */
 	@Comment("Время регистрации")
 	@Persist @TimeString @DoTimeString
-	public String getPhoneTime() {return thePhoneTime;}
-	public void setPhoneTime(String theTime) {this.thePhoneTime = theTime;}
-	private String thePhoneTime;
+	public String getPhoneTime() {return phoneTime;}
+	private String phoneTime;
 	
 	@Comment("Фамилия принявшего")
 	@Persist
-	public String getRecieverFio() {return theRecieverFio;}
-	public void setRecieverFio(String aRecieverFio) {theRecieverFio = aRecieverFio;}
+	public String getRecieverFio() {return recieverFio;}
 
 	/** Фамилия принявшего сообщение */
 	@Comment("Фамилия принявшего сообщение")
 	@Persist
-	public Long getRecieverEmploye() {return theRecieverEmploye;}
-	public void setRecieverEmploye(Long aRecieverEmploye) {theRecieverEmploye = aRecieverEmploye;}
+	public Long getRecieverEmploye() {return recieverEmploye;}
 
 	/** Фамилия принявшего сообщение */
-	private Long theRecieverEmploye;
+	private Long recieverEmploye;
 	/** Должность принявшего сообщение*/
-	private String theRecieverPost;
+	private String recieverPost;
 	/** Фамилия принявшего */
-	private String theRecieverFio;
+	private String recieverFio;
 
 	/**
 	 * Getter of the property <tt>theRecieverPost</tt>
 	 */
 	@Comment("Должность принявшего сообщение")
 	@Persist
-	public String getRecieverPost() {return theRecieverPost;}
-	public void setRecieverPost(String aRecieverPost) {theRecieverPost = aRecieverPost;}
+	public String getRecieverPost() {return recieverPost;}
 
 	/** Телефон */
 	@Comment("Телефон")
 	@Persist
-	public String getPhone() {return thePhone;}
-	public void setPhone(String aPhone) {thePhone = aPhone;}
+	public String getPhone() {return phone;}
 
 	/** Телефон */
-	private String thePhone;
+	private String phone;
 	/** Принявшая сообщение организация */
-	private String theRecieverOrganization = "";
+	private String recieverOrganization = "";
 
 	@Comment("Принявшая сообщение организация")
 	@Persist
 	public String getRecieverOrganization() {
-		return theRecieverOrganization;
-	}
-
-	public void setRecieverOrganization(String theRecieverOrganization) {
-		this.theRecieverOrganization = theRecieverOrganization;
+		return recieverOrganization;
 	}
 
 	@Comment("Текст сообщения")
 	@Persist
-	public String getText() {return theText;}
-	public void setText(String aText) {theText = aText;}
+	public String getText() {return text;}
 	/**
 	 * Текст сообщения
 	 */
-	private String theText;
+	private String text;
 
 	/**
 	 * Передавший сообщение специалист
 	 */
-	private Long theWorker;
+	private Long worker;
 
 	/**
 	 * Getter of the property <tt>theWorker</tt>
@@ -111,24 +102,16 @@ public class PhoneMessageForm extends IdEntityForm {
 	@Comment("Передавший сообщение специалист")
 	@Persist
 	public Long getWorker() {
-		return theWorker;
+		return worker;
 	}
 	
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@Persist
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public Long getWorkFunction() {return workFunction;}
 
 	/** Рабочая функция */
-	private Long theWorkFunction;
-
-	/**
-	 * Setter of the property <tt>theWorker</tt>
-	 */
-	public void setWorker(Long theWorker) {
-		this.theWorker = theWorker;
-	}
+	private Long workFunction;
 
 	/**
 	 * Тип сообщения
@@ -136,20 +119,14 @@ public class PhoneMessageForm extends IdEntityForm {
 	@Comment("Тип сообщения")
 	@Persist
 	public Long getPhoneMessageType() {
-		return thePhoneMessageType;
+		return phoneMessageType;
 	}
+
 
 	/**
 	 * Тип сообщения
 	 */
-	public void setPhoneMessageType(Long aNewProperty) {
-		thePhoneMessageType = aNewProperty;
-	}
-
-	/**
-	 * Тип сообщения
-	 */
-	private Long thePhoneMessageType;
+	private Long phoneMessageType;
 
 	/**
 	 * Номер сообщения
@@ -157,20 +134,13 @@ public class PhoneMessageForm extends IdEntityForm {
 	@Comment("Номер сообщения")
 	@Persist
 	public String getNumber() {
-		return theNumber;
+		return number;
 	}
 
 	/**
 	 * Номер сообщения
 	 */
-	public void setNumber(String aNewProperty) {
-		theNumber = aNewProperty;
-	}
-
-	/**
-	 * Номер сообщения
-	 */
-	private String theNumber;
+	private String number;
 
 	/**
 	 * Случай медицинского обслуживания
@@ -178,83 +148,63 @@ public class PhoneMessageForm extends IdEntityForm {
 	@Comment("Случай медицинского обслуживания")
 	@Persist
 	public Long getMedCase() {
-		return theMedCase;
+		return medCase;
 	}
 
 	/**
 	 * Случай медицинского обслуживания
 	 */
-	public void setMedCase(Long aNewProperty) {
-		theMedCase = aNewProperty;
-	}
-
-	/**
-	 * Случай медицинского обслуживания
-	 */
-	private Long theMedCase;
+	private Long medCase;
 		
 
 	/** Подтип сообщения*/
 	@Comment("Подтип сообщения")
 	@Persist
-	public Long getPhoneMessageSubType() {return thePhoneMessageSubType;}
-	/** Подтип сообщения*/
-	public void setPhoneMessageSubType(Long a_Property) {
-		thePhoneMessageSubType = a_Property;
-	}
-
+	public Long getPhoneMessageSubType() {return phoneMessageSubType;}
 
 	/** Подтип сообщения*/
-	private Long thePhoneMessageSubType;
+	private Long phoneMessageSubType;
 	
 	/** Пользователь, создавший запись */
 	@Comment("Пользователь, создавший запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DateString @DoDateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
+
 	/** Время создания */
 	@Comment("Время создания")
 	@Persist @TimeString @DoTimeString
-	public String getCreateTime() {return theCreateTime;	}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;	}
 
 	/** Пользователь, которые последним редактировал запись */
 	@Comment("Пользователь, которые последним редактировал запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Дата редакции */
 	@Comment("Дата редакции")
 	@Persist @DateString @DoDateString
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	public String getEditDate() {return editDate;}
 
 	/** Время редакции */
 	@Comment("Время редакции")
 	@Persist @TimeString @DoTimeString
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+	public String getEditTime() {return editTime;}
 
 	/** Время редакции */
-	private String theEditTime;
+	private String editTime;
 	/** Дата редакции */
-	private String theEditDate;
+	private String editDate;
 	/** Пользователь, которые последним редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
-
-
+	private String createUsername;
 }

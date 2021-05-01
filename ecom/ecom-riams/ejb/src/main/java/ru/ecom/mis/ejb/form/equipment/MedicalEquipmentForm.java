@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.equipment;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.equipment.MedicalEquipment;
 import ru.ecom.mis.ejb.form.lpu.MisLpuForm;
@@ -17,111 +18,99 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @WebTrail(comment = "Медицинское оборудование", nameProperties= "nameTypeEquip", view="entityView-mis_medicalEquipment.do")
 @Parent(property="lpu", parentForm= MisLpuForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Equipment/Equipment")
+@Setter
 public class MedicalEquipmentForm extends EquipmentForm {
 
 	/** Количество */
 	@Comment("Количество")
 	@Persist
-	public Float getAmount() {return theAmount;}
-	public void setAmount(Float aAmount) {theAmount = aAmount;}
+	public Float getAmount() {return amount;}
 	/** Количество */
-	private Float theAmount;
+	private Float amount;
 
 	/** ИД в системе Парус */
 	@Comment("ИД в системе Парус")
 	@Persist
-	public String getParusCode() {return theParusCode;}
-	public void setParusCode(String aParusCode) {theParusCode = aParusCode;}
+	public String getParusCode() {return parusCode;}
 	/** ИД в системе Парус */
-	private String theParusCode;
+	private String parusCode;
 	
 	/** Группа бухгалтерии */
 	@Comment("Группа бухгалтерии")
 	@Persist
-	public String getGroupName() {return theGroupName;}
-	public void setGroupName(String aGroupName) {theGroupName = aGroupName;}
+	public String getGroupName() {return groupName;}
 	/** Группа бухгалтерии */
-	private String theGroupName;
+	private String groupName;
 	
 	/** ОКОФ-текст */
 	@Comment("ОКОФ-текст")
 	@Persist
-	public String getOkofText() {return theOkofText;}
-	public void setOkofText(String aOkofText) {theOkofText = aOkofText;}
+	public String getOkofText() {return okofText;}
 	/** ОКОФ-текст */
-	private String theOkofText;
+	private String okofText;
 
 	/** Износ */
 	@Comment("Износ")
 	@Persist
-	public String getWearout() {return theWearout;}
-	public void setWearout(String aWearout) {theWearout = aWearout;}
+	public String getWearout() {return wearout;}
 	/** Износ */
-	private String theWearout;
+	private String wearout;
 	
 	/** Остаточная стоимость */
 	@Comment("Остаточная стоимость")
 	@Persist
-	public String getResidualValue() {return theResidualValue;}
-	public void setResidualValue(String aResidualValue) {theResidualValue = aResidualValue;}
+	public String getResidualValue() {return residualValue;}
 	/** Остаточная стоимость */
-	private String theResidualValue;
+	private String residualValue;
 	
 	/** Начальный износ */
 	@Comment("Начальный износ")
 	@Persist
-	public String getStartWearout() {return theStartWearout;}
-	public void setStartWearout(String aStartWearout) {theStartWearout = aStartWearout;}
+	public String getStartWearout() {return startWearout;}
 	/** Начальный износ */
-	private String theStartWearout;
+	private String startWearout;
 	
 	
 	/** ОКОФ */
 	@Comment("ОКОФ")
 	@Persist
-	public Long getOkof() {return theOkof;}
-	public void setOkof(Long aOkof) {theOkof = aOkof;}
+	public Long getOkof() {return okof;}
 	/** ОКОФ */
-	private Long theOkof;
+	private Long okof;
 
 	/** Инвентарный номер */
 	@Comment("Инвентарный номер")
 	@Persist
-	public String getInventoryNumber() {return theInventoryNumber;}
-	public void setInventoryNumber(String aInventoryNumber) {theInventoryNumber = aInventoryNumber;}
+	public String getInventoryNumber() {return inventoryNumber;}
 	/** Инвентарный номер */
-	private String theInventoryNumber;
+	private String inventoryNumber;
 
 	/** В рамках какой програмы (мероприятия) было поставлено */
 	@Comment("В рамках какой програмы (мероприятия) было поставлено")
 	@Persist
-	public String getProjectName() {return theProjectName;}
-	public void setProjectName(String aProjectName) {theProjectName = aProjectName;}
+	public String getProjectName() {return projectName;}
 	/** В рамках какой програмы (мероприятия) было поставлено */
-	private String theProjectName;
+	private String projectName;
 	
 	/** Источник финансирования */
 	@Comment("Источник финансирования")
 	@Persist
-	public Long getFundingStream() {return theFundingStream;}
-	public void setFundingStream(Long aFundingStream) {theFundingStream = aFundingStream;}
+	public Long getFundingStream() {return fundingStream;}
 	/** Источник финансирования */
-	private Long theFundingStream;
+	private Long fundingStream;
 	
 	/** Цена */
 	@Comment("Цена")
 	@Persist
-	public String getPrice() {return thePrice;}
-	public void setPrice(String aPrice) {thePrice = aPrice;}
+	public String getPrice() {return price;}
 	/** Цена */
-	private String thePrice;
+	private String price;
 	
 	/** Дата ввода в эксплуатацию */
 	@Comment("Дата ввода в эксплуатацию")
 	@DateString @DoDateString
-	public String getStartDate() {return theStartDate;}
-	public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
+	public String getStartDate() {return startDate;}
 	/** Дата ввода в эксплуатацию */
-	private String theStartDate;
+	private String startDate;
 	
 }

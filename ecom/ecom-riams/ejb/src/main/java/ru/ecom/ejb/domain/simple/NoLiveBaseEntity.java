@@ -20,37 +20,37 @@ public class NoLiveBaseEntity implements Serializable {
 	/** Время окончания актуальности */
 	@Comment("Время окончания актуальности")
 	public Timestamp getVTE() {
-		return theVTE;
+		return VTE;
 	}
 
 	public void setVTE(Timestamp aVTE) {
-		theVTE = aVTE;
+		VTE = aVTE;
 	}
 
 	/** Время окончания актуальности */
-	private Timestamp theVTE;
+	private Timestamp VTE;
 	
 	/** Время начала актуальности */
 	@Comment("Время начала актуальности")
 	public Timestamp getVTS() {
-		return theVTS;
+		return VTS;
 	}
 
 	public void setVTS(Timestamp aVTS) {
-		theVTS = aVTS;
+		VTS = aVTS;
 	}
 
 	/** Время начала актуальности */
-	private Timestamp theVTS;
+	private Timestamp VTS;
 
     /** Идентификатор */
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    public long getId() { return theId ; }
-    public void setId(long aId) { theId = aId ; }
+    public long getId() { return id ; }
+    public void setId(long aId) { id = aId ; }
 	
     
     /** Идентификатор */
-    private long theId ;
+    private long id ;
 
 
 	/* 
@@ -58,7 +58,7 @@ public class NoLiveBaseEntity implements Serializable {
 	 */
 	@Override
 	public int hashCode() {
-		return (int) (theId % Integer.MAX_VALUE) ;
+		return (int) (id % Integer.MAX_VALUE) ;
 	}
 	/* 
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -69,12 +69,11 @@ public class NoLiveBaseEntity implements Serializable {
 		if (obj == null) return false;
 		if (getClass() != obj.getClass()) return false;
 		final NoLiveBaseEntity other = (NoLiveBaseEntity) obj;
-		if (theId != other.theId) return false;
-		return true;
+		return id == other.id;
 	}
     
 	@Override 
 	public String toString() {
-		return getClass().getName()+":"+theId ;
+		return getClass().getName()+":"+id ;
 	}
 }

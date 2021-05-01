@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractAccountMedService;
@@ -15,6 +16,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Медицинские услуги", nameProperties= "id", list="entityParentList-contract_accountMedService.do", view="entityParentView-contract_accountMedService.do")
 @Parent(property="account", parentForm=ContractAccountForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount/MedService")
+@Setter
 public class ContractAccountMedServiceForm extends IdEntityForm{
 
 	/**
@@ -22,102 +24,85 @@ public class ContractAccountMedServiceForm extends IdEntityForm{
 	 */
 	@Comment("Обслуживаемая персона")
 	@Persist
-	public Long getServedPerson() {return theServedPerson;}
-	public void setServedPerson(Long aServedPerson) {theServedPerson = aServedPerson;}
+	public Long getServedPerson() {return servedPerson;}
 	/**
 	 * Обслуживаемая персона
 	 */
-	private Long theServedPerson;
+	private Long servedPerson;
 	
 	/**
 	 * Договорной счет
 	 */
 	@Comment("Договорной счет")
 	@Persist
-	public Long getAccount() {return theAccount;}
-	public void setAccount(Long aAccount) {theAccount = aAccount;}
+	public Long getAccount() {return account;}
 	/**
 	 * Договорной счет
 	 */
-	private Long theAccount;
+	private Long account;
 	/**
 	 * Мед. Услуги
 	 */
 	@Comment("Мед. Услуги")
 	@Persist @Required
 	public Long getMedService() {
-		return theMedService;
-	}
-	public void setMedService(Long aMedService) {
-		theMedService = aMedService;
+		return medService;
 	}
 
 	/**
 	 * Мед. Услуги
 	 */
-	private Long theMedService;
+	private Long medService;
 
 	/** Рабочая функция */
 	@Persist
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public Long getWorkFunction() {return workFunction;}
 	/** Рабочая функция */
-	private Long theWorkFunction;
+	private Long workFunction;
 
 	/** Количество */
 	@Comment("Количество")
 	@Persist @Required
 	public Integer getCountMedService() {
-		return theCountMedService;
+		return countMedService;
 	}
 
-	public void setCountMedService(Integer aCountMedService) {
-		theCountMedService = aCountMedService;
-	}
 
 	/** Количество */
-	private Integer theCountMedService;
+	private Integer countMedService;
 	
 	@Persist
 	public String getCost() {
-		return theCost;
-	}
-	public void setCost(String aCost) {
-		theCost = aCost;
+		return cost;
 	}
 	/**
 	 * Цена
 	 */
-	private String theCost;
+	private String cost;
 	
 	/** Все услуги */
 	@Comment("Все услуги")
 	public String getAllServicies() {
-		return theAllServicies;
+		return allServicies;
 	}
 
-	public void setAllServicies(String aAllServicies) {
-		theAllServicies = aAllServicies;
-	}
 
 	/** Все услуги */
-	private String theAllServicies;
+	private String allServicies;
 	
 	/** Дата начала */
 	@Comment("Дата начала")
 	@Persist @DateString @DoDateString
-	public String getDateFrom() {return theDateFrom;}
-	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
+	public String getDateFrom() {return dateFrom;}
 	/** Дата начала */
-	private String theDateFrom;
+	private String dateFrom;
 	
 	/** Дата окончания */
 	@Comment("Дата окончания")
 	@Persist @DateString @DoDateString
-	public String getDateTo() {return theDateTo;}
-	public void setDateTo(String aDateTo) {theDateTo = aDateTo;}
+	public String getDateTo() {return dateTo;}
 	/** Дата окончания */
-	private String theDateTo;
+	private String dateTo;
 
 	
 }

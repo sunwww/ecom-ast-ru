@@ -1,11 +1,15 @@
 package ru.ecom.expert2.domain.voc;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 
 @Entity
+@Getter
+@Setter
 /** Поправочные коэффициенты для поликлиники*/
 public class VocE2PolyclinicCoefficient extends VocCoefficient {
     /**
@@ -13,31 +17,16 @@ public class VocE2PolyclinicCoefficient extends VocCoefficient {
      */
     @Comment("Код для определения тарифа")
     @OneToOne
-    public VocE2BaseTariffType getTariffType() {return theTariffType;}
-    public void setTariffType(VocE2BaseTariffType aTariffType) {
-        theTariffType = aTariffType;
-    }
-    private VocE2BaseTariffType theTariffType;
+    public VocE2BaseTariffType getTariffType() {return tariffType;}
+    private VocE2BaseTariffType tariffType;
 
     /** Коэффициент для мобильной поликлиники */
-    @Comment("Коэффициент для мобильной поликлиники")
-    public Boolean getIsMobilePolyclinic() {return theIsMobilePolyclinic;}
-    public void setIsMobilePolyclinic(Boolean aIsMobilePolyclinic) {theIsMobilePolyclinic = aIsMobilePolyclinic;}
-    /** Коэффициент для мобильной поликлиники */
-    private Boolean theIsMobilePolyclinic ;
+    private Boolean isMobilePolyclinic;
 
     /** Для консультативного приема */
-    @Comment("Для консультативного приема")
-    public Boolean getIsConsultation() {return theIsConsultation;}
-    public void setIsConsultation(Boolean aIsConsultation) {theIsConsultation = aIsConsultation;}
-    /** Для консультативного приема */
-    private Boolean theIsConsultation ;
+    private Boolean isConsultation;
 
     /** Для консультативно-диагностического обращений */
-    @Comment("Для консультативно-диагностического обращений")
-    public Boolean getIsDiagnosticSpo() {return theIsDiagnosticSpo;}
-    public void setIsDiagnosticSpo(Boolean aIsDiagnosticSpo) {theIsDiagnosticSpo = aIsDiagnosticSpo;}
-    /** Для консультативно-диагностического обращений */
-    private Boolean theIsDiagnosticSpo ;
+    private Boolean isDiagnosticSpo;
 
 }

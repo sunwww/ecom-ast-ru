@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.patient;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.patient.PatientFond;
@@ -14,6 +15,7 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @WebTrail(comment = "Пациент ФОМС", nameProperties= "id", list="entityParentList-patient_patientFond.do", view="entityParentView-patient_patientFond.do")
 @Parent(property="patient", parentForm=PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Patient/Fond")
+@Setter
 public class PatientFondForm extends IdEntityForm{
 	/**
 	 * Фамилия
@@ -21,45 +23,36 @@ public class PatientFondForm extends IdEntityForm{
 	@Comment("Фамилия")
 	@Persist
 	public String getLastname() {
-		return theLastname;
-	}
-	public void setLastname(String aLastname) {
-		theLastname = aLastname;
+		return lastname;
 	}
 	/**
 	 * Фамилия
 	 */
-	private String theLastname;
+	private String lastname;
 	/**
 	 * Имя
 	 */
 	@Comment("Имя")
 	@Persist
 	public String getFirstname() {
-		return theFirstname;
-	}
-	public void setFirstname(String aFirstname) {
-		theFirstname = aFirstname;
+		return firstname;
 	}
 	/**
 	 * Имя
 	 */
-	private String theFirstname;
+	private String firstname;
 	/**
 	 * Отчество
 	 */
 	@Comment("Отчество")
 	@Persist
 	public String getMiddlename() {
-		return theMiddlename;
-	}
-	public void setMiddlename(String aMiddlename) {
-		theMiddlename = aMiddlename;
+		return middlename;
 	}
 	/**
 	 * Отчество
 	 */
-	private String theMiddlename;
+	private String middlename;
 	/**
 	 * Дата рождения
 	 */
@@ -67,195 +60,156 @@ public class PatientFondForm extends IdEntityForm{
 	@Persist
 	@DateString @DoDateString
 	public String getBirthday() {
-		return theBirthday;
-	}
-	public void setBirthday(String aBirthday) {
-		theBirthday = aBirthday;
+		return birthday;
 	}
 	/**
 	 * Дата рождения
 	 */
-	private String theBirthday;
+	private String birthday;
 	/**
 	 * СНИЛС
 	 */
 	@Comment("СНИЛС")
 	@Persist
 	public String getSnils() {
-		return theSnils;
-	}
-	public void setSnils(String aSnils) {
-		theSnils = aSnils;
+		return snils;
 	}
 	/**
 	 * СНИЛС
 	 */
-	private String theSnils;
+	private String snils;
 	/**
 	 * Вид идентифицирующего документа
 	 */
 	@Comment("Вид идентифицирующего документа")
 	@Persist
 	public String getDocumentType() {
-		return theDocumentType;
-	}
-	public void setDocumentType(String aDocumentType) {
-		theDocumentType = aDocumentType;
+		return documentType;
 	}
 	/**
 	 * Вид идентифицирующего документа
 	 */
-	private String theDocumentType;
+	private String documentType;
 	/**
 	 * Серия идентифицирующего документа
 	 */
 	@Comment("Серия идентифицирующего документа")
 	@Persist
 	public String getDocumentSeries() {
-		return theDocumentSeries;
-	}
-	public void setDocumentSeries(String aDocumentSeries) {
-		theDocumentSeries = aDocumentSeries;
+		return documentSeries;
 	}
 	/**
 	 * Серия идентифицирующего документа
 	 */
-	private String theDocumentSeries;
+	private String documentSeries;
 	/**
 	 * Номер идентифицирующего документа
 	 */
 	@Comment("Номер идентифицирующего документа")
 	@Persist
 	public String getDocumentNumber() {
-		return theDocumentNumber;
-	}
-	public void setDocumentNumber(String aDocumentNumber) {
-		theDocumentNumber = aDocumentNumber;
+		return documentNumber;
 	}
 	/**
 	 * Номер идентифицирующего документа
 	 */
-	private String theDocumentNumber;
+	private String documentNumber;
 	/**
 	 * Региональный код страховой компании
 	 */
 	@Comment("Региональный код страховой компании")
 	@Persist
 	public String getCompanyCode() {
-		return theCompanyCode;
-	}
-	public void setCompanyCode(String aCompanyCode) {
-		theCompanyCode = aCompanyCode;
+		return companyCode;
 	}
 	/**
 	 * Региональный код страховой компании
 	 */
-	private String theCompanyCode;
+	private String companyCode;
 	/**
 	 * Серия полиса
 	 */
 	@Comment("Серия полиса")
 	@Persist
 	public String getPolicySeries() {
-		return thePolicySeries;
-	}
-	public void setPolicySeries(String aPolicySeries) {
-		thePolicySeries = aPolicySeries;
+		return policySeries;
 	}
 	/**
 	 * Серия полиса
 	 */
-	private String thePolicySeries;
+	private String policySeries;
 	/**
 	 * Номер полиса
 	 */
 	@Comment("Номер полиса")
 	@Persist
 	public String getPolicyNumber() {
-		return thePolicyNumber;
-	}
-	public void setPolicyNumber(String aPolicyNumber) {
-		thePolicyNumber = aPolicyNumber;
+		return policyNumber;
 	}
 	/**
 	 * Номер полиса
 	 */
-	private String thePolicyNumber;
+	private String policyNumber;
 	/**
 	 * Единый номер
 	 */
 	@Comment("Единый номер")
 	@Persist
 	public String getCommonNumber() {
-		return theCommonNumber;
-	}
-	public void setCommonNumber(String aCommonNumber) {
-		theCommonNumber = aCommonNumber;
+		return commonNumber;
 	}
 	/**
 	 * Единый номер
 	 */
-	private String theCommonNumber;
+	private String commonNumber;
 	/**
 	 * Кладр
 	 */
 	@Comment("Кладр")
 	@Persist
 	public String getKladr() {
-		return theKladr;
-	}
-	public void setKladr(String aKladr) {
-		theKladr = aKladr;
+		return kladr;
 	}
 	/**
 	 * Кладр
 	 */
-	private String theKladr;
+	private String kladr;
 	/**
 	 * Дом
 	 */
 	@Comment("Дом")
 	@Persist
 	public String getHouse() {
-		return theHouse;
-	}
-	public void setHouse(String aHouse) {
-		theHouse = aHouse;
+		return house;
 	}
 	/**
 	 * Дом
 	 */
-	private String theHouse;
+	private String house;
 	/**
 	 * Корпус
 	 */
 	@Comment("Корпус")
 	@Persist
 	public String getHouseBuilding() {
-		return theHouseBuilding;
-	}
-	public void setHouseBuilding(String aHouseBuilding) {
-		theHouseBuilding = aHouseBuilding;
+		return houseBuilding;
 	}
 	/**
 	 * Корпус
 	 */
-	private String theHouseBuilding;
+	private String houseBuilding;
 	/**
 	 * Квартира
 	 */
 	@Comment("Квартира")
 	@Persist
 	public String getFlat() {
-		return theFlat;
-	}
-	public void setFlat(String aFlat) {
-		theFlat = aFlat;
+		return flat;
 	}
 	/**
 	 * Квартира
 	 */
-	private String theFlat;
+	private String flat;
 	/**
 	 * Дата проверки
 	 */
@@ -263,30 +217,24 @@ public class PatientFondForm extends IdEntityForm{
 	@Persist
 	@DateString @DoDateString
 	public String getCheckDate() {
-		return theCheckDate;
-	}
-	public void setCheckDate(String aCheckDate) {
-		theCheckDate = aCheckDate;
+		return checkDate;
 	}
 	/**
 	 * Дата проверки
 	 */
-	private String theCheckDate;
+	private String checkDate;
 	/**
 	 * Тип проверки
 	 */
 	@Comment("Тип проверки")
 	@Persist
 	public String getCheckType() {
-		return theCheckType;
-	}
-	public void setCheckType(String aCheckType) {
-		theCheckType = aCheckType;
+		return checkType;
 	}
 	/**
 	 * Тип проверки
 	 */
-	private String theCheckType;
+	private String checkType;
 	/**
 	 * Дата начала действия полиса
 	 */
@@ -294,15 +242,12 @@ public class PatientFondForm extends IdEntityForm{
 	@Persist
 	@DateString @DoDateString
 	public String getPolicyDateFrom() {
-		return thePolicyDateFrom;
-	}
-	public void setPolicyDateFrom(String aPolicyDateFrom) {
-		thePolicyDateFrom = aPolicyDateFrom;
+		return policyDateFrom;
 	}
 	/**
 	 * Дата начала действия полиса
 	 */
-	private String thePolicyDateFrom;
+	private String policyDateFrom;
 	/**
 	 * Дата окончания действия полиса
 	 */
@@ -310,74 +255,59 @@ public class PatientFondForm extends IdEntityForm{
 	@Persist
 	@DateString @DoDateString
 	public String getPolicyDateTo() {
-		return thePolicyDateTo;
-	}
-	public void setPolicyDateTo(String aPolicyDateTo) {
-		thePolicyDateTo = aPolicyDateTo;
+		return policyDateTo;
 	}
 	/**
 	 * Дата окончания действия полиса
 	 */
-	private String thePolicyDateTo;
+	private String policyDateTo;
 	/**
 	 * ОГРН страховой компании
 	 */
 	@Comment("ОГРН страховой компании")
 	@Persist
 	public String getCompanyOgrn() {
-		return theCompanyOgrn;
-	}
-	public void setCompanyOgrn(String aCompanyOgrn) {
-		theCompanyOgrn = aCompanyOgrn;
+		return companyOgrn;
 	}
 	/**
 	 * ОГРН страховой компании
 	 */
-	private String theCompanyOgrn;
+	private String companyOgrn;
 	/**
 	 * ОКАТО страховой компании
 	 */
 	@Comment("ОКАТО страховой компании")
 	@Persist
 	public String getCompanyOkato() {
-		return theCompanyOkato;
-	}
-	public void setCompanyOkato(String aCompanyOkato) {
-		theCompanyOkato = aCompanyOkato;
+		return companyOkato;
 	}
 	/**
 	 * ОКАТО страховой компании
 	 */
-	private String theCompanyOkato;
+	private String companyOkato;
 	/**
 	 * Кто проверял
 	 */
 	@Comment("Кто проверял")
 	@Persist
 	public String getChecker() {
-		return theChecker;
-	}
-	public void setChecker(String aChecker) {
-		theChecker = aChecker;
+		return checker;
 	}
 	/**
 	 * Кто проверял
 	 */
-	private String theChecker;
+	private String checker;
 	/**
 	 * Федеральный код страховой компании
 	 */
 	@Comment("Федеральный код страховой компании")
 	@Persist
 	public String getCompabyCodeF() {
-		return theCompabyCodeF;
-	}
-	public void setCompabyCodeF(String aCompabyCodeF) {
-		theCompabyCodeF = aCompabyCodeF;
+		return compabyCodeF;
 	}
 	/**
 	 * Федеральный код страховой компании
 	 */
-	private String theCompabyCodeF;
+	private String compabyCodeF;
 
 }

@@ -27,9 +27,9 @@ import java.util.Iterator;
 public class SyncVocSprSmoServiceBean implements ISyncVocSprSmoService {
 	
 
-	private @PersistenceContext EntityManager theManager;
-	private @EJB ISyncLpuFondService theSyncService ;
-	private @EJB ILocalMonitorService theMonitorService;
+	private @PersistenceContext EntityManager manager;
+	private @EJB ISyncLpuFondService syncService ;
+	private @EJB ILocalMonitorService monitorService;
 	IMonitor monitor = null; 
 	private static final Logger LOG = Logger.getLogger(SyncVocSprSmoServiceBean.class) ;
 	public void sync(long aMonitorId, long aTimeId) {
@@ -37,9 +37,9 @@ public class SyncVocSprSmoServiceBean implements ISyncVocSprSmoService {
 		RegInsuranceCompany regInsCompany;
 		OmcSprSmo osSmo;
 		//	Date current_date=new Date(new java.util.Date().getTime()) ;
-			monitor = theMonitorService.startMonitor(aMonitorId, "Синхронизация с RegInsuranceCompany", getCount(aTimeId));
+			monitor = monitorService.startMonitor(aMonitorId, "Синхронизация с RegInsuranceCompany", getCount(aTimeId));
 			try{
-			Query query = theManager.createQuery("from OmcSprSmo oss where time = :time").setParameter("time", aTimeId);
+			Query query = manager.createQuery("from OmcSprSmo oss where time = :time").setParameter("time", aTimeId);
 			Iterator<OmcSprSmo> oss = QueryIteratorUtil.iterate(OmcSprSmo.class, query);
 			int i =0;
 			while (oss.hasNext()) {
@@ -48,7 +48,7 @@ public class SyncVocSprSmoServiceBean implements ISyncVocSprSmoService {
                     throw new IllegalMonitorStateException("Прервано пользователем");
                 }
 				osSmo =  oss.next();
-				regInsCompany = (RegInsuranceCompany) theManager.createQuery("from RegInsuranceCompany rig where smocode = :smocode").setParameter("smocode", osSmo.getCode()).getSingleResult();
+				regInsCompany = (RegInsuranceCompany) manager.createQuery("from RegInsuranceCompany rig where smocode = :smocode").setParameter("smocode", osSmo.getCode()).getSingleResult();
 				if (regInsCompany !=null){ 
 					// обновляем поля: ogrn 
 					//TODO: где взять краткое наименование?
@@ -76,7 +76,7 @@ public class SyncVocSprSmoServiceBean implements ISyncVocSprSmoService {
 		}
 	}
 	 private Long getCount(long aTimeId) {
-	    	return (Long) theManager.createQuery("select count(*) from OmcSprSmo where time = :time")
+	    	return (Long) manager.createQuery("select count(*) from OmcSprSmo where time = :time")
 	    			.setParameter("time", aTimeId).getSingleResult() ;
 	    }
 	

@@ -25,13 +25,13 @@ public class ImportSyncKey extends ImportKey {
 	private static final Logger LOG = Logger.getLogger(ImportSyncKey.class);
 	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
-    private String theEntityName;
-    private Query theQuery;
-    private String theEntityClassName;
+    private String entityName;
+    private Query query;
+    private String entityClassName;
 
 
     public String getEntityName() {
-        return theEntityName;
+        return entityName;
     }
 
     private List<ImportKey> getKeys() {
@@ -79,25 +79,25 @@ public class ImportSyncKey extends ImportKey {
         return sb.toString();
     }
 
-    public Query createQuery(EntityManager aManager,String entityClassName) throws ClassNotFoundException {
-        theEntityClassName = entityClassName;
-        Class clazz = Class.forName(theEntityClassName);
-        theEntityName = EntityNameUtil.getInstance().getEntityName(clazz);
-        String sql = "select id from "+theEntityName +" where "+getWhereClause();
+    public Query createQuery(EntityManager aManager,String entityClassName1) throws ClassNotFoundException {
+        entityClassName = entityClassName1;
+        Class clazz = Class.forName(entityClassName);
+        entityName = EntityNameUtil.getInstance().getEntityName(clazz);
+        String sql = "select id from "+entityName +" where "+getWhereClause();
         log(sql);
         try {
-        	theQuery = aManager.createQuery(sql);
+        	query = aManager.createQuery(sql);
         } catch (Exception e) {
         	throw new RuntimeException("Ошибка выполнения запроса "+sql+" : "+e) ;
         }
-        return theQuery;
+        return query;
     }
 
     public Object openId(EntityManager aManager,String id) {
         if (id==null || "".equals(id)) return null;
         //LOG.info("ID:"+id);
         try {
-            return aManager.find(Class.forName(theEntityClassName),new Long(id));
+            return aManager.find(Class.forName(entityClassName),new Long(id));
         } catch (ClassNotFoundException e) {
         }
         return null;
@@ -122,21 +122,17 @@ public class ImportSyncKey extends ImportKey {
         String[] selects = getSelect().split(";");
     	Class entityClass;
 		try {
-			entityClass = ClassLoaderHelper.getInstance().loadClass(theEntityClassName);
+			entityClass = ClassLoaderHelper.getInstance().loadClass(entityClassName);
 		} catch (ClassNotFoundException e) {
-			throw new RuntimeException("Ошибка при поиске класса "+theEntityClassName+" : "+e,e);
+			throw new RuntimeException("Ошибка при поиске класса "+entityClassName+" : "+e,e);
 		}
         for (int i=0; i<properties.length; i++) {
-            //String val = "";
-            //val =  mapValues.get(selects[i]).toString();
             Object val = convertType(entityClass,properties[i], mapValues.get(selects[i])) ;
             log(i+":\t"+properties[i]+" = '"+val+"' \t {"+selects[i]+"}");
-            //theQuery.
-            theQuery.setParameter("p"+i,val);
+            query.setParameter("p"+i,val);
         }
-        List keyList = theQuery.getResultList();
+        List keyList = query.getResultList();
 
-//        LOG.info("COUNT:"+keyList.size());
         if (keyList.size()==1) {
             String keyid = keyList.get(0).toString();
             log("id:"+keyid);
@@ -151,7 +147,7 @@ public class ImportSyncKey extends ImportKey {
 
 
     private Object convertType(Class aClass, String aProperty, Object aValue) {
-    	int dotPosition =aProperty.indexOf('.') ; 
+    	int dotPosition =aProperty.indexOf('.') ;
     	if(dotPosition>0) { // переход по вложенным
     		String firstProperty = aProperty.substring(0,dotPosition) ;
     		try {
@@ -159,7 +155,7 @@ public class ImportSyncKey extends ImportKey {
     			Class clazz = m.getReturnType() ;
     			String otherProperties = aProperty.substring(dotPosition+1) ;
     			if (CAN_DEBUG)
-					LOG.debug("convertType: otherProperties = " + otherProperties); 
+					LOG.debug("convertType: otherProperties = " + otherProperties);
 
     			return convertType(clazz, otherProperties, aValue);
     		} catch (Exception e) {
@@ -175,9 +171,9 @@ public class ImportSyncKey extends ImportKey {
         		} else {
         			return PropertyUtil.convertValue(aValue.getClass(), type, aValue) ;
         		}
-        		
+
         	} catch (Exception e) {
-        		throw new RuntimeException("Ошибка преобразования для свойства "+aProperty+ " в классе "+theEntityClassName+" для значения "+aValue+" : "+e,e);
+        		throw new RuntimeException("Ошибка преобразования для свойства "+aProperty+ " в классе "+entityClassName+" для значения "+aValue+" : "+e,e);
         	}
         	
     	}
@@ -197,7 +193,7 @@ public class ImportSyncKey extends ImportKey {
             } catch (JDOMException e) {}
             log(i+":\t"+properties[i]+" = '"+val+"' \t {"+selects[i]+"}");
 //            LOG.info("\tSETP:"+i+":"+val);
-            theQuery.setParameter("p"+i,val);
+            query.setParameter("p"+i,val);
         }
 
         if (properties.length == 1 && val.equals("")) {
@@ -207,7 +203,7 @@ public class ImportSyncKey extends ImportKey {
         }
 
 
-        List keyList = theQuery.getResultList();
+        List keyList = query.getResultList();
 
 //        LOG.info("COUNT:"+keyList.size());
         if (keyList.size()==1) {

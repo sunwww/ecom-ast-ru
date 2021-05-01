@@ -10,6 +10,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -26,56 +28,31 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
   ,@AIndex(properties={"parentSecPolicy","name"})
 })
 @Table(schema="SQLUser")
+@Setter
+@Getter
 public class SecPolicy extends BaseEntity {
-
-    //public static final long ROOT_POLICY_ID = 1 ; 
-
-
-    /** Ключ */
-    public String getKey() { return theKey ; }
-    public void setKey(String aKey) { theKey = aKey ; }
-
-    /** Название */
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
-
-    /** Комментарий */
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
 
     /** Родитель */
     @ManyToOne
-    public SecPolicy getParentSecPolicy() { return theParentSecPolicy ; }
-    public void setParentSecPolicy(SecPolicy aParentSecPolicy) { theParentSecPolicy = aParentSecPolicy ; }
+    public SecPolicy getParentSecPolicy() { return parentSecPolicy ; }
 
     /** Вложенные политики */
     @OneToMany(cascade = ALL, mappedBy = "parentSecPolicy")
     @OrderBy("name")
-    public Collection<SecPolicy> getChildsSecPolicies() { return theChildsSecPolicies ; }
-    public void setChildsSecPolicies(Collection<SecPolicy> aChildsSecPolicies) { theChildsSecPolicies = aChildsSecPolicies ; }
+    public Collection<SecPolicy> getChildsSecPolicies() { return childsSecPolicies ; }
 
     /** Вложенные политики */
-    private Collection<SecPolicy> theChildsSecPolicies ;
+    private Collection<SecPolicy> childsSecPolicies ;
     /** Родитель */
-    private SecPolicy theParentSecPolicy ;
+    private SecPolicy parentSecPolicy ;
     /** Комментарий */
-    private String theComment ;
+    private String comment ;
     /** Название */
-    private String theName ;
+    private String name ;
     /** Ключ */
-    private String theKey ;
+    private String key ;
     
-    /** Вычисленный ключ */
-	@Comment("Вычисленный ключ")
-	public Integer getCalckey() {
-		return theCalckey;
-	}
-
-	public void setCalckey(Integer aCalckey) {
-		theCalckey = aCalckey;
-	}
-
 	/** Вычисленный ключ */
-	private Integer theCalckey;
+	private Integer calckey;
 
 }

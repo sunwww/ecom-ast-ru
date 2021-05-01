@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.diet.voc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.diet.voc.VocFoodStuff;
@@ -20,250 +21,184 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @Comment("Продукт питания")
 @WebTrail(comment = "Продукт питания", nameProperties= "id", view="entityView-diet_vocFoodStuff.do")
 @EntityFormSecurityPrefix("/Policy/Mis/InvalidFood/VocFoodStuff")
+@Setter
 	public class VocFoodStuffForm  extends IdEntityForm{
 		
 		/** Наименование */
 		@Comment("Наименование")
 		@Persist
 		public String getName() {
-			return theName;
-		}
-
-		public void setName(String aName) {
-			theName = aName;
+			return name;
 		}
 
 		/** Наименование */
-		private String theName;
+		private String name;
 	
 	    /** Железо */
 		@Comment("Железо")
 		@Persist
-		public String getFerrum() {return theFerrum;}
-		public void setFerrum(String aFerrum) {
-			theFerrum = aFerrum;
-		}
+		public String getFerrum() {return ferrum;}
 		/** Железо */
-		private String theFerrum;
+		private String ferrum;
 		
 		/** Фосфор */
 		@Comment("Фосфор")
 		@Persist
-		public String getPhosphorus() {return thePhosphorus;}
-		public void setPhosphorus(String aPhosphorus) {
-			thePhosphorus = aPhosphorus;
-		}
+		public String getPhosphorus() {return phosphorus;}
 
 		/** Фосфор */
-		private String thePhosphorus;
+		private String phosphorus;
 		
 		/** Магний */
 		@Comment("Магний")
 		@Persist
-		public String getMagnesium() {return theMagnesium;}
-		public void setMagnesium(String aMagnesium) {
-			theMagnesium = aMagnesium;
-		}
+		public String getMagnesium() {return magnesium;}
 
 		/** Магний */
-		private String theMagnesium;
+		private String magnesium;
 		
 		/** Кальций */
 		@Comment("Кальций")
 		@Persist
-		public String getCalcium() {return theCalcium;}
-		public void setCalcium(String aCalcium) {
-			theCalcium = aCalcium;
-		}
+		public String getCalcium() {return calcium;}
 
 		/** Кальций */
-		private String theCalcium;
+		private String calcium;
 		
 		/** Калий */
 		@Comment("Калий")
 		@Persist
-		public String getPotassium() {return thePotassium;}
-		public void setPotassium(String aPotassium) {
-			thePotassium = aPotassium;
-		}
+		public String getPotassium() {return potassium;}
 
 		/** Калий */
-		private String thePotassium;
+		private String potassium;
 		
 		/** Натрий */
 		@Comment("Натрий")
 		@Persist
-		public String getNatrium() {return theNatrium;}
-		public void setNatrium(String aNatrium) {
-			theNatrium = aNatrium;
-		}
+		public String getNatrium() {return natrium;}
 
 		/** Натрий */
-		private String theNatrium;
+		private String natrium;
 		
 		/** Витамин C */
 		@Comment("Витамин C")
 		@Persist
-		public String getCevitamicAcid() {return theCevitamicAcid;}
-		public void setCevitamicAcid(String aCevitamicAcid) {
-			theCevitamicAcid = aCevitamicAcid;
-		}
+		public String getCevitamicAcid() {return cevitamicAcid;}
 
 		/** Витамин C */
-		private String theCevitamicAcid;
+		private String cevitamicAcid;
 	
 		/** Витамин PP */
 		@Comment("Витамин PP")
 		@Persist
-		public String getNicotinamid() {return theNicotinamid;}
-		public void setNicotinamid(String aNicotinamid) {
-			theNicotinamid = aNicotinamid;
-		}
+		public String getNicotinamid() {return nicotinamid;}
 
 		/** Витамин PP */
-		private String theNicotinamid;
+		private String nicotinamid;
 		
 		/** Витамин B2 */
 		@Comment("Витамин B2")
 		@Persist
-		public String getRiboflavin() {return theRiboflavin;}
-		public void setRiboflavin(String aRiboflavin) {
-			theRiboflavin = aRiboflavin;
-		}
+		public String getRiboflavin() {return riboflavin;}
 
 		/** Витамин B2 */
-		private String theRiboflavin;
+		private String riboflavin;
 		
 		/** Витамин B1 */
 		@Comment("Витамин B1")
 		@Persist
-		public String getTiamin() {return theTiamin;}
-		public void setTiamin(String aTiamin) {
-			theTiamin = aTiamin;
-		}
+		public String getTiamin() {return tiamin;}
 
 		/** Витамин B1 */
-		private String theTiamin;
+		private String tiamin;
 		
 		/** Бета-каротин */
 		@Comment("Бета-каротин")
 		@Persist
-		public String getBetaCarotin() {return theBetaCarotin;}
-		public void setBetaCarotin(String aBetaCarotin) {
-			theBetaCarotin = aBetaCarotin;
-		}
+		public String getBetaCarotin() {return betaCarotin;}
 
 		/** Бета-каротин */
-		private String theBetaCarotin;
+		private String betaCarotin;
 		
 		/** Витамин А */
 		@Comment("Витамин А")
 		@Persist
-		public String getRetinol() {return theRetinol;}
-		public void setRetinol(String aRetinol) {
-			theRetinol = aRetinol;
-		}
+		public String getRetinol() {return retinol;}
 
 		/** Витамин А */
-		private String theRetinol;
+		private String retinol;
 	
 		/** Калорийность */
 		@Comment("Калорийность")
 		@Persist
-		public String getCalorieContent() {return theCalorieContent;}
-		public void setCalorieContent(String aCalorieContent) {
-			theCalorieContent = aCalorieContent;
-		}
+		public String getCalorieContent() {return calorieContent;}
 
 		/** Калорийность */
-		private String theCalorieContent;
+		private String calorieContent;
 		
 		/** Углеводы */
 		@Comment("Углеводы")
 		@Persist
-		public String getCarbohydrates() {return theCarbohydrates;}
-		public void setCarbohydrates(String aCarbohydrates) {
-			theCarbohydrates = aCarbohydrates;
-		}
+		public String getCarbohydrates() {return carbohydrates;}
 
 		/** Углеводы */
-		private String theCarbohydrates;
+		private String carbohydrates;
 		
 		/** Жиры */
 		@Comment("Жиры")
 		@Persist
-		public String getLipids() {return theLipids;}
-		public void setLipids(String aLipids) {
-			theLipids = aLipids;
-		}
+		public String getLipids() {return lipids;}
 
 		/** Жиры */
-		private String theLipids;
+		private String lipids;
 		
 		/** Белки */
 		@Comment("Белки")
 		@Persist
-		public String getProteins() {return theProteins;}
-		public void setProteins(String aProteins) {
-			theProteins = aProteins;
-		}
+		public String getProteins() {return proteins;}
 
 		/** Белки */
-		private String theProteins;
+		private String proteins;
 
 		/** Растительные белки */
 		@Comment("Растительные белки")
 		@Persist
 		public String getPlantProteins() {
-			return thePlantProteins;
+			return plantProteins;
 		}
 
-		public void setPlantProteins(String aPlantProteins) {
-			thePlantProteins = aPlantProteins;
-		}
 
 		/** Растительные белки */
-		private String thePlantProteins;
+		private String plantProteins;
 		
 		/** Животные белки */
 		@Comment("Животные белки")
 		@Persist
 		public String getAnimalProteins() {
-			return theAnimalProteins;
-		}
-
-		public void setAnimalProteins(String aAnimalProteins) {
-			theAnimalProteins = aAnimalProteins;
+			return animalProteins;
 		}
 
 		/** Животные белки */
-		private String theAnimalProteins;
+		private String animalProteins;
 		
 		/** Растительные жиры */
 		@Comment("Растительные жиры")
 		@Persist
 		public String getPlantLipids() {
-			return thePlantLipids;
-		}
-
-		public void setPlantLipids(String aPlantLipids) {
-			thePlantLipids = aPlantLipids;
+			return plantLipids;
 		}
 
 		/** Растительные жиры */
-		private String thePlantLipids;
+		private String plantLipids;
 		
 		/** Животные жиры */
 		@Comment("Животные жиры")
 		@Persist
 		public String getAnimalLipids() {
-			return theAnimalLipids;
-		}
-
-		public void setAnimalLipids(String aAnimalLipids) {
-			theAnimalLipids = aAnimalLipids;
+			return animalLipids;
 		}
 
 		/** Животные жиры */
-		private String theAnimalLipids;
+		private String animalLipids;
 	}

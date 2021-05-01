@@ -8,6 +8,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -24,66 +26,44 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
     @AIndex(properties="template")
     }) 
 @EntityListeners(DeleteListener.class)
+@Setter
+@Getter
 public class ParameterByForm extends BaseEntity{
 	
 	/** Использовать значение параметра по умолчанию */
-	@Comment("Использовать значение параметра по умолчанию")
-	public Boolean getUseDefaultValue() {return theUseDefaultValue;}
-	public void setUseDefaultValue(Boolean aUseDefaultValue) {theUseDefaultValue = aUseDefaultValue;}
-	/** Использовать значение параметра по умолчанию */
-	private Boolean theUseDefaultValue;
+	private Boolean useDefaultValue;
 	
 	/** Параметр */
 	@Comment("Параметр")
 	@OneToOne
-	public Parameter getParameter() {return theParameter;}
-	public void setParameter(Parameter aParameter) {theParameter = aParameter;}
-	
-	/** Позиция на форме */
-	@Comment("Позиция на форме")
-	public Long getPosition() {return thePosition;}
-	public void setPosition(Long aPosition) {thePosition = aPosition;}
+	public Parameter getParameter() {return parameter;}
+
 
 	/** Форма ввода для шаблона */
 	@Comment("Форма ввода для шаблона")
 	@ManyToOne
-	public FormInputProtocol getFormInput() {return theFormInput;}
-	public void setFormInput(FormInputProtocol aFormInput) {theFormInput = aFormInput;}
+	public FormInputProtocol getFormInput() {return formInput;}
 
 	/** Форма ввода для шаблона */
-	private FormInputProtocol theFormInput;
+	private FormInputProtocol formInput;
 	/** Позиция на форме */
-	private Long thePosition;
+	private Long position;
 	/** Параметр */
-	private Parameter theParameter;
+	private Parameter parameter;
 	
 	/** Шаблон */
 	@Comment("Шаблон")
 	@OneToOne
-	public TemplateProtocol getTemplate() {return theTemplate;}
-	public void setTemplate(TemplateProtocol aTemplate) {theTemplate = aTemplate;}
+	public TemplateProtocol getTemplate() {return template;}
 
 	/** Шаблон */
-	private TemplateProtocol theTemplate;
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
+	private TemplateProtocol template;
 
 	/** Пользователь */
-	@Comment("Пользователь")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-
-	/** Пользователь */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	
 	/** Карта оценки */
-	@Comment("Карта оценки")
-	public Long getAssessmentCard() {return theAssessmentCard;}
-	public void setAssessmentCard(Long aAssessmentCard) {theAssessmentCard = aAssessmentCard;}
-	/** Карта оценки */
-	private Long theAssessmentCard;
+	private Long assessmentCard;
 }

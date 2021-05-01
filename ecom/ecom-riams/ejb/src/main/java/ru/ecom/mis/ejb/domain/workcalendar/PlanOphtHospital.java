@@ -2,6 +2,8 @@ package ru.ecom.mis.ejb.domain.workcalendar;/**
  * Created by Milamesher on 31.10.2019.
  */
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocEye;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -17,19 +19,15 @@ import java.sql.Date;
  */
 
 @Entity
+@Getter
+@Setter
 public class PlanOphtHospital extends WorkCalendarHospitalBed {
     /** Дата ОКТ */
-    @Comment("Дата ОКТ")
-    public Date getDateOKT() {return theDateOKT;}
-    public void setDateOKT(Date aDateOKT) {theDateOKT = aDateOKT;}
-    /** Дата ОКТ */
-    private Date theDateOKT;
+    private Date dateOKT;
 
     /** Глаз, в который будут вводить ингибиторы ангиогенеза */
     @Comment("Глаз, в который будут вводить ингибиторы ангиогенеза")
     @OneToOne
-    public VocEye getEye() {return theEye;}
-    public void setEye(VocEye aEye) {theEye = aEye;}
-    /** Глаз, в который будут вводить ингибиторы ангиогенеза */
-    private VocEye theEye;
+    public VocEye getEye() {return eye;}
+    private VocEye eye;
 }

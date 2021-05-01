@@ -8,6 +8,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -27,107 +29,53 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	,@AIndex(properties={"cardNumber"})
 })
 @Table(schema="SQLUser")
+ @Getter
+ @Setter
 public class PsychiatricCareCard extends BaseEntity{
  /**
   * Дата взятия на учет
   */
- @Comment("Дата взятия на учет")
- public Date getStartDate() {
-  return theStartDate;
- }
- public void setStartDate(Date aStartDate) {
-  theStartDate = aStartDate;
- }
- /**
-  * Дата взятия на учет
-  */
- private Date theStartDate;
+ private Date startDate;
  /**
   * Дата окончания учета
   */
- @Comment("Дата окончания учета")
- public Date getFinishDate() {
-  return theFinishDate;
- }
- public void setFinishDate(Date aFinishDate) {
-  theFinishDate = aFinishDate;
- }
- /**
-  * Дата окончания учета
-  */
- private Date theFinishDate;
+ private Date finishDate;
  /**
   * Впервые в жизни заболевший
   */
- @Comment("Впервые в жизни заболевший")
- public Boolean getFirstTimeDiseased() {
-  return theFirstTimeDiseased;
- }
- public void setFirstTimeDiseased(Boolean aFirstTimeDiseased) {
-  theFirstTimeDiseased = aFirstTimeDiseased;
- }
- /**
-  * Впервые в жизни заболевший
-  */
- private Boolean theFirstTimeDiseased;
+ private Boolean firstTimeDiseased;
  /**
   * Причина прекращения наблюдения
   */
  @Comment("Причина прекращения наблюдения")
  @OneToOne
  public VocPsychStrikeOffReason getStrikeOffReason() {
-  return theStrikeOffReason;
- }
- public void setStrikeOffReason(VocPsychStrikeOffReason aStrikeOffReason) {
-  theStrikeOffReason = aStrikeOffReason;
+  return strikeOffReason;
  }
  /**
   * Причина прекращения наблюдения
   */
- private VocPsychStrikeOffReason theStrikeOffReason;
+ private VocPsychStrikeOffReason strikeOffReason;
  /**
   * Примечания
   */
- @Comment("Примечания")
- public String getNotes() {
-  return theNotes;
- }
- public void setNotes(String aNotes) {
-  theNotes = aNotes;
- }
- /**
-  * Примечания
-  */
- private String theNotes;
+ private String notes;
  /**
   * Участки ЛПУ
   */
  @Comment("Участки ЛПУ")
  @OneToMany(mappedBy="careCard", cascade=CascadeType.ALL)
  public List<LpuAreaPsychCareCard> getLpuAreas() {
-  return theLpuAreas;
- }
- public void setLpuAreas(List<LpuAreaPsychCareCard> aLpuAreas) {
-  theLpuAreas = aLpuAreas;
+  return lpuAreas;
  }
  /**
   * Участки ЛПУ
   */
- private List<LpuAreaPsychCareCard> theLpuAreas;
+ private List<LpuAreaPsychCareCard> lpuAreas;
  /**
   * Номер диспансерной карты
   */
- @Comment("Номер диспансерной карты")
- public String getCardNumber() {
-  return theCardNumber;
- }
- public void setCardNumber(String aCardNumber) {
-  theCardNumber = aCardNumber;
- }
- /**
-  * Номер диспансерной карты
-  */
- private String theCardNumber;
+ private String cardNumber;
  /**
   * Наблюдения
   */
@@ -135,15 +83,12 @@ public class PsychiatricCareCard extends BaseEntity{
  @OneToMany(mappedBy="careCard", cascade=CascadeType.ALL)
  @OrderBy("startDate")
  public List<PsychiaticObservation> getObservations() {
-  return theObservations;
- }
- public void setObservations(List<PsychiaticObservation> aObservations) {
-  theObservations = aObservations;
+  return observations;
  }
  /**
   * Наблюдения
   */
- private List<PsychiaticObservation> theObservations;
+ private List<PsychiaticObservation> observations;
 
  /**
   * Общественно-опасные события
@@ -152,15 +97,12 @@ public class PsychiatricCareCard extends BaseEntity{
  @OneToMany(mappedBy="careCard", cascade=CascadeType.ALL)
  @OrderBy("effectDate")
  public List<PublicDangerousEffect> getPublicDangerousEffects() {
-  return thePublicDangerousEffects;
- }
- public void setPublicDangerousEffects(List<PublicDangerousEffect> aPublicDangerousEffects) {
-  thePublicDangerousEffects = aPublicDangerousEffects;
+  return publicDangerousEffects;
  }
  /**
   * Общественно-опасные события
   */
- private List<PublicDangerousEffect> thePublicDangerousEffects;
+ private List<PublicDangerousEffect> publicDangerousEffects;
  /**
   * Принудительные лечения
   */
@@ -168,15 +110,12 @@ public class PsychiatricCareCard extends BaseEntity{
  @OneToMany(mappedBy="careCard", cascade=CascadeType.ALL)
  @OrderBy("decisionDate")
  public List<CompulsoryTreatment> getCompulsoryTreatments() {
-  return theCompulsoryTreatments;
- }
- public void setCompulsoryTreatments(List<CompulsoryTreatment> aCompulsoryTreatments) {
-  theCompulsoryTreatments = aCompulsoryTreatments;
+  return compulsoryTreatments;
  }
  /**
   * Принудительные лечения
   */
- private List<CompulsoryTreatment> theCompulsoryTreatments;
+ private List<CompulsoryTreatment> compulsoryTreatments;
  /**
   * Состояния здоровья
   */
@@ -184,15 +123,12 @@ public class PsychiatricCareCard extends BaseEntity{
  @OneToMany(mappedBy="careCard", cascade=CascadeType.ALL)
  @OrderBy("startDate")
  public List<PsychicHealthState> getHealthState() {
-  return theHealthState;
- }
- public void setHealthState(List<PsychicHealthState> aHealthState) {
-  theHealthState = aHealthState;
+  return healthState;
  }
  /**
   * Состояния здоровья
   */
- private List<PsychicHealthState> theHealthState;
+ private List<PsychicHealthState> healthState;
  /**
   * Судебно-психиатрические экспертизы
   */
@@ -200,173 +136,85 @@ public class PsychiatricCareCard extends BaseEntity{
  @OneToMany(mappedBy="careCard", cascade=CascadeType.ALL)
  @OrderBy("examinationDate")
  public List<PsychiatricExamination> getExaminations() {
-  return theExaminations;
- }
- public void setExaminations(List<PsychiatricExamination> aExaminations) {
-  theExaminations = aExaminations;
+  return examinations;
  }
  /**
   * Судебно-психиатрические экспертизы
   */
- private List<PsychiatricExamination> theExaminations;
+ private List<PsychiatricExamination> examinations;
  /**
   * Дата начала заболевания
   */
- @Comment("Дата начала заболевания")
- public Date getIllnessStartDate() {
-  return theIllnessStartDate;
- }
- public void setIllnessStartDate(Date aIllnessStartDate) {
-  theIllnessStartDate = aIllnessStartDate;
- }
- /**
-  * Дата начала заболевания
-  */
- private Date theIllnessStartDate;
+ private Date illnessStartDate;
  /**
   * Дата первого обращения к психиатру
   */
- @Comment("Дата первого обращения к психиатру")
- public Date getFirstPsychiatricVisitDate() {
-  return theFirstPsychiatricVisitDate;
- }
- public void setFirstPsychiatricVisitDate(Date aFirstPsychiatricVisitDate) {
-  theFirstPsychiatricVisitDate = aFirstPsychiatricVisitDate;
- }
- /**
-  * Дата первого обращения к психиатру
-  */
- private Date theFirstPsychiatricVisitDate;
+ private Date firstPsychiatricVisitDate;
  /**
   * Дата последнего недобровольного освидетельствования
   */
- @Comment("Дата последнего недобровольного освидетельствования")
- public Date getLastInvoluntaryExamDate() {
-  return theLastInvoluntaryExamDate;
- }
- public void setLastInvoluntaryExamDate(Date aLastInvoluntaryExamDate) {
-  theLastInvoluntaryExamDate = aLastInvoluntaryExamDate;
- }
- /**
-  * Дата последнего недобровольного освидетельствования
-  */
- private Date theLastInvoluntaryExamDate;
+ private Date lastInvoluntaryExamDate;
  /**
   * Судимость до обращения к психиатру
   */
- @Comment("Судимость до обращения к психиатру")
- public Boolean getConvictionsBeforeCare() {
-  return theConvictionsBeforeCare;
- }
- public void setConvictionsBeforeCare(Boolean aConvictionsBeforeCare) {
-  theConvictionsBeforeCare = aConvictionsBeforeCare;
- }
- /**
-  * Судимость до обращения к психиатру
-  */
- private Boolean theConvictionsBeforeCare;
+ private Boolean convictionsBeforeCare;
  /**
   * Описание прочей причины прекращения наблюдения
   */
- @Comment("Описание прочей причины прекращения наблюдения")
- public String getStrikeOffOtherReasonNotes() {
-  return theStrikeOffOtherReasonNotes;
- }
- public void setStrikeOffOtherReasonNotes(String aStrikeOffOtherReasonNotes) {
-  theStrikeOffOtherReasonNotes = aStrikeOffOtherReasonNotes;
- }
- /**
-  * Описание прочей причины прекращения наблюдения
-  */
- private String theStrikeOffOtherReasonNotes;
+ private String strikeOffOtherReasonNotes;
  /**
   * Дата смерти
   */
- @Comment("Дата смерти")
- public Date getDeathDate() {
-  return theDeathDate;
- }
- public void setDeathDate(Date aDeathDate) {
-  theDeathDate = aDeathDate;
- }
- /**
-  * Дата смерти
-  */
- private Date theDeathDate;
+ private Date deathDate;
  /**
   * Причина смерти
   */
  @Comment("Причина смерти")
  @OneToOne
  public VocPsychDeathReason getDeathReason() {
-  return theDeathReason;
- }
- public void setDeathReason(VocPsychDeathReason aDeathReason) {
-  theDeathReason = aDeathReason;
+  return deathReason;
  }
  /**
   * Причина смерти
   */
- private VocPsychDeathReason theDeathReason;
+ private VocPsychDeathReason deathReason;
  /**
   * Причина наблюдения
   */
  @Comment("Причина наблюдения")
  @OneToOne
  public VocPsychObservationReason getObservationReason() {
-  return theObservationReason;
- }
- public void setObservationReason(VocPsychObservationReason aObservationReason) {
-  theObservationReason = aObservationReason;
+  return observationReason;
  }
  /**
   * Причина наблюдения
   */
- private VocPsychObservationReason theObservationReason;
+ private VocPsychObservationReason observationReason;
  /**
   * Пациент
   */
  @Comment("Пациент")
  @OneToOne
  public Patient getPatient() {
-  return thePatient;
- }
- public void setPatient(Patient aPatient) {
-  thePatient = aPatient;
+  return patient;
  }
  /**
   * Пациент
   */
- private Patient thePatient;
- /**
-  * Дата заведения карты *
-  */
- public Date getDateRegistration() {return theDateRegistration;}
- public void setDateRegistration(Date aDateRegistration) {theDateRegistration = aDateRegistration;    }
+ private Patient patient;
 
  /**
   * Регистратор *
   */
- public String getRegistrator() {return theRegistrator;}
- public void setRegistrator(String aRegistrator) {theRegistrator = aRegistrator;}
-
- /**
-  * Регистратор *
-  */
- private String theRegistrator;
+ private String registrator;
  /** Дата заведения карты */
- private Date theDateRegistration;
+ private Date dateRegistration;
  	/** ЛПУ */
 	@Comment("ЛПУ")
 	@OneToOne
 	public MisLpu getLpu() {
-		return theLpu;
+		return lpu;
 	}
-
-	public void setLpu(MisLpu aLpu) {
-		theLpu = aLpu;
-	}
-
 	/** ЛПУ */
-	private MisLpu theLpu;
+	private MisLpu lpu;
 }

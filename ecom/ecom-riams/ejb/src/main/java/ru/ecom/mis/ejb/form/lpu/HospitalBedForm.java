@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.lpu;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.lpu.HospitalBed;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
@@ -11,15 +12,14 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Больничная койка", nameProperties = "name", view = "entityParentView-mis_hospitalBed.do")
 @Parent(property = "parent", parentForm = HospitalRoomForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/WorkPlace/HospitalRoom/HospitalBed")
+@Setter
 public class HospitalBedForm extends HospitalRoomForm {
 	/** Дополнительные */
 	@Comment("Дополнительные")
 	@Persist
-	public Boolean getIsAddition() {return theIsAddition;}
-	public void setIsAddition(Boolean aIsAddition) {theIsAddition = aIsAddition;}
-
+	public Boolean getIsAddition() {return isAddition;}
 	/** Дополнительные */
-	private Boolean theIsAddition;
+	private Boolean isAddition;
 
 	/**
 	 * Лечебное учреждение
@@ -27,10 +27,7 @@ public class HospitalBedForm extends HospitalRoomForm {
 	@Comment("Лечебное учреждение")
 	@Persist
 	public Long getLpu() {
-		return theLpu;
+		return lpu;
 	}
-	public void setLpu(Long aLpu) {
-		theLpu = aLpu;
-	}
-	private Long theLpu;
+	private Long lpu;
 }

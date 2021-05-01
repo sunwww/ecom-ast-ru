@@ -42,7 +42,7 @@ public class SyncLpuFondServiceBean implements ISyncLpuFondService {
 
     @SuppressWarnings("unchecked")
 	private MedPolicyOmc findMedPolicy(String aSeries, String aNumber) {
-        List<MedPolicyOmc> list = theManager.createQuery(
+        List<MedPolicyOmc> list = manager.createQuery(
                 "from MedPolicyOmc where series = :series and polNumber = :number"
         ).setParameter("series", aSeries)
                 .setParameter("number", aNumber)
@@ -54,7 +54,7 @@ public class SyncLpuFondServiceBean implements ISyncLpuFondService {
     @SuppressWarnings("unchecked")
 	private Patient findPatient(String aLastname, String aFirstname, String aMiddlename, Date aBirthday) {
         if (CAN_DEBUG) LOG.debug("Finding patient " + aLastname+" "+aFirstname+" " +aMiddlename+" "+aBirthday+"...");
-        List<Patient> list = theManager.createQuery(
+        List<Patient> list = manager.createQuery(
                 "from Patient where lastname = :lastname "
                         + " and firstname = :firstname"
                         + " and middlename = :middlename"
@@ -77,8 +77,8 @@ public class SyncLpuFondServiceBean implements ISyncLpuFondService {
    // @SuppressWarnings("unchecked")
    /*
 	private <T> T findEntity(Class<T> aEntity, String aCodeField, String aValue) {
-        String entityName = theEntityHelper.getEntityName(aEntity);
-        List<T> list = theManager.createQuery(
+        String entityName = entityHelper.getEntityName(aEntity);
+        List<T> list = manager.createQuery(
                 "from "+entityName+" where "+aCodeField+" = :code"
         ).setParameter("code",aValue).getResultList();
         return list!=null && list.size()==1 ? list.iterator().next() : null ;
@@ -95,12 +95,12 @@ public class SyncLpuFondServiceBean implements ISyncLpuFondService {
      /*   IMonitor monitor = null;
 
         try {
-//            theUserTransaction.begin();
+//            userTransaction.begin();
 
-            List<RegistryEntry> registry = theManager.createQuery(
+            List<RegistryEntry> registry = manager.createQuery(
                     "from RegistryEntry where time = :time"
             ).setParameter("time", aTimeId).getResultList();
-            monitor = theMonitorService.startMonitor(aMinitorId, "Синхронизация услуг", registry.size());
+            monitor = monitorService.startMonitor(aMinitorId, "Синхронизация услуг", registry.size());
 
             int i = 0;
             for (RegistryEntry entry : registry) {
@@ -119,18 +119,18 @@ public class SyncLpuFondServiceBean implements ISyncLpuFondService {
                 if(i%10==0) monitor.setText(new StringBuilder().append("Импортируется: ").append(entry.getLastname()).append(" ").append(DateFormat.formatToDate(entry.getDischargeDate())).append("...").toString());
                 monitor.advice(1);
                 
-//                    theUserTransaction.commit();
-//                    theUserTransaction.begin();
-                theManager.flush();
-                theManager.clear();
+//                    userTransaction.commit();
+//                    userTransaction.begin();
+                manager.flush();
+                manager.clear();
                 if (i % 300 == 0) {
-//                    theUserTransaction.commit();
-//                    theUserTransaction.begin();
+//                    userTransaction.commit();
+//                    userTransaction.begin();
                     monitor.setText("Импортировано " + i);
                 }
             }
             monitor.finish("");
-//            theUserTransaction.commit();
+//            userTransaction.commit();
         } catch (Exception e) {
             if(monitor!=null) monitor.setText(e+"");
             throw new IllegalStateException(e) ;
@@ -139,11 +139,11 @@ public class SyncLpuFondServiceBean implements ISyncLpuFondService {
 
 
     @EJB
-    private ILocalMonitorService theMonitorService;
+    private ILocalMonitorService monitorService;
     @PersistenceContext
-    private EntityManager theManager;
-    private EntityHelper theEntityHelper = EntityHelper.getInstance();
-//    @Resource UserTransaction theUserTransaction;
-    @EJB ILocalAddressService theAddressService ;
-//    @JndiInject(jndiName="ejb/stac/AddressService") AddressServiceHome theAddressServiceHome;
+    private EntityManager manager;
+    private EntityHelper entityHelper = EntityHelper.getInstance();
+//    @Resource UserTransaction userTransaction;
+    @EJB ILocalAddressService addressService ;
+//    @JndiInject(jndiName="ejb/stac/AddressService") AddressServiceHome addressServiceHome;
 }

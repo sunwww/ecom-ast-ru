@@ -3,6 +3,8 @@ package ru.ecom.address.ejb.domain.address;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -16,23 +18,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Тип адреса")
 @AIndexes(@AIndex(unique = true, properties = "shortName"))
 @Table(schema="SQLUser")
+@Setter
+@Getter
 public class AddressType extends BaseEntity {
-    /** Наименование */
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
-
-    /** Сокращенное наименование */
-    public String getShortName() { return theShortName ; }
-    public void setShortName(String aShortName) { theShortName = aShortName ; }
 
     /** Код в ОМС */
-    public String getOmcCode() { return theOmcCode ; }
-    public void setOmcCode(String aOmcCode) { theOmcCode = aOmcCode ; }
-
-    /** Код в ОМС */
-    private String theOmcCode ;
+    private String omcCode ;
     /** Сокращенное наименование */
-    private String theShortName ;
+    private String shortName ;
     /** Наименование */
-    private String theName ;
+    private String name ;
 }

@@ -10,9 +10,9 @@ public class QueryResponse {
     
 
     /** Список свойст */
-    public List<QueryResponseProperty> getProperties() { return theProperties ; }
-    public void setProperties(List<QueryResponseProperty> aProperties) { theProperties = aProperties ; }
+    public List<QueryResponseProperty> getProperties() { return properties ; }
+    public void setProperties(List<QueryResponseProperty> aProperties) { properties = aProperties ; }
 
     /** Список свойст */
-    private List<QueryResponseProperty> theProperties ;
+    private List<QueryResponseProperty> properties ;
 }

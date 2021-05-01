@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -26,96 +27,86 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Subclasses( { PregnanInspectionForm.class,ConfinedInspectionForm.class, AudiologicScreeningForm.class,
 	ApgarEstimationForm.class, DownesEstimationForm.class, NewBornInfRiskEstimationForm.class, 
 	HereditaryScreeningForm.class})
+@Setter
 public class InspectionForm extends IdEntityForm{
 	/** Кто проводил осмотр */
 	@Comment("Кто проводил осмотр")
 	@Persist 
-	public String getInspector() {return theInspector;}
-	public void setInspector(String aInspector) {theInspector = aInspector;}
-	
+	public String getInspector() {return inspector;}
+
 	/** Дата осмотра */
 	@Comment("Дата осмотра")
 	@Persist @DateString @DoDateString
 	@Required
-	public String getInspectionDate() {return theInspectionDate;}
-	public void setInspectionDate(String aInspectionDate) {theInspectionDate = aInspectionDate;}
+	public String getInspectionDate() {return inspectionDate;}
 
 	/** Время осмотра */
 	@Comment("Время осмотра")
 	@Persist @TimeString @DoTimeString
 	@Required
-	public String getInspectionTime() {return theInspectionTime;}
-	public void setInspectionTime(String aInspectionTime) {theInspectionTime = aInspectionTime;}
+	public String getInspectionTime() {return inspectionTime;}
 
 	/** Беременность */
 	@Comment("Беременность")
 	@Persist
-	public Long getPregnancy() {return thePregnancy;}
-	public void setPregnancy(Long aPregnancy) {thePregnancy = aPregnancy;}
+	public Long getPregnancy() {return pregnancy;}
 
 	/** История родов */
 	@Comment("История родов")
 	@Persist
-	public Long getPregnancyHistory() {return thePregnancyHistory;}
-	public void setPregnancyHistory(Long aPregnancyHistory) {thePregnancyHistory = aPregnancyHistory;}
+	public Long getPregnancyHistory() {return pregnancyHistory;}
 
 	/** Случай медицинского обслуживания */
 	@Comment("Случай медицинского обслуживания")
 	@Persist
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
-	
+	public Long getMedCase() {return medCase;}
+
 	/** Описание */
 	@Comment("Описание")
 	@Persist
-	public String getNotes() {return theNotes;}
-	public void setNotes(String aNotes) {theNotes = aNotes;}
-	
+	public String getNotes() {return notes;}
+
 	/** Специалист, проводивший осмотр */
 	@Comment("Специалист, проводивший осмотр")
 	@Persist @Required
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public Long getWorkFunction() {return workFunction;}
 
 	/** Информация об осмотре */
 	@Comment("Информация об осмотре")
 	@Persist
-	public String getInformation() {return theInformation;}
-	public void setInformation(String aInformation) {theInformation = aInformation;}
+	public String getInformation() {return information;}
 
 	/** Информация о специалисте */
 	@Comment("Информация о специалисте")
 	@Persist
-	public String getWorkFunctionInfo() {return theWorkFunctionInfo;}
-	public void setWorkFunctionInfo(String aWorkFunctionInfo) {theWorkFunctionInfo = aWorkFunctionInfo;}
+	public String getWorkFunctionInfo() {return workFunctionInfo;}
 
 	/** Информация о типе осмотра */
 	@Comment("Информация о типе осмотра")
 	@Persist
-	public String getTypeInformation() {return theTypeInformation;}
-	public void setTypeInformation(String aTypeInformation) {theTypeInformation = aTypeInformation;}
+	public String getTypeInformation() {return typeInformation;}
 
 	/** Информация о типе осмотра */
-	private String theTypeInformation;
+	private String typeInformation;
 	/** Информация о специалисте */
-	private String theWorkFunctionInfo;
+	private String workFunctionInfo;
 	/** Информация об осмотре */
-	private String theInformation;
+	private String information;
 	/** Специалист, проводивший осмотр */
-	private Long theWorkFunction;
+	private Long workFunction;
 	/** Случай медицинского обслуживания */
-	private Long theMedCase;
+	private Long medCase;
 	/** История родов */
-	private Long thePregnancyHistory;
+	private Long pregnancyHistory;
 	/** Беременность */
-	private Long thePregnancy;
+	private Long pregnancy;
 	/** Кто проводил осмотр */
-	private String theInspector;
+	private String inspector;
 	/** Дата осмотра */
-	private String theInspectionDate;
+	private String inspectionDate;
 	/** Время осмотра */
-	private String theInspectionTime;
+	private String inspectionTime;
 	/** Описание */
-	private String theNotes;
+	private String notes;
 
 }

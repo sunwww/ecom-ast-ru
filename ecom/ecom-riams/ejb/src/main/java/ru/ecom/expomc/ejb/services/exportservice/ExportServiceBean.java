@@ -33,17 +33,17 @@ public class ExportServiceBean implements IExportService {
     public void export(long aMonitorId, long aFileId, ExportForm aForm) {
         IMonitor monitor = null ;
         try {
-            ImportDocument document = theManager.find(ImportDocument.class, aForm.getDocument())  ;
-        	File file = theJbossGetFileLocalService.createFile(aFileId, document.getKeyName()+".dbf");
+            ImportDocument document = manager.find(ImportDocument.class, aForm.getDocument())  ;
+        	File file = jbossGetFileLocalService.createFile(aFileId, document.getKeyName()+".dbf");
         	String filename = file.getName() ;
         	
             Class clazz = ClassLoaderHelper.getInstance().loadClass(document.getEntityClassName()) ;
-            Long count = (Long)theManager.createQuery("select count(*) from "+clazz.getSimpleName()).getSingleResult() ;
-            monitor = theMonitorService.startMonitor(aMonitorId, "Экспорт файла "+filename, count);
+            Long count = (Long)manager.createQuery("select count(*) from "+clazz.getSimpleName()).getSingleResult() ;
+            monitor = monitorService.startMonitor(aMonitorId, "Экспорт файла "+filename, count);
             monitor.setText(filename);
-            Iterator iterator = QueryIteratorUtil.iterate(theManager.createQuery("from "+clazz.getSimpleName()+" order by id")) ;
+            Iterator iterator = QueryIteratorUtil.iterate(manager.createQuery("from "+clazz.getSimpleName()+" order by id")) ;
 
-            Format format = theManager.find(Format.class, aForm.getFormat()) ;
+            Format format = manager.find(Format.class, aForm.getFormat()) ;
             
             export(format, iterator, file, monitor, count, null) ;
             
@@ -131,10 +131,10 @@ public class ExportServiceBean implements IExportService {
         return fields;
     }
 
-    @EJB ILocalMonitorService theMonitorService ;
+    @EJB ILocalMonitorService monitorService ;
     @PersistenceContext
-    public EntityManager theManager;
+    public EntityManager manager;
 
-    private @EJB IJbossGetFileLocalService theJbossGetFileLocalService;
+    private @EJB IJbossGetFileLocalService jbossGetFileLocalService;
 
 }

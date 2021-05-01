@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.vaccination;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.vaccination.VaccinationEstop;
@@ -25,21 +26,18 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Медотвод", nameProperties= "id", view="entityView-vac_vaccinationEstop.do")
 @Parent(property = "vaccination", parentForm =VaccinationForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Vaccination/VaccinationEstop")
+@Setter
 public class VaccinationEstopForm extends IdEntityForm {
 
 	/** Вакцинация */
 	@Comment("Вакцинация")
 	@Persist @Required
 	public Long getVaccination() {
-		return theVaccination;
-	}
-
-	public void setVaccination(Long aVaccination) {
-		theVaccination = aVaccination;
+		return vaccination;
 	}
 
 	/** Вакцинация */
-	private Long theVaccination;
+	private Long vaccination;
 	
 	/**
 	 * Дата медотвода
@@ -48,46 +46,37 @@ public class VaccinationEstopForm extends IdEntityForm {
 	@Persist @Required
 	@DateString @DoDateString
 	public String getEstopDate() {
-		return theEstopDate;
+		return estopDate;
 	}
 
 	/**
 	 * Дата медотвода
 	 */
-	public void setEstopDate(String a_Property) {
-		theEstopDate = a_Property;
-	}
-
-	/**
-	 * Дата медотвода
-	 */
-	private String theEstopDate;
+	private String estopDate;
 	
 	/**
 	 * Тип медотвода
 	 */
 	@Comment("Тип медотвода")
 	@Persist @Required
-	public Long getEstopType() {return theEstopType;}
-	public void setEstopType(Long a_Property) {theEstopType = a_Property;}
+	public Long getEstopType() {return estopType;}
 
 	/**
 	 * Тип медотвода
 	 */
-	private Long theEstopType;
+	private Long estopType;
 
 	/**
 	 * Комментарий
 	 */
 	@Comment("Комментарий")
 	@Persist
-	public String getComments() {return theComments;}
-	public void setComments(String a_Property) {theComments = a_Property;}
+	public String getComments() {return comments;}
 
 	/**
 	 * Комментарий
 	 */
-	private String theComments;
+	private String comments;
 
 	/**
 	 * Дата окончания медотвода
@@ -95,25 +84,23 @@ public class VaccinationEstopForm extends IdEntityForm {
 	@Comment("Дата окончания медотвода")
 	@Persist
 	@DateString @DoDateString
-	public String getDateFinish() {return theDateFinish;}
-	public void setDateFinish(String a_Property) {theDateFinish = a_Property;}
+	public String getDateFinish() {return dateFinish;}
 
 	/**
 	 * Дата окончания медотвода
 	 */
-	private String theDateFinish;
+	private String dateFinish;
 
 	/**
 	 * Недействительность
 	 */
 	@Comment("Недействительность")
 	@Persist
-	public Boolean getNoActuality() {return theNoActuality;}
-	public void setNoActuality(Boolean a_Property) {theNoActuality = a_Property;}
+	public Boolean getNoActuality() {return noActuality;}
 
 	/**
 	 * Недействительность
 	 */
-	private Boolean theNoActuality;
+	private Boolean noActuality;
 
 }

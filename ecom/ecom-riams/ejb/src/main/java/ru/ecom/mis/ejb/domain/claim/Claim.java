@@ -6,6 +6,8 @@ import java.sql.Time;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -13,202 +15,91 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Заявка в техническую поддержку")
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class Claim extends BaseEntity{
 
 	/** Дата заморозки задачи */
-	@Comment("Дата заморозки задачи")
-	public Date getFreezeDate() {return theFreezeDate;}
-	public void setFreezeDate(Date aFreezeDate) {theFreezeDate = aFreezeDate;}
-	/** Дата заморозки задачи */
-	private Date theFreezeDate;
+	private Date freezeDate;
 	
 	/** Время заморозки */
-	@Comment("Время заморозки")
-	public Time getFreezeTime() {return theFreezeTime;}
-	public void setFreezeTime(Time aFreezeTime) {theFreezeTime = aFreezeTime;}
-	/** Время заморозки */
-	private Time theFreezeTime;
+	private Time freezeTime;
 	
 	/** Пользователь, заморозивший задачу */
-	@Comment("Пользователь, заморозивший задачу")
-	public String getFreezeUsername() {return theFreezeUsername;}
-	public void setFreezeUsername(String aFreezeUsername) {theFreezeUsername = aFreezeUsername;}
-	/** Пользователь, заморозивший задачу */
-	private String theFreezeUsername;
+	private String freezeUsername;
 	
 	/** Создатель */
-	@Comment("Создатель")
-	public String getUsername() {return theUsername;}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
-	/** Создатель */
-	private String theUsername;
+	private String username;
 	
 	/** Рабочая функция создателя */
-	@Comment("Рабочая функция создателя")
-	public Long getWorkfunction() {return theWorkfunction;}
-	public void setWorkfunction(Long aWorkfunction) {theWorkfunction = aWorkfunction;}
-	/** Рабочая функция создателя */
-	private Long theWorkfunction;
+	private Long workfunction;
 	
 	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	
 	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	
 	/** Текст заявки */
-	@Comment("Текст заявки")
-	public String getDescription() {return theDescription;}
-	public void setDescription(String aDescription) {theDescription = aDescription;}
-	/** Текст заявки */
-	private String theDescription;
+	private String description;
 	
 	/** Дата просмотра оператором */
-	@Comment("Дата просмотра оператором")
-	public Date getViewDate() {return theViewDate;}
-	public void setViewDate(Date aViewDate) {theViewDate = aViewDate;}
-	/** Дата просмотра оператором */
-	private Date theViewDate;
+	private Date viewDate;
 	
 	/** Время просмотра оператором */
-	@Comment("Время просмотра оператором")
-	public Time getViewTime() {return theViewTime;}
-	public void setViewTime(Time aViewTime) {theViewTime = aViewTime;}
-	/** Время просмотра оператором */
-	private Time theViewTime;
+	private Time viewTime;
 	
 	/** Оператор */
-	@Comment("Оператор")
-	public String getViewUsername() {return theViewUsername;}
-	public void setViewUsername(String aViewUsername) {theViewUsername = aViewUsername;}
-	/** Оператор */
-	private String theViewUsername;
+	private String viewUsername;
 	
 	/** Дата получения в работу */
-	@Comment("Дата получения в работу")
-	public Date getStartWorkDate() {return theStartWorkDate;}
-	public void setStartWorkDate(Date aStartWorkDate) {theStartWorkDate = aStartWorkDate;}
-	/** Дата получения в работу */
-	private Date theStartWorkDate;
+	private Date startWorkDate;
 	
 	/** Время получения в работу */
-	@Comment("Время получения в работу")
-	public Time getStartWorkTime() {return theStartWorkTime;}
-	public void setStartWorkTime(Time aStartWorkTime) {theStartWorkTime = aStartWorkTime;}
-	/** Время получения в работу */
-	private Time theStartWorkTime;
+	private Time startWorkTime;
 	
 	/** Исполнитель */
-	@Comment("Исполнитель")
-	public String getStartWorkUsername() {return theStartWorkUsername;}
-	public void setStartWorkUsername(String aStartWorkUsername) {theStartWorkUsername = aStartWorkUsername;}
-	/** Исполнитель */
-	private String theStartWorkUsername;
+	private String startWorkUsername;
 	
 	/** Комментарий исполнителя */
-	@Comment("Комментарий исполнителя")
-	public String getExecutorComment() {return theExecutorComment;}
-	public void setExecutorComment(String aExecutorComment) {theExecutorComment = aExecutorComment;}
-	/** Комментарий исполнителя */
-	private String theExecutorComment;
+	private String executorComment;
 	
 	/** Дата отмены */
-	@Comment("Дата отмены")
-	public Date getCancelDate() {return theCancelDate;}
-	public void setCancelDate(Date aCancelDate) {theCancelDate = aCancelDate;}
-	/** Дата отмены */
-	private Date theCancelDate;
+	private Date cancelDate;
 	
 	/** Время отмены */
-	@Comment("Время отмены")
-	public Time getCancelTime() {return theCancelTime;}
-	public void setCancelTime(Time aCancelTime) {theCancelTime = aCancelTime;}
-	/** Время отмены */
-	private Time theCancelTime;
+	private Time cancelTime;
 	
 	/** Пользователь, отменивший заявку */
-	@Comment("Пользователь, отменивший заявку")
-	public String getCancelUsername() {return theCancelUsername;}
-	public void setCancelUsername(String aCancelUsername) {theCancelUsername = aCancelUsername;}
-	/** Пользователь, отменивший заявку */
-	private String theCancelUsername;
+	private String cancelUsername;
 
 	/** Было уведомление через СМС */
-	@Comment("Было уведомление через СМС")
-	public Boolean getSendMessage() {return theSendMessage;}
-	public void setSendMessage(Boolean aSendMessage) {theSendMessage = aSendMessage;}
-	/** Было уведомление через СМС */
-	private Boolean theSendMessage;
+	private Boolean sendMessage;
 	
 	/** Тип заявки */
-	@Comment("Тип заявки")
-	public Long getClaimType() {return theClaimType;}
-	public void setClaimType(Long aClaimType) {theClaimType = aClaimType;}
-	/** Тип заявки */
-	private Long theClaimType;
+	private Long claimType;
 	
 	/** Контактный телефон */
-	@Comment("Контактный телефон")
-	public String getPhone() {return thePhone;}
-	public void setPhone(String aPhone) {thePhone = aPhone;}
-	/** Контактный телефон */
-	private String thePhone;
+	private String phone;
 	
 	/** Дата исполнения */
-	@Comment("Дата исполнения")
-	public Date getFinishDate() {return theFinishDate;}
-	public void setFinishDate(Date aFinishDate) {theFinishDate = aFinishDate;}
-	/** Дата исполнения */
-	private Date theFinishDate;
+	private Date finishDate;
 	
 	/** Время исполнения */
-	@Comment("Время исполнения")
-	public Time getFinishTime() {return theFinishTime;}
-	public void setFinishTime(Time aFinishTime) {theFinishTime = aFinishTime;}
-	/** Время исполнения */
-	private Time theFinishTime;
+	private Time finishTime;
 	
 	/** Пользователь, исполнивший заявку*/
-	@Comment("Пользователь, исполнивший заявку")
-	public String getFinishUsername() {return theFinishUsername;}
-	public void setFinishUsername(String aFinishUsername) {theFinishUsername = aFinishUsername;}
-	/** Пользователь, исполнивший заявку*/
-	private String theFinishUsername;
+	private String finishUsername;
 	
 	/** Место исполнения заявки */
-	@Comment("Место исполнения заявки")
-	public String getAddress() {return theAddress;}
-	public void setAddress(String aAddress) {theAddress = aAddress;}
-	/** Место исполнения заявки */
-	private String theAddress;
+	private String address;
 	
 	/** Пользователь подтвердил выполнение заявки */
-	@Comment("Пользователь подтвердил выполнение заявки")
-	public Boolean getCompleteConfirmed() {return theCompleteConfirmed;}
-	public void setCompleteConfirmed(Boolean aCompleteConfirmed) {theCompleteConfirmed = aCompleteConfirmed;}
-	/** Пользователь подтвердил выполнение заявки */
-	private Boolean theCompleteConfirmed;
+	private Boolean completeConfirmed;
 	
 	/** Комментарий пользователя */
-	@Comment("Комментарий пользователя")
-	public String getCreatorComment() {return theCreatorComment;}
-	public void setCreatorComment(String aCreatorComment) {theCreatorComment = aCreatorComment;}
-	/** Комментарий пользователя */
-	private String theCreatorComment;
+	private String creatorComment;
 
 	/** Имя файла-скриншота */
-	@Comment("Имя файла-скриншота")
-	public String getScreenFileName() {return theScreenFileName;}
-	public void setScreenFileName(String aScreenFileName) {theScreenFileName= aScreenFileName;}
-	/** Имя файла-скриншота */
-	private String theScreenFileName;
+	private String screenFileName;
 }
-//lastrealease milamesher 06.03.2018 #77

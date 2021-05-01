@@ -7,6 +7,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.diet.voc.VocFoodStuff;
 import ru.ecom.mis.ejb.domain.diet.voc.VocProcessingType;
@@ -21,33 +24,14 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Продукт блюда")
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class DishFoodStuff extends BaseEntity{
 
 	/** Нетто */
-	@Comment("Нетто")
-	public BigDecimal getNet() {
-		return theNet;
-	}
-
-	public void setNet(BigDecimal aNet) {
-		theNet = aNet;
-	}
-
-	/** Нетто */
-	private BigDecimal theNet;
-	
+	private BigDecimal net;
 	/** Брутто */
-	@Comment("Брутто")
-	public BigDecimal getGross() {
-		return theGross;
-	}
-
-	public void setGross(BigDecimal aGross) {
-		theGross = aGross;
-	}
-
-	/** Брутто */
-	private BigDecimal theGross;
+	private BigDecimal gross;
 	
 	
 	/** Железо */
@@ -160,7 +144,7 @@ public class DishFoodStuff extends BaseEntity{
 	
 	/** Название продукта */
 	@Transient
-	public String getName() {return theFoodStuff!=null?theFoodStuff.getName():"";}
+	public String getName() {return foodStuff!=null?foodStuff.getName():"";}
 	public void setName(String aName) {}
 
 	/** Калорийность */
@@ -243,44 +227,32 @@ public class DishFoodStuff extends BaseEntity{
 	@Comment("Продукт питания")
 	@OneToOne
 	public VocFoodStuff getFoodStuff() {
-		return theFoodStuff;
-	}
-
-	public void setFoodStuff(VocFoodStuff aFoodStuff) {
-		theFoodStuff = aFoodStuff;
+		return foodStuff;
 	}
 
 	/** Продукт питания */
-	private VocFoodStuff theFoodStuff;
+	private VocFoodStuff foodStuff;
 
 	
 	/** Блюдо */
 	@Comment("Блюдо")
 	@ManyToOne
 	public Dish getDish() {
-		return theDish;
-	}
-
-	public void setDish(Dish aDish) {
-		theDish = aDish;
+		return dish;
 	}
 
 	/** Блюдо */
-	private Dish theDish;
+	private Dish dish;
 
 	/** Тип кулинарной обработки */
 	@Comment("Тип кулинарной обработки")
 	@OneToOne
 	public VocProcessingType getProcessingType() {
-		return theProcessingType;
-	}
-
-	public void setProcessingType(VocProcessingType aProcessingType) {
-		theProcessingType = aProcessingType;
+		return processingType;
 	}
 
 	/** Тип кулинарной обработки */
-	private VocProcessingType theProcessingType;
+	private VocProcessingType processingType;
 
 
 	/** Множитель веса */
@@ -297,31 +269,17 @@ public class DishFoodStuff extends BaseEntity{
 	}
 	public BigDecimal calcProperty(String aPropertyName) {
 		BigDecimal ret = new BigDecimal(0);
-		if (theFoodStuff!=null){
-			Class foodStuffClass = theFoodStuff.getClass();
+		if (foodStuff!=null){
+			Class foodStuffClass = foodStuff.getClass();
 			String methodName = "get" + aPropertyName;
 			Object value;
 			try {
-				value = foodStuffClass.getMethod(methodName).invoke(theFoodStuff);
+				value = foodStuffClass.getMethod(methodName).invoke(foodStuff);
 				ret = value!=null ? (BigDecimal) value : ret;
 				ret= ret.multiply(getWeightMultiplier());
-			} catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException | InvocationTargetException | IllegalAccessException | SecurityException | NoSuchMethodException | ArithmeticException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ArithmeticException e) {
-				e.printStackTrace() ;
 			}
 		}
 		return ret.setScale(2,BigDecimal.ROUND_HALF_DOWN);

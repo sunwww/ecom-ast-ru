@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.uc.privilege.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
@@ -16,124 +18,50 @@ import java.sql.Date;
  */
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 abstract public class Recipe extends BaseEntity {
 	
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@OneToOne
 	public WorkFunction getWorkFunction() {
-		return theWorkFunction;
-	}
-
-	public void setWorkFunction(WorkFunction aWorkFunction) {
-		theWorkFunction = aWorkFunction;
+		return workFunction;
 	}
 
 	/** Рабочая функция */
-	private WorkFunction theWorkFunction;
+	private WorkFunction workFunction;
 
-	/** Номер рецепта */
-	@Comment("Номер рецепта")
-	public String getRecipeNumber() {
-		return theRecipeNumber;
-	}
-
-	public void setRecipeNumber(String aRecipeNumber) {
-		theRecipeNumber = aRecipeNumber;
-	}
-
-	/** Дата выписки */
-	@Comment("Дата выписки")
-	public Date getRecipeDate() {
-		return theRecipeDate;
-	}
-
-	public void setRecipeDate(Date aRecipeDate) {
-		theRecipeDate = aRecipeDate;
-	}
-	
 	/** МКБ10 */
 	@Comment("МКБ10")
 	@OneToOne
 	public VocIdc10 getIdc10() {
-		return theIdc10;
-	}
-
-	public void setIdc10(VocIdc10 aIdc10) {
-		theIdc10 = aIdc10;
+		return idc10;
 	}
 
 	/** Лекарство */
 	@Comment("Лекарство")
 	@OneToOne
 	public VocDrugClassify getDrugClassify() {
-		return theDrugClassify;
+		return drugClassify;
 	}
 
-	public void setDrugClassify(VocDrugClassify aDrugClassify) {
-		theDrugClassify = aDrugClassify;
-	}
-
-	/** Количество ЛС по рецепту */
-	@Comment("Количество ЛС по рецепту")
-	public BigDecimal getDrugQuantity() {
-		return theDrugQuantity;
-	}
-
-	public void setDrugQuantity(BigDecimal aDrugQuantity) {
-		theDrugQuantity = aDrugQuantity;
-	}
-	
-	/** Количество лекарства на прием */
-	@Comment("Количество лекарства на прием")
-	public BigDecimal getTakingDoseAmount() {
-		return theTakingDoseAmount;
-	}
-	public void setTakingDoseAmount(BigDecimal aTakingDoseAmount) {
-		theTakingDoseAmount = aTakingDoseAmount;
-	}
-	
-	/** Количество приемов в день */
-	@Comment("Количество приемов в день")
-	public Integer getDayTakingAmount() {
-		return theDayTakingAmount;
-	}
-	public void setDayTakingAmount(Integer aDayTakingAmount) {
-		theDayTakingAmount = aDayTakingAmount;
-	}
-
-	/** Длительность приема */
-	@Comment("Длительность приема")
-	public String getUseDuration() {
-		return theUseDuration;
-	}
-	public void setUseDuration(String aUseDuration) {
-		theUseDuration = aUseDuration;
-	}
-	
 	/** Процент оплаты */
-	@Comment("Процент оплаты")
-	public Long getPayPercent() {return thePayPercent;}
-	public void setPayPercent(Long aPaymentPercent) {thePayPercent = aPaymentPercent;}
-	
-	/** Процент оплаты */
-	private Long thePayPercent;
+	private Long payPercent;
 	/** Длительность приема */
-	private String theUseDuration;
+	private String useDuration;
 		/** Количество приемов в день */
-	private Integer theDayTakingAmount;
+	private Integer dayTakingAmount;
 	/** Количество лекарства на прием */
-	private BigDecimal theTakingDoseAmount;
-	/** Статус */
-//	private VocRecipeStatus theStatus;
+	private BigDecimal takingDoseAmount;
 	/** Количество ЛС по рецепту */
-	private BigDecimal theDrugQuantity;
+	private BigDecimal drugQuantity;
 	/** МКБ10 */
-	private VocIdc10 theIdc10;
+	private VocIdc10 idc10;
 	/** Дата выписки */
-	private Date theRecipeDate;
+	private Date recipeDate;
 	/** Номер рецепта */
-	private String theRecipeNumber;
+	private String recipeNumber;
 	/** Лекарство */
-	private VocDrugClassify theDrugClassify;
+	private VocDrugClassify drugClassify;
 }

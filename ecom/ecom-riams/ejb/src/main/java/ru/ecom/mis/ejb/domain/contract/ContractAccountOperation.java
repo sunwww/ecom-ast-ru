@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.contract;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -24,66 +26,37 @@ import java.sql.Time;
 })
 @EntityListeners(DeleteListener.class)
 @UnDeletable
+@Getter
+@Setter
 public class ContractAccountOperation extends BaseEntity{
 
 	/** Признак удаленной записи */
-	@Comment("Признак удаленной записи")
-	public Boolean getIsDeleted() {return theIsDeleted;}
-	public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
-	/** Признак удаленной записи */
-	private Boolean theIsDeleted ;
+	private Boolean isDeleted ;
 
 	/** Договорной счет */
 	@Comment("Договорной счет")
 	@ManyToOne
-	public ContractAccount getAccount() {return theAccount;}
-	public void setAccount(ContractAccount aAccount) {theAccount = aAccount;}
-	/** Договорной счет */
-	private ContractAccount theAccount;
+	public ContractAccount getAccount() {return account;}
+	private ContractAccount account;
 
 	/** Тип операции (не используется) */
 	@Comment("Тип операции (не используется)")
 	@OneToOne
-	public VocAccountOperation getType() {return theType;}
-	public void setType(VocAccountOperation aType) {theType = aType;}
-	/** Тип операции */
-	private VocAccountOperation theType;
+	public VocAccountOperation getType() {return type;}
+	private VocAccountOperation type;
 
 	/**
 	 * Дата
 	 */
-	@Comment("Дата")
-	public Date getOperationDate() {return theOperationDate;}
-	public void setOperationDate(Date aOperationDate) {theOperationDate = aOperationDate;}
-	/**
-	 * Дата
-	 */
-	private Date theOperationDate;
+	private Date operationDate;
 	/**
 	 * Время операции
 	 */
-	@Comment("Время операции")
-	public Time getOperationTime() {return theOperationTime;}
-	public void setOperationTime(Time aOperationTime) {theOperationTime = aOperationTime;}
-	/**
-	 * Время операции
-	 */
-	private Time theOperationTime;
+	private Time operationTime;
 	/**
 	 * Стоимость
 	 */
-	@Comment("Стоимость")
-	
-	public BigDecimal getCost() {
-		return theCost;
-	}
-	public void setCost(BigDecimal aCost) {
-		theCost = aCost;
-	}
-	/**
-	 * Стоимость
-	 */
-	private BigDecimal theCost;
+	private BigDecimal cost;
 
 	/**
 	 * Отменившая операция
@@ -91,92 +64,40 @@ public class ContractAccountOperation extends BaseEntity{
 	@Comment("Отменившая операция")
 	@OneToOne
 	public ContractAccountOperation getRepealOperation() {
-		return theRepealOperation;
-	}
-	public void setRepealOperation(ContractAccountOperation aRepealOperation) {
-		theRepealOperation = aRepealOperation;
+		return repealOperation;
 	}
 	/**
 	 * Отменившая операция
 	 */
-	private ContractAccountOperation theRepealOperation;
+	private ContractAccountOperation repealOperation;
 	/**
 	 * Оператор
 	 */
 	@Comment("Оператор")
 	@OneToOne
 	public WorkFunction getWorkFunction() {
-		return theWorkFunction;
-	}
-	public void setWorkFunction(WorkFunction aWorkFunction) {
-		theWorkFunction = aWorkFunction;
+		return workFunction;
 	}
 	/**
 	 * Оператор
 	 */
-	private WorkFunction theWorkFunction;
-	/** Скидка  */
-	@Comment("Скидка")
-	public BigDecimal getDiscount() {return theDiscount;}
-	public void setDiscount(BigDecimal aDiscount) {theDiscount = aDiscount;}
+	private WorkFunction workFunction;
 	/** Скидка */
-	private BigDecimal theDiscount;
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	
-	/** Пользователь, создавший запись */
-	@Comment("Пользователь, создавший запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	
-	/** Дата последнего изменения */
-	@Comment("Дата последнего изменения")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-	
-	/** Время, последнего изменения */
-	@Comment("Время, последнего изменения")
-	public Time getEditTime() {return theEditTime;}
-	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-	
+	private BigDecimal discount;
 	/** Пользователь, последний изменивший запись */
-	@Comment("Пользователь, последний изменивший запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-
-	
-	/** Пользователь, последний изменивший запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Время, последнего изменения */
-	private Time theEditTime;
+	private Time editTime;
 	/** Дата последнего изменения */
-	private Date theEditDate;
+	private Date editDate;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	/** Оплата терминалом */
-	
-	@Comment("Оплата терминалом")
-	public Boolean getIsPaymentTerminal() {return theIsPaymentTerminal;}
-	public void setIsPaymentTerminal(Boolean aIsPaymentTerminal) {theIsPaymentTerminal = aIsPaymentTerminal;}
-
-	/** Оплата терминалом */
-	private Boolean theIsPaymentTerminal;
-
+	private Boolean isPaymentTerminal;
 	/** Номер телефона для чека */
-	@Comment("Номер телефона для чека")
-	public String getCustomerPhone() {return theCustomerPhone;}
-	public void setCustomerPhone(String aCustomerPhone) {theCustomerPhone = aCustomerPhone;}
-	/** Номер телефона для чека */
-	private String theCustomerPhone ;
+	private String customerPhone ;
 }

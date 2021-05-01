@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -18,42 +20,27 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @AIndexes({
 	@AIndex(properties="transfusion")
     })
+@Getter
+@Setter
 public class TransfusionReagent extends BaseEntity{
 	/** Реактив */
 	@Comment("Реактив")
 	@OneToOne
-	public VocTransfusionReagent getReagent() {return theReagent;}
-	public void setReagent(VocTransfusionReagent aReagent) {theReagent = aReagent;}
-
-	/** Серия */
-	@Comment("Серия")
-	public String getSeries() {return theSeries;}
-	public void setSeries(String aSeries) {theSeries = aSeries;}
-
-	/** Срок годности */
-	@Comment("Срок годности")
-	public Date getExpirationDate() {return theExpirationDate;}
-	public void setExpirationDate(Date aExpirationDate) {theExpirationDate = aExpirationDate;}
-
-	/** Порядковый номер */
-	@Comment("Порядковый номер")
-	public Integer getNumberReagent() {return theNumberReagent;}
-	public void setNumberReagent(Integer aNumberReagent) {theNumberReagent = aNumberReagent;}
+	public VocTransfusionReagent getReagent() {return reagent;}
 
 	/** Переливание */
 	@Comment("Переливание")
 	@OneToOne
-	public Transfusion getTransfusion() {return theTransfusion;}
-	public void setTransfusion(Transfusion aTransfusion) {theTransfusion = aTransfusion;}
+	public Transfusion getTransfusion() {return transfusion;}
 
 	/** Переливание */
-	private Transfusion theTransfusion;
+	private Transfusion transfusion;
 	/** Порядковый номер */
-	private Integer theNumberReagent;
+	private Integer numberReagent;
 	/** Срок годности */
-	private Date theExpirationDate;
+	private Date expirationDate;
 	/** Серия */
-	private String theSeries;
+	private String series;
 	/** Реактив */
-	private VocTransfusionReagent theReagent;
+	private VocTransfusionReagent reagent;
 }

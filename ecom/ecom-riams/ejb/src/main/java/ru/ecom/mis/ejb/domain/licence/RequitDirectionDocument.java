@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.licence;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -9,49 +11,36 @@ import java.sql.Date;
 
 @Entity
 @Comment("Акт в военкомат")
+@Getter
+@Setter
 public class RequitDirectionDocument extends InternalDocuments {
 	/** Номер направления */
-	@Comment("Номер направления")
-	public String getOrderNumber() {return theOrderNumber;}
-	public void setOrderNumber(String aOrderNumber) {theOrderNumber = aOrderNumber;}
-	/** Номер направления */
-	private String theOrderNumber;
+	private String orderNumber;
 	
 	/** Дата направления */
-	@Comment("Дата направления")
-	public Date getOrderDate() {return theOrderDate;}
-	public void setOrderDate(Date aOrderDate) {theOrderDate = aOrderDate;}
-	/** Дата направления */
-	private Date theOrderDate;
+	private Date orderDate;
 	
 	/** Направитель */
-	@Comment("Направитель")
-	public String getOrderOffice() {return theOrderOffice;}
-	public void setOrderOffice(String aOrderOffice) {theOrderOffice = aOrderOffice;}
-	/** Направитель */
-	private String theOrderOffice;
+	private String orderOffice;
 	
 	/** Данные объективного исследования */
 	@Comment("Данные объективного исследования")
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
-	public String getResearch() {return theResearch;}
-	public void setResearch(String aResearch) {theResearch = aResearch;}
+	public String getResearch() {return research;}
 	/** Данные объективного исследования */
-	private String theResearch;
+	private String research;
 	
 	/** Результаты диагностических исследований */
 	@Comment("Результаты диагностических исследований")
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
-	public String getLabResearch() {return theLabResearch;}
-	public void setLabResearch(String aLabResearch) {theLabResearch = aLabResearch;}
+	public String getLabResearch() {return labResearch;}
 	/** Результаты диагностических исследований */
-	private String theLabResearch;
+	private String labResearch;
 	
 	/** Жалобы */
 	@Comment("Жалобы")
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
-	public String getAbuses() {return theAbuses;}
-	public void setAbuses(String aAbuses) {theAbuses = aAbuses;}
+	public String getAbuses() {return abuses;}
 	/** Жалобы */
-	private String theAbuses;
+	private String abuses;
 }

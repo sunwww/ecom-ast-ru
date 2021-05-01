@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.extdisp;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -17,7 +19,9 @@ import java.util.List;
 @Table(schema="SQLUser")
 @AIndexes({
 	@AIndex(properties="dispType")
-    }) 
+    })
+	@Getter
+	@Setter
 public class ExtDispPlan extends BaseEntity{
 	/**
 	 * Тип дополнительной диспансеризации
@@ -25,24 +29,18 @@ public class ExtDispPlan extends BaseEntity{
 	@Comment("Тип дополнительной диспансеризации")
 	@OneToOne
 	public VocExtDisp getDispType() {
-		return theDispType;
-	}
-	public void setDispType(VocExtDisp aDispType) {
-		theDispType = aDispType;
+		return dispType;
 	}
 	/**
 	 * Тип дополнительной диспансеризации
 	 */
-	private VocExtDisp theDispType;
+	private VocExtDisp dispType;
 	@OneToMany(mappedBy="plan", cascade=CascadeType.ALL)
 	public List<ExtDispPlanService> getServices() {
-		return theServices;
-	}
-	public void setServices(List<ExtDispPlanService> aServices) {
-		theServices = aServices;
+		return services;
 	}
 	/**
 	 * Услуги
 	 */
-	private List<ExtDispPlanService> theServices;
+	private List<ExtDispPlanService> services;
 }

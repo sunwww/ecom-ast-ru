@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -16,6 +17,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Parent(property="dayPattern", parentForm=WorkCalendarDayPatternForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/WorkCalendar/Pattern/Day/Time")
 @Subclasses(value = { WorkCalendarTimeExampleForm.class, WorkCalendarTimeIntervalForm.class })
+@Setter
 public class WorkCalendarTimePatternForm extends IdEntityForm{
 	/**
 	 * Шаблон дня
@@ -23,44 +25,36 @@ public class WorkCalendarTimePatternForm extends IdEntityForm{
 	@Comment("Шаблон дня")
 	@Persist @Required
 	public Long getDayPattern() {
-		return theDayPattern;
-	}
-	public void setDayPattern(Long aDayPattern) {
-		theDayPattern = aDayPattern;
+		return dayPattern;
 	}
 	/**
 	 * Шаблон дня
 	 */
-	private Long theDayPattern;
+	private Long dayPattern;
 	/**
 	 * Тип занятости
 	 */
 	@Comment("Тип занятости")
 	@Persist 
 	public Long getWorkBusy() {
-		return theWorkBusy;
-	}
-	public void setWorkBusy(Long aWorkBusy) {
-		theWorkBusy = aWorkBusy;
+		return workBusy;
 	}
 	/**
 	 * Тип занятости
 	 */
-	private Long theWorkBusy;
+	private Long workBusy;
 	
 	/** Список времен */
 	@Comment("Список времен")
-	public String getListTimes() {return theListTimes;}
-	public void setListTimes(String aListTimes) {theListTimes = aListTimes;}
+	public String getListTimes() {return listTimes;}
 
 	/** Список времен */
-	private String theListTimes;
+	private String listTimes;
 	/** Резерв времени */
 	@Comment("Резерв времени")
 	@Persist
-	public Long getReserveType() {return theReserveType;}
-	public void setReserveType(Long aReserveType) {theReserveType = aReserveType;}
+	public Long getReserveType() {return reserveType;}
 
 	/** Резерв времени */
-	private Long theReserveType;
+	private Long reserveType;
 }

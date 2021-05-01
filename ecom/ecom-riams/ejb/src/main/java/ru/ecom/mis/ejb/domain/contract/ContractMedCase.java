@@ -2,85 +2,33 @@ package ru.ecom.mis.ejb.domain.contract;
 
 import javax.persistence.Entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
+@Getter
+@Setter
 public class ContractMedCase extends BaseEntity {
-	
 	/** Основной СМО */
-	@Comment("Основной СМО")
-	public Long getMainMedCase() {return theMainMedCase;}
-	public void setMainMedCase(Long aMainMedCase) {theMainMedCase = aMainMedCase;}
-
-	/** Основной СМО */
-	private Long theMainMedCase;
-	/** СМО */
-	@Comment("СМО")
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
-	
-	/** Гарантийный документ */
-	@Comment("Гарантийный документ")
-	public Long getGuarantee() {return theGuarantee;}
-	public void setGuarantee(Long aGuarantee) {theGuarantee = aGuarantee;}
-
-	/** Договор */
-	@Comment("Договор")
-	public Long getContract() {return theContract;}
-	public void setContract(Long aContract) {theContract = aContract;}
-
+	private Long mainMedCase;
 	/** Счет */
-	@Comment("Счет")
-	public Long getAccount() {return theAccount;}
-	public void setAccount(Long aAccount) {theAccount = aAccount;}
-
-	/** Счет */
-	private Long theAccount;
+	private Long account;
 	/** Договор */
-	private Long theContract;
+	private Long contract;
 	/** Гарантийный документ */
-	private Long theGuarantee;
+	private Long guarantee;
 	/** СМО */
-	private Long theMedCase;
-	
+	private Long medCase;
 	/** Операция */
-	@Comment("Операция")
-	public Long getSurgicalOperation() {return theSurgicalOperation;}
-	public void setSurgicalOperation(Long aSurgicalOperation) {theSurgicalOperation = aSurgicalOperation;}
-
-	/** Операция */
-	private Long theSurgicalOperation;
-	
+	private Long surgicalOperation;
 	/** Анестезия */
-	@Comment("Анестезия")
-	public Long getAnesthesia() {return theAnesthesia;}
-	public void setAnesthesia(Long aAnesthesia) {theAnesthesia = aAnesthesia;}
-
-	/** Анестезия */
-	private Long theAnesthesia;
-	
+	private Long anesthesia;
 	/** Услуга по прейскуранту */
-	@Comment("Услуга по прейскуранту")
-	public Long getPricePosition() {return thePricePosition;}
-	public void setPricePosition(Long aPricePosition) {thePricePosition = aPricePosition;}
-
-	/** Услуга по прейскуранту */
-	private Long thePricePosition;
-	
+	private Long pricePosition;
 	/** Услуга внутренния */
-	@Comment("Услуга внутренния")
-	public Long getMedService() {return theMedService;}
-	public void setMedService(Long aMedService) {theMedService = aMedService;}
-
-	/** Услуга внутренния */
-	private Long theMedService;
-	
+	private Long medService;
 	/** PriceMedService */
-	@Comment("PriceMedService")
-	public Long getPriceMedService() {return thePriceMedService;}
-	public void setPriceMedService(Long aPriceMedService) {thePriceMedService = aPriceMedService;}
-
-	/** PriceMedService */
-	private Long thePriceMedService;
+	private Long priceMedService;
 }

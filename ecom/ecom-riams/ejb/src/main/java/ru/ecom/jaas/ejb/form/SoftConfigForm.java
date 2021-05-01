@@ -1,5 +1,6 @@
 package ru.ecom.jaas.ejb.form;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.jaas.ejb.domain.SoftConfig;
@@ -20,30 +21,28 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Настройка приложения")
 @EntityFormSecurityPrefix("/Policy/Config/Soft")
 @WebTrail(comment="Настройка приложения. Ключ", nameProperties="key", view="entityView-sec_softConfig.do")
+@Setter
 public class SoftConfigForm extends IdEntityForm{
 	/** Ключ */
 	@Comment("Ключ")
 	@Persist @Required
-	public String getKey() {return theKey;}
-	public void setKey(String aKey) {theKey = aKey;}
+	public String getKey() {return key;}
 
 	/** Значение */
 	@Comment("Значение")
 	@Persist @Required
-	public String getKeyValue() {return theKeyValue;}
-	public void setKeyValue(String aValue) {theKeyValue = aValue;}
+	public String getKeyValue() {return keyValue;}
 
 	/** Описание */
 	@Comment("Описание")
 	@Persist 
-	public String getDescription() {return theDescription;}
-	public void setDescription(String aDescription) {theDescription = aDescription;}
+	public String getDescription() {return description;}
 
 	
 	/** Описание */
-	private String theDescription;
+	private String description;
 	/** Значение */
-	private String theKeyValue;
+	private String keyValue;
 	/** Ключ */
-	private String theKey;
+	private String key;
 }

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocDayParity;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkCalendarParity;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkWeek;
@@ -14,6 +16,8 @@ import javax.persistence.Transient;
 	 */
 	@Comment("Алгоритм шаблона рабочего календаря по неделям")
 @Entity
+	@Getter
+	@Setter
 public class WorkCalendarWeekAlgorithm extends WorkCalendarAlgorithm{
 		/** infoClass */
 		@Comment("infoClass")
@@ -27,58 +31,46 @@ public class WorkCalendarWeekAlgorithm extends WorkCalendarAlgorithm{
 	@Comment("Рабочая неделя")
 	@OneToOne
 	public VocWorkWeek getWorkWeek() {
-		return theWorkWeek;
-	}
-	public void setWorkWeek(VocWorkWeek aWorkWeek) {
-		theWorkWeek = aWorkWeek;
+		return workWeek;
 	}
 	/**
 	 * Рабочая неделя
 	 */
-	private VocWorkWeek theWorkWeek;
+	private VocWorkWeek workWeek;
 	/**
 	 * Четная
 	 */
 	@Comment("Четная")
 	@OneToOne
 	public VocDayParity getParity() {
-		return theParity;
-	}
-	public void setParity(VocDayParity aParity) {
-		theParity = aParity;
+		return parity;
 	}
 	/**
 	 * Четная
 	 */
-	private VocDayParity theParity;
+	private VocDayParity parity;
 	/**
 	 * Шаблон дня
 	 */
 	@Comment("Шаблон дня")
 	@OneToOne
 	public WorkCalendarDayPattern getDayPattern() {
-		return theDayPattern;
-	}
-	public void setDayPattern(WorkCalendarDayPattern aDayPattern) {
-		theDayPattern = aDayPattern;
+		return dayPattern;
 	}
 	/**
 	 * Шаблон дня
 	 */
-	private WorkCalendarDayPattern theDayPattern;
+	private WorkCalendarDayPattern dayPattern;
 	/**
 	 * Тип четности
 	 */
 	@Comment("Тип четности")
 	@OneToOne
 	public VocWorkCalendarParity getCalendarParity() {
-		return theCalendarParity;
-	}
-	public void setCalendarParity(VocWorkCalendarParity aCalendarParity) {
-		theCalendarParity = aCalendarParity;
+		return calendarParity;
 	}
 	/**
 	 * Тип четности
 	 */
-	private VocWorkCalendarParity theCalendarParity;
+	private VocWorkCalendarParity calendarParity;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.birth.PregnanExchangeCard;
@@ -24,218 +25,193 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Обменная карта беременной (сведения о беременной)", nameProperties= "id", view="entityParentView-preg_pregnanCard.do")
 @Parent(property="pregnancy", parentForm= PregnancyForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Pregnancy/PregnanExchangeCard")
+@Setter
 public class PregnanExchangeCardForm extends IdEntityForm{
 	
 	/** Консультация */
 	@Comment("Консультация")
 	@Persist @Required
-	public Long getConsultation() {return theConsultation;}
-	public void setConsultation(Long aConsultation) {theConsultation = aConsultation;}
+	public Long getConsultation() {return consultation;}
 
 	/** Перенесенные заболевания */
 	@Comment("Перенесенные заболевания")
 	@Persist
-	public String getTransmitDiseases() {return theTransmitDiseases;}
-	public void setTransmitDiseases(String aTransmitDiseases) {theTransmitDiseases = aTransmitDiseases;}
+	public String getTransmitDiseases() {return transmitDiseases;}
 
 	
 	/** Предыдущие беременности */
 	@Comment("Предыдущие беременности")
 	@Persist
-	public String getPreviousPregnancies() {return thePreviousPregnancies;}
-	public void setPreviousPregnancies(String aPreviousPregnancies) {thePreviousPregnancies = aPreviousPregnancies;}
+	public String getPreviousPregnancies() {return previousPregnancies;}
 
 	
 	/** Последние месячные */
 	@Persist @DateString @DoDateString
 	@Comment("Последние месячные")
-	public String getLastMensis() {return theLastMensis;}
-	public void setLastMensis(String aLastMensis) {theLastMensis = aLastMensis;}
+	public String getLastMensis() {return lastMensis;}
 
 	/** Количество коротких беременностей */
 	@Comment("Количество коротких беременностей")
 	@Persist
-	public Integer getShortPregnancyAmount() {return theShortPregnancyAmount;}
-	public void setShortPregnancyAmount(Integer aShortPregnancyAmount) {theShortPregnancyAmount = aShortPregnancyAmount;}
+	public Integer getShortPregnancyAmount() {return shortPregnancyAmount;}
 
 	/** Количество родов */
 	@Comment("Количество родов")
 	@Persist
-	public Integer getChildbirthAmount() {return theChildbirthAmount;}
-	public void setChildbirthAmount(Integer aChildbirthAmount) {theChildbirthAmount = aChildbirthAmount;}
+	public Integer getChildbirthAmount() {return childbirthAmount;}
 
 	/** Первое посещение женской консультации */
 	@Comment("Первое посещение женской консультации")
 	@Persist @DateString @DoDateString
-	public String getFirstVisitDate() {return theFirstVisitDate;}
-	public void setFirstVisitDate(String aFirstVisitDate) {theFirstVisitDate = aFirstVisitDate;}
+	public String getFirstVisitDate() {return firstVisitDate;}
 
 	/** Количество визитов */
 	@Comment("Количество визитов")
 	@Persist
-	public Integer getVisitsAmount() {return theVisitsAmount;}
-	public void setVisitsAmount(Integer aVisitsAmount) {theVisitsAmount = aVisitsAmount;}
+	public Integer getVisitsAmount() {return visitsAmount;}
 
 	
 	/** Особенности беременности */
 	@Comment("Особенности беременности")
 	@Persist
-	public String getPregnancyFeatures() {return thePregnancyFeatures;}
-	public void setPregnancyFeatures(String aPregnancyFeatures) {thePregnancyFeatures = aPregnancyFeatures;}
+	public String getPregnancyFeatures() {return pregnancyFeatures;}
 
 	/** Обследование беременной */
 	@Comment("Обследование беременной")
 	@Persist
-	public Long getPregnanInspection() {return thePregnanInspection;}
-	public void setPregnanInspection(Long aPregnanInspection) {thePregnanInspection = aPregnanInspection;}
+	public Long getPregnanInspection() {return pregnanInspection;}
 
 	/** Анализ мочи */
 	@Comment("Анализ мочи")
 	@Persist
-	public String getUrineAnalysis() {return theUrineAnalysis;}
-	public void setUrineAnalysis(String aUrineAnalysis) {theUrineAnalysis = aUrineAnalysis;}
+	public String getUrineAnalysis() {return urineAnalysis;}
 
 	/** Дата анализа мочи */
 	@Comment("Дата анализа мочи")
 	@Persist @DateString @DoDateString
-	public String getUrineAnalysisDate() {return theUrineAnalysisDate;}
-	public void setUrineAnalysisDate(String aUrineAnalysisDate) {theUrineAnalysisDate = aUrineAnalysisDate;}
+	public String getUrineAnalysisDate() {return urineAnalysisDate;}
 
 	/** Анализ крови */
 	@Comment("Анализ крови")
 	@Persist
-	public String getBloodAnalysis() {return theBloodAnalysis;}
-	public void setBloodAnalysis(String aBloodAnalysis) {theBloodAnalysis = aBloodAnalysis;}
+	public String getBloodAnalysis() {return bloodAnalysis;}
 
 	/** Дата анализа крови */
 	@Comment("Дата анализа крови")
 	@Persist @DateString @DoDateString
-	public String getBloodAnalysisDate() {return theBloodAnalysisDate;}
-	public void setBloodAnalysisDate(String aBloodAnalysisDate) {theBloodAnalysisDate = aBloodAnalysisDate;}
+	public String getBloodAnalysisDate() {return bloodAnalysisDate;}
 
 	/** Артериальное давление */
 	@Comment("Артериальное давление")
 	@Persist
-	public String getBloodPressure() {return theBloodPressure;}
-	public void setBloodPressure(String aBloodPressure) {theBloodPressure = aBloodPressure;}
+	public String getBloodPressure() {return bloodPressure;}
 
 	/** Дата артериального давления */
 	@Comment("Дата артериального давления")
 	@Persist @DateString @DoDateString
-	public String getBloodPressureDate() {return theBloodPressureDate;}
-	public void setBloodPressureDate(String aBloodPressureDate) {theBloodPressureDate = aBloodPressureDate;}
+	public String getBloodPressureDate() {return bloodPressureDate;}
 
 	/** Количество занятий психопрофилактической подготовки */
 	@Comment("Количество занятий психопрофилактической подготовки")
 	@Persist
-	public Integer getTrainingAmount() {return theTrainingAmount;}
-	public void setTrainingAmount(Integer aTrainingAmount) {theTrainingAmount = aTrainingAmount;}
+	public Integer getTrainingAmount() {return trainingAmount;}
 
 	/** Дата последнего занятия психопрофилактической подготовки */
 	@Comment("Дата последнего занятия психопрофилактической подготовки")
 	@Persist @DateString @DoDateString
-	public String getLastTrainingDate() {return theLastTrainingDate;}
-	public void setLastTrainingDate(String aLastTrainingDate) {theLastTrainingDate = aLastTrainingDate;}
+	public String getLastTrainingDate() {return lastTrainingDate;}
 
 	/** Предполагаемый срок родов */
 	@Comment("Предполагаемый срок родов")
 	@Persist
-	public String getSupposedBithPeriod() {return theSupposedBithPeriod;}
-	public void setSupposedBithPeriod(String aSupposedBithPeriod) {theSupposedBithPeriod = aSupposedBithPeriod;}
+	public String getSupposedBithPeriod() {return supposedBithPeriod;}
 
 	
 	/** Специальные замечания */
 	@Comment("Специальные замечания")
 	@Persist
-	public String getNotes() {return theNotes;}
-	public void setNotes(String aNotes) {theNotes = aNotes;}
+	public String getNotes() {return notes;}
 
 	/** Дата заполнения */
 	@Comment("Дата заполнения")
 	@Persist @DateString @DoDateString
-	public String getFillingDate() {return theFillingDate;}
-	public void setFillingDate(String aFillingDate) {theFillingDate = aFillingDate;}
+	public String getFillingDate() {return fillingDate;}
 
 	/** Беременность */
 	@Comment("Беременность")
 	@Persist
-	public Long getPregnancy() {return thePregnancy;}
-	public void setPregnancy(Long aPregnancy) {thePregnancy = aPregnancy;}
+	public Long getPregnancy() {return pregnancy;}
 
 	/** Случай медицинского обслуживания */
 	@Comment("Случай медицинского обслуживания")
 	@Persist
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+	public Long getMedCase() {return medCase;}
 
 	/** История родов */
 	@Comment("История родов")
 	@Persist
-	public Long getPregnancyHistory() {return thePregnancyHistory;}
-	public void setPregnancyHistory(Long aPregnancyHistory) {thePregnancyHistory = aPregnancyHistory;}
+	public Long getPregnancyHistory() {return pregnancyHistory;}
 
 	/** Не помнит, когда были последние месячные */
 	@Comment("Не помнит, когда были последние месячные")
 	@Persist
-	public Boolean getDontRememberLastMensis() {return theDontRememberLastMensis;}
-	public void setDontRememberLastMensis(Boolean aDontRememberLastMensis) {theDontRememberLastMensis = aDontRememberLastMensis;}
-	
+	public Boolean getDontRememberLastMensis() {return dontRememberLastMensis;}
+
 	/** Не посещала жк */
 	@Comment("Не посещала жк")
 	@Persist
-	public Boolean getDontVisitCons() {return theDontVisitCons;}
-	public void setDontVisitCons(Boolean aDontVisitCons) {theDontVisitCons = aDontVisitCons;}
+	public Boolean getDontVisitCons() {return dontVisitCons;}
 
 	/** Не посещала жк */
-	private Boolean theDontVisitCons;
+	private Boolean dontVisitCons;
 	/** Не помнит, когда были последние месячные */
-	private Boolean theDontRememberLastMensis;
+	private Boolean dontRememberLastMensis;
 	/** История родов */
-	private Long thePregnancyHistory;
+	private Long pregnancyHistory;
 	/** Случай медицинского обслуживания */
-	private Long theMedCase;
+	private Long medCase;
 	/** Беременность */
-	private Long thePregnancy;
+	private Long pregnancy;
 	/** Предполагаемый срок родов */
-	private String theSupposedBithPeriod;
+	private String supposedBithPeriod;
 	/** Специальные замечания */
-	private String theNotes;
+	private String notes;
 	/** Анализ мочи */
-	private String theUrineAnalysis;
+	private String urineAnalysis;
 	/** Обследование беременной */
-	private Long thePregnanInspection;
+	private Long pregnanInspection;
 	/** Дата анализа мочи */
-	private String theUrineAnalysisDate;
+	private String urineAnalysisDate;
 	/** Анализ крови */
-	private String theBloodAnalysis;
+	private String bloodAnalysis;
 	/** Дата анализа крови */
-	private String theBloodAnalysisDate;
+	private String bloodAnalysisDate;
 	/** Артериальное давление */
-	private String theBloodPressure;
+	private String bloodPressure;
 	/** Дата артериального давления */
-	private String theBloodPressureDate;
+	private String bloodPressureDate;
 	/** Количество занятий психопрофилактической подготовки */
-	private Integer theTrainingAmount;
+	private Integer trainingAmount;
 	/** Дата последнего занятия психопрофилактической подготовки */
-	private String theLastTrainingDate;
+	private String lastTrainingDate;
 	/** Дата заполнения */
-	private String theFillingDate;
+	private String fillingDate;
 	/** Консультация */
-	private Long theConsultation;
+	private Long consultation;
 	/** Перенесенные заболевания */
-	private String theTransmitDiseases;
+	private String transmitDiseases;
 	/** Предыдущие беременности */
-	private String thePreviousPregnancies;
+	private String previousPregnancies;
 	/** Последние месячные */
-	private String theLastMensis;
+	private String lastMensis;
 	/** Количество коротких беременностей */
-	private Integer theShortPregnancyAmount;
+	private Integer shortPregnancyAmount;
 	/** Количество родов */
-	private Integer theChildbirthAmount;
+	private Integer childbirthAmount;
 	/** Первое посещение женской консультации */
-	private String theFirstVisitDate;
+	private String firstVisitDate;
 	/** Количество визитов */
-	private Integer theVisitsAmount;
+	private Integer visitsAmount;
 	/** Особенности беременности */
-	private String thePregnancyFeatures;
+	private String pregnancyFeatures;
 }

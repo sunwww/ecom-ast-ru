@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AViewInterceptors;
@@ -24,689 +25,555 @@ import ru.nuzmsh.forms.validator.validators.*;
 @AViewInterceptors(
         @AEntityFormInterceptor(HospitalMedCaseViewInterceptor.class)
 )
-
+@Setter
 public class HospitalMedCaseForm extends MedCaseForm {
 	/** Дата начала */
 	@Comment("Дата начала") 
 	@DateString @DoDateString 
 	@Persist 
-	public String getDateStart() {return theDateStart;	}
-	public void setDateStart(String aDateStart) {theDateStart = aDateStart;}
-	
+	public String getDateStart() {return dateStart;	}
+
 
 	/** Недействительность */
 	@Comment("Недействительность")
 	@Persist
-	public Boolean getNoActuality() {return theNoActuality;}
-	public void setNoActuality(Boolean aNewProperty) {theNoActuality = aNewProperty;}
+	public Boolean getNoActuality() {return noActuality;}
 
 	/** Рабочая функция направителя */
 	@Comment("Рабочая функция направителя")
-	public Long getOrderWorkFunction() {return theOrderWorkFunction;}
-	public void setOrderWorkFunction(Long aOrderWorkFunction) {theOrderWorkFunction = aOrderWorkFunction;}
+	public Long getOrderWorkFunction() {return orderWorkFunction;}
 
 	
 	/** Экстренность */
 	@Comment("Экстренность")
 	@Persist
-	public Boolean getEmergency() {return theEmergency;	}
-	public void setEmergency(Boolean aNewProperty) {theEmergency = aNewProperty;}
-	
+	public Boolean getEmergency() {return emergency;	}
+
 	/** Внешний идентификатор */
 	@Comment("Внешний идентификатор")
 	@Persist
-	public String getExternalId() {return theExternalId;}
-	public void setExternalId(String aNewProperty) {theExternalId = aNewProperty;	}
-	
+	public String getExternalId() {return externalId;}
+
 	/** Дефекты догоспитального этапа */
 	@Comment("Дефекты догоспитального этапа")
 	@Persist
-	public Long getPreAdmissionDefect() { return thePreAdmissionDefect;}
-	public void setPreAdmissionDefect(Long aPreAdmissionDefect) {	thePreAdmissionDefect = aPreAdmissionDefect;}
-	
+	public Long getPreAdmissionDefect() { return preAdmissionDefect;}
+
 	/** Тип доставки */
 	@Comment("Тип доставки")
 	@Persist
-	public String getSupplyType() {return theSupplyType;	}
-	public void setSupplyType(String aSupplyType) {theSupplyType= aSupplyType;}
-	
+	public String getSupplyType() {return supplyType;	}
+
 	/** Номер направления */
 	@Comment("Номер направления")
 	@Persist
-	public String getOrderNumber() {return theOrderNumber;	}
-	public void setOrderNumber(String aOrderNumber) {theOrderNumber = aOrderNumber;	}
+	public String getOrderNumber() {return orderNumber;	}
 
 	/** Номер наряда доставки */
 	@Comment("Номер наряда доставки")
 	@Persist
-	public String getSupplyOrderNumber() {return theSupplyOrderNumber;	}
-	public void setSupplyOrderNumber(String aSupplyOrderNumber) {theSupplyOrderNumber = aSupplyOrderNumber;}
-	
+	public String getSupplyOrderNumber() {return supplyOrderNumber;	}
 
 	/** Время заболевания до госпитализации */
 	@Comment("Время заболевания до госпитализации")
 	@Persist
-	public Long getPreAdmissionTime() {	return thePreAdmissionTime;	}
-	public void setPreAdmissionTime(Long aPreAdmissionTime) {thePreAdmissionTime = aPreAdmissionTime;}
+	public Long getPreAdmissionTime() {	return preAdmissionTime;	}
 
 	/** Время поступления */
 	@Comment("Время поступления")
 	@TimeString @DoTimeString
 	@Persist 
-	public String getEntranceTime() {	return theEntranceTime;	}
-	public void setEntranceTime(String aEntranceTime) {theEntranceTime = aEntranceTime;}
+	public String getEntranceTime() {	return entranceTime;	}
 
 	/** Время выписки */
 	@Comment("Время выписки")
 	@TimeString @DoTimeString
 	@Persist
-	public String getDischargeTime() {return theDischargeTime;}
-	public void setDischargeTime(String aDischargeTime) {theDischargeTime = aDischargeTime;	}
+	public String getDischargeTime() {return dischargeTime;}
 
 	/** Исход госпитализации */
 	@Comment("Исход госпитализации")
 	@Persist
-	public Long getOutcome() {	return theOutcome;}
-	public void setOutcome(Long aOutcome) {theOutcome = aOutcome;	}
+	public Long getOutcome() {	return outcome;}
 
 	/** Результат госпитализации */
 	@Comment("Результат госпитализации")
 	@Persist
-	public Long getResult() {return theResult;	}
-	public void setResult(Long aResult) {theResult = aResult;}
+	public Long getResult() {return result;	}
 
-	///** Обследован на RW */
-	//@Comment("Обследован на RW")
-	//@Persist
-	//public Boolean getRwExamination() {return theRwExamination;}
-	//public void setRwExamination(Boolean aRwExamination) {theRwExamination = aRwExamination;}
-
-	///** Обследован на ВИЧ */
-	//@Comment("Обследован на ВИЧ")
-	//@Persist
-	//public Boolean getAidsExamination() {return theAidsExamination;}
-	//public void setAidsExamination(Boolean aAidsExamination) {theAidsExamination = aAidsExamination;}
-	
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist
 	@Required
-	public Long getPatient() {	return thePatient;	}
-	public void setPatient(Long aPatient) {thePatient = aPatient;	}
-	
+	public Long getPatient() {	return patient;	}
+
 	/** Дата окончания */
 	@Comment("Дата окончания")
 	@Persist @DateString @DoDateString
-	public String getDateFinish() {return theDateFinish;}
-	public void setDateFinish(String aDateFinish) {theDateFinish = aDateFinish;}
+	public String getDateFinish() {return dateFinish;}
 
 	/** Количество дней */
 	@Comment("Количество дней")
 	@Persist
-	public String getDaysCount() {	return theDaysCount;}
-	public void setDaysCount(String aDaysCount) {	theDaysCount = aDaysCount;}
+	public String getDaysCount() {	return daysCount;}
 
-	
 	/** Состояние опьянения */
 	@Comment("Состояние опьянения")
 	@Persist
-	public Long getIntoxication() {	return theIntoxication;	}
-	public void setIntoxication(Long aIntoxication) {theIntoxication = aIntoxication;	}
-	
+	public Long getIntoxication() {	return intoxication;	}
+
 	@Comment("Вид травмы")
-	public Long getTrauma() {return theTrauma;	}
-	public void setTrauma(Long aTrauma) {theTrauma = aTrauma;}
-	
+	public Long getTrauma() {return trauma;	}
+
 	/** Кем доставлен (тип доставки) */
 	@Comment("Кем доставлен (тип доставки)")
 	@Persist
-	public Long getOrderType() {return theOrderType;}
-	public void setOrderType(Long aOrderType) {theOrderType = aOrderType;}
-	
+	public Long getOrderType() {return orderType;}
+
 	/** Отказ от госпитализации */
 	@Comment("Отказ от госпитализации")
 	@Persist
-	public Long getDeniedHospitalizating() {return theDeniedHospitalizating;}
-	public void setDeniedHospitalizating(Long aDeniedHospitalizating) {theDeniedHospitalizating = aDeniedHospitalizating;}
-
-	///** Дата RW */
-	//@Comment("Дата RW")
-	//@DateString @DoDateString
-	//@Persist
-	//public String getRwDate() {return theRwDate;}
-	//public void setRwDate(String aRwDate) {theRwDate = aRwDate;}
+	public Long getDeniedHospitalizating() {return deniedHospitalizating;}
 
 	/** Диагноз при поступлении */
 	@Comment("Диагноз при поступлении")
-	public String getEntranceDiagnos() {return theEntranceDiagnos;	}
-	public void setEntranceDiagnos(String aEntranceDiagnos) {theEntranceDiagnos = aEntranceDiagnos;}
+	public String getEntranceDiagnos() {return entranceDiagnos;	}
 
 	/** Код МКБ приемного отделения */
 	@Comment("Код МКБ приемного отделения")
-	public Long getEntranceMkb() {return theEntranceMkb;}
-	public void setEntranceMkb(Long aEntranceMkb) {theEntranceMkb = aEntranceMkb;}
+	public Long getEntranceMkb() {return entranceMkb;}
 
 	/** Диагноз направившего учреждения */
 	@Comment("Диагноз направившего учреждения")
-	public String getOrderDiagnos() {return theOrderDiagnos;}
-	public void setOrderDiagnos(String aOrderDiagnos) {theOrderDiagnos = aOrderDiagnos;}
+	public String getOrderDiagnos() {return orderDiagnos;}
 
 	/** Код МКБ направившего учреждения */
 	@Comment("Код МКБ направившего учреждения")
-	public Long getOrderMkb() {return theOrderMkb;	}
-	public void setOrderMkb(Long aOrderMkb) {theOrderMkb = aOrderMkb;}
+	public Long getOrderMkb() {return orderMkb;	}
 
 	/** Профиль коек */
 	@Comment("Профиль коек")
 	@Persist
-	public Long getBedType() {return theBedType;}
-	public void setBedType(Long aBedType) {theBedType = aBedType;}
+	public Long getBedType() {return bedType;}
 
 	/** Оператор */
 	@Comment("Оператор")
 	@Persist
-	public String getUsername() {return theUsername;}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
+	public String getUsername() {return username;}
 
 	/** Отделение */
 	@Comment("Отделение")
 	@Persist
-	public Long getDepartment() {return theDepartment;}
-	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
-	
+	public Long getDepartment() {return department;}
+
 	/** Случай является отказом от госпитализации? */
 	@Comment("Случай является отказом от госпитализации?")
 	@Persist
-	public Boolean getIsDeniedHospitalizating() {return theIsDeniedHospitalizating;}
-	public void setIsDeniedHospitalizating(Boolean aIsDeniedHospitalizating) {theIsDeniedHospitalizating = aIsDeniedHospitalizating;}
+	public Boolean getIsDeniedHospitalizating() {return isDeniedHospitalizating;}
 
 	/** Амбулаторное лечение */
 	@Comment("Амбулаторное лечение")
 	@Persist
-	public Boolean getAmbulanceTreatment() {return theAmbulanceTreatment;}
-	public void setAmbulanceTreatment(Boolean aAmbulanceTreatment) {theAmbulanceTreatment = aAmbulanceTreatment;}
+	public Boolean getAmbulanceTreatment() {return ambulanceTreatment;}
 
 	/** Номер стат. карты */
 	@Comment("Номер стат. карты")
 	@Persist
-	public String getStatCardNumber() {return theStatCardNumber;	}
-	public void setStatCardNumber(String aStatCardNumber) {theStatCardNumber = aStatCardNumber;}
-
-	///** Номер RW */
-	//@Comment("Номер RW")
-	//@Persist
-	//public String getRwNumber() {return theRwNumber;}
-	//public void setRwNumber(String aRwNumber) {theRwNumber = aRwNumber;}
+	public String getStatCardNumber() {return statCardNumber;	}
 
 	/** Сообщение родственникам */
 	@Comment("Сообщение родственникам")
 	@Persist
-	public Boolean getRelativeMessage() {return theRelativeMessage;	}
-	public void setRelativeMessage(Boolean aRelativeMessage) {theRelativeMessage = aRelativeMessage;}
+	public Boolean getRelativeMessage() {return relativeMessage;	}
 
 	/** Оказана мед. помощь в приемном отделении */
 	@Comment("Оказана мед. помощь в приемном отделении")
 	@Persist
-	public Boolean getMedicalAid() {return theMedicalAid;}
-	public void setMedicalAid(Boolean aMedicalAid) {theMedicalAid = aMedicalAid;}
+	public Boolean getMedicalAid() {return medicalAid;}
 
 	/** Лечебное учреждение */
 	@Comment("Лечебное учреждение")
 	@Persist 
-	public Long getLpu() {return theLpu;}
-	public void setLpu(Long aLpu) {theLpu = aLpu;	}
+	public Long getLpu() {return lpu;}
 
 	@Comment("Провизорность")
 	@Persist @Deprecated
-	public Boolean getProvisional() {return theProvisional;}
-	public void setProvisional(Boolean aProvisional) {theProvisional = aProvisional;}
+	public Boolean getProvisional() {return provisional;}
 
 	/** Перевод в другое ЛПУ */
 	@Comment("Перевод в другое ЛПУ")
 	@Persist
-	public Long getMoveToAnotherLPU() {return theMoveToAnotherLPU;}
-	public void setMoveToAnotherLPU(Long aMoveToAnotherLPU) {theMoveToAnotherLPU = aMoveToAnotherLPU;}
+	public Long getMoveToAnotherLPU() {return moveToAnotherLPU;}
 
 	/** Тип текущего стационара */
 	@Comment("Тип текущего стационара")
 	@Persist
-	public Long getHospType() {return theHospType;}
-	public void setHospType(Long aHospType) {theHospType = aHospType;}
+	public Long getHospType() {return hospType;}
 
 	/** Госпитализация (впервые, повторно) */
 	@Comment("Госпитализация (впервые, повторно)")
 	@Persist
-	public Long getHospitalization() {return theHospitalization;}
-	public void setHospitalization(Long aHospitalization) {theHospitalization = aHospitalization;}
+	public Long getHospitalization() {return hospitalization;}
 
 	/** Рабочая функция лечащего врача */
 	@Comment("Рабочая функция лечащего врача")
 	@Persist
-	public Long getOwnerFunction() {return theOwnerFunction;}
-	public void setOwnerFunction(Long aOwnerFunction) {theOwnerFunction = aOwnerFunction;}
-	
+	public Long getOwnerFunction() {return ownerFunction;}
+
 	/** Выписной эпикриз */
 	@Comment("Выписной эпикриз")
-	public String getDischargeEpicrisis() {return theDischargeEpicrisis;}
-	public void setDischargeEpicrisis(String aDischargeEpicrisis) {theDischargeEpicrisis = aDischargeEpicrisis;}
+	public String getDischargeEpicrisis() {return dischargeEpicrisis;}
 
 	/** Клинический диагноз */
 	@Comment("Клинический диагноз")
-	public String getClinicalDiagnos() {return theClinicalDiagnos;}
-	public void setClinicalDiagnos(String aClinicalDiagnos) {theClinicalDiagnos = aClinicalDiagnos;}
+	public String getClinicalDiagnos() {return clinicalDiagnos;}
 
 	/** Код МКБ клинического диагноза */
 	@Comment("Код МКБ клинического диагноза")
 	@Mkb
-	public Long getClinicalMkb() {return theClinicalMkb;}
-	public void setClinicalMkb(Long aClinicalMkb) {theClinicalMkb = aClinicalMkb;}
-	
+	public Long getClinicalMkb() {return clinicalMkb;}
+
 	/** Патанатомический диагноз */
 	@Comment("Патанатомический диагноз")
-	public String getPathanatomicalDiagnos() {return thePathanatomicalDiagnos;}
-	public void setPathanatomicalDiagnos(String aPathanatomicalDiagnos) {thePathanatomicalDiagnos = aPathanatomicalDiagnos;}	
-	
+	public String getPathanatomicalDiagnos() {return pathanatomicalDiagnos;}
+
 	/** Патанатомический диагноз по МКБ-10 */
 	@Comment("Патанатомический диагноз по МКБ-10")
 	@Mkb
-	public Long getPathanatomicalMkb() {return thePathanatomicalMkb;}
-	public void setPathanatomicalMkb(Long aPathanatomicalMkb) {thePathanatomicalMkb = aPathanatomicalMkb;}
+	public Long getPathanatomicalMkb() {return pathanatomicalMkb;}
 
 	/** Заключительный диагноз */
 	@Comment("Заключительный диагноз")
-	public String getConcludingDiagnos() {return theConcludingDiagnos;}
-	public void setConcludingDiagnos(String aConcludingDiagnos) {theConcludingDiagnos = aConcludingDiagnos;}
+	public String getConcludingDiagnos() {return concludingDiagnos;}
 
 	/** Заключительный диагноз по МКБ-10 */
 	@Comment("Заключительный диагноз по МКБ-10")
 	@Mkb
-	public Long getConcludingMkb() {return theConcludingMkb;}
-	public void setConcludingMkb(Long aConcludingMkb) {theConcludingMkb = aConcludingMkb;}
-	
+	public Long getConcludingMkb() {return concludingMkb;}
+
 	/** Сопровождающее лицо */
 	@Comment("Сопровождающее лицо")
 	@Persist
-	public String getAttendant() {return theAttendant;}
-	public void setAttendant(String aAttendant) {theAttendant = aAttendant;}
-	
+	public String getAttendant() {return attendant;}
+
 	/** Отделение (текст) */
 	@Comment("Отделение (текст)")
 	@Persist
-	public String getDepartmentInfo() {return theDepartmentInfo;}
-	public void setDepartmentInfo(String aDepartmentInfo) {theDepartmentInfo = aDepartmentInfo;}
+	public String getDepartmentInfo() {return departmentInfo;}
 
 	/** Педикулез */
 	@Comment("Педикулез")
 	@Persist
-	public Long getPediculosis() {return thePediculosis;}
-	public void setPediculosis(Long aPediculosis) {thePediculosis = aPediculosis;}
+	public Long getPediculosis() {return pediculosis;}
 
 	/** Педикулез */
-	private Long thePediculosis;
+	private Long pediculosis;
 
 	/** Редкий случай */
 	@Comment("Редкий случай")
 	@Persist
-	public Boolean getRareCase() {return theRareCase;}
-	public void setRareCase(Boolean aRareCase) {theRareCase = aRareCase;}
+	public Boolean getRareCase() {return rareCase;}
 
 	/** Диагноз клин. сопутствующий */
 	@Comment("Диагноз клин. сопутствующий")
-	public String getConcomitantDiagnos() {return theConcomitantDiagnos;}
-	public void setConcomitantDiagnos(String aConcomitantDiagnos) {theConcomitantDiagnos = aConcomitantDiagnos;}
+	public String getConcomitantDiagnos() {return concomitantDiagnos;}
 
 	/** Диагноз клин. сопутствующий МКБ */
 	@Comment("Диагноз клин. сопутствующий МКБ")
 	@Mkb
-	public Long getConcomitantMkb() {return theConcomitantMkb;}
-	public void setConcomitantMkb(Long aConcomitantMkb) {theConcomitantMkb = aConcomitantMkb;}
+	public Long getConcomitantMkb() {return concomitantMkb;}
 
 	/** Острота диагноза клинического */
 	@Comment("Острота диагноза клинического")
-	public Long getClinicalActuity() {return theClinicalActuity;}
-	public void setClinicalActuity(Long aClinicalActuity) {theClinicalActuity = aClinicalActuity;}
+	public Long getClinicalActuity() {return clinicalActuity;}
 
 	 /**
 	  * Причина госпитализации в психиатрический стационар
 	  */
 	 @Comment("Причина госпитализации в психиатрический стационар")
 	 @Persist
-	 public Long getPsychReason() {return thePsychReason;}
-	 public void setPsychReason(Long aPsychReason) {thePsychReason = aPsychReason;}
+	 public Long getPsychReason() {return psychReason;}
 		/** Дата решения суда */
 		@Comment("Дата решения суда")
 		@DateString @DoDateString @Persist
-		public String getLawCourtDesicionDate() {return theLawCourtDesicionDate;}
-		public void setLawCourtDesicionDate(String aLawCourtDesicionDate) {theLawCourtDesicionDate = aLawCourtDesicionDate;}
+		public String getLawCourtDesicionDate() {return lawCourtDesicionDate;}
 
 		/** Острота диагноза заключительного */
 		@Comment("Острота диагноза клинического")
-		public Long getConcludingActuity() {return theConcludingActuity;}
-		public void setConcludingActuity(Long aClinicalActuity) {theConcludingActuity = aClinicalActuity;}
+		public Long getConcludingActuity() {return concludingActuity;}
 
 		/** Острота диагноза заключительного */
-		private Long theConcludingActuity;
+		private Long concludingActuity;
 		/** Дата решения суда */
-		private String theLawCourtDesicionDate;
+		private String lawCourtDesicionDate;
 	 /**
 	  * Причина госпитализации в психиатрический стационар
 	  */
-	 private Long thePsychReason;
+	 private Long psychReason;
 	/** Острота диагноза клинического */
-	private Long theClinicalActuity;
+	private Long clinicalActuity;
 	/** Диагноз клин. сопутствующий МКБ */
-	private Long theConcomitantMkb;
+	private Long concomitantMkb;
 	/** Диагноз клин. сопутствующий */
-	private String theConcomitantDiagnos;
-	
-	
+	private String concomitantDiagnos;
 	/** Редкий случай */
-	private Boolean theRareCase;
+	private Boolean rareCase;
 
 	/** Отделение (текст) */
-	private String theDepartmentInfo;
+	private String departmentInfo;
 	/** Сопровождающее лицо */
-	private String theAttendant;
+	private String attendant;
 	/** Заключительный диагноз по МКБ-10 */
-	private Long theConcludingMkb;
+	private Long concludingMkb;
 	/** Заключительный диагноз */
-	private String theConcludingDiagnos;
+	private String concludingDiagnos;
 	/** Патанатомический диагноз по МКБ-10 */
-	private Long thePathanatomicalMkb;
+	private Long pathanatomicalMkb;
 	/** Патанатомический диагноз */
-	private String thePathanatomicalDiagnos;
+	private String pathanatomicalDiagnos;
 	/** Код МКБ клинического диагноза */
-	private Long theClinicalMkb;
+	private Long clinicalMkb;
 	/** Клинический диагноз */
-	private String theClinicalDiagnos;
+	private String clinicalDiagnos;
 	/** Выписной эпикриз */
-	private String theDischargeEpicrisis;
+	private String dischargeEpicrisis;
 	/** Рабочая функция лечащего врача */
-	private Long theOwnerFunction;
+	private Long ownerFunction;
 	/** Госпитализация (впервые, повторно) */
-	private Long theHospitalization;
+	private Long hospitalization;
 	/** Тип текущего стационара */
-	private Long theHospType;	
+	private Long hospType;	
 	/** Перевод в другое ЛПУ */
-	private Long theMoveToAnotherLPU;
+	private Long moveToAnotherLPU;
 	/** Провизорность */
-	private Boolean theProvisional;
+	private Boolean provisional;
 	/** Лечебное учреждение */
-	private Long theLpu;
+	private Long lpu;
 	/** Оказана мед. помощь в приемном отделении */
-	private Boolean theMedicalAid;
+	private Boolean medicalAid;
 	/** Сообщение родственникам */
-	private Boolean theRelativeMessage;
+	private Boolean relativeMessage;
 	///** Номер RW */
-	//private String theRwNumber;
+	//private String rwNumber;
 	/** Номер стат. карты */
-	private String theStatCardNumber;
+	private String statCardNumber;
 	/** Амбулаторное лечение */
-	private Boolean theAmbulanceTreatment;
+	private Boolean ambulanceTreatment;
 	/** Случай является отказом от госпитализации? */
-	private Boolean theIsDeniedHospitalizating;
+	private Boolean isDeniedHospitalizating;
 	/** Отделение */
-	private Long theDepartment;
+	private Long department;
 	/** Оператор */
-	private String theUsername;
+	private String username;
 	/** Профиль коек */
-	private Long theBedType;
+	private Long bedType;
 	/** Код МКБ направившего учреждения */
-	private Long theOrderMkb;
+	private Long orderMkb;
 	/** Диагноз направившего учреждения */
-	private String theOrderDiagnos;
+	private String orderDiagnos;
 	/** Код МКБ приемного отделения */
-	private Long theEntranceMkb;
+	private Long entranceMkb;
 	/** Диагноз при поступлении */
-	private String theEntranceDiagnos;
+	private String entranceDiagnos;
 	///** Дата RW */
-	//private String theRwDate;
+	//private String rwDate;
 	/** Отказ от госпитализации */
-	private Long theDeniedHospitalizating;
+	private Long deniedHospitalizating;
 	/** Кем доставлен (тип доставки) */
-	private Long theOrderType;
+	private Long orderType;
 	/** Вид травмы */
-	private Long theTrauma;
+	private Long trauma;
 	/** Состояние опьянения */
-	private Long theIntoxication;
+	private Long intoxication;
 	/** Количество дней */
-	private String theDaysCount;
+	private String daysCount;
 	/** Дата окончания */
-	private String theDateFinish;
+	private String dateFinish;
 	/** Пациент */
-	private Long thePatient;
-	///** Обследован на ВИЧ */
-	//private Boolean theAidsExamination;
-	///** Обследован на RW */
-	//private Boolean theRwExamination;
+	private Long patient;
 	/** Результат госпитализации */
-	private Long theResult;
+	private Long result;
 	/** Исход госпитализации */
-	private Long theOutcome;
+	private Long outcome;
 	/** Время выписки */
-	private String theDischargeTime;
+	private String dischargeTime;
 	/** Время поступления */
-	private String theEntranceTime;
+	private String entranceTime;
 	/** Время заболевания до госпитализации */
-	private Long thePreAdmissionTime;
+	private Long preAdmissionTime;
 
 	/** Номер наряда доставки */
-	private String theSupplyOrderNumber;
+	private String supplyOrderNumber;
 	/** Номер направления */
-	private String theOrderNumber;
+	private String orderNumber;
 	/** Тип доставки */
-	private String theSupplyType;
+	private String supplyType;
 	/** Дефекты догоспитального этапа */
-	private Long thePreAdmissionDefect;
+	private Long preAdmissionDefect;
 	/** Внешний идентификатор */
-	private String theExternalId;
+	private String externalId;
 	/** Экстренность */
-	private Boolean theEmergency;
+	private Boolean emergency;
 	/** Недействительность */
-	private Boolean theNoActuality;
+	private Boolean noActuality;
 	/** Дата начала */
-	private String theDateStart;
+	private String dateStart;
 	/** Рабочая функция направителя */
-	private Long theOrderWorkFunction;
+	private Long orderWorkFunction;
 
 	/** Дата направления */
 	@Comment("Дата направления")
 	@DateString @DoDateString
 	@Persist
-	public String getOrderDate() {return theOrderDate;}
-	public void setOrderDate(String aOrderDate) {theOrderDate = aOrderDate;}
+	public String getOrderDate() {return orderDate;}
 
 	/** Дата направления */
-	private String theOrderDate;
+	private String orderDate;
 	
 	/** Направитель */
 	@Comment("Направитель")
 	@Persist
-	public Long getOrderLpu() {return theOrderLpu;}
-	public void setOrderLpu(Long aOrderLpu) {theOrderLpu = aOrderLpu;}
+	public Long getOrderLpu() {return orderLpu;}
 
 	/** Направитель */
-	private Long theOrderLpu;
+	private Long orderLpu;
 	
 	/** Порядок поступления */
 	@Comment("Порядок поступления")
 	@Persist
-	public Long getAdmissionOrder() {return theAdmissionOrder;}
-	public void setAdmissionOrder(Long aAdmissionOrder) {theAdmissionOrder = aAdmissionOrder;}
+	public Long getAdmissionOrder() {return admissionOrder;}
 
 	/** Решение суда по 35 статье */
 	@Comment("Решение суда по 35 статье")
 	@Persist
-	public Long getJudgment35() {return theJudgment35;}
-	public void setJudgment35(Long aJudgment35) {theJudgment35 = aJudgment35;}
-
-	///** Число дней лечебных отпусков */
-	//@Comment("Число дней лечебных отпусков")
-	//@Persist
-	//public Integer getMedicalHolidayDays() {return theMedicalHolidayDays;}
-	//public void setMedicalHolidayDays(Integer aMedicalHolidayDays) {theMedicalHolidayDays = aMedicalHolidayDays;}
-
-	///** Число лечебных отпусков */
-	//@Comment("Число лечебных отпусков")
-	//@Persist
-	//public Integer getMedicalHolidays() {return theMedicalHolidays;}
-	//public void setMedicalHolidays(Integer aMedicalHolidays) {theMedicalHolidays = aMedicalHolidays;}
-
-	///** Число лечебных отпусков */
-	//private Integer theMedicalHolidays;
-	///** Число дней лечебных отпусков */
-	//private Integer theMedicalHolidayDays;
+	public Long getJudgment35() {return judgment35;}
 	/** Решение суда по 35 статье */
-	private Long theJudgment35;
+	private Long judgment35;
 	/** Порядок поступления */
-	private Long theAdmissionOrder;
+	private Long admissionOrder;
 	
 	/** Осложнение текст диагноза */
 	@Comment("Осложнение текст диагноза")
-	public String getComplicationDiagnos() {return theComplicationDiagnos;}
-	public void setComplicationDiagnos(String aComplicationDiagnos) {theComplicationDiagnos = aComplicationDiagnos;}
+	public String getComplicationDiagnos() {return complicationDiagnos;}
 
 	/** Осложнение МКБ диагноза */
 	@Comment("Осложнение МКБ диагноза")
-	public Long getComplicationMkb() {return theComplicationMkb;}
-	public void setComplicationMkb(Long aComplicationMkb) {theComplicationMkb = aComplicationMkb;}
+	public Long getComplicationMkb() {return complicationMkb;}
 
 	/** Осложнение МКБ диагноза */
-	private Long theComplicationMkb;
+	private Long complicationMkb;
 	/** Осложнение текст диагноза */
-	private String theComplicationDiagnos;
+	private String complicationDiagnos;
 	
 	/** Диагнозы осложнение */
 	@Comment("Диагнозы осложнение")
-	public String getComplicationDiags() { return theComplicationDiags; }
-	public void setComplicationDiags(String aComplicationDiags) { theComplicationDiags = aComplicationDiags; }
+	public String getComplicationDiags() { return complicationDiags; }
 
 	/** Диагнозы осложнение */
-	private String theComplicationDiags;
+	private String complicationDiags;
 	
 	/** Диагнозы сопутствующие */
 	@Comment("Диагнозы сопутствующие")
-	public String getConcomitantDiags() { return theConcomitantDiags; }
-
-	public void setConcomitantDiags(String aConcomitantDiags) { theConcomitantDiags = aConcomitantDiags; }
+	public String getConcomitantDiags() { return concomitantDiags; }
 
 	/** Диагнозы сопутствующие */
-	private String theConcomitantDiags;
+	private String concomitantDiags;
 
 
 	/** Поступление в данный стационар */
 	@Comment("Поступление в данный стационар")
 	@Persist
-	public Long getAdmissionInHospital() {return theAdmissionInHospital;}
-	public void setAdmissionInHospital(Long aAdmissionInHospital) {theAdmissionInHospital = aAdmissionInHospital;}
+	public Long getAdmissionInHospital() {return admissionInHospital;}
 
 	/** Откуда поступил */
 	@Comment("Откуда поступил")
 	@Persist
-	public Long getWhereAdmission() {return theWhereAdmission;}
-	public void setWhereAdmission(Long aWhereAdmission) {theWhereAdmission = aWhereAdmission;}
+	public Long getWhereAdmission() {return whereAdmission;}
 
 	/** Откуда поступил */
-	private Long theWhereAdmission;
+	private Long whereAdmission;
 	/** Поступление в данный стационар */
-	private Long theAdmissionInHospital;
+	private Long admissionInHospital;
 
 	/** Дата перевода */
 	@Comment("Дата перевода")
 	@DateString @DoDateString
 	@Persist @MaxDateCurrent
-	public String getTransferDate() {return theTransferDate;	}
-	public void setTransferDate(String aTransferDate) {theTransferDate = aTransferDate;}
+	public String getTransferDate() {return transferDate;	}
 
 	/** Время перевода */
 	@Comment("Время перевода")
 	@TimeString @DoTimeString
 	@Persist
-	public String getTransferTime() {return theTransferTime;	}
-	public void setTransferTime(String aTransferTime) {theTransferTime = aTransferTime;}
+	public String getTransferTime() {return transferTime;	}
 
 	/** Время перевода */
-	private String theTransferTime;
+	private String transferTime;
 	/** Дата перевода */
-	private String theTransferDate;
+	private String transferDate;
 	
 	/** Причина выписки */
 	@Comment("Причина выписки")
 	@Persist
-	public Long getReasonDischarge() {return theReasonDischarge;}
-	public void setReasonDischarge(Long aReasonDischarge) {theReasonDischarge = aReasonDischarge;}
-	
+	public Long getReasonDischarge() {return reasonDischarge;}
+
 	/** Причина выписки */
-	private Long theReasonDischarge;
+	private Long reasonDischarge;
 	/** Итог выписки */
 	@Comment("Итог выписки")
 	@Persist
-	public Long getResultDischarge() {return theResultDischarge;}
-	public void setResultDischarge(Long aResultDischarge) {theResultDischarge = aResultDischarge;}
+	public Long getResultDischarge() {return resultDischarge;}
 
 	/** Причина выписки */
-	private Long theResultDischarge;
+	private Long resultDischarge;
 	/* Рост */
 	@Comment("Рост")
 	@Persist
-	public Integer getHeight() { return theHeight; }
-	public void setHeight(Integer aHeight) {
-		theHeight = aHeight;
-	}
+	public Integer getHeight() { return height; }
 	/* Вес */
 	@Comment("Вес")
 	@Persist
 	public Integer getWeight() {
-		return theWeight;
-	}
-	public void setWeight(Integer aWeight) {
-		theWeight = aWeight;
+		return weight;
 	}
 	/* Индекс массы тела */
 	@Comment("Индекс массы тела")
 	@Persist
-	public Double getTheIMT() {
-		return theIMT;
-	}
-	public void setTheIMT(Double aIMT) {
-		theIMT = aIMT;
+	public Double getImt() {
+		return imt;
 	}
 	/** Вес */
-	private Integer theWeight;
+	private Integer weight;
 	/** Рост */
-	private Integer theHeight;
+	private Integer height;
 	/** Индекс массы тела */
-	private Double theIMT;
+	private Double imt;
 
 	/** Дата идентификации */
 	@Comment("Дата идентификации")
 	@DateString @DoDateString
 	@MaxDateCurrent
-	public String getIdentDate() {return theIdentDate;	}
-	public void setIdentDate(String aIdentDate) {theIdentDate = aIdentDate;}
+	public String getIdentDate() {return identDate;	}
 
 	/** Время идентификации */
 	@Comment("Время идентификации")
 	@DoTimeString @TimeString
-	public String getIdentTime() {return theIdentTime;	}
-	public void setIdentTime(String aIdentTime) {theIdentTime = aIdentTime;}
+	public String getIdentTime() {return identTime;	}
 
 	/** Кто провёл идентификацию */
 	@Comment("Кто провёл идентификацию")
-	public String getIdentUsername() {return theIdentUsername;}
-	public void setIdentUsername(String aIdentUsername) {theIdentUsername = aIdentUsername;}
+	public String getIdentUsername() {return identUsername;}
 
 	/** Была ли проведена идентификация пациента? */
 	@Comment("Была ли проведена идентификация пациента?")
-	public Boolean getIsIdentified() { return theIsIdentified; }
-	public void setIsIdentified(Boolean aIsIdentified) { theIsIdentified = aIsIdentified; }
+	public Boolean getIsIdentified() { return isIdentified; }
 
 	/** Дата идентификации */
-	private String theIdentDate;
+	private String identDate;
 	/** Время идентификации */
-	private String theIdentTime;
+	private String identTime;
 	/** Кто провёл идентификацию */
-	private String theIdentUsername;
+	private String identUsername;
 	/** Была ли проведена идентификация пациента */
-	private Boolean theIsIdentified;
+	private Boolean isIdentified;
 }

@@ -29,12 +29,12 @@ public class ImportMDB implements MessageListener {
             fileForm.setComment(aMessage.getStringProperty("ImportFileForm_comment"));
             fileForm.setImportFormat(aMessage.getLongProperty("ImportFileForm_importFormat"));
 
-            ImportFileResult result = theImportService.importFile(filename,monitorId, filename, fileForm) ;
+            ImportFileResult result = importService.importFile(filename,monitorId, filename, fileForm) ;
             LOG.info(result.getMessages()) ;
         } catch (Exception e) {
             LOG.error(e,e);
         }
     }
 
-    @EJB IImportService theImportService ;
+    @EJB IImportService importService ;
 }

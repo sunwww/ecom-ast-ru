@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase.listwatch;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -14,13 +16,10 @@ import java.sql.Date;
 @Comment("Лист наблюдений")
 @Entity 
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class ListWatch extends BaseEntity{
 	
 	/**Дата наблюдения */
-	@Comment("Дата наблюдения")
-	public Date getDateWatch() {return theDateWatch;}
-	public void setDateWatch(Date aDateWatch) {theDateWatch = aDateWatch;}
-	
-	/**Дата наблюдения */
-	private Date theDateWatch;
+	private Date dateWatch;
 }

@@ -8,11 +8,11 @@ import java.io.Serializable;
 public class ImportFileResult implements Serializable {
 
     public ImportFileResult(long aTimeId) {
-        theTimeId = aTimeId;
+        timeId = aTimeId;
     }
 
     /** Идентификатор time */
-    public long getTimeId() { return theTimeId ; }
+    public long getTimeId() { return timeId ; }
 
     public void addMessage(String aMessage) {
         sb.append(aMessage) ;
@@ -25,5 +25,5 @@ public class ImportFileResult implements Serializable {
 
     StringBuilder sb = new StringBuilder();
     /** Идентификатор time */
-    private final long theTimeId ;
+    private final long timeId ;
 }

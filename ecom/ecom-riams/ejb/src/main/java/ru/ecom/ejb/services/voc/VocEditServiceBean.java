@@ -22,7 +22,7 @@ import java.lang.reflect.Method;
 public class VocEditServiceBean implements IVocEditService {
 
 	public Object createVocValue(String aVocKey, VocValue aVocValue, VocAdditional aAdditional) {
-		IVocContextService vocService = theInfoService.getVocService(aVocKey) ;
+		IVocContextService vocService = infoService.getVocService(aVocKey) ;
 		if(vocService==null) throw new IllegalArgumentException("Нет справочника "+aVocKey) ;
 		if(vocService instanceof EntityVocService) {
 			EntityVocService entityVocService = (EntityVocService) vocService ;
@@ -44,7 +44,7 @@ public class VocEditServiceBean implements IVocEditService {
 		try {
 			Object obj = aEntitClass.newInstance() ;
 			setProperty(obj, aNameField, aValue) ;
-			EntityManager manager = theFactory.createEntityManager() ;
+			EntityManager manager = factory.createEntityManager() ;
 			manager.persist(obj) ;
 			manager.close() ;
 			return PropertyUtil.getPropertyValue(obj, "id") ;
@@ -59,21 +59,17 @@ public class VocEditServiceBean implements IVocEditService {
 		Class clazz = aObject.getClass() ;
 		Method getterMethod = PropertyUtil.getGetterMethod(clazz, aProperty) ;
 		Method setterMethod = PropertyUtil.getSetterMethod(clazz, getterMethod) ;
-		//String getter = PropertyUtil.getGetterMethodNameForProperty(aProperty) ;
-		//String setter = PropertyUtil.getSetterMethodName(getter) ;
-		//Method m = aObject.getClass().getMethod(setter, String.class) ;
 		setterMethod.invoke(aObject, aValue) ;
 	}
 
 	public boolean isVocEditabled(String aVocKey) {
-//		return true ;
 		String sb = "/Policy/Voc/" + aVocKey + "/Create";
-		return theContext.isCallerInRole(sb) ;
+		return context.isCallerInRole(sb) ;
 	}
 
-	private @EJB IVocInfoService theInfoService ;
-	private @Resource SessionContext theContext;
-	private @PersistenceUnit EntityManagerFactory theFactory;
+	private @EJB IVocInfoService infoService ;
+	private @Resource SessionContext context;
+	private @PersistenceUnit EntityManagerFactory factory;
 	
 }   
 

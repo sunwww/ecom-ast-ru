@@ -1,5 +1,7 @@
 package ru.ecom.jaas.ejb.form;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
@@ -18,29 +20,27 @@ import ru.nuzmsh.forms.validator.validators.Required;
 //@Parent(property = "parentSecPolicy", parentForm=SecPolicyForm.class, orderBy="name,key")
 @EntityFormSecurityPrefix("/Policy/Jaas/SecGroup")
 @WebTrail(comment="Группа пользователей", nameProperties="name", view="entityView-secgroup.do")
+@Setter
 public class SecGroupForm extends IdEntityForm {
 	/** Название группы */
 	@Comment("Название группы")
 	@Persist @Required 
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
+	public String getName() {return name;}
 
 	/** Список пользователей */
 	@Comment("Список пользователей")
 	@Persist @PersistManyToManyOneProperty(collectionGenericType=SecUser.class)
-	public String getSecUsers() {return theSecUsers;}
-	public void setSecUsers(String aUsers) {theSecUsers = aUsers;}
+	public String getSecUsers() {return secUsers;}
 
 	/** Комментарий */
 	@Comment("Комментарий")
 	@Persist
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
+	public String getComment() {return comment;}
 
 	/** Комментарий */
-	private String theComment;
+	private String comment;
 	/** Список пользователей */
-	private String theSecUsers;
+	private String secUsers;
 	/** Название группы */
-	private String theName;
+	private String name;
 }

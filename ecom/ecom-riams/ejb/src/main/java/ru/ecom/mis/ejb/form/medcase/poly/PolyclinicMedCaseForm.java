@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.poly;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
@@ -20,72 +21,64 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 , view="entityParentView-smo_spo.do",shortList="entityParentList-smo_spo.do?short=Short",list="entityParentList-smo_spo.do")
 @Parent(property="patient", parentForm= PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Spo")
+@Setter
 public class PolyclinicMedCaseForm extends MedCaseForm {
 
 	/** Признак консультативно-диагностического обращения */
 	@Comment("Признак консультативно-диагностического обращения")
 	@Persist @Deprecated
-	public Boolean getIsDiagnosticSpo() {return theIsDiagnosticSpo;}
-	public void setIsDiagnosticSpo(Boolean aIsDiagnosticSpo) {theIsDiagnosticSpo = aIsDiagnosticSpo;}
+	public Boolean getIsDiagnosticSpo() {return isDiagnosticSpo;}
 	/** Признак консультативно-диагностического обращения */
-	private Boolean theIsDiagnosticSpo ;
+	private Boolean isDiagnosticSpo ;
 
 	/** Дата окончания */
 	@Comment("Дата окончания")
 	@Persist	@DateString @DoDateString
-	public String getDateFinish() {return theDateFinish;}
-	public void setDateFinish(String aDateFinish) {theDateFinish = aDateFinish;}
+	public String getDateFinish() {return dateFinish;}
 
 	/** Продолжительность */
 	@Comment("Продолжительность")
 	@Persist
-	public String getDuration() {return theDuration;}
-	public void setDuration(String aDuration) {theDuration = aDuration;}
+	public String getDuration() {return duration;}
 
 	/** Код МКБ-10 */
 	@Comment("Код МКБ-10")
 	@Persist
-	public Long getIdc10() {return theIdc10;}
-	public void setIdc10(Long aIdc10) {theIdc10 = aIdc10;}
+	public Long getIdc10() {return idc10;}
 
 	/** Кто завершил */
 	@Comment("Кто завершил")
 	@Persist
-	public Long getFinishFunction() {return theFinishFunction;}
-	public void setFinishFunction(Long aFinishWorker) {	theFinishFunction = aFinishWorker;	}
+	public Long getFinishFunction() {return finishFunction;}
 
 	/** Владелец */
 	@Comment("Владелец")
 	@Persist
-	public Long getOwnerFunction() {return theOwnerFunction;}
-	public void setOwnerFunction(Long aOwner) {theOwnerFunction = aOwner;}
-
+	public Long getOwnerFunction() {return ownerFunction;}
 
 	/** Кол-во визитов */
 	@Comment("Кол-во визитов")
 	@Persist
-	public Integer getVisitsCount() {return theVisitsCount;}
-	public void setVisitsCount(Integer aVisitsCount) {theVisitsCount = aVisitsCount;}
+	public Integer getVisitsCount() {return visitsCount;}
 
 	/** Кол-во дней */
 	@Comment("Кол-во дней")
 	@Persist
-	public String getDaysCount() {return theDaysCount;}
-	public void setDaysCount(String aVisitsCount) {theDaysCount = aVisitsCount;}
+	public String getDaysCount() {return daysCount;}
 
 	/** Кол-во дней */
-	private String theDaysCount;
+	private String daysCount;
 	/** Кол-во визитов */
-	private Integer theVisitsCount;
+	private Integer visitsCount;
 	/** Владелец */
-	private Long theOwnerFunction;
+	private Long ownerFunction;
 	/** Кто завершил */
-	private Long theFinishFunction;
+	private Long finishFunction;
 	/** Код МКБ-10 */
-	private Long theIdc10;
+	private Long idc10;
 	/** Продолжительность */
-	private String theDuration;
+	private String duration;
 	/** Дата окончания */
-	private String theDateFinish;
+	private String dateFinish;
 }
 

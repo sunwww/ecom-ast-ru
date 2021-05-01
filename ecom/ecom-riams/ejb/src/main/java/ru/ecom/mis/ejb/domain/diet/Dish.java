@@ -10,6 +10,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.diet.voc.VocDishType;
 
@@ -24,6 +27,8 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Блюдо")
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class Dish extends BaseEntity{
 	
 	/** Растительные белки */
@@ -184,106 +189,28 @@ public class Dish extends BaseEntity{
 	}
 
 	/** Внешний вид блюда */
-	@Comment("Внешний вид блюда")
-	public String getDishAppearance() {
-		return theDishAppearance;
-	}
-	public void setDishAppearance(String aDishAppearance) {
-		theDishAppearance = aDishAppearance;
-	}
-	/** Внешний вид блюда */
-	private String theDishAppearance; 
+	private String dishAppearance;
 	
 	/** Цвет блюда */
-	@Comment("Цвет блюда")
-	public String getDishColor() {
-		return theDishColor;
-	}
-
-	public void setDishColor(String aDishColor) {
-		theDishColor = aDishColor;
-	}
-
-	/** Цвет блюда */
-	private String theDishColor;
+	private String dishColor;
 	
 	/** Запах блюда */
-	@Comment("Запах блюда")
-	public String getDishScent() {
-		return theDishScent;
-	}
-
-	public void setDishScent(String aDishScent) {
-		theDishScent = aDishScent;
-	}
-
-	/** Запах блюда */
-	private String theDishScent;
+	private String dishScent;
 	
 	/** Вкус блюда */
-	@Comment("Вкус блюда")
-	public String getDishTaste() {
-		return theDishTaste;
-	}
-
-	public void setDishTaste(String aDishTaste) {
-		theDishTaste = aDishTaste;
-	}
-
-	/** Вкус блюда */
-	private String theDishTaste;
+	private String dishTaste;
 	
 	/** Консистенция блюда */
-	@Comment("Консистенция блюда")
-	public String getDishConsistence() {
-		return theDishConsistence;
-	}
-
-	public void setDishConsistence(String aDishConsistence) {
-		theDishConsistence = aDishConsistence;
-	}
-
-	/** Консистенция блюда */
-	private String theDishConsistence;
+	private String dishConsistence;
 	
 	/** Срок годности и условия хранения блюда */
-	@Comment("Срок годности и условия хранения блюда")
-	public String getDishStorageConditions() {
-		return theDishStorageConditions;
-	}
-
-	public void setDishStorageConditions(String aDishStorageConditions) {
-		theDishStorageConditions = aDishStorageConditions;
-	}
-
-	/** Срок годности и условия хранения блюда */
-	private String theDishStorageConditions;
+	private String dishStorageConditions;
 	
 	/** Номер карточки-раскладки */
-	@Comment("Номер карточки-раскладки")
-	public String getDishNumber() {
-		return theDishNumber;
-	}
-
-	public void setDishNumber(String aDishNumber) {
-		theDishNumber = aDishNumber;
-	}
-
-	/** Номер карточки-раскладки */
-	private String theDishNumber; 
+	private String dishNumber; 
 	
 	/** Вес */
-	@Comment("Вес")
-	public BigDecimal getWeight() {
-		return theWeight;
-	}
-
-	public void setWeight(BigDecimal aWeight) {
-		theWeight = aWeight;
-	}
-
-	/** Вес */
-	private BigDecimal theWeight;
+	private BigDecimal weight;
 	
 	/** Калорийность */
 	@Comment("Калорийность")
@@ -328,81 +255,52 @@ public class Dish extends BaseEntity{
 	/** Название диеты */
 	@Transient
 	public String getDietsShortName() {StringBuilder sb = new StringBuilder() ;
-	if (theDiets!=null) {for (Diet diet : theDiets) {sb.append(diet.getShortName() ) ; sb.append(" ,") ;}
+	if (diets!=null) {for (Diet diet : diets) {sb.append(diet.getShortName() ) ; sb.append(" ,") ;}
 	} 
 	return sb.toString() ;} 
 	
 	/** Технология приготовления */
-	@Comment("Технология приготовления")
-	public String getPreparationTechnology() {
-		return thePreparationTechnology;
-	}
-	public void setPreparationTechnology(String aPreparationTechnology) {
-		thePreparationTechnology = aPreparationTechnology;
-	}
-	/** Технология приготовления */
-	private String thePreparationTechnology;
+	private String preparationTechnology;
 	
 	/** Продукты */
 	@Comment("Продукты")
 	@OneToMany(mappedBy="dish", cascade=CascadeType.ALL)
 	public List<DishFoodStuff> getDishFoodStuffs() {
-		return theDishFoodStuffs;
-	}
-
-	public void setDishFoodStuffs(List<DishFoodStuff> aDishFoodStuffs) {
-		theDishFoodStuffs = aDishFoodStuffs;
+		return dishFoodStuffs;
 	}
 
 	/** Продукты */
-	private List<DishFoodStuff> theDishFoodStuffs;
+	private List<DishFoodStuff> dishFoodStuffs;
 	
 	/** Наименование */
-	@Comment("Наименование")
-	public String getName() {
-		return theName;
-	}
-
-	public void setName(String aName) {
-		theName = aName;
-	}
-
-	/** Наименование */
-	private String theName;
+	private String name;
 	
 	/** Тип блюда */
 	@Comment("Тип блюда")
 	@OneToOne
 	public VocDishType getDishType() {
-		return theDishType;
-	}
-
-	public void setDishType(VocDishType aDishType) {
-		theDishType = aDishType;
+		return dishType;
 	}
 
 	/** Тип блюда */
-	private VocDishType theDishType;
+	private VocDishType dishType;
 	
 	/** Диеты */
 	@Comment("Диеты")
 	@ManyToMany
     public List<Diet> getDiets() {
-		return theDiets;
+		return diets;
 	}
 
-	public void setDiets(List<Diet> aDiets) {
-		theDiets = aDiets;
-	}
 	/** Диеты */
-	private List<Diet> theDiets;
+	private List<Diet> diets;
 	
 	@Comment("Сумма значений по свойству")
 	public BigDecimal calcSum(String aPropertyName) {
 		BigDecimal sum = new BigDecimal(0);
 		BigDecimal value;
-        if (theDishFoodStuffs!=null) {
-        	for (DishFoodStuff foodStuff : theDishFoodStuffs) {
+        if (dishFoodStuffs!=null) {
+        	for (DishFoodStuff foodStuff : dishFoodStuffs) {
         		value = calcProperty(foodStuff, aPropertyName);
         		sum = value!=null ? sum.add(value) : sum;
         	} 

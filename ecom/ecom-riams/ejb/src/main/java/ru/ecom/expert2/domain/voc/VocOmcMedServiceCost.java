@@ -1,5 +1,7 @@
 package ru.ecom.expert2.domain.voc;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV021;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
@@ -17,37 +19,28 @@ import java.sql.Date;
         @NamedQuery( name="VocOmcMedServiceCost.getByCodeAndDate"
                 , query="from VocOmcMedServiceCost where medService.code=:code and (finishDate is null or finishDate>=:finishDate)")
 })
+@Getter
+@Setter
 public class VocOmcMedServiceCost extends BaseEntity {
 
     /** Услуга */
     @Comment("Услуга")
     @OneToOne
-    public VocMedService getMedService() {return theMedService;}
-    public void setMedService(VocMedService aMedService) {theMedService = aMedService;}
-    private VocMedService theMedService ;
+    public VocMedService getMedService() {return medService;}
+    private VocMedService medService;
 
     /** Цена */
-    @Comment("Цена")
-    public BigDecimal getCost() {return theCost;}
-    public void setCost(BigDecimal aCost) {theCost = aCost;}
-    private BigDecimal theCost ;
+    private BigDecimal cost;
 
     /** Дата начала действия цены */
-    @Comment("Дата начала действия цены")
-    public Date getStartDate() {return theStartDate;}
-    public void setStartDate(Date aStartDate) {theStartDate = aStartDate;}
-    private Date theStartDate ;
+    private Date startDate;
 
     /** Дата окончания действия цены */
-    @Comment("Дата окончания действия цены")
-    public Date getFinishDate() {return theFinishDate;}
-    public void setFinishDate(Date aFinishDate) {theFinishDate = aFinishDate;}
-    private Date theFinishDate ;
+    private Date finishDate;
 
     /** Рабочая функция врача по умолчанию */
     @Comment("Рабочая функция врача по умолчанию")
     @OneToOne
-    public VocE2FondV021 getWorkFunction() {return theWorkFunction;}
-    public void setWorkFunction(VocE2FondV021 aWorkFunction) {theWorkFunction = aWorkFunction;}
-    private VocE2FondV021 theWorkFunction ;
+    public VocE2FondV021 getWorkFunction() {return workFunction;}
+    private VocE2FondV021 workFunction;
 }

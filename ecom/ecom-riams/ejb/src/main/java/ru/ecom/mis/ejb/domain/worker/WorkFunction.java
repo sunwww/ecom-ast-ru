@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.worker;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -28,41 +30,19 @@ import java.sql.Time;
         , @AIndex(properties = {"code"})
 })
 @Table(schema = "SQLUser")
+@Getter
+@Setter
 abstract public class WorkFunction extends BaseEntity {
 
     /**
      * Дата начала работы
      */
-    @Comment("Дата начала работы")
-    public Date getStartDate() {
-        return theStartDate;
-    }
-
-    public void setStartDate(Date aStartDate) {
-        theStartDate = aStartDate;
-    }
-
-    /**
-     * Дата начала работы
-     */
-    private Date theStartDate;
+    private Date startDate;
 
     /**
      * Дата окончания работы
      */
-    @Comment("Дата окончания работы")
-    public Date getFinishDate() {
-        return theFinishDate;
-    }
-
-    public void setFinishDate(Date aFinishDate) {
-        theFinishDate = aFinishDate;
-    }
-
-    /**
-     * Дата окончания работы
-     */
-    private Date theFinishDate;
+    private Date finishDate;
 
     /**
      * Рабочий календарь
@@ -71,17 +51,13 @@ abstract public class WorkFunction extends BaseEntity {
     @OneToOne
     @Deprecated
     public WorkCalendar getWorkCalendar() {
-        return theWorkCalendar;
-    }
-
-    public void setWorkCalendar(WorkCalendar aWorkCalendars) {
-        theWorkCalendar = aWorkCalendars;
+        return workCalendar;
     }
 
     /**
      * Рабочий календарь
      */
-    private WorkCalendar theWorkCalendar;
+    private WorkCalendar workCalendar;
 
     /**
      * Наименование
@@ -90,10 +66,10 @@ abstract public class WorkFunction extends BaseEntity {
     @Transient
     public String getName() {
         StringBuilder ret = new StringBuilder();
-        if (theDegrees != null) {
-            ret.append(theDegrees.getCode()).append(" ");
+        if (degrees != null) {
+            ret.append(degrees.getCode()).append(" ");
         }
-        if (theWorkFunction != null) ret.append(theWorkFunction.getName());
+        if (workFunction != null) ret.append(workFunction.getName());
         return ret.toString();
     }
 
@@ -108,9 +84,9 @@ abstract public class WorkFunction extends BaseEntity {
     @Comment("Информация по коду ОМС врача")
     public String getOmcCodeInfo() {
         String ret = "";
-        if (theWorkFunction != null && theWorkFunction.getVocPost() != null
-                && theWorkFunction.getVocPost().getOmcDoctorPost() != null) {
-            ret = theWorkFunction.getVocPost().getOmcDoctorPost().getCode();
+        if (workFunction != null && workFunction.getVocPost() != null
+                && workFunction.getVocPost().getOmcDoctorPost() != null) {
+            ret = workFunction.getVocPost().getOmcDoctorPost().getCode();
         }
         return ret;
     }
@@ -126,34 +102,27 @@ abstract public class WorkFunction extends BaseEntity {
     @Comment("Функция")
     @OneToOne
     public VocWorkFunction getWorkFunction() {
-        return theWorkFunction;
+        return workFunction;
     }
 
-    public void setWorkFunction(VocWorkFunction aWorkFunction) {
-        theWorkFunction = aWorkFunction;
-    }
 
     /**
      * Функция
      */
-    private VocWorkFunction theWorkFunction;
+    private VocWorkFunction workFunction;
 
     /**
      * Поместить в архив
      */
     @Comment("Поместить в архив")
     public Boolean getArchival() {
-        return theArchival;
-    }
-
-    public void setArchival(Boolean aArchival) {
-        theArchival = aArchival;
+        return archival;
     }
 
     /**
      * Поместить в архив
      */
-    private Boolean theArchival;
+    private Boolean archival;
 
     @Transient
     public String getWorkerLpuInfo() {
@@ -181,53 +150,13 @@ abstract public class WorkFunction extends BaseEntity {
     @Comment("ЛПУ")
     @ManyToOne
     public MisLpu getLpu() {
-        return theLpu;
-    }
-
-    public void setLpu(MisLpu aLpu) {
-        theLpu = aLpu;
+        return lpu;
     }
 
     /**
      * ЛПУ
      */
-    private MisLpu theLpu;
-
-    /**
-     * Код специалиста
-     */
-    @Comment("Код специалиста")
-    public String getCode() {
-        return theCode;
-    }
-
-    public void setCode(String aCode) {
-        theCode = aCode;
-    }
-
-    /**
-     * Хирургическая специальность
-     */
-    @Comment("Хирургическая специальность")
-    public Boolean getIsSurgical() {
-        return theIsSurgical;
-    }
-
-    public void setIsSurgical(Boolean aIsSurgical) {
-        theIsSurgical = aIsSurgical;
-    }
-
-    /**
-     * Администратор
-     */
-    @Comment("Администратор")
-    public Boolean getIsAdministrator() {
-        return theIsAdministrator;
-    }
-
-    public void setIsAdministrator(Boolean aAdministrator) {
-        theIsAdministrator = aAdministrator;
-    }
+    private MisLpu lpu;
 
     /**
      * WorkPlace
@@ -235,97 +164,45 @@ abstract public class WorkFunction extends BaseEntity {
     @Comment("WorkPlace")
     @OneToOne
     public WorkPlace getWorkPlace() {
-        return theWorkPlace;
-    }
-
-    public void setWorkPlace(WorkPlace aWorkPlace) {
-        theWorkPlace = aWorkPlace;
+        return workPlace;
     }
 
     /**
      * WorkPlace
      */
-    private WorkPlace theWorkPlace;
+    private WorkPlace workPlace;
     /**
      * Администратор
      */
-    private Boolean theIsAdministrator;
+    private Boolean isAdministrator;
     /**
      * Хирургическая специальность
      */
-    private Boolean theIsSurgical;
+    private Boolean isSurgical;
     /**
      * Код специалиста
      */
-    private String theCode;
+    private String code;
 
     /**
      * Интервал разрешенной регистрации
      */
-    @Comment("Интервал разрешенной регистрации")
-    public Integer getRegistrationInterval() {
-        return theRegistrationInterval;
-    }
-
-    public void setRegistrationInterval(Integer aRegistrationInterval) {
-        theRegistrationInterval = aRegistrationInterval;
-    }
-
-    /**
-     * Интервал разрешенной регистрации
-     */
-    private Integer theRegistrationInterval;
+    private Integer registrationInterval;
 
     /**
      * Операционная сестра
      */
-    @Comment("Операционная сестра")
-    public Boolean getIsInstrumentNurse() {
-        return theIsInstrumentNurse;
-    }
-
-    public void setIsInstrumentNurse(Boolean aOperationSister) {
-        theIsInstrumentNurse = aOperationSister;
-    }
-
-    /**
-     * Операционная сестра
-     */
-    private Boolean theIsInstrumentNurse;
+    private Boolean isInstrumentNurse;
 
     /**
      * Комментарий
      */
-    @Comment("Комментарий")
-    public String getComment() {
-        return theComment;
-    }
-
-    public void setComment(String aComment) {
-        theComment = aComment;
-    }
-
-    /**
-     * Комментарий
-     */
-    private String theComment;
+    private String comment;
 
     /**
      * Не показывать удаленным пользователям
      */
-    @Comment("Не показывать удаленным пользователям")
-    public Boolean getIsNoViewRemoteUser() {
-        return theIsNoViewRemoteUser;
-    }
-
-    public void setIsNoViewRemoteUser(Boolean aNoViewRemoteUser) {
-        theIsNoViewRemoteUser = aNoViewRemoteUser;
-    }
-
-    /**
-     * Не показывать удаленным пользователям
-     */
-    private Boolean theIsNoViewRemoteUser;
+    private Boolean isNoViewRemoteUser;
 
     /**
      * Принтер по умолчанию
@@ -333,131 +210,44 @@ abstract public class WorkFunction extends BaseEntity {
     @Comment("Принтер по умолчанию")
     @OneToOne
     public CopyingEquipment getCopyingEquipmentDefault() {
-        return theCopyingEquipmentDefault;
-    }
-
-    public void setCopyingEquipmentDefault(CopyingEquipment aCopyingEquipmentDefault) {
-        theCopyingEquipmentDefault = aCopyingEquipmentDefault;
+        return copyingEquipmentDefault;
     }
 
     /**
      * Принтер по умолчанию
      */
-    private CopyingEquipment theCopyingEquipmentDefault;
+    private CopyingEquipment copyingEquipmentDefault;
 
-    /**
-     * Дата создания
-     */
-    @Comment("Дата создания")
-    public Date getCreateDate() {
-        return theCreateDate;
-    }
-
-    public void setCreateDate(Date aCreateDate) {
-        theCreateDate = aCreateDate;
-    }
-
-    /**
-     * Дата редактирования
-     */
-    @Comment("Дата редактирования")
-    public Date getEditDate() {
-        return theEditDate;
-    }
-
-    public void setEditDate(Date aEditDate) {
-        theEditDate = aEditDate;
-    }
-
-    /**
-     * Время создания
-     */
-    @Comment("Время создания")
-    public Time getCreateTime() {
-        return theCreateTime;
-    }
-
-    public void setCreateTime(Time aCreateTime) {
-        theCreateTime = aCreateTime;
-    }
-
-    /**
-     * Время редактрования
-     */
-    @Comment("Время редактрования")
-    public Time getEditTime() {
-        return theEditTime;
-    }
-
-    public void setEditTime(Time aEditTime) {
-        theEditTime = aEditTime;
-    }
-
-    /**
-     * Пользователь, который создал запись
-     */
-    @Comment("Пользователь, который создал запись")
-    public String getCreateUsername() {
-        return theCreateUsername;
-    }
-
-    public void setCreateUsername(String aCreateUsername) {
-        theCreateUsername = aCreateUsername;
-    }
 
     /**
      * Пользователь, который последний редактировал запись
      */
-    @Comment("Пользователь, который последний редактировал запись")
-    public String getEditUsername() {
-        return theEditUsername;
-    }
-
-    public void setEditUsername(String aEditUsername) {
-        theEditUsername = aEditUsername;
-    }
-
-    /**
-     * Пользователь, который последний редактировал запись
-     */
-    private String theEditUsername;
+    private String editUsername;
     /**
      * Пользователь, который создал запись
      */
-    private String theCreateUsername;
+    private String createUsername;
     /**
      * Время редактрования
      */
-    private Time theEditTime;
+    private Time editTime;
     /**
      * Время создания
      */
-    private Time theCreateTime;
+    private Time createTime;
     /**
      * Дата редактирования
      */
-    private Date theEditDate;
+    private Date editDate;
     /**
      * Дата создания
      */
-    private Date theCreateDate;
+    private Date createDate;
 
     /**
      * Экстренность
      */
-    @Comment("Экстренность")
-    public Boolean getEmergency() {
-        return theEmergency;
-    }
-
-    public void setEmergency(Boolean aEmergency) {
-        theEmergency = aEmergency;
-    }
-
-    /**
-     * Экстренность
-     */
-    private Boolean theEmergency;
+    private Boolean emergency;
 
     /**
      * Категория специалиста
@@ -465,17 +255,13 @@ abstract public class WorkFunction extends BaseEntity {
     @Comment("Категория специалиста")
     @OneToOne
     public VocAcademicDegree getDegrees() {
-        return theDegrees;
-    }
-
-    public void setDegrees(VocAcademicDegree aCategory) {
-        theDegrees = aCategory;
+        return degrees;
     }
 
     /**
      * Категория специалиста
      */
-    private VocAcademicDegree theDegrees;
+    private VocAcademicDegree degrees;
 
     /**
      * Категория специалиста
@@ -483,85 +269,43 @@ abstract public class WorkFunction extends BaseEntity {
     @Comment("Категория специалиста")
     @OneToOne
     public VocCategory getCategory() {
-        return theCategory;
-    }
-
-    public void setCategory(VocCategory aCategory) {
-        theCategory = aCategory;
+        return category;
     }
 
     /**
      * Категория специалиста
      */
-    private VocCategory theCategory;
+    private VocCategory category;
 
     /**
      * Импорт
      */
     @Comment("Импорт")
     public Boolean getIsImport() {
-        return theIsImport;
-    }
-
-    public void setIsImport(Boolean aIsImport) {
-        theIsImport = aIsImport;
+        return isImport;
     }
 
     /**
      * Импорт
      */
-    private Boolean theIsImport;
+    private Boolean isImport;
+
 
     /**
      * Запрет на направление к себе
      */
-    @Comment("Запрет на направление к себе")
-    public Boolean getIsNoDirectSelf() {
-        return theIsNoDirectSelf;
-    }
+    private Boolean isNoDirectSelf;
 
-    public void setIsNoDirectSelf(Boolean aIsNoDirectSelf) {
-        theIsNoDirectSelf = aIsNoDirectSelf;
-    }
-
-    /**
-     * Запрет на направление к себе
-     */
-    private Boolean theIsNoDirectSelf;
 
     /**
      * Ротация
      */
-    @Comment("Ротация")
-    public Boolean getIsRotation() {
-        return theIsRotation;
-    }
-
-    public void setIsRotation(Boolean aIsRotation) {
-        theIsRotation = aIsRotation;
-    }
-
-    /**
-     * Ротация
-     */
-    private Boolean theIsRotation;
+    private Boolean isRotation;
 
     /**
      * Не синхронизировать с ПАРУСом
      */
-    @Comment("Не синхронизировать с ПАРУСом")
-    public Boolean getIsNoP7Sync() {
-        return theIsNoP7Sync;
-    }
-
-    public void setIsNoP7Sync(Boolean aIsNoP7Sync) {
-        theIsNoP7Sync = aIsNoP7Sync;
-    }
-
-    /**
-     * Не синхронизировать с ПАРУСом
-     */
-    private Boolean theIsNoP7Sync;
+    private Boolean isNoP7Sync;
 
     /**
      * Доверенность
@@ -569,59 +313,34 @@ abstract public class WorkFunction extends BaseEntity {
     @Comment("Доверенность")
     @OneToOne
     public Attorney getAttorney() {
-        return theAttorney;
-    }
-
-    public void setAttorney(Attorney aAttorney) {
-        theAttorney = aAttorney;
+        return attorney;
     }
 
     /**
      * Доверенность
      */
-    private Attorney theAttorney;
+    private Attorney attorney;
 
     @Comment("Код рабочего места в промеде")
     @Column(name = "promedCode_workstaff")
     public String getPromedCodeWorkstaff() {
-        return thePromedCodeWorkstaff;
+        return promedCodeWorkstaff;
     }
 
-    public void setPromedCodeWorkstaff(String aPromedCodeWorkstaff) {
-        thePromedCodeWorkstaff = aPromedCodeWorkstaff;
-    }
-
-    private String thePromedCodeWorkstaff;
+    private String promedCodeWorkstaff;
 
 
     @Comment("Код отделения в промеде")
     @Column(name = "promedCode_lpusection")
     public String getPromedCodeLpuSection() {
-        return thePromedCodeLpuSection;
+        return promedCodeLpuSection;
     }
-
-    public void setPromedCodeLpuSection(String aPromedCodeLpuSection) {
-        thePromedCodeLpuSection = aPromedCodeLpuSection;
-    }
-
-    private String thePromedCodeLpuSection;
+    private String promedCodeLpuSection;
 
     /**
      * Разрешено записывать на дату без указания времени
      */
-    @Comment("Разрешено записывать на дату без указания времени")
-    public Boolean getIsDirectionNoTime() {
-        return theIsDirectionNoTime;
-    }
-
-    public void setIsDirectionNoTime(Boolean aIsDirectionNoTime) {
-        theIsDirectionNoTime = aIsDirectionNoTime;
-    }
-
-    /**
-     * Разрешено записывать на дату без указания времени
-     */
-    private Boolean theIsDirectionNoTime = false;
+    private Boolean isDirectionNoTime = false;
 
     /**
      * Очередь, которую обслуживает раб. функция
@@ -629,34 +348,18 @@ abstract public class WorkFunction extends BaseEntity {
     @Comment("Очередь, которую обслуживает раб. функция")
     @OneToOne
     public VocQueue getQueue() {
-        return theQueue;
-    }
-
-    public void setQueue(VocQueue aQueue) {
-        theQueue = aQueue;
+        return queue;
     }
 
     /**
      * Очередь, которую обслуживает раб. функция
      */
-    private VocQueue theQueue;
+    private VocQueue queue;
 
     /**
      * Номер окна в электронной очереди
      */
-    @Comment("Номер окна в электронной очереди")
-    public String getWindowNumber() {
-        return theWindowNumber;
-    }
-
-    public void setWindowNumber(String aWindowNumber) {
-        theWindowNumber = aWindowNumber;
-    }
-
-    /**
-     * Номер окна в электронной очереди
-     */
-    private String theWindowNumber;
+    private String windowNumber;
 
     /**
      * ККМ по умолчанию
@@ -664,15 +367,11 @@ abstract public class WorkFunction extends BaseEntity {
     @Comment("ККМ по умолчанию")
     @OneToOne
     public KkmEquipment getKkmEquipmentDefault() {
-        return theKkmEquipmentDefault;
-    }
-
-    public void setKkmEquipmentDefault(KkmEquipment aKkmEquipmentDefault) {
-        theKkmEquipmentDefault = aKkmEquipmentDefault;
+        return kkmEquipmentDefault;
     }
 
     /**
      * ККМ по умолчанию
      */
-    private KkmEquipment theKkmEquipmentDefault;
+    private KkmEquipment kkmEquipmentDefault;
 }

@@ -1,5 +1,7 @@
 package ru.ecom.expert2.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -8,49 +10,35 @@ import javax.persistence.ManyToOne;
 import java.sql.Date;
 
 @Entity
+@Getter
+@Setter
 public class E2CancerDiagnostic extends BaseEntity {
 
     /** Случай рака */
     @Comment("Случай рака")
     @ManyToOne
-    public E2CancerEntry getCancerEntry() {return theCancerEntry;}
-    public void setCancerEntry(E2CancerEntry aCancerEntry) {theCancerEntry = aCancerEntry;}
-    /** Случай рака */
-    private E2CancerEntry theCancerEntry ;
+    public E2CancerEntry getCancerEntry() {return cancerEntry;}
+    private E2CancerEntry cancerEntry;
     
     /** Тип показателя */
-    @Comment("Тип показателя")
-    public String getType() {return theType;}
-    public void setType(String aType) {theType = aType;}
-    /** Тип показателя */
-    private String theType ;
+    private String type;
     
     /** Код показателя */
-    @Comment("Код показателя")
-    public String getCode() {return theCode;}
-    public void setCode(String aCode) {theCode = aCode;}
-    /** Код показателя */
-    private String theCode ;
+    private String code;
 
     /** Результат показателя */
-    @Comment("Результат показателя")
-    public String getResult() {return theResult;}
-    public void setResult(String aResult) {theResult = aResult;}
-    /** Результат показателя */
-    private String theResult ;
+    private String result;
 
     public E2CancerDiagnostic(){}
-    public E2CancerDiagnostic(E2CancerEntry aCancerEntry){theCancerEntry=aCancerEntry;}
+    public E2CancerDiagnostic(E2CancerEntry aCancerEntry){
+        cancerEntry =aCancerEntry;}
     public E2CancerDiagnostic(E2CancerDiagnostic aDiag, E2CancerEntry aCancerEntry){
-        theCancerEntry=aCancerEntry;
-        theType = aDiag.theType;
-        theCode=aDiag.theCode;
-        theResult=aDiag.theResult;
+        cancerEntry =aCancerEntry;
+        type = aDiag.type;
+        code =aDiag.code;
+        result =aDiag.result;
     }
 
     /** Дата взятия биопсийного материала * Олег */
-    @Comment("Дата взятия биопсийного материала * Олег")
-    public Date getBiopsyDate() {return theBiopsyDate;}
-    public void setBiopsyDate(Date aBiopsyDate) {theBiopsyDate = aBiopsyDate;}
-    private Date theBiopsyDate ;
+    private Date biopsyDate;
 }

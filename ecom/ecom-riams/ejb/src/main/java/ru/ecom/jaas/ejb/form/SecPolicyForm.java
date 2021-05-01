@@ -1,5 +1,7 @@
 package ru.ecom.jaas.ejb.form;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -32,62 +34,56 @@ import ru.nuzmsh.forms.validator.validators.Required;
 	@AEntityFormInterceptor(SecPolicySaveInterceptor.class)
 	
 })
+@Setter
 public class SecPolicyForm  extends IdEntityForm    {
 
 
     /** Ключ */
     @Persist
     @Required
-    public String getKey() { return theKey ; }
-    public void setKey(String aKey) { theKey = aKey ; }
+    public String getKey() { return key ; }
 
     /** Название */
     @Persist
     @Required
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
+    public String getName() { return name ; }
 
     /** Комментарий */
     @Persist
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
+    public String getComment() { return comment ; }
 
     /** Родительская политика безопасности */
     @Persist
     @Required
-    public Long getParentSecPolicy() { return theParentSecPolicy ; }
-    public void setParentSecPolicy(Long aParentSecPolicy) { theParentSecPolicy = aParentSecPolicy ; }
+    public Long getParentSecPolicy() { return parentSecPolicy ; }
 
     /** Роли, в которые входит данная политика */
 	@Comment("Роли, в которые входит данная политика")
-	public String getRoleList() {return theRoleList;}
-	public void setRoleList(String aRoleList) {theRoleList = aRoleList;}
+	public String getRoleList() {return roleList;}
 
 	/** Роли, в которые входит данная политика */
-	private String theRoleList;
+	private String roleList;
     /** Родительская политика безопасности */
-    private Long theParentSecPolicy ;
+    private Long parentSecPolicy ;
     /** Комментарий */
-    private String theComment ;
+    private String comment ;
     /** Название */
-    private String theName ;
+    private String name ;
     /** Ключ */
-    private String theKey ;
+    private String key ;
     
     /** Создание роли */
 	@Comment("Создание роли")
-	public Boolean getIsCreateRole() {return theIsCreateRole;}
-	public void setIsCreateRole(Boolean aIsCreateRole) {theIsCreateRole = aIsCreateRole;}
+	public Boolean getIsCreateRole() {return isCreateRole;}
 
 	/** Создание роли */
-	private Boolean theIsCreateRole;
+	private Boolean isCreateRole;
 	
 	/** Роль */
 	@Comment("Роль")
-	public SecRoleForm getRoleForm() {return theRoleForm;}
-	public void setRoleForm(SecRoleForm aRoleForm) {theRoleForm = aRoleForm;}
+	public SecRoleForm getRoleForm() {return roleForm;}
 
 	/** Роль */
-	private SecRoleForm theRoleForm = new SecRoleForm() ;
+	private SecRoleForm roleForm = new SecRoleForm() ;
 
 }

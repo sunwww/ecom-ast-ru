@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -15,34 +17,22 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes(value = { @AIndex(properties = { "medCase" }) })
+@Getter
+@Setter
 public class AmbulanceCard extends BaseEntity {
 	/** Номер карты скорой помощи */
-	@Comment("Номер карты скорой помощи")
-	public String getNumberCard() {return theNumberCard;}
-	public void setNumberCard(String aNumberCard) {theNumberCard = aNumberCard;}
-
-	/** Номер карты скорой помощи */
-	private String theNumberCard;
+	private String numberCard;
 	/** СМО */
 	@Comment("СМО")
 	@OneToOne
-	public MedCase getMedCase() {return theMedCase;}
-	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
+	public MedCase getMedCase() {return medCase;}
 
 	/** СМО */
-	private MedCase theMedCase;
+	private MedCase medCase;
 	
 	/** Время получения вызова СМП */
-	@Comment("Время получения вызова СМП")
-	public Time getCallReceiveTime() {return theCallReceiveTime;}
-	public void setCallReceiveTime(Time aCallReceiveTime) {theCallReceiveTime = aCallReceiveTime;}
-	/** Время получения вызова СМП */
-	private Time theCallReceiveTime;
+	private Time callReceiveTime;
 	
 	/** Время прибытия бригады до места назначения */
-	@Comment("Время прибытия бригады до места назначения")
-	public Time getArrivalTime() {return theArrivalTime;}
-	public void setArrivalTime(Time aArrivalTime) {theArrivalTime = aArrivalTime;}
-	/** Время прибытия бригады до места назначения */
-	private Time theArrivalTime;
+	private Time arrivalTime;
 }

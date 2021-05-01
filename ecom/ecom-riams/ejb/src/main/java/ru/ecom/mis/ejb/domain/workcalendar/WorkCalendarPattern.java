@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -19,6 +21,8 @@ import java.util.List;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes(value = { @AIndex(properties={"workFunction"}) })
+	@Getter
+	@Setter
 public class WorkCalendarPattern extends BaseEntity{
 	/**
 	 * Тип календаря
@@ -26,85 +30,58 @@ public class WorkCalendarPattern extends BaseEntity{
 	@Comment("Тип календаря")
 	@OneToOne
 	public VocWorkCalendarType getCalendarType() {
-		return theCalendarType;
-	}
-	public void setCalendarType(VocWorkCalendarType aCalendarType) {
-		theCalendarType = aCalendarType;
+		return calendarType;
 	}
 	/**
 	 * Тип календаря
 	 */
-	private VocWorkCalendarType theCalendarType;
+	private VocWorkCalendarType calendarType;
 	/**
 	 * Рабочая функция
 	 */
 	@Comment("Рабочая функция")
 	@OneToOne
 	public WorkFunction getWorkFunction() {
-		return theWorkFunction;
+		return workFunction;
 	}
-	public void setWorkFunction(WorkFunction aWorkFunction) {
-		theWorkFunction = aWorkFunction;
-	}
-	
+
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@OneToOne
 	public MisLpu getLpu() {
-		return theLpu;
-	}
-
-	public void setLpu(MisLpu aLpu) {
-		theLpu = aLpu;
+		return lpu;
 	}
 
 	/** ЛПУ */
-	private MisLpu theLpu;
+	private MisLpu lpu;
 	/**
 	 * Рабочая функция
 	 */
-	private WorkFunction theWorkFunction;
+	private WorkFunction workFunction;
 	/**
 	 * Тип занятости
 	 */
 	@Comment("Тип занятости")
 	@OneToOne
 	public VocWorkBusy getWorkBusy() {
-		return theWorkBusy;
-	}
-	public void setWorkBusy(VocWorkBusy aWorkBusy) {
-		theWorkBusy = aWorkBusy;
+		return workBusy;
 	}
 	/**
 	 * Тип занятости
 	 */
-	private VocWorkBusy theWorkBusy;
+	private VocWorkBusy workBusy;
 	@OneToMany(mappedBy="pattern",  cascade=CascadeType.ALL)
 	public List<WorkCalendarAlgorithm> getAlgorithms() {
-		return theAlgorithms;
-	}
-	public void setAlgorithms(List<WorkCalendarAlgorithm> aAlgorithms) {
-		theAlgorithms = aAlgorithms;
+		return algorithms;
 	}
 	/**
 	 * Алгоритмы шаблона рабочего календаря
 	 */
-	private List<WorkCalendarAlgorithm> theAlgorithms;
+	private List<WorkCalendarAlgorithm> algorithms;
 	/**
 	 * Название
 	 */
-	@Comment("Название")
-	
-	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
-	}
-	/**
-	 * Название
-	 */
-	private String theName;
+	private String name;
 	
 	@Transient
 	public String getInfo() {

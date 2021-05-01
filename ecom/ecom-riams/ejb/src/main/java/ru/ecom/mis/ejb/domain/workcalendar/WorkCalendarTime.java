@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -28,174 +30,102 @@ import java.sql.Time;
 	@AIndex(properties = {"createDatePreRecord"})
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class WorkCalendarTime extends BaseEntity{
-
 	/** Удаленная запись */
-	@Comment("Удаленная запись")
-	public Boolean getIsDeleted() {return theIsDeleted;}
-	public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
-	/** Удаленная запись */
-	private Boolean theIsDeleted ;
+	private Boolean isDeleted ;
 
 	/** Рабочий день */
 	@Comment("Рабочий день")
 	@ManyToOne
-	public WorkCalendarDay getWorkCalendarDay() {return theWorkCalendarDay;}
-	public void setWorkCalendarDay(WorkCalendarDay aWorkCalendarDay) {theWorkCalendarDay = aWorkCalendarDay;}
-	/** Рабочий день */
-	private WorkCalendarDay theWorkCalendarDay;
+	public WorkCalendarDay getWorkCalendarDay() {return workCalendarDay;}
+	private WorkCalendarDay workCalendarDay;
 	
 	/** Время начала */
-	@Comment("Время начала")
-	public Time getTimeFrom() {return theTimeFrom;}
-	public void setTimeFrom(Time aTimeFrom) {theTimeFrom = aTimeFrom;}
-	/** Время начала */
-	private Time theTimeFrom;
+	private Time timeFrom;
 
 	/** СМО */
 	@Comment("СМО")
 	@OneToOne
-	public MedCase getMedCase() {return theMedCase;}
-	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
+	public MedCase getMedCase() {return medCase;}
 	/** СМО */
-	private MedCase theMedCase;
-	
+	private MedCase medCase;
+
 	/** Добавочное время */
-	@Comment("Добавочное время")
-	public Boolean getAdditional() {return theAdditional;}
-	public void setAdditional(Boolean aAdditional) {theAdditional = aAdditional;}
-	/** Добавочное время */
-	private Boolean theAdditional;
+	private Boolean additional;
 	
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@OneToOne
-	public VocServiceStream getServiceStream() {return theServiceStream;}
-	public void setServiceStream(VocServiceStream aServiceStream) {theServiceStream = aServiceStream;}
-	/** Поток обслуживания */
-	private VocServiceStream theServiceStream;
+	public VocServiceStream getServiceStream() {return serviceStream;}
+	private VocServiceStream serviceStream;
 	
 
 	/** Нерабочее время */
-	@Comment("Нерабочее время")
-	public Boolean getRest() {return theRest;}
-	public void setRest(Boolean aRest) {theRest = aRest;}
-	/** Нерабочее время */
-	private Boolean theRest;
+	private Boolean rest;
 	
 	/** Пациент информации */
-	@Comment("Пациент информации")
-	public String getPrePatientInfo() {return thePrePatientInfo;}
-	public void setPrePatientInfo(String aPatientInfo) {thePrePatientInfo = aPatientInfo;}
-	/** Пациент информации */
-	private String thePrePatientInfo;
+	private String prePatientInfo;
 	
 	/** Пациент пред.пациента */
 	@Comment("Пациент пред.пациента")
 	@OneToOne
-	public Patient getPrePatient() {return thePrePatient;}
-	public void setPrePatient(Patient aPrePatient) {thePrePatient = aPrePatient;}
-	/** Пациент пред.пациента */
-	private Patient thePrePatient;
+	public Patient getPrePatient() {return prePatient;}
+	private Patient prePatient;
 
 	/** Пользователь, создавший пред.запись */
-	@Comment("Пользователь, создавший пред.запись")
-	public String getCreatePreRecord() {return theCreatePreRecord;}
-	public void setCreatePreRecord(String aCreatePreRecord) {theCreatePreRecord = aCreatePreRecord;}
-	/** Пользователь, создавший пред.запись */
-	private String theCreatePreRecord;
+	private String createPreRecord;
 
 	/** Дата создания предварительной записи */
-	@Comment("Дата создания предварительной записи")
-	public Date getCreateDatePreRecord() {return theCreateDatePreRecord;}
-	public void setCreateDatePreRecord(Date aCreateDatePreRecord) {theCreateDatePreRecord = aCreateDatePreRecord;}
-	/** Дата создания предварительной записи */
-	private Date theCreateDatePreRecord;
+	private Date createDatePreRecord;
 
 	/** Время создания предварительной записи */
-	@Comment("Время создания предварительной записи")
-	public Time getCreateTimePreRecord() {return theCreateTimePreRecord;}
-	public void setCreateTimePreRecord(Time aCreateTimePreRecord) {theCreateTimePreRecord = aCreateTimePreRecord;}
-	/** Время создания предварительной записи */
-	private Time theCreateTimePreRecord;
+	private Time createTimePreRecord;
 
 	/** Резерв времени */
 	@Comment("Резерв времени")
 	@OneToOne
-	public VocServiceReserveType getReserveType() {return theReserveType;}
-	public void setReserveType(VocServiceReserveType aReserveType) {theReserveType = aReserveType;}
-	/** Резерв времени */
-	private VocServiceReserveType theReserveType;
+	public VocServiceReserveType getReserveType() {return reserveType;}
+	private VocServiceReserveType reserveType;
 	
 	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 
 	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 
 	/** Пользователь, создавший запись */
-	@Comment("Пользователь, создавший запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 
 	/** Номер телефона */
-	@Comment("Номер телефона")
-	public String getPhone() {return thePhone;}
-	public void setPhone(String aPhone) {thePhone = aPhone;}
-	/** Номер телефона */
-	private String thePhone;
+	private String phone;
 
 	/** Услуга */
-	@Comment("Услуга")
-	public Long getService() {return theService;}
-	public void setService(Long aService) {theService = aService;}
-	/** Услуга */
-	private Long theService;
+	private Long service;
 
 	/** Назначение */
-	@Comment("Назначение")
-	public Long getPrescription() {return thePrescription;}
-	public void setPrescription(Long aPrescription) {thePrescription = aPrescription;}
-	/** Назначение */
-	private Long thePrescription;
+	private Long prescription;
 	
 	/** Предварительная госпитализация */
-	@Comment("Предварительная госпитализация")
-	public Long getPreHospital() {return thePreHospital;}
-	public void setPreHospital(Long aPreHospital) {thePreHospital = aPreHospital;}
-	/** Предварительная госпитализация */
-	private Long thePreHospital;
+	private Long preHospital;
 
 	/** Примечание пациента (при записи)*/
 	@Comment("Примечание пациента")
 	@Column(length= ColumnConstants.TEXT_MAXLENGHT)
-	public String getPatientComment() {return thePatientComment;}
-	public void setPatientComment(String aPatientComment) {thePatientComment = aPatientComment;}
-	/** Примечание пациента */
-	private String thePatientComment ;
+	public String getPatientComment() {return patientComment;}
+	private String patientComment ;
 
 	@PrePersist
 	void prePersist() {
 		Date currentDate = new Date(System.currentTimeMillis());
-		theCreateDate = currentDate;
-		theCreateTime=new Time(currentDate.getTime());
+		createDate = currentDate;
+		createTime=new Time(currentDate.getTime());
 	}
 
 	/** Тип способа обращения */
 	@Comment("Тип способа обращения")
 	@OneToOne
-	public VocWayOfRecord getWayOfRecord() {return theWayOfRecord;}
-	public void setWayOfRecord(VocWayOfRecord aWayOfRecord) {theWayOfRecord = aWayOfRecord;}
-	/** Тип способа обращения */
-	private VocWayOfRecord theWayOfRecord;
+	public VocWayOfRecord getWayOfRecord() {return wayOfRecord;}
+	private VocWayOfRecord wayOfRecord;
 }

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.psychiatry;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -24,6 +26,8 @@ import java.sql.Time;
 	,@AIndex(properties={"suiMessage"})
 })
 @Table(schema="SQLUser")
+ @Getter
+ @Setter
 public class Suicide extends BaseEntity{
  /**
   * Карта обратившегося за психиатрической помощью
@@ -31,420 +35,213 @@ public class Suicide extends BaseEntity{
  @Comment("Карта обратившегося за психиатрической помощью")
  @OneToOne
  public PsychiatricCareCard getCareCard() {
-  return theCareCard;
- }
- public void setCareCard(PsychiatricCareCard aCareCard) {
-  theCareCard = aCareCard;
+  return careCard;
  }
  /**
   * Карта обратившегося за психиатрической помощью
   */
- private PsychiatricCareCard theCareCard;
+ private PsychiatricCareCard careCard;
  /**
   * Описание
   */
- @Comment("Описание")
- public String getNotes() {
-  return theNotes;
- }
- public void setNotes(String aNotes) {
-  theNotes = aNotes;
- }
- /**
-  * Описание
-  */
- private String theNotes;
-	 /** Дата регистрации */
-	@Comment("Дата регистрации")
-	public Date getRegistrationDate() {
-		return theRegistrationDate;
-	}
-	
-	public void setRegistrationDate(Date aRegistrationDate) {
-		theRegistrationDate = aRegistrationDate;
-	}
-	
+ private String notes;
+
 	/** Дата регистрации */
-	private Date theRegistrationDate;
+	private Date registrationDate;
 
 
 	/** Получает психотропную помощь */
 	@Comment("Получает психотропную помощь")
 	@OneToOne 
 	public VocYesNo getPsychotropicHelp() {
-		return thePsychotropicHelp;
-	}
-
-	public void setPsychotropicHelp(VocYesNo aPsychotropicHelp) {
-		thePsychotropicHelp = aPsychotropicHelp;
+		return psychotropicHelp;
 	}
 
 	/** Получает психотропную помощь */
-	private VocYesNo thePsychotropicHelp;
+	private VocYesNo psychotropicHelp;
 	
 	/** Какую психотропную помощь */
-	@Comment("Какую психотропную помощь")
-	public String getPsychotropicHelpDesc() {
-		return thePsychotropicHelpDesc;
-	}
-
-	public void setPsychotropicHelpDesc(String aPsychotropicHelpDesc) {
-		thePsychotropicHelpDesc = aPsychotropicHelpDesc;
-	}
-
-	/** Какую психотропную помощь */
-	private String thePsychotropicHelpDesc;
+	private String psychotropicHelpDesc;
 	/** Сообщение о суициде */
 	@Comment("Сообщение о суициде")
 	@OneToOne
 	public SuicideMessage getSuiMessage() {
-		return theSuiMessage;
+		return suiMessage;
 	}
-
-	public void setSuiMessage(SuicideMessage aSuiMessage) {
-		theSuiMessage = aSuiMessage;
-	}
-	
-	
 
 	/** Сообщение о суициде */
-	private SuicideMessage theSuiMessage;
+	private SuicideMessage suiMessage;
 	
 	/** Диагноз МКБ */
 	@Comment("Диагноз МКБ")
 	@OneToOne
 	public VocIdc10 getDiagnosMkb() {
-		return theDiagnosMkb;
-	}
-
-	public void setDiagnosMkb(VocIdc10 aDiagnosMkb) {
-		theDiagnosMkb = aDiagnosMkb;
+		return diagnosMkb;
 	}
 
 	/** Диагноз МКБ */
-	private VocIdc10 theDiagnosMkb;
+	private VocIdc10 diagnosMkb;
 	
 	/** Диагноз текст */
-	@Comment("Диагноз текст")
-	public String getDiagnosText() {
-		return theDiagnosText;
-	}
-
-	public void setDiagnosText(String aDiagnosText) {
-		theDiagnosText = aDiagnosText;
-	}
-
-	/** Диагноз текст */
-	private String theDiagnosText;
+	private String diagnosText;
 	
 	/** Другие суициды */
 	@Comment("Другие суициды")
 	@OneToOne
 	public VocYesNo getOtherSuicide() {
-		return theOtherSuicide;
-	}
-
-	public void setOtherSuicide(VocYesNo aOtherSuicide) {
-		theOtherSuicide = aOtherSuicide;
+		return otherSuicide;
 	}
 
 	/** Другие суициды */
-	private VocYesNo theOtherSuicide;
+	private VocYesNo otherSuicide;
 
 	/** Другие суициды описание */
-	@Comment("Другие суициды описание")
-	public String getOtherSuicideDesc() {
-		return theOtherSuicideDesc;
-	}
-
-	public void setOtherSuicideDesc(String aOtherSuicideDesc) {
-		theOtherSuicideDesc = aOtherSuicideDesc;
-	}
-
-	/** Другие суициды описание */
-	private String theOtherSuicideDesc;
+	private String otherSuicideDesc;
 	
 	/** Алкоголизм */
 	@Comment("Алкоголизм")
 	@OneToOne
 	public VocYesNo getAlcoholism() {
-		return theAlcoholism;
-	}
-
-	public void setAlcoholism(VocYesNo aAlcoholism) {
-		theAlcoholism = aAlcoholism;
+		return alcoholism;
 	}
 
 	/** Алкоголизм */
-	private VocYesNo theAlcoholism;
-	
-	/** Алкоголизм стаж */
-	@Comment("Алкоголизм стаж")
-	public Long getAlcoholismExperience() {
-		return theAlcoholismExperience;
-	}
-
-	public void setAlcoholismExperience(Long aAlcoholismExperience) {
-		theAlcoholismExperience = aAlcoholismExperience;
-	}
+	private VocYesNo alcoholism;
 
 	/** Алкоголизм стаж */
-	private Long theAlcoholismExperience;
+	private Long alcoholismExperience;
 	
 	/** Наркомания */
 	@Comment("Наркомания")
 	@OneToOne
 	public VocYesNo getNarcomania() {
-		return theNarcomania;
-	}
-
-	public void setNarcomania(VocYesNo aNarcomania) {
-		theNarcomania = aNarcomania;
+		return narcomania;
 	}
 
 	/** Наркомания */
-	private VocYesNo theNarcomania;
+	private VocYesNo narcomania;
 	
 	/** Наркомания стаж */
 	@Comment("Наркомания стаж")
 	public Long getNarcomaniaExperience() {
-		return theNarcomaniaExperience;
-	}
-
-	public void setNarcomaniaExperience(Long aNarcomaniaExperience) {
-		theNarcomaniaExperience = aNarcomaniaExperience;
+		return narcomaniaExperience;
 	}
 
 	/** Наркомания стаж */
-	private Long theNarcomaniaExperience;
+	private Long narcomaniaExperience;
 	
 	/** Получал психотерапевтическую помощь */
 	@Comment("Получал психотерапевтическую помощь")
 	@OneToOne
 	public VocYesNo getPsychoTherapeuticHelp() {
-		return thePsychoTherapeuticHelp;
-	}
-
-	public void setPsychoTherapeuticHelp(VocYesNo aPsychoTherapeuticHelp) {
-		thePsychoTherapeuticHelp = aPsychoTherapeuticHelp;
+		return psychoTherapeuticHelp;
 	}
 
 	/** Получал психотерапевтическую помощь */
-	private VocYesNo thePsychoTherapeuticHelp;
+	private VocYesNo psychoTherapeuticHelp;
 	
-	/** Где оказывалась психотерапевтическая помощь? */
-	@Comment("Где оказывалась психотерапевтическая помощь?")
-	public String getPsychoTherapeuticHelpWhere() {
-		return thePsychoTherapeuticHelpWhere;
-	}
-
-	public void setPsychoTherapeuticHelpWhere(String aPsychoTherapeuticHelpWhere) {
-		thePsychoTherapeuticHelpWhere = aPsychoTherapeuticHelpWhere;
-	}
 
 	/** Где оказывалась психотерапевтическая помощь? */
-	private String thePsychoTherapeuticHelpWhere;
+	private String psychoTherapeuticHelpWhere;
 	
 	/** Семейное положение */
 	@Comment("Семейное положение")
 	@OneToOne
 	public VocMarriageStatus getMarriageStatus() {
-		return theMarriageStatus;
-	}
-
-	public void setMarriageStatus(VocMarriageStatus aMarriageStatus) {
-		theMarriageStatus = aMarriageStatus;
+		return marriageStatus;
 	}
 
 	/** Семейное положение */
-	private VocMarriageStatus theMarriageStatus;
+	private VocMarriageStatus marriageStatus;
 	
 	/** Суицидальная настроенность */
 	@Comment("Суицидальная настроенность")
 	@OneToOne
 	public VocSuicidalAttitude getSuicidalAttitude() {
-		return theSuicidalAttitude;
-	}
-
-	public void setSuicidalAttitude(VocSuicidalAttitude aSuicidalAttitude) {
-		theSuicidalAttitude = aSuicidalAttitude;
+		return suicidalAttitude;
 	}
 
 	/** Суицидальная настроенность */
-	private VocSuicidalAttitude theSuicidalAttitude;
+	private VocSuicidalAttitude suicidalAttitude;
 	
 	/** Характер суицидальной активности */
 	@Comment("Характер суицидальной активности")
 	@OneToOne
 	public VocSuicidalActivity getSuicidalActivity() {
-		return theSuicidalActivity;
-	}
-
-	public void setSuicidalActivity(VocSuicidalActivity aSuicidalActivity) {
-		theSuicidalActivity = aSuicidalActivity;
+		return suicidalActivity;
 	}
 
 	/** Характер суицидальной активности */
-	private VocSuicidalActivity theSuicidalActivity;
+	private VocSuicidalActivity suicidalActivity;
 	
 	/** Мотив */
 	@Comment("Мотив")
 	@OneToOne
 	public VocSuicidalMotive getMotive() {
-		return theMotive;
-	}
-
-	public void setMotive(VocSuicidalMotive aMotive) {
-		theMotive = aMotive;
+		return motive;
 	}
 
 	/** Мотив */
-	private VocSuicidalMotive theMotive;
+	private VocSuicidalMotive motive;
 	
 	/** Другие мотивы */
-	@Comment("Другие мотивы")
-	public String getMotiveOther() {
-		return theMotiveOther;
-	}
-
-	public void setMotiveOther(String aMotiveOther) {
-		theMotiveOther = aMotiveOther;
-	}
-
-	/** Другие мотивы */
-	private String theMotiveOther;
+	private String motiveOther;
 	
 	/** Материальное положение */
 	@Comment("Материальное положение")
 	@OneToOne
 	public VocFinancialSituation getFinSituation() {
-		return theFinSituation;
-	}
-
-	public void setFinSituation(VocFinancialSituation aFinSituation) {
-		theFinSituation = aFinSituation;
+		return finSituation;
 	}
 
 	/** Материальное положение */
-	private VocFinancialSituation theFinSituation;
+	private VocFinancialSituation finSituation;
 	
 	/** Соматическое заболевание */
 	@Comment("Соматическое заболевание")
 	@OneToOne
 	public VocPsychSomaticDisease getSomaticDisease() {
-		return theSomaticDisease;
-	}
-
-	public void setSomaticDisease(VocPsychSomaticDisease aSomaticDisease) {
-		theSomaticDisease = aSomaticDisease;
+		return somaticDisease;
 	}
 
 	/** Соматическое заболевание */
-	private VocPsychSomaticDisease theSomaticDisease;
+	private VocPsychSomaticDisease somaticDisease;
 	
 	/** Рекомандации */
 	@Comment("Рекомандации")
 	@OneToOne
 	public VocPsychRecommendation getRecommendation() {
-		return theRecommendation;
-	}
-
-	public void setRecommendation(VocPsychRecommendation aRecommendation) {
-		theRecommendation = aRecommendation;
+		return recommendation;
 	}
 
 	/** Рекомандации */
-	private VocPsychRecommendation theRecommendation;
+	private VocPsychRecommendation recommendation;
 	
 	/** Сожалеет о суициде */
 	@Comment("Сожалеет о суициде")
 	@OneToOne
 	public VocSuicideRegret getRegret() {
-		return theRegret;
-	}
-
-	public void setRegret(VocSuicideRegret aRegret) {
-		theRegret = aRegret;
+		return regret;
 	}
 
 	/** Сожалеет о суициде */
-	private VocSuicideRegret theRegret;
-	
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {
-		return theCreateDate;
-	}
-
-	public void setCreateDate(Date aCreateDate) {
-		theCreateDate = aCreateDate;
-	}
-
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {
-		return theEditDate;
-	}
-
-	public void setEditDate(Date aEditDate) {
-		theEditDate = aEditDate;
-	}
-
-	/** Пользователь, создавший запись */
-	@Comment("Пользователь, создавший запись")
-	public String getCreateUsername() {
-		return theCreateUsername;
-	}
-
-	public void setCreateUsername(String aCreateUsername) {
-		theCreateUsername = aCreateUsername;
-	}
-
-	/** Пользователь, последний редактировавший запись */
-	@Comment("Пользователь, последний редактировавший запись")
-	public String getEditUsername() {
-		return theEditUsername;
-	}
-
-	public void setEditUsername(String aEditUsername) {
-		theEditUsername = aEditUsername;
-	}
-
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {
-		return theCreateTime;
-	}
-
-	public void setCreateTime(Time aCreateTime) {
-		theCreateTime = aCreateTime;
-	}
+	private VocSuicideRegret regret;
 
 	/** Время редактрования */
-	@Comment("Время редактрования")
-	public Time getEditTime() {
-		return theEditTime;
-	}
-
-	public void setEditTime(Time aEditTime) {
-		theEditTime = aEditTime;
-	}
-
-	/** Время редактрования */
-	private Time theEditTime;
+	private Time editTime;
 
 	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 
 	/** Пользователь, последний редактировавший запись */
-	private String theEditUsername;
+	private String editUsername;
 
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 
 	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 }

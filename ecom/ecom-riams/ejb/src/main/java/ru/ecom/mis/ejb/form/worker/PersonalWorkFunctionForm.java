@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.worker;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.jaas.ejb.form.SecUserForm;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
@@ -13,92 +14,80 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Рабочая функция специалиста", nameProperties= "name", view="entityParentView-work_personalWorkFunction.do",list= "entityParentList-work_personalWorkFunction.do")
 @Parent(property="worker", parentForm= WorkerForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/WorkFunction")
+@Setter
 public class PersonalWorkFunctionForm extends WorkFunctionForm {
 	/** Сотрудник */
 	@Comment("Сотрудник")
 	@Persist @Required
-	public Long getWorker() {return theWorker;}
-	public void setWorker(Long aWorkers) {theWorker = aWorkers;}
+	public Long getWorker() {return worker;}
 
 	/** Пользователь системы */
 	@Comment("Пользователь системы")
 	@Persist
-	public Long getSecUser() {return theSecUser;}
-	public void setSecUser(Long aSecUser) {theSecUser = aSecUser;}
+	public Long getSecUser() {return secUser;}
 
 	/** Групповая рабочая функция */
 	@Comment("Групповая рабочая функция")
 	@Persist
-	public Long getGroup() {return theGroup;}
-	public void setGroup(Long aGroup) {theGroup = aGroup;}
+	public Long getGroup() {return group;}
 
 	   /** Информация о работнике */
 	@Comment("Информация о работнике")
 	@Persist
-	public String getWorkerInfo() {return theWorkerInfo;}
-	public void setWorkerInfo(String aWorkerInfo) {theWorkerInfo = aWorkerInfo;}
-	
+	public String getWorkerInfo() {return workerInfo;}
+
 	/** Информация о рабочей группе */
 	@Comment("Информация о рабочей группе")
 	@Persist
-	public String getGroupInfo() {return theGroupInfo;}
-	public void setGroupInfo(String aGroupInfo) {theGroupInfo = aGroupInfo;}
+	public String getGroupInfo() {return groupInfo;}
 
 	/** Пользователь */
 	@Comment("Пользователь")
-	public SecUserForm getUserForm() {return theUserForm;}
-	public void setSecUserForm(SecUserForm aUserForm) {theUserForm = aUserForm;}
+	public SecUserForm getUserForm() {return userForm;}
 
 	/** Создавать календарь */
 	@Comment("Создавать календарь")
-	public Boolean getIsCalendarCreate() {return theIsCalendarCreate;}
-	public void setIsCalendarCreate(Boolean aIsCalendarCreate) {theIsCalendarCreate = aIsCalendarCreate;}
-
+	public Boolean getIsCalendarCreate() {return isCalendarCreate;}
 
 	/** Категория специалиста */
 	@Comment("Категория специалиста")
 	@Persist
-	public Long getDegrees() {return theDegrees;}
-	public void setDegrees(Long aDegrees) {theDegrees = aDegrees;}
+	public Long getDegrees() {return degrees;}
 
 	/** Очередь, которую обслуживает раб. функция */
 	@Comment("Очередь, которую обслуживает раб. функция")
 	@Persist
-	public Long getQueue() {return theQueue;}
-	public void setQueue(Long aQueue) {theQueue = aQueue;}
+	public Long getQueue() {return queue;}
 	/** Очередь, которую обслуживает раб. функция */
-	private Long theQueue ;
+	private Long queue ;
 
 	/** Номер окна в электронной очереди */
 	@Comment("Номер окна в электронной очереди")
 	@Persist
-	public String getWindowNumber() {return theWindowNumber;}
-	public void setWindowNumber(String aWindowNumber) {theWindowNumber = aWindowNumber;}
-	/** Номер окна в электронной очереди */
-	private String theWindowNumber ;
+	public String getWindowNumber() {return windowNumber;}
+	private String windowNumber ;
 
 	public String getAllGroups() {
-		return theAllGroups;
+		return allGroups;
 	}
-	public void setAllGroups(String aAllGroups) { theAllGroups = aAllGroups; }
 
 	/** Категория специалиста */
-	private Long theDegrees;
+	private Long degrees;
 	/** Создавать календарь */
-	private Boolean theIsCalendarCreate;
+	private Boolean isCalendarCreate;
 	/** Пользователь */
-	private SecUserForm theUserForm;
+	private SecUserForm userForm;
 	/** Информация о рабочей группе */
-	private String theGroupInfo;
+	private String groupInfo;
 
 	/** Информация о работнике */
-	private String theWorkerInfo;
+	private String workerInfo;
 	/** Групповая рабочая функция */
-	private Long theGroup;
+	private Long group;
 	/** Пользователь системы */
-	private Long theSecUser;
+	private Long secUser;
 	/** Сотрудник */
-	private Long theWorker;
+	private Long worker;
 	/** Дополнительные групповые рабочие функции */
-	private String theAllGroups;
+	private String allGroups;
 }

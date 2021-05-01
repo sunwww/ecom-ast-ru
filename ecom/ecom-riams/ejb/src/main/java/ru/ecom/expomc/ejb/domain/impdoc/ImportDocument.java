@@ -1,5 +1,7 @@
 package ru.ecom.expomc.ejb.domain.impdoc;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -28,56 +30,41 @@ import java.util.Collection;
         , @NamedQuery(name = "ImportDocument.findByKey", query = "from ImportDocument where keyName = :key")
 }
 		)
+@Getter
+@Setter
 public class ImportDocument extends BaseEntity {
 
     /** Системный формат */
     @Transient
     public Format getDefaultFormat() {
-        for (Format format: theFormats) {
+        for (Format format: formats) {
             if (Boolean.TRUE.equals(format.getSystemFormat())) return format;
         }
         return null;
     }
 
-    /** Клас для сохранения */
-    public String getEntityClassName() { return theEntityClassName ; }
-    public void setEntityClassName(String aEntityClassName) { theEntityClassName = aEntityClassName ; }
-
-    /** Комментарий */
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
-
-    /** Ключ */
-    public String getKeyName() { return theKeyName ; }
-    public void setKeyName(String aKeyName) { theKeyName = aKeyName ; }
-
     /** Время импорта */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "document")
-    public Collection<ImportTime> getTimes() { return theTimes ; }
-    public void setTimes(Collection<ImportTime> aTimes) { theTimes = aTimes ; }
+    public Collection<ImportTime> getTimes() { return times; }
 
     /** Форматы импорта */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "document")
-    public Collection<Format> getFormats() { return theFormats ; }
-    public void setFormats(Collection<Format> aFormats) { theFormats = aFormats ; }
-    private Collection<Format> theFormats ;
+    public Collection<Format> getFormats() { return formats; }
+    private Collection<Format> formats;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "document")
-    public Collection<ExportFormat> getExportFormats() { return theExportFormats; }
-    public void setExportFormats(Collection<ExportFormat> anExportFormats) { theExportFormats = anExportFormats; }
-    private Collection<ExportFormat> theExportFormats ;
+    public Collection<ExportFormat> getExportFormats() { return exportFormats; }
+    private Collection<ExportFormat> exportFormats;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "document")
-    public Collection<ImportFormat> getImportFormats() { return theImportFormats; }
-    public void setImportFormats(Collection<ImportFormat> anImportFormats) { theImportFormats = anImportFormats; }
-    private Collection<ImportFormat> theImportFormats;
+    public Collection<ImportFormat> getImportFormats() { return importFormats; }
+    private Collection<ImportFormat> importFormats;
 
     /** Проверки */
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "document")
     @OrderBy("sn")
-    public Collection<Check> getChecks() { return theChecks ; }
-    public void setChecks(Collection<Check> aChecks) { theChecks = aChecks ; }
-    private Collection<Check> theChecks ;
+    public Collection<Check> getChecks() { return checks; }
+    private Collection<Check> checks;
 
 
     @Transient
@@ -91,11 +78,11 @@ public class ImportDocument extends BaseEntity {
     }
 
     /** Время импорта */
-    private Collection<ImportTime> theTimes ;
+    private Collection<ImportTime> times;
     /** Комментарий */
-    private String theComment ;
+    private String comment;
     /** Ключ */
-    private String theKeyName ;
+    private String keyName;
     /** Клас для сохранения */
-    private String theEntityClassName ;
+    private String entityClassName;
 }

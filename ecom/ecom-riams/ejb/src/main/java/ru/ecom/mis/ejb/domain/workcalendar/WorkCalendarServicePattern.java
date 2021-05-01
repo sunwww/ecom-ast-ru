@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceReserveType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -12,6 +14,8 @@ import javax.persistence.OneToOne;
 	 */
 	@Comment("Шаблон услуги рабочего календаря")
 @Entity
+	@Getter
+	@Setter
 public class WorkCalendarServicePattern extends WorkCalendarReservePattern{
 	/**
 	 * Медицинская услуга
@@ -19,28 +23,22 @@ public class WorkCalendarServicePattern extends WorkCalendarReservePattern{
 	@Comment("Медицинская услуга")
 	@OneToOne
 	public MedService getMedService() {
-		return theMedService;
-	}
-	public void setMedService(MedService aMedService) {
-		theMedService = aMedService;
+		return medService;
 	}
 	/**
 	 * Медицинская услуга
 	 */
-	private MedService theMedService;
+	private MedService medService;
 	/**
 	 * Тип резерва
 	 */
 	@Comment("Тип резерва")
 	@OneToOne
 	public VocServiceReserveType getReserveType() {
-		return theReserveType;
-	}
-	public void setReserveType(VocServiceReserveType aReserveType) {
-		theReserveType = aReserveType;
+		return reserveType;
 	}
 	/**
 	 * Тип резерва
 	 */
-	private VocServiceReserveType theReserveType;
+	private VocServiceReserveType reserveType;
 }

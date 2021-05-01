@@ -17,13 +17,13 @@ public class DestroyServiceBean implements IDestroyService, IDestroyManagementSe
 
 	public void add(IDestroyable aDestroyable) {
 		LOG.info(" Add "+aDestroyable.getClass().getSimpleName()) ;
-		theListeners.add(aDestroyable) ;
+		listeners.add(aDestroyable) ;
 	}
 
 	public void destroy() {
 		LOG.info("Destroing ...") ;
 		DestroyContext ctx = new DestroyContext() ;
-		for(IDestroyable d : theListeners) {
+		for(IDestroyable d : listeners) {
 			LOG.info("  "+d.getClass().getSimpleName()) ;
 			try {
 				d.destroy(ctx);
@@ -38,8 +38,7 @@ public class DestroyServiceBean implements IDestroyService, IDestroyManagementSe
 		LOG.info("  Destroying Introspector's caches...") ;
 		PropertyUtil.destroy() ;
 		Introspector.flushCaches() ;
-		//PropertyUtilsBean.clearDescriptors();
 	}
 	
-	private final LinkedList<IDestroyable> theListeners = new LinkedList<>() ;
+	private final LinkedList<IDestroyable> listeners = new LinkedList<>() ;
 }

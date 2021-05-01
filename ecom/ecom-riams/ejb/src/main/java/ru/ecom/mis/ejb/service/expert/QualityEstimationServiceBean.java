@@ -33,7 +33,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 	public String getInfoByDep(Long aSmo, Long aDepartment){
 		StringBuilder sql = new StringBuilder() ;
 		sql.append("select upper(smo.dtype),count(*) from medcase smo where smo.id='").append(aSmo).append("'") ;
-		List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
+		List<Object[]> list = manager.createNativeQuery(sql.toString()).getResultList() ;
 		if (!list.isEmpty()) {
 			String dtype=list.get(0)[0].toString() ;
 			//Стационар
@@ -56,7 +56,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 					.append(" left join worker w on w.id = wf.worker_id")
 					.append(" left join patient wp on wp.id=w.person_id")
 					.append(" where smoM.id = '").append(aSmo).append("' and smoD.department_id='").append(aDepartment).append("'") ;
-				list = theManager.createNativeQuery(sql.toString()).getResultList() ;
+				list = manager.createNativeQuery(sql.toString()).getResultList() ;
 				if (!list.isEmpty()) {
 					StringBuilder ret = new StringBuilder() ;
 					Object[] row = list.get(0) ;
@@ -89,7 +89,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		sql1.append("select vqec.id as vqecid from VocQualityEstimationCrit vqec")
 			.append(" left join qualityestimationcard qec on qec.kind_id=vqec.kind_id where qec.id='").append(aCardId).append("' group by vqec.id,vqec.code  order by vqec.code")			;
 		//LOG.info(sql1) ;
-		List<Object> list1 = theManager.createNativeQuery(sql1.toString()).getResultList() ;
+		List<Object> list1 = manager.createNativeQuery(sql1.toString()).getResultList() ;
 		Long cntSection ;
 		//Long kind ;
 		if (!list1.isEmpty()) {
@@ -125,7 +125,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		sql1.append("select count(*),vqec.kind_id from VocQualityEstimationCrit vqec")
 			.append(" left join qualityestimationcard qec on qec.kind_id=vqec.kind_id where qec.id='").append(aCardId).append("' group by vqec.kind_id")			;
 		
-		List<Object[]> list1 = theManager.createNativeQuery(sql1.toString()).getResultList() ;
+		List<Object[]> list1 = manager.createNativeQuery(sql1.toString()).getResultList() ;
 		int cntSection ;
 		
 		Long kind ;
@@ -138,7 +138,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		}
         boolean ifTypeBool=false,isKmp=false;
         String sql2 = "select case when vqec.code='PR203' then '1' else case when vqec. code='KMP' then '-1' else '0' end end from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=:cardId";
-        List<Object[]> listkind = theManager.createNativeQuery(sql2).setParameter("cardId",aCardId).getResultList() ;
+        List<Object[]> listkind = manager.createNativeQuery(sql2).setParameter("cardId",aCardId).getResultList() ;
         if (!listkind.isEmpty()) {
             Object one = "1", _one="-1";
             Object row = listkind.get(0);
@@ -255,7 +255,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		 //table.append("<th>КЭР</th>") ;
 		 if (ifTypeBool) table.append("<th>Комм. зав.</th>") ;
 		 table.append("</tr>") ;
-		 List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
+		 List<Object[]> list = manager.createNativeQuery(sql.toString()).getResultList() ;
 		 if (!list.isEmpty()) {
 			 boolean firststr = false;
 			 int cntPart =1 ;
@@ -406,7 +406,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		boolean ifTypeBool=false;
 		String sql2 = "select case when vqec.code='PR203' then '1' else case when vqec.code='KMP' then '-1' else '0' end end from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=" + aCard;
 
-		List<Object[]> listkind = theManager.createNativeQuery(sql2).getResultList() ;
+		List<Object[]> listkind = manager.createNativeQuery(sql2).getResultList() ;
 		if (!listkind.isEmpty()) {
 			Object one = "1", _one="-1";
 			Object row = listkind.get(0) ;
@@ -446,7 +446,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		sql.append(" order by vqec.code") ;
 		String aVocName= isKmp? "vocQualityEstimationMarkKMP"
 				: "vocQualityEstimationMark";
-		List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
+		List<Object[]> list = manager.createNativeQuery(sql.toString()).getResultList() ;
 		 if (!list.isEmpty()) {
 			 List<String[]> list2=null;
 			 if (ifTypeBool) {
@@ -638,7 +638,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		return ret ;
 	}
 	public Long getIdQualityEstimationByType(String aType, Long aIdCard) {
-		List<Object[]> result = theManager.createNativeQuery("select qe.id, qe.expert_id from qualityestimation qe where qe.card_id='"+aIdCard+"' and qe.expertType=:aType").setParameter("aType",aType).getResultList();
+		List<Object[]> result = manager.createNativeQuery("select qe.id, qe.expert_id from qualityestimation qe where qe.card_id='"+aIdCard+"' and qe.expertType=:aType").setParameter("aType",aType).getResultList();
 		return result.isEmpty()? null : ConvertSql.parseLong(result.get(0)[0]) ;
 	}
 
@@ -662,7 +662,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 	 * @return ArrayList
 	 */
 	private List<Object> getDiagnosticServices(String startDate, String finishDate, Long patId) {
-		return theManager.createNativeQuery("select ms.code" +
+		return manager.createNativeQuery("select ms.code" +
 				" from medcase vis" +
 				" left join medcase smc on smc.parent_id=vis.id and upper(smc.dtype)='SERVICEMEDCASE'" +
 				" left join medservice ms on ms.id=smc.medservice_id" +
@@ -681,7 +681,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 	 * @return List<Object>
 	 */
 	private List<Object> getLaboratoryServices(Long medcaseId, String startDate, String finishDate) {
-		return theManager.createNativeQuery("select ms.code" +
+		return manager.createNativeQuery("select ms.code" +
 				" from medcase vis" +
 				" left join medcase smc on smc.parent_id=vis.id" +
 				" left join medservice ms on ms.id=smc.medservice_id" +
@@ -697,7 +697,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 	 * @return List<Object>
 	 */
 	private List<Object> getOperationServices(Long medcaseId) {
-		return theManager.createNativeQuery("select ms.code " +
+		return manager.createNativeQuery("select ms.code " +
 				" from SurgicalOperation so" +
 				" left join medcase slo on slo.id=so.medcase_id" +
 				" left join medservice ms on ms.id=so.medservice_id" +
@@ -710,7 +710,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 	 * @return List<Object>
 	 */
 	private List<Object> getAnestesiaServices(Long medcaseId)  {
-		return theManager.createNativeQuery("select ms.code" +
+		return manager.createNativeQuery("select ms.code" +
 				" from Anesthesia aso" +
 				" left join SurgicalOperation so on so.id=aso.surgicalOperation_id" +
 				" left join medcase slo on slo.id=so.medcase_id" +
@@ -724,7 +724,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 	 * @return List<Object>
 	 */
 	private List<Object> getExtraServices(Long medcaseId) {
-		return theManager.createNativeQuery("select ms.code" +
+		return manager.createNativeQuery("select ms.code" +
 				" from MedCase so " +
 				" left join medcase slo on slo.id=so.parent_id" +
 				" left join vocservicestream vss on vss.id=so.servicestream_id" +
@@ -742,7 +742,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		ArrayList<String> res = new ArrayList<>();
 		String startDate, finishDate;
 		Long patId;
-		List<Object[]> list0 = theManager.createNativeQuery("select to_char(dateStart,'dd.mm.yyyy') as ds" +
+		List<Object[]> list0 = manager.createNativeQuery("select to_char(dateStart,'dd.mm.yyyy') as ds" +
 				" , to_char(case when datefinish is null then current_date else datefinish end,'dd.mm.yyyy') as df" +
 				" ,patient_id as pat" +
 				" from medcase sls where id=" +aMedcaseId).getResultList();
@@ -759,9 +759,9 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		return res;
 	}
 
-	@EJB ILocalEntityFormService theEntityFormService ;
-    @PersistenceContext EntityManager theManager ;
-    @Resource SessionContext theContext;
+	@EJB ILocalEntityFormService entityFormService ;
+    @PersistenceContext EntityManager manager ;
+    @Resource SessionContext context;
 	//Milamesher получение списка критерии+услуги
 	private List<String[]> getExecutedCriterias(Long aCard) {
 
@@ -776,13 +776,13 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				"left join vocprioritydiagnosis prior on prior.id=ds.priority_id\n" +
 				"left join qualityestimationcard qecard on qecard.medcase_id=mc.id\n" +
 				"where qecard.id="+aCard+" and reg.code='4' and prior.code='1'";
-		List<Object[]> list = theManager.createNativeQuery(query).getResultList() ;
+		List<Object[]> list = manager.createNativeQuery(query).getResultList() ;
 		if (!list.isEmpty()) {
 			query = "select m.parent_id from qualityestimationcard qecard\n" +
 					"left join qualityestimation qe on qe.card_id=qecard.id\n" +
 					"left join medcase m on m.id=qecard.medcase_id\n" +
 					"where qecard.id=" + aCard;
-			List<Object> list0 = theManager.createNativeQuery(query).getResultList();
+			List<Object> list0 = manager.createNativeQuery(query).getResultList();
 			if (!list0.isEmpty()) {
 				Long id = Long.parseLong(list0.get(0).toString());
 				ArrayList<String> listServicies = getAllServicesByMedCase(id);
@@ -806,25 +806,25 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 	//Milamesher создание черновик ЭК c кодом типа карты aCode
 	public Long createDraftEK(Long aMcaseId, String aCode) {
 		//если уже есть QE, то вернуть имеющийся, нет - создать
-		List<Object> ids= theManager.createNativeQuery("select id from qualityestimation where card_id=ANY(select id from qualityestimationcard  where medcase_id="
+		List<Object> ids= manager.createNativeQuery("select id from qualityestimation where card_id=ANY(select id from qualityestimationcard  where medcase_id="
 				+ aMcaseId + " and kind_id=(select id from vocqualityestimationkind where code='"+aCode+"'))").getResultList();
 		if (ids == null || ids.isEmpty()) {
 			QualityEstimationCard qecard = new QualityEstimationCard();
 			//беру первый основной клинический диагноз
-			List<Object> listIdc10=theManager.createNativeQuery("select ds.idc10_id from diagnosis ds" +
+			List<Object> listIdc10=manager.createNativeQuery("select ds.idc10_id from diagnosis ds" +
 					" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id" +
 					" left join vocprioritydiagnosis prior on prior.id=ds.priority_id" +
 					" where ds.medcase_id= " + aMcaseId + " and prior.code='1' and reg.code='4' order by ds.id").getResultList();
 			if (listIdc10.size()==0) return 0L;
 			Long idc10Id = ConvertSql.parseLong(listIdc10.get(0));
-			String login = theContext.getCallerPrincipal().toString();
-			MedCase mcase = aMcaseId != null ? theManager.find(MedCase.class, aMcaseId) : null;
-			Long kindId = ConvertSql.parseLong(theManager.createNativeQuery("select id from vocqualityestimationkind where code='"+aCode+"'").getResultList().get(0));
-			VocQualityEstimationKind kind = kindId != null ? theManager.find(VocQualityEstimationKind.class, kindId) : null;
-			Long wfId = ConvertSql.parseLong(theManager.createNativeQuery("select id from workfunction where secuser_id=(select id from secuser where login='" + login + "')").getResultList().get(0));
-			WorkFunction wf = wfId != null ? theManager.find(WorkFunction.class, wfId) : null;
-			VocIdc10 idc10 = idc10Id != null ? theManager.find(VocIdc10.class, idc10Id) : null;
-			Object cardnumber = theManager.createNativeQuery("select code from statisticstub  where medcase_id=(select parent_id from medcase where id=" + aMcaseId + ") ").getResultList().get(0);
+			String login = context.getCallerPrincipal().toString();
+			MedCase mcase = aMcaseId != null ? manager.find(MedCase.class, aMcaseId) : null;
+			Long kindId = ConvertSql.parseLong(manager.createNativeQuery("select id from vocqualityestimationkind where code='"+aCode+"'").getResultList().get(0));
+			VocQualityEstimationKind kind = kindId != null ? manager.find(VocQualityEstimationKind.class, kindId) : null;
+			Long wfId = ConvertSql.parseLong(manager.createNativeQuery("select id from workfunction where secuser_id=(select id from secuser where login='" + login + "')").getResultList().get(0));
+			WorkFunction wf = wfId != null ? manager.find(WorkFunction.class, wfId) : null;
+			VocIdc10 idc10 = idc10Id != null ? manager.find(VocIdc10.class, idc10Id) : null;
+			Object cardnumber = manager.createNativeQuery("select code from statisticstub  where medcase_id=(select parent_id from medcase where id=" + aMcaseId + ") ").getResultList().get(0);
 			if (mcase != null && kindId != null && wf != null && idc10 != null && cardnumber != null) {
 				qecard.setCreateDate(new java.sql.Date((new java.util.Date()).getTime()));
 				qecard.setCreateUsername(login);
@@ -836,7 +836,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				qecard.setDiagnosis(idc10.getName());  //надо?
 				qecard.setIdc10(idc10);
 				qecard.setCardNumber(cardnumber.toString());
-				theManager.persist(qecard);
+				manager.persist(qecard);
 			/*Long qecardid=Long.valueOf(qecard.getId()) ;
 			if (qecardid!=null) {*/
 				QualityEstimation qe = new QualityEstimation();
@@ -846,7 +846,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				qe.setExpert(wf);
 				qe.setCard(qecard);
 				qe.setIsDraft(true);
-				theManager.persist(qe);
+				manager.persist(qe);
 				//нужно критерии
 				StringBuilder sql = new StringBuilder();
 					sql.append("select distinct vqecrit.id")
@@ -867,16 +867,16 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 				}
 				else if (aCode.equals("KMP"))
 					sql.append(" and (prior.code='1' or prior.code='3' and vqecrit_d.isconcomitant=true) order by vqecrit.id");
-				List<Object> crits = theManager.createNativeQuery(sql.toString()).getResultList();
+				List<Object> crits = manager.createNativeQuery(sql.toString()).getResultList();
 				if (crits != null) {
 					for (Object critO : crits) {
 						QualityEstimationCrit crit = new QualityEstimationCrit();
 						Long id = Long.parseLong(critO.toString());//Long.parseLong(String.valueOf(crits.get(i)));
-						VocQualityEstimationCrit vcrit = theManager.find(VocQualityEstimationCrit.class, id);
+						VocQualityEstimationCrit vcrit = manager.find(VocQualityEstimationCrit.class, id);
 						if (vcrit != null) {
 							crit.setEstimation(qe);
 							crit.setCriterion(vcrit);
-							theManager.persist(crit);
+							manager.persist(crit);
 						}
 					}
 				}
@@ -887,7 +887,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		else {
 			if (aCode.equals("KMP"))
 				return ConvertSql.parseLong(ids.get(0));
-			Object isdraft= theManager.createNativeQuery("select case when isdraft=true  then '1' else '0' end from qualityestimation where id="+ids.get(0)).getResultList().get(0);
+			Object isdraft= manager.createNativeQuery("select case when isdraft=true  then '1' else '0' end from qualityestimation where id="+ids.get(0)).getResultList().get(0);
 			if (isdraft.equals("1")) return ConvertSql.parseLong(ids.get(0));  //это черновик
 			else return null; //ЗАВ УЖЕ ЗАПОЛНИЛ!
 		}

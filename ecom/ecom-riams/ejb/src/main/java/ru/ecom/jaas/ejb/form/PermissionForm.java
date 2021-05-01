@@ -1,5 +1,7 @@
 package ru.ecom.jaas.ejb.form;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -21,101 +23,90 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Subclasses(value = { UserPermissionForm.class })
 @EntityFormSecurityPrefix("/Policy/Jaas/Permission")
 @WebTrail(comment="Разрешения", nameProperties="name", view="entityView-sec_permission.do")
+@Setter
 public class PermissionForm extends IdEntityForm {
 	/** Дата начала актульности */
 	@Comment("Дата начала актульности")
 	@Persist @DateString @DoDateString @Required
-	public String getDateFrom() {return theDateFrom;}
-	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
-	
+	public String getDateFrom() {return dateFrom;}
+
 	/** Дата окончания актульности */
 	@Comment("Дата окончания актульности")
 	@Persist @DateString @DoDateString 
-	public String getDateTo() {return theDateTo;}
-	public void setDateTo(String aDateTo) {theDateTo = aDateTo;}
+	public String getDateTo() {return dateTo;}
 
 	/** Разрешение */
 	@Comment("Разрешение")
 	@Persist @Required
-	public Long getPermission() {return thePermission;}
-	public void setPermission(Long aPermission) {thePermission = aPermission;}
+	public Long getPermission() {return permission;}
 
 	/** Объект Id */
 	@Comment("Объект Id")
 	@Persist
-	public String getIdObject() {return theIdObject;}
-	public void setIdObject(String aIdObject) {theIdObject = aIdObject;}
+	public String getIdObject() {return idObject;}
 
 	/** Пользователь, который дал разрешение */
 	@Comment("Пользователь, который дал разрешение")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DateString @DoDateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	public String getCreateDate() {return createDate;}
 
 	/** Время создания */
 	@Comment("Время создания")
 	@Persist @TimeString @DoTimeString
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
-	
+	public String getCreateTime() {return createTime;}
+
 	/** Разрешение инфо */
 	@Comment("Разрешение инфо")
 	@Persist
-	public String getPermissionInfo() {return thePermissionInfo;}
-	public void setPermissionInfo(String aPermissionInfo) {thePermissionInfo = aPermissionInfo;}
+	public String getPermissionInfo() {return permissionInfo;}
 
 	/** ObjectInfo */
 	@Comment("ObjectInfo")
 	@Persist
-	public String getObjectInfo() {return theObjectInfo;}
-	public void setObjectInfo(String aObjectInfo) {theObjectInfo = aObjectInfo;}
+	public String getObjectInfo() {return objectInfo;}
 
 	/** Объект */
 	@Comment("Объект")
 	@Persist @Required
-	public Long getObject() {return theObject;}
-	public void setObject(Long aObject) {	theObject = aObject;}
+	public Long getObject() {return object;}
 
 	/** Дата начала периода редактирования */
 	@Comment("Дата начала периода редактирования")
 	@Persist @DateString @DoDateString @Required
-	public String getEditPeriodFrom() {return theEditPeriodFrom;}
-	public void setEditPeriodFrom(String aEditDateFrom) {theEditPeriodFrom = aEditDateFrom;}
+	public String getEditPeriodFrom() {return editPeriodFrom;}
 
 	/** Дата окончания периода редактирования */
 	@Comment("Дата окончания периода редактирования")
 	@Persist @DateString @DoDateString @Required
-	public String getEditPeriodTo() {return theEditPeriodTo;}
-	public void setEditPeriodTo(String aEditPeriodTo) {theEditPeriodTo = aEditPeriodTo;}
+	public String getEditPeriodTo() {return editPeriodTo;}
 
 	/** Дата окончания периода редактирования */
-	private String theEditPeriodTo;
+	private String editPeriodTo;
 	/** Дата начала периода редактирования  */
-	private String theEditPeriodFrom;
+	private String editPeriodFrom;
 	/** Объект */
-	private Long theObject;
+	private Long object;
 	/** ObjectInfo */
-	private String theObjectInfo;
+	private String objectInfo;
 	/** Разрешение инфо */
-	private String thePermissionInfo;
+	private String permissionInfo;
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	/** Пользователь, который дал разрешение */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Объект Id */
-	private String theIdObject;
+	private String idObject;
 	/** Разрешение */
-	private Long thePermission;
+	private Long permission;
 	/** Дата окончания актульности */
-	private String theDateTo;
+	private String dateTo;
 	/** Дата начала актульности */
-	private String theDateFrom;
+	private String dateFrom;
 }

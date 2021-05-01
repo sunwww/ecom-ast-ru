@@ -18,29 +18,29 @@ public class ImportLogger {
 
 
     /** Выходной поток для отчета импорта */
-    public Writer getImportReportWriter() { return theImportReportWriter ; }
-    public void setImportReportWriter(Writer aImportReportWriter) { theImportReportWriter = aImportReportWriter ; }
+    public Writer getImportReportWriter() { return importReportWriter ; }
+    public void setImportReportWriter(Writer aImportReportWriter) { importReportWriter = aImportReportWriter ; }
 
     public void log(String message) {
         Date dt = new Date();
-        if (theImportReportWriter != null) {
+        if (importReportWriter != null) {
             try {
-                theImportReportWriter.write(FORMATLOG.format(dt)+": ");
-                for (int i=0; i<theInputReportLevel; i++) theImportReportWriter.write("\t");
-                theImportReportWriter.write(message+"\n");
+                importReportWriter.write(FORMATLOG.format(dt)+": ");
+                for (int i=0; i<inputReportLevel; i++) importReportWriter.write("\t");
+                importReportWriter.write(message+"\n");
             } catch (IOException e) {
                 LOG.error("can't write import report ");
                 LOG.info(message);
             }
         }
     }
-    public void inclev() { theInputReportLevel++; }
-    public void declev() { theInputReportLevel--; }
+    public void inclev() { inputReportLevel++; }
+    public void declev() { inputReportLevel--; }
 
 
     /** Выходной поток для отчета импорта */
-    private Writer theImportReportWriter = null;
-    private int theInputReportLevel = 0;
+    private Writer importReportWriter = null;
+    private int inputReportLevel = 0;
 
 
 }

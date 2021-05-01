@@ -2,48 +2,27 @@ package ru.ecom.jaas.ejb.service;
 
 import java.io.Serializable;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+@Getter
+@Setter
 public class PolicyForm implements Serializable{
 	public 	PolicyForm(String aKey,String aName,String aComment) {
-		theKey = aKey ;
-		theName = aName;
-		theComment = aComment ;
+		key = aKey ;
+		name = aName;
+		comment = aComment ;
 	}
-	/** Ключ */
-	@Comment("Ключ")
-	public String getKey() {return theKey;}
-	public void setKey(String aKey) {theKey = aKey;}
-
-	/** Название */
-	@Comment("Название")
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
-
-	/** Комментарий */
-	@Comment("Комментарий")
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
-
-	/** Существует в базе? */
-	@Comment("Существует в базе?")
-	public Boolean getIsExist() {return theIsExist;}
-	public void setIsExist(Boolean aIsExist) {theIsExist = aIsExist;}
-
 	/** Id в файле */
-	@Comment("Id в файле")
-	public Long getIdInFile() {return theIdInFile;}
-	public void setIdInFile(Long aIdInFile) {theIdInFile = aIdInFile;}
-
-	/** Id в файле */
-	private Long theIdInFile;
+	private Long idInFile;
 	/** Существует в базе? */
-	private Boolean theIsExist;
+	private Boolean isExist;
 	/** Комментарий */
-	private String theComment;
+	private String comment;
 	/** Название */
-	private String theName;
+	private String name;
 	/** Ключ */
-	private String theKey;
+	private String key;
 
 }

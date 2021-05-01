@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.expert;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -24,6 +25,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(QualityEstimationPrepareCreateInterceptor.class)
 )
+@Setter
 public class QualityEstimationForm extends IdEntityForm {
 	 /**
 	  * Карта оценки качества
@@ -31,91 +33,68 @@ public class QualityEstimationForm extends IdEntityForm {
 	 @Comment("Карта оценки качества")
 	 @Persist
 	 public Long getCard() {
-	  return theCard;
-	 }
-	 public void setCard(Long aCard) {
-	  theCard = aCard;
+	  return card;
 	 }
 	 /**
 	  * Карта оценки качества
 	  */
-	 private Long theCard;
+	 private Long card;
 	 /**
 	  * Критерии оценки качества
 	  */
 	 @Comment("Критерии оценки качества")
 	 @Required
 	 public String getCriterions() {
-	  return theCriterions;
-	 }
-	 public void setCriterions(String aCriterions) {
-	  theCriterions = aCriterions;
+	  return criterions;
 	 }
 	 /**
 	  * Критерии оценки качества
 	  */
-	 private String theCriterions;
+	 private String criterions;
 	 /**
 	  * Эсперт
 	  */
 	 @Comment("Эсперт")
 	 @Persist @Required
 	 public Long getExpert() {
-	  return theExpert;
+	  return expert;
 	 }
-	 public void setExpert(Long aExpert) {
-	  theExpert = aExpert;
-	 }
-	 
+
 	 /** Тип эксперта */
 	@Comment("Тип эксперта")
 	@Persist @Required
 	public String getExpertType() {
-		return theExpertType;
+		return expertType;
 	}
 
-	public void setExpertType(String aExpertType) {
-		theExpertType = aExpertType;
-	}
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DateString @DoDateString
 	public String getCreateDate() {
-		return theCreateDate;
+		return createDate;
 	}
 
-	public void setCreateDate(String aNAME) {
-		theCreateDate = aNAME;
-	}
 	/** Пользователь, создавший экспертную карту */
 	@Comment("Пользователь, создавший экспертную карту")
 	@Persist
 	public String getCreateUsername() {
-		return theCreateUsername;
+		return createUsername;
 	}
 
-	public void setCreateUsername(String aCreateUsername) {
-		theCreateUsername = aCreateUsername;
-	}
-	
-
-	private String theCreateUsername;
-	private String theCreateDate;
+	private String createUsername;
+	private String createDate;
 	/** Тип эксперта */
-	private String theExpertType;
+	private String expertType;
 	 /**
 	  * Эсперт
 	  */
-	 private Long theExpert;
+	 private Long expert;
 
 	@Comment("Является ли черновиком")
 	@Persist
 	public Boolean getIsDraft() {
-		return theIsDraft;
-	}
-	public void setIsDraft(Boolean aIsDraft) {
-		theIsDraft = aIsDraft;
+		return isDraft;
 	}
 	/** Является ли черновиком */
-	private Boolean theIsDraft;
+	private Boolean isDraft;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.extdisp;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispPlanService;
@@ -17,44 +18,40 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 , list="entityParentList-extDisp_vocPlanService.do", view="entityParentView-extDisp_vocPlanService.do")
 @Parent(property = "plan",parentForm=ExtDispPlanForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card/Voc/Plan/Service")
+@Setter
 public class ExtDispPlanServiceForm extends IdEntityForm{
 	/** План */
 	@Comment("План")
 	@Persist
-	public Long getPlan() {return thePlan;}
-	public void setPlan(Long aPlan) {thePlan = aPlan;}
+	public Long getPlan() {return plan;}
 	/** План */
-	private Long thePlan;
+	private Long plan;
 	
 	/** Пол */
 	@Comment("Пол")
 	@Persist
-	public Long getSex() {return theSex;}
-	public void setSex(Long aSex) {theSex = aSex;}
+	public Long getSex() {return sex;}
 	/** Пол */
-	private Long theSex;
+	private Long sex;
 	
 	/** Тип услуги */
 	@Comment("Тип услуги")
 	@Persist
-	public Long getServiceType() {return theServiceType;}
-	public void setServiceType(Long aServiceType) {theServiceType = aServiceType;}
+	public Long getServiceType() {return serviceType;}
 	/** Тип услуги */
-	private Long theServiceType;
+	private Long serviceType;
 	
 	/** Возрастная группа */
 	@Comment("Возрастная группа")
 	@Persist
-	public Long getAgeGroup() {return theAgeGroup;}
-	public void setAgeGroup(Long aAgeGroup) {theAgeGroup = aAgeGroup;}
+	public Long getAgeGroup() {return ageGroup;}
 	/** Возрастная группа */
-	private Long theAgeGroup;
+	private Long ageGroup;
 	
 	/** Визит */
 	@Comment("Визит")
 	@Persist
-	public Boolean getIsVisit() {return theIsVisit;}
-	public void setIsVisit(Boolean aIsVisit) {theIsVisit = aIsVisit;}
+	public Boolean getIsVisit() {return isVisit;}
 	/** Визит */
-	private Boolean theIsVisit;
+	private Boolean isVisit;
 }

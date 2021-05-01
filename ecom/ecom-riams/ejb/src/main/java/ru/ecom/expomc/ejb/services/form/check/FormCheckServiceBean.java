@@ -21,7 +21,7 @@ import java.util.*;
 public class FormCheckServiceBean implements IFormCheckService {
 
     public LinkedList<Long> save(ChecksTableForm aForm, long aFormat) {
-        Format format = theManager.find(Format.class, aFormat);
+        Format format = manager.find(Format.class, aFormat);
         LinkedList<Long> deleted = new LinkedList<>();
         for (ChecksTableFormRow row : aForm.getChecksTableFormRows()) {
             for (ChecksTableFormRowOn on : row.getOns()) {
@@ -36,8 +36,8 @@ public class FormCheckServiceBean implements IFormCheckService {
 
     public void deleteChecks(LinkedList<Long> aDeleted) {
         for (Long id : aDeleted) {
-            Check check = theManager.find(Check.class, id) ;
-            theManager.remove(check);
+            Check check = manager.find(Check.class, id) ;
+            manager.remove(check);
         }
     }
 
@@ -50,7 +50,7 @@ public class FormCheckServiceBean implements IFormCheckService {
                 // delete
                 //isOn.check.getDocument().getChecks().remove(isOn.check) ; //getProperties().clear() ;
                 //theManager.persist(isOn.check.getDocument());
-//                theManager.remove(isOn.check) ;
+//                manager.remove(isOn.check) ;
             }
         } else {
 
@@ -60,19 +60,19 @@ public class FormCheckServiceBean implements IFormCheckService {
                 check.setActualDateTo(format.getActualDateTo());
                 check.setCheckId(on.getCheckId());
 
-                Class clazz = theAllowed.getCheckClassById(on.getCheckId()) ;
+                Class clazz = allowed.getCheckClassById(on.getCheckId()) ;
 
                 check.setCheckType(isChange(clazz) ? Check.TYPE_CHANGE : Check.TYPE_CRITICAL);
 
                 check.setDocument(format.getDocument());
                 check.setName(row.getProperty()+" : "+getComment(clazz));
-                theManager.persist(check);
+                manager.persist(check);
 
                 CheckProperty property = new CheckProperty();
                 property.setCheck(check);
                 property.setProperty("property");
                 property.setValue(row.getProperty());
-                theManager.persist(property);
+                manager.persist(property);
             }
         }
         return ret ;
@@ -88,7 +88,7 @@ public class FormCheckServiceBean implements IFormCheckService {
     }
 
     public ChecksTableForm loadFormChecksTableForm(long aFormatId) {
-        Format format = theManager.find(Format.class, aFormatId);
+        Format format = manager.find(Format.class, aFormatId);
         if(format==null) throw new IllegalArgumentException("Формата с id "+aFormatId+" нет ");
         ChecksTableForm form = new ChecksTableForm();
         ArrayList<ChecksTableFormRow> elms = new ArrayList<ChecksTableFormRow>();
@@ -185,9 +185,9 @@ public class FormCheckServiceBean implements IFormCheckService {
     }
 
     @PersistenceContext
-    private EntityManager theManager;
+    private EntityManager manager;
 
-    AllowedChecksAllValues theAllowed = new AllowedChecksAllValues();
+    AllowedChecksAllValues allowed = new AllowedChecksAllValues();
 }
 
 //

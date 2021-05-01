@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form.voc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.voc.VocE2EntrySubType;
@@ -14,100 +15,89 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @Comment("Подтип экономического случая")
 @WebTrail(comment = "Подтип экономического случая", nameProperties = "id", view = "entityView-e2_vocEntrySubType.do")
 @EntityFormSecurityPrefix("/Policy/E2")
+@Setter
 public class VocE2EntrySubTypeForm extends IdEntityForm {
 
     /** Название */
     @Comment("Название")
     @Persist
-    public String getName() {return theName;}
-    public void setName(String aName) {theName = aName;}
+    public String getName() {return name;}
     /** Название */
-    private String theName ;
+    private String name ;
 
     /** Код */
     @Comment("Код")
     @Persist
-    public String getCode() {return theCode;}
-    public void setCode(String aCode) {theCode = aCode;}
+    public String getCode() {return code;}
     /** Код */
-    private String theCode ;
+    private String code ;
 
     /** Код для определения тарифа */
     @Comment("Код для определения тарифа")
     @Persist
-    public Long getTariffCode() {return theTariffCode;}
-    public void setTariffCode(Long aTariffCode) {theTariffCode = aTariffCode;}
+    public Long getTariffCode() {return tariffCode;}
     /** Код для определения тарифа */
-    private Long theTariffCode ;
+    private Long tariffCode ;
 
     /** Условия оказания мед. помощи для подачи */
     @Comment("Условия оказания мед. помощи для подачи")
     @Persist
-    public Long getUslOk() {return theUslOk;}
-    public void setUslOk(Long aUslOk) {theUslOk = aUslOk;}
+    public Long getUslOk() {return uslOk;}
     /** Условия оказания мед. помощи для подачи */
-    private Long theUslOk ;
+    private Long uslOk ;
 
     /** В архиве */
     @Comment("В архиве")
     @Persist
-    public Boolean getIsArchival() {return theIsArchival;}
-    public void setIsArchival(Boolean aIsArchival) {theIsArchival = aIsArchival;}
+    public Boolean getIsArchival() {return isArchival;}
     /** В архиве */
-    private Boolean theIsArchival ;
+    private Boolean isArchival ;
 
     /** Посещение в консультативной поликлинике */
     @Comment("Посещение в консультативной поликлинике")
     @Persist
-    public Boolean getIsConsultation() {return theIsConsultation;}
-    public void setIsConsultation(Boolean aIsConsultation) {theIsConsultation = aIsConsultation;}
+    public Boolean getIsConsultation() {return isConsultation;}
     /** Посещение в консультативной поликлинике */
-    private Boolean theIsConsultation ;
+    private Boolean isConsultation ;
 
     /** Вид случая */
     @Comment("Вид случая")
     @Persist
-    public Long getVidSluch() {return theVidSluch;}
-    public void setVidSluch(Long aVidSluch) {theVidSluch = aVidSluch;}
+    public Long getVidSluch() {return vidSluch;}
     /** Вид случая */
-    private Long theVidSluch ;
+    private Long vidSluch ;
 
     /** Цель посещения */
     @Comment("Цель посещения")
     @Persist
-    public Long getVisitPurpose() {return theVisitPurpose;}
-    public void setVisitPurpose(Long aVisitPurpose) {theVisitPurpose = aVisitPurpose;}
+    public Long getVisitPurpose() {return visitPurpose;}
     /** Цель посещения */
-    private Long theVisitPurpose ;
+    private Long visitPurpose ;
 
     /** Способ оплаты */
     @Comment("Способ оплаты")
     @Persist
-    public Long getIdsp() {return theIdsp;}
-    public void setIdsp(Long aIdsp) {theIdsp = aIdsp;}
+    public Long getIdsp() {return idsp;}
     /** Способ оплаты */
-    private Long theIdsp ;
+    private Long idsp ;
 
     /** Вид доп. диспансеризации */
     @Comment("Вид доп. диспансеризации")
     @Persist
-    public Long getExtDispType() {return theExtDispType;}
-    public void setExtDispType(Long aExtDispType) {theExtDispType = aExtDispType;}
+    public Long getExtDispType() {return extDispType;}
     /** Вид доп. диспансеризации */
-    private Long theExtDispType ;
+    private Long extDispType ;
 
     /** Тип файла */
     @Comment("Тип файла")
     @Persist
-    public String getFileType() {return theFileType;}
-    public void setFileType(String aFileType) {theFileType = aFileType;}
-    private String theFileType ;
+    public String getFileType() {return fileType;}
+    private String fileType ;
 
     /** Назначение платежа в счете */
     @Comment("Назначение платежа в счете")
     @Persist
-    public String getBillProperty() {return theBillProperty;}
-    public void setBillProperty(String aBillProperty) {theBillProperty = aBillProperty;}
-    private String theBillProperty ;
+    public String getBillProperty() {return billProperty;}
+    private String billProperty ;
 
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -20,50 +21,45 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(MedContractByPersonPreCreateInterceptor.class)
 )
+@Setter
 public class MedContractByPersonForm extends MedContractForm {
 	/** Признак удаленной записи */
 	@Comment("Признак удаленной записи")
 	@Persist
-	public Boolean getIsDeleted() {return theIsDeleted;}
-	public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
+	public Boolean getIsDeleted() {return isDeleted;}
 	/** Признак удаленной записи */
-	private Boolean theIsDeleted ;
+	private Boolean isDeleted ;
 
 	/** Обслуживаемая персона */
 	@Comment("Обслуживаемая персона")
 	@Required
-	public Long getServedPerson() {return theServedPerson;}
-	public void setServedPerson(Long aServedPerson) {theServedPerson = aServedPerson;}
+	public Long getServedPerson() {return servedPerson;}
 	
 	/** Создавать счет */
 	@Comment("Создавать счет")
-	public Boolean getAutoAccount() {return theAutoAccount;}
-	public void setAutoAccount(Boolean aAutoAccount) {theAutoAccount = aAutoAccount;}
+	public Boolean getAutoAccount() {return autoAccount;}
 
 	/** Список услуг */
 	@Comment("Список услуг")
-	public String getPriceMedServicies() {return thePriceMedServicies;}
-	public void setPriceMedServicies(String aPriceMedServicies) {thePriceMedServicies = aPriceMedServicies;}
+	public String getPriceMedServicies() {return priceMedServicies;}
 
 	/** Услуг */
 	@Comment("Услуг")
-	public Long getPriceMedService() {return thePriceMedService;}
-	public void setPriceMedService(Long aPriceMedService) {thePriceMedService = aPriceMedService;}
+	public Long getPriceMedService() {return priceMedService;}
 
 	
 	/** Скидка по умолчанию */
 	@Comment("Скидка по умолчанию")
-	public String getDiscountDefault() {return theDiscountDefault;}
-	public void setDiscountDefault(String aDiscountDefault) {theDiscountDefault = aDiscountDefault;}
+	public String getDiscountDefault() {return discountDefault;}
 
 	/** Скидка по умолчанию */
-	private String theDiscountDefault;
+	private String discountDefault;
 	/** Услуг */
-	private Long thePriceMedService;
+	private Long priceMedService;
 	/** Список услуг */
-	private String thePriceMedServicies;
+	private String priceMedServicies;
 	/** Создавать счет */
-	private Boolean theAutoAccount;
+	private Boolean autoAccount;
 	/** Обслуживаемая персона */
-	private Long theServedPerson;
+	private Long servedPerson;
 }

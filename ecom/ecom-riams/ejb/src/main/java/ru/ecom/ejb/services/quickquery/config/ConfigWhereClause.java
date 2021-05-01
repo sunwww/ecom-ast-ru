@@ -1,30 +1,16 @@
 package ru.ecom.ejb.services.quickquery.config;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.quickquery.IWhereClause;
 
+@Getter
+@Setter
 public class ConfigWhereClause {
 
-	/** Ключ */
-	public String getKey() {
-		return theKey;
-	}
-
-	public void setKey(String aKey) {
-		theKey = aKey;
-	}
-
 	/** Ограничени */
-	public IWhereClause getWhereClause() {
-		return theWhereClause;
-	}
-
-	public void setWhereClause(IWhereClause aWhereClause) {
-		theWhereClause = aWhereClause;
-	}
-
-	/** Ограничени */
-	private IWhereClause theWhereClause;
+	private IWhereClause whereClause;
 	
 	/** Ключ */
-	private String theKey;
+	private String key;
 }

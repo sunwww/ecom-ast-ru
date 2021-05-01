@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.GuaranteeInterval;
@@ -18,6 +19,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Интервал гарантийных документов", nameProperties= "id", list="entityParentList-contract_guaranteeInterval.do", view="entityParentView-contract_guaranteeInterval.do")
 @Parent(property="guaranteeGroup", parentForm=ContractGuaranteeGroupForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/GroupRules/ContractGuaranteeGroup/GuaranteeInterval")
+@Setter
 public class GuaranteeIntervalForm extends IdEntityForm{
 	/**
 	 * Группа гарантийных документов
@@ -25,15 +27,12 @@ public class GuaranteeIntervalForm extends IdEntityForm{
 	@Comment("Группа гарантийных документов")
 	@Persist
 	public Long getGuaranteeGroup() {
-		return theGuaranteeGroup;
-	}
-	public void setGuaranteeGroup(Long aGuaranteeGroup) {
-		theGuaranteeGroup = aGuaranteeGroup;
+		return guaranteeGroup;
 	}
 	/**
 	 * Группа гарантийных документов
 	 */
-	private Long theGuaranteeGroup;
+	private Long guaranteeGroup;
 	
 	/**
 	 * Маска выбора номеров
@@ -41,15 +40,12 @@ public class GuaranteeIntervalForm extends IdEntityForm{
 	@Comment("Маска выбора номеров")
 	@Persist @DoUpperCase
 	public String getNumberMask() {
-		return theNumberMask;
-	}
-	public void setNumberMask(String aNumberMask) {
-		theNumberMask = aNumberMask;
+		return numberMask;
 	}
 	/**
 	 * Маска выбора номеров
 	 */
-	private String theNumberMask;
+	private String numberMask;
 	
 	/**
 	 * Начиная с номера
@@ -57,30 +53,24 @@ public class GuaranteeIntervalForm extends IdEntityForm{
 	@Comment("Начиная с номера")
 	@Persist
 	public String getFromNumber() {
-		return theFromNumber;
-	}
-	public void setFromNumber(String aFromNumber) {
-		theFromNumber = aFromNumber;
+		return fromNumber;
 	}
 	/**
 	 * Начиная с номера
 	 */
-	private String theFromNumber;
+	private String fromNumber;
 	/**
 	 * Заканчивая номером
 	 */
 	@Comment("Заканчивая номером")
 	@Persist
 	public String getToNumber() {
-		return theToNumber;
-	}
-	public void setToNumber(String aToNumber) {
-		theToNumber = aToNumber;
+		return toNumber;
 	}
 	/**
 	 * Заканчивая номером
 	 */
-	private String theToNumber;
+	private String toNumber;
 
 	/**
 	 * Название
@@ -88,87 +78,69 @@ public class GuaranteeIntervalForm extends IdEntityForm{
 	@Comment("Название")
 	@Persist @DoUpperCase @Required
 	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
+		return name;
 	}
 	/**
 	 * Название
 	 */
-	private String theName;
+	private String name;
 	/**
 	 * Серия
 	 */
 	@Comment("Серия")
 	@Persist @DoUpperCase 
 	public String getSeries() {
-		return theSeries;
-	}
-	public void setSeries(String aSeries) {
-		theSeries = aSeries;
+		return series;
 	}
 	/**
 	 * Серия
 	 */
-	private String theSeries;
+	private String series;
 	/**
 	 * Программа обслуживания
 	 */
 	@Comment("Программа обслуживания")
 	@Persist
 	public Long getServiceProgram() {
-		return theServiceProgram;
-	}
-	public void setServiceProgram(Long aServiceProgram) {
-		theServiceProgram = aServiceProgram;
+		return serviceProgram;
 	}
 	/**
 	 * Программа обслуживания
 	 */
-	private Long theServiceProgram;
+	private Long serviceProgram;
 	/**
 	 * Статус обслуживаемой персоны
 	 */
 	@Comment("Статус обслуживаемой персоны")
 	@Persist
 	public Long getServedPersonStatus() {
-		return theServedPersonStatus;
-	}
-	public void setServedPersonStatus(Long aServedPersonStatus) {
-		theServedPersonStatus = aServedPersonStatus;
+		return servedPersonStatus;
 	}
 	/**
 	 * Статус обслуживаемой персоны
 	 */
-	private Long theServedPersonStatus;
+	private Long servedPersonStatus;
 	
 	/** Статус обслуживаемой персоны (инфо) */
 	@Comment("Статус обслуживаемой персоны (инфо)")
 	@Persist
 	public String getServedPersonStatusInfo() {
-		return theServedPersonStatusInfo;
+		return servedPersonStatusInfo;
 	}
 
-	public void setServedPersonStatusInfo(String aServedPersonStatusInfo) {
-		theServedPersonStatusInfo = aServedPersonStatusInfo;
-	}
 
 	/** Статус обслуживаемой персоны (инфо) */
-	private String theServedPersonStatusInfo;
+	private String servedPersonStatusInfo;
 	
 	/** Программа обслуживания (инфо) */
 	@Comment("Программа обслуживания (инфо)")
 	@Persist
 	public String getServiceProgramInfo() {
-		return theServiceProgramInfo;
+		return serviceProgramInfo;
 	}
 
-	public void setServiceProgramInfo(String aServiceProgramInfo) {
-		theServiceProgramInfo = aServiceProgramInfo;
-	}
 
 	/** Программа обслуживания (инфо) */
-	private String theServiceProgramInfo;
+	private String serviceProgramInfo;
 	
 }

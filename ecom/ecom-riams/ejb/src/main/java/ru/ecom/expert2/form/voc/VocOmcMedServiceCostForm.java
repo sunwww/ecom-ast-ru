@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form.voc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.voc.VocOmcMedServiceCost;
@@ -20,43 +21,39 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Цена по ОМС услуги")
 @WebTrail(comment = "Цена по ОМС услуги", nameProperties = "id", view = "entityView-e2_vocMedServiceCost.do")
 @EntityFormSecurityPrefix("/Policy/E2")
+@Setter
 public class VocOmcMedServiceCostForm extends IdEntityForm {
     /** Услуга */
     @Comment("Услуга")
     @Persist
     @Required
-    public Long getMedService() {return theMedService;}
-    public void setMedService(Long aMedService) {theMedService = aMedService;}
-    private Long theMedService ;
+    public Long getMedService() {return medService;}
+    private Long medService ;
 
     /** Цена */
     @Comment("Цена")
     @Persist
     @Required
-    public String getCost() {return theCost;}
-    public void setCost(String aCost) {theCost = aCost;}
-    private String theCost ;
+    public String getCost() {return cost;}
+    private String cost ;
 
     /** Дата начала действия цены */
     @Comment("Дата начала действия цены")
     @Persist
     @Required @DateString @DoDateString
-    public String getStartDate() {return theStartDate;}
-    public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
-    private String theStartDate ;
+    public String getStartDate() {return startDate;}
+    private String startDate ;
 
     /** Дата окончания действия цены */
     @Comment("Дата окончания действия цены")
     @Persist
     @DateString @DoDateString
-    public String getFinishDate() {return theFinishDate;}
-    public void setFinishDate(String aFinishDate) {theFinishDate = aFinishDate;}
-    private String theFinishDate ;
+    public String getFinishDate() {return finishDate;}
+    private String finishDate ;
 
     /** Рабочая функция врача по умолчанию */
     @Comment("Рабочая функция врача по умолчанию")
     @Persist
-    public Long getWorkFunction() {return theWorkFunction;}
-    public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
-    private Long theWorkFunction ;
+    public Long getWorkFunction() {return workFunction;}
+    private Long workFunction ;
 }

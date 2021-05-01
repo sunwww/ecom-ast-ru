@@ -29,10 +29,10 @@ public class AddressSync implements ISync {
         String clause = " where time = "+aContext.getImportTime().getId();
         String countQueryString = "select count(*) from Kladr " + clause;
 
-        theEntityManager = aContext.getEntityManager();
+        entityManager = aContext.getEntityManager();
 //        UserTransaction tx = aContext.getTransactionManager();
 //        tx.begin();
-        long results = (Long) theEntityManager.createQuery(countQueryString).getSingleResult();
+        long results = (Long) entityManager.createQuery(countQueryString).getSingleResult();
 
         IMonitor monitor = aContext.getMonitorService().startMonitor(aContext.getMonitorId(), "Синхронизация ", results);
 
@@ -40,8 +40,8 @@ public class AddressSync implements ISync {
         long id = 0;
        while (true) {
     	   String sql = "select id from kladr "+clause+" and id >"+id+" order by id";
-      //  Iterator<Kladr> iterator = QueryIteratorUtil.iterate(Kladr.class, theEntityManager.createQuery(queryString));
-        List <Object> kladrs = theEntityManager.createNativeQuery(sql).setMaxResults(5000).getResultList();
+      //  Iterator<Kladr> iterator = QueryIteratorUtil.iterate(Kladr.class, entityManager.createQuery(queryString));
+        List <Object> kladrs = entityManager.createNativeQuery(sql).setMaxResults(5000).getResultList();
         if (kladrs.isEmpty()) {
         	LOG.info("===Импорт кладров завершен");
         	break;
@@ -49,7 +49,7 @@ public class AddressSync implements ISync {
         for (Object kl: kladrs) {
         	Long klId = Long.valueOf(""+kl);
         	id = klId;
-            Kladr kladr = theEntityManager.find(Kladr.class, klId);
+            Kladr kladr = entityManager.find(Kladr.class, klId);
             String kladrCode = kladr.getKladrCode();
             String kladrStatus = kladrCode.substring(kladrCode.length()-2);
         	if (!kladrStatus.equals("00")){
@@ -70,35 +70,35 @@ public class AddressSync implements ISync {
             address.setType(findOrCreateType(kladr.getShortName()));
             address.setParent(findParentByKladrCode(kladrCode));
 
-            theEntityManager.persist(address);
+            entityManager.persist(address);
 
             if (++i % 100 == 0) {
                 monitor.advice(100);
                 monitor.setText(i+" "+kladr.getName()+" "+kladr.getKladrCode());
             }
-            theEntityManager.flush();
-            theEntityManager.clear();
+            entityManager.flush();
+            entityManager.clear();
         }
     }
 //Отмечаем старые (староимпортированные) КЛАДРы как недействующие
-     //   theEntityManager.createNativeQuery("update kladr set archive='1' where time!="+aContext.getImportTime().getId()).executeUpdate();
+     //   entityManager.createNativeQuery("update kladr set archive='1' where time!="+aContext.getImportTime().getId()).executeUpdate();
         monitor.finish(aContext.getImportTime().getId() + "");
-        theEntityManager = null;
+        entityManager = null;
 //        if(monitor.isCancelled()) tx.rollback(); else tx.commit();
 //        tx.commit() ;
     }
 
     @SuppressWarnings("unchecked")
 	private AddressType findOrCreateType(String aShortName) {
-        if (theHash.isEmpty()) {
-            List<AddressType> list = theEntityManager.createQuery("from AddressType").getResultList();
+        if (hash.isEmpty()) {
+            List<AddressType> list = entityManager.createQuery("from AddressType").getResultList();
             for (AddressType type : list) {
-                theHash.put(type.getShortName(), type);
+                hash.put(type.getShortName(), type);
             }
         }
-//        AddressType type = theHash.get(aShortName);
+//        AddressType type = hash.get(aShortName);
 //        if (type == null) {
-//            List<AddressType> list = theEntityManager.createQuery("from AddressType where shortName = :shortName")
+//            List<AddressType> list = entityManager.createQuery("from AddressType where shortName = :shortName")
 //                    .setHint("org.hibernate.timeout",60)
 //                    .setParameter("shortName", aShortName).getResultList();
 //            type = list != null && list.size() > 0 ? list.iterator().next() : null;
@@ -106,16 +106,16 @@ public class AddressSync implements ISync {
 //                type = new AddressType();
 //                type.setName(aShortName);
 //                type.setShortName(aShortName);
-//                theEntityManager.persist(type);
+//                entityManager.persist(type);
 //            }
 //        }
 
-        return theHash.get(aShortName);
+        return hash.get(aShortName);
     }
 
     @SuppressWarnings("unchecked")
 	private Address findAddressByKladr(String aKladrCode) {
-        List<Address> list = theEntityManager.createQuery("from Address where kladr = :kladr")
+        List<Address> list = entityManager.createQuery("from Address where kladr = :kladr")
                 .setParameter("kladr", aKladrCode).getResultList();
         return list != null && !list.isEmpty() ? list.iterator().next() : null;
     }
@@ -186,13 +186,13 @@ public class AddressSync implements ISync {
 
     @SuppressWarnings("unchecked")
 	private Address findOrCreateRussia() {
-        List<Address> list = theEntityManager.createQuery("from Address where domen=1").setMaxResults(1).getResultList();
+        List<Address> list = entityManager.createQuery("from Address where domen=1").setMaxResults(1).getResultList();
         Address ret ;
         if(list==null || list.isEmpty()) {
             ret = new Address();
             ret.setDomen(1);
             ret.setName("Россия");
-            theEntityManager.persist(ret);
+            entityManager.persist(ret);
         } else {
             ret = list.iterator().next();
         }
@@ -202,7 +202,7 @@ public class AddressSync implements ISync {
     @SuppressWarnings("unchecked")
 	private Collection<Address> findByKladrCode(String aCode)  {
         if (CAN_TRACE) LOG.debug("    findByKladrCode: aCode = " + aCode+" ...");
-        Collection<Address> parents = theEntityManager.createQuery("from Address where kladr = :code")
+        Collection<Address> parents = entityManager.createQuery("from Address where kladr = :code")
                 .setParameter("code",aCode).getResultList();  //theAddressHome.findByKladrCode(aCode) ;
         if (CAN_TRACE) LOG.debug("    findByKladrCode: parents = " + parents.size());
         return parents ;
@@ -246,6 +246,6 @@ public class AddressSync implements ISync {
     }
 
 
-    private EntityManager theEntityManager;
-    private HashMap<String, AddressType> theHash = new HashMap<>();
+    private EntityManager entityManager;
+    private final HashMap<String, AddressType> hash = new HashMap<>();
 }

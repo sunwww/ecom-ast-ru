@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.expert;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -24,230 +25,203 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(ClinicExpertCardPreCreateInterceptor.class)
 )
+@Setter
 public class DirectOfMedicalCommissionForm extends IdEntityForm {
 
 	/** Описание состояния здоровья пациента */
 	@Comment("Описание состояния здоровья пациента")
 	@Persist @Required
-	public String getPatientHealthInfo() {return thePatientHealthInfo;}
-	public void setPatientHealthInfo(String aPatientHealthInfo) {thePatientHealthInfo = aPatientHealthInfo;}
+	public String getPatientHealthInfo() {return patientHealthInfo;}
 	/** Описание состояния здоровья пациента */
-	private String thePatientHealthInfo ;
+	private String patientHealthInfo ;
 
 	/** Лист нетрудоспособности выданный другим ЛПУ */
 	@Comment("Лист нетрудоспособности выданный другим ЛПУ")
 	@Persist
-	public String getAnotherDisabilityNumber() {return theAnotherDisabilityNumber;}
-	public void setAnotherDisabilityNumber(String aAnotherDisabilityNumber) {theAnotherDisabilityNumber = aAnotherDisabilityNumber;}
+	public String getAnotherDisabilityNumber() {return anotherDisabilityNumber;}
 	/** Лист нетрудоспособности выданный другим ЛПУ */
-	private String theAnotherDisabilityNumber ;
+	private String anotherDisabilityNumber ;
 
 	/** Тип ВК */
 	@Comment("Тип ВК")
 	@Persist @Required
-	public Long getType() {return theType;}
-	public void setType(Long aType) {theType = aType;}
+	public Long getType() {return type;}
 
 	/** Тип ВК */
-	private Long theType;
+	private Long type;
 	/** СМО */
 	@Comment("СМО")
 	@Persist
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
-	
+	public Long getMedCase() {return medCase;}
+
 	/** Профессия */
 	@Comment("Профессия")
 	@Persist @Required
-	public String getProfession() {return theProfession;}
-	public void setProfession(String aProfession) {theProfession = aProfession;}
-	
+	public String getProfession() {return profession;}
+
 	/** Статус пациента */
 	@Comment("Статус пациента")
 	@Persist @Required
-	public Long getPatientStatus() {return thePatientStatus;}
-	public void setPatientStatus(Long aPatientStatus) {thePatientStatus = aPatientStatus;}
+	public Long getPatientStatus() {return patientStatus;}
 
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
+	public Long getPatient() {return patient;}
 
 	/** Дата направления */
 	@Comment("Дата направления")
 	@Persist @DateString @DoDateString @Required
-	public String getOrderDate() {return theOrderDate;}
-	public void setOrderDate(String aOrderDate) {theOrderDate = aOrderDate;}
+	public String getOrderDate() {return orderDate;}
 
 	/** Дата выхода на нетрудосп. */
 	@Comment("Дата выхода на нетрудосп.")
 	@Persist @DateString @DoDateString @Required
-	public String getDisabilityDate() {return theDisabilityDate;}
-	public void setDisabilityDate(String aDisabilityDate) {theDisabilityDate = aDisabilityDate;}
+	public String getDisabilityDate() {return disabilityDate;}
 
 	/** Диагноз осн. */
 	@Comment("Диагноз осн.")
 	@Persist @Required
-	public Long getMainDiagnosis() {return theMainDiagnosis;}
-	public void setMainDiagnosis(Long aMainDiagnosis) {theMainDiagnosis = aMainDiagnosis;}
+	public Long getMainDiagnosis() {return mainDiagnosis;}
 
 	/** Обоснование направления */
 	@Comment("Обоснование направления")
 	@Persist @Required
-	public Long getOrderConclusion() {return theOrderConclusion;}
-	public void setOrderConclusion(Long aOrderConclusion) {theOrderConclusion = aOrderConclusion;}
+	public Long getOrderConclusion() {return orderConclusion;}
 
 	/** Диагноз сопутствующий */
 	@Comment("Диагноз сопутствующий")
 	@Persist
-	public String getConcomitantDiagnosis() {return theConcomitantDiagnosis;}
-	public void setConcomitantDiagnosis(String aConcomitantDiagnosis) {theConcomitantDiagnosis = aConcomitantDiagnosis;}
+	public String getConcomitantDiagnosis() {return concomitantDiagnosis;}
 
 	/** Диагноз осложнение */
 	@Comment("Диагноз осложнение")
 	@Persist
-	public String getComplicationDiagnosis() {return theComplicationDiagnosis;}
-	public void setComplicationDiagnosis(String aComplicationDiagnosis) {theComplicationDiagnosis = aComplicationDiagnosis;}
+	public String getComplicationDiagnosis() {return complicationDiagnosis;}
 
 	/** Направивший специалист */
 	@Comment("Направивший специалист")
 	@Persist @Required
-	public Long getOrderFunction() {return theOrderFunction;}
-	public void setOrderFunction(Long aOrderFunction) {theOrderFunction = aOrderFunction;}
+	public Long getOrderFunction() {return orderFunction;}
 
 	/** Листок нетрудоспособности */
 	@Comment("Листок нетрудоспособности")
 	@Persist
-	public Long getDisabilityDocument() {return theDisabilityDocument;}
-	public void setDisabilityDocument(Long aDisabilityDocument) {theDisabilityDocument = aDisabilityDocument;}
+	public Long getDisabilityDocument() {return disabilityDocument;}
 
 	/** Причина задержки */
 	@Comment("Причина задержки")
 	@Persist 
-	public String getDelayReason() {return theDelayReason;}
-	public void setDelayReason(String aDelayReason) {theDelayReason = aDelayReason;}
+	public String getDelayReason() {return delayReason;}
 
 	/** Направившее ЛПУ */
 	@Comment("Направившее ЛПУ")
 	@Persist
-	public Long getOrderLpu() {return theOrderLpu;}
-	public void setOrderLpu(Long aOrderLpu) {theOrderLpu = aOrderLpu;}
+	public Long getOrderLpu() {return orderLpu;}
 
 	/** Причина направления */
 	@Comment("Причина направления")
 	@Persist @Required
-	public Long getReasonDirect() {return theReasonDirect;}
-	public void setReasonDirect(Long aReasonDirect) {theReasonDirect = aReasonDirect;}
+	public Long getReasonDirect() {return reasonDirect;}
 
 	/** Лечение на момент подачи */
 	@Comment("Лечение на момент подачи")
 	@Persist @Required
-	public String getTreatmentCurrent() {return theTreatmentCurrent;}
-	public void setTreatmentCurrent(String aTreatmentCurrent) {theTreatmentCurrent = aTreatmentCurrent;}
+	public String getTreatmentCurrent() {return treatmentCurrent;}
 
 	/** Срок предполагаемого лечения */
 	@Comment("Срок предполагаемого лечения")
 	@Persist @DateString @DoDateString 
-	public String getPreFinishDate() {return thePreFinishDate;}
-	public void setPreFinishDate(String aPreFinishDate) {thePreFinishDate = aPreFinishDate;}
+	public String getPreFinishDate() {return preFinishDate;}
 
 	/** Срок предполагаемого лечения */
-	private String thePreFinishDate;
+	private String preFinishDate;
 	/** Лечение на момент подачи */
-	private String theTreatmentCurrent;
+	private String treatmentCurrent;
 	/** Причина направления */
-	private Long theReasonDirect;
+	private Long reasonDirect;
 	/** Направившее ЛПУ */
-	private Long theOrderLpu;
+	private Long orderLpu;
 	/** Причина задержки */
-	private String theDelayReason;
+	private String delayReason;
 	/** Листок нетрудоспособности */
-	private Long theDisabilityDocument;
+	private Long disabilityDocument;
     /** Направивший специалист */
-	private Long theOrderFunction;
+	private Long orderFunction;
 	/** Диагноз осложнение */
-	private String theComplicationDiagnosis;
+	private String complicationDiagnosis;
 	/** Диагноз сопутствующий */
-	private String theConcomitantDiagnosis;
+	private String concomitantDiagnosis;
 	/** Обоснование направления */
-	private Long theOrderConclusion;
+	private Long orderConclusion;
 	/** Диагноз осн. */
-	private Long theMainDiagnosis;
+	private Long mainDiagnosis;
 	/** Дата выхода на нетрудосп. */
-	private String theDisabilityDate;
+	private String disabilityDate;
 	/** Дата направления */
-	private String theOrderDate;
+	private String orderDate;
 	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	/** Статус пациента */
-	private Long thePatientStatus;
+	private Long patientStatus;
 	/** Профессия */
-	private String theProfession;
+	private String profession;
 	/** СМО */
-	private Long theMedCase;
+	private Long medCase;
 	
 	
 	/** Дата создания */
 	@Comment("Дата создания")
 	@DateString @DoDateString @Persist
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
+
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@DateString @DoDateString @Persist
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
-	
+	public String getEditDate() {return editDate;}
+
 	/** Время создания */
 	@Comment("Время создания")
 	@TimeString @DoTimeString @Persist
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;}
 	/** Время редактрования */
 	@Comment("Время редактрования")
 	@TimeString @DoTimeString @Persist
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+	public String getEditTime() {return editTime;}
 	/** Пользователь, который создал запись */
 	@Comment("Пользователь, который создал запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 	/** Пользователь, который последний редактировал запись */
 	@Comment("Пользователь, который последний редактировал запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private String theEditTime;
+	private String editTime;
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	
 	/** Заключение дополнение */
 	@Comment("Заключение дополнение")
 	@Persist
-	public String getConclusionSentAdd() {return theConclusionSentAdd;}
-	public void setConclusionSentAdd(String aConclusionSentAdd) {theConclusionSentAdd = aConclusionSentAdd;}
+	public String getConclusionSentAdd() {return conclusionSentAdd;}
 
 	/** Причина дополнение */
 	@Comment("Причина дополнение")
 	@Persist
-	public String getReasonAdd() {return theReasonAdd;}
-	public void setReasonAdd(String aReasonAdd) {theReasonAdd = aReasonAdd;}
+	public String getReasonAdd() {return reasonAdd;}
 
 	/** Причина дополнение */
-	private String theReasonAdd;
+	private String reasonAdd;
 	/** Заключение дополнение */
-	private String theConclusionSentAdd;
+	private String conclusionSentAdd;
 }

@@ -1,5 +1,7 @@
 package ru.ecom.diary.ejb.form.category;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -24,45 +26,41 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Классификатор шаблонов", nameProperties= "name", view="entityParentView-temp_category.do")
 @Parent(property="parent", parentForm= TemplateCategoryForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Template/Category")
+@Setter
 public class TemplateCategoryForm extends IdEntityForm {
 	/** Родитель */
 	@Comment("Родитель")
 	@Persist
-	public Long getParent() {return theParent;	}
-	public void setParent(Long aParent) {theParent = aParent;}
+	public Long getParent() {return parent;	}
 
 	/** Название категории */
 	@Comment("Название категории")
 	@Persist @Required @DoUpperCase 
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
+	public String getName() {return name;}
 
 	/** Комментарии */
 	@Comment("Комментарии")
 	@Persist
-	public String getComments() {return theComments;}
-	public void setComments(String aComments) {theComments = aComments;}
+	public String getComments() {return comments;}
 
 	/** Пользователь */
 	@Comment("Пользователь")
 	@Persist
-	public String getUsername() {return theUsername;}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
+	public String getUsername() {return username;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DateString @DoDateString
-	public String getDateCreate() {return theDateCreate;}
-	public void setDateCreate(String aDateCreate) {theDateCreate = aDateCreate;}
+	public String getDateCreate() {return dateCreate;}
 
 	/** Дата создания */
-	private String theDateCreate;
+	private String dateCreate;
 	/** Пользователь */
-	private String theUsername;
+	private String username;
 	/** Комментарии */
-	private String theComments;
+	private String comments;
 	/** Название категории */
-	private String theName;
+	private String name;
 	/** Родитель */
-	private Long theParent;
+	private Long parent;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.userdocument.voc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.userdocument.voc.VocDynamicDocument;
@@ -18,29 +19,25 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Справочник видов динамических документов")
 @WebTrail(comment = "Справочник видов динамических документов", nameProperties = "id", view = "entityView-voc_dynamicDocument.do")
 @EntityFormSecurityPrefix("/Policy/Mis/UserDocument")
+@Setter
 public class VocDynamicDocumentForm extends IdEntityForm {
     /** Содержимое формы */
     @Comment("Содержимое формы")
     @Persist @Required
-    public String getContent() {return theContent;}
-    public void setContent(String aContent) {theContent = aContent;}
-    private String theContent ;
+    public String getContent() {return content;}
+    private String content ;
 
     /** Название */
     @Comment("Наименование")
     @Persist @Required
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
-    private String theName ;
+    public String getName() { return name ; }
+    private String name ;
 
     /** код */
     @Comment("код")
     @Persist @Required
     public String getCode() {
-        return theCode;
+        return code;
     }
-    public void setCode(String aCode) {
-        theCode = aCode;
-    }
-    private String theCode;
+    private String code;
 }

@@ -31,7 +31,7 @@ public class CheckResult  {
      * @param aDate
      */
     public void set(String aFieldName, Object aDate) {
-        theValues.put(aFieldName, aDate) ;
+        values.put(aFieldName, aDate) ;
     }
     
     /**
@@ -40,7 +40,7 @@ public class CheckResult  {
      * @param aValue
      */
     public void set(String aFieldName, String aValue) {
-        theValues.put(aFieldName, aValue) ;
+        values.put(aFieldName, aValue) ;
     }
 
     /**
@@ -49,29 +49,29 @@ public class CheckResult  {
      * @param aValue
      */
     public void set(String aFieldName, BigDecimal aValue) {
-        theValues.put(aFieldName, aValue) ;
+        values.put(aFieldName, aValue) ;
     }
 
     public String toString() {
-        return "CheckResult [ accepted = " + theAccepted +
-                ", values = " + theValues +
-                ", logs = " + theLogs +
+        return "CheckResult [ accepted = " + accepted +
+                ", values = " + values +
+                ", logs = " + logs +
                 " ]";
     }
     protected Map<String, Object> getChanged() {
-        return theValues;
+        return values;
     }
     /** Найдено ли условие проверки */
-    public boolean isAccepted() { return theAccepted ; }
-    public void setAccepted(boolean aAccepted) { theAccepted = aAccepted ; }
+    public boolean isAccepted() { return accepted ; }
+    public void setAccepted(boolean aAccepted) { accepted = aAccepted ; }
 
     /** Найдено ли условие проверки */
-    private boolean theAccepted = false ;
+    private boolean accepted = false ;
 
     /** Сообщения */
-    public ArrayList<ResultLog> getLogs() { return theLogs ; }
-    private final TreeMap<String, Object> theValues = new TreeMap<>();
+    public ArrayList<ResultLog> getLogs() { return logs ; }
+    private final TreeMap<String, Object> values = new TreeMap<>();
 
     /** Сообщения */
-    private final ArrayList<ResultLog> theLogs = new ArrayList<>();
+    private final ArrayList<ResultLog> logs = new ArrayList<>();
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.ticket;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -22,86 +23,74 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(TicketPreCreateInterceptor.class)
 )
+@Setter
 public class ShortTicketMedCaseForm extends ChildMedCaseForm {
 	/** Внешний идентификатор */
 	@Comment("Внешний идентификатор")
 	@Persist
-	public String getExternalId() {return theExternalId;}
-	public void setExternalId(String aNewProperty) {theExternalId = aNewProperty;}
-	private String theExternalId;
+	public String getExternalId() {return externalId;}
+	private String externalId;
 
 	/** Дата направления */
 	@Comment("Дата направления")
 	@DateString @DoDateString
 	@Persist @Required
-	public String getDateFinish() {return theDateFinish;}
-	public void setDateFinish(String aDateFinish) {theDateFinish = aDateFinish;}
-	private String theDateFinish;
+	public String getDateFinish() {return dateFinish;}
+	private String dateFinish;
 
 	/**
 	 * Рабочая функция исполнения
 	 */
 	@Comment("Рабочая функция исполнения")
 	@Persist @Required
-	public Long getWorkFunctionExecute() {return theWorkFunctionExecute;	}
-	public void setWorkFunctionExecute(Long aNewProperty) {	theWorkFunctionExecute = aNewProperty;}
-	private Long theWorkFunctionExecute;
+	public Long getWorkFunctionExecute() {return workFunctionExecute;	}
+	private Long workFunctionExecute;
 
 	
     @Comment("Медицинская карта")
     @Persist 
-    public Long getMedcard() {return theMedcard;}
-    public void setMedcard(Long aMedcard) {theMedcard = aMedcard;}
-    private Long theMedcard;
+    public Long getMedcard() {return medcard;}
+    private Long medcard;
 
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@Persist @Required
-	public Long getServiceStream() {return theServiceStream;}
-	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
-	private Long theServiceStream;
+	public Long getServiceStream() {return serviceStream;}
+	private Long serviceStream;
 
 	/** Категория ребенка */
 	@Comment("Категория ребенка")
-	public Long getCategoryChild() {return theCategoryChild;}
-	public void setCategoryChild(Long aCategoryChild) {theCategoryChild = aCategoryChild;}
-	private Long theCategoryChild;
+	public Long getCategoryChild() {return categoryChild;}
+	private Long categoryChild;
 	
 	/** Цель визита */
 	@Comment("Цель визита")
 	@Persist 
-	public Long getVisitReason() {return theVisitReason;	}
-	public void setVisitReason(Long aReason) {theVisitReason = aReason;	}
-	private Long theVisitReason;
+	public Long getVisitReason() {return visitReason;	}
+	private Long visitReason;
 
 	/** Тип рабочего места обслуживания */
 	@Comment("Тип рабочего места обслуживания")
 	@Persist 
-	public Long getWorkPlaceType() {return theWorkPlaceType;}
-	public void setWorkPlaceType(Long aWorkPlaceType) {theWorkPlaceType = aWorkPlaceType;	}
-	private Long theWorkPlaceType;
+	public Long getWorkPlaceType() {return workPlaceType;}
+	private Long workPlaceType;
 
 	@Comment("Планируемое время исполнения")
 	@Persist
 	public Long getTimePlan() {
-		return theTimePlan;
+		return timePlan;
 	}
-	public void setTimePlan(Long aNewProperty) {
-		theTimePlan = aNewProperty;
-	}
-	private Long theTimePlan;
+	private Long timePlan;
 
 	/** Планируемая дата исполнения */
 	@Comment("Планируемая дата исполнения")
 	@Persist
-	public Long getDatePlan() {return theDatePlan;	}
-	public void setDatePlan(Long aNewProperty) {theDatePlan = aNewProperty;	}
-	private Long theDatePlan;
+	public Long getDatePlan() {return datePlan;	}
+	private Long datePlan;
 
 	/** Планируемая рабочая функция исполнения */
 	@Comment("Планируемая рабочая функция исполнения")
 	@Persist
-	public Long getWorkFunctionPlan() {return theWorkFunctionPlan;}
-	public void setWorkFunctionPlan(Long aNewProperty) {theWorkFunctionPlan = aNewProperty;}
-	private Long theWorkFunctionPlan;
+	public Long getWorkFunctionPlan() {return workFunctionPlan;}
+	private Long workFunctionPlan;
 }

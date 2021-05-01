@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
@@ -28,62 +29,56 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @ACreateInterceptors(
 		@AEntityFormInterceptor(WorkCalendarHospitalBedSave.class)
 )
+@Setter
 public class WorkCalendarHospitalBedByHospForm extends WorkCalendarHospitalBedForm {
 
 	/** Предполагаемая дата начала госпитализации */
 	@Comment("Предполагаемая дата начала госпитализации")
 	@Persist @DateString
 	@DoDateString
-	public String getDateFrom() {return theDateFrom;}
-	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
+	public String getDateFrom() {return dateFrom;}
 	/** Предполагаемая дата начала госпитализации */
-	private String theDateFrom;
+	private String dateFrom;
 
 	/** Профиль коек */
 	@Comment("Профиль коек")
 	@Persist
-	public Long getBedType() {return theBedType;}
-	public void setBedType(Long aBedType) {theBedType = aBedType;}
+	public Long getBedType() {return bedType;}
 	/** Профиль коек */
-	private Long theBedType;
+	private Long bedType;
 
 	/** Тип коек */
 	@Comment("Тип коек")
 	@Persist
-	public Long getBedSubType() {return theBedSubType;}
-	public void setBedSubType(Long aBedSubType) {theBedSubType = aBedSubType;}
+	public Long getBedSubType() {return bedSubType;}
 	/** Тип коек */
-	private Long theBedSubType;
+	private Long bedSubType;
 
 	/** Показания для госпитализации */
 	@Comment("Показания для госпитализации")
 	@Persist
-	public Long getIndicationToHosp() {return theIndicationToHosp;}
-	public void setIndicationToHosp(Long aIndicationToHosp) {theIndicationToHosp = aIndicationToHosp;}
+	public Long getIndicationToHosp() {return indicationToHosp;}
 	/** Показания для госпитализации */
-	private Long theIndicationToHosp;
+	private Long indicationToHosp;
 	
 	/** Палата */
 	@Comment("Палата")
 	@Persist 
-	public Long getHospitalRoom() {return theHospitalRoom;}
-	public void setHospitalRoom(Long aHospitalRoom) {theHospitalRoom = aHospitalRoom;}
+	public Long getHospitalRoom() {return hospitalRoom;}
 	/** Палата */
-	private Long theHospitalRoom;
+	private Long hospitalRoom;
 
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@Persist @Required
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public Long getWorkFunction() {return workFunction;}
 	/** Рабочая функция */
-	private Long theWorkFunction;
+	private Long workFunction;
 
 	/** Отделение */
 	@Comment("Отделение")
 	@Persist
-	public Long getDepartment() {return theDepartment;}
-	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+	public Long getDepartment() {return department;}
 	/** Отделение */
-	private Long theDepartment;
+	private Long department;
 }

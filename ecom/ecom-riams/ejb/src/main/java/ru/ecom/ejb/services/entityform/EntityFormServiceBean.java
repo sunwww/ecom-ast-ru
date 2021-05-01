@@ -70,7 +70,7 @@ public class EntityFormServiceBean extends AbstractFormServiceBeanHelper impleme
             UnDeletable a =(UnDeletable) entityClass.getAnnotation(UnDeletable.class);
             sql.append(" where ").append(a.fieldName()).append(" is null or ").append(a.fieldName()).append(" is false");
         }
-        Collection results = theManager.createQuery( sql.toString()+ " order by id")
+        Collection results = manager.createQuery( sql.toString()+ " order by id")
                 .setMaxResults(300).getResultList();
         
     	if (CAN_DEBUG) LOG.debug("listAll: copying ..."); 
@@ -98,39 +98,14 @@ public class EntityFormServiceBean extends AbstractFormServiceBeanHelper impleme
 
 
 	public Collection<IEntityForm> listAll(String aClassname) throws EntityFormException {
-		//Class clazz = loadMapForm(aClassname);
-		
-		//if (CAN_DEBUG)
-		//	LOG.debug("listAll: clazz = " + clazz); 
-		
+
 		Collection<IEntityForm> ret = listAll(loadMapForm(aClassname));
-		//dumpCollection(ret);
 		return convertToMapFormCollection(aClassname, ret) ;
 	}
 	
     public IEntityForm prepareToCreate(String aFormClassName) throws EntityFormException {
     	return convertToMapForm(aFormClassName, prepareToCreate(loadMapForm(aFormClassName)));
     }
-	
-    /*
-	private void dumpCollection(Collection aObject) {
-		if (CAN_DEBUG)
-			LOG.debug("dumpCollection: collection = " + aObject); 
 
-		for (Object o : aObject) {
-			if (CAN_DEBUG)
-				LOG.debug("   object: " + aObject); 
 
-			dump(o);
-		}
-	}
-	*/
-	private void dump(Object aObject) {
-		for (Method m : aObject.getClass().getMethods()) {
-			if (CAN_DEBUG)
-				LOG.debug("  " + m);
-		}
-	}
-	
-	
 }

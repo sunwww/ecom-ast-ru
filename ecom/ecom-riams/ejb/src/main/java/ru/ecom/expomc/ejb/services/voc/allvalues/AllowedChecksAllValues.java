@@ -43,19 +43,19 @@ public class AllowedChecksAllValues extends ArrayAllValue {
     }
 
     public Set<Map.Entry<Long,Class>> getChecksEntries() {
-        return theHash.entrySet() ;
+        return hash.entrySet() ;
     }
 
     public Collection<Class> getChecksClasses() {
-        return theHash.values();
+        return hash.values();
     }
 
     public Class getCheckClassById(long aCheckId) {
-        return theHash.get(aCheckId);
+        return hash.get(aCheckId);
     }
 
     private void add(Class aClass) {
-        theIndex++ ;
+        index++ ;
         Comment comment = (Comment) aClass.getAnnotation(Comment.class) ;
         StringBuilder sb = new StringBuilder();
         if(comment!=null) {
@@ -64,11 +64,11 @@ public class AllowedChecksAllValues extends ArrayAllValue {
         sb.append(" (") ;
         sb.append(aClass.getSimpleName()) ;
         sb.append(")") ;
-        addValue(String.valueOf(theIndex), sb.toString());
-        theHash.put(theIndex, aClass) ;
+        addValue(String.valueOf(index), sb.toString());
+        hash.put(index, aClass) ;
 
     }
 
-    private TreeMap<Long, Class> theHash = new TreeMap<>();
-    private long theIndex = 0 ;
+    private TreeMap<Long, Class> hash = new TreeMap<>();
+    private long index = 0 ;
 }

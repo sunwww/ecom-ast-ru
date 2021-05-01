@@ -29,7 +29,7 @@ import ru.nuzmsh.util.StringUtil;
 public class FormatServiceBean implements IFormatService {
 
     public void removeFieldsWithEmptyProperty(long aFormatId) {
-        Format format = theManager.find(Format.class, aFormatId);
+        Format format = manager.find(Format.class, aFormatId);
         LinkedList<Long> removed = new LinkedList<Long>();
 
         for (Field field : format.getFields()) {
@@ -37,13 +37,13 @@ public class FormatServiceBean implements IFormatService {
                 removed.add(field.getId()) ;
             }
         }
-        theManager.clear();
+        manager.clear();
         for (Long id : removed) {
-            theManager.remove(theManager.find(Field.class, id)) ;
+            manager.remove(manager.find(Field.class, id)) ;
         }
     }
     public void addFieldFromWord(long aFormatId, String aText) {
-        Format format = theManager.find(Format.class, aFormatId);
+        Format format = manager.find(Format.class, aFormatId);
 
 
         StringTokenizer line = new StringTokenizer(aText, "\n\r");
@@ -75,13 +75,13 @@ public class FormatServiceBean implements IFormatService {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
-            theManager.persist(field);
+            manager.persist(field);
         }
 
     }
 
     public PropertySuggest findPropertySuggest(String aFieldname, long aFormatId) throws ClassNotFoundException {
-        Format format = theManager.find(Format.class, aFormatId) ;
+        Format format = manager.find(Format.class, aFormatId) ;
         return findPropertySuggest(aFieldname, format) ;
     }
 
@@ -102,7 +102,7 @@ public class FormatServiceBean implements IFormatService {
     }
 
     public long getDocumentForFormat(long aFormatId) {
-        Format format = theManager.find(Format.class, aFormatId) ;
+        Format format = manager.find(Format.class, aFormatId) ;
         return format.getDocument().getId() ;
     }
 
@@ -137,5 +137,5 @@ public class FormatServiceBean implements IFormatService {
 
 
     @PersistenceContext
-    public EntityManager theManager;
+    public EntityManager manager;
 }

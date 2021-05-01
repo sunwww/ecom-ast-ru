@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.patient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -9,70 +11,39 @@ import java.sql.Date;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 public class PatientFondCheckData extends BaseEntity {
 	
 	/** Необходимо автоматически обновлять данные пациента */
-	@Comment("Необходимо автоматически обновлять данные пациента")
-	public Boolean  getNeedUpdatePatient() {return theNeedUpdatePatient;}
-	public void setNeedUpdatePatient(Boolean  aNeedUpdatePatient) {theNeedUpdatePatient = aNeedUpdatePatient;}
-	/** Необходимо автоматически обновлять данные пациента */
-	private Boolean  theNeedUpdatePatient;
+	private Boolean  needUpdatePatient;
 	
 	/** Необходимо обновлять данные паспорта */
-	@Comment("Необходимо обновлять данные паспорта")
-	public Boolean getNeedUpdateDocument() {return theNeedUpdateDocument;}
-	public void setNeedUpdateDocument(Boolean aNeedUpdateDocument) {theNeedUpdateDocument = aNeedUpdateDocument;}
-	/** Необходимо обновлять данные паспорта */
-	private Boolean theNeedUpdateDocument;
+	private Boolean needUpdateDocument;
 	
 	/** Необходимо обновлять данные полиса */
-	@Comment("Необходимо обновлять данные полиса")
-	public Boolean getNeedUpdatePolicy() {return theNeedUpdatePolicy;}
-	public void setNeedUpdatePolicy(Boolean aNeedUpdatePolicy) {theNeedUpdatePolicy = aNeedUpdatePolicy;}
-	/** Необходимо обновлять данные полиса */
-	private Boolean theNeedUpdatePolicy;
+	private Boolean needUpdatePolicy;
 	
 	/** Необходимо обновлять данные прикрепления */
-	@Comment("Необходимо обновлять данные прикрепления")
-	public Boolean getNeedUpdateAttachment() {return theNeedUpdateAttachment;}
-	public void setNeedUpdateAttachment(Boolean aNeedUpdateAttachment) {theNeedUpdateAttachment = aNeedUpdateAttachment;}
-	/** Необходимо обновлять данные прикрепления */
-	private Boolean theNeedUpdateAttachment;
+	private Boolean needUpdateAttachment;
 
 	/** Статус(текст) */
-	@Comment("Статус(текст)")
-	public String getStatusText() {return theStatusText;}
-	public void setStatusText(String aStatusText) {theStatusText = aStatusText;}
-	/** Статус(текст) */
-	private String theStatusText;
+	private String statusText;
 	
 	/** Комментарий */
-	@Comment("Комментарий")
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
-	/** Комментарий */
-	private String theComment;
+	private String comment;
 	
 	/** Дата начала импорта */
-	@Comment("Дата начала импорта")
-	public Date getStartDate() {return theStartDate;}
-	public void setStartDate(Date aStartDate) {theStartDate = aStartDate;}
-	/** Дата начала импорта */
-	private Date theStartDate;
+	private Date startDate;
 	
+
 	/** Дата окончания импорта */
-	@Comment("Дата окончания импорта")
-	public Date getFinishDate() {return theFinishDate;}
-	public void setFinishDate(Date aFinishDate) {theFinishDate = aFinishDate;}
-	
-	/** Дата окончания импорта */
-	private Date theFinishDate;
+	private Date finishDate;
 
 	/** Список запией по проверке */
 	@Comment("Список запией по проверке")
 	@OneToMany
-	public List<PatientFond> getPatientList() {return thePatientList;}
-	public void setPatientList(List<PatientFond> aPatientList) {thePatientList = aPatientList;}
+	public List<PatientFond> getPatientList() {return patientList;}
 	/** Список запией по проверке */
-	private List<PatientFond> thePatientList;
+	private List<PatientFond> patientList;
 }

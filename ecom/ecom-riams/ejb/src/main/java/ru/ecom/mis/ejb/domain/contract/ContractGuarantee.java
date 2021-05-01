@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.contract;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -22,6 +24,8 @@ import java.sql.Date;
 	@AIndexes({
 		@AIndex(properties = {"contract"})
 	})
+	@Getter
+	@Setter
 public abstract class ContractGuarantee extends BaseEntity{
 	/**
 	 * Договор
@@ -29,103 +33,58 @@ public abstract class ContractGuarantee extends BaseEntity{
 	@Comment("Договор")
 	@ManyToOne
 	public MedContract getContract() {
-		return theContract;
-	}
-	public void setContract(MedContract aContract) {
-		theContract = aContract;
+		return contract;
 	}
 	/**
 	 * Договор
 	 */
-	private MedContract theContract;
+	private MedContract contract;
 	/**
 	 * Договорная персона
 	 */
 	@Comment("Договорная персона")
 	@OneToOne
 	public ContractPerson getContractPerson() {
-		return theContractPerson;
-	}
-	public void setContractPerson(ContractPerson aContractPerson) {
-		theContractPerson = aContractPerson;
+		return contractPerson;
 	}
 	/**
 	 * Договорная персона
 	 */
-	private ContractPerson theContractPerson;
+	private ContractPerson contractPerson;
 	
-	/** Лимит денег */
-	@Comment("Лимит денег")
-	public BigDecimal getLimitMoney() {return theLimitMoney;}
-	public void setLimitMoney(BigDecimal aLimitMoney) {theLimitMoney = aLimitMoney;}
-
 	/** Без лимита */
-	@Comment("Без лимита")
-	public Boolean getIsNoLimit() {return theIsNoLimit;}
-	public void setIsNoLimit(Boolean aIsNoLimit) {theIsNoLimit = aIsNoLimit;}
-
-	/** Без лимита */
-	private Boolean theIsNoLimit;
+	private Boolean isNoLimit;
 	/** Лимит денег */
-	private BigDecimal theLimitMoney;
+	private BigDecimal limitMoney;
 	
 	/** Номер */
-	@Comment("Номер")
-	public String getNumberDoc() {return theNumberDoc;}
-	public void setNumberDoc(String aNumberDoc) {theNumberDoc = aNumberDoc;}
-
-	/** Номер */
-	private String theNumberDoc;
-	
-	/** Дата выдачи */
-	@Comment("Дата выдачи")
-	public Date getIssueDate() {return theIssueDate;}
-	public void setIssueDate(Date aIssueDate) {theIssueDate = aIssueDate;}
-
+	private String numberDoc;
 	
 	/** Дата действия */
-	@Comment("Дата действия")
-	public Date getActionDate() {return theActionDate;}
-	public void setActionDate(Date aActionDate) {theActionDate = aActionDate;}
-
-	/** Дата действия */
-	private Date theActionDate;
+	private Date actionDate;
 	
 	/** Дата окончания действия */
-	@Comment("Дата окончания действия")
-	public Date getActionDateTo() {return theActionDateTo;}
-	public void setActionDateTo(Date aActionDateTo) {theActionDateTo = aActionDateTo;}
-
-	/** Дата окончания действия */
-	private Date theActionDateTo;
+	private Date actionDateTo;
 	/** Дата выдачи */
-	private Date theIssueDate;
+	private Date issueDate;
 	
 	/** Вид медицинской помощи */
 	@Comment("Вид медицинской помощи")
 	@OneToOne
 	public VocGuaranteeKindHelp getKindHelp() {
-		return theKindHelp;
-	}
-
-	public void setKindHelp(VocGuaranteeKindHelp aKindHelp) {
-		theKindHelp = aKindHelp;
+		return kindHelp;
 	}
 
 	/** Вид медицинской помощи */
-	private VocGuaranteeKindHelp theKindHelp;
+	private VocGuaranteeKindHelp kindHelp;
 	
 	/** Палата */
 	@Comment("Палата")
 	@OneToOne
 	public VocRoomType getRoomType() {
-		return theRoomType;
-	}
-
-	public void setRoomType(VocRoomType aRoomType) {
-		theRoomType = aRoomType;
+		return roomType;
 	}
 
 	/** Палата */
-	private VocRoomType theRoomType;
+	private VocRoomType roomType;
 }

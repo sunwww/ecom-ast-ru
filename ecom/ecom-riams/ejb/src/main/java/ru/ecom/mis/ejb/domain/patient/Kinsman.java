@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.patient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -21,59 +23,48 @@ import javax.persistence.*;
 	,@AIndex(properties={"kinsman"})
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class Kinsman extends BaseEntity{
 	
 	/** Персона */
 	@Comment("Персона")
 	@ManyToOne
 	public Patient getPerson() {
-		return thePerson;
+		return person;
 	}
 	
-
-	public void setPerson(Patient aPerson) {
-		thePerson = aPerson;
-	}
-
 	/** Персона */
-	private Patient thePerson;
+	private Patient person;
 	
 	/** Родственник */
 	@Comment("Родственник")
 	@ManyToOne
 	public Patient getKinsman() {
-		return theKinsman;
-	}
-
-	public void setKinsman(Patient aKinsman) {
-		theKinsman = aKinsman;
+		return kinsman;
 	}
 
 	/** Родственник */
-	private Patient theKinsman;
+	private Patient kinsman;
 	
 	/** Родственная роль */
 	@Comment("Родственная роль")
 	@OneToOne
 	public VocKinsmanRole getKinsmanRole() {
-		return theKinsmanRole;
-	}
-
-	public void setKinsmanRole(VocKinsmanRole aKinsmanRole) {
-		theKinsmanRole = aKinsmanRole;
+		return kinsmanRole;
 	}
 
 	/** Родственная роль */
-	private VocKinsmanRole theKinsmanRole;
+	private VocKinsmanRole kinsmanRole;
 	
 	@Transient
 	public String getKinsmanInfo() {
-		return theKinsman!=null ? theKinsman.getPatientInfo() :"";
+		return kinsman!=null ? kinsman.getPatientInfo() :"";
 	}
 	
 	@Transient
 	public String getKinsmanRoleInfo() {
-		return theKinsmanRole!=null ? theKinsmanRole.getName() : "" ;
+		return kinsmanRole!=null ? kinsmanRole.getName() : "" ;
 	}
 	@Transient
 	public String getInfo() {

@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.E2CancerDiagnostic;
@@ -17,40 +18,36 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @WebTrail(comment = "Диагностический блок", nameProperties = "id", view = "entityView-e2_cancerDiagnostic.do")
 @EntityFormSecurityPrefix("/Policy/E2")
 @Parent(property = "cancerEntry", parentForm = E2CancerEntryForm.class)
+@Setter
 public class E2CancerDiagnosticForm extends IdEntityForm {
     /** Случай рака */
     @Comment("Случай рака")
     @Persist
-    public Long getCancerEntry() {return theCancerEntry;}
-    public void setCancerEntry(Long aCancerEntry) {theCancerEntry = aCancerEntry;}
-    private Long theCancerEntry ;
+    public Long getCancerEntry() {return cancerEntry;}
+    private Long cancerEntry ;
 
     /** Тип показателя */
     @Comment("Тип показателя")
     @Persist
-    public String getType() {return theType;}
-    public void setType(String aType) {theType = aType;}
-    private String theType ;
+    public String getType() {return type;}
+    private String type ;
 
     /** Код показателя */
     @Comment("Код показателя")
     @Persist
-    public String getCode() {return theCode;}
-    public void setCode(String aCode) {theCode = aCode;}
-    private String theCode ;
+    public String getCode() {return code;}
+    private String code ;
 
     /** Результат показателя */
     @Comment("Результат показателя")
     @Persist
-    public String getResult() {return theResult;}
-    public void setResult(String aResult) {theResult = aResult;}
-    private String theResult ;
+    public String getResult() {return result;}
+    private String result ;
 
     /** Дата взятия биопсийного материала * Олег */
     @Comment("Дата взятия биопсийного материала * Олег")
     @DateString @DoDateString
     @Persist
-    public String getBiopsyDate() {return theBiopsyDate;}
-    public void setBiopsyDate(String aBiopsyDate) {theBiopsyDate = aBiopsyDate;}
-    private String theBiopsyDate ;
+    public String getBiopsyDate() {return biopsyDate;}
+    private String biopsyDate ;
 }

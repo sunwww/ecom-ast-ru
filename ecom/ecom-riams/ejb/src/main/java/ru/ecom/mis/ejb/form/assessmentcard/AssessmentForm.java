@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.assessmentcard;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.assessmentcard.Assessment;
@@ -14,37 +15,34 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Parent(property = "assessmentCard", parentForm=AssessmentCardTemplateForm.class) 
 
 @EntityFormSecurityPrefix("/Policy/Mis/AssessmentCard")
+@Setter
 public class AssessmentForm extends IdEntityForm{
 	/** Наименование */
 	@Comment("Наименование")
 	@Persist @Required
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
-	private String theName;
+	public String getName() {return name;}
+	private String name;
 	
 	
 	/** Минимальное кол-во баллов */
 	@Comment("Минимальное кол-во баллов")
 	@Persist @Required
-	public Integer getMinBall() {return theMinBall;}
-	public void setMinBall(Integer aMinBall) {theMinBall = aMinBall;}
+	public Integer getMinBall() {return minBall;}
 	/** Минимальное кол-во баллов */
-	private Integer theMinBall;
+	private Integer minBall;
 
 	/** Максимальное количество баллов */
 	@Comment("Максимальное количество баллов")
 	@Persist @Required
-	public Integer getMaxBall() {return theMaxBall;}
-	public void setMaxBall(Integer aMaxBall) {theMaxBall = aMaxBall;}
+	public Integer getMaxBall() {return maxBall;}
 	/** Максимальное количество баллов */
-	private Integer theMaxBall;
+	private Integer maxBall;
 
 	/** Тип карты оценки */
 	@Comment("Тип карты оценки")
 	@Persist
-	public Long getAssessmentCard() {return theAssessmentCard;}
-	public void setAssessmentCard(Long aAssessmentCard) {theAssessmentCard = aAssessmentCard;}
+	public Long getAssessmentCard() {return assessmentCard;}
 	/** Тип карты оценки */
-	private Long theAssessmentCard;
+	private Long assessmentCard;
 
 }

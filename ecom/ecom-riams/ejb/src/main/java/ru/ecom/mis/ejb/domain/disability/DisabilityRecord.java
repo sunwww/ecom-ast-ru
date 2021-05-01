@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.disability;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -20,69 +22,55 @@ import java.sql.Time;
  */
 @Entity
 @AIndexes({
-		@AIndex(unique = false, properties= {"dateFrom"})
-		,@AIndex(unique = false, properties= {"dateTo"})
-		,@AIndex(unique = false, properties= {"disabilityDocument"})
+		@AIndex(properties= {"dateFrom"})
+		,@AIndex(properties= {"dateTo"})
+		,@AIndex(properties= {"disabilityDocument"})
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class DisabilityRecord extends BaseEntity{
 
 	private String docName;
 	private String docRole;
 	private String vkName;
 	private String vkRole;
-	private Boolean theIsExport=false;
-	private WorkFunction theWorkFunctionAdd;
-	private WorkFunction theWorkFunction;
-	private DisabilityDocument theDisabilityDocument;
-	private Date theDateFrom;
-	private Date theDateTo;
-	private VocDisabilityRegime theRegime;
-	private MedCase theCreateMedCase;
+	private Boolean isExport=false;
+	private WorkFunction workFunctionAdd;
+	private WorkFunction workFunction;
+	private DisabilityDocument disabilityDocument;
+	private Date dateFrom;
+	private Date dateTo;
+	private VocDisabilityRegime regime;
+	private MedCase createMedCase;
 
 
 	@Comment("Документ нетрудоспособности")
 	@ManyToOne
-	public DisabilityDocument getDisabilityDocument() {return theDisabilityDocument;}
-	public void setDisabilityDocument(DisabilityDocument aDisabilityDocument) {theDisabilityDocument = aDisabilityDocument;}
+	public DisabilityDocument getDisabilityDocument() {return disabilityDocument;}
 
-	@Comment("Дата начала нетрудоспособности")
-	public Date getDateFrom() {return theDateFrom;}
-	public void setDateFrom(Date aDateFrom) {theDateFrom = aDateFrom;}
+	/**Дата создания*/
+	private Date createDate;
 
-	@Comment("Дата окончания нетрудоспособности")
-	public Date getDateTo() {return theDateTo;}
-	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;	}
-
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	private Date theCreateDate;
-
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	private Time theCreateTime;
+	/**Время создания*/
+	private Time createTime;
 
 	@Comment("Режим нетрудоспособности")
 	@OneToOne
-	public VocDisabilityRegime getRegime() {return theRegime;}
-	public void setRegime(VocDisabilityRegime aRegime) {theRegime = aRegime;}
+	public VocDisabilityRegime getRegime() {return regime;}
 
 	@Comment("СМО, создавшего запись")
 	@OneToOne
-	public MedCase getCreateMedCase() {return theCreateMedCase;}
-	public void setCreateMedCase(MedCase aCreateMedCase) {theCreateMedCase = aCreateMedCase;}
+	public MedCase getCreateMedCase() {return createMedCase;}
 
 	@Comment("Специалист")
 	@OneToOne
-	public WorkFunction getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(WorkFunction aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public WorkFunction getWorkFunction() {return workFunction;}
 
 	@Comment("Режим нетрудоспособности (текст)")
 	@Transient
 	public String getRegimeText() {
-		return theRegime!=null?theRegime.getName():"";
+		return regime!=null?regime.getName():"";
 	}
 
 	@Comment("Информация о записи")
@@ -94,52 +82,14 @@ public class DisabilityRecord extends BaseEntity{
 
 	@Comment("Рабочая функция инфо")
 	@Transient
-	public String getWorkFunctionInfo() {return theWorkFunction!=null?theWorkFunction.getWorkFunctionInfo():"";}
+	public String getWorkFunctionInfo() {return workFunction!=null?workFunction.getWorkFunctionInfo():"";}
 
 	@Comment("Рабочая функция председ. ВК инфо")
 	@Transient
-	public String getWorkFunctionAddInfo() {return theWorkFunctionAdd!=null?theWorkFunctionAdd.getWorkFunctionInfo():"";}
+	public String getWorkFunctionAddInfo() {return workFunctionAdd!=null?workFunctionAdd.getWorkFunctionInfo():"";}
 
 	@Comment("Доп. рабочая функция")
 	@OneToOne
-	public WorkFunction getWorkFunctionAdd() {return theWorkFunctionAdd;}
-	public void setWorkFunctionAdd(WorkFunction aWorkFunctionAdd) {theWorkFunctionAdd = aWorkFunctionAdd;}
-
-	@Comment("Экспортировано")
-	public Boolean getIsExport(){return theIsExport;}
-	public void setIsExport(Boolean aIsExport) {theIsExport = aIsExport;}
-
-	@Comment("ФИО врача")
-	public String getDocName() {
-		return docName;
-	}
-	public void setDocName(String docName) {
-		this.docName = docName;
-	}
-
-	@Comment("Роль врача")
-	public String getDocRole() {
-		return docRole;
-	}
-	public void setDocRole(String docRole) {
-		this.docRole = docRole;
-	}
-
-	@Comment("ФИО ВК")
-	public String getVkName() {
-		return vkName;
-	}
-	public void setVkName(String vkName) {
-		this.vkName = vkName;
-	}
-
-	@Comment("Роль ВК")
-	public String getVkRole() {
-		return vkRole;
-	}
-	public void setVkRole(String vkRole) {
-		this.vkRole = vkRole;
-	}
-
+	public WorkFunction getWorkFunctionAdd() {return workFunctionAdd;}
 
 }

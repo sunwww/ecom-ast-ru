@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.licence;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -20,21 +21,20 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(DocumentPrepareCreateInterceptor.class)
 )
+@Setter
 public class DischargeDiagnostDocumentForm extends InternalDocumentsForm {
 	/** Услуги */
 	@Comment("Услуги")
 	@Persist @Required
-	public String getServicies() {return theServicies;}
-	public void setServicies(String aServicies) {theServicies = aServicies;}
+	public String getServicies() {return servicies;}
 
 	/** Обоснование */
 	@Comment("Обоснование")
 	@Persist @Required
-	public String getHistory() {return theHistory;}
-	public void setHistory(String aHistory) {theHistory = aHistory;}
+	public String getHistory() {return history;}
 
 	/** Обоснование */
-	private String theHistory;
+	private String history;
 	/** Услуги */
-	private String theServicies;
+	private String servicies;
 }

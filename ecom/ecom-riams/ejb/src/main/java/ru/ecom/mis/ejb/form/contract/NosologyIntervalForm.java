@@ -1,4 +1,5 @@
 package ru.ecom.mis.ejb.form.contract;
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.NosologyInterval;
@@ -16,6 +17,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Интервал нозологий", nameProperties= "id", list="entityParentList-contract_nosologyInterval.do", view="entityParentView-contract_nosologyInterval.do")
 @Parent(property="nosologyGroup", parentForm=ContractNosologyGroupForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/GroupRules/ContractNosologyGroup/NosologyInterval")
+@Setter
 public class NosologyIntervalForm extends IdEntityForm{
 	/**
 	 * Начиная с кода
@@ -23,45 +25,36 @@ public class NosologyIntervalForm extends IdEntityForm{
 	@Comment("Начиная с кода")
 	@Persist @DoUpperCase @Required
 	public Long getFromCode() {
-		return theFromCode;
-	}
-	public void setFromCode(Long aFromCode) {
-		theFromCode = aFromCode;
+		return fromCode;
 	}
 	/**
 	 * Начиная с кода
 	 */
-	private Long theFromCode;
+	private Long fromCode;
 	/**
 	 * Заканчивая кодом
 	 */
 	@Comment("Заканчивая кодом")
 	@Persist @DoUpperCase @Required
 	public Long getToCode() {
-		return theToCode;
-	}
-	public void setToCode(Long aToCode) {
-		theToCode = aToCode;
+		return toCode;
 	}
 	/**
 	 * Заканчивая кодом
 	 */
-	private Long theToCode;
+	private Long toCode;
 	/**
 	 * Нозологическая группа
 	 */
 	@Comment("Нозологическая группа")
 	@Persist 
 	public Long getNosologyGroup() {
-		return theNosologyGroup;
-	}
-	public void setNosologyGroup(Long aNosologyGroup) {
-		theNosologyGroup = aNosologyGroup;
+		return nosologyGroup;
 	}
 	/**
 	 * Нозологическая группа
 	 */
-	private Long theNosologyGroup;
+	private Long nosologyGroup;
 
 	/**
 	 * Начиная с код МКБ10
@@ -69,30 +62,24 @@ public class NosologyIntervalForm extends IdEntityForm{
 	@Comment("Начиная с код МКБ10")
 	@Persist @DoUpperCase
 	public String getFromIdc10Code() {
-		return theFromIdc10Code;
-	}
-	public void setFromIdc10Code(String aFromIdc10Code) {
-		theFromIdc10Code = aFromIdc10Code;
+		return fromIdc10Code;
 	}
 	/**
 	 * Начиная с код МКБ10
 	 */
-	private String theFromIdc10Code;
+	private String fromIdc10Code;
 	/**
 	 * Заканчивая кодом МКБ10
 	 */
 	@Comment("Заканчивая кодом МКБ10")
 	@Persist @DoUpperCase
 	public String getToIdc10Code() {
-		return theToIdc10Code;
-	}
-	public void setToIdc10Code(String aToIdc10Code) {
-		theToIdc10Code = aToIdc10Code;
+		return toIdc10Code;
 	}
 	/**
 	 * Заканчивая кодом МКБ10
 	 */
-	private String theToIdc10Code;
+	private String toIdc10Code;
 
 	/**
 	 * Название
@@ -100,13 +87,10 @@ public class NosologyIntervalForm extends IdEntityForm{
 	@Comment("Название")
 	@Persist @DoUpperCase
 	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
+		return name;
 	}
 	/**
 	 * Название
 	 */
-	private String theName;
+	private String name;
 }

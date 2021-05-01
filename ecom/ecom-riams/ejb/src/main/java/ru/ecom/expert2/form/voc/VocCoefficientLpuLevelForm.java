@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form.voc;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.voc.VocCoefficientLpuLevel;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -17,21 +18,20 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @Comment("Коэффициент уровня ЛПУ (отделения)")
 @WebTrail(comment = "Коэффициент уровня ЛПУ (отделения)", nameProperties = "id", view = "entityView-e2_vocCofficientLpuLevel.do")
 @EntityFormSecurityPrefix("/Policy/E2")
+@Setter
 public class VocCoefficientLpuLevelForm  extends VocCoefficientForm {
     
     /** Идентификатор отделения */
     @Comment("Идентификатор отделения")
     @Persist
-    public Long getDepartment() {return theDepartment;}
-    public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+    public Long getDepartment() {return department;}
     /** Идентификатор отделения */
-    private Long theDepartment ;
+    private Long department ;
 
     /** Профиль мед. помощи */
     @Comment("Профиль мед. помощи")
     @Persist
-    public Long getProfile() {return theProfile;}
-    public void setProfile(Long aProfile) {theProfile = aProfile;}
+    public Long getProfile() {return profile;}
     /** Профиль мед. помощи */
-    private Long theProfile ;
+    private Long profile ;
 }

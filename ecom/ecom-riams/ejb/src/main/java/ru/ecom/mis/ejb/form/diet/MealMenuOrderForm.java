@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.diet;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.diet.MealMenuOrder;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -23,6 +24,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @Parent(property="diet", parentForm=DietForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/InvalidFood/MealMenuOrder")
 
+@Setter
 public class MealMenuOrderForm extends MealMenuForm {
 	
 		
@@ -30,29 +32,21 @@ public class MealMenuOrderForm extends MealMenuForm {
 	@Comment("Шаблон меню приема пищи")
 	@Persist
 	public Long getTemplateMenu() {
-		return theTemplateMenu;
-	}
-
-	public void setTemplateMenu(Long aTemplateMenu) {
-		theTemplateMenu = aTemplateMenu;
+		return templateMenu;
 	}
 
 	/** Шаблон меню приема пищи */
-	private Long theTemplateMenu;
+	private Long templateMenu;
 	
 	/** Количество порций */
 	@Comment("Количество порций")
 	@Persist
 	public Integer getPortionAmount() {
-		return thePortionAmount;
-	}
-
-	public void setPortionAmount(Integer aPortionAmount) {
-		thePortionAmount = aPortionAmount;
+		return portionAmount;
 	}
 
 	/** Количество порций */
-	private Integer thePortionAmount;
+	private Integer portionAmount;
 
 }
 	

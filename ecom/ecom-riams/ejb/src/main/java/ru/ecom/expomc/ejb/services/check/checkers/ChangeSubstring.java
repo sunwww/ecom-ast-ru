@@ -8,34 +8,34 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Замена подстроки")
 public class ChangeSubstring extends AbstractChangeStringProperty {
     public String transform(String aStr) {
-    	String replace = theReplaceTo ;
+    	String replace = replaceTo ;
     	if(replace==null) replace = "" ;
     	if("\"\"".equals(replace)) replace ="" ;
-    	return aStr!=null ? aStr.replace(theSearch, replace) : null ;
+    	return aStr!=null ? aStr.replace(search, replace) : null ;
     }
     
     /** Искать */
 	@Comment("Искать")
 	public String getSearch() {
-		return theSearch;
+		return search;
 	}
 
 	public void setSearch(String aSearch) {
-		theSearch = aSearch;
+		search = aSearch;
 	}
 
 	/** Заменить на */
 	@Comment("Заменить на")
 	public String getReplaceTo() {
-		return theReplaceTo;
+		return replaceTo;
 	}
 
 	public void setReplaceTo(String aReplaceTo) {
-		theReplaceTo = aReplaceTo;
+		replaceTo = aReplaceTo;
 	}
 
 	/** Заменить на */
-	private String theReplaceTo;
+	private String replaceTo;
 	/** Искать */
-	private String theSearch;
+	private String search;
 }

@@ -47,7 +47,6 @@ public class RolePoliciesEditAction extends BaseAction {
     }
 
     private static void outNode(JspWriter out, String aNodeVariableName, CheckNode aNode) throws IOException {
-//        System.out.println("aNode.getChilds().size() = " + aNode.getChilds().size());
         boolean visible = (aNode.getChilds()!=null && aNode.getChilds().size()==1) || aNode.getChecked() ;
         out.println("var checkNode_"+aNode.getId()+" =  createNode("+aNodeVariableName+", '"+aNode.getName()+"', "+aNode.getChecked()
                 +", "+visible

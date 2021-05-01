@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.disability;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -16,62 +18,46 @@ import java.sql.Date;
  */
 @Entity
 @AIndexes({
-	@AIndex(unique = false, properties= {"disabilityDocument"})
+	@AIndex(properties= {"disabilityDocument"})
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class RegimeViolationRecord extends BaseEntity {
 	
 	/** Документ нетрудоспособности */
 	@Comment("Документ нетрудоспособности")
 	@ManyToOne
-	public DisabilityDocument getDisabilityDocument() {return theDisabilityDocument;}
-	public void setDisabilityDocument(DisabilityDocument aDisabilityDocument) {theDisabilityDocument = aDisabilityDocument;}
-	
-	/** Дата начала нарушения */
-	@Comment("Дата начала нарушения")
-	public Date getDateFrom() {return theDateFrom;}
-	public void setDateFrom(Date aDateFrom) {theDateFrom = aDateFrom;}
-
-	
-	/** Дата окончания нарушения */
-	@Comment("Дата окончания нарушения")
-	public Date getDateTo() {return theDateTo;}
-	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;}
+	public DisabilityDocument getDisabilityDocument() {return disabilityDocument;}
 
 	/** Тип нарушения */
 	@Comment("Тип нарушения")
 	@OneToOne
-	public VocRegimeViolationType getRegimeViolationType() {return theRegimeViolationType;}
-	public void setRegimeViolationType(VocRegimeViolationType aRegimeViolationType) {theRegimeViolationType = aRegimeViolationType;}
-	
-	/** Комментарии */
-	@Comment("Комментарии")
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
-	
+	public VocRegimeViolationType getRegimeViolationType() {return regimeViolationType;}
+
+
 	@Transient
 	public String getRegimeViolationTypeInfo() {
-		return theRegimeViolationType!=null?theRegimeViolationType.getName():"" ;
+		return regimeViolationType!=null?regimeViolationType.getName():"" ;
 	}
 	
 	/** Информация о нарушении режима */
 	@Comment("Информация о нарушении режима")
 	@Transient
 	public String getInfo() {
-		String ret = getRegimeViolationTypeInfo() + " " +
+		return getRegimeViolationTypeInfo() + " " +
 				DurationUtil.getDuration(getDateFrom(), getDateTo());
-		return ret;
 	}
 
 	/** Документ нетрудоспособности */
-	private DisabilityDocument theDisabilityDocument;
+	private DisabilityDocument disabilityDocument;
 	/** Дата начала нарушения */
-	private Date theDateFrom;
+	private Date dateFrom;
 	/** Дата окончания нарушения */
-	private Date theDateTo;
+	private Date dateTo;
 	/** Тип нарушения */
-	private VocRegimeViolationType theRegimeViolationType;
+	private VocRegimeViolationType regimeViolationType;
 	/** Комментарии */
-	private String theComment;
+	private String comment;
 
 }

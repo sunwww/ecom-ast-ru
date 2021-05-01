@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.patient;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.patient.LpuAttachedByDepartment;
@@ -20,230 +21,196 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Специальное прикрепление", nameProperties = "info", view = "entityView-mis_lpuAttachedByDepartment.do")
 @Parent(property = "patient", parentForm =PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Patient/AttachedByDepartment")
+@Setter
 public class LpuAttachedByDepartmentForm extends IdEntityForm {
 
 	/** Не актуально */
 	@Comment("Не актуально")
 	@Persist
-	public Boolean getNoActuality() {return theNoActuality;}
-	public void setNoActuality(Boolean aNoActuality) {theNoActuality = aNoActuality;}
+	public Boolean getNoActuality() {return noActuality;}
 	/** Не актуально */
-	private Boolean theNoActuality;
+	private Boolean noActuality;
 	
 	/** Результат последней проверки ФОМС */
 	@Comment("Результат последней проверки ФОМС")
 	@Persist
-	public String getCheckResult() {return theCheckResult;}
-	public void setCheckResult(String aCheckResult) {theCheckResult = aCheckResult;}
+	public String getCheckResult() {return checkResult;}
 	/** Результат последней проверки ФОМС */
-	private String theCheckResult;
+	private String checkResult;
 	
 	/** ЛПУ открепления */
 	@Comment("ЛПУ открепления")
 	@Persist
 	public String getLpuTo() {
-		return theLpuTo;
+		return lpuTo;
 	}
-
-	public void setLpuTo(String aLpuTo) {
-		theLpuTo = aLpuTo;
-	}
-
 	/** ЛПУ открепления */
-	private String theLpuTo;
+	private String lpuTo;
 	
 	/** Полное имя ЛПУ */
 	@Comment("Полное имя ЛПУ")
 	@Persist
 	public String getLpuFullname() {
-		return theLpuFullname;
-	}
-
-	public void setLpuFullname(String aLpuFullname) {
-		theLpuFullname = aLpuFullname;
+		return lpuFullname;
 	}
 
 	/** ПОлное имя ЛПУ */
-	private String theLpuFullname;
+	private String lpuFullname;
 	
 	public String getInfo() {
-		return theLpuFullname ;
+		return lpuFullname ;
 	}
 	
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@Persist @Required
 	public Long getLpu() {
-		return theLpu;
-	}
-
-	public void setLpu(Long aLpu) {
-		theLpu = aLpu;
+		return lpu;
 	}
 
 	/** Участок */
 	@Comment("Участок")
 	@Persist @Required
-	public Long getArea() {return theArea;}
-	public void setArea(Long aArea) {theArea = aArea;}
+	public Long getArea() {return area;}
 
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
+	public Long getPatient() {return patient;}
 
 	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	/** Участок */
-	private Long theArea;
+	private Long area;
 	/** ЛПУ */
-	private Long theLpu;
+	private Long lpu;
 	
 	/** Прикреплен с */
 	@Comment("Прикреплен с")
 	@Persist @Required @DateString @DoDateString 
-	public String getDateFrom() {return theDateFrom;}
-	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
+	public String getDateFrom() {return dateFrom;}
 
 	/** Откреплен с */
 	@Comment("Откреплен с")
 	@Persist @DateString @DoDateString
-	public String getDateTo() {return theDateTo;}
-	public void setDateTo(String aDateTo) {theDateTo = aDateTo;}
+	public String getDateTo() {return dateTo;}
 
 	/** Откреплен с */
-	private String theDateTo;
+	private String dateTo;
 	/** Прикреплен с */
-	private String theDateFrom;
+	private String dateFrom;
 	
 	/** Тип прикрепления */
 	@Comment("Тип прикрепления")
 	@Persist @Required
-	public Long getAttachedType() {return theAttachedType;}
-	public void setAttachedType(Long aAttachedType) {theAttachedType = aAttachedType;}
+	public Long getAttachedType() {return attachedType;}
 
 	/** Тип прикрепления */
-	private Long theAttachedType;
+	private Long attachedType;
 	
 	/** Дата создания */
 	@Comment("Дата создания")
 	@DateString @DoDateString @Persist
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
+
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@DateString @DoDateString @Persist
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
-	
+	public String getEditDate() {return editDate;}
+
 	/** Время создания */
 	@Comment("Время создания")
 	@TimeString @DoTimeString @Persist
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;}
 	/** Время редактрования */
 	@Comment("Время редактрования")
 	@TimeString @DoTimeString @Persist
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+	public String getEditTime() {return editTime;}
 	/** Пользователь, который создал запись */
 	@Comment("Пользователь, который создал запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 	/** Пользователь, который последний редактировал запись */
 	@Comment("Пользователь, который последний редактировал запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Дата редактирования услуги */
 	@Comment("Дата редактирования услуги")
 	@Persist @DateString @DoDateString
-	public String getEditDateRender() {return theEditDateRender;}
-	public void setEditDateRender(String aEditDateRender) {theEditDateRender = aEditDateRender;}
+	public String getEditDateRender() {return editDateRender;}
 
 	/** Время редактирование услуги */
 	@Comment("Время редактирование услуги")
 	@Persist @TimeString @DoTimeString
-	public String getEditTimeRender() {return theEditTimeRender;}
-	public void setEditTimeRender(String aEditTimeRender) {theEditTimeRender = aEditTimeRender;}
+	public String getEditTimeRender() {return editTimeRender;}
 
 	/** Пользователь редактировавший услуги */
 	@Comment("Пользователь редактировавший услуги")
 	@Persist
-	public String getEditUsernameRender() {return theEditUsernameRender;}
-	public void setEditUsernameRender(String aEditUsernameRender) {theEditUsernameRender = aEditUsernameRender;}
+	public String getEditUsernameRender() {return editUsernameRender;}
 
 	/** Пользователь редактировавший услуги */
-	private String theEditUsernameRender;
+	private String editUsernameRender;
 	/** Время редактирование услуги */
-	private String theEditTimeRender;
+	private String editTimeRender;
 	/** Дата редактирования услуги */
-	private String theEditDateRender;
+	private String editDateRender;
 	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private String theEditTime;
+	private String editTime;
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	
 	/** Дата импорта результатов ФОМС */
 	@Comment("Дата импорта результатов ФОМС")
 	@Persist
-	public String getDefectPeriod() {return theDefectPeriod;}
-	public void setDefectPeriod(String aDefectPeriod) {theDefectPeriod = aDefectPeriod;}
+	public String getDefectPeriod() {return defectPeriod;}
 	/** Дата импорта результатов ФОМС */
-	private String theDefectPeriod;
+	private String defectPeriod;
 	
 	/** Текст дефекта */
 	@Comment("Текст дефекта")
 	@Persist
-	public String getDefectText() {return theDefectText;}
-	public void setDefectText(String aDefectText) {theDefectText = aDefectText;}
+	public String getDefectText() {return defectText;}
 	/** Текст дефекта */
-	private String theDefectText;
+	private String defectText;
 
 	
 	/** Страховая компания */
 	@Comment("Страховая компания")
 	@Persist @Required
-	public Long getCompany() {return theCompany;}
-	public void setCompany(Long aCompany) {theCompany = aCompany;}
+	public Long getCompany() {return company;}
 
 	/** Страховая компания */
-	private Long theCompany;
+	private Long company;
 	
 	/** Подача производилась по неактуальному полису */
 	@Comment("Подача производилась по неактуальному полису")
 	@Persist
-	public Boolean getNoActualPolicy() {return theNoActualPolicy;}
-	public void setNoActualPolicy(Boolean aNoActualPolicy) {theNoActualPolicy = aNoActualPolicy;}
+	public Boolean getNoActualPolicy() {return noActualPolicy;}
 
 	/** Подача производилась по неактуальному полису */
-	private Boolean theNoActualPolicy;
+	private Boolean noActualPolicy;
 
 	/** Новый адрес */
 	@Comment("Новый адрес")
 	@Persist
-	public Boolean getNewAddress() {return theNewAddress;}
-	public void setNewAddress(Boolean aNewAddress) {theNewAddress = aNewAddress;}
+	public Boolean getNewAddress() {return newAddress;}
 	/** Новый адрес */
-	private Boolean theNewAddress;
+	private Boolean newAddress;
 	
 	/** Дата последней выгрузки в ФОМС */
 	@Comment("Дата последней выгрузки в ФОМС")
 	@Persist @DateString @DoDateString
-	public String getExportDate() {return theExportDate;}
-	public void setExportDate(String aExportDate) {theExportDate = aExportDate;}
+	public String getExportDate() {return exportDate;}
 	/** Дата последней выгрузки в ФОМС */
-	private String theExportDate;
+	private String exportDate;
 }

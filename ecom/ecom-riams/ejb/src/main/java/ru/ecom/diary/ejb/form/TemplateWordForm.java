@@ -1,5 +1,7 @@
 package ru.ecom.diary.ejb.form;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateWord;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -22,65 +24,59 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Ключевые слова")
 @WebTrail(comment = "Ключевые слова", nameProperties= "reduction", view="entityView-diary_templateWord.do")
 @EntityFormSecurityPrefix("/Policy/Diary/KeyWord")
+@Setter
 public class TemplateWordForm extends IdEntityForm {
 
     /** Расшифровка */
     @Persist @Required
     @Comment("Расшифровка")
-    public String getDecryption() {    return theDecryption ;}
-    public void setDecryption(String aDecryption ) {  theDecryption = aDecryption ; }
+    public String getDecryption() {    return decryption ;}
 
     /** Сокращение */
     @Persist @Required @DoUpperCase
     @Comment("Сокращение")
-    public String getReduction() {    return theReduction ;}
-    public void setReduction(String aReduction ) {  theReduction = aReduction ; }
+    public String getReduction() {    return reduction ;}
 
     /** Расшифровка */
-    private String theDecryption ;
+    private String decryption ;
     /** Сокращение */
-    private String theReduction ;
+    private String reduction ;
 
     /** Пользователь */
     @Comment("Пользователь")
     @Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@DateString @DoDateString @Persist
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
+
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@DateString @DoDateString @Persist
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	public String getEditDate() {return editDate;}
 
 	/** Группы пользователей */
 	@Comment("Группы пользователей")
 	@Persist @PersistManyToManyOneProperty(collectionGenericType = SecGroup.class)
-	public String getSecGroups() {return theSecGroups;}
-	public void setSecGroups(String aSecGroups) {theSecGroups = aSecGroups;}
+	public String getSecGroups() {return secGroups;}
 
 	/** Группы пользователей */
-	private String theSecGroups;
+	private String secGroups;
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	/** Пользователь */
-	private String theCreateUsername;
+	private String createUsername;
 	
 	/** Пользователь, отредактировающий запись */
 	@Comment("Пользователь, отредактировающий запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Пользователь, отредактировающий запись */
-	private String theEditUsername;
+	private String editUsername;
 
 }

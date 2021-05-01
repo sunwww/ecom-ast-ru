@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.assessmentcard;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -20,70 +22,42 @@ import java.sql.Date;
 		,@AIndex(properties="medcase")
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class AssessmentCard extends BaseEntity {
 	/** Тип карты оценки */
-	@Comment("Тип карты оценки")
-	public Long getTemplate() {return theTemplate;}
-	public void setTemplate(Long aTemplate) {theTemplate = aTemplate;}
-	/** Тип карты оценки */
-	private Long theTemplate;
+	private Long template;
 	
 	/** Пациент */
 	@Comment("Пациент")
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
+	public Long getPatient() {return patient;}
 	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	
 	/** Комментарий */
 	@Comment("Комментарий")
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
+	public String getComment() {return comment;}
 	/** Комментарий */
-	private String theComment;
+	private String comment;
 
 	/** Сумма баллов по карте */
-	@Comment("Сумма баллов по карте")
-	public Long getBallSum() {return theBallSum;}
-	public void setBallSum(Long aBallSum) {theBallSum = aBallSum;}
-	/** Сумма баллов по карте */
-	private Long theBallSum;
-	
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-
+	private Long ballSum;
 	/** Пользователь создавший запись */
-	@Comment("Пользователь создавший запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-
-	/** Пользователь создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	
 	/** Рабочая функция врача */
-	@Comment("Рабочая функция врача")
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
-	/** Рабочая функция врача */
-	private Long theWorkFunction;
+	private Long workFunction;
 	
 	/** Дата приема */
-	@Comment("Дата приема")
-	public Date getStartDate() {return theStartDate;}
-	public void setStartDate(Date aStartDate) {theStartDate = aStartDate;}
-	/** Дата приема */
-	private Date theStartDate;
+	private Date startDate;
 
 	/** СЛО/визит создания */
 	@Comment("СЛО/визит создания")
 	@OneToOne
-	public MedCase getMedcase() {return theMedcase;}
-	public void setMedcase(MedCase aMedcase) {theMedcase = aMedcase;}
+	public MedCase getMedcase() {return medcase;}
 	/** СЛО/визит создания */
-	private MedCase theMedcase;
+	private MedCase medcase;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.diet;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.diet.Diet;
@@ -18,100 +19,76 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Диета", nameProperties= "name", view="entityParentView-diet_diet.do")
 @Parent(property="parent", parentForm=DietForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Diet")
+@Setter
 public class DietForm extends IdEntityForm{
 
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@Persist
 	public Long getLpu() {
-		return theLpu;
-	}
-
-	public void setLpu(Long aLpu) {
-		theLpu = aLpu;
+		return lpu;
 	}
 
 	/** ЛПУ */
-	private Long theLpu;
+	private Long lpu;
 
 	/** Описание */
 	@Comment("Описание")
 	@Persist
 	
 	public String getDescription() {
-		return theDescription;
-	}
-
-	public void setDescription(String aDescription) {
-		theDescription = aDescription;
+		return description;
 	}
 
 	/** Описание */
-	private String theDescription;
+	private String description;
 	
 	/** Показания к применению */
 	@Comment("Показания к применению")
 	@Persist
 	public String getPrescription() {
-		return thePrescription;
-	}
-
-	public void setPrescription(String aPrescription) {
-		thePrescription = aPrescription;
+		return prescription;
 	}
 
 	/** Показания к применению */
-	private String thePrescription;
+	private String prescription;
 	
 	
 	/** Головная диета */
 	@Comment("Головная диета")
 	@Persist
 	public Long getParent() {
-		return theParent;
-	}
-
-	public void setParent(Long aParent) {
-		theParent = aParent;
+		return parent;
 	}
 
 	/** Головная диета */
-	private Long theParent;
+	private Long parent;
 	
 	/** Короткое название */
 	@Comment("Короткое название")
 	@Persist
 	public String getShortName() {
-		return theShortName;
-	}
-
-	public void setShortName(String aShortName) {
-		theShortName = aShortName;
+		return shortName;
 	}
 
 	/** Короткое название */
-	private String theShortName;
+	private String shortName;
 	
 	/** Название */
 	@Comment("Название")
 	@Persist
 	public String getName() {
-		return theName;
-	}
-
-	public void setName(String aName) {
-		theName = aName;
+		return name;
 	}
 
 	/** Название */
-	private String theName;
+	private String name;
 	
 	/** В архиве */
 	@Comment("В архиве")
 	@Persist
-	public Boolean getIsArchival() {return theIsArchival;}
-	public void setIsArchival(Boolean aIsArchival) {theIsArchival = aIsArchival;}
+	public Boolean getIsArchival() {return isArchival;}
 	/** В архиве */
-	private Boolean theIsArchival;
+	private Boolean isArchival;
 
 }

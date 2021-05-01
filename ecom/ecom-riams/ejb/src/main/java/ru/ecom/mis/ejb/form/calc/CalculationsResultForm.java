@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.calc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.calc.CalculationsResult;
@@ -19,34 +20,31 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 , nameProperties= "id", list="entityParentList-calc_calculationsResult.do", view="entityParentView-calc_calculationsResult.do", shortView="entityShortView-calc_calculationsResult.do")
 @Parent(property="departmentMedCase", parentForm=DepartmentMedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Calc/Calculation")
+@Setter
 public class CalculationsResultForm extends IdEntityForm{
 	
         /** СЛО */
 	@Comment("СЛО")
 	@Persist
-	public Long getDepartmentMedCase(){return theDepartmentMedCase;}
-	public void setDepartmentMedCase(Long aDepartmentMedCase){theDepartmentMedCase = aDepartmentMedCase;}
-	private Long theDepartmentMedCase ;
+	public Long getDepartmentMedCase(){return departmentMedCase;}
+	private Long departmentMedCase ;
 	
 	/** Калькулятор */
         @Comment("Калькулятор")
         @Persist
-        public Long getCalculator() {return theCalculator;}
-        public void setCalculator(Long aCalculator){theCalculator = aCalculator;}
-        private Long theCalculator;
+        public Long getCalculator() {return calculator;}
+        private Long calculator;
         
         /** Дата */
       	@Comment("Дата")
       	@Persist
-      	public String getResDate(){return theResDate;}
-      	public void setResDate(String aResDate){theResDate = aResDate;}
-      	private String theResDate;
+      	public String getResDate(){return resDate;}
+      	private String resDate;
       	
 	/** Результат */
 	@Comment("Результат")
 	@Persist
-	public String getResult(){return theResult;}
-	public void setResult(String aResult){theResult = aResult;}
-	private String theResult ;
+	public String getResult(){return result;}
+	private String result ;
 	
 }

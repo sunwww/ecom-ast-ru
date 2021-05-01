@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.vaccination.voc.VaccineVocNosology;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -18,27 +20,15 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Вакцинируемая нозология")
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VaccinationNosology extends BaseEntity{
 
-	/**
-	 * Название
-	 */
-	@Comment("Название")
-	public String getName() {
-		return theName;
-	}
 
 	/**
 	 * Название
 	 */
-	public void setName(String a_Property) {
-		theName = a_Property;
-	}
-
-	/**
-	 * Название
-	 */
-	private String theName;
+	private String name;
 
 	/**
 	 * Список вакцин
@@ -46,19 +36,12 @@ public class VaccinationNosology extends BaseEntity{
 	@Comment("Список вакцин")
 	@OneToMany(mappedBy="nosology", cascade=CascadeType.ALL)
 	public List<VaccineVocNosology> getVaccineList() {
-		return theVaccineList;
+		return vaccineList;
 	}
 
 	/**
 	 * Список вакцин
 	 */
-	public void setVaccineList(List<VaccineVocNosology> a_Property) {
-		theVaccineList = a_Property;
-	}
-
-	/**
-	 * Список вакцин
-	 */
-	private List<VaccineVocNosology> theVaccineList;
+	private List<VaccineVocNosology> vaccineList;
 
 }

@@ -27,7 +27,7 @@ public class ChangeIfEmpty implements IChangeCheck, INativeSqlMultipleQueriesSup
 			
 			// сообщение 
 			RequiredCheck requiredCheck = new RequiredCheck() ;
-			requiredCheck.setProperty(theProperty) ;
+			requiredCheck.setProperty(property) ;
 			ret.add(requiredCheck.getNativeSql(aContext)) ;
 			
 			// обновить 
@@ -37,10 +37,10 @@ public class ChangeIfEmpty implements IChangeCheck, INativeSqlMultipleQueriesSup
 			ReplaceHelper replaceHelper = new ReplaceHelper() ;
 			HashValueGetter hash = new HashValueGetter() ;
 			hash.set("TIME_ID", aContext.getTimeId()) ;
-			hash.set("EMPTY_VALUE", aContext.getEntitySqlEmptyValue(theProperty)) ;
+			hash.set("EMPTY_VALUE", aContext.getEntitySqlEmptyValue(property)) ;
 			hash.set("TABLE", aContext.getTableName()) ;
-			hash.set("COLUMN", "\""+theProperty+"\"") ;
-			hash.set("VALUE", aContext.getEntitySqlValue(theProperty, theNewValue)) ;
+			hash.set("COLUMN", "\""+property+"\"") ;
+			hash.set("VALUE", aContext.getEntitySqlValue(property, newValue)) ;
 			ret.add((String) replaceHelper.replaceWithValues(query, hash)) ;
 			
 			return ret ;
@@ -49,17 +49,17 @@ public class ChangeIfEmpty implements IChangeCheck, INativeSqlMultipleQueriesSup
 		}	}
 
     public CheckResult check(ICheckContext aContext) throws CheckException {
-        Object value = aContext.get(theProperty);
+        Object value = aContext.get(property);
         CheckResult ret = new CheckResult();
         if(value instanceof String) {
             String str = (String) value ;
             if(StringUtil.isNullOrEmpty(str)) {
                 ret.setAccepted(true);
-                ret.set(theProperty, theNewValue);
+                ret.set(property, newValue);
             }
         } else if(value==null) {
             ret.setAccepted(true);
-            ret.set(theProperty, theNewValue);
+            ret.set(property, newValue);
         }
         return ret ;
     }
@@ -70,20 +70,20 @@ public class ChangeIfEmpty implements IChangeCheck, INativeSqlMultipleQueriesSup
 
     /** Свойство */
     @Comment("Свойство")
-    public String getProperty() { return theProperty ; }
-    public void setProperty(String aProperty) { theProperty = aProperty ; }
+    public String getProperty() { return property ; }
+    public void setProperty(String aProperty) { property = aProperty ; }
 
     /** Свойство */
-    private String theProperty ;
+    private String property ;
 
     /** Новое значение */
     @Comment("Новое значение")
-	public String getNewValue() { return theNewValue ; }
-	public void setNewValue(String aNewValue) { theNewValue = aNewValue ; }
+	public String getNewValue() { return newValue ; }
+	public void setNewValue(String aNewValue) { newValue = aNewValue ; }
 	
 	/** Новое значение */
-	private String theNewValue ;
+	private String newValue ;
 	
-	private final RequiredCheck theRequiredCheck = new RequiredCheck();
+	private final RequiredCheck requiredCheck = new RequiredCheck();
 
 }

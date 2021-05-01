@@ -14,25 +14,25 @@ public class InterceptorContext {
     }
     
     public InterceptorContext(EntityManager aEntityManager, SessionContext aSessionContext, ElementType aTarget) {
-        theEntityManager = aEntityManager ;
-        theSessionContext = aSessionContext ;
-        theTarget = aTarget ;
+        entityManager = aEntityManager ;
+        sessionContext = aSessionContext ;
+        target = aTarget ;
     }
 
     /** SessionContext */
-    public SessionContext getSessionContext() { return theSessionContext ; }
+    public SessionContext getSessionContext() { return sessionContext ; }
 
 
     /** EntityManager */
-    public EntityManager getEntityManager() { return theEntityManager ; }
+    public EntityManager getEntityManager() { return entityManager ; }
 
     public ElementType getTarget() {
-    	return theTarget ;
+    	return target ;
     }
     
-    private final ElementType theTarget ;
+    private final ElementType target ;
     /** EntityManager */
-    private final EntityManager theEntityManager ;
+    private final EntityManager entityManager ;
     /** SessionContext */
-    private final SessionContext theSessionContext ;
+    private final SessionContext sessionContext ;
 }

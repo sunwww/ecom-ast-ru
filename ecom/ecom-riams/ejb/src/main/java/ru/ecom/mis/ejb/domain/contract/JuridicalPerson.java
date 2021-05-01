@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.contract;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcKodTer;
@@ -25,219 +27,110 @@ import javax.persistence.Transient;
 		}
 )
 
+	@Getter
+	@Setter
 public class JuridicalPerson extends ContractPerson{
 	/** Электронная почта */
-	@Comment("Электронная почта")
-	public String getEmail() {
-		return theEmail;
-	}
-	public void setEmail(String aEmail) {
-		theEmail = aEmail;
-	}
-	private String theEmail;
+	private String email;
 
 	/** Телефоны */
-	@Comment("Телефоны")
-	public String getPhones() {
-		return thePhones;
-	}
-	public void setPhones(String aPhones) {
-		thePhones = aPhones;
-	}
-	private String thePhones;
+	private String phones;
 
 	/** Факс */
-	@Comment("Факс")
-	public String getFax() {
-		return theFax;
-	}
-	public void setFax(String aFax) {
-		theFax = aFax;
-	}
-	private String theFax;
+	private String fax;
 
 	/** КПП */
-	@Comment("КПП")
-	public String getKpp() {
-		return theKpp;
-	}
-	public void setKpp(String aKpp) {
-		theKpp = aKpp;
-	}
-	private String theKpp;
+	private String kpp;
 
 	/** ИНН */
-	@Comment("ИНН")
-	public String getInn() {
-		return theInn;
-	}
-	public void setInn(String aInn) {
-		theInn = aInn;
-	}
-	private String theInn;
+	private String inn;
 
 	/** БИК */
-	@Comment("БИК")
-	public String getBic() {
-		return theBic;
-	}
-	public void setBic(String aBic) {
-		theBic = aBic;
-	}
-	private String theBic;
+	private String bic;
 
 	/** Короткое название */
-	@Comment("Короткое название")
-	public String getShortName() {
-		return theShortName;
-	}
-	public void setShortName(String aShortName) {
-		theShortName = aShortName;
-	}
-	private String theShortName;
+	private String shortName;
 
 	/** Полное название */
-	@Comment("Полное название")
-	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
-	}
-	private String theName;
+	private String name;
 
 	/** Директор */
-	@Comment("Директор")
-	public String getDirector() {
-		return theDirector;
-	}
-	public void setDirector(String aDirector) {
-		theDirector = aDirector;
-	}
-	private String theDirector;
+	private String director;
 
 	/** Почтовый адрес */
-	@Comment("Почтовый адрес")
-	public String getPostAddress() {
-		return thePostAddress;
-	}
-	public void setPostAddress(String aPostAddress) {
-		thePostAddress = aPostAddress;
-	}
-	private String thePostAddress;
+	private String postAddress;
 
 	/** Счет */
-	@Comment("Счет")
-	public String getAccount() {
-		return theAccount;
-	}
-	public void setAccount(String aAccount) {
-		theAccount = aAccount;
-	}
-	private String theAccount;
+	private String account;
 
 	/** Корреспондентский счет */
-	@Comment("Корреспондентский счет")
-	public String getCorAccount() {
-		return theCorAccount;
-	}
-	public void setCorAccount(String aCorAccount) {
-		theCorAccount = aCorAccount;
-	}
-	private String theCorAccount;
+	private String corAccount;
 
 	/** Юридический адрес */
-	@Comment("Юридический адрес")
-	public String getJuridicalAddress() {
-		return theJuridicalAddress;
-	}
-	public void setJuridicalAddress(String aJuridicalAddress) {
-		theJuridicalAddress = aJuridicalAddress;
-	}
-	private String theJuridicalAddress;
+	private String juridicalAddress;
 
 	/** Тип юридической персоны */
 	@Comment("Тип юридической персоны")
 	@OneToOne
 	public VocJuridicalPerson getJuridicalPersonType() {
-		return theJuridicalPersonType;
+		return juridicalPersonType;
 	}
-	public void setJuridicalPersonType(VocJuridicalPerson aJuridicalPersonType) {
-		theJuridicalPersonType = aJuridicalPersonType;
-	}
-	private VocJuridicalPerson theJuridicalPersonType;
+	private VocJuridicalPerson juridicalPersonType;
 
 	/** Организация */
 	@Comment("Организация")
 	@OneToOne
 	public VocOrg getOrganization() {
-		return theOrganization;
+		return organization;
 	}
-	public void setOrganization(VocOrg aOrganization) {
-		theOrganization = aOrganization;
-	}
-	private VocOrg theOrganization;
+	private VocOrg organization;
 
 	/** Статус обслуживаемой персоны */
 	@Comment("Статус обслуживаемой персоны")
 	@OneToOne
 	public VocServedPersonStatus getServedPersonStatus() {
-		return theServedPersonStatus;
+		return servedPersonStatus;
 	}
-	public void setServedPersonStatus(VocServedPersonStatus aServedPersonStatus) {
-		theServedPersonStatus = aServedPersonStatus;
-	}
-	private VocServedPersonStatus theServedPersonStatus;
+	private VocServedPersonStatus servedPersonStatus;
 
 	/** Программа обслуживания */
 	@Comment("Программа обслуживания")
 	@OneToOne
 	public VocServiceProgram getServiceProgram() {
-		return theServiceProgram;
+		return serviceProgram;
 	}
-	public void setServiceProgram(VocServiceProgram aServiceProgram) {
-		theServiceProgram = aServiceProgram;
-	}
-	private VocServiceProgram theServiceProgram;
+	private VocServiceProgram serviceProgram;
 
 	/** Территория */
 	@Comment("Территория")
 	@OneToOne
 	public OmcKodTer getTerritory() {
-		return theTerritory;
+		return territory;
 	}
-	public void setTerritory(OmcKodTer aTerritory) {
-		theTerritory = aTerritory;
-	}
-	private OmcKodTer theTerritory;
+	private OmcKodTer territory;
 	
 	@Transient
 	public String getInformation() {
-		return "Юрид. лицо: " + theName;
+		return "Юрид. лицо: " + name;
 	}
 
 	/** Страховая компания */
 	@Comment("Страховая компания")
 	@OneToOne
-	public RegInsuranceCompany getRegCompany() {return theRegCompany;}
-	public void setRegCompany(RegInsuranceCompany aRegCompany) {theRegCompany = aRegCompany;}
-	private RegInsuranceCompany theRegCompany;
+	public RegInsuranceCompany getRegCompany() {return regCompany;}
+	private RegInsuranceCompany regCompany;
 	
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@OneToOne
-	public VocServiceStream getServiceStream() {return theServiceStream;}
-	public void setServiceStream(VocServiceStream aServiceStream) {theServiceStream = aServiceStream;}
-	private VocServiceStream theServiceStream;
+	public VocServiceStream getServiceStream() {return serviceStream;}
+	private VocServiceStream serviceStream;
 
 	/** ЛПУ*/
 	@Comment("ЛПУ")
 	@OneToOne
 	public MisLpu getLpu() {
-		return theLpu;
+		return lpu;
 	}
-	public void setLpu(MisLpu aLpu) {
-		theLpu = aLpu;
-	}
-	private MisLpu theLpu;
+	private MisLpu lpu;
 }

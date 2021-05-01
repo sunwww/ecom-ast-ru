@@ -3,6 +3,7 @@ package ru.ecom.mis.ejb.form.medcase.kili;
 
 /* import com.sun.java.swing.plaf.windows.XPStyle.Prop; */
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.kili.ProtocolKili;
@@ -25,122 +26,89 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Протокол решения КИЛИ", nameProperties= "id", view="entityParentView-mis_protocolKili.do")
 @Parent(property="deathCase", parentForm=DeathCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/ProtocolKili")
-
+@Setter
 public class ProtocolKiliForm extends IdEntityForm {
 	/** Список дефектов (текст) */
 	@Comment("Список дефектов (текст)")
-	public String getDefectSaveList() {return theDefectSaveList;}
-	public void setDefectSaveList(String aDefectSaveList) {theDefectSaveList = aDefectSaveList;}
+	public String getDefectSaveList() {return defectSaveList;}
 	/** Список дефектов (текст) */
-	private String theDefectSaveList;
+	private String defectSaveList;
 	
 	/** ID протокола */
 	@Comment("ID протокола")
-	public Long getIDProtocol() {return theIDProtocol;}
-	public void setIDProtocol(Long aIDProtocol) {theIDProtocol = aIDProtocol;}
+	public Long getIDProtocol() {return iDProtocol;}
 	/** ID протокола */
-	private Long theIDProtocol;
-	
-	/** Профиль 
-	@Comment("Профиль")
-	@Persist @Required
-	public Long getProfile() {return theProfile;}
-	public void setProfile(Long aProfile) {theProfile = aProfile;}
-	*/
-	/** Профиль 
-	private Long theProfile;
-	*/
-	
+	private Long iDProtocol;
+
 	/** Случай смерти */
 	@Comment("Случай смерти")
 	@Persist
-	public Long getDeathCase() {return theDeathCase;}
-	public void setDeathCase(Long aDeathCase) {theDeathCase = aDeathCase;}
+	public Long getDeathCase() {return deathCase;}
 	/** Случай смерти */
-	private Long theDeathCase;
+	private Long deathCase;
 	
 	/** Дата проведения КИЛИ */
 	@Comment("Дата проведения КИЛИ")
 	@DoDateString @DateString
 	@Persist @Required
-	public String getProtocolDate() {return theProtocolDate;}
-	public void setProtocolDate(String aProtocolDate) {theProtocolDate = aProtocolDate;}
-	/** Дата проведения КИЛИ */
-	private String theProtocolDate;
+	public String getProtocolDate() {return protocolDate;}
+	private String protocolDate;
 	
 	/** Номер протокола */
 	@Comment("Номер протокола")
 	@Persist @Required
-	public String getProtocolNumber() {return theProtocolNumber;}
-	public void setProtocolNumber(String aProtocolNumber) {theProtocolNumber = aProtocolNumber;}
-	/** Номер протокола */
-	private String theProtocolNumber;
+	public String getProtocolNumber() {return protocolNumber;}
+	private String protocolNumber;
 
 	/** Решение КИЛИ */
 	@Comment("Решение КИЛИ")
 	@Persist @Required
-	public Long getConclusion() {return theConclusion;}
-	public void setConclusion(Long aConclusion) {theConclusion = aConclusion;}
-	/** Решение КИЛИ */
-	private Long theConclusion;
+	public Long getConclusion() {return conclusion;}
+	private Long conclusion;
 	
 	/** Дата создания */
 	@Comment("Дата создания")
 	@DoDateString @DateString
 	@Persist
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	/** Дата создания */
-	private String theCreateDate;
+	public String getCreateDate() {return createDate;}
+	private String createDate;
 
 	/** Время создания */
 	@Comment("Время создания")
 	@DoTimeString @TimeString
 	@Persist
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
-	/** Время создания */
-	private String theCreateTime;
+	public String getCreateTime() {return createTime;}
+	private String createTime;
 
 	/** Создано пользователем */
 	@Comment("Создано пользователем")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	/** Создано пользователем */
-	private String theCreateUsername;
+	public String getCreateUsername() {return createUsername;}
+	private String createUsername;
 	
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@DoDateString @DateString
 	@Persist
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
-	/** Дата редактирования */
-	private String theEditDate;
+	public String getEditDate() {return editDate;}
+	private String editDate;
 
 	/** Время редактирования */
 	@Comment("Время редактирования")
 	@DoTimeString @TimeString
 	@Persist
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
-	/** Время редактирования */
-	private String theEditTime;
+	public String getEditTime() {return editTime;}
+	private String editTime;
 
 	/** Редактирование пользователем */
 	@Comment("Редактирование пользователем")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-	/** Редактирование пользователем */
-	private String theEditUsername;
+	public String getEditUsername() {return editUsername;}
+	private String editUsername;
 	
 	/** Примечание */
 	@Comment("Примечание") 
 	@Persist
-	public String getProtocolComment() {return theProtocolComment;}
-	public void setProtocolComment(String aProtocolComment) {theProtocolComment = aProtocolComment;}
-	/** Примечание */
-	private String theProtocolComment;
+	public String getProtocolComment() {return protocolComment;}
+	private String protocolComment;
 }

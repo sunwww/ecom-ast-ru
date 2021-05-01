@@ -8,6 +8,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendar;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarPattern;
@@ -20,70 +22,49 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  */
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class JournalPatternCalendar extends BaseEntity {
 
 	/** Шаблон календаря */
 	@Comment("Шаблон календаря")
 	@OneToOne
-	public WorkCalendarPattern getPattern() {return thePattern;}
-	public void setPattern(WorkCalendarPattern aPattern) {thePattern = aPattern;}
+	public WorkCalendarPattern getPattern() {return pattern;}
 
-	/** Дата начала действия */
-	@Comment("Дата начала действия")
-	public Date getDateFrom() {return theDateFrom;}
-	public void setDateFrom(Date aDateFrom) {theDateFrom = aDateFrom;}
-
-	/** Дата окончания действия */
-	@Comment("Дата окончания действия")
-	public Date getDateTo() {return theDateTo;}
-	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;}
-
-	
-	/** Не действует */
-	@Comment("Не действует")
-	public Boolean getNoActive() {return theNoActive;}
-	public void setNoActive(Boolean aNoActive) {theNoActive = aNoActive;}
-	
 	/** Информация */
 	@Comment("Информация")
 	@Transient
 	public String getInfo() {
 		StringBuilder ret = new StringBuilder() ;
-		if (thePattern!=null) ret.append(thePattern.getInfo()) ;
+		if (pattern!=null) ret.append(pattern.getInfo()) ;
 		return ret.toString();
 	}
 
 	/** Рабочий календарь */
 	@Comment("Рабочий календарь")
 	@ManyToOne
-	public WorkCalendar getWorkCalendar() {return theWorkCalendar;}
-	public void setWorkCalendar(WorkCalendar aWorkCalendar) {theWorkCalendar = aWorkCalendar;}
+	public WorkCalendar getWorkCalendar() {return workCalendar;}
 
 	/** Рабочий календарь */
-	private WorkCalendar theWorkCalendar;
+	private WorkCalendar workCalendar;
 	/** Не действует */
-	private Boolean theNoActive;
+	private Boolean noActive;
 	/** Дата окончания действия */
-	private Date theDateTo;
+	private Date dateTo;
 	/** Дата начала действия */
-	private Date theDateFrom;
+	private Date dateFrom;
 	/** Шаблон календаря */
-	private WorkCalendarPattern thePattern;
-//	/** Рабочая функция */
-//	private WorkFunction theWorkFunction;
+	private WorkCalendarPattern pattern;
 	/**
 	 * Тип занятости
 	 */
 	@Comment("Тип занятости")
 	@OneToOne
 	public VocWorkBusy getWorkBusy() {
-		return theWorkBusy;
-	}
-	public void setWorkBusy(VocWorkBusy aWorkBusy) {
-		theWorkBusy = aWorkBusy;
+		return workBusy;
 	}
 	/**
 	 * Тип занятости
 	 */
-	private VocWorkBusy theWorkBusy;
+	private VocWorkBusy workBusy;
 }

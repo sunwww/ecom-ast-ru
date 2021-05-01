@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.expert;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -26,215 +27,187 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(ClinicExpertCardPreCreateInterceptor.class)
 )
+@Setter
 public class ClinicExpertCardForm extends DirectOfMedicalCommissionForm {
 
 	/** Описание состояния здоровья пациента */
 	@Comment("Описание состояния здоровья пациента")
 	@Persist @Required
-	public String getPatientHealthInfo() {return thePatientHealthInfo;}
-	public void setPatientHealthInfo(String aPatientHealthInfo) {thePatientHealthInfo = aPatientHealthInfo;}
+	public String getPatientHealthInfo() {return patientHealthInfo;}
 	/** Описание состояния здоровья пациента */
-	private String thePatientHealthInfo ;
+	private String patientHealthInfo ;
 
 	/** Лист нетрудоспособности выданный другим ЛПУ */
 	@Comment("Лист нетрудоспособности выданный другим ЛПУ")
 	@Persist
-	public String getAnotherDisabilityNumber() {return theAnotherDisabilityNumber;}
-	public void setAnotherDisabilityNumber(String aAnotherDisabilityNumber) {theAnotherDisabilityNumber = aAnotherDisabilityNumber;}
+	public String getAnotherDisabilityNumber() {return anotherDisabilityNumber;}
 	/** Лист нетрудоспособности выданный другим ЛПУ */
-	private String theAnotherDisabilityNumber ;
+	private String anotherDisabilityNumber ;
 
 	/** Характеристика случая экспертизы */
 	@Comment("Характеристика случая экспертизы")
 	@Persist @Required
-	public Long getPatternCase() {return thePatternCase;}
-	public void setPatternCase(Long aPatternCase) {thePatternCase = aPatternCase;}
-
+	public Long getPatternCase() {return patternCase;}
 
 	/** Вид экспертизы */
 	@Comment("Вид экспертизы")
 	@Persist @Required
-	public Long getModeCase() {return theModeCase;}
-	public void setModeCase(Long aModeCase) {theModeCase = aModeCase;}
+	public Long getModeCase() {return modeCase;}
 
 	/** Предмет экспертизы */
 	@Comment("Предмет экспертизы")
 	@Persist @Required
-	public Long getSubjectCase() {return theSubjectCase;}
-	public void setSubjectCase(Long aSubjectCase) {theSubjectCase = aSubjectCase;}
+	public Long getSubjectCase() {return subjectCase;}
 
 	/** Отклонение от стандартов */
 	@Comment("Отклонение от стандартов")
 	@Persist @Required
-	public Long getDeviationStandards() {return theDeviationStandards;}
-	public void setDeviationStandards(Long aDeviationStandards) {theDeviationStandards = aDeviationStandards;}
+	public Long getDeviationStandards() {return deviationStandards;}
 
 	/** Текст оклонения от стандартов */
 	@Comment("Текст оклонения от стандартов")
 	@Persist 
-	public String getDeviationStandardsText() {return theDeviationStandardsText;}
-	public void setDeviationStandardsText(String aDeviationStandardsText) {theDeviationStandardsText = aDeviationStandardsText;}
+	public String getDeviationStandardsText() {return deviationStandardsText;}
 
 	/** Дефекты */
 	@Comment("Дефекты")
 	@Persist
-	public String getDefects() {return theDefects;}
-	public void setDefects(String aDefects) {theDefects = aDefects;}
+	public String getDefects() {return defects;}
 
 	/** Достижение результата этапа */
 	@Comment("Достижение результата этапа")
 	@Persist
-	public String getResultStep() {return theResultStep;}
-	public void setResultStep(String aResultStep) {theResultStep = aResultStep;}
+	public String getResultStep() {return resultStep;}
 
 	/** Обоснование заключения */
 	@Comment("Обоснование заключения")
 	@Persist @Required
-	public Long getConclusion() {return theConclusion;}
-	public void setConclusion(Long aConclusion) {theConclusion = aConclusion;}
+	public Long getConclusion() {return conclusion;}
 
 	/** Продление */
 	@Comment("Продление")
 	@Persist @DateString @DoDateString
-	public String getConclusionDate() {return theConclusionDate;}
-	public void setConclusionDate(String aConclusionDate) {theConclusionDate = aConclusionDate;}
+	public String getConclusionDate() {return conclusionDate;}
 
 	/** Дата направления в бюро МСЭ */
 	@Comment("Дата направления в бюро МСЭ")
 	@Persist @DateString @DoDateString
-	public String getOrderHADate() {return theOrderHADate;}
-	public void setOrderHADate(String aOrderDate) {theOrderHADate = aOrderDate;}
+	public String getOrderHADate() {return orderHADate;}
 
 	/** Заключение МСЭ */
 	@Comment("Заключение МСЭ")
 	@Persist
-	public String getConclusionHA() {return theConclusionHA;}
-	public void setConclusionHA(String aConclusionHealthAssessment) {theConclusionHA = aConclusionHealthAssessment;}
+	public String getConclusionHA() {return conclusionHA;}
 
 	/** Дата получения заключения МСЭ */
 	@Comment("Дата получения заключения МСЭ")
 	@Persist  @DateString @DoDateString
-	public String getReceiveHADate() {return theReceiveHADate;}
-	public void setReceiveHADate(String aReceiveHADate) {theReceiveHADate = aReceiveHADate;}
+	public String getReceiveHADate() {return receiveHADate;}
 
 	/** Дополнительная информация по заключению */
 	@Comment("Дополнительная информация по заключению")
 	@Persist
-	public String getAdditionInfo() {return theAdditionInfo;}
-	public void setAdditionInfo(String aAdditionInfo) {theAdditionInfo = aAdditionInfo;}
+	public String getAdditionInfo() {return additionInfo;}
 
 	/** Состав экспертов */
 	@Comment("Состав экспертов")
 	@Persist @Required
-	public Long getExpComposition() {return theExpComposition;}
-	public void setExpComposition(Long aExpComposition) {theExpComposition = aExpComposition;}
+	public Long getExpComposition() {return expComposition;}
 
 
 	/** Причина задержки */
 	@Comment("Причина задержки")
 	@Persist
-	public String getDelayReason() {return theDelayReason;}
-	public void setDelayReason(String aDelayReason) {theDelayReason = aDelayReason;}
+	public String getDelayReason() {return delayReason;}
 
 	/** Причина направления */
 	@Comment("Причина направления")
 	@Persist 
-	public Long getReasonDirect() {return theReasonDirect;}
-	public void setReasonDirect(Long aReasonDirect) {theReasonDirect = aReasonDirect;}
+	public Long getReasonDirect() {return reasonDirect;}
 
 	/** Лечение на момент подачи */
 	@Comment("Лечение на момент подачи")
 	@Persist @MaxLength(value = 250)
-	public String getTreatmentCurrent() {return theTreatmentCurrent;}
-	public void setTreatmentCurrent(String aTreatmentCurrent) {theTreatmentCurrent = aTreatmentCurrent;}
+	public String getTreatmentCurrent() {return treatmentCurrent;}
 
 	/** Срок предполагаемого лечения */
 	@Comment("Срок предполагаемого лечения")
 	@Persist @DateString @DoDateString
-	public String getPreFinishDate() {return thePreFinishDate;}
-	public void setPreFinishDate(String aPreFinishDate) {thePreFinishDate = aPreFinishDate;}
+	public String getPreFinishDate() {return preFinishDate;}
 
 	/** Срок предполагаемого лечения */
-	private String thePreFinishDate;
+	private String preFinishDate;
 	/** Лечение на момент подачи */
-	private String theTreatmentCurrent;
+	private String treatmentCurrent;
 	/** Причина направления */
-	private Long theReasonDirect;
+	private Long reasonDirect;
 	/** Причина задержки */
-	private String theDelayReason;
+	private String delayReason;
 	/** Состав экспертов */
-	private Long theExpComposition;
+	private Long expComposition;
 	/** Дополнительная информация по заключению */
-	private String theAdditionInfo;
+	private String additionInfo;
 	/** Дата получения заключения МСЭ */
-	private String theReceiveHADate;
+	private String receiveHADate;
 	/** Заключение МСЭ */
-	private String theConclusionHA;
+	private String conclusionHA;
 	/** Дата направления в бюро МСЭ */
-	private String theOrderHADate;
+	private String orderHADate;
 	/** Продление */
-	private String theConclusionDate;
+	private String conclusionDate;
 	/** Обоснование заключения */
-	private Long theConclusion;
+	private Long conclusion;
 	/** Достижение результата этапа */
-	private String theResultStep;
+	private String resultStep;
 	/** Дефекты */
-	private String theDefects;
+	private String defects;
 	/** Текст оклонения от стандартов */
-	private String theDeviationStandardsText;
+	private String deviationStandardsText;
 	/** Отклонение от стандартов */
-	private Long theDeviationStandards;
+	private Long deviationStandards;
 	/** Предмет экспертизы */
-	private Long theSubjectCase;
+	private Long subjectCase;
 	/** Вид экспертизы */
-	private Long theModeCase;
+	private Long modeCase;
 	/** Характеристика случая экспертизы */
-	private Long thePatternCase;
+	private Long patternCase;
 
-
-
-	
 	/** Дата экспертизы */
 	@Comment("Дата экспертизы")
 	@Persist @DateString @DoDateString @Required
-	public String getExpertDate() {return theExpertDate;}
-	public void setExpertDate(String aExpertDate) {theExpertDate = aExpertDate;}
+	public String getExpertDate() {return expertDate;}
 
 	/** Дата экспертизы */
-	private String theExpertDate;
+	private String expertDate;
 	
 	/** Дополнительная информация по МСЭ */
 	@Comment("Дополнительная информация по МСЭ")
 	@Persist
-	public String getAdditionInfoHA() {return theAdditionInfoHA;}
-	public void setAdditionInfoHA(String aAdditionInfoHA) {theAdditionInfoHA = aAdditionInfoHA;}	
+	public String getAdditionInfoHA() {return additionInfoHA;}
 	/** Дополнительная информация по МСЭ */
-	private String theAdditionInfoHA;
+	private String additionInfoHA;
 	
 	/** Заключение. Направляется... */
 	@Comment("Заключение. Направляется...")
 	@Persist
-	public Long getConclusionSent() {return theConclusionSent;}
-	public void setConclusionSent(Long aConclusionSent) {theConclusionSent = aConclusionSent;}
+	public Long getConclusionSent() {return conclusionSent;}
 
 	/** Заключение. Направляется... */
-	private Long theConclusionSent;
+	private Long conclusionSent;
 	
 	/** Замечания */
 	@Comment("Замечания")
 	@Persist
-	public String getNotes() {return theNotes;}
-	public void setNotes(String aNotes) {theNotes = aNotes;}
+	public String getNotes() {return notes;}
 
 	/** Замечания */
-	private String theNotes;
+	private String notes;
 	
 	/** Порядковый номер в журнале */
 	@Comment("Порядковый номер в журнале")
 	@Persist 
-	public String getNumberInJournal() {return theNumberInJournal;}
-	public void setNumberInJournal(String aNumberInJournal) {theNumberInJournal = aNumberInJournal;}
+	public String getNumberInJournal() {return numberInJournal;}
 
 	/** Порядковый номер в журнале */
-	private String theNumberInJournal;
+	private String numberInJournal;
 }

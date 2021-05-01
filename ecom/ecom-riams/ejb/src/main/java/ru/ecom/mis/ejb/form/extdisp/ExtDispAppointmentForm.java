@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.extdisp;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
@@ -21,34 +22,31 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AViewInterceptors(
         @AEntityFormInterceptor(ExtDispAppointmentInterceptor.class)
 )
+@Setter
 public class ExtDispAppointmentForm extends IdEntityForm{
 	
 	/** Назначение */
 	@Comment("Назначение")
 	@Persist @Required
-	public Long getAppointment(){return theAppointment;}
-	public void setAppointment(Long aAppointment){theAppointment = aAppointment;}
-	private Long theAppointment ;
+	public Long getAppointment(){return appointment;}
+	private Long appointment ;
 	
 	/** Вид обследования */
 	@Comment("Вид обследования")
 	@Persist
-	public Long getKindSurvey(){return theKindSurvey;}
-	public void setKindSurvey(Long aKindSurvey){theKindSurvey = aKindSurvey;}
-	private Long theKindSurvey;
+	public Long getKindSurvey(){return kindSurvey;}
+	private Long kindSurvey;
 	
 	/** Профиль */
 	@Comment("Профиль")
 	@Persist
-	public Long getProfile(){return theProfile;}
-	public void setProfile(Long aProfile){theProfile = aProfile;}
-	private Long theProfile ;
+	public Long getProfile(){return profile;}
+	private Long profile ;
 	
 	/** Дисп. карта */
 	@Comment("Дисп. карта")
 	@Persist
-	public Long getDispCard(){return theDispCard;}
-	public void setDispCard(Long aDispCard){theDispCard = aDispCard;}
-	private Long theDispCard;
+	public Long getDispCard(){return dispCard;}
+	private Long dispCard;
 
 }

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.birth;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.birth.voc.*;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -15,47 +17,35 @@ import javax.persistence.Transient;
 
 @Comment("Оценка новорожденного по Апгар")
 @Entity
+@Getter
+@Setter
 public class ApgarEstimation extends Inspection {
 	
-	/** Время после рождения (мин) */
-	@Comment("Время после рождения (мин)")
-	public Integer getPostNatalTime() {return thePostNatalTime;}
-	public void setPostNatalTime(Integer aPostNatalTime) {thePostNatalTime = aPostNatalTime;}
 
 	/** Сердцебиение */
 	@Comment("Сердцебиение")
 	@OneToOne
-	public VocApgarPalpitation getPalpitation() {return thePalpitation;}
-	public void setPalpitation(VocApgarPalpitation aPalpitation) {thePalpitation = aPalpitation;}
+	public VocApgarPalpitation getPalpitation() {return palpitation;}
 
 	/** Дыхание */
 	@Comment("Дыхание")
 	@OneToOne
-	public VocApgarRespiration getRespiration() {return theRespiration;}
-	public void setRespiration(VocApgarRespiration aRespiration) {theRespiration = aRespiration;}
+	public VocApgarRespiration getRespiration() {return respiration;}
 
 	/** Окраска кожи */
 	@Comment("Окраска кожи")
 	@OneToOne
-	public VocApgarSkinColor getSkinColor() {return theSkinColor;}
-	public void setSkinColor(VocApgarSkinColor aSkinColor) {theSkinColor = aSkinColor;}
+	public VocApgarSkinColor getSkinColor() {return skinColor;}
 
 	/** Тонус мышц */
 	@Comment("Тонус мышц")
 	@OneToOne
-	public VocApgarMuscleTone getMuscleTone() {return theMuscleTone;}
-	public void setMuscleTone(VocApgarMuscleTone aMuscleTone) {theMuscleTone = aMuscleTone;}
+	public VocApgarMuscleTone getMuscleTone() {return muscleTone;}
 
 	/** Рефлексы */
 	@Comment("Рефлексы")
 	@OneToOne
-	public VocApgarReflexes getReflexes() {return theReflexes;}
-	public void setReflexes(VocApgarReflexes aReflexes) {theReflexes = aReflexes;}
-
-	/** Общая оценка (балл) */
-	@Comment("Общая оценка (балл)")
-	public Integer getCommonMark() {return theCommonMark;}
-	public void setCommonMark(Integer aCommonMark) {theCommonMark = aCommonMark;}
+	public VocApgarReflexes getReflexes() {return reflexes;}
 
 	@Transient
 	public String getTypeInformation() {
@@ -63,22 +53,20 @@ public class ApgarEstimation extends Inspection {
 	}
 	@Transient
 	public String getInformation() {
-		return "Общая оценка (балл) " + theCommonMark;
+		return "Общая оценка (балл) " + commonMark;
 	}
 	/** Время после рождения (мин) */
-	private Integer thePostNatalTime;
+	private Integer postNatalTime;
 	/** Сердцебиение */
-	private VocApgarPalpitation thePalpitation;
+	private VocApgarPalpitation palpitation;
 	/** Дыхание */
-	private VocApgarRespiration theRespiration;
+	private VocApgarRespiration respiration;
 	/** Окраска кожи */
-	private VocApgarSkinColor theSkinColor;
+	private VocApgarSkinColor skinColor;
 	/** Тонус мышц */
-	private VocApgarMuscleTone theMuscleTone;
+	private VocApgarMuscleTone muscleTone;
 	/** Рефлексы */
-	private VocApgarReflexes theReflexes;
+	private VocApgarReflexes reflexes;
 	/** Общая оценка (балл) */
-	private Integer theCommonMark;
-	
-	
+	private Integer commonMark;
 }

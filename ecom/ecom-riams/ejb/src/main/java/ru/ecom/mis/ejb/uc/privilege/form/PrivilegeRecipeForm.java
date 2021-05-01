@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.uc.privilege.form;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.uc.privilege.domain.PrivilegeRecipe;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -15,29 +16,23 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 	, shortView="entityShortView-mis_privilegeRecipe.do")
 @Parent(property="privilege", parentForm=PrivilegeForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Person/Privilege/Recipe")
+@Setter
 public class PrivilegeRecipeForm extends RecipeForm {
 	/** Льгота */
 	@Comment("Льгота")
 	public Long getPrivilege() {
-		return thePrivilege;
+		return privilege;
 	}
 
-	public void setPrivilege(Long aPrivilege) {
-		thePrivilege = aPrivilege;
-	}
 	/** Льгота */
-	private Long thePrivilege;
+	private Long privilege;
 	
 	/** Решение КЭК */
 	@Comment("Решение КЭК")
 	public boolean getKekDesicion() {
-		return theKekDesicion;
+		return kekDesicion;
 	}
 
-	public void setKekDesicion(boolean aKekDesicion) {
-		theKekDesicion = aKekDesicion;
-	}
-	
 	/** Решение КЭК */
-	private boolean theKekDesicion;
+	private boolean kekDesicion;
 }

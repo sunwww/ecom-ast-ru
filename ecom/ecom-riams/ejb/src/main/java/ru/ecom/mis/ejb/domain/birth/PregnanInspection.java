@@ -4,6 +4,8 @@ package ru.ecom.mis.ejb.domain.birth;
  * Осмотр беременной
  */
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.birth.voc.*;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -14,123 +16,53 @@ import java.math.BigDecimal;
 
 @Entity
 @Comment("Осмотр беременной")
+@Getter
+@Setter
 public class PregnanInspection extends Inspection {
 	
-	/** Размер таза DSp */
-	@Comment("Размер таза DSp")
-	public Integer getPelvisDSp() {return thePelvisDSp;}
-	public void setPelvisDSp(Integer aPelvisDSp) {thePelvisDSp = aPelvisDSp;	}
-
-	/** Размер таза DCr */
-	@Comment("Размер таза DCr")
-	public Integer getPelvisDCr() {return thePelvisDCr;}
-	public void setPelvisDCr(Integer aPelvisDCr) {thePelvisDCr = aPelvisDCr;}
-
-	/** Размер таза DTr */
-	@Comment("Размер таза DTr")
-	public Integer getPelvisDTr() {return thePelvisDTr;}
-	public void setPelvisDTr(Integer aPelvisDTr) {thePelvisDTr = aPelvisDTr;}
-
-	/** Размера таза CExt */
-	@Comment("Размера таза CExt")
-	public Integer getPelvisCExt() {return thePelvisCExt;}
-	public void setPelvisCExt(Integer aPelvisCExt) {thePelvisCExt = aPelvisCExt;}
-	
-	/** Размер таза СDiag */
-	@Comment("Размер таза СDiag")
-	public Integer getPelvisCDiag() {return thePelvisCDiag;}
-	public void setPelvisCDiag(Integer aPelvisCDiag) {thePelvisCDiag = aPelvisCDiag;}
-	
-	/** Размер таза CLater */
-	@Comment("Размер таза CLater")
-	public Integer getPelvisCLater() {return thePelvisCLater;}
-	public void setPelvisCLater(Integer aPelvisCLater) {thePelvisCLater = aPelvisCLater;}
-
-	/** Продольный размер ромба Михаэлиса */
-	@Comment("Продольный размер ромба Михаэлиса")
-	public Integer getRhombLongitudinal() {return theRhombLongitudinal;}
-	public void setRhombLongitudinal(Integer aRhombLongitudinal) {theRhombLongitudinal = aRhombLongitudinal;}
-
-	/** Поперечный размер ромба Михаэлиса */
-	@Comment("Поперечный размер ромба Михаэлиса")
-	public Integer getRhombTransversal() {return theRhombTransversal;}
-	public void setRhombTransversal(Integer aRhombTransversal) {theRhombTransversal = aRhombTransversal;}
-
-	/** Индекс Соловьева */
-	@Comment("Индекс Соловьева")
-	public BigDecimal getSolovievIndex() {return theSolovievIndex;}
-	public void setSolovievIndex(BigDecimal aSolovievIndex) {theSolovievIndex = aSolovievIndex;}
-
-	/** Окружность живота */
-	@Comment("Окружность живота")
-	public BigDecimal getAbdomenCircle() {return theAbdomenCircle;}
-	public void setAbdomenCircle(BigDecimal aAbdomenCircle) {theAbdomenCircle = aAbdomenCircle;}
-
-	/** Высота матки над лоном */
-	@Comment("Высота матки над лоном")
-	public BigDecimal getUterusHeight() {return theUterusHeight;}
-	public void setUterusHeight(BigDecimal aUterusHeight) {theUterusHeight = aUterusHeight;}
-
 	/** Положение плода */
 	@Comment("Положение плода")
 	@OneToOne
-	public VocFetusLocation getFetusLocation() {return theFetusLocation;}
-	public void setFetusLocation(VocFetusLocation aFetusLocation) {theFetusLocation = aFetusLocation;}
+	public VocFetusLocation getFetusLocation() {return fetusLocation;}
 
 	/** Предлежащая часть */
 	@Comment("Предлежащая часть")
 	@OneToOne
-	public VocPreviusPart getPreviusPart() {return thePreviusPart;}
-	public void setPreviusPart(VocPreviusPart aPreviusPart) {thePreviusPart = aPreviusPart;}
-
-	/** Высота стояния предлежащей части */
-	@Comment("Высота стояния предлежащей части")
-	public BigDecimal getPreviusPartHeight() {return thePreviusPartHeight;}
-	public void setPreviusPartHeight(BigDecimal aPreviusPartHeight) {thePreviusPartHeight = aPreviusPartHeight;}
+	public VocPreviusPart getPreviusPart() {return previusPart;}
 
 	/** Родовая деятельность */
 	@Comment("Родовая деятельность")
 	@OneToOne
-	public VocPregnancyActivity getPregnancyActivity() {return thePregnancyActivity;}
-	public void setPregnancyActivity(VocPregnancyActivity aPregnancyActivity) {thePregnancyActivity = aPregnancyActivity;}
-	
+	public VocPregnancyActivity getPregnancyActivity() {return pregnancyActivity;}
+
 	/** Влагалищные выделения */
 	@Comment("Влагалищные выделения")
 	@OneToOne
-	public VocVaginalDischarge getVaginalDischarge() {return theVaginalDischarge;}
-	public void setVaginalDischarge(VocVaginalDischarge aVaginalDischarge) {theVaginalDischarge = aVaginalDischarge;}
+	public VocVaginalDischarge getVaginalDischarge() {return vaginalDischarge;}
 
 	/** Место сердцебиения плода */
 	@Comment("Место сердцебиения плода")
 	@OneToOne
-	public VocFetusPalpitationPlace getFetusPalpitationPlace() {return theFetusPalpitationPlace;}
-	public void setFetusPalpitationPlace(VocFetusPalpitationPlace aFetusPalpitationPlace) {theFetusPalpitationPlace = aFetusPalpitationPlace;	}
-	
-	/** Частота сердцебиения плода */
-	@Comment("Частота сердцебиения плода")
-	public Integer getFetusPalpitationRate() {return theFetusPalpitationRate;}
-	public void setFetusPalpitationRate(Integer aFetusPalpitationRate) {theFetusPalpitationRate = aFetusPalpitationRate;}
+	public VocFetusPalpitationPlace getFetusPalpitationPlace() {return fetusPalpitationPlace;}
 
-	
 	/** Характер сердцебиения плода */
 	@Comment("Характер сердцебиения плода")
 	@OneToOne
-	public VocFetusPalpitationNature getFetusPalpitationNature() {return theFetusPalpitationNature;}
-	public void setFetusPalpitationNature(VocFetusPalpitationNature aFetusPalpitationNature) {theFetusPalpitationNature = aFetusPalpitationNature;}
+	public VocFetusPalpitationNature getFetusPalpitationNature() {return fetusPalpitationNature;}
 
 	@Transient
 	public String getInformation() {
 		// Размеры таза
-		return "Размеры таза: D Sp" + thePelvisDSp +
-				" D Cr " + thePelvisDCr +
-				" D Tr " + thePelvisDTr +
-				"C ext " + thePelvisCExt +
-				"C diag " + thePelvisCDiag +
-				"C later " + thePelvisCLater +
+		return "Размеры таза: D Sp" + pelvisDSp +
+				" D Cr " + pelvisDCr +
+				" D Tr " + pelvisDTr +
+				"C ext " + pelvisCExt +
+				"C diag " + pelvisCDiag +
+				"C later " + pelvisCLater +
 				//Ромб Михаэлиса
-				". Ромб Михаэлиса прод." + theRhombLongitudinal + " попер. " + theRhombTransversal +
+				". Ромб Михаэлиса прод." + rhombLongitudinal + " попер. " + rhombTransversal +
 				//Индекс Соловьева
-				". Индекс Соловьева " + theSolovievIndex;
+				". Индекс Соловьева " + solovievIndex;
 	}
 	@Transient
 	public String getTypeInformation() {
@@ -154,42 +86,42 @@ public class PregnanInspection extends Inspection {
 	}
 	
 	/** Место сердцебиения плода */
-	private VocFetusPalpitationPlace theFetusPalpitationPlace;
+	private VocFetusPalpitationPlace fetusPalpitationPlace;
 	/** Частота сердцебиения плода */
-	private Integer theFetusPalpitationRate;
+	private Integer fetusPalpitationRate;
 	/** Характер сердцебиения плода */
-	private VocFetusPalpitationNature theFetusPalpitationNature;
+	private VocFetusPalpitationNature fetusPalpitationNature;
 	/** Продольный размер ромба Михаэлиса */
-	private Integer theRhombLongitudinal;
+	private Integer rhombLongitudinal;
 	/** Поперечный размер ромба Михаэлиса */
-	private Integer theRhombTransversal;
+	private Integer rhombTransversal;
 	/** Индекс Соловьева */
-	private BigDecimal theSolovievIndex;
+	private BigDecimal solovievIndex;
 	/** Окружность живота */
-	private BigDecimal theAbdomenCircle;
+	private BigDecimal abdomenCircle;
 	/** Высота матки над лоном */
-	private BigDecimal theUterusHeight;
+	private BigDecimal uterusHeight;
 	/** Положение плода */
-	private VocFetusLocation theFetusLocation;
+	private VocFetusLocation fetusLocation;
 	/** Предлежащая часть */
-	private VocPreviusPart thePreviusPart;
+	private VocPreviusPart previusPart;
 	/** Высота стояния предлежащей части */
-	private BigDecimal thePreviusPartHeight;
+	private BigDecimal previusPartHeight;
 	/** Влагалищные выделения */
-	private VocVaginalDischarge theVaginalDischarge;
+	private VocVaginalDischarge vaginalDischarge;
 	/** Родовая деятельность */
-	private VocPregnancyActivity thePregnancyActivity;
+	private VocPregnancyActivity pregnancyActivity;
 	/** Размер таза DSp */
-	private Integer thePelvisDSp;
+	private Integer pelvisDSp;
 	/** Размер таза DCr */
-	private Integer thePelvisDCr;
+	private Integer pelvisDCr;
 	/** Размер таза DTr */
-	private Integer thePelvisDTr;
+	private Integer pelvisDTr;
 	/** Размера таза CExt */
-	private Integer thePelvisCExt;
+	private Integer pelvisCExt;
 	/** Размер таза СDiag */
-	private Integer thePelvisCDiag;
+	private Integer pelvisCDiag;
 	/** Размер таза CLater */
-	private Integer thePelvisCLater;
+	private Integer pelvisCLater;
 
 }

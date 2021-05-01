@@ -41,7 +41,7 @@ public class LpuAllValueVoc implements IAllValue {
 		for(Object[] lpu : lpus) {
 			 try {
 				 Long id = ConvertSql.parseLong(lpu[0]) ;
-				 theSecurity.checkParent("View", id, context) ;
+				 security.checkParent("View", id, context) ;
 				 //aContext.getEntityManager().refresh(lpu);
 				 add(ret, id, ""+lpu[1], "",aContext.getEntityManager()) ;
 			 } catch (IllegalStateException e) {
@@ -65,5 +65,5 @@ public class LpuAllValueVoc implements IAllValue {
 	}
 	
 
-	private final MisLpuDynamicSecurity theSecurity = new MisLpuDynamicSecurity() ;
+	private final MisLpuDynamicSecurity security = new MisLpuDynamicSecurity() ;
 }

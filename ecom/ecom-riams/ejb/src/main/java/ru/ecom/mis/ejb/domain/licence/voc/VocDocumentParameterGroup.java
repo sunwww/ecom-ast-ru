@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.licence.voc;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -13,6 +15,8 @@ import javax.persistence.Table;
 	@Comment("Справочник групп параметров документа")
 @Entity
 @Table(schema="SQLUser")
+	@Getter
+	@Setter
 public class VocDocumentParameterGroup extends VocBaseEntity{
 	/**
 	 * Тип документа
@@ -20,13 +24,10 @@ public class VocDocumentParameterGroup extends VocBaseEntity{
 	@Comment("Тип документа")
 	@OneToOne
 	public VocExternalDocumentType getType() {
-		return theType;
-	}
-	public void setType(VocExternalDocumentType aType) {
-		theType = aType;
+		return type;
 	}
 	/**
 	 * Тип документа
 	 */
-	private VocExternalDocumentType theType;
+	private VocExternalDocumentType type;
 }

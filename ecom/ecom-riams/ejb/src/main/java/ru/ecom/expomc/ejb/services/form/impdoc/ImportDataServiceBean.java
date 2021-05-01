@@ -25,14 +25,14 @@ public class ImportDataServiceBean implements IImportDataService {
 	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 	
     public Collection<IImportData> listAll(long aTime) {
-        ImportTime importTime = theManager.find(ImportTime.class, aTime)  ;
+        ImportTime importTime = manager.find(ImportTime.class, aTime)  ;
         ImportDocument doc = importTime.getDocument();
 
         if(doc.isTimeSupport()) {
-            return theManager.createQuery("from "+doc.getEntityClassName()+" where time = :time").setParameter("time", aTime)
+            return manager.createQuery("from "+doc.getEntityClassName()+" where time = :time").setParameter("time", aTime)
                     .setMaxResults(20).getResultList();
         } else {
-            return theManager.createQuery("from "+doc.getEntityClassName())
+            return manager.createQuery("from "+doc.getEntityClassName())
                     .setMaxResults(20).getResultList();
         }
     }
@@ -46,7 +46,7 @@ public class ImportDataServiceBean implements IImportDataService {
 		}
 		try {
 			long to = aImportedDataIds[0] ;
-	        ImportTime importTime = theManager.find(ImportTime.class, to)  ;
+	        ImportTime importTime = manager.find(ImportTime.class, to)  ;
 			ImportDocument doc = importTime.getDocument() ;
 			EntityHelper entityHelper = EntityHelper.getInstance() ;
 			ClassLoaderHelper classLoaderHelper = ClassLoaderHelper.getInstance() ; 
@@ -55,8 +55,8 @@ public class ImportDataServiceBean implements IImportDataService {
 			
 			for(int i=1; i<aImportedDataIds.length; i++) {
 				importTime.setComment(importTime.getComment()+" + "
-						+theManager.find(ImportTime.class, aImportedDataIds[i]).getComment()) ;
-				int count = theManager.createNativeQuery("update "+tableName+" set \"time\"=:time where \"time\"=:to")
+						+manager.find(ImportTime.class, aImportedDataIds[i]).getComment()) ;
+				int count = manager.createNativeQuery("update "+tableName+" set \"time\"=:time where \"time\"=:to")
 				 .setParameter("to", aImportedDataIds[i])
 				 .setParameter("time", to)
 				 .executeUpdate();
@@ -69,7 +69,7 @@ public class ImportDataServiceBean implements IImportDataService {
 		}
 	}
 
-    private @PersistenceContext EntityManager theManager ;
+    private @PersistenceContext EntityManager manager ;
 
 
 

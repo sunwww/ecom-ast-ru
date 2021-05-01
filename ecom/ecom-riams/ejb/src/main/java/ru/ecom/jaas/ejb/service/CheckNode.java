@@ -1,5 +1,8 @@
 package ru.ecom.jaas.ejb.service;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -7,39 +10,28 @@ import java.util.LinkedList;
 /**
  *
  */
+@Setter
+@Getter
 public class CheckNode implements Serializable {
 
     public CheckNode(long aId, String aName, boolean aChecked) {
-        theId = aId;
-        theName = aName;
-        theChecked = aChecked;
+        id = aId;
+        name = aName;
+        checked = aChecked;
     }
 
     public CheckNode() {
     }
-
+    public boolean getChecked() {
+        return checked;
+    }
     /** Идентификатор */
-    public long getId() { return theId ; }
-    public void setId(long aId) { theId = aId ; }
-
-    /** Идентификатор */
-    private long theId ;
-    /** Название */
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
-
-    /** Отмечен */
-    public boolean getChecked() { return theChecked ; }
-    public void setChecked(boolean aChecked) { theChecked = aChecked ; }
+    private long id ;
 
     /** Список детей */
-    public Collection<CheckNode> getChilds() { return theChilds ; }
-    public void setChilds(Collection<CheckNode> aChilds) { theChilds = aChilds ; }
-
-    /** Список детей */
-    private Collection<CheckNode> theChilds = new LinkedList<CheckNode>();
+    private Collection<CheckNode> childs = new LinkedList<>();
     /** Отмечен */
-    private boolean theChecked = false ;
+    private boolean checked = false ;
     /** Название */
-    private String theName = "NO_NAME";
+    private String name = "NO_NAME";
 }

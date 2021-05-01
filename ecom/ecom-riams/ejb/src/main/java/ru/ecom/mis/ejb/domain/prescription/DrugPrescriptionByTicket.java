@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.prescription;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.diary.ejb.domain.Diary;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -12,39 +14,20 @@ import javax.persistence.OneToOne;
 @AIndexes({
   @AIndex(properties="diary", table="Prescription")
 })
+@Getter
+@Setter
 public class DrugPrescriptionByTicket extends DrugPrescription {
 	/** Протокол */
 	@Comment("Протокол")
 	@OneToOne 
-	public Diary getDiary() {return theDiary;}
-	public void setDiary(Diary aDiary) {theDiary = aDiary;}
+	public Diary getDiary() {return diary;}
 
 	/** Протокол */
-	private Diary theDiary;
+	private Diary diary;
 	
 	/** Кол-во строковое */
-	@Comment("Кол-во строковое")
-	public String getAmountString() {
-		return theAmountString;
-	}
-
-	public void setAmountString(String aAmountString) {
-		theAmountString = aAmountString;
-	}
-
-	/** Кол-во строковое */
-	private String theAmountString;
-	
-	/** Номер */
-	@Comment("Номер")
-	public String getNumberPrescript() {
-		return theNumberPrescript;
-	}
-
-	public void setNumberPrescript(String aNumberPrescript) {
-		theNumberPrescript = aNumberPrescript;
-	}
+	private String amountString;
 
 	/** Номер */
-	private String theNumberPrescript;
+	private String numberPrescript;
 }

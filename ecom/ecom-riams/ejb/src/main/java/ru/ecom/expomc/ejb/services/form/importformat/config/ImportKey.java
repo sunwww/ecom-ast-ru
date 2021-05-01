@@ -12,32 +12,32 @@ import ru.nuzmsh.util.StringUtil;
  */
 public class ImportKey {
     public void load(Element element, EntityManager aManager) throws InvalidFkException, ClassNotFoundException, MissingAttributeException {
-        theProperty = element.getAttributeValue("property");
-        if (StringUtil.isNullOrEmpty(theProperty)) throw new MissingAttributeException("атрибут property отсутствует");
-        theSelect = element.getAttributeValue("select",theProperty);
+        property = element.getAttributeValue("property");
+        if (StringUtil.isNullOrEmpty(property)) throw new MissingAttributeException("атрибут property отсутствует");
+        select = element.getAttributeValue("select",property);
     }
 
 
     /** Свойство в Hibernate Bean */
-    public String getProperty() { return theProperty ; }
-    public void setProperty(String aProperty) { theProperty = aProperty ; }
+    public String getProperty() { return property ; }
+    public void setProperty(String aProperty) { property = aProperty ; }
 
     /** Путь XPATH для свойства */
-    public String getSelect() { return theSelect ; }
-    public void setSelect(String aSelect) { theSelect = aSelect ; }
+    public String getSelect() { return select ; }
+    public void setSelect(String aSelect) { select = aSelect ; }
 
     /** Свойство в Hibernate Bean */
-    private String theProperty ;
+    private String property ;
 
     /** Путь XPATH для свойства */
-    private String theSelect ;
+    private String select ;
 
 
-    protected void log(String message) { theImportLogger.log(message);  }
-    protected void inclev() { theImportLogger.inclev(); }
-    protected void declev() { theImportLogger.declev(); }
-    public ImportLogger getImportLogger() { return theImportLogger ; }
-    public void setImportLogger(ImportLogger aImportLogger) { theImportLogger = aImportLogger ; }
+    protected void log(String message) { importLogger.log(message);  }
+    protected void inclev() { importLogger.inclev(); }
+    protected void declev() { importLogger.declev(); }
+    public ImportLogger getImportLogger() { return importLogger ; }
+    public void setImportLogger(ImportLogger aImportLogger) { importLogger = aImportLogger ; }
 
-    private ImportLogger theImportLogger ;
+    private ImportLogger importLogger ;
 }

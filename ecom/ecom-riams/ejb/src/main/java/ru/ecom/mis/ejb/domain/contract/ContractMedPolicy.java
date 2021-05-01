@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.contract;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcKodTer;
 import ru.ecom.mis.ejb.domain.contract.voc.VocServedPersonStatus;
 import ru.ecom.mis.ejb.domain.contract.voc.VocServiceProgram;
@@ -14,138 +16,65 @@ import java.sql.Date;
 	 */
 	@Comment("Медицинский полис по договору")
 @Entity
+	@Getter
+	@Setter
 public class ContractMedPolicy extends ContractGuarantee {
 	/** Медицинский полис */
 	@Comment("Медицинский полис")
 	@OneToOne
 	public MedPolicy getMedPolicy() {
-		return theMedPolicy;
+		return medPolicy;
 	}
-	public void setMedPolicy(MedPolicy aMedPolicy) {
-		theMedPolicy = aMedPolicy;
-	}
-	private MedPolicy theMedPolicy;
+	private MedPolicy medPolicy;
 
 	/** Фамилия */
-	@Comment("Фамилия")
-	public String getLastname() {
-		return theLastname;
-	}
-	public void setLastname(String aLastname) {
-		theLastname = aLastname;
-	}
-	private String theLastname;
+	private String lastname;
 
 	/** Имя */
-	@Comment("Имя")
-	public String getFirstname() {
-		return theFirstname;
-	}
-	public void setFirstname(String aFirstname) {
-		theFirstname = aFirstname;
-	}
-	private String theFirstname;
+	private String firstname;
 
 	/** Отчество */
-	@Comment("Отчество")
-	public String getMiddlename() {
-		return theMiddlename;
-	}
-	public void setMiddlename(String aMiddlename) {
-		theMiddlename = aMiddlename;
-	}
-	private String theMiddlename;
+	private String middlename;
 
 	/** День рождения */
-	@Comment("День рождения")
-	public Date getBirthday() {
-		return theBirthday;
-	}
-	public void setBirthday(Date aBirthday) {
-		theBirthday = aBirthday;
-	}
-	private Date theBirthday;
+	private Date birthday;
 
 	/** Серия */
-	@Comment("Серия")
-	public String getSeries() {
-		return theSeries;
-	}
-	public void setSeries(String aSeries) {
-		theSeries = aSeries;
-	}
-	private String theSeries;
+	private String series;
 
 	/** Номер */
-	@Comment("Номер")
-	public String getNumber() {
-		return theNumber;
-	}
-	public void setNumber(String aNumber) {
-		theNumber = aNumber;
-	}
-	private String theNumber;
+	private String number;
 
 	/** Дата начала действия */
-	@Comment("Дата начала действия")
-	public Date getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(Date aDateFrom) {
-		theDateFrom = aDateFrom;
-	}
-	private Date theDateFrom;
+	private Date dateFrom;
 
 	/** Дата окончания действия */
-	@Comment("Дата окончания действия")
-	public Date getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(Date aDateTo) {
-		theDateTo = aDateTo;
-	}
-	private Date theDateTo;
+	private Date dateTo;
 
 	/** Дата объявления недействительности */
-	@Comment("Дата объявления недействительности")
-	public Date getNullityDate() {
-		return theNullityDate;
-	}
-	public void setNullityDate(Date aNullityDate) {
-		theNullityDate = aNullityDate;
-	}
-	private Date theNullityDate;
+	private Date nullityDate;
 
 	/** Программа обслуживания */
 	@Comment("Программа обслуживания")
 	@OneToOne
 	public VocServiceProgram getServiceProgram() {
-		return theServiceProgram;
+		return serviceProgram;
 	}
-	public void setServiceProgram(VocServiceProgram aServiceProgram) {
-		theServiceProgram = aServiceProgram;
-	}
-	private VocServiceProgram theServiceProgram;
+	private VocServiceProgram serviceProgram;
 
 	/** Статус обслуживаемой персоны */
 	@Comment("Статус обслуживаемой персоны")
 	@OneToOne
 	public VocServedPersonStatus getServedPersonStatus() {
-		return theServedPersonStatus;
+		return servedPersonStatus;
 	}
-	public void setServedPersonStatus(VocServedPersonStatus aServedPersonStatus) {
-		theServedPersonStatus = aServedPersonStatus;
-	}
-	private VocServedPersonStatus theServedPersonStatus;
+	private VocServedPersonStatus servedPersonStatus;
 
 	/** Территория */
 	@Comment("Территория")
 	@OneToOne
 	public OmcKodTer getTerritory() {
-		return theTerritory;
+		return territory;
 	}
-	public void setTerritory(OmcKodTer aTerritory) {
-		theTerritory = aTerritory;
-	}
-	private OmcKodTer theTerritory;
+	private OmcKodTer territory;
 }

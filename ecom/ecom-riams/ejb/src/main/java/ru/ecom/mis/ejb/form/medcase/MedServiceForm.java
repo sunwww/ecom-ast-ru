@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -27,7 +28,6 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Медицинская услуга"
         , nameProperties = "name"
         , view = "entityParentView-mis_medService.do"
-//			,list = "entityParentList-mis_medService.do"
 )
 @Parent(property = "parent", parentForm = MedServiceGroupForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedService")
@@ -40,6 +40,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @ACreateInterceptors({
         @AEntityFormInterceptor(MedServiceSaveInterceptor.class)
 })
+@Setter
 public class MedServiceForm extends IdEntityForm {
 
     /**
@@ -48,17 +49,13 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Отображать результат выполнения услуги в отчете по состоящим в отделении пациентам")
     @Persist
     public Boolean getShowInReport() {
-        return theShowInReport;
-    }
-
-    public void setShowInReport(Boolean aShowInReport) {
-        theShowInReport = aShowInReport;
+        return showInReport;
     }
 
     /**
      * Отображать результат выполнения услуги в отчете по состоящим в отделении пациентам
      */
-    private Boolean theShowInReport;
+    private Boolean showInReport;
 
     /**
      * Может назначаться врачом лаборатории
@@ -66,17 +63,13 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Может назначаться врачом лаборатории")
     @Persist
     public Boolean getIsForLabDoctor() {
-        return theIsForLabDoctor;
-    }
-
-    public void setIsForLabDoctor(Boolean aIsForLabDoctor) {
-        theIsForLabDoctor = aIsForLabDoctor;
+        return isForLabDoctor;
     }
 
     /**
      * Может назначаться врачом лаборатории
      */
-    private Boolean theIsForLabDoctor;
+    private Boolean isForLabDoctor;
 
     /**
      * Справочная услуга
@@ -84,11 +77,7 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Справочная услуга")
     @Persist
     public Long getVocMedService() {
-        return theVocMedService;
-    }
-
-    public void setVocMedService(Long aVocMedService) {
-        theVocMedService = aVocMedService;
+        return vocMedService;
     }
 
     /**
@@ -97,11 +86,7 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Родитель")
     @Persist
     public Long getParent() {
-        return theParent;
-    }
-
-    public void setParent(Long aParent) {
-        theParent = aParent;
+        return parent;
     }
 
     /**
@@ -110,11 +95,7 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Справочная услуга")
     @Persist
     public String getVocMedServiceInfo() {
-        return theVocMedServiceInfo;
-    }
-
-    public void setVocMedServiceInfo(String aVocMedServiceInfo) {
-        theVocMedServiceInfo = aVocMedServiceInfo;
+        return vocMedServiceInfo;
     }
 
     /**
@@ -125,24 +106,15 @@ public class MedServiceForm extends IdEntityForm {
     @Required
     @DoUpperCase
     public String getName() {
-        return theName;
+        return name;
     }
-
-    public void setName(String aName) {
-        theName = aName;
-    }
-
 
     /**
      * Проба дерева
      */
     @Comment("Проба дерева")
     public Long getProbaTree() {
-        return theProbaTree;
-    }
-
-    public void setProbaTree(Long aProbaTree) {
-        theProbaTree = aProbaTree;
+        return probaTree;
     }
 
     /**
@@ -153,11 +125,7 @@ public class MedServiceForm extends IdEntityForm {
     @Required
     @DoUpperCase
     public String getCode() {
-        return theCode;
-    }
-
-    public void setCode(String aCode) {
-        theCode = aCode;
+        return code;
     }
 
     /**
@@ -166,11 +134,7 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Пользователь")
     @Persist
     public String getCreateUsername() {
-        return theCreateUsername;
-    }
-
-    public void setCreateUsername(String aCreateUsername) {
-        theCreateUsername = aCreateUsername;
+        return createUsername;
     }
 
     /**
@@ -181,11 +145,7 @@ public class MedServiceForm extends IdEntityForm {
     @DoDateString
     @DateString
     public String getCreateDate() {
-        return theCreateDate;
-    }
-
-    public void setCreateDate(String aCreateDate) {
-        theCreateDate = aCreateDate;
+        return createDate;
     }
 
     /**
@@ -196,11 +156,7 @@ public class MedServiceForm extends IdEntityForm {
     @DoDateString
     @DateString
     public String getStartDate() {
-        return theStartDate;
-    }
-
-    public void setStartDate(String aStartDate) {
-        theStartDate = aStartDate;
+        return startDate;
     }
 
     /**
@@ -211,11 +167,7 @@ public class MedServiceForm extends IdEntityForm {
     @DoDateString
     @DateString
     public String getFinishDate() {
-        return theFinishDate;
-    }
-
-    public void setFinishDate(String aFinishDate) {
-        theFinishDate = aFinishDate;
+        return finishDate;
     }
 
     /**
@@ -224,11 +176,7 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Тип услуги")
     @Persist
     public Long getServiceType() {
-        return theServiceType;
-    }
-
-    public void setServiceType(Long aServiceType) {
-        theServiceType = aServiceType;
+        return serviceType;
     }
 
     /**
@@ -237,76 +185,68 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Тип услуги (инфо)")
     @Persist
     public String getServiceTypeInfo() {
-        return theServiceTypeInfo;
-    }
-
-    public void setServiceTypeInfo(String aServiceTypeInfo) {
-        theServiceTypeInfo = aServiceTypeInfo;
+        return serviceTypeInfo;
     }
 
 
     @Comment("Доп. код услуги")
     @Persist
     public String getAdditionCode() {
-        return theAdditionCode;
-    }
-
-    public void setAdditionCode(String aAdditionCode) {
-        theAdditionCode = aAdditionCode;
+        return additionCode;
     }
 
     /**
      * Доп. код услуги
      */
-    private String theAdditionCode;
+    private String additionCode;
     /**
      * Тип услуги (инфо)
      */
-    private String theServiceTypeInfo;
+    private String serviceTypeInfo;
     /**
      * Тип услуги
      */
-    private Long theServiceType;
+    private Long serviceType;
     /**
      * Дата окончания актуальности
      */
-    private String theFinishDate;
+    private String finishDate;
     /**
      * Дата начала актуальности
      */
-    private String theStartDate;
+    private String startDate;
     /**
      * Дата создания
      */
-    private String theCreateDate;
+    private String createDate;
     /**
      * Пользователь
      */
-    private String theCreateUsername;
+    private String createUsername;
     /**
      * Код услуги
      */
-    private String theCode;
+    private String code;
     /**
      * Проба дерева
      */
-    private Long theProbaTree;
+    private Long probaTree;
     /**
      * Название
      */
-    private String theName;
+    private String name;
     /**
      * Справочная услуга
      */
-    private String theVocMedServiceInfo;
+    private String vocMedServiceInfo;
     /**
      * Родитель
      */
-    private Long theParent;
+    private Long parent;
     /**
      * Справочная услуга
      */
-    private Long theVocMedService;
+    private Long vocMedService;
 
     /**
      * Поликлиническая услуга
@@ -314,17 +254,13 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Поликлиническая услуга")
     @Persist
     public Boolean getIsPoliclinic() {
-        return theIsPoliclinic;
-    }
-
-    public void setIsPoliclinic(Boolean aIsPoliclinic) {
-        theIsPoliclinic = aIsPoliclinic;
+        return isPoliclinic;
     }
 
     /**
      * Поликлиническая услуга
      */
-    private Boolean theIsPoliclinic;
+    private Boolean isPoliclinic;
 
     /**
      * Круглосуточный стационар
@@ -332,17 +268,13 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Круглосуточный стационар")
     @Persist
     public Boolean getIsHospital() {
-        return theIsHospital;
-    }
-
-    public void setIsHospital(Boolean aHospital) {
-        theIsHospital = aHospital;
+        return isHospital;
     }
 
     /**
      * Круглосуточный стационар
      */
-    private Boolean theIsHospital;
+    private Boolean isHospital;
 
     /**
      * Дневной стационар
@@ -350,17 +282,13 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Дневной стационар")
     @Persist
     public Boolean getIsDayHospital() {
-        return theIsDayHospital;
-    }
-
-    public void setIsDayHospital(Boolean aIsDayHospital) {
-        theIsDayHospital = aIsDayHospital;
+        return isDayHospital;
     }
 
     /**
      * Дневной стационар
      */
-    private Boolean theIsDayHospital;
+    private Boolean isDayHospital;
 
     /**
      * Уровонь сложности
@@ -368,17 +296,13 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Уровонь сложности")
     @Persist
     public Long getComplexity() {
-        return theComplexity;
-    }
-
-    public void setComplexity(Long aComplexity) {
-        theComplexity = aComplexity;
+        return complexity;
     }
 
     /**
      * Уровонь сложности
      */
-    private Long theComplexity;
+    private Long complexity;
 
     /**
      * Не входит в ОМС
@@ -386,49 +310,37 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Не входит в ОМС")
     @Persist
     public Boolean getIsNoOmc() {
-        return theIsNoOmc;
-    }
-
-    public void setIsNoOmc(Boolean aIsNoOmc) {
-        theIsNoOmc = aIsNoOmc;
+        return isNoOmc;
     }
 
     /**
      * Не входит в ОМС
      */
-    private Boolean theIsNoOmc;
+    private Boolean isNoOmc;
 
     /**
      * Создать услугу во внеш. справочник
      */
     @Comment("Создать услугу во внеш. справочник")
     public Boolean getVocMedServiceIsCreate() {
-        return theVocMedServiceIsCreate;
-    }
-
-    public void setVocMedServiceIsCreate(Boolean aVocMedServiceIsCreate) {
-        theVocMedServiceIsCreate = aVocMedServiceIsCreate;
+        return vocMedServiceIsCreate;
     }
 
     /**
      * Создать услугу во внеш. справочник
      */
-    private Boolean theVocMedServiceIsCreate;
+    private Boolean vocMedServiceIsCreate;
 
     @Comment("Подтип назначения")
     @Persist
     public Long getServiceSubType() {
-        return theServiceSubType;
-    }
-
-    public void setServiceSubType(Long aServiceSubType) {
-        theServiceSubType = aServiceSubType;
+        return serviceSubType;
     }
 
     /**
      * Подтип назначения
      */
-    private Long theServiceSubType;
+    private Long serviceSubType;
 
     /**
      * Короткое наименование
@@ -436,17 +348,13 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Короткое наименование")
     @Persist
     public String getShortName() {
-        return theShortName;
-    }
-
-    public void setShortName(String aShortName) {
-        theShortName = aShortName;
+        return shortName;
     }
 
     /**
      * Короткое наименование
      */
-    private String theShortName;
+    private String shortName;
 
     /**
      * В другом ЛПУ выполняется
@@ -454,11 +362,7 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("В другом ЛПУ выполняется")
     @Persist
     public Boolean getIsOtherLpu() {
-        return theIsOtherLpu;
-    }
-
-    public void setIsOtherLpu(Boolean aIsOtherLpu) {
-        theIsOtherLpu = aIsOtherLpu;
+        return isOtherLpu;
     }
 
     /**
@@ -467,11 +371,7 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Префикс шаблона печати")
     @Persist
     public String getPrefixTemplate() {
-        return thePrefixTemplate;
-    }
-
-    public void setPrefixTemplate(String aPrefixTemplate) {
-        thePrefixTemplate = aPrefixTemplate;
+        return prefixTemplate;
     }
 
     /**
@@ -480,25 +380,21 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Организация")
     @Persist
     public Long getOrganization() {
-        return theOrganization;
-    }
-
-    public void setOrganization(Long aOrganization) {
-        theOrganization = aOrganization;
+        return organization;
     }
 
     /**
      * Организация
      */
-    private Long theOrganization;
+    private Long organization;
     /**
      * Префикс шаблона печати
      */
-    private String thePrefixTemplate;
+    private String prefixTemplate;
     /**
      * В другом ЛПУ выполняется
      */
-    private Boolean theIsOtherLpu;
+    private Boolean isOtherLpu;
 
     /**
      * Обязательное заполнение комментария
@@ -506,17 +402,13 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Обязательное заполнение комментария")
     @Persist
     public String getIsReqComment() {
-        return theIsReqComment;
-    }
-
-    public void setIsReqComment(String aIsReqComment) {
-        theIsReqComment = aIsReqComment;
+        return isReqComment;
     }
 
     /**
      * Обязательное заполнение комментария
      */
-    private String theIsReqComment;
+    private String isReqComment;
 
     /**
      * Не федеральный код
@@ -524,17 +416,13 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Не федеральный код")
     @Persist
     public Boolean getIsNoFederal() {
-        return theIsNoFederal;
-    }
-
-    public void setIsNoFederal(Boolean aIsNoFederal) {
-        theIsNoFederal = aIsNoFederal;
+        return isNoFederal;
     }
 
     /**
      * Не федеральный код
      */
-    private Boolean theIsNoFederal;
+    private Boolean isNoFederal;
 
     /**
      * УЕТ
@@ -542,17 +430,13 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("УЕТ")
     @Persist
     public String getUet() {
-        return theUet;
-    }
-
-    public void setUet(String aUet) {
-        theUet = aUet;
+        return uet;
     }
 
     /**
      * УЕТ
      */
-    private String theUet;
+    private String uet;
 
     /**
      * Указывать тип аборта при создании операции
@@ -560,17 +444,13 @@ public class MedServiceForm extends IdEntityForm {
     @Persist
     @Comment("Указывать тип аборта при создании операции")
     public Boolean getIsAbortRequired() {
-        return theIsAbortRequired;
-    }
-
-    public void setIsAbortRequired(Boolean aIsAbortRequired) {
-        theIsAbortRequired = aIsAbortRequired;
+        return isAbortRequired;
     }
 
     /**
      * Указывать тип аборта при создании операции
      */
-    private Boolean theIsAbortRequired = false;
+    private Boolean isAbortRequired = false;
 
     /**
      * Отображать код услуги при печати в реестре назначений для лаборатории
@@ -583,27 +463,19 @@ public class MedServiceForm extends IdEntityForm {
         return printCodeLabReestr;
     }
 
-    public void setPrintCodeLabReestr(Boolean printCodeLabReestr) {
-        this.printCodeLabReestr = printCodeLabReestr;
-    }
-
     /**
      * Отображать на сайте как услугу по умолчанию у специалиста
      */
     @Persist
     @Comment("Отображать на сайте как услугу по умолчанию у специалиста")
     public Boolean getIsShowSiteAsDefault() {
-        return theIsShowSiteAsDefault;
-    }
-
-    public void setIsShowSiteAsDefault(Boolean aIsShowSiteAsDefault) {
-        theIsShowSiteAsDefault = aIsShowSiteAsDefault;
+        return isShowSiteAsDefault;
     }
 
     /**
      * Отображать на сайте как услугу по умолчанию у специалиста
      */
-    private Boolean theIsShowSiteAsDefault = false;
+    private Boolean isShowSiteAsDefault = false;
 
     /**
      * Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии
@@ -611,17 +483,13 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии")
     @Persist
     public Long getVocColorIdentity() {
-        return theVocColorIdentity;
-    }
-
-    public void setVocColorIdentity(Long aVocColorIdentity) {
-        theVocColorIdentity = aVocColorIdentity;
+        return vocColorIdentity;
     }
 
     /**
      * Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии
      */
-    private Long theVocColorIdentity;
+    private Long vocColorIdentity;
 
     /**
      * Всегда выполняется для реанимаций
@@ -629,17 +497,13 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Всегда выполняется для реанимаций")
     @Persist
     public Boolean getIsAvailableReanimAlways() {
-        return theIsAvailableReanimAlways;
-    }
-
-    public void setIsAvailableReanimAlways(Boolean aIsAvailableReanimAlways) {
-        theIsAvailableReanimAlways = aIsAvailableReanimAlways;
+        return isAvailableReanimAlways;
     }
 
     /**
      * Всегда выполняется для реанимаций
      */
-    private Boolean theIsAvailableReanimAlways;
+    private Boolean isAvailableReanimAlways;
 
     /**
      * Обязательно указывать статус пациентки?
@@ -647,17 +511,13 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Обязательно указывать статус пациентки?")
     @Persist
     public Boolean getIsAskStatusWomen() {
-        return theIsAskStatusWomen;
-    }
-
-    public void setIsAskStatusWomen(Boolean aIsAskStatusWomen) {
-        theIsAskStatusWomen = aIsAskStatusWomen;
+        return isAskStatusWomen;
     }
 
     /**
      * Обязательно указывать статус пациентки?
      */
-    private Boolean theIsAskStatusWomen;
+    private Boolean isAskStatusWomen;
 
     /**
      * Обязательно указывать вид биоматериала?
@@ -665,17 +525,13 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Обязательно указывать вид биоматериала?")
     @Persist
     public Boolean getIsAskBioType() {
-        return theIsAskBioType;
-    }
-
-    public void setIsAskBioType(Boolean aIsAskBioType) {
-        theIsAskBioType = aIsAskBioType;
+        return isAskBioType;
     }
 
     /**
      * Обязательно указывать вид биоматериала?
      */
-    private Boolean theIsAskBioType;
+    private Boolean isAskBioType;
 
     /**
      * Обязательно указывать рост, вес и возраст?
@@ -683,15 +539,10 @@ public class MedServiceForm extends IdEntityForm {
     @Comment("Обязательно указывать рост, вес и возраст?")
     @Persist
     public Boolean getIsAskHWA() {
-        return theIsAskHWA;
+        return isAskHWA;
     }
-
-    public void setIsAskHWA(Boolean aIsAskHWA) {
-        theIsAskHWA = aIsAskHWA;
-    }
-
     /**
      * Обязательно указывать рост, вес и возраст?
      */
-    private Boolean theIsAskHWA;
+    private Boolean isAskHWA;
 }

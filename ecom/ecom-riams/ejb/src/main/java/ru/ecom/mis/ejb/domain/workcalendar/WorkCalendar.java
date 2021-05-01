@@ -9,6 +9,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -24,79 +26,44 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Календарь работы")
 @Entity
 @AIndexes({
-	@AIndex(unique = false, properties = {"workFunction"})
+	@AIndex(properties = {"workFunction"})
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class WorkCalendar extends BaseEntity{
-	
-	
-	
-//	/** Шаблоны календаря */
-//	@Comment("Шаблоны календаря")
-//	@OneToMany
-//	public List<WorkCalendarPattern> getPatterns() {return thePatterns;}
-//	public void setPatterns(List<WorkCalendarPattern> aPatterns) {thePatterns = aPatterns;}
 
-//	/** Шаблоны календаря */
-//	private List<WorkCalendarPattern> thePatterns;
-	
 	/** Журналы шаблонов календаря */
 	@Comment("Журналы шаблонов календаря")
 	@OneToMany(mappedBy="workCalendar", cascade=CascadeType.ALL)
-	public List<JournalPatternCalendar> getJournals() {return theJournals;}
-	public void setJournals(List<JournalPatternCalendar> aJournals) {theJournals = aJournals;}
+	public List<JournalPatternCalendar> getJournals() {return journals;}
 
 	/** Журналы шаблонов календаря */
-	private List<JournalPatternCalendar> theJournals;
+	private List<JournalPatternCalendar> journals;
 	
 	/** Дни календаря */
 	@Comment("Дни календаря")
 	@OneToMany(mappedBy="workCalendar", cascade=CascadeType.ALL)
-	public List<WorkCalendarDay> getDays() {return theDays;}
-	public void setDays(List<WorkCalendarDay> aDays) {theDays = aDays;}
+	public List<WorkCalendarDay> getDays() {return days;}
 
 	/** Дни календаря */
-	private List<WorkCalendarDay> theDays;
+	private List<WorkCalendarDay> days;
 	
 		
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@OneToOne
 	public WorkFunction getWorkFunction() {
-		return theWorkFunction;
-	}
-
-	public void setWorkFunction(WorkFunction aWorkFunction) {
-		theWorkFunction = aWorkFunction;
+		return workFunction;
 	}
 
 	/** Рабочая функция */
-	private WorkFunction theWorkFunction;
+	private WorkFunction workFunction;
 	
 	/** Автоматически генерировать */
-	@Comment("Автоматически генерировать")
-	public Boolean getAutoGenerate() {
-		return theAutoGenerate;
-	}
-
-	public void setAutoGenerate(Boolean aAutoGenerate) {
-		theAutoGenerate = aAutoGenerate;
-	}
-
-	/** Автоматически генерировать */
-	private Boolean theAutoGenerate;
+	private Boolean autoGenerate;
 	
 	/** Через сколько дней генерировать */
-	@Comment("Через сколько дней генерировать")
-	public Long getAfterDaysGenerate() {
-		return theAfterDaysGenerate;
-	}
-
-	public void setAfterDaysGenerate(Long aAfterDaysGenerate) {
-		theAfterDaysGenerate = aAfterDaysGenerate;
-	}
-
-	/** Через сколько дней генерировать */
-	private Long theAfterDaysGenerate;
+	private Long afterDaysGenerate;
 
 }

@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.E2CancerDrugDate;
@@ -18,23 +19,22 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Использование лек. препарата в онкослучае", nameProperties = "id", view = "entityView-e2_cancerDrugDate.do")
 @EntityFormSecurityPrefix("/Policy/E2")
 @Parent(property = "drug", parentForm = E2CancerDrugForm.class)
+@Setter
 public class E2CancerDrugDateForm extends IdEntityForm {
 
     /** Лекарственный препарат */
     @Comment("Лекарственный препарат")
     @Persist @Required
-    public Long getDrug() {return theDrug;}
-    public void setDrug(Long aDrug) {theDrug = aDrug;}
+    public Long getDrug() {return drug;}
     /** Лекарственный препарат */
-    private Long theDrug ;
+    private Long drug ;
 
     /** Дата введения препарата */
     @Comment("Дата введения препарата")
     @Persist
     @DateString @DoDateString @Required
-    public String getDate() {return theDate;}
-    public void setDate(String aDate) {theDate = aDate;}
+    public String getDate() {return date;}
     /** Дата введения препарата */
-    private String theDate ;
+    private String date ;
 
 }

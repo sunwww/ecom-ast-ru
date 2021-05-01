@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
@@ -32,45 +33,41 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @ACreateInterceptors(
 		@AEntityFormInterceptor(DischargeMedCaseSaveInterceptor.class)
 )
+@Setter
 public class ExtHospitalMedCaseForm extends HospitalMedCaseForm {
 	/** Дата начала */
 	@Comment("Дата начала") 
 	@DateString @DoDateString 
 	@Persist @Required @MaxDateCurrent
-	public String getDateStart() {return theDateStart;	}
-	public void setDateStart(String aDateStart) {theDateStart = aDateStart;}
+	public String getDateStart() {return dateStart;	}
 	/** Дата окончания */
 	@Comment("Дата окончания")
 	@Persist @DateString @DoDateString
 	@Required @MaxDateCurrent
-	public String getDateFinish() {return theDateFinish;}
-	public void setDateFinish(String aDateFinish) {theDateFinish = aDateFinish;}
+	public String getDateFinish() {return dateFinish;}
 
 	/** Клинический диагноз */
 	@Comment("Клинический диагноз")
 	@Required
-	public String getClinicalDiagnos() {return theClinicalDiagnos;}
-	public void setClinicalDiagnos(String aClinicalDiagnos) {theClinicalDiagnos = aClinicalDiagnos;}
+	public String getClinicalDiagnos() {return clinicalDiagnos;}
 
 	/** Клинический диагноз по МКБ-10 */
 	@Comment("Клинический диагноз по МКБ-10")
 	@Required @Mkb
-	public Long getClinicalMkb() {return theClinicalMkb;}
-	public void setClinicalMkb(Long aClinicalMkb) {theClinicalMkb = aClinicalMkb;}
+	public Long getClinicalMkb() {return clinicalMkb;}
 	/** Острота диагноза клинического */
 	@Comment("Острота диагноза клинического")
 	@Required
-	public Long getClinicalActuity() {return theClinicalActuity;}
-	public void setClinicalActuity(Long aClinicalActuity) {theClinicalActuity = aClinicalActuity;}
+	public Long getClinicalActuity() {return clinicalActuity;}
 
 	/** Острота диагноза клинического */
-	private Long theClinicalActuity;
+	private Long clinicalActuity;
 	/** Клинический диагноз */
-	private String theClinicalDiagnos;
+	private String clinicalDiagnos;
 	/** Клинический диагноз по МКБ-10 */
-	private Long theClinicalMkb;
+	private Long clinicalMkb;
 	/** Дата окончания */
-	private String theDateFinish;
+	private String dateFinish;
 	/** Дата начала */
-	private String theDateStart;
+	private String dateStart;
 }

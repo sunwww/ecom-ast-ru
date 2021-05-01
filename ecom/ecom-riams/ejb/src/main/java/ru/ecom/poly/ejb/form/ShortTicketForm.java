@@ -1,5 +1,6 @@
 package ru.ecom.poly.ejb.form;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.poly.ejb.domain.Ticket;
@@ -26,85 +27,75 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Parent(property = "medcard", parentForm = MedcardForm.class)
 @WebTrail(comment = "Талон", nameProperties = "ticketInfo", view = "entityView-poly_short_ticket.do")
 @EntityFormSecurityPrefix("/Policy/Poly/ShortTicket")
+@Setter
 public class ShortTicketForm extends IdEntityForm {
     @Comment("Медицинская карта")
     @Persist @Required
-    public Long getMedcard() { return theMedcard;}
-    public void setMedcard(Long aMedcard) {theMedcard = aMedcard;}
+    public Long getMedcard() { return medcard;}
 
     @Comment("Дата приема")
     @Persist @Required
     @DateString @DoDateString
-    public String getDate() {return theDate;}
-    public void setDate(String aDate) {theDate = aDate;}
+    public String getDate() {return date;}
 
     @Comment("Время приема")
     @Persist 
     @TimeString @DoTimeString
-    public String getTime() { return theTime; }
-    public void setTime(String aTime) { theTime = aTime; }
-	
+    public String getTime() { return time; }
+
 	/** Рабочая функция исполнения */
 	@Comment("Рабочая функция исполнения")
 	@Persist @Required
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aNewProperty) {theWorkFunction = aNewProperty;}
+	public Long getWorkFunction() {return workFunction;}
 
-	
 	/** Рабочая функция исполнения(Инфо) */
 	@Comment("Рабочая функция исполнения(Инфо)")
 	@Persist
-	public String getWorkFunctionInfo() {return theWorkFunctionInfo;}
-	public void setWorkFunctionInfo(String aNewProperty) {theWorkFunctionInfo = aNewProperty;}
+	public String getWorkFunctionInfo() {return workFunctionInfo;}
 
     /** Информация по талону */
 	@Comment("Информация по талону")
 	@Persist
-	public String getTicketInfo() {return theTicketInfo;}
-	public void setTicketInfo(String aTicketInfo) {theTicketInfo = aTicketInfo;}
+	public String getTicketInfo() {return ticketInfo;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DateString @DoDateString
-	public String getDateCreate() {return theDateCreate;}
-	public void setDateCreate(String aDateCreate) {theDateCreate = aDateCreate;}
+	public String getDateCreate() {return dateCreate;}
 
 	/** Время создания */
 	@Comment("Время создания")
 	@Persist @TimeString @DoTimeString
-	public String getTimeCreate() {return theTimeCreate;}
-	public void setTimeCreate(String aTimeCreate) {theTimeCreate = aTimeCreate;}
+	public String getTimeCreate() {return timeCreate;}
 
 	/** Пользователь, создавший запись */
 	@Comment("Пользователь, создавший запись")
 	@Persist
-	public String getUsernameCreate() {return theUsernameCreate;}
-	public void setUsernameCreate(String aUsernameCreate) {theUsernameCreate = aUsernameCreate;}
+	public String getUsernameCreate() {return usernameCreate;}
 
 	/** Представитель */
 	@Comment("Представитель")
 	@Persist
-	public Long getKinsman() {return theKinsman;}
-	public void setKinsman(Long aKinsman) {theKinsman = aKinsman;}
+	public Long getKinsman() {return kinsman;}
 
 	/** Представитель */
-	private Long theKinsman;
+	private Long kinsman;
 	/** Пользователь, создавший запись */
-	private String theUsernameCreate;
+	private String usernameCreate;
 	/** Время создания */
-	private String theTimeCreate;
+	private String timeCreate;
 	/** Дата создания */
-	private String theDateCreate;
+	private String dateCreate;
 	/** Информация по талону */
-	private String theTicketInfo;
+	private String ticketInfo;
 	/** Время приема **/
-    private String theTime;
+    private String time;
 	/** Рабочая функция исполнения */
-	private Long theWorkFunction;
+	private Long workFunction;
 	/** Рабочая функция исполнения(Инфо) */
-	private String theWorkFunctionInfo;
+	private String workFunctionInfo;
     /** Дата выдачи/создания(?) талона */
-    private String theDate;
+    private String date;
     /** Медицинская карта */
-    private Long theMedcard;
+    private Long medcard;
 }

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.report.voc;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -23,59 +25,33 @@ import javax.persistence.Table;
 	,@AIndex(properties = { "parameterType" })
 	,@AIndex(properties = { "sex" })
 })
+@Getter
+@Setter
 public class ReportSetTypeParameterType extends VocBaseEntity{
 	
 	/** Тип параметра */
 	@Comment("Тип параметра")
 	@OneToOne
 	public VocReportSetParameterType getParameterType() {
-		return theParameterType;
+		return parameterType;
 	}
-
-	public void setParameterType(VocReportSetParameterType aParameterType) {
-		theParameterType = aParameterType;
-	}
-	
-	/** Начальный параметр */
-	@Comment("Начальный параметр")
-	public String getCodeFrom() {return theCodeFrom;}
-	public void setCodeFrom(String aCodeFrom) {theCodeFrom = aCodeFrom;}
-
-	/** Последний параметер */
-	@Comment("Последний параметр")
-	public String getCodeTo() {
-		return theCodeTo;
-	}
-
-	public void setCodeTo(String aCodeTo) {
-		theCodeTo = aCodeTo;
-	}
-
-	/** Пол код */
-	@Comment("Пол код")
-	public String getSexCode() {return theSexCode;}
-	public void setSexCode(String aSexCode) {theSexCode = aSexCode;}
 
 	/** Пол */
 	@Comment("Пол")
 	@OneToOne
 	public VocSex getSex() {
-		return theSex;
-	}
-
-	public void setSex(VocSex aSex) {
-		theSex = aSex;
+		return sex;
 	}
 
 	/** Пол */
-	private VocSex theSex;
+	private VocSex sex;
 	/** Пол код */
-	private String theSexCode;
+	private String sexCode;
 	/** Последний параметр */
-	private String theCodeTo;
+	private String codeTo;
 	/** Начальный параметр */
-	private String theCodeFrom;
+	private String codeFrom;
 
 	/** Тип параметра */
-	private VocReportSetParameterType theParameterType;
+	private VocReportSetParameterType parameterType;
 }

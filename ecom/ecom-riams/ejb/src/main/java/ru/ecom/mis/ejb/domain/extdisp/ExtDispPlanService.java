@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.extdisp;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -23,61 +25,52 @@ import javax.persistence.Table;
 		@AIndex(properties="plan")
 		,@AIndex(properties="sex")
 		,@AIndex(properties="ageGroup")
-	    }) 
+	    })
+	@Getter
+	@Setter
 public class ExtDispPlanService extends BaseEntity{
 	/**
 	 * План
 	 */
 	@Comment("План")
 	@ManyToOne
-	public ExtDispPlan getPlan() {return thePlan;}
-	public void setPlan(ExtDispPlan aPlan) {thePlan = aPlan;}
+	public ExtDispPlan getPlan() {return plan;}
 	/**
 	 * План
 	 */
-	private ExtDispPlan thePlan;
+	private ExtDispPlan plan;
 	/**
 	 * Пол
 	 */
 	@Comment("Пол")
 	@OneToOne
-	public VocSex getSex() {return theSex;}
-	public void setSex(VocSex aSex) {theSex = aSex;}
+	public VocSex getSex() {return sex;}
 	/**
 	 * Пол
 	 */
-	private VocSex theSex;
+	private VocSex sex;
 	/**
 	 * Тип услуги
 	 */
 	@Comment("Тип услуги")
 	@OneToOne
-	public VocExtDispService getServiceType() {return theServiceType;}
-	public void setServiceType(VocExtDispService aServiceType) {theServiceType = aServiceType;}
+	public VocExtDispService getServiceType() {return serviceType;}
 	/**
 	 * Тип услуги
 	 */
-	private VocExtDispService theServiceType;
+	private VocExtDispService serviceType;
 	/**
 	 * Возрастная группа
 	 */
 	@Comment("Возрастная группа")
 	@OneToOne
-	public VocExtDispAgeGroup getAgeGroup() {return theAgeGroup;}
-	public void setAgeGroup(VocExtDispAgeGroup aAgeGroup) {theAgeGroup = aAgeGroup;}
+	public VocExtDispAgeGroup getAgeGroup() {return ageGroup;}
 	/**
 	 * Возрастная группа
 	 */
-	private VocExtDispAgeGroup theAgeGroup;
+	private VocExtDispAgeGroup ageGroup;
 	/**
 	 * Визит
 	 */
-	@Comment("Визит")
-	
-	public Boolean getIsVisit() {return theIsVisit;}
-	public void setIsVisit(Boolean aIsVisit) {theIsVisit = aIsVisit;}
-	/**
-	 * Визит
-	 */
-	private Boolean theIsVisit;
+	private Boolean isVisit;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.poly;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
 import ru.ecom.poly.ejb.form.MedcardForm;
@@ -18,222 +19,191 @@ import ru.nuzmsh.forms.validator.validators.*;
 , view="entityParentView-smo_short_spo.do",shortList="entityParentList-smo_short_spo.do?short=Short",list="entityParentList-smo_short_spo.do")
 @Parent(property="medcard", parentForm= MedcardForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Spo")
+@Setter
 public class PolyclinicFullMedCaseForm extends PolyclinicMedCaseForm {
 	/** Дата окончания */
 	@Comment("Дата окончания")
 	@Persist @DateString @DoDateString
-	public String getDateFinish() {return theDateFinish;}
-	public void setDateFinish(String aDateFinish) {theDateFinish = aDateFinish;}
+	public String getDateFinish() {return dateFinish;}
 
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@Persist @Required
-	public Long getServiceStream() {return theServiceStream;}
-	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
-	private Long theServiceStream ;
+	public Long getServiceStream() {return serviceStream;}
+	private Long serviceStream ;
 	/** Код МКБ-10 */
 	@Comment("Код МКБ-10")
 	@Persist @Mkb  @Required
-	public Long getIdc10() {return theIdc10;}
-	public void setIdc10(Long aIdc10) {theIdc10 = aIdc10;}
+	public Long getIdc10() {return idc10;}
 
 	/** Кто завершил */
 	@Comment("Кто завершил")
 	@Persist
-	public Long getFinishFunction() {return theFinishFunction;}
-	public void setFinishFunction(Long aFinishWorker) {	theFinishFunction = aFinishWorker;	}
+	public Long getFinishFunction() {return finishFunction;}
 
 	/** Владелец */
 	@Comment("Владелец")
 	@Persist @Required
-	public Long getOwnerFunction() {return theOwnerFunction;}
-	public void setOwnerFunction(Long aOwner) {theOwnerFunction = aOwner;}
+	public Long getOwnerFunction() {return ownerFunction;}
 
-
-	
 	/** Владелец */
-	private Long theOwnerFunction;
+	private Long ownerFunction;
 	/** Кто завершил */
-	private Long theFinishFunction;
+	private Long finishFunction;
 	/** Код МКБ-10 */
-	private Long theIdc10;
+	private Long idc10;
 	
 	/** Дата окончания */
-	private String theDateFinish;
+	private String dateFinish;
 	
 	/** Даты визитов */
 	@Comment("Даты визитов")
-	public String getOtherTicketDates() {return theOtherTicketDates;}
-	public void setOtherTicketDates(String aOtherTicketDates) {theOtherTicketDates = aOtherTicketDates;}
+	public String getOtherTicketDates() {return otherTicketDates;}
 	/** Даты визитов */
-	private String theOtherTicketDates;
+	private String otherTicketDates;
 
 	/** Дата другого визита */
 	@Comment("Дата другого визита")
 	@DoDateString @DateString
-	public String getOtherTicketDate() {return theOtherTicketDate;}
-	public void setOtherTicketDate(String aOtherTicketDate) {theOtherTicketDate = aOtherTicketDate;}
+	public String getOtherTicketDate() {return otherTicketDate;}
 	/** Дата другого визита */
-	private String theOtherTicketDate;
+	private String otherTicketDate;
 
 	/** Штамп времени исполнения */
 	@Comment("Время исполнения")
 	@TimeString @DoTimeString
-	public String getTimeExecute() {return theTimeExecute;	}
-	public void setTimeExecute(String aNewProperty) {theTimeExecute = aNewProperty;}
+	public String getTimeExecute() {return timeExecute;	}
 
 	/** Время исполнения */
-	private String theTimeExecute;
+	private String timeExecute;
 	
 	/** Инфо по полису */
 	@Comment("Инфо по полису")
-	public String getInfoByPolicy() {return theInfoByPolicy;}
-	public void setInfoByPolicy(String aInfoByPolicy) {theInfoByPolicy = aInfoByPolicy;}
+	public String getInfoByPolicy() {return infoByPolicy;}
 
 	/** Инфо по полису */
-	private String theInfoByPolicy;
+	private String infoByPolicy;
 	
-	
-
     /** Разговор с родственником */
 	@Comment("Разговор с родственником")
 	
-	public Boolean getIsTalk() {return theIsTalk;}
-	public void setIsTalk(Boolean aIsTalk) {theIsTalk = aIsTalk;}
+	public Boolean getIsTalk() {return isTalk;}
 
-	
 	/** Разговор с родственником */
-	private Boolean theIsTalk;
+	private Boolean isTalk;
 	
 	/** Услуги */
 	@Comment("Услуги")
-	public String getMedServices() {return theMedServices;	}
-	public void setMedServices(String aMedServices) {theMedServices = aMedServices;}
+	public String getMedServices() {return medServices;	}
 
 	/** Услуги */
-	private String theMedServices;
+	private String medServices;
 	/** Сопутствующие диагнозы */
 	@Comment("Сопутствующие диагнозы")
-	public String getConcomitantDiseases() {return theConcomitantDiseases;}
-	public void setConcomitantDiseases(String aConcomitantDiseases) {theConcomitantDiseases = aConcomitantDiseases;}
+	public String getConcomitantDiseases() {return concomitantDiseases;}
 
 	/** Сопутствующие диагнозы */
-	private String theConcomitantDiseases;
+	private String concomitantDiseases;
 	
 	/** Заключительный диагноз */
 	@Comment("Заключительный диагноз")
 	@Required
-	public String getConcludingDiagnos() {return theConcludingDiagnos;}
-	public void setConcludingDiagnos(String aConcludingDiagnos) {theConcludingDiagnos = aConcludingDiagnos;}
+	public String getConcludingDiagnos() {return concludingDiagnos;}
 
 	
 	/** Заключительный диагноз */
 	@Comment("Заключительный диагноз")
-	public Long getConcludingTrauma() {return theConcludingTrauma;}
-	public void setConcludingTrauma(Long aConcludingTrauma) {theConcludingTrauma = aConcludingTrauma;}
+	public Long getConcludingTrauma() {return concludingTrauma;}
 
 	/** Острота диагноза заключительного */
 	@Comment("Острота диагноза клинического")
 	@Required
-	public Long getConcludingActuity() {return theConcludingActuity;}
-	public void setConcludingActuity(Long aClinicalActuity) {theConcludingActuity = aClinicalActuity;}
+	public Long getConcludingActuity() {return concludingActuity;}
 
 	/** Результат визита */
 	@Comment("Результат визита")
 	 @Required
-	public Long getVisitResult() {return theVisitResult;	}
-	public void setVisitResult(Long aResult) {theVisitResult = aResult;}
+	public Long getVisitResult() {return visitResult;	}
 
 	/** Цель визита */
 	@Comment("Цель визита")
 	 @Required
-	public Long getVisitReason() {return theVisitReason;	}
-	public void setVisitReason(Long aReason) {theVisitReason = aReason;	}
+	public Long getVisitReason() {return visitReason;	}
 
 	/** Тип рабочего места обслуживания */
 	@Comment("Тип рабочего места обслуживания")
 	 @Required
-	public Long getWorkPlaceType() {return theWorkPlaceType;}
-	public void setWorkPlaceType(Long aWorkPlaceType) {theWorkPlaceType = aWorkPlaceType;	}
+	public Long getWorkPlaceType() {return workPlaceType;}
 
 	 /** Диспансерный учет * */
     
-    public Long getDispRegistration() {return theDispRegistration;}
-    public void setDispRegistration(Long aVocDispanseryRegistration) {theDispRegistration = aVocDispanseryRegistration;}
+    public Long getDispRegistration() {return dispRegistration;}
 
     /** Скорая помощь */
 	@Comment("Скорая помощь")
 	
-	public Long getAmbulance() {return theAmbulance;}
-	public void setAmbulance(Long aAmbulance) {theAmbulance = aAmbulance;}
+	public Long getAmbulance() {return ambulance;}
 
 	/** Исход визита */
 	@Comment("Исход визита")
 	
-	public Long getVisitOutcome() {return theVisitOutcome;}
-	public void setVisitOutcome(Long aVisitOutcome) {theVisitOutcome = aVisitOutcome;}
+	public Long getVisitOutcome() {return visitOutcome;}
 
 	/** Дата начала */
 	@Comment("Дата начала")
 	@Persist @DateString @DoDateString @MaxDateCurrent @Required
-	public String getDateStart() {return theDateStart;}
-	public void setDateStart(String aNewProperty) {theDateStart = aNewProperty;}
+	public String getDateStart() {return dateStart;}
 	/** Дата начала */
-	private String theDateStart;
+	private String dateStart;
 	/** Исход визита */
-	private Long theVisitOutcome;
+	private Long visitOutcome;
 	/** Скорая помощь */
-	private Long theAmbulance;
-    private Long theDispRegistration;
+	private Long ambulance;
+    private Long dispRegistration;
     /** Тип рабочего места обслуживания */
-	private Long theWorkPlaceType;
+	private Long workPlaceType;
 	/** Цель визита */
-	private Long theVisitReason;
+	private Long visitReason;
 	/** Результат визита */
-	private Long theVisitResult;
+	private Long visitResult;
 	/** Острота диагноза заключительного */
-	private Long theConcludingActuity;
+	private Long concludingActuity;
 	/** Заключительный диагноз */
-	private Long theConcludingTrauma;
+	private Long concludingTrauma;
 	
 	/** Заключительный диагноз */
-	private String theConcludingDiagnos;
+	private String concludingDiagnos;
 	
 	
 	/** Внешний направитель (ЛПУ) */
 	@Comment("Внешний направитель (ЛПУ)")
 	
-	public Long getOrderLpu() {return theOrderLpu;}
-	public void setOrderLpu(Long aOrderLpu) {theOrderLpu = aOrderLpu;}
+	public Long getOrderLpu() {return orderLpu;}
 	/** Внешний направитель (ЛПУ) */
-	private Long theOrderLpu;	
+	private Long orderLpu;	
 	/** МКБ */
 	@Comment("МКБ")
-	public String getMkb() {return theMkb;}
-	public void setMkb(String aMkb) {theMkb = aMkb;}
+	public String getMkb() {return mkb;}
 
 	/** МКБ */
-	private String theMkb;
+	private String mkb;
 	
 	/** Доп.код мкб */
 	@Comment("Доп.код мкб")
-	public String getMkbAdc() {return theMkbAdc;}
-	public void setMkbAdc(String aMkbAdc) {theMkbAdc = aMkbAdc;}
+	public String getMkbAdc() {return mkbAdc;}
 
 	/** Доп.код мкб */
-	private String theMkbAdc;
+	private String mkbAdc;
 	
 	/** Карта скорой помощи */
 	@Comment("Карта скорой помощи")
-	public String getAmbulanceCard() {return theAmbulanceCard;}
-	public void setAmbulanceCard(String aAmbulanceCard) {theAmbulanceCard = aAmbulanceCard;}
+	public String getAmbulanceCard() {return ambulanceCard;}
 
 	/** Карта скорой помощи */
-	private String theAmbulanceCard;
+	private String ambulanceCard;
 	@Comment("Медицинская карта")
     
-    public Long getMedcard() {return theMedcard;}
-    public void setMedcard(Long aMedcard) {theMedcard = aMedcard;}
+    public Long getMedcard() {return medcard;}
     /** Медицинская карта */
-    private Long theMedcard;
+    private Long medcard;
 }

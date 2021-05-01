@@ -1,109 +1,108 @@
 package ru.ecom.expomc.ejb.domain.omcvoc;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 @Entity
-@Table(name = "OMC_STANDART",schema="SQLUser")
-@AIndexes
-(
-		{	@AIndex(unique = false, properties = "model")
-	, @AIndex(unique = false, properties = "idcList")
-		}
-)
+@Table(name = "OMC_STANDART", schema = "SQLUser")
+@AIndexes({
+        @AIndex(properties = "model")
+        , @AIndex(properties = "idcList")
+})
+@Getter
+@Setter
 public class OmcStandart extends VocBaseEntity {
-	/** Idc list */
-	@Comment("Idc list")
-	@AFormatFieldSuggest("IdcList")
-	public String getIdcList() {
-		return theIdcList;
-	}
+    /**
+     * Idc list
+     */
+    @Comment("Idc list")
+    @AFormatFieldSuggest("IdcList")
+    public String getIdcList() {
+        return idcList;
+    }
 
-	public void setIdcList(String aIdcList) {
-		theIdcList = aIdcList;
-	}
-	
-	/** Фаза */
-	@Comment("Фаза")
-	@AFormatFieldSuggest("phase")
-	public String getPhase() {
-		return thePhase;
-	}
+    /**
+     * Фаза
+     */
+    @Comment("Фаза")
+    @AFormatFieldSuggest("phase")
+    public String getPhase() {
+        return phase;
+    }
 
-	public void setPhase(String aPhase) {
-		thePhase = aPhase;
-	}
+    /**
+     * stage
+     */
+    @Comment("stage")
+    @AFormatFieldSuggest("stage")
+    public String getStage() {
+        return stage;
+    }
 
-	/** stage */
-	@Comment("stage")
-	@AFormatFieldSuggest("stage")
-	public String getStage() {
-		return theStage;
-	}
+    /**
+     * complicatioC
+     */
+    @Comment("complicatioC")
+    @AFormatFieldSuggest("complicatio")
+    public String getComplication() {
+        return complication;
+    }
 
-	public void setStage(String aStage) {
-		theStage = aStage;
-	}
+    /**
+     * payer
+     */
+    @Comment("payer")
+    @AFormatFieldSuggest("payer")
+    public String getPayer() {
+        return payer;
+    }
 
-	/** complicatioC */
-	@Comment("complicatioC")
-	@AFormatFieldSuggest("complicatio")
-	public String getComplication() {
-		return theComplication;
-	}
+    /**
+     * model
+     */
+    @Comment("model")
+    @AFormatFieldSuggest("model")
+    public String getModel() {
+        return model;
+    }
 
-	public void setComplication(String aComplication) {
-		theComplication = aComplication;
-	}
+    /**
+     * Не действует
+     */
+    private Boolean deprecated;
 
-	/** payer */
-	@Comment("payer")
-	@AFormatFieldSuggest("payer")
-	public String getPayer() {
-		return thePayer;
-	}
+    /**
+     * model
+     */
+    private String model;
+    /**
+     * payer
+     */
+    private String payer;
+    /**
+     * complicatioC
+     */
+    private String complication;
+    /**
+     * stage
+     */
+    private String stage;
+    /**
+     * Фаза
+     */
+    private String phase;
 
-	public void setPayer(String aPayer) {
-		thePayer = aPayer;
-	}
-
-	/** model */
-	@Comment("model")
-	@AFormatFieldSuggest("model")
-	public String getModel() {
-		return theModel;
-	}
-
-	public void setModel(String aModel) {
-		theModel = aModel;
-	}
-	
-	/** Не действует */
-	@Comment("Не действует")
-	public Boolean getDeprecated() {return theDeprecated;}
-	public void setDeprecated(Boolean aDeprecated) {theDeprecated = aDeprecated;}
-
-	/** Не действует */
-	private Boolean theDeprecated;
-
-	/** model */
-	private String theModel;
-	/** payer */
-	private String thePayer;
-	/** complicatioC */
-	private String theComplication;
-	/** stage */
-	private String theStage;
-	/** Фаза */
-	private String thePhase;
-
-	/** Idc list */
-	private String theIdcList;
+    /**
+     * Idc list
+     */
+    private String idcList;
 
 }

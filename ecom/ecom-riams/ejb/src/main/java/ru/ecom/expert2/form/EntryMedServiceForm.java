@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.EntryMedService;
@@ -16,71 +17,62 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Услуга по записи", nameProperties = "id", view = "entityParentView-e2_entryMedService.do")
 @EntityFormSecurityPrefix("/Policy/E2")
 @Parent(property = "entry", parentForm = E2EntryForm.class)
+@Setter
 public class EntryMedServiceForm extends IdEntityForm {
 
 
     /** Запись */
-    private Long theEntry ;
+    private Long entry ;
     /** Мед. услуга */
-    private Long theMedService ;
+    private Long medService ;
 
     @Comment("Запись")
     @Persist @Required
-    public Long getEntry() {return theEntry;}
-    public void setEntry(Long aEntry) {theEntry = aEntry;}
+    public Long getEntry() {return entry;}
 
 
     @Comment("Мед. услуга")
     @Persist @Required
-    public Long getMedService() {return theMedService;}
-    public void setMedService(Long aMedService) {theMedService = aMedService;}
+    public Long getMedService() {return medService;}
 
     /** СНИЛС специалиста, выполневшего услугу */
     @Comment("СНИЛС специалиста, выполневшего услугу")
     @Persist
-    public String getDoctorSnils() {return theDoctorSnils;}
-    public void setDoctorSnils(String aDoctorSnils) {theDoctorSnils = aDoctorSnils;}
-    private String theDoctorSnils ;
+    public String getDoctorSnils() {return doctorSnils;}
+    private String doctorSnils ;
 
     /** Дата оказания мед. услуги */
     @Comment("Дата оказания мед. услуги")
     @Persist
     @DateString @DoDateString
-    public String getServiceDate() {return theServiceDate;}
-    public void setServiceDate(String aServiceDate) {theServiceDate = aServiceDate;}
+    public String getServiceDate() {return serviceDate;}
     /** Дата оказания мед. услуги */
-    private String theServiceDate ;
+    private String serviceDate ;
 
     /** Специальность врача */
     @Comment("Специальность врача")
     @Persist
-    public Long getDoctorSpeciality() {return theDoctorSpeciality;}
-    public void setDoctorSpeciality(Long aDoctorSpeciality) {theDoctorSpeciality = aDoctorSpeciality;}
+    public Long getDoctorSpeciality() {return doctorSpeciality;}
     /** Специальность врача */
-    private Long theDoctorSpeciality ;
+    private Long doctorSpeciality ;
 
     /** Диагноз, выявленный при оказании услуги */
     @Comment("Диагноз, выявленный при оказании услуги")
     @Persist
-    public Long getMkb() {return theMkb;}
-    public void setMkb(Long aMkb) {theMkb = aMkb;}
+    public Long getMkb() {return mkb;}
     /** Диагноз, выявленный при оказании услуги */
-    private Long theMkb ;
+    private Long mkb ;
 
     /** Цена */
     @Comment("Цена")
     @Persist
-    public String getCost() {return theCost;}
-    public void setCost(String aCost) {theCost = aCost;}
+    public String getCost() {return cost;}
     /** Цена */
-    private String theCost ;
+    private String cost ;
 
     /** Коммент */
     @Comment("Коммент")
     @Persist
-    public String getComment() {return theComment;}
-    public void setComment(String aComment) {theComment = aComment;}
-    private String theComment ;
-
-
+    public String getComment() {return comment;}
+    private String comment ;
 }

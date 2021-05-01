@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.vaccination;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.vaccination.Vaccination;
@@ -27,252 +28,222 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Вакцинация", nameProperties= "id", view="entityView-vac_vaccination.do")
 @Parent(property = "medCase", parentForm =MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Vaccination")
+@Setter
 public class VaccinationForm extends IdEntityForm {
 
 	/** Вакцина */
 	@Comment("Вакцина")
 	@Persist @Required 
-	public Long getVaccine() {return theVaccine;}
-	public void setVaccine(Long aNewProperty) {theVaccine = aNewProperty;}
+	public Long getVaccine() {return vaccine;}
 
 	/** Вакцинный материал	 */
 	@Comment("Вакцинный материал")
 	@Persist 
-	public Long getMaterial() {return theMaterial;}
-	public void setMaterial(Long aNewProperty) {theMaterial = aNewProperty;}
+	public Long getMaterial() {return material;}
 
 	/**  Исполнитель */
 	@Comment("Исполнитель")
 	@Persist @Required
-	public Long getExecuteWorker() {return theExecuteWorker;}
-	public void setExecuteWorker(Long aNewProperty) {theExecuteWorker = aNewProperty;}
+	public Long getExecuteWorker() {return executeWorker;}
 
 	/**  Дата исполнения  */
 	@Comment("Дата исполнения")
 	@DateString @DoDateString
 	@Persist @Required
-	public String getExecuteDate() {return theExecuteDate;}
-	public void setExecuteDate(String aNewProperty) {theExecuteDate = aNewProperty;}
+	public String getExecuteDate() {return executeDate;}
 
 	/**  Время исполнения */
 	@Comment("Время исполнения")
 	@TimeString @DoTimeString
 	@Persist @Required
-	public String  getExecuteTime() {return theExecuteTime;}
-	public void setExecuteTime(String aNewProperty) {theExecuteTime = aNewProperty;}
+	public String  getExecuteTime() {return executeTime;}
 
 	/** Доза */
 	@Comment("Доза")
 	@Persist @Required
-	public String getDose() {return theDose;}
-	public void setDose(String aNewProperty) {theDose = aNewProperty;}
+	public String getDose() {return dose;}
 
 	/** Серия */
 	@Comment("Серия")
 	@Persist @Required @DoUpperCase
-	public String getSeries() {return theSeries;}
-	public void setSeries(String aNewProperty) {theSeries = aNewProperty;}
+	public String getSeries() {return series;}
 
 	/** Метод вакцинации */
 	@Comment("Метод вакцинации")
 	@Persist @Required
-	public Long getMethod() {return theMethod;}
-	public void setMethod(Long aNewProperty) {theMethod = aNewProperty;}
+	public Long getMethod() {return method;}
 
 	/** Контрольный номер */
 	@Comment("Контрольный номер")
 	@Persist @Required
-	public String getControlNumber() {return theControlNumber;}
-	public void setControlNumber(String aNewProperty) {theControlNumber = aNewProperty;}
+	public String getControlNumber() {return controlNumber;}
 
 	/** Дата, на которую планировалась вакцинация */
 	@Comment("Дата, на которую планировалась вакцинация")
 	@DateString @DoDateString
 	@Persist
-	public String getPlanDate() {return thePlanDate;}
-	public void setPlanDate(String aNewProperty) {thePlanDate = aNewProperty;}
+	public String getPlanDate() {return planDate;}
 
 	/** Дата следующей вакцинации */
 	@Comment("Дата следующей вакцинации")
 	@DateString @DoDateString
 	@Persist
-	public String getNextDate() {return theNextDate;}
-	public void setNextDate(String aNewProperty) {theNextDate = aNewProperty;}
+	public String getNextDate() {return nextDate;}
 
 	/** Фаза вакцинации */
 	@Comment("Фаза вакцинации")
 	@Persist @Required
-	public Long getPhase() {return thePhase;}
-	public void setPhase(Long aNewProperty) {thePhase = aNewProperty;}
+	public Long getPhase() {return phase;}
 
 	/** Тип причины вакцинации */
 	@Comment("Тип причины вакцинации")
 	@Persist @Required
-	public Long getReasonType() {return theReasonType;}
-	public void setReasonType(Long aNewProperty) {theReasonType = aNewProperty;}
+	public Long getReasonType() {return reasonType;}
 
 	/** Комментарии */
 	@Comment("Комментарии")
 	@Persist
-	public String getComments() {return theComments;}
-	public void setComments(String a_Property) {theComments = a_Property;}
+	public String getComments() {return comments;}
 
 	/** Медотвод */
 	@Comment("Медотвод")
 	@Persist
-	public Long getEstop() {return theEstop;}
-	public void setEstop(Long a_Property) {theEstop = a_Property;}
+	public Long getEstop() {return estop;}
 
 	/** Оценка */
 	@Comment("Оценка")
 	@Persist
-	public Long getAssesment() {return theAssesment;}
-	public void setAssesment(Long a_Property) {theAssesment = a_Property;}
+	public Long getAssesment() {return assesment;}
 
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
+	public Long getPatient() {return patient;}
 
 	/** СМО */
 	@Comment("СМО")
 	@Persist @Required
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+	public Long getMedCase() {return medCase;}
 
 	/** Дата окончания годности */
 	@Comment("Дата окончания годности")
 	@DateString @DoDateString
 	@Persist @Required
-	public String getExpirationDate() {return theExpirationDate;}
-	public void setExpirationDate(String a_Property) {theExpirationDate = a_Property;}
+	public String getExpirationDate() {return expirationDate;}
 
 	/** Разрешил */
 	@Comment("Разрешил")
 	@Persist @Required
-	public Long getPermitWorker() {return thePermitWorker;}
-	public void setPermitWorker(Long a_Property) {thePermitWorker = a_Property;}
-	
+	public Long getPermitWorker() {return permitWorker;}
+
 	/** Недействительность */
 	@Comment("Недействительность")
 	@Persist
-	public Boolean getNoActuality() {return theNoActuality;}
-	public void setNoActuality(Boolean a_Property) {theNoActuality = a_Property;}
-	
+	public Boolean getNoActuality() {return noActuality;}
+
 	/** Информация по вакцине */
 	@Comment("Информация по вакцине")
 	@Persist
-	public String getVaccineInfo() {return theVaccineInfo;}
-	public void setVaccineInfo(String aVaccineInfo) {theVaccineInfo = aVaccineInfo;}
+	public String getVaccineInfo() {return vaccineInfo;}
 
 	/** Разрешил (инфо) */
 	@Comment("Разрешил (инфо)")
 	@Persist
-	public String getPermitWorkerInfo() {return thePermitWorkerInfo;}
-	public void setPermitWorkerInfo(String aPermitWorkerInfo) {thePermitWorkerInfo = aPermitWorkerInfo;}
+	public String getPermitWorkerInfo() {return permitWorkerInfo;}
 
 	/** Исполнитель (инфо) */
 	@Comment("Исполнитель (инфо)")
 	@Persist
-	public String getExecuteWorkerInfo() {return theExecuteWorkerInfo;}
-	public void setExecuteWorkerInfo(String aExecuteWorkerInfo) {theExecuteWorkerInfo = aExecuteWorkerInfo;}
+	public String getExecuteWorkerInfo() {return executeWorkerInfo;}
 
 	/** Фаза (текст) */
 	@Comment("Фаза (текст)")
 	@Persist
-	public String getPhaseText() {return thePhaseText;}
-	public void setPhaseText(String aPhaseText) {thePhaseText = aPhaseText;}
+	public String getPhaseText() {return phaseText;}
 
 	/** Метод (текст) */
 	@Comment("Метод (текст)")
 	@Persist
-	public String getMethodText() {return theMethodText;}
-	public void setMethodText(String aMethodText) {theMethodText = aMethodText;}
+	public String getMethodText() {return methodText;}
 
 	/** Вакцинный материал (текст) */
 	@Comment("Вакцинный материал (текст)")
 	@Persist
-	public String getMaterialText() {return theMaterialText;}
-	public void setMaterialText(String aMaterialText) {theMaterialText = aMaterialText;}
+	public String getMaterialText() {return materialText;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DoDateString @DateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	public String getCreateDate() {return createDate;}
 
 	/** Пользователь, создавший запись */
 	@Comment("Пользователь, создавший запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 
 	/** Реакция вакцинации */
 	@Comment("Реакция вакцинации")
 	@Persist
-	public Long getVaccinationReaction() {return theVaccinationReaction;}
-	public void setVaccinationReaction(Long aVaccinationReaction) {theVaccinationReaction = aVaccinationReaction;}
+	public Long getVaccinationReaction() {return vaccinationReaction;}
 
 	/** Реакция вакцинации */
-	private Long theVaccinationReaction;
+	private Long vaccinationReaction;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	/** Вакцинный материал (текст) */
-	private String theMaterialText;
+	private String materialText;
 	/** Недействительность */
-	private Boolean theNoActuality;
+	private Boolean noActuality;
 	/** Информация по вакцине */
-	private String theVaccineInfo;
+	private String vaccineInfo;
 	/** Исполнитель (инфо) */
-	private String theExecuteWorkerInfo;
+	private String executeWorkerInfo;
 	/** Метод (текст) */
-	private String theMethodText;
+	private String methodText;
 	/** Фаза (текст) */
-	private String thePhaseText;
+	private String phaseText;
 	/** Разрешил (инфо) */
-	private String thePermitWorkerInfo;
+	private String permitWorkerInfo;
 	/** Тип причины вакцинации */
-	private Long theReasonType;
+	private Long reasonType;
 	/** Фаза вакцинации */
-	private Long thePhase;
+	private Long phase;
 	/** Дата следующей вакцинации */
-	private String theNextDate;
+	private String nextDate;
 	/** Дата, на которую планировалась вакцинация */
-	private String thePlanDate;
+	private String planDate;
 	/** Контрольный номер */
-	private String theControlNumber;
+	private String controlNumber;
 	/** Метод вакцинации */
-	private Long theMethod;
+	private Long method;
 	/** Серия */
-	private String theSeries;
+	private String series;
 	/**  Время исполнения */
-	private String theExecuteTime;
+	private String executeTime;
 	/** Вакцина */
-	private Long theVaccine;
+	private Long vaccine;
 	/** Вакцинный материал	 */
-	private Long theMaterial;
+	private Long material;
 	/**  Исполнитель */
-	private Long theExecuteWorker;
+	private Long executeWorker;
 	/**  Дата исполнения  */
-	private String theExecuteDate;
+	private String executeDate;
 	/** Доза */
-	private String theDose;
+	private String dose;
 	/** Разрешил */
-	private Long thePermitWorker;
+	private Long permitWorker;
 	/** Дата окончания годности */
-	private String theExpirationDate;
+	private String expirationDate;
 	/** СМО */
-	private Long theMedCase;
+	private Long medCase;
 	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	/** Комментарии */
-	private String theComments;
+	private String comments;
 	/** Медотвод */
-	private Long theEstop;
+	private Long estop;
 	/** Оценка */
-	private Long theAssesment;
-
+	private Long assesment;
 }

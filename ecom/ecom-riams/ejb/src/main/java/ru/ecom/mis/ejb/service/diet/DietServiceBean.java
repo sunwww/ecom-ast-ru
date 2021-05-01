@@ -32,7 +32,7 @@ public class DietServiceBean implements IDietService {
 	private static final Logger LOG = Logger.getLogger(DietServiceBean.class);
 
 	public String getDescriptionMenu(Long aIdTemplateMenu) {
-		MealMenuTemplate temp = theManager.find(MealMenuTemplate.class, aIdTemplateMenu) ;
+		MealMenuTemplate temp = manager.find(MealMenuTemplate.class, aIdTemplateMenu) ;
 		StringBuilder desc = new StringBuilder() ;
 		desc.append("Описание меню-раскладки №") ;
 		desc.append(aIdTemplateMenu) ;
@@ -66,7 +66,7 @@ public class DietServiceBean implements IDietService {
 	}
 	
 	public String getDescriptionChildMenu(Long aIdTemplateMenu) {
-		MealMenuTemplate temp = theManager.find(MealMenuTemplate.class, aIdTemplateMenu) ;
+		MealMenuTemplate temp = manager.find(MealMenuTemplate.class, aIdTemplateMenu) ;
 		MealMenuTemplate parent = temp.getParentMenu() ;
 		StringBuilder desc = new StringBuilder() ;
 		desc.append("Описание меню №") ;
@@ -100,14 +100,14 @@ public class DietServiceBean implements IDietService {
 		LOG.info("tempMenu="+aIdTemplateMenu) ;
 		LOG.info("curMenu="+aIdParent) ;
 		if (aIdTemplateMenu.equals(aIdParent)) throw new IllegalArgumentException("Невозможно добавить блюда. Шаблон и текущее меню должны быть разными!!!");
-		MealMenuTemplate temp = theManager.find(MealMenuTemplate.class, aIdTemplateMenu) ;
-		MealMenu menu = theManager.find(MealMenu.class, aIdParent) ;
+		MealMenuTemplate temp = manager.find(MealMenuTemplate.class, aIdTemplateMenu) ;
+		MealMenu menu = manager.find(MealMenu.class, aIdParent) ;
 		if (menu instanceof MealMenuTemplate) {
 			for (MealMenuTemplate childMenu: temp.getChildMenus()) {
 				MealMenuTemplate newtemp = new MealMenuTemplate() ;
 				newtemp.setMealTime(childMenu.getMealTime());
 				newtemp.setParentMenu((MealMenuTemplate)menu);
-				theManager.persist(newtemp);
+				manager.persist(newtemp);
 				addDishInMenu(childMenu, newtemp);
 			}
 		}
@@ -120,11 +120,11 @@ public class DietServiceBean implements IDietService {
 	public boolean saveInNewMenu(Long aIdTemplateMenu
 			, Date aDateFrom, Long aLpu
 			, Integer aPortionAmount) {
-		MealMenuTemplate temp = theManager.find(MealMenuTemplate.class, aIdTemplateMenu) ;
-		MisLpu lpu = theManager.find(MisLpu.class, aLpu) ;
+		MealMenuTemplate temp = manager.find(MealMenuTemplate.class, aIdTemplateMenu) ;
+		MisLpu lpu = manager.find(MisLpu.class, aLpu) ;
 		//Date date = getDateFormat(aDateFrom);
 		if (aDateFrom!=null) {
-			//Diet diet = theManager.find(Diet.class, aIdParent) ;
+			//Diet diet = manager.find(Diet.class, aIdParent) ;
 			if (temp!=null && temp.getChildMenus()!=null && !temp.getChildMenus().isEmpty()) {
 				for (MealMenuTemplate childMenu:temp.getChildMenus()) {
 					MealMenuOrder order = new MealMenuOrder() ;
@@ -134,7 +134,7 @@ public class DietServiceBean implements IDietService {
 					order.setPortionAmount(aPortionAmount) ;
 					order.setLpu(lpu);
 					order.setDateFrom(aDateFrom);
-					theManager.persist(order) ;
+					manager.persist(order) ;
 					addDishInMenu(childMenu, order) ;
 				}
 			}
@@ -149,17 +149,17 @@ public class DietServiceBean implements IDietService {
 			,Long aIdDiet, Long aIdServiceStream
 			,Long aIdWeekDay, Date aDateFrom, Date aDateTo) {
 		LOG.info("копирование данных шаблона");
-		//MealMenuTemplate temp = theManager.find(MealMenuTemplate.class, aIdTemplateMenu) ;
-		Diet diet = theManager.find(Diet.class, aIdDiet);
-		VocWeekDay weekDay = theManager.find(VocWeekDay.class, aIdWeekDay);
-		VocServiceStream serviceStream = theManager.find(VocServiceStream.class, aIdServiceStream);
+		//MealMenuTemplate temp = manager.find(MealMenuTemplate.class, aIdTemplateMenu) ;
+		Diet diet = manager.find(Diet.class, aIdDiet);
+		VocWeekDay weekDay = manager.find(VocWeekDay.class, aIdWeekDay);
+		VocServiceStream serviceStream = manager.find(VocServiceStream.class, aIdServiceStream);
 		MealMenuTemplate newtemp = new MealMenuTemplate();
 		newtemp.setDiet(diet);
 		newtemp.setWeekDay(weekDay);
 		newtemp.setDateFrom(aDateFrom);
 		newtemp.setDateTo(aDateTo);
 		newtemp.setServiceStream(serviceStream);
-		theManager.persist(newtemp);
+		manager.persist(newtemp);
 		return saveInExistsMenu(aIdTemplateMenu, newtemp.getId()); 
 	}
 	
@@ -179,10 +179,10 @@ public class DietServiceBean implements IDietService {
 				newDishMenu.setDish(dishMenu.getDish()) ;
 				newDishMenu.setMenu(aMenu) ;
 				list.add(newDishMenu) ;
-				theManager.flush() ;
+				manager.flush() ;
 			}
 			aMenu.setDishes(list) ;
-			theManager.persist(aMenu) ;
+			manager.persist(aMenu) ;
 		}
 	}
 	/* //unused
@@ -232,7 +232,7 @@ public class DietServiceBean implements IDietService {
 	@EJB ILocalEntityFormService 
 	theEntityFormService ;
     @PersistenceContext
-    EntityManager theManager ;
+    EntityManager manager ;
     @Resource
-	SessionContext theContext ;
+	SessionContext context ;
 }

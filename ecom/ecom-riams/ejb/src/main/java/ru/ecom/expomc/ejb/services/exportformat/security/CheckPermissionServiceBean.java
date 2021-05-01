@@ -17,5 +17,5 @@ public class CheckPermissionServiceBean
 
 
 
-    @PersistenceContext private EntityManager theManager;
+    @PersistenceContext private EntityManager manager;
 }

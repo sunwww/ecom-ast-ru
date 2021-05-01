@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.contract;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -24,235 +26,120 @@ import java.sql.Date;
 	
 })
 @EntityListeners(DeleteListener.class)
+@Getter
+@Setter
 public class ContractAccountMedService extends BaseEntity{
 
 	/** Рабочая функция */
 	@OneToOne
-	public WorkFunction getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(WorkFunction aWorkFunction) {theWorkFunction = aWorkFunction;}
-	private WorkFunction theWorkFunction;
+	public WorkFunction getWorkFunction() {return workFunction;}
+	private WorkFunction workFunction;
 
 	/** Признак удаленной записи */
-	@Comment("Признак удаленной записи")
-	public Boolean getIsDeleted() {return theIsDeleted;}
-	public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
-	private Boolean theIsDeleted ;
+	private Boolean isDeleted ;
 
 	/** Договорной счет */
 	@Comment("Договорной счет")
 	@ManyToOne
 	public ContractAccount getAccount() {
-		return theAccount;
+		return account;
 	}
-	public void setAccount(ContractAccount aAccount) {
-		theAccount = aAccount;
-	}
-	private ContractAccount theAccount;
+	private ContractAccount account;
 
 	/** Мед Услуга */
 	@Comment("Мед Услуга")
 	@OneToOne
 	public PriceMedService getMedService() {
-		return theMedService;
+		return medService;
 	}
-	public void setMedService(PriceMedService aMedService) {
-		theMedService = aMedService;
-	}
-	private PriceMedService theMedService;
+	private PriceMedService medService;
 
 	/** Количество */
-	@Comment("Количество")
-	public Integer getCountMedService() {
-		return theCountMedService;
-	}
-	public void setCountMedService(Integer aCountMedService) {
-		theCountMedService = aCountMedService;
-	}
-	private Integer theCountMedService;
+	private Integer countMedService;
 	
-	public BigDecimal getCost() {
-		return theCost;
-	}
-	public void setCost(BigDecimal aCost) {
-		theCost = aCost;
-	}
-	private BigDecimal theCost;
+	private BigDecimal cost;
 
 	/** Обслуживаемая персона */
 	@Comment("Обслуживаемая персона")
 	@OneToOne
-	public ServedPerson getServedPerson() {return theServedPerson;}
-	public void setServedPerson(ServedPerson aServedPerson) {theServedPerson = aServedPerson;}
-	private ServedPerson theServedPerson;
+	public ServedPerson getServedPerson() {return servedPerson;}
+	private ServedPerson servedPerson;
 	
 	/** Гарантийное письмо */
 	@Comment("Гарантийное письмо")
 	@OneToOne
-	public ContractGuarantee getGuarantee() {return theGuarantee;}
-	public void setGuarantee(ContractGuarantee aGuarantee) {theGuarantee = aGuarantee;}
-	private ContractGuarantee theGuarantee;
+	public ContractGuarantee getGuarantee() {return guarantee;}
+	private ContractGuarantee guarantee;
 	
 	/** Диагноз */
 	@Comment("Диагноз")
 	@OneToOne
-	public VocIdc10 getIdc10() {return theIdc10;}
-	public void setIdc10(VocIdc10 aIdc10) {theIdc10 = aIdc10;}
-	private VocIdc10 theIdc10;
+	public VocIdc10 getIdc10() {return idc10;}
+	private VocIdc10 idc10;
 
 	/** Дата начала */
-	@Comment("Дата начала")
-	public Date getDateFrom() {return theDateFrom;}
-	public void setDateFrom(Date aDateFrom) {theDateFrom = aDateFrom;}
-	private Date theDateFrom;
+	private Date dateFrom;
 	
 	/** Дата окончания */
-	@Comment("Дата окончания")
-	public Date getDateTo() {return theDateTo;}
-	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;}
-	private Date theDateTo;
+	private Date dateTo;
 
 	/** СМО */
-	@Comment("СМО")
-	public Long getSmo() {return theSmo;}
-	public void setSmo(Long aSmo) {theSmo = aSmo;}
-	private Long theSmo;
+	private Long smo;
 
 	/** Фамилия */
-	@Comment("Фамилия")
-	public String getLastname() {return theLastname;}
-	public void setLastname(String aLastname) {theLastname = aLastname;}
-	private String theLastname;
+	private String lastname;
 
 	/** Имя */
-	@Comment("Имя")
-	public String getFirstname() {return theFirstname;}
-	public void setFirstname(String aFirstname) {theFirstname = aFirstname;}
-	private String theFirstname;
+	private String firstname;
 
 	/** Отчество */
-	@Comment("Отчество")
-	public String getMiddlename() {return theMiddlename;}
-	public void setMiddlename(String aMiddlename) {theMiddlename = aMiddlename;}
-	private String theMiddlename;
+	private String middlename;
 
 	/** Дата рождения */
-	@Comment("Дата рождения")
-	public Date getBirthday() {return theBirthday;}
-	public void setBirthday(Date aBirthday) {theBirthday = aBirthday;}
-	private Date theBirthday;
+	private Date birthday;
 
 	/** Тип услуги */
-	@Comment("Тип услуги")
-	public String getTypeService() {return theTypeService;}
-	public void setTypeService(String aTypeService) {theTypeService = aTypeService;}
-	private String theTypeService;
+	private String typeService;
 
 	/** ИД мед. случая */
-	@Comment("ИД мед. случая")
-	public Long getIdService() {return theIdService;}
-	public void setIdService(Long aIdService) {theIdService = aIdService;}
-	/** ИД мед. случая */
-	private Long theIdService ;
+	private Long idService ;
 	
 	/** Летальный исход */
-	@Comment("Летальный исход")
-	public Boolean getIsDeath() {
-		return theIsDeath;
-	}
-	public void setIsDeath(Boolean aIsDeath) {
-		theIsDeath = aIsDeath;
-	}
-	private Boolean theIsDeath;
+	private Boolean isDeath;
 	
 	/** Полис */
-	@Comment("Полис")
-	public String getPolSeries() {return thePolSeries;}
-	public void setPolSeries(String aPolSeries) {thePolSeries = aPolSeries;}
-	private String thePolSeries;
+	private String polSeries;
 
 	/** Номер полиса */
-	@Comment("Номер полиса")
-	public String getPolNumber() {return thePolNumber;}
-	public void setPolNumber(String aPolNumber) {thePolNumber = aPolNumber;}
-	private String thePolNumber;
+	private String polNumber;
 
 	/** Услуга внутр */
-	@Comment("Услуга внутр")
-	public Long getServiceIn() {
-		return theServiceIn;
-	}
-	public void setServiceIn(Long aServiceIn) {
-		theServiceIn = aServiceIn;
-	}
-	private Long theServiceIn;
+	private Long serviceIn;
 
 	/** Рабочая функция */
-	@Comment("Рабочая функция")
-	public Long getDoctor() {
-		return theDoctor;
-	}
-	public void setDoctor(Long aDoctor) {
-		theDoctor = aDoctor;
-	}
-	private Long theDoctor;
+	private Long doctor;
 	
 	/** Основной СМО */
-	@Comment("Основной СМО")
-	public Long getMainParent() {
-		return theMainParent;
-	}
-	public void setMainParent(Long aMainParent) {
-		theMainParent = aMainParent;
-	}
-	private Long theMainParent;
+	private Long mainParent;
 	
 	/** Диагноз */
-	@Comment("Диагноз")
-	public Long getDiagnosis() {
-		return theDiagnosis;
-	}
-	public void setDiagnosis(Long aDiagnosis) {
-		theDiagnosis = aDiagnosis;
-	}
-	private Long theDiagnosis;
+	private Long diagnosis;
 	
 	/** Проверино */
-	@Comment("Проверино")
-	public Boolean getIsCheck() {
-		return theIsCheck;
-	}
-	public void setIsCheck(Boolean aIsCheck) {
-		theIsCheck = aIsCheck;
-	}
-	private Boolean theIsCheck;
+	private Boolean isCheck;
 	
 	/** Удаленная запись */
-	@Comment("Удаленная запись")
-	public Boolean getIsDelete() {return theIsDelete;}
-	public void setIsDelete(Boolean aIsDelete) {theIsDelete = aIsDelete;}
-	private Boolean theIsDelete;
+	private Boolean isDelete;
 
 	/** Отредактированная запись */
-	@Comment("Отредактированная запись")
-	public Boolean getIsEdit() {return theIsEdit;}
-	public void setIsEdit(Boolean aIsEdit) {theIsEdit = aIsEdit;}
-	private Boolean theIsEdit;
+	private Boolean isEdit;
 	
 	/** Добавленная запись */
-	@Comment("Добавленная запись")
-	public Boolean getIsCreate() {return theIsCreate;}
-	public void setIsCreate(Boolean aIsCreate) {theIsCreate = aIsCreate;}
-	private Boolean theIsCreate;
+	private Boolean isCreate;
 	
 	/** Пациент */
-	@Comment("Пациент")
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {	thePatient = aPatient;}
-	private Long thePatient;
+	private Long patient;
 
 	/** Комлексная услуга, частью которой является текущий объект */
-	@Comment("Комлексная услуга, частью которой является текущий объект")
-	public Long getFromComplexMedServiceId() {return theFromComplexMedServiceId;}
-	public void setFromComplexMedServiceId(Long aFromComplexMedServiceId) {theFromComplexMedServiceId = aFromComplexMedServiceId;}
-	private Long theFromComplexMedServiceId;
+	private Long fromComplexMedServiceId;
 }

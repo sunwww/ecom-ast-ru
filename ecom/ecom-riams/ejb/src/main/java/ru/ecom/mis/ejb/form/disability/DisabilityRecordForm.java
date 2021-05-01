@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.form.disability;
 
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -31,112 +32,97 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(RecordPreCreate.class)
 )
+@Setter
 public class DisabilityRecordForm extends IdEntityForm {
 
 	/** Документ нетрудоспособности */
 	@Comment("Документ нетрудоспособности")
 	@Persist @Required
-	public Long getDisabilityDocument() {return theDisabilityDocument;}
-	public void setDisabilityDocument(Long aDisabilityDocument) {theDisabilityDocument = aDisabilityDocument;}
+	public Long getDisabilityDocument() {return disabilityDocument;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DateString @DoDateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	private String theCreateDate;
+	public String getCreateDate() {return createDate;}
+	private String createDate;
 	
 	/** Время создания */
 	@Comment("Время создания")
 	@Persist @DateString @DoDateString
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
-	private String theCreateTime;
+	public String getCreateTime() {return createTime;}
+	private String createTime;
 	
 	/** Дата начала нетрудоспособности */
 	@Comment("Дата начала нетрудоспособности")
 	@Persist @DateString @DoDateString @Required
-	public String getDateFrom() {return theDateFrom;}
-	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
-	
+	public String getDateFrom() {return dateFrom;}
+
 	/** Дата окончания нетрудоспособности */
 	@Comment("Дата окончания нетрудоспособности")
 	@Persist @DateString @DoDateString 
-	public String getDateTo() {return theDateTo;}
-	public void setDateTo(String aDateTo) {theDateTo = aDateTo;	}
-	
+	public String getDateTo() {return dateTo;}
+
 	/** Режим нетрудоспособности */
 	@Comment("Режим нетрудоспособности")
 	@Persist
-	public Long getRegime() {return theRegime;}
-	public void setRegime(Long aRegime) {theRegime = aRegime;}
-	
+	public Long getRegime() {return regime;}
+
 	/** СМО, создавшего запись */
 	@Comment("СМО, создавшего запись")
 	@Persist
-	public Long getCreateMedCase() {return theCreateMedCase;}
-	public void setCreateMedCase(Long aCreateMedCase) {theCreateMedCase = aCreateMedCase;}
+	public Long getCreateMedCase() {return createMedCase;}
 
 	/** Специалист */
 	@Comment("Специалист")
 	@Persist 
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public Long getWorkFunction() {return workFunction;}
 
 	/** Режим нетрудоспособности (текст) */
 	@Comment("Режим нетрудоспособности (текст)")
 	@Persist
-	public String getRegimeText() {return theRegimeText;}
-	public void setRegimeText(String aRegimeText) {theRegimeText = aRegimeText;}
+	public String getRegimeText() {return regimeText;}
 
 	/** Информация о записи */
 	@Comment("Информация о записи")
 	@Persist
-	public String getInfo() {return theInfo;}
-	public void setInfo(String aInfo) {theInfo = aInfo;}
+	public String getInfo() {return info;}
 
 	/** Рабочая функция инфо */
 	@Comment("Рабочая функция инфо")
 	@Persist
-	public String getWorkFunctionInfo() {return theWorkFunctionInfo;}
-	public void setWorkFunctionInfo(String aWorkFunctionInfo) {theWorkFunctionInfo = aWorkFunctionInfo;}
+	public String getWorkFunctionInfo() {return workFunctionInfo;}
 
 	/** Доп. рабочая функция */
 	@Comment("Доп. рабочая функция")
 	@Persist
-	public Long getWorkFunctionAdd() {return theWorkFunctionAdd;}
-	public void setWorkFunctionAdd(Long aWorkFunctionAdd) {theWorkFunctionAdd = aWorkFunctionAdd;}
+	public Long getWorkFunctionAdd() {return workFunctionAdd;}
 
 	/** Доп. рабочая функция */
-	private Long theWorkFunctionAdd;
+	private Long workFunctionAdd;
 	/** Рабочая функция инфо */
-	private String theWorkFunctionInfo;
+	private String workFunctionInfo;
 	/** Информация о записи */
-	private String theInfo;
+	private String info;
 	/** Режим нетрудоспособности (текст) */
-	private String theRegimeText;
+	private String regimeText;
 	/** Специалист */
-	private Long theWorkFunction;
+	private Long workFunction;
 	/** Документ нетрудоспособности */
-	private Long theDisabilityDocument;
+	private Long disabilityDocument;
 	/** Дата начала нетрудоспособности */
-	private String theDateFrom;
+	private String dateFrom;
 	/** Дата окончания нетрудоспособности */
-	private String theDateTo;
+	private String dateTo;
 	/** Режим нетрудоспособности */
-	private Long theRegime;
+	private Long regime;
 	/** СМО, создавшего запись */
-	private Long theCreateMedCase;
+	private Long createMedCase;
 	/**
 	 * Новое свойство
 	 */
 	@Comment("Новое свойство")
 	@Persist
-	public String getWorkFunctionAddInfo() {return theWorkFunctionAddInfo;}
-	/** Новое свойство */
-	public void setWorkFunctionAddInfo(String a_Property) {theWorkFunctionAddInfo = a_Property;}
-
-	/** Новое свойство */
-	private String theWorkFunctionAddInfo;
+	public String getWorkFunctionAddInfo() {return workFunctionAddInfo;}
+	private String workFunctionAddInfo;
 
 }

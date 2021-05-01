@@ -1,5 +1,7 @@
 package ru.ecom.expomc.ejb.domain.omcvoc;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.NoLiveBaseEntity;
 import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -27,6 +29,8 @@ import java.io.Serializable;
 @AIndex(properties = {"time", "name"}),
 @AIndex(properties = {"time", "code", "name"})
         })
+@Getter
+@Setter
 public class OmcAbstractVoc extends NoLiveBaseEntity implements Serializable, IImportData {
 
     /** Код */
@@ -35,27 +39,24 @@ public class OmcAbstractVoc extends NoLiveBaseEntity implements Serializable, II
     	,"C_PRVD","AS","KL","Q_Z", "TYPS", "CASUS", "EXPERT"
             , "TCOD", "KOD_FOMS", "RNUMBER","COD","CODE","MCOD" })
     @Column(name="voc_code")
-    public String getCode() { return theCode ; }
-    public void setCode(String aCode) { theCode = aCode ; }
+    public String getCode() { return code; }
 
     /** Название района */
     @Comment("Наименование")
     @AFormatFieldSuggest({"NAME","DESCRIPTIO", "DISCRIPTIO"
     	,"N_PRVD","NAME_Z","NAZV", "NAZV_PRE","NAME_MOP"})
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
+    public String getName() { return name; }
 
     /** Время импорта */
     @Column(name="voc_time")
-    public long getTime() { return theTime ; }
-    public void setTime(long aTime) { theTime = aTime ; }
+    public long getTime() { return time; }
 
 
     /** Название района */
-    private String theName ;
+    private String name;
     /** Код */
-    private String theCode ;
+    private String code;
     /** Время импорта */
-    private long theTime ;
+    private long time;
 
 }

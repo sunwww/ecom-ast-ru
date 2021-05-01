@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.patient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.patient.voc.VocMedPolicyOmc;
 import ru.ecom.mis.ejb.domain.patient.voc.VocOrg;
@@ -14,18 +16,12 @@ import javax.persistence.Transient;
  * Полис ОМС
  */
 @Entity
+@Getter
+@Setter
 public class MedPolicyOmc extends MedPolicy {
 
 	/** Город нахождения СМО */
-	@Comment("Город нахождения СМО")
-	public String getInsuranceCompanyCity() {
-		return theInsuranceCompanyCity;
-	}
-	public void setInsuranceCompanyCity(String aInsuranceCompanyCity) {
-		theInsuranceCompanyCity = aInsuranceCompanyCity;
-	}
-	/** Город нахождения СМО */
-	private String theInsuranceCompanyCity;
+	private String insuranceCompanyCity;
 
     @Transient
     public String getText() {
@@ -55,31 +51,26 @@ public class MedPolicyOmc extends MedPolicy {
 
     /** Предприятие */
     @OneToOne
-    public VocOrg getOrg() { return theOrg ; }
-    public void setOrg(VocOrg aOrg) { theOrg = aOrg ; }
+    public VocOrg getOrg() { return org ; }
     @Deprecated
-    private VocOrg theOrg ;
+    private VocOrg org ;
 
     /** Прикрепленное ЛПУ */
 	@Comment("Прикрепленное ЛПУ")
 	@OneToOne
     @Deprecated
 	public MisLpu getAttachedLpu() {
-		return theAttachedLpu;
-	}
-	public void setAttachedLpu(MisLpu aAttachedLpu) {
-		theAttachedLpu = aAttachedLpu;
+		return attachedLpu;
 	}
     @Deprecated
-    private MisLpu theAttachedLpu;
+    private MisLpu attachedLpu;
 
 	/** Тип полиса */
 	@Comment("Тип полиса")
 	@OneToOne
-	public VocMedPolicyOmc getType() {return theType;}
-	public void setType(VocMedPolicyOmc aType) {theType = aType;}
+	public VocMedPolicyOmc getType() {return type;}
 
 	/** Тип полиса */
-	private VocMedPolicyOmc theType;
+	private VocMedPolicyOmc type;
 
 }

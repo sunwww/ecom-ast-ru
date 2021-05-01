@@ -1,6 +1,8 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.util.DurationUtil;
@@ -26,7 +28,9 @@ import javax.persistence.Transient;
 	,@AIndex(properties="dateFinish", table="MedCase")
 	,@AIndex(properties="transferDate", table="MedCase")
     ,@AIndex(properties="prevMedCase", table="MedCase")
-}) 
+})
+@Getter
+@Setter
 public class DepartmentMedCase extends HospitalMedCase {
 
 	@Comment("Главный диагноз случая")
@@ -41,43 +45,37 @@ public class DepartmentMedCase extends HospitalMedCase {
 	/** Отделение перевода */
 	@Comment("Отделение перевода")
 	@OneToOne
-	public MisLpu getTransferDepartment() {return theTransferDepartment;}
-	public void setTransferDepartment(MisLpu aTransferDepartment) {theTransferDepartment = aTransferDepartment;}
+	public MisLpu getTransferDepartment() {return transferDepartment;}
 
 	/** Предыдущий случай лечения в отделении */
 	@Comment("Предыдущий случай лечения в отделении")
 	@OneToOne
-	public MedCase getPrevMedCase() {return thePrevMedCase;}
-	public void setPrevMedCase(MedCase aPrevMedCase) {thePrevMedCase = aPrevMedCase;}
-	
+	public MedCase getPrevMedCase() {return prevMedCase;}
+
 	/** Коечный фонд */
 	@Comment("Коечный фонд")
 	@OneToOne
-	public BedFund getBedFund() {return theBedFund;	}
-	public void setBedFund(BedFund aBedFund) {theBedFund = aBedFund;}
+	public BedFund getBedFund() {return bedFund;	}
 
 	/** № палаты */
 	@Comment("№ палаты")
 	@OneToOne
-	public HospitalRoom getRoomNumber() {return theRoomNumber;	}
-	public void setRoomNumber(HospitalRoom aRoomNumber) {theRoomNumber = aRoomNumber;}
-	
+	public HospitalRoom getRoomNumber() {return roomNumber;	}
+
 	/** № койки */
 	@Comment("№ койки")
 	@OneToOne
-	public HospitalBed getBedNumber() {return theBedNumber;}
-	public void setBedNumber(HospitalBed aBedNumber) {theBedNumber = aBedNumber;}
-	
+	public HospitalBed getBedNumber() {return bedNumber;}
+
 	/** Тип палаты */
 	@Comment("Тип палаты")
 	@OneToOne
-	public VocRoomType getRoomType() {return theRoomType;}
-	public void setRoomType(VocRoomType aRoomType) {theRoomType = aRoomType;}
+	public VocRoomType getRoomType() {return roomType;}
 
 	/** Тип палаты */
-	private VocRoomType theRoomType;
+	private VocRoomType roomType;
 	/** № койки */
-	private HospitalBed theBedNumber;
+	private HospitalBed bedNumber;
 
 
 	@Transient
@@ -94,7 +92,7 @@ public class DepartmentMedCase extends HospitalMedCase {
 	@Comment("Отделение перевода. Инфо")
 	public String getTransferDepartmentInfo(){
 		
-		return theTransferDepartment!=null?theTransferDepartment.getName():"";
+		return transferDepartment!=null?transferDepartment.getName():"";
 	}
 	@Transient
 	@Comment("Отделение поступления. Инфо")
@@ -111,24 +109,15 @@ public class DepartmentMedCase extends HospitalMedCase {
 			;
 	}
 	/** № палаты */
-	private HospitalRoom theRoomNumber;
+	private HospitalRoom roomNumber;
 	/** Коечный фонд */
-	private BedFund theBedFund;
+	private BedFund bedFund;
 	/** Предыдущий случай лечения в отделении */
-	private MedCase thePrevMedCase;
+	private MedCase prevMedCase;
 	/** Отделение перевода */
-	private MisLpu theTransferDepartment;
+	private MisLpu transferDepartment;
 
 	
-	/** Палата матери */
-	@Comment("Палата матери")
-	public String getMotherWard() {
-		return theMotherWard;
-	}
-
-	public void setMotherWard(String aMotherWard) {
-		theMotherWard = aMotherWard;
-	}
 	@Transient
 	public String getStatCardBySLS() {
 		if (getParent() instanceof HospitalMedCase) {
@@ -139,7 +128,7 @@ public class DepartmentMedCase extends HospitalMedCase {
 	}
 
 	/** Палата матери */
-	private String theMotherWard;
+	private String motherWard;
 	@Transient
 	public String getInfo() {
 		Patient patient = getPatient();
@@ -151,28 +140,20 @@ public class DepartmentMedCase extends HospitalMedCase {
 	@Comment("Стандарт")
 	@OneToOne
 	public OmcStandart getOmcStandart() {
-		return theOmcStandart;
-	}
-
-	public void setOmcStandart(OmcStandart aOmcStandart) {
-		theOmcStandart = aOmcStandart;
+		return omcStandart;
 	}
 
 	/** Стандарт */
-	private OmcStandart theOmcStandart;
+	private OmcStandart omcStandart;
 	
 	/** Омс стандарт, установленный экспертом */
 	@Comment("Омс стандарт, установленный экспертом")
 	@OneToOne
 	public OmcStandart getOmcStandartExpert() {
-		return theOmcStandartExpert;
-	}
-
-	public void setOmcStandartExpert(OmcStandart aOmcStandartExpert) {
-		theOmcStandartExpert = aOmcStandartExpert;
+		return omcStandartExpert;
 	}
 
 	/** Омс стандарт, установленный экспертом */
-	private OmcStandart theOmcStandartExpert;
+	private OmcStandart omcStandartExpert;
 
 }

@@ -124,60 +124,72 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 			// 1-числовой
 			// 4-числовой с плав точкой
 			String value = param.getString("value");
-			if (type.equals("1")||type.equals("4")) {
-				if (!StringUtil.isNullOrEmpty(value)) {
-					fip.setValueBD(new BigDecimal(value)) ;
-					fip.setValueText(value) ;
-					if (sb.length()>0) sb.append("\n") ;
-					sb.append(param.get("name")).append(": ") ;
-					sb.append(value).append(" ") ;
-					sb.append(param.get("unitname")).append(" ") ;
+			switch (type) {
+				case "1":
+				case "4":
+					if (!StringUtil.isNullOrEmpty(value)) {
+						fip.setValueBD(new BigDecimal(value));
+						fip.setValueText(value);
+						if (sb.length() > 0) sb.append("\n");
+						sb.append(param.get("name")).append(": ");
+						sb.append(value).append(" ");
+						sb.append(param.get("unitname")).append(" ");
+					}
+					//пользовательский справочник
+					break;
+				case "2": {
+					Long id = ConvertSql.parseLong(value);
+					if (id != null && !id.equals(0L)) {
+						UserValue uv = aManager.find(UserValue.class, id);
+						fip.setValueVoc(uv);
+						if (sb.length() > 0) sb.append("\n");
+						sb.append(param.get("name")).append(": ");
+						sb.append(param.get("valueVoc")).append(" ");
+						sb.append(param.get("unitname")).append(" ");
+					}
+					//пользовательский справочник (множественный выбор)
+					break;
 				}
-				//пользовательский справочник
-			} else if (type.equals("2")) {
-				Long id = ConvertSql.parseLong(value) ;
-				if (id!=null && !id.equals(0L)) {
-					UserValue uv = aManager.find(UserValue.class, id) ;
-					fip.setValueVoc(uv) ;
-					if (sb.length()>0) sb.append("\n") ;
-					sb.append(param.get("name")).append(": ") ;
-					sb.append(param.get("valueVoc")).append(" ") ;
-					sb.append(param.get("unitname")).append(" ") ;
+				case "6": {
+					String id = param.getString("value");
+					if (!id.trim().equals(",") && !id.trim().equals(",,") && !id.trim().equals("")) {
+						fip.setValueText(param.getString("valueVoc"));
+						fip.setListValues(id);
+						if (sb.length() > 0) sb.append("\n");
+						sb.append(param.get("name")).append(": ");
+						sb.append(param.get("unitname")).append(" ");
+						sb.append(fip.getValueText());
+					}
+					//пользовательский справочник (текст)
+					break;
 				}
-				//пользовательский справочник (множественный выбор)
-			} else if (type.equals("6")) {
-				String id = param.getString("value");
-				if (!id.trim().equals(",") && !id.trim().equals(",,") && !id.trim().equals("")) {
-					fip.setValueText(param.getString("valueVoc"));
-					fip.setListValues(id) ;
-					if (sb.length()>0) sb.append("\n") ;
-					sb.append(param.get("name")).append(": ") ;
-					sb.append(param.get("unitname")).append(" ") ;
-					sb.append(fip.getValueText()) ;
+				case "7": {
+					Long id = ConvertSql.parseLong(value);
+					if (id != null && !id.equals(0L)) {
+						UserValue uv = aManager.find(UserValue.class, id);
+						fip.setValueVoc(uv);
+						fip.setValueText(param.getString("addValue"));
+						if (sb.length() > 0) sb.append("\n");
+						sb.append(param.get("name")).append(": ");
+						sb.append(param.get("valueVoc")).append(" ");
+						sb.append(param.get("unitname")).append(" ");
+						sb.append(param.get("addValue")).append(" ");
+					}
+					//3-текстовый
+					//5-текстовый с ограничением
+					break;
 				}
-				//пользовательский справочник (текст)
-			} else if (type.equals("7")) {
-				Long id = ConvertSql.parseLong(value) ;
-				if (id!=null && !id.equals(0L)) {
-					UserValue uv = aManager.find(UserValue.class, id) ;
-					fip.setValueVoc(uv) ;
-					fip.setValueText(param.getString("addValue")) ;
-					if (sb.length()>0) sb.append("\n") ;
-					sb.append(param.get("name")).append(": ") ;
-					sb.append(param.get("valueVoc")).append(" ") ;
-					sb.append(param.get("unitname")).append(" ") ;
-					sb.append(param.get("addValue")).append(" ") ;
-				}
-				//3-текстовый
-				//5-текстовый с ограничением
-			} else if (type.equals("3")||type.equals("5")||"8".equals(type)) {  //дата
-				if (!StringUtil.isNullOrEmpty(value)) {
-					fip.setValueText(value) ;
-					if (sb.length()>0) sb.append("\n") ;
-					sb.append(param.get("name")).append(": ") ;
-					sb.append(value).append(" ") ;
-					sb.append(param.get("unitname")).append(" ") ;
-				}
+				case "3":
+				case "5":
+				case "8":   //дата
+					if (!StringUtil.isNullOrEmpty(value)) {
+						fip.setValueText(value);
+						if (sb.length() > 0) sb.append("\n");
+						sb.append(param.get("name")).append(": ");
+						sb.append(value).append(" ");
+						sb.append(param.get("unitname")).append(" ");
+					}
+					break;
 			}
 			aManager.persist(fip) ;
 		}
@@ -198,21 +210,21 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 	}
 	
 	public String getTextByProtocol(long aProtocolId) {
-        Protocol tempprot = theManager.find(Protocol.class, aProtocolId) ;
+        Protocol tempprot = manager.find(Protocol.class, aProtocolId) ;
         if(tempprot==null) throw new IllegalArgumentException("Нет шаблона протокола с таким ИД "+aProtocolId) ;
         return tempprot.getRecord() ;		
 	}
     public String getTextTemplate(long aId) {
-        TemplateProtocol tempprot = theManager.find(TemplateProtocol.class, aId) ;
+        TemplateProtocol tempprot = manager.find(TemplateProtocol.class, aId) ;
         if(tempprot==null) throw new IllegalArgumentException("Нет шаблона протокола с таким ИД "+aId) ;
         return tempprot.getText() ;
     }
 
-	@EJB ILocalEntityFormService theEntityFormService ;
+	@EJB ILocalEntityFormService entityFormService ;
     @PersistenceContext
-    EntityManager theManager ;
+    EntityManager manager ;
 	public Long getCountSymbolsInProtocol(long aVisit) {
-		List<Protocol> list = theManager.createQuery("from Protocol where medCase_id=:idv").setParameter("idv", aVisit).setMaxResults(1).getResultList() ;
+		List<Protocol> list = manager.createQuery("from Protocol where medCase_id=:idv").setParameter("idv", aVisit).setMaxResults(1).getResultList() ;
 		return list.isEmpty() ? Long.valueOf(0) : Long.valueOf(list.get(0).getRecord().length());
 	}
 }

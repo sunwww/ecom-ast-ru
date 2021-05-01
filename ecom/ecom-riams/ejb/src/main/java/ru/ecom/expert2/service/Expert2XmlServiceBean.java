@@ -597,7 +597,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(naz, "NAZ_V", "1");
                     sl.addContent(naz);
                 }
-                add(sl, "ED_COL", edCol);
+                add(sl, "ED_COL", edCol); //для стомов - кол-во УЕТ
                 if (isPoliclinicKdp) {
                     add(sl, "TARIF", entry.getCost());
                     add(sl, "SUM_M", entry.getCost());

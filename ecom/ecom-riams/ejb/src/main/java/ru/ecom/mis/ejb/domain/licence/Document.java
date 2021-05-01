@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -18,78 +20,32 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Документ")
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class Document extends BaseEntity {
-
-    /** Серия документа */
-    public String getSeriaDoc() { return theSeriaDoc ; }
-    public void setSeriaDoc(String aSeriaDoc) { theSeriaDoc = aSeriaDoc ; }
-
-    /** Номер документа */
-    public String getNumberDoc() { return theNumberDoc ; }
-    public void setNumberDoc(String aNumberDoc) { theNumberDoc = aNumberDoc ; }
-    
-    /** Дата выдачи */
-	@Comment("Дата выдачи")
-	public Date getDateIssued() {return theDateIssued;}
-	public void setDateIssued(Date aDateIssued) {theDateIssued = aDateIssued;}
-
 	/** Кем выдан */
-	@Comment("Кем выдан")
-	public String getWhomIssued() {return theWhomIssued;}
-	public void setWhomIssued(String aWhomIssued) {theWhomIssued = aWhomIssued;}
-
-	/** Кем выдан */
-	private String theWhomIssued;
+	private String whomIssued;
 	/** Дата выдачи */
-	private Date theDateIssued;
-  
+	private Date dateIssued;
     /** Серия документа */
-    private String theSeriaDoc ;
+    private String seriaDoc ;
     /** Номер документа */
-    private String theNumberDoc ;
-    
-    /** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Пользователь, создавший запись */
-	@Comment("Пользователь, создавший запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-	
-	/** Пользователь, последний редактировавший запись */
-	@Comment("Пользователь, последний редактировавший запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-
+    private String numberDoc ;
 	/** СМО */
 	@Comment("СМО")
 	@OneToOne
-	public MedCase getMedCase() {return theMedCase;}
-	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
+	public MedCase getMedCase() {return medCase;}
 	/** СМО */
-	private MedCase theMedCase;
+	private MedCase medCase;
 	/** Пользователь, последний редактировавший запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Дата создания */
-	private Date theCreateDate;
-	
+	private Date createDate;
 	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-
-	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 
 }

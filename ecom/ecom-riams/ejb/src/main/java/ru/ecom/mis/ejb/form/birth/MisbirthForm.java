@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -27,106 +28,94 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(MisbirthPreCreateInterceptor.class)
 )
+@Setter
 public class MisbirthForm extends IdEntityForm {
     /** СМО */
     @Comment("СМО")
     @Persist
     @Required
-    public Long getMedCase() {return theMedCase;}
-    public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+    public Long getMedCase() {return medCase;}
     /** Дата создания */
     @Comment("Дата создания")
     @DateString
     @DoDateString
     @Persist
-    public String getCreateDate() {return theCreateDate;}
-    public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+    public String getCreateDate() {return createDate;}
     /** Дата редактирования */
     @Comment("Дата редактирования")
     @DateString
     @DoDateString
     @Persist
-    public String getEditDate() {return theEditDate;}
-    public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+    public String getEditDate() {return editDate;}
     /** Время создания */
     @Comment("Время создания")
     @TimeString
     @DoTimeString
     @Persist
-    public String getCreateTime() {return theCreateTime;}
-    public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+    public String getCreateTime() {return createTime;}
     /** Время редактрования */
     @Comment("Время редактирования")
     @TimeString @DoTimeString @Persist
-    public String getEditTime() {return theEditTime;}
-    public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+    public String getEditTime() {return editTime;}
     /** Пользователь, который создал запись */
     @Comment("Пользователь, который создал запись")
     @Persist
-    public String getCreateUsername() {return theCreateUsername;}
-    public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+    public String getCreateUsername() {return createUsername;}
     /** Пользователь, который последний редактировал запись */
     @Comment("Пользователь, который последний редактировал запись")
     @Persist
-    public String getEditUsername() {return theEditUsername;}
-    public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+    public String getEditUsername() {return editUsername;}
     /** Срок беременности (нед) */
     @Comment("Срок беременности (нед)")
     @Persist @Required
-    public String getDurationPregnancy() {return theDurationPregnancy;}
-    public void setDurationPregnancy(String aDurationPregnancy) {theDurationPregnancy = aDurationPregnancy;}
+    public String getDurationPregnancy() {return durationPregnancy;}
     /** Тип выкидыша */
     @Comment("Тип выкидыша")
     @Persist @Required
-    public Long getTypeMisbirth() {return theTypeMisbirth;}
-    public void setTypeMisbirth(Long aTypeMisbirth) {theTypeMisbirth = aTypeMisbirth;}
+    public Long getTypeMisbirth() {return typeMisbirth;}
     /** Дата выкидыша */
     @Comment("Дата выкидыша")
     @DateString
     @DoDateString
     @Persist @Required
-    public String getMisbirthDate() {return theMisbirthDate;}
-    public void setMisbirthDate(String aMisbirthDate) {theMisbirthDate = aMisbirthDate;}
+    public String getMisbirthDate() {return misbirthDate;}
     /** Тип выкидыша */
     @Comment("Тип выкидыша")
     @Persist @Required
-    public Long getNumFetus() {return theNumFetus;}
-    public void setNumFetus(Long aNumFetus) {theNumFetus = aNumFetus;}
+    public Long getNumFetus() {return numFetus;}
     /** ЭКО? */
     @Comment("ЭКО?")
     @Persist
-    public Boolean getIsECO() {return theIsECO;}
-    public void setIsECO(Boolean aIsECO) {theIsECO = aIsECO;}
+    public Boolean getIsECO() {return isECO;}
     /** Состояла на учёте в ЖК? */
     @Comment("Состояла на учёте в ЖК?")
     @Persist
-    public Boolean getIsRegisteredWithWomenConsultation() {return theIsRegisteredWithWomenConsultation;}
-    public void setIsRegisteredWithWomenConsultation(Boolean aIsRegisteredWithWomenConsultation) {theIsRegisteredWithWomenConsultation = aIsRegisteredWithWomenConsultation;}
+    public Boolean getIsRegisteredWithWomenConsultation() {return isRegisteredWithWomenConsultation;}
 
     /** СМО */
-    private Long theMedCase;
+    private Long medCase;
     /** Пользователь, который последний редактировал запись */
-    private String theEditUsername;
+    private String editUsername;
     /** Пользователь, который создал запись */
-    private String theCreateUsername;
+    private String createUsername;
     /** Время редактрования */
-    private String theEditTime;
+    private String editTime;
     /** Время создания */
-    private String theCreateTime;
+    private String createTime;
     /** Дата редактирования */
-    private String theEditDate;
+    private String editDate;
     /** Дата создания */
-    private String theCreateDate;
+    private String createDate;
     /** Срок беременности (нед) */
-    private String theDurationPregnancy;
+    private String durationPregnancy;
     /** Тип выкидыша */
-    private Long theTypeMisbirth;
+    private Long typeMisbirth;
     /** Дата выкидыша */
-    private String theMisbirthDate;
+    private String misbirthDate;
     /** Кол-во плодов */
-    private Long theNumFetus;
+    private Long numFetus;
     /** ЭКО? */
-    private Boolean theIsECO;
+    private Boolean isECO;
     /** Состояла на учёте в ЖК? */
-    private Boolean theIsRegisteredWithWomenConsultation;
+    private Boolean isRegisteredWithWomenConsultation;
 }

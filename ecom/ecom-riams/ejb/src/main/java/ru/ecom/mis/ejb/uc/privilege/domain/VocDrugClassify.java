@@ -9,6 +9,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.patient.voc.VocIdNameOmcCode;
 import ru.ecom.mis.ejb.uc.privilege.domain.voc.VocDrugUnlicensedName;
 import ru.ecom.mis.ejb.uc.privilege.domain.voc.VocDrugVendor;
@@ -22,187 +24,91 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Лекарственное средство")
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VocDrugClassify extends VocIdNameOmcCode {
 	
 	/** Позиции классификаторов */
 	@Comment("Позиции классификаторов")
 	@OneToMany(mappedBy="drug", cascade=CascadeType.ALL)
 	public List<DrugClassificatorPosition> getDrugClassificatorPositions() {
-		return theDrugClassificatorPositions;
+		return drugClassificatorPositions;
 	}
 
-	public void setDrugClassificatorPositions(List<DrugClassificatorPosition> aDrugClassificatorPositions) {
-		theDrugClassificatorPositions = aDrugClassificatorPositions;
-	}
 
 	/** Позиции классификаторов */
-	private List<DrugClassificatorPosition> theDrugClassificatorPositions;
+	private List<DrugClassificatorPosition> drugClassificatorPositions;
 	
 	/** Производитель */
 	@Comment("Производитель")
 	@OneToOne
 	public VocDrugVendor getDrugVendor() {
-		return theDrugVendor;
-	}
-
-	public void setDrugVendor(VocDrugVendor aDrugVendor) {
-		theDrugVendor = aDrugVendor;
+		return drugVendor;
 	}
 
 	/** Производитель */
-	private VocDrugVendor theDrugVendor;
+	private VocDrugVendor drugVendor;
 	
 	/** Количество доз в упаковке */
-	@Comment("Количество доз в упаковке")
-	public Integer getPackingAmount() {
-		return thePackingAmount;
-	}
-
-	public void setPackingAmount(Integer aPackingAmount) {
-		thePackingAmount = aPackingAmount;
-	}
-
-	/** Количество доз в упаковке */
-	private Integer thePackingAmount;
+	private Integer packingAmount;
 	
 	/** Дозировка */
-	@Comment("Дозировка")
-	public String getDozage() {
-		return theDozage;
-	}
-
-	public void setDozage(String aDozage) {
-		theDozage = aDozage;
-	}
-
-	/** Дозировка */
-	private String theDozage;
+	private String dozage;
 	
 	/** Лекарственная форма */
 	@Comment("Лекарственная форма")
 	@OneToOne
 	public VocDrugForm getDrugForm() {
-		return theDrugForm;
-	}
-
-	public void setDrugForm(VocDrugForm aDrugForm) {
-		theDrugForm = aDrugForm;
+		return drugForm;
 	}
 
 	/** Лекарственная форма */
-	private VocDrugForm theDrugForm;
+	private VocDrugForm drugForm;
 	
 	/** Патентованное наименование */
 	@Comment("Патентованное наименование")
 	@OneToOne
 	public VocLicensedName getLicensedName() {
-		return theLicensedName;
-	}
-
-	public void setLicensedName(VocLicensedName aLicensedName) {
-		theLicensedName = aLicensedName;
+		return licensedName;
 	}
 
 	/** Патентованное наименование */
-	private VocLicensedName theLicensedName;
+	private VocLicensedName licensedName;
 	
 	/** Международное непатентованное наименование */
 	@Comment("Международное непатентованное наименование")
 	@OneToOne
 	public VocDrugUnlicensedName getDrugUnlicensedName() {
-		return theDrugUnlicensedName;
+		return drugUnlicensedName;
 	}
 
-	public void setDrugUnlicensedName(VocDrugUnlicensedName aDrugUnlicensedName) {
-		theDrugUnlicensedName = aDrugUnlicensedName;
-	}
-
-	/** Пользователь */
-	@Comment("Пользователь")
-	public String getUsername() {return theUsername;}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
 
 	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-
-	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	/** Пользователь */
-	private String theUsername;
+	private String username;
 	/** Международное непатентованное наименование */
-	private VocDrugUnlicensedName theDrugUnlicensedName;
-	
-	/** Импорт наименование фирмы */
-	@Comment("Импорт наименование фирмы")
-	public String getImpVendor() {return theImpVendor;}
-	public void setImpVendor(String aImpVendor) {theImpVendor = aImpVendor;}
-
-	/** Импорт наименование международное */
-	@Comment("Импорт наименование международное")
-	public String getImpUnlicName() {return theImpUnlicName;}
-	public void setImpUnlicName(String aImpUnlicName) {theImpUnlicName = aImpUnlicName;}
-
-	/** Торговое наименование */
-	@Comment("Торговое наименование")
-	public String getImpLicName() {return theImpLicName;}
-	public void setImpLicName(String aImpLicName) {theImpLicName = aImpLicName;}
-
-	/** Форма выпуска */
-	@Comment("Форма выпуска")
-	public String getImpForm() {return theImpForm;}
-	public void setImpForm(String aImpForm) {theImpForm = aImpForm;}
-
-	/** Регистрац. номер */
-	@Comment("Регистрац. номер")
-	public String getImpRegNumber() {return theImpRegNumber;}
-	public void setImpRegNumber(String aImpRegNumber) {theImpRegNumber = aImpRegNumber;}
+	private VocDrugUnlicensedName drugUnlicensedName;
 
 	/** Дата регистрации */
-	@Comment("Дата регистрации")
-	public Date getRegistDate() {return theRegistDate;}
-	public void setRegistDate(Date aRegistDate) {theRegistDate = aRegistDate;}
-
-	/** Дата регистрации */
-	private Date theRegistDate;
-	
-	/** Дата окончания регистрации */
-	@Comment("Дата окончания регистрации")
-	public Date getRegistDateTo() {return theRegistDateTo;}
-	public void setRegistDateTo(Date aRegistDateTo) {theRegistDateTo = aRegistDateTo;}
-
-	/** Дата аннулирования */
-	@Comment("Дата аннулирования")
-	public Date getRegistDateCancel() {return theRegistDateCancel;}
-	public void setRegistDateCancel(Date aRegistDateCancel) {theRegistDateCancel = aRegistDateCancel;}
+	private Date registDate;
 
 	/** Нормативная база */
-	@Comment("Нормативная база")
-	public String getNormData() {return theNormData;}
-	public void setNormData(String aNormData) {theNormData = aNormData;}
-
-	/** Нормативная база */
-	private String theNormData;
+	private String normData;
 	/** Дата аннулирования */
-	private Date theRegistDateCancel;
+	private Date registDateCancel;
 	/** Дата окончания регистрации */
-	private Date theRegistDateTo;
+	private Date registDateTo;
 	/** Регистрац. номер */
-	private String theImpRegNumber;
+	private String impRegNumber;
 	/** Форма выпуска */
-	private String theImpForm;
+	private String impForm;
 	/** Торговое наименование */
-	private String theImpLicName;
+	private String impLicName;
 	/** Импорт наименование международное */
-	private String theImpUnlicName;
+	private String impUnlicName;
 	/** Импорт наименование фирмы */
-	private String theImpVendor;
+	private String impVendor;
 	/** Группа */
-	@Comment("Группа")
-	public String getImpGroup() {return theImpGroup;}
-	public void setImpGroup(String aImpGroup) {theImpGroup = aImpGroup;}
-
-	/** Группа */
-	private String theImpGroup;
+	private String impGroup;
 }

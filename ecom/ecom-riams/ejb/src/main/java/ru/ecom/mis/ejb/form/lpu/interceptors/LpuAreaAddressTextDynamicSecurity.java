@@ -16,8 +16,8 @@ public class LpuAreaAddressTextDynamicSecurity implements IDynamicParentSecurity
     }
 
     public void checkParent(String aPolicyAction, Object aParentId, InterceptorContext aContext) {
-        theLpuAreaDynamicSecurity.check(aPolicyAction, aParentId, aContext);
+        lpuAreaDynamicSecurity.check(aPolicyAction, aParentId, aContext);
     }
 
-    private final LpuAreaDynamicSecurity theLpuAreaDynamicSecurity = new LpuAreaDynamicSecurity();
+    private final LpuAreaDynamicSecurity lpuAreaDynamicSecurity = new LpuAreaDynamicSecurity();
 }

@@ -5,6 +5,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.equipment.voc.VocTypeEquip;
 import ru.ecom.mis.ejb.domain.medstandard.MedicalStandard;
@@ -13,36 +15,28 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Позиция мед. оборудования")
 @Table(schema="SQLUser")
+@Getter
+@Setter
 
 public class MedicalEquipmentPosition extends BaseEntity {
 
 	/** Медицинский стандарт */
 	@Comment("Медицинский стандарт")
 	@ManyToOne
-	public MedicalStandard getStandard() {return theStandard;}
-	public void setStandard(MedicalStandard aStandard) {theStandard = aStandard;}
+	public MedicalStandard getStandard() {return standard;}
 	/** Медицинский стандарт */
-	private MedicalStandard theStandard;
+	private MedicalStandard standard;
 	
 	/** Тип оборудования */
 	@Comment("Тип Оборудования")
 	@OneToOne
-	public VocTypeEquip getEquipmentType() {return theEquipmentType;}
-	public void setEquipmentType(VocTypeEquip aEquipmentType) {theEquipmentType = aEquipmentType;}
+	public VocTypeEquip getEquipmentType() {return equipmentType;}
 	/** Оборудование */
-	private VocTypeEquip theEquipmentType;
+	private VocTypeEquip equipmentType;
 	
 	/** Необходимое количество */
-	@Comment("Необходимое количество")
-	public Long getAmount() {return theAmount;}
-	public void setAmount(Long aAmount) {theAmount = aAmount;}
-	/** Необходимое количество */
-	private Long theAmount;
+	private Long amount;
 	
 	/** Примечание */
-	@Comment("Примечание")
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
-	/** Примечание */
-	private String theComment;
+	private String comment;
 }

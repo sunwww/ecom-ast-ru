@@ -1,5 +1,7 @@
 package ru.ecom.address.ejb.domain.address;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -22,20 +24,11 @@ import javax.persistence.*;
         	@AIndex(unique = false, properties = "kladr"),
         	@AIndex(unique = false, properties = "domen")
                 })
-@AttributeOverride(name="id", column=@Column(name = "AddressId"))                
+@AttributeOverride(name="id", column=@Column(name = "AddressId"))
+@Setter
+@Getter
 public class Address extends BaseEntity {
 
-    /**
-     * Домен (Ошибка: domain)
-     */
-    @Comment("Домен")
-    public int getDomen() {
-        return theDomen;
-    }
-
-    public void setDomen(int aDomen) {
-        theDomen = aDomen;
-    }
 
     /**
      * Родитель
@@ -43,11 +36,7 @@ public class Address extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @Comment("Родитель")
     public Address getParent() {
-        return theParent;
-    }
-
-    public void setParent(Address aParent) {
-        theParent = aParent;
+        return parent;
     }
 
     /**
@@ -56,11 +45,7 @@ public class Address extends BaseEntity {
     @Column(length = 40)
     @Comment("Название")
     public String getName() {
-        return theName;
-    }
-
-    public void setName(String aName) {
-        theName = aName;
+        return name;
     }
 
     /**
@@ -69,11 +54,7 @@ public class Address extends BaseEntity {
     @Column(length = 17)
     @Comment("Кладр")
     public String getKladr() {
-        return theKladr;
-    }
-
-    public void setKladr(String aKladr) {
-        theKladr = aKladr;
+        return kladr;
     }
 
     /**
@@ -82,11 +63,7 @@ public class Address extends BaseEntity {
     @Column(length = 6)
     @Comment("Почтовый индекc")
     public String getPostIndex() {
-        return thePostIndex;
-    }
-
-    public void setPostIndex(String aPostIndex) {
-        thePostIndex = aPostIndex;
+        return postIndex;
     }
 
     /**
@@ -95,19 +72,16 @@ public class Address extends BaseEntity {
     @OneToOne
     @Comment("Кладр")
     public AddressType getType() {
-        return theType;
-    }
-    public void setType(AddressType aType) {
-        theType = aType;
+        return type;
     }
     @Transient
     public String getTypeName() {
-        return theType != null ? theType.getShortName() : "";
+        return type != null ? type.getShortName() : "";
     }
 
     @Transient
     public String getAddressInfo() {
-    	return theFullname==null ? theName : theFullname ;
+    	return fullname==null ? name : fullname ;
     }
 
     @Transient
@@ -127,75 +101,50 @@ public class Address extends BaseEntity {
         }
         return sb.toString() ;
     }
-    /** Город? */
-	@Comment("Город?")
-	public Boolean getAddressIsCity() {return theAddressIsCity;}
-	public void setAddressIsCity(Boolean aAddressIsCity) {theAddressIsCity = aAddressIsCity;}
 
 	/** Город? */
-	private Boolean theAddressIsCity;
-
-    /** Село? */
-	@Comment("Село?")
-	public Boolean getAddressIsVillage() {return theAddressIsVillage;}
-	public void setAddressIsVillage(Boolean aAddressIsVillage) {theAddressIsVillage = aAddressIsVillage;}
+	private Boolean addressIsCity;
 
 	/** Село? */
-	private Boolean theAddressIsVillage;
-
-    /** Полный адрес */
-	@Comment("Полный адрес")
-	public String getFullname() {return theFullname;}
-	public void setFullname(String aFullname) {theFullname = aFullname;}
+	private Boolean addressIsVillage;
 
 	/** Полный адрес */
-	private String theFullname;
+	private String fullname;
     /** Тип адреса */
-    private AddressType theType;
+    private AddressType type;
     /**
      * Почтовый индекс
      */
-    private String thePostIndex;
+    private String postIndex;
     /**
      * Код КЛАДР
      */
-    private String theKladr;
+    private String kladr;
     /**
      * Название
      */
-    private String theName;
+    private String name;
     /**
      * Родитель
      */
-    private Address theParent;
+    private Address parent;
     /**
      * Домен
      */
-    private int theDomen;
-
-    /** ОКАТО */
-	@Comment("ОКАТО")
-	public String getOkato() {return theOkato;}
-	public void setOkato(String aOkato) {theOkato = aOkato;}
+    private int domen;
 
 	/** ОКАТО */
-	private String theOkato;
+	private String okato;
 	
 	/** Регион */
 	@Comment("Регион")
 	@OneToOne
-	public Address getRegion() {return theRegion;}
-	public void setRegion(Address aRegion) {theRegion = aRegion;}
+	public Address getRegion() {return region;}
 
 	/** Регион */
-	private Address theRegion;
-	
-	/** Текущий регион */
-	@Comment("Текущий регион")
-	public Boolean getIsCurrentRegion() {return theIsCurrentRegion;}
-	public void setIsCurrentRegion(Boolean aIsCurrentRegion) {theIsCurrentRegion = aIsCurrentRegion;}
+	private Address region;
 
 	/** Текущий регион */
-	private Boolean theIsCurrentRegion;
+	private Boolean isCurrentRegion;
 
 }

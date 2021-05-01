@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -25,84 +27,67 @@ import java.sql.Time;
 @AIndexes({
 	@AIndex(properties="surgicalOperation"),
 	@AIndex(properties="manipulation")
-    }) 
+    })
+@Getter
+@Setter
 public class Anesthesia extends BaseEntity{
 
 	/** Метод */
 	@Comment("Метод")
 	@OneToOne
-	public VocAnesthesiaMethod getMethod() {return theMethod;}
-	public void setMethod(VocAnesthesiaMethod aMethod) {theMethod = aMethod;}
-	private VocAnesthesiaMethod theMethod;
+	public VocAnesthesiaMethod getMethod() {return method;}
+	private VocAnesthesiaMethod method;
 	
 	/** Вид анестезии */
 	@Comment("Вид анестезии")
 	@OneToOne
-	public VocAnesthesia getType() {return theType;}
-	public void setType(VocAnesthesia aType) {theType = aType;}
-	private VocAnesthesia theType;
+	public VocAnesthesia getType() {return type;}
+	private VocAnesthesia type;
 
 	/** Длительность в минутах */
-	@Comment("Длительность в минутах")
-	public Integer getDuration() {return theDuration;}
-	public void setDuration(Integer aDuration) {theDuration = aDuration;}
-	private Integer theDuration;
+	private Integer duration;
 	
 	/** Описание */
 	@Comment("Описание")
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
-	public String getDescription() {return theDescription;}
-	public void setDescription(String aDescription) {theDescription = aDescription;}
-	private String theDescription;
+	public String getDescription() {return description;}
+	private String description;
 	
 	/** Хирургическая операция */
 	@Comment("Хирургическая операция")
 	@ManyToOne
-	public SurgicalOperation getSurgicalOperation() {return theSurgicalOperation;}
-	public void setSurgicalOperation(SurgicalOperation aSurgicalOperation) {theSurgicalOperation = aSurgicalOperation;}
-	private SurgicalOperation theSurgicalOperation;
+	public SurgicalOperation getSurgicalOperation() {return surgicalOperation;}
+	private SurgicalOperation surgicalOperation;
 
 	/* Манипуляция*/
 	@Comment("Манипуляция")
 	@ManyToOne
-	public MedicalManipulation getManipulation() {return theManipulation;}
-	public void setManipulation(MedicalManipulation aManipulation) {theManipulation = aManipulation;}
-	private MedicalManipulation theManipulation;
+	public MedicalManipulation getManipulation() {return manipulation;}
+	private MedicalManipulation manipulation;
 
 	/** Анестезиолог */
 	@Comment("Анестезист")
 	@OneToOne
-	public WorkFunction getAnesthesist() {return theAnesthesist;}
-	public void setAnesthesist(WorkFunction aAnesthesist) {theAnesthesist = aAnesthesist;}
-	private WorkFunction theAnesthesist;
+	public WorkFunction getAnesthesist() {return anesthesist;}
+	private WorkFunction anesthesist;
 	
 	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	private Date theCreateDate;
+	private Date createDate;
 
 	/** Пользователь создавший запись */
-	@Comment("Пользователь создавший запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	private String theCreateUsername;
+	private String createUsername;
 
 	@Transient
-	public String getMethodInfo() {return theMethod!=null?theMethod.getName():"" ;}
+	public String getMethodInfo() {return method!=null?method.getName():"" ;}
 	@Transient
-	public String getAnesthesistInfo() {return theAnesthesist != null ? theAnesthesist.getWorkerInfo():"" ;}
+	public String getAnesthesistInfo() {return anesthesist != null ? anesthesist.getWorkerInfo():"" ;}
 	
 	/** Мед.услуга */
 	@Comment("Мед.услуга")
 	@OneToOne
-	public MedService getMedService() {return theMedService;}
-	public void setMedService(MedService aMedService) {theMedService = aMedService;}
-	private MedService theMedService;
+	public MedService getMedService() {return medService;}
+	private MedService medService;
 	
 	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	private Time theCreateTime;
+	private Time createTime;
 }

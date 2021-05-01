@@ -1,5 +1,7 @@
 package ru.ecom.expomc.ejb.domain.format;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -12,6 +14,8 @@ import javax.persistence.*;
 @SuppressWarnings("serial")
 @Entity
 @Table(name="EFFIELD",schema="SQLUser")
+@Getter
+@Setter
 public class Field extends BaseEntity {
 
     public static final int TEXT = 1 ;
@@ -19,67 +23,19 @@ public class Field extends BaseEntity {
     public static final int DATE = 3 ;
     public static final int BOOLEAN = 4 ;
 
-    /** Название поля */
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
-
-    /** Комментарий */
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
-
-    /** DBF: тип поля */
-    @Comment("DBF: тип поля")
-    public int getDbfType() { return theDbfType ; }
-    public void setDbfType(int aDbfType) { theDbfType = aDbfType ; }
-
-    /** DBF: размер поля */
-    @Comment("DBF: размер поля")
-    public int getDbfSize() { return theDbfSize ; }
-    public void setDbfSize(int aDbfSize) { theDbfSize = aDbfSize ; }
-
-    /** DBF: количество знаков после запятой */
-    @Comment("DBF: количество знаков после запятой")
-    public int getDbfDecimal() { return theDbfDecimal ; }
-    public void setDbfDecimal(int aDbfDecimal) { theDbfDecimal = aDbfDecimal ; }
-
     /** Формат */
     @ManyToOne
     @Comment("Формат")
-    public AbstractImportFormat getFormat() { return theFormat ; }
-    public void setFormat(AbstractImportFormat aFormat) { theFormat = aFormat ; }
-
-    /** Свойство для сохранения */
-    @Comment("Свойство для сохранения")
-    public String getProperty() { return theProperty ; }
-    public void setProperty(String aProperty) { theProperty = aProperty ; }
-
-    /**
-     * Порядковый номер
-     */
-    public int getSerialNumber() { return theSerialNumber ; }
-    public void setSerialNumber(int aSerialNumber) { theSerialNumber = aSerialNumber ; }
-
-    /** Обязательное поле */
-    public boolean getRequired() { return theRequired ; }
-    public void setRequired(boolean aRequired) { theRequired = aRequired ; }
-
-    /** Пояснения */
-    public String getDescription() { return theDescription ; }
-    public void setDescription(String aDescription) { theDescription = aDescription ; }
+    public AbstractImportFormat getFormat() { return format; }
 
     /** Документ */
     @OneToOne
-    public ImportDocument getLinkedDocument() { return theLinkedDocument ; }
-    public void setLinkedDocument(ImportDocument aLinkedDocument) { theLinkedDocument = aLinkedDocument ; }
-
-    /** Поле с кодом у документа, по которому делать проверку */
-    public String getLinkedDocumentCodeField() { return theLinkedDocumentCodeField ; }
-    public void setLinkedDocumentCodeField(String aLinkedDocumentCodeField) { theLinkedDocumentCodeField = aLinkedDocumentCodeField ; }
+    public ImportDocument getLinkedDocument() { return linkedDocument; }
 
     @Transient
     public String getDbfInfo() {
         StringBuilder sb = new StringBuilder();
-        switch(theDbfType) {
+        switch(dbfType) {
             case TEXT:
                 sb.append("A") ;
                 sb.append(getDbfSize()) ;
@@ -90,9 +46,9 @@ public class Field extends BaseEntity {
             case NUMERIC:
             	sb.append("N") ;
             	sb.append(getDbfSize()) ;
-            	if(theDbfDecimal!=0) {
+            	if(dbfDecimal !=0) {
             		sb.append(".") ;
-            		sb.append(theDbfDecimal) ;
+            		sb.append(dbfDecimal) ;
             	}
             	break;
             case BOOLEAN:
@@ -102,40 +58,30 @@ public class Field extends BaseEntity {
     }
 
 
-    /** Значение по-умолчанию */
-	@Comment("Значение по-умолчанию")
-	public String getDefaultValue() {
-		return theDefaultValue;
-	}
-
-	public void setDefaultValue(String aDefaultValue) {
-		theDefaultValue = aDefaultValue;
-	}
-
 	/** Значение по-умолчанию */
-	private String theDefaultValue;
+	private String defaultValue;
     /** Поле с кодом у документа, по которому делать проверку */
-    private String theLinkedDocumentCodeField ;
+    private String linkedDocumentCodeField;
     /** Документ */
-    private ImportDocument theLinkedDocument ;
+    private ImportDocument linkedDocument;
     /** Пояснения */
-    private String theDescription ;
+    private String description;
     /** Обязательное поле */
-    private boolean theRequired ;
+    private boolean required;
     /** Порядковый номер */
-    private int theSerialNumber ;
+    private int serialNumber;
     /** Свойство для сохранения */
-    private String theProperty ;
+    private String property;
     /** Формат */
-    private AbstractImportFormat theFormat ;
+    private AbstractImportFormat format;
     /** DBF: количество знаков после запятой */
-    private int theDbfDecimal ;
+    private int dbfDecimal;
     /** DBF: размер поля */
-    private int theDbfSize ;
+    private int dbfSize;
     /** DBF: тип поля */
-    private int theDbfType ;
+    private int dbfType;
     /** Комментарий */
-    private String theComment ;
+    private String comment;
     /** Название поля */
-    private String theName ;
+    private String name;
 }

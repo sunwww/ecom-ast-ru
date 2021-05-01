@@ -2,6 +2,9 @@ package ru.ecom.mis.ejb.domain.expert.voc;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -16,102 +19,51 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@AIndex(properties="kind")
 	, @AIndex(properties="parent")
  })
+ @Getter
+ @Setter
 public class VocQualityEstimationCrit extends VocBaseEntity{
  /**
   * Короткое название
   */
- @Comment("Короткое название")
- public String getShortName() {
-  return theShortName;
- }
- public void setShortName(String aShortName) {
-  theShortName = aShortName;
- }
- /**
-  * Короткое название
-  */
- private String theShortName;
+ private String shortName;
  /**
   * Вид оценки качества
   */
  @Comment("Вид оценки качества")
  @OneToOne
  public VocQualityEstimationKind getKind() {
-  return theKind;
- }
- public void setKind(VocQualityEstimationKind aKind) {
-  theKind = aKind;
+  return kind;
  }
  /** Тип критерия */
 @Comment("Тип критерия")
 @OneToOne
 public VocQualityEstimationCritType getType() {
-	return theType;
-}
-
-public void setType(VocQualityEstimationCritType aType) {
-	theType = aType;
+	return type;
 }
 
 /** Родитель */
 @Comment("Родитель")
 @OneToOne
-public VocQualityEstimationCrit getParent() {return theParent;}
-public void setParent(VocQualityEstimationCrit aParent) {theParent = aParent;}
+public VocQualityEstimationCrit getParent() {return parent;}
 
 /** Родитель */
-private VocQualityEstimationCrit theParent;
+private VocQualityEstimationCrit parent;
 /** Тип критерия */
-private VocQualityEstimationCritType theType;
+private VocQualityEstimationCritType type;
  /**
   * Вид оценки качества
   */
- private VocQualityEstimationKind theKind;
+ private VocQualityEstimationKind kind;
 
- /** Коды медицинских услуг */
-  @Comment("Коды медицинских услуг")
-  public String getMedServiceCodes() {
-   return theMedServiceCodes;
-  }
-  public void setMedServiceCodes(String medServiceCodes) {
-   theMedServiceCodes = medServiceCodes;
-  }
   /** Коды медицинских услуг */
-  private String theMedServiceCodes;
+  private String medServiceCodes;
 
   /** Логический тип критерия? */
-  @Comment("Логический тип критерия?")
-  public Boolean getIsBoolean() {
-   return theIsBoolean;
-  }
-  public void setIsBoolean(Boolean aIsBoolean) {
-   theIsBoolean = aIsBoolean;
-  }
-
-  /** Логический тип критерия? */
-  private Boolean theIsBoolean;
+  private Boolean isBoolean;
 
   /** Для взрослых? */
-  @Comment("Для взрослых?")
-  public Boolean getIsGrownup() {
-   return theIsGrownup;
-  }
-  public void setIsGrownup(Boolean aIsGrownup) {
-   theIsGrownup = aIsGrownup;
-  }
-
-  /** Для взрослых? */
-  private Boolean theIsGrownup;
+  private Boolean isGrownup;
 
   /** Для детей? */
-  @Comment("Для детей?")
-  public Boolean getIsChild() {
-   return theIsChild;
-  }
-  public void setIsChild(Boolean aIsChild) {
-   theIsChild = aIsChild;
-  }
-
-  /** Для детей? */
-  private Boolean theIsChild;
+  private Boolean isChild;
  }

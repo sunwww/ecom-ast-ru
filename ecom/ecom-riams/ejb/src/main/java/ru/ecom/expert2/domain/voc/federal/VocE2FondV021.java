@@ -8,8 +8,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 
 /**
  * Классификатор медицинских специальностей
@@ -18,11 +16,6 @@ import javax.persistence.PreUpdate;
 @Getter
 @Setter
 public class VocE2FondV021 extends VocBaseFederal {
-    @PrePersist
-    void prePersist() {}
-
-    @PreUpdate
-    void preUpdate() {}
 
     /** Услуга по умолчанию для поликлиники */
     @Comment("Услуга по умолчанию для поликлиники")

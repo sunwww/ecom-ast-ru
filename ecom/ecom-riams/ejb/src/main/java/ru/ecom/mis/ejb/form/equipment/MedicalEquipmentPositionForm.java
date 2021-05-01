@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.equipment;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.equipment.MedicalEquipmentPosition;
@@ -14,38 +15,35 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Позиция мед. стандарта", nameProperties= "equipmentType", view="entityView-mis_medicalEquipmentPosition.do")
 @Parent(property="standard", parentForm= MedicalStandardForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Equipment/Equipment")
+@Setter
 
 public class MedicalEquipmentPositionForm extends IdEntityForm {
 	
 	/** Медицинский стандарт */
 	@Comment("Медицинский стандарт")
 	@Persist
-	public Long getStandard() {return theStandard;}
-	public void setStandard(Long aStandard) {theStandard = aStandard;}
+	public Long getStandard() {return standard;}
 	/** Медицинский стандарт */
-	private Long theStandard;
+	private Long standard;
 	
 	/** Тип оборудования */
 	@Comment("Тип оборудования")
 	@Persist @Required
-	public Long getEquipmentType() {return theEquipmentType;}
-	public void setEquipmentType(Long aEquipmentType) {theEquipmentType = aEquipmentType;}
+	public Long getEquipmentType() {return equipmentType;}
 	/** Оборудование */
-	private Long theEquipmentType;
+	private Long equipmentType;
 	
 	/** Необходимое количество */
 	@Comment("Необходимое количество")
 	@Persist @Required
-	public Long getAmount() {return theAmount;}
-	public void setAmount(Long aAmount) {theAmount = aAmount;}
+	public Long getAmount() {return amount;}
 	/** Необходимое количество */
-	private Long theAmount;
+	private Long amount;
 	
 	/** Примечание */
 	@Comment("Примечание")
 	@Persist
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
+	public String getComment() {return comment;}
 	/** Примечание */
-	private String theComment;
+	private String comment;
 }

@@ -1,5 +1,7 @@
 package ru.ecom.document.ejb.domain.certificate;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.birth.Pregnancy;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -20,93 +22,40 @@ import java.sql.Time;
 
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class Certificate extends BaseEntity {
-	
-	/** Серия документа */
-	@Comment("Серия документа")
-	public String getSeries() {return theSeries;}
-	public void setSeries(String aSeries) {theSeries = aSeries;}
-	
-	/** Номер документа */
-	@Comment("Номер документа")
-	public Integer getNumber() {return theNumber;}
-	public void setNumber(Integer aNumber) {theNumber = aNumber;}
-
-	
-	/** Дата выдачи документа */
-	@Comment("Дата выдачи документа")
-	public Date getDateIssue() {return theDateIssue;}
-	public void setDateIssue(Date aDateIssue) {theDateIssue = aDateIssue;}
-
-	/** Серия предварительного свидетельства */
-	@Comment("Серия предварительного свидетельства")
-	public String getSeriesPreCertificate() {return theSeriesPreCertificate;}
-	public void setSeriesPreCertificate(String aSeriesPreCertificate) {theSeriesPreCertificate = aSeriesPreCertificate;}
-
-	
-	/** Номер предварительного свидетельства */
-	@Comment("Номер предварительного свидетельства")
-	public String getNumberPreCertificate() {return theNumberPreCertificate;}
-	public void setNumberPreCertificate(String aNumberPreCertificate) {theNumberPreCertificate = aNumberPreCertificate;}
 
 	/** Беременность */
 	@Comment("Беременность") 
 	@ManyToOne
-	public Pregnancy getPregnancy() {return thePregnancy;}
-	public void setPregnancy(Pregnancy aPregnancy) {thePregnancy = aPregnancy;}
+	public Pregnancy getPregnancy() {return pregnancy;}
 
 	/** Беременность */
-	private Pregnancy thePregnancy;
+	private Pregnancy pregnancy;
 	@Transient
 	public String getInformation() {return "" ;}
 	/** Серия документа */
-	private String theSeries;
+	private String series;
 	/** Номер документа */
-	private Integer theNumber;
+	private Integer number;
 	/** Дата выдачи документа */
-	private Date theDateIssue;
+	private Date dateIssue;
 	/** Серия предварительного свидетельства */
-	private String theSeriesPreCertificate;
+	private String seriesPreCertificate;
 	/** Номер предварительного свидетельства */
-	private String theNumberPreCertificate;
-	
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-	
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	/** Время редактрования */
-	@Comment("Время редактрования")
-	public Time getEditTime() {return theEditTime;}
-	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-	/** Пользователь, который создал запись */
-	@Comment("Пользователь, который создал запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	/** Пользователь, который последний редактировал запись */
-	@Comment("Пользователь, который последний редактировал запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	private String numberPreCertificate;
 
 	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private Time theEditTime;
+	private Time editTime;
 	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 }

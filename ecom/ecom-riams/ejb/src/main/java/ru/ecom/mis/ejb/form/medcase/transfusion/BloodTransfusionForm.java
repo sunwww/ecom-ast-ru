@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.transfusion;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -33,446 +34,392 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(TransfusionPreCreateInterceptor.class)
 )
+@Setter
 public class BloodTransfusionForm extends TransfusionForm{
 	/** Препарат крови */
 	@Comment("Препарат крови")
 	@Persist @Required
-	public Long getBloodPreparation() {return theBloodPreparation;}
-	public void setBloodPreparation(Long aBloodPreparation) {theBloodPreparation = aBloodPreparation;}
+	public Long getBloodPreparation() {return bloodPreparation;}
 
 	/** Группа крови пациента */
 	@Comment("Группа крови пациента")
 	@Persist @Required
-	public Long getPatientBloodGroup() {return thePatientBloodGroup;}
-	public void setPatientBloodGroup(Long aPatientBloodGroup) {thePatientBloodGroup = aPatientBloodGroup;}
-	
+	public Long getPatientBloodGroup() {return patientBloodGroup;}
+
 	/** Резус-фактор пациента */
 	@Comment("Резус-фактор пациента")
 	@Persist @Required
-	public Long getPatientRhesusFactor() {return thePatientRhesusFactor;}
-	public void setPatientRhesusFactor(Long aPatientRhesusFactor) {thePatientRhesusFactor = aPatientRhesusFactor;}
-	
+	public Long getPatientRhesusFactor() {return patientRhesusFactor;}
+
 	/** Группа крови препарата */
 	@Comment("Группа крови препарата")
 	@Persist @Required
-	public Long getPreparationBloodGroup() {return thePreparationBloodGroup;}
-	public void setPreparationBloodGroup(Long aPreparationBloodGroup) {thePreparationBloodGroup = aPreparationBloodGroup;}
+	public Long getPreparationBloodGroup() {return preparationBloodGroup;}
 
 	/** Резус-фактор препарата */
 	@Comment("Резус-фактор препарата")
 	@Persist @Required
-	public Long getPreparationRhesusFactor() {return thePreparationRhesusFactor;}
-	public void setPreparationRhesusFactor(Long aPreparationRhesusFactor) {thePreparationRhesusFactor = aPreparationRhesusFactor;}
+	public Long getPreparationRhesusFactor() {return preparationRhesusFactor;}
 
 	/** Препарат крови */
-	private Long theBloodPreparation;
+	private Long bloodPreparation;
 	/** Группа крови пациента */
-	private Long thePatientBloodGroup;
+	private Long patientBloodGroup;
 	/** Резус-фактор пациента */
-	private Long thePatientRhesusFactor;
+	private Long patientRhesusFactor;
 	/** Группа крови препарата */
-	private Long thePreparationBloodGroup;
+	private Long preparationBloodGroup;
 	/** Резус-фактор препарата */
-	private Long thePreparationRhesusFactor;
+	private Long preparationRhesusFactor;
 	
 	/** Проверка группы крови пациента */
 	@Comment("Проверка группы крови пациента")
 	@Persist
-	public Long getPatBloodGroupCheck() {return thePatBloodGroupCheck;}
-	public void setPatBloodGroupCheck(Long aPatBloodGroupCheck) {thePatBloodGroupCheck = aPatBloodGroupCheck;}
+	public Long getPatBloodGroupCheck() {return patBloodGroupCheck;}
 
 	/** Проверка группы крови препарата */
 	@Comment("Проверка группы крови препарата")
 	@Persist
-	public Long getPrepBloodGroupCheck() {return thePrepBloodGroupCheck;}
-	public void setPrepBloodGroupCheck(Long aPrepBloodGroupCheck) {thePrepBloodGroupCheck = aPrepBloodGroupCheck;}
+	public Long getPrepBloodGroupCheck() {return prepBloodGroupCheck;}
 
 	/** Проверка группы крови препарата */
-	private Long thePrepBloodGroupCheck;
+	private Long prepBloodGroupCheck;
 	/** Проверка группы крови пациента */
-	private Long thePatBloodGroupCheck;
+	private Long patBloodGroupCheck;
 	
 	/** Наблюдение сразу после переливания */
 	@Comment("Наблюдение сразу после переливания")
-	public TransfusionMonitoringForm getMonitorForm0() {return theMonitorForm0;}
-	public void setMonitorForm0(TransfusionMonitoringForm aMonitorForm0) {theMonitorForm0 = aMonitorForm0;}
+	public TransfusionMonitoringForm getMonitorForm0() {return monitorForm0;}
 
 	/** Наблюдение через 1 час */
 	@Comment("Наблюдение через 1 час")
-	public TransfusionMonitoringForm getMonitorForm1() {return theMonitorForm1;}
-	public void setMonitorForm1(TransfusionMonitoringForm aMonitorForm1) {theMonitorForm1 = aMonitorForm1;}
+	public TransfusionMonitoringForm getMonitorForm1() {return monitorForm1;}
 
 	/** Наблюдение через 2 часа */
 	@Comment("Наблюдение через 2 часа")
-	public TransfusionMonitoringForm getMonitorForm2() {return theMonitorForm2;}
-	public void setMonitorForm2(TransfusionMonitoringForm aMonitorForm2) {theMonitorForm2 = aMonitorForm2;}
+	public TransfusionMonitoringForm getMonitorForm2() {return monitorForm2;}
 
 	/** Наблюдение через 2 часа */
-	private TransfusionMonitoringForm theMonitorForm2 = new TransfusionMonitoringForm();
+	private TransfusionMonitoringForm monitorForm2 = new TransfusionMonitoringForm();
 	/** Наблюдение через 1 час */
-	private TransfusionMonitoringForm theMonitorForm1 = new TransfusionMonitoringForm();
+	private TransfusionMonitoringForm monitorForm1 = new TransfusionMonitoringForm();
 	/** Наблюдение сразу после переливания */
-	private TransfusionMonitoringForm theMonitorForm0 = new TransfusionMonitoringForm();
+	private TransfusionMonitoringForm monitorForm0 = new TransfusionMonitoringForm();
 	
 	/** Реактив 1 */
 	@Comment("Реактив 1")
-	public TransfusionReagentForm getReagentForm1() {return theReagentForm1;}
-	public void setReagentForm1(TransfusionReagentForm aReagentForm1) {theReagentForm1 = aReagentForm1;}
+	public TransfusionReagentForm getReagentForm1() {return reagentForm1;}
 
 	/** Реактив 2 */
 	@Comment("Реактив 2")
-	public TransfusionReagentForm getReagentForm2() {return theReagentForm2;}
-	public void setReagentForm2(TransfusionReagentForm aReagentForm2) {theReagentForm2 = aReagentForm2;}
+	public TransfusionReagentForm getReagentForm2() {return reagentForm2;}
 
 	/** Реактив 3 */
 	@Comment("Реактив 3")
-	public TransfusionReagentForm getReagentForm3() {return theReagentForm3;}
-	public void setReagentForm3(TransfusionReagentForm aReagentForm3) {theReagentForm3 = aReagentForm3;}
+	public TransfusionReagentForm getReagentForm3() {return reagentForm3;}
 
 	/** Реактив 3 */
-	private TransfusionReagentForm theReagentForm3 = new TransfusionReagentForm();
+	private TransfusionReagentForm reagentForm3 = new TransfusionReagentForm();
 	/** Реактив 2 */
-	private TransfusionReagentForm theReagentForm2 = new TransfusionReagentForm();
+	private TransfusionReagentForm reagentForm2 = new TransfusionReagentForm();
 	/** Реактив 1 */
-	private TransfusionReagentForm theReagentForm1 = new TransfusionReagentForm();
+	private TransfusionReagentForm reagentForm1 = new TransfusionReagentForm();
 	
 	/** Частота пульса */
 	@Comment("Частота пульса")
 	@Persist
-	public Integer getPulseRateBT() {return thePulseRateBT;}
-	public void setPulseRateBT(Integer aPulseRate) {thePulseRateBT = aPulseRate;}
+	public Integer getPulseRateBT() {return pulseRateBT;}
 
 	/** Температура */
 	@Comment("Температура")
 	@Persist @DoIntegerString @IntegerString
-	public String getTemperatureBT() {return theTemperatureBT;}
-	public void setTemperatureBT(String aTemperature) {theTemperatureBT = aTemperature;}
+	public String getTemperatureBT() {return temperatureBT;}
 
 	/** Артериальное давление (верхнее) */
 	@Comment("Артериальное давление (верхнее)")
 	@Persist
-	public Integer getBloodPressureTopBT() {return theBloodPressureTopBT;}
-	public void setBloodPressureTopBT(Integer aBloodPressureTop) {theBloodPressureTopBT = aBloodPressureTop;}
+	public Integer getBloodPressureTopBT() {return bloodPressureTopBT;}
 
 	/** Артериальное давление (нижнее) */
 	@Comment("Артериальное давление (нижнее)")
 	@Persist
-	public Integer getBloodPressureLowerBT() {return theBloodPressureLowerBT;}
-	public void setBloodPressureLowerBT(Integer aBloodPressureLower) {theBloodPressureLowerBT = aBloodPressureLower;}
-	
+	public Integer getBloodPressureLowerBT() {return bloodPressureLowerBT;}
+
 	/** Частота дыхательных движений */
 	@Comment("Частота дыхательных движений")
 	@Persist
-	public Integer getRespiratoryRateBT() {return theRespiratoryRateBT;}
-	public void setRespiratoryRateBT(Integer aRespiratoryRate) {theRespiratoryRateBT = aRespiratoryRate;}
+	public Integer getRespiratoryRateBT() {return respiratoryRateBT;}
 
 	/** Цвет сыворотки (биол. проба) */
 	@Comment("Цвет сыворотки (биол. проба)")
 	@Persist
-	public Long getSerumColorBT() {return theSerumColorBT;}
-	public void setSerumColorBT(Long aSerumColor) {theSerumColorBT = aSerumColor;}
+	public Long getSerumColorBT() {return serumColorBT;}
 
 	/** Переливание прекращено */
 	@Comment("Переливание прекращено")
 	@Persist
-	public Boolean getIsBreakBT() {return theIsBreakBT;}
-	public void setIsBreakBT(Boolean aIsBreakBT) {theIsBreakBT = aIsBreakBT;}
+	public Boolean getIsBreakBT() {return isBreakBT;}
 
 	/** Состояние удовлетворительное */
 	@Comment("Состояние удовлетворительное")
 	@Persist
-	public Long getStateBT() {return theStateBT;}
-	public void setStateBT(Long aStateBT) {theStateBT = aStateBT;}
+	public Long getStateBT() {return stateBT;}
 
 	/** Тяжелый боьлной */
 	@Comment("Тяжелый боьлной")
 	@Persist
-	public Boolean getIsIllPatientsBT() {return theIsIllPatientsBT;}
-	public void setIsIllPatientsBT(Boolean aIsIllPatients) {theIsIllPatientsBT = aIsIllPatients;}
+	public Boolean getIsIllPatientsBT() {return isIllPatientsBT;}
 
 	/** Жалобы */
 	@Comment("Жалобы")
 	@Persist
-	public String getLamentBT() {return theLamentBT;}
-	public void setLamentBT(String aLamentBT) {theLamentBT = aLamentBT;}
+	public String getLamentBT() {return lamentBT;}
 
 	/** Совместимость биопробы */
 	@Comment("Совместимость биопробы")
 	@Persist @Required
-	public Long getBioProbeCompatibility() {return theBioProbeCompatibility;}
-	public void setBioProbeCompatibility(Long aBioProbeCompatibility) {theBioProbeCompatibility = aBioProbeCompatibility;}
+	public Long getBioProbeCompatibility() {return bioProbeCompatibility;}
 
 	/** Организация, осуществившая инд. подбор */
 	@Comment("Организация, осуществившая инд. подбор")
 	@Persist @Required
-	public Long getIndOrg() {return theIndOrg;}
-	public void setIndOrg(Long aIndOrg) {theIndOrg = aIndOrg;}
+	public Long getIndOrg() {return indOrg;}
 	/** Организация, осуществившая инд. подбор */
-	private Long theIndOrg;
+	private Long indOrg;
 
 	/** Совместимость биопробы */
-	private Long theBioProbeCompatibility;
+	private Long bioProbeCompatibility;
 	/** Жалобы */
-	private String theLamentBT;
+	private String lamentBT;
 	/** Тяжелый боьлной */
-	private Boolean theIsIllPatientsBT;
+	private Boolean isIllPatientsBT;
 	/** Состояние удовлетворительное */
-	private Long theStateBT;
+	private Long stateBT;
 	/** Переливание прекращено */
-	private Boolean theIsBreakBT;
+	private Boolean isBreakBT;
 	/** Цвет сыворотки (биол. проба) */
-	private Long theSerumColorBT;
+	private Long serumColorBT;
 	/** Частота дыхательных движений */
-	private Integer theRespiratoryRateBT;
+	private Integer respiratoryRateBT;
 	/** Артериальное давление (нижнее) */
-	private Integer theBloodPressureLowerBT;
+	private Integer bloodPressureLowerBT;
 	/** Артериальное давление (верхнее) */
-	private Integer theBloodPressureTopBT;
+	private Integer bloodPressureTopBT;
 	/** Температура */
-	private String theTemperatureBT;
+	private String temperatureBT;
 	/** Частота пульса */
-	private Integer thePulseRateBT;
+	private Integer pulseRateBT;
 	
 	
 	/** Метод 1 по инд. совместимости */
 	@Comment("Метод 1 по инд. совместимости")
 	@Persist
-	public Long getMethodPT1() {return theMethodPT1;}
-	public void setMethodPT1(Long aMethodPT1) {theMethodPT1 = aMethodPT1;}
+	public Long getMethodPT1() {return methodPT1;}
 
 	/** 1. Реактив по инд. совместимости */
 	@Comment("1. Реактив по инд. совместимости")
 	@Persist
-	public String getReagentPT1() {return theReagentPT1;}
-	public void setReagentPT1(String aReagentPT1) {theReagentPT1 = aReagentPT1;}
+	public String getReagentPT1() {return reagentPT1;}
 
 	/** 1. Серия реактива по инд. совместимости */
 	@Comment("1. Серия реактива по инд. совместимости")
 	@Persist
-	public String getReagentSeriesPT1() {return theReagentSeriesPT1;}
-	public void setReagentSeriesPT1(String aReagentSeriesPT1) {theReagentSeriesPT1 = aReagentSeriesPT1;}
+	public String getReagentSeriesPT1() {return reagentSeriesPT1;}
 
 	/** 1. Срок годности */
 	@Comment("1. Срок годности")
 	@Persist @DateString @DoDateString
-	public String getReagentExpDatePT1() {return theReagentExpDatePT1;}
-	public void setReagentExpDatePT1(String aReagentExpDatePT1) {theReagentExpDatePT1 = aReagentExpDatePT1;}
+	public String getReagentExpDatePT1() {return reagentExpDatePT1;}
 
 	/** Результат. Совместима */
 	@Comment("Результат. Совместима")
 	@Persist
-	public Long getResultGoodPT1() {return theResultGoodPT1;}
-	public void setResultGoodPT1(Long aResultGoodPT1) {theResultGoodPT1 = aResultGoodPT1;}
+	public Long getResultGoodPT1() {return resultGoodPT1;}
 
 	/** Результат. Совместима */
-	private Long theResultGoodPT1;
+	private Long resultGoodPT1;
 	/** 1. Срок годности */
-	private String theReagentExpDatePT1;
+	private String reagentExpDatePT1;
 	/** 1. Серия реактива по инд. совместимости */
-	private String theReagentSeriesPT1;
+	private String reagentSeriesPT1;
 	/** 1. Реактив по инд. совместимости */
-	private String theReagentPT1;
+	private String reagentPT1;
 	/** Метод 1 по инд. совместимости */
-	private Long theMethodPT1;
+	private Long methodPT1;
 	
 	/** Метод 2 по инд. совместимости */
 	@Comment("Метод 2 по инд. совместимости")
 	@Persist
-	public Long getMethodPT2() {return theMethodPT2;}
-	public void setMethodPT2(Long aMethodPT2) {theMethodPT2 = aMethodPT2;}
+	public Long getMethodPT2() {return methodPT2;}
 
 	/** 2. Реактив по инд. совместимости */
 	@Comment("2. Реактив по инд. совместимости")
 	@Persist
-	public String getReagentPT2() {return theReagentPT2;}
-	public void setReagentPT2(String aReagentPT2) {theReagentPT2 = aReagentPT2;}
+	public String getReagentPT2() {return reagentPT2;}
 
 	/** 2. Серия реактива по инд. совместимости */
 	@Comment("2. Серия реактива по инд. совместимости")
 	@Persist
-	public String getReagentSeriesPT2() {return theReagentSeriesPT2;}
-	public void setReagentSeriesPT2(String aReagentSeriesPT2) {theReagentSeriesPT2 = aReagentSeriesPT2;}
+	public String getReagentSeriesPT2() {return reagentSeriesPT2;}
 
 	/** 2. Срок годности */
 	@Comment("2. Срок годности")
 	@Persist @DateString @DoDateString
-	public String getReagentExpDatePT2() {return theReagentExpDatePT2;}
-	public void setReagentExpDatePT2(String aReagentExpDatePT2) {theReagentExpDatePT2 = aReagentExpDatePT2;}
+	public String getReagentExpDatePT2() {return reagentExpDatePT2;}
 
 	/** Результат. Совместима */
 	@Comment("Результат. Совместима")
 	@Persist
-	public Long getResultGoodPT2() {return theResultGoodPT2;}
-	public void setResultGoodPT2(Long aResultGoodPT2) {theResultGoodPT2 = aResultGoodPT2;}
+	public Long getResultGoodPT2() {return resultGoodPT2;}
 
 	/** Результат. Совместима */
-	private Long theResultGoodPT2;
+	private Long resultGoodPT2;
 	/** 1. Срок годности */
-	private String theReagentExpDatePT2;
+	private String reagentExpDatePT2;
 	/** 1. Серия реактива по инд. совместимости */
-	private String theReagentSeriesPT2;
+	private String reagentSeriesPT2;
 	/** 1. Реактив по инд. совместимости */
-	private String theReagentPT2;
+	private String reagentPT2;
 	/** Метод 1 по инд. совместимости */
-	private Long theMethodPT2;
+	private Long methodPT2;
 	
 	/** Биологическая проба */
 	@Comment("Биологическая проба")
-	public String getBiologicTest() {return theBiologicTest;}
-	public void setBiologicTest(String aBiologicTest) {theBiologicTest = aBiologicTest;}
+	public String getBiologicTest() {return biologicTest;}
 
 	/** Биологическая проба */
-	private String theBiologicTest;
+	private String biologicTest;
 
 	/** Справочник процедур в биологической пробе при переливаниях */
 	@Comment("Справочник процедур в биологической пробе при переливаниях")
 	@Persist
-	public Long getBloodBioProbProcedure() {return theBloodBioProbProcedure;}
-	public void setBloodBioProbProcedure(Long aBloodBioProbProcedure) {theBloodBioProbProcedure=aBloodBioProbProcedure;}
+	public Long getBloodBioProbProcedure() {return bloodBioProbProcedure;}
 
 	/** Кровотечение усилилось или нет без видимой причины*/
 	@Comment("Кровотечение усилилось или нет без видимой причины")
 	@Persist
-	public Boolean getWasBleedingIncreased() {return theWasBleedingIncreased;}
-	public void setWasBleedingIncreased(Boolean aWasBleedingIncreased) {theWasBleedingIncreased=aWasBleedingIncreased;}
+	public Boolean getWasBleedingIncreased() {return wasBleedingIncreased;}
 
 	/** АД снизилось или нет без видимой причины*/
 	@Comment("АД снизилось или нет без видимой причины")
 	@Persist
-	public Boolean getWasADDecreased() {return theWasADDecreased;}
-	public void setWasADDecreased(Boolean aWasADDecreased) {theWasADDecreased=aWasADDecreased;}
+	public Boolean getWasADDecreased() {return wasADDecreased;}
 
 	/** Пульс участился или нет без видимой причины*/
 	@Comment("Пульс участился или нет без видимой причины")
 	@Persist
-	public Boolean getWasPulseIncreased() {return theWasPulseIncreased;}
-	public void setWasPulseIncreased(Boolean aWasPulseIncreased) {theWasPulseIncreased=aWasPulseIncreased;}
+	public Boolean getWasPulseIncreased() {return wasPulseIncreased;}
 
 	/** Пульс участился или нет без видимой причины*/
 	@Comment("Пульс участился или нет без видимой причины")
 	@Persist
-	public Boolean getWasUrineColorChanged() {return theWasUrineColorChanged;}
-	public void setWasUrineColorChanged(Boolean aWasUrineColorChanged) {theWasUrineColorChanged=aWasUrineColorChanged;}
+	public Boolean getWasUrineColorChanged() {return wasUrineColorChanged;}
 
 	/** 3. Реактив по инд. совместимости */
 	@Comment("3. Реактив по инд. совместимости")
 	@Persist
-	public String getReagentPT3() {return theReagentPT3;}
-	public void setReagentPT3(String aReagentPT3) {theReagentPT3 = aReagentPT3;}
+	public String getReagentPT3() {return reagentPT3;}
 
 	/** 3. Серия реактива по инд. совместимости */
 	@Comment("3. Серия реактива по инд. совместимости")
 	@Persist
-	public String getReagentSeriesPT3() {return theReagentSeriesPT3;}
-	public void setReagentSeriesPT3(String aReagentSeriesPT3) {theReagentSeriesPT3 = aReagentSeriesPT3;}
+	public String getReagentSeriesPT3() {return reagentSeriesPT3;}
 
 	/** 3. Срок годности */
 	@Comment("3. Срок годности")
 	@Persist @DateString @DoDateString
-	public String getReagentExpDatePT3() {return theReagentExpDatePT3;}
-	public void setReagentExpDatePT3(String aReagentExpDatePT3) {theReagentExpDatePT3 = aReagentExpDatePT3;}
+	public String getReagentExpDatePT3() {return reagentExpDatePT3;}
 
 	@Persist @DateString @DoDateString
-	public String getDateResearch() {return theDateResearch;}
-	public void setDateResearch(String aDateResearch) {theDateResearch = aDateResearch;}
+	public String getDateResearch() {return dateResearch;}
 
 	/** Справочник процедур в биологической пробе при переливаниях */
-	private Long theBloodBioProbProcedure;
+	private Long bloodBioProbProcedure;
 	/** Кровотечение усилилось или нет без видимой причины (при переливании под наркозом или в коме)*/
-	private Boolean theWasBleedingIncreased;
+	private Boolean wasBleedingIncreased;
 	/** АД снизилось или нет без видимой причины (при переливании под наркозом или в коме)*/
-	private Boolean theWasADDecreased;
+	private Boolean wasADDecreased;
 	/** Пульс участился или нет без видимой причины (при переливании под наркозом или в коме)*/
-	private Boolean theWasPulseIncreased;
+	private Boolean wasPulseIncreased;
 	/** Цвет мочи изменился или нет без видимой причины (при переливании под наркозом или в коме)*/
-	private Boolean theWasUrineColorChanged;
+	private Boolean wasUrineColorChanged;
 	/** 3. Срок годности */
-	private String theReagentExpDatePT3;
+	private String reagentExpDatePT3;
 	/** 3. Серия реактива по инд. совместимости */
-	private String theReagentSeriesPT3;
+	private String reagentSeriesPT3;
 	/** 3. Реактив по инд. совместимости */
-	private String theReagentPT3;
+	private String reagentPT3;
 	/** Дата исследования */
-	private String theDateResearch;
+	private String dateResearch;
 
 	/** Фенотип донора */
 	@Comment("Фенотип донора")
 	@Persist
-	public String getPhenotypeDon() {return thePhenotypeDon;}
-	public void setPhenotypeDon(String aPhenotypeDon) {thePhenotypeDon = aPhenotypeDon;}
+	public String getPhenotypeDon() {return phenotypeDon;}
 
 	/** Фенотип донора C */
 	@Comment("Фенотип донора C")
 	@Persist
-	public Boolean getPhenotypeDonC() {return thePhenotypeDonC;}
-	public void setPhenotypeDonC(Boolean aPhenotypeDonC) {thePhenotypeDonC = aPhenotypeDonC;}
+	public Boolean getPhenotypeDonC() {return phenotypeDonC;}
 
 	/** Фенотип донора с */
 	@Comment("Фенотип донора с")
 	@Persist
-	public Boolean getPhenotypeDonc1() {return thePhenotypeDonc1;}
-	public void setPhenotypeDonc1(Boolean aPhenotypeDonc1) {thePhenotypeDonc1 = aPhenotypeDonc1;}
+	public Boolean getPhenotypeDonc1() {return phenotypeDonc1;}
 
 	/** Фенотип донора Е */
 	@Comment("Фенотип донора Е")
 	@Persist
-	public Boolean getPhenotypeDonD() {return thePhenotypeDonD;}
-	public void setPhenotypeDonD(Boolean aPhenotypeDonD) {thePhenotypeDonD = aPhenotypeDonD;}
+	public Boolean getPhenotypeDonD() {return phenotypeDonD;}
 
 	/** Фенотип донора e */
 	@Comment("Фенотип донора e")
 	@Persist
-	public Boolean getPhenotypeDonE() {return thePhenotypeDonE;}
-	public void setPhenotypeDonE(Boolean aPhenotypeDonE) {thePhenotypeDonE = aPhenotypeDonE;}
+	public Boolean getPhenotypeDonE() {return phenotypeDonE;}
 
 	/** Фенотип донора E */
 	@Comment("Фенотип донора E")
 	@Persist
-	public Boolean getPhenotypeDone1() {return thePhenotypeDone1;}
-	public void setPhenotypeDone1(Boolean aPhenotypeDone1) {thePhenotypeDone1 = aPhenotypeDone1;}
+	public Boolean getPhenotypeDone1() {return phenotypeDone1;}
 
 	/** Фенотип донора не определялся */
 	@Comment("Фенотип донора не определялся")
 	@Persist
-	public Boolean getPhenotypeDonNone() {return thePhenotypeDonNone;}
-	public void setPhenotypeDonNone(Boolean aPhenotypeDonNone) {thePhenotypeDonNone = aPhenotypeDonNone;}
+	public Boolean getPhenotypeDonNone() {return phenotypeDonNone;}
 
 	/** Заключение совместимо/нет */
 	@Comment("Заключение совместимо/нет")
 	@Persist
-	public Long getConclusion() {return theConclusion;}
-	public void setConclusion(Long aConclusion) {theConclusion = aConclusion;}
+	public Long getConclusion() {return conclusion;}
 
 	/** Совместимость на плоскости */
 	@Comment("Совместимость на плоскости")
 	@Persist
-	public Long getPlaneCompatibility() {return thePlaneCompatibility;}
-	public void setPlaneCompatibility(Long aPlaneCompatibility) {thePlaneCompatibility = aPlaneCompatibility;}
+	public Long getPlaneCompatibility() {return planeCompatibility;}
 
 	/** Основные симптомы */
 	@Comment("Основные симптомы")
 	@Persist
-	public String getMainSymptoms() {return theMainSymptoms;}
-	public void setMainSymptoms(String aMainSymptoms) {theMainSymptoms = aMainSymptoms;}
+	public String getMainSymptoms() {return mainSymptoms;}
 
 	/** Заключение совместимо/нет */
-	private Long theConclusion;
+	private Long conclusion;
 	/** Заключение совместимо/нет */
-	private Long thePlaneCompatibility;
+	private Long planeCompatibility;
 	/** Фенотип донора E */
-	private Boolean thePhenotypeDone1;
+	private Boolean phenotypeDone1;
 	/** Фенотип донора e */
-	private Boolean thePhenotypeDonE;
+	private Boolean phenotypeDonE;
 	/** Фенотип донора Е */
-	private Boolean thePhenotypeDonD;
+	private Boolean phenotypeDonD;
 	/** Фенотип донора с */
-	private Boolean thePhenotypeDonc1;
+	private Boolean phenotypeDonc1;
 	/** Фенотип донора C */
-	private Boolean thePhenotypeDonC;
+	private Boolean phenotypeDonC;
 	/** Фенотип донора не определялся*/
-	private Boolean thePhenotypeDonNone;
+	private Boolean phenotypeDonNone;
 	/** Фенотип донора */
-	private String thePhenotypeDon;
+	private String phenotypeDon;
 	/** Основные симптомы */
-	private String theMainSymptoms;
+	private String mainSymptoms;
 }

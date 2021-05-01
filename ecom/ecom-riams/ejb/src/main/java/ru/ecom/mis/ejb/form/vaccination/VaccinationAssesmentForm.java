@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.vaccination;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.vaccination.VaccinationAssesment;
@@ -25,21 +26,18 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Оценка", nameProperties= "id", view="entityView-vac_vaccinationAssesment.do")
 @Parent(property = "vaccination", parentForm =VaccinationForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Vaccination/VaccinationAssesment")
+@Setter
 public class VaccinationAssesmentForm extends IdEntityForm {
 
 	/** Вакцинация */
 	@Comment("Вакцинация")
 	@Persist @Required
 	public Long getVaccination() {
-		return theVaccination;
-	}
-
-	public void setVaccination(Long aVaccination) {
-		theVaccination = aVaccination;
+		return vaccination;
 	}
 
 	/** Вакцинация */
-	private Long theVaccination;
+	private Long vaccination;
 	
 	/**
 	 * Дата оценки
@@ -49,20 +47,13 @@ public class VaccinationAssesmentForm extends IdEntityForm {
 	@DateString
 	@DoDateString
 	public String getAssesmentDate() {
-		return theAssesmentDate;
+		return assesmentDate;
 	}
 
 	/**
 	 * Дата оценки
 	 */
-	public void setAssesmentDate(String a_Property) {
-		theAssesmentDate = a_Property;
-	}
-
-	/**
-	 * Дата оценки
-	 */
-	private String theAssesmentDate;
+	private String assesmentDate;
 
 	/**
 	 * Время оценки
@@ -72,20 +63,13 @@ public class VaccinationAssesmentForm extends IdEntityForm {
 	@TimeString
 	@DoTimeString
 	public String getAssesmentTime() {
-		return theAssesmentTime;
+		return assesmentTime;
 	}
 
 	/**
 	 * Время оценки
 	 */
-	public void setAssesmentTime(String a_Property) {
-		theAssesmentTime = a_Property;
-	}
-
-	/**
-	 * Время оценки
-	 */
-	private String theAssesmentTime;
+	private String assesmentTime;
 
 	/**
 	 * Кто оценивал
@@ -93,20 +77,13 @@ public class VaccinationAssesmentForm extends IdEntityForm {
 	@Comment("Кто оценивал")
 	@Persist @Required
 	public Long getWorker() {
-		return theWorker;
+		return worker;
 	}
 
 	/**
 	 * Кто оценивал
 	 */
-	public void setWorker(Long a_Property) {
-		theWorker = a_Property;
-	}
-
-	/**
-	 * Кто оценивал
-	 */
-	private Long theWorker;
+	private Long worker;
 	
 	/**
 	 * Комментарий к общей реакции
@@ -114,20 +91,13 @@ public class VaccinationAssesmentForm extends IdEntityForm {
 	@Comment("Комментарий к общей реакции")
 	@Persist
 	public String getCommonReactionComment() {
-		return theCommonReactionComment;
+		return commonReactionComment;
 	}
 
 	/**
 	 * Комментарий к общей реакции
 	 */
-	public void setCommonReactionComment(String a_Property) {
-		theCommonReactionComment = a_Property;
-	}
-
-	/**
-	 * Комментарий к общей реакции
-	 */
-	private String theCommonReactionComment;
+	private String commonReactionComment;
 
 	/**
 	 * Комментарий к локальной реакции
@@ -135,19 +105,12 @@ public class VaccinationAssesmentForm extends IdEntityForm {
 	@Comment("Комментарий к локальной реакции")
 	@Persist
 	public String getLocalReactionComment() {
-		return theLocalReactionComment;
+		return localReactionComment;
 	}
 
 	/**
 	 * Комментарий к локальной реакции
 	 */
-	public void setLocalReactionComment(String a_Property) {
-		theLocalReactionComment = a_Property;
-	}
-
-	/**
-	 * Комментарий к локальной реакции
-	 */
-	private String theLocalReactionComment;
+	private String localReactionComment;
 
 }

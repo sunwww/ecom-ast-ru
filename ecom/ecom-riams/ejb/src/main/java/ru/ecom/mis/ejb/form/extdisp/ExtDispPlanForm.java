@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.extdisp;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispPlan;
@@ -18,12 +19,12 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 , view="entityParentView-extDisp_vocPlan.do")
 @Parent(property="dispType", parentForm=VocExtDispForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card/Voc/Plan")
+@Setter
 public class ExtDispPlanForm extends IdEntityForm{
 	/** Тип дополнительной диспансеризации */
 	@Comment("Тип дополнительной диспансеризации")
 	@Persist
-	public Long getDispType() {return theDispType;}
-	public void setDispType(Long aDispType) {theDispType = aDispType;}
+	public Long getDispType() {return dispType;}
 	/** Тип дополнительной диспансеризации */
-	private Long theDispType;
+	private Long dispType;
 }

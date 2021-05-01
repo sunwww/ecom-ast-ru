@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.form.psychiatry;
 
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.psychiatry.CompulsoryTreatment;
@@ -22,6 +23,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Принудительное лечение", nameProperties= "orderNumber",list="entityParentList-psych_compulsoryTreatment.do", view="entityParentView-psych_compulsoryTreatment.do", listComment="список по пациенту")
 @Parent(property="careCard", parentForm=PsychiatricCareCardForm.class,orderBy="decisionDate")
 @EntityFormSecurityPrefix("/Policy/Mis/Psychiatry/CareCard/CompulsoryTreatment")
+@Setter
 public class CompulsoryTreatmentForm extends IdEntityForm {
 	/**
 	  * Порядковый номер лечения
@@ -29,60 +31,48 @@ public class CompulsoryTreatmentForm extends IdEntityForm {
 	 @Comment("Порядковый номер лечения")
 	 @Persist @Required
 	 public int getOrderNumber() {
-	  return theOrderNumber;
-	 }
-	 public void setOrderNumber(int aOrderNumber) {
-	  theOrderNumber = aOrderNumber;
+	  return orderNumber;
 	 }
 	 /**
 	  * Порядковый номер лечения
 	  */
-	 private int theOrderNumber;
+	 private int orderNumber;
 	 /**
 	  * Дата решения суда
 	  */
 	 @Comment("Дата решения суда")
 	 @DateString @DoDateString @Persist @Required
 	 public String getDecisionDate() {
-	  return theDecisionDate;
-	 }
-	 public void setDecisionDate(String aDecisionDate) {
-	  theDecisionDate = aDecisionDate;
+	  return decisionDate;
 	 }
 	 /**
 	  * Дата решения суда
 	  */
-	 private String theDecisionDate;
+	 private String decisionDate;
 	 /**
 	  * Описание решения
 	  */
 	 @Comment("Описание решения")
 	 @Persist
 	 public String getDecisionNotes() {
-	  return theDecisionNotes;
-	 }
-	 public void setDecisionNotes(String aDecisionNotes) {
-	  theDecisionNotes = aDecisionNotes;
+	  return decisionNotes;
 	 }
 	 /**
 	  * Описание решения
 	  */
-	 private String theDecisionNotes;
+	 private String decisionNotes;
 	 /**
 	  * Карта обратившегося за психиатрической помощью
 	  */
 	 @Comment("Карта обратившегося за психиатрической помощью")
 	 @Persist @Required
 	 public Long getCareCard() {
-	  return theCareCard;
-	 }
-	 public void setCareCard(Long aCareCard) {
-	  theCareCard = aCareCard;
+	  return careCard;
 	 }
 	 /**
 	  * Карта обратившегося за психиатрической помощью
 	  */
-	 private Long theCareCard;
+	 private Long careCard;
 
 	 /**
 	  * Вид принудительного лечения
@@ -90,217 +80,167 @@ public class CompulsoryTreatmentForm extends IdEntityForm {
 	 @Comment("Вид принудительного лечения")
 	 @Persist @Required
 	 public Long getKind() {
-	  return theKind;
-	 }
-	 public void setKind(Long aKind) {
-	  theKind = aKind;
+	  return kind;
 	 }
 	 /**
 	  * Вид принудительного лечения
 	  */
-	 private Long theKind;
+	 private Long kind;
 	 /**
 	  * Суд, принявший решение
 	  */
 	 @Comment("Суд, принявший решение")
 	 @Persist @Required
 	 public Long getLawCourt() {
-	  return theLawCourt;
-	 }
-	 public void setLawCourt(Long aLawCourt) {
-	  theLawCourt = aLawCourt;
+	  return lawCourt;
 	 }
 	 /**
 	  * Суд, принявший решение
 	  */
-	 private Long theLawCourt;
+	 private Long lawCourt;
 	 /**
 	  * Статья уголовного кодекса
 	  */
 	 @Comment("Статья уголовного кодекса")
 	 @Persist @Required
 	 public Long getCrimainalCodeArticle() {
-	  return theCrimainalCodeArticle;
-	 }
-	 public void setCrimainalCodeArticle(Long aCrimainalCodeArticle) {
-	  theCrimainalCodeArticle = aCrimainalCodeArticle;
+	  return crimainalCodeArticle;
 	 }
 	 /**
 	  * Статья уголовного кодекса
 	  */
-	 private Long theCrimainalCodeArticle;
+	 private Long crimainalCodeArticle;
 	 /**
 	  * Психиатрическая экспертиза
 	  */
 	 @Comment("Психиатрическая экспертиза")
 	 @Persist
 	 public Long getPsychatricExamination() {
-	  return thePsychatricExamination;
-	 }
-	 public void setPsychatricExamination(Long aPsychatricExamination) {
-	  thePsychatricExamination = aPsychatricExamination;
+	  return psychatricExamination;
 	 }
 	 /**
 	  * Психиатрическая экспертиза
 	  */
-	 private Long thePsychatricExamination;
-	 
+	 private Long psychatricExamination;
 
-	
 	/** Статья уголовного кодекса (инфо) */
 	@Comment("Статья уголовного кодекса (инфо)")
 	@Persist
 	public String getCrimainalCodeArticleInfo() {
-		return theCrimainalCodeArticleInfo;
-	}
-
-	public void setCrimainalCodeArticleInfo(String aCrimainalCodeArticleInfo) {
-		theCrimainalCodeArticleInfo = aCrimainalCodeArticleInfo;
+		return crimainalCodeArticleInfo;
 	}
 
 	/** Статья уголовного кодекса (инфо) */
-	private String theCrimainalCodeArticleInfo;
+	private String crimainalCodeArticleInfo;
 	
 	/** Вид принудительного лечения (инфо) */
 	@Comment("Вид принудительного лечения (инфо)")
 	@Persist
 	public String getKindInfo() {
-		return theKindInfo;
-	}
-
-	public void setKindInfo(String aKindInfo) {
-		theKindInfo = aKindInfo;
+		return kindInfo;
 	}
 
 	/** Вид принудительного лечения (инфо) */
-	private String theKindInfo;
+	private String kindInfo;
 	
 	/** Суд, принявший решений (инфо) */
 	@Comment("Суд, принявший решений (инфо)")
 	@Persist
 	public String getLawCourtInfo() {
-		return theLawCourtInfo;
-	}
-
-	public void setLawCourtInfo(String aLawCourtInfo) {
-		theLawCourtInfo = aLawCourtInfo;
+		return lawCourtInfo;
 	}
 
 	/** Суд, принявший решений (инфо) */
-	private String theLawCourtInfo;
+	private String lawCourtInfo;
 	
 	/** Психиатрическая экспертиза */
 	@Comment("Психиатрическая экспертиза")
 	@Persist
 	public String getPsychatricExaminationInfo() {
-		return thePsychatricExaminationInfo;
-	}
-
-	public void setPsychatricExaminationInfo(String aPsychatricExaminationInfo) {
-		thePsychatricExaminationInfo = aPsychatricExaminationInfo;
+		return psychatricExaminationInfo;
 	}
 
 	/** Психиатрическая экспертиза */
-	private String thePsychatricExaminationInfo;
+	private String psychatricExaminationInfo;
 	
 	 /** Дата регистрации */
 	@Comment("Дата регистрации")
 	@Persist @DateString @DoDateString @Required
 	public String getRegistrationDate() {
-		return theRegistrationDate;
-	}
-
-	public void setRegistrationDate(String aRegistrationDate) {
-		theRegistrationDate = aRegistrationDate;
+		return registrationDate;
 	}
 
 	/** Дата регистрации */
-	private String theRegistrationDate;
+	private String registrationDate;
 	
 	
 	 /** Дата замены */
 	@Comment("Дата замены")
 	@Persist @DoDateString @DateString
-	public String getDateReplace() {return theDateReplace;}
-	public void setDateReplace(String aDateReplace) {theDateReplace = aDateReplace;}
-	
+	public String getDateReplace() {return dateReplace;}
+
 	/** Суд, заменивший тип принудительного лечения */
 	@Comment("Суд, заменивший тип принудительного лечения")
 	@Persist
-	public Long getLawCourtReplace() {return theLawCourtReplace;}
-	public void setLawCourtReplace(Long aLawCourtReplace) {theLawCourtReplace = aLawCourtReplace;}
+	public Long getLawCourtReplace() {return lawCourtReplace;}
 
 	/** Решение заменено на */
 	@Comment("Решение заменено на")
 	@Persist
 	public Long getCourtDecisionReplace() {
-		return theCourtDecisionReplace;
-	}
-
-	public void setCourtDecisionReplace(Long aCourtDecisionReplace) {
-		theCourtDecisionReplace = aCourtDecisionReplace;
+		return courtDecisionReplace;
 	}
 
 	/** Решение заменено на */
-	private Long theCourtDecisionReplace;
+	private Long courtDecisionReplace;
 	/** Суд, заменивший тип принудительного лечения */
-	private Long theLawCourtReplace;
+	private Long lawCourtReplace;
 	/** Дата замены */
-	private String theDateReplace;
+	private String dateReplace;
 	/** Дата регистрации замены */
 	@Comment("Дата регистрации замены")
 	@Persist @DateString @DoDateString
 	public String getRegistrationReplaceDate() {
-		return theRegistrationReplaceDate;
-	}
-
-	public void setRegistrationReplaceDate(String aRegistrationReplaceDate) {
-		theRegistrationReplaceDate = aRegistrationReplaceDate;
+		return registrationReplaceDate;
 	}
 
 	/** Дата регистрации замены */
-	private String theRegistrationReplaceDate;
+	private String registrationReplaceDate;
 	 /** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DoDateString @DateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	public String getCreateDate() {return createDate;}
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@Persist @DoDateString @DateString
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	public String getEditDate() {return editDate;}
 	/** Пользователь, создавший запись */
 	@Comment("Пользователь, создавший запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 	/** Пользователь, последний редактировавший запись */
 	@Comment("Пользователь, последний редактировавший запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Время создания */
 	@Comment("Время создания")
 	@Persist @TimeString @DoTimeString
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;}
 	/** Время редактрования */
 	@Comment("Время редактрования")
 	@Persist @TimeString @DoTimeString
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
-	
+	public String getEditTime() {return editTime;}
+
 	/** Время редактрования */
-	private String theEditTime;
+	private String editTime;
 	/** Время создания */
-	private String theCreateTime;	/** Пользователь, последний редактировавший запись */
-	private String theEditUsername;
+	private String createTime;	/** Пользователь, последний редактировавший запись */
+	private String editUsername;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 }

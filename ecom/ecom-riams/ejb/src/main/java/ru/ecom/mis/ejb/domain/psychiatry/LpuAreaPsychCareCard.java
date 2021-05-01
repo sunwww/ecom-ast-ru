@@ -10,6 +10,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -28,119 +30,79 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@AIndex(properties={"careCard"})
 })
 @Table(schema="SQLUser")
+ @Getter
+ @Setter
 public class LpuAreaPsychCareCard extends BaseEntity{
  /**
   * Дата прихода на участок
   */
- @Comment("Дата прихода на участок")
- public Date getStartDate() {
-  return theStartDate;
- }
- public void setStartDate(Date aStartDate) {
-  theStartDate = aStartDate;
- }
- /**
-  * Дата прихода на участок
-  */
- private Date theStartDate;
+ private Date startDate;
  /**
   * Дата выбытия с участка
   */
- @Comment("Дата выбытия с участка")
- public Date getFinishDate() {
-  return theFinishDate;
- }
- public void setFinishDate(Date aFinishDate) {
-  theFinishDate = aFinishDate;
- }
- /**
-  * Дата выбытия с участка
-  */
- private Date theFinishDate;
+ private Date finishDate;
  /**
   * Участок ЛПУ
   */
  @Comment("Участок ЛПУ")
  @ManyToOne
  public LpuArea getLpuArea() {
-  return theLpuArea;
- }
- public void setLpuArea(LpuArea aLpuArea) {
-  theLpuArea = aLpuArea;
+  return lpuArea;
  }
  /**
   * Участок ЛПУ
   */
- private LpuArea theLpuArea;
+ private LpuArea lpuArea;
  /**
   * Карта обративщегося за психиатрической помощью
   */
  @Comment("Карта обративщегося за психиатрической помощью")
  @ManyToOne
  public PsychiatricCareCard getCareCard() {
-  return theCareCard;
+  return careCard;
  }
- public void setCareCard(PsychiatricCareCard aCareCard) {
-  theCareCard = aCareCard;
- }
- 
-	 /** Дата перевода */
-	@Comment("Дата перевода")
-	public Date getTransferDate() {return theTransferDate;}
-	public void setTransferDate(Date aTransferDate) {theTransferDate = aTransferDate;}
-	
+
+
 	/** Причина перевода */
 	@Comment("Причина перевода")
 	@OneToOne
 	public VocPsychTransferReason getTransferReason() {
-		return theTransferReason;
+		return transferReason;
 	}
 
-	public void setTransferReason(VocPsychTransferReason aTransferReason) {
-		theTransferReason = aTransferReason;
-	}
-	
 	/** Причина взятия */
 	@Comment("Причина взятия")
 	@OneToOne
 	public VocPsychObservationReason getObservationReason() {
-		return theObservationReason;
+		return observationReason;
 	}
 
-	public void setObservationReason(VocPsychObservationReason aObservationReason) {
-		theObservationReason = aObservationReason;
-	}
-	
 	/** Причина снятия с учета */
 	@Comment("Причина снятия с учета")
 	@OneToOne
 	public VocPsychStrikeOffReason getStikeOffReason() {
-		return theStikeOffReason;
-	}
-
-	public void setStikeOffReason(VocPsychStrikeOffReason aStikeOffReason) {
-		theStikeOffReason = aStikeOffReason;
+		return stikeOffReason;
 	}
 
 	/** Причина снятия с учета */
-	private VocPsychStrikeOffReason theStikeOffReason;
+	private VocPsychStrikeOffReason stikeOffReason;
 
 	/** Причина взятия */
-	private VocPsychObservationReason theObservationReason;
+	private VocPsychObservationReason observationReason;
 
 	/** Причина перевода */
-	private VocPsychTransferReason theTransferReason;
+	private VocPsychTransferReason transferReason;
 	/** Дата перевода */
-	private Date theTransferDate;
+	private Date transferDate;
  /**
   * Карта обративщегося за психиатрической помощью
   */
- private PsychiatricCareCard theCareCard;
+ private PsychiatricCareCard careCard;
  
  @Comment("Участок ЛПУ (ИНФО)")
  @Transient
  public String getLpuAreaInfo() {
-	 return theLpuArea!=null? theLpuArea.getName():"" ;
+	 return lpuArea!=null? lpuArea.getName():"" ;
  }
  /**
   * Наблюдения
@@ -148,74 +110,30 @@ public class LpuAreaPsychCareCard extends BaseEntity{
  @Comment("Наблюдения")
  @OneToMany(mappedBy="lpuAreaPsychCareCard", cascade=CascadeType.ALL)
  public List<PsychiaticObservation> getObservations() {
-  return theObservations;
- }
- public void setObservations(List<PsychiaticObservation> aObservations) {
-  theObservations = aObservations;
+  return observations;
  }
  /**
   * Наблюдения
   */
- private List<PsychiaticObservation> theObservations;
+ private List<PsychiaticObservation> observations;
  
- /** Дата создания */
-@Comment("Дата создания")
-public Date getCreateDate() {
-	return theCreateDate;
-}
-
-public void setCreateDate(Date aCreateDate) {
-	theCreateDate = aCreateDate;
-}
-/** Дата редактирования */
-@Comment("Дата редактирования")
-public Date getEditDate() {
-	return theEditDate;
-}
-
-public void setEditDate(Date aEditDate) {
-	theEditDate = aEditDate;
-}
-/** Пользователь, создавший запись */
-@Comment("Пользователь, создавший запись")
-public String getCreateUsername() {
-	return theCreateUsername;
-}
-
-public void setCreateUsername(String aCreateUsername) {
-	theCreateUsername = aCreateUsername;
-}
 /** Пользователь, последний редактировавший запись */
-@Comment("Пользователь, последний редактировавший запись")
-public String getEditUsername() {
-	return theEditUsername;
-}
-
-public void setEditUsername(String aEditUsername) {
-	theEditUsername = aEditUsername;
-}
-
-/** Пользователь, последний редактировавший запись */
-private String theEditUsername;
+private String editUsername;
 /** Пользователь, создавший запись */
-private String theCreateUsername;
+private String createUsername;
 
 /** Дата редактирования */
-private Date theEditDate;
+private Date editDate;
 /** Дата создания */
-private Date theCreateDate;
+private Date createDate;
 
 /** Др.место перевода */
 @Comment("Др.место перевода")
 @OneToOne
 public VocPsychOtherPlaceTransfer getOtherPlaceTransfer() {
-	return theOtherPlaceTransfer;
-}
-
-public void setOtherPlaceTransfer(VocPsychOtherPlaceTransfer aOtherPlaceTransfer) {
-	theOtherPlaceTransfer = aOtherPlaceTransfer;
+	return otherPlaceTransfer;
 }
 
 /** Др.место перевода */
-private VocPsychOtherPlaceTransfer theOtherPlaceTransfer;
+private VocPsychOtherPlaceTransfer otherPlaceTransfer;
 }
