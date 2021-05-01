@@ -83,7 +83,7 @@ public class DiaryServiceBean implements IDiaryService {
     }
 
     private void addParameters(Long aGroup, CheckNode aNode, TreeSet<Long> aParameters) {
-        List<Object[]> listChild = manager.createNativeQuery("select par.id,par.name||' ('||case when par.type='1' n 'Числовой' when par.type='4' n 'Числовой с плавающей точкой зн.'||par.cntDecimal when par.type='2' n 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when par.type='3' n 'Текстовое поле' when par.type='5' n 'Текстовое поле с ограничением' else 'неизвестный' end||') - '||coalesce(vmu.name,''),par.type as partype from Parameter par left join userDomain vd on vd.id=par.valueDomain_id left join vocMeasureUnit vmu on vmu.id=par.measureUnit_id where par.group_id = :parent order by par.name").setParameter("parent", aGroup).getResultList();
+        List<Object[]> listChild = manager.createNativeQuery("select par.id,par.name||' ('||case when par.type='1' then 'Числовой' when par.type='4' then 'Числовой с плавающей точкой зн.'||par.cntDecimal when par.type='2' then 'Пользовательский справочник: '||coalesce(vd.name,'НЕ УКАЗАН!!!!!!!') when par.type='3' then 'Текстовое поле' when par.type='5' then 'Текстовое поле с ограничением' else 'неизвестный' end||') - '||coalesce(vmu.name,''),par.type as partype from Parameter par left join userDomain vd on vd.id=par.valueDomain_id left join vocMeasureUnit vmu on vmu.id=par.measureUnit_id where par.group_id = :parent order by par.name").setParameter("parent", aGroup).getResultList();
 
         for (Object[] param : listChild) {
             CheckNodeByParameter node = new CheckNodeByParameter("p" + param[0],

@@ -182,7 +182,7 @@
                 <msh:row>
                     <msh:textField property="height" label="Рост (см)" fieldColSpan="1" horizontalFill="false"/>
                     <msh:textField property="weight" label="Вес (кг)" fieldColSpan="1" horizontalFill="false"/>
-                    <msh:textField property="theIMT" label="ИМТ" viewOnlyField="true" fieldColSpan="1"
+                    <msh:textField property="imt" label="ИМТ" viewOnlyField="true" fieldColSpan="1"
                                    horizontalFill="false"/>
                 </msh:row>
                 <msh:ifFormTypeIsView formName="stac_sslAdmissionForm">
@@ -394,9 +394,9 @@
                 var w = parseInt($('weight').value);
                 var h = parseInt($('height').value);
                 var imt = (w / (0.0001 * h * h)).toFixed(2);
-                $('theIMT').value = imt;
-                if ($('theIMT').value == "NaN") $('theIMT').value = "0.0";
-                $('theIMTReadOnly').value = $('theIMT').value;
+                $('imt').value = imt;
+                if ($('imt').value == "NaN") $('imt').value = "0.0";
+                $('imtReadOnly').value = $('imt').value;
             });
             eventutil.addEventListener($('height'), "change", function () {
                 $('height').value = parseInt($('height').value);
@@ -404,16 +404,16 @@
                 var w = parseInt($('weight').value);
                 var h = parseInt($('height').value);
                 var imt = (w / (0.0001 * h * h)).toFixed(2);
-                $('theIMT').value = imt;
-                if ($('theIMT').value == "NaN") $('theIMT').value = "0.0";
-                $('theIMTReadOnly').value = $('theIMT').value;
+                $('imt').value = imt;
+                if ($('imt').value == "NaN") $('imt').value = "0.0";
+                $('imtReadOnly').value = $('imt').value;
             });
-            eventutil.addEventListener($('theIMT'), "change", function () {
+            eventutil.addEventListener($('imt'), "change", function () {
                 var w = parseInt($('weight').value);
                 var h = parseInt($('height').value);
                 var imt = (w / (0.0001 * h * h)).toFixed(2);
-                $('theIMT').value = imt;
-                if ($('theIMT').value == "NaN") $('theIMT').value = "0.0";
+                $('imt').value = imt;
+                if ($('imt').value == "NaN") $('imt').value = "0.0";
             });
         </script>
         <msh:ifFormTypeIsCreate formName="stac_sslAdmissionForm">
@@ -528,7 +528,7 @@
                 if (+$('deniedHospitalizating').value > 0) {
                     //если есть отказ, рост и вес не сохраняются
                     $('height').value = $('weight').value = "";
-                    $('theIMT').value = "0.0";
+                    $('imt').value = "0.0";
                     $('height').disabled = $('weight').disabled = true;
                     $('height').className = " ";
                     $('weight').className = " ";

@@ -200,7 +200,7 @@ public class PatientServiceBean implements IPatientService {
 
         if (aLpuAttached != null && aAttachedDate != null && aAttachedType != null) {
             String aSql = "select " +
-                    " case when (select max(sc.keyvalue) from softconfig sc where sc.key='DEFAULT_LPU_OMCCODE')!='" + aLpuAttached + "' n 1" +
+                    " case when (select max(sc.keyvalue) from softconfig sc where sc.key='DEFAULT_LPU_OMCCODE')!='" + aLpuAttached + "' then 1" +
                     " else (select count(att.id) from lpuattachedbydepartment att where (att.patient_id=" + aPatientId +
                     " and att.attachedtype_id=(select id from vocattachedtype where code='" + aAttachedType + "')" +
                     " and att.dateFrom=to_date('" + aAttachedDate + "','dd.MM.yyyy')and att.dateTo is null" +
@@ -698,7 +698,7 @@ public class PatientServiceBean implements IPatientService {
                             " where p.id=" + aPatientId +
                             " and (laap.housenumber is null or laap.housenumber='' or laap.housenumber=p.housenumber )" +
                             " and (((p.housebuilding is null or p.housebuilding='') and (laap.housebuilding is null or laap.housebuilding='')) or laap.housebuilding=p.housebuilding)" +
-                            " and  vat.code=case when cast(to_char(current_date,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(current_date, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(current_date,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) n -1 else 0 end)<0) n -1 else 0 end) <18 n '2' else '1' end ").getResultList();
+                            " and  vat.code=case when cast(to_char(current_date,'yyyy') as int)-cast(to_char(p.birthday,'yyyy') as int) +(case when (cast(to_char(current_date, 'mm') as int)-cast(to_char(p.birthday, 'mm') as int) +(case when (cast(to_char(current_date,'dd') as int) - cast(to_char(p.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) <18 then '2' else '1' end ").getResultList();
                 } catch (NoResultException e) {
                     LOG.error("Участок по адресу не найден");
                 } catch (Exception e) {
@@ -1244,13 +1244,13 @@ public class PatientServiceBean implements IPatientService {
         List<PatientForm> ret3 = new LinkedList<>();
         StringBuilder sqlFld = new StringBuilder();
         sqlFld.append(" select p.id,p.lastname,p.firstname,p.middlename,p.birthday");
-        sqlFld.append(" ,p.patientSync,case when p.colorType='1' n cast('red' as varchar(200)) else coalesce((select coalesce((select max(pl.colorText) from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'#01D') from SuicideMessage sui where sui.patient_id=p.id),(select coalesce('background:'||max(pl.colorName)||';','')||coalesce('color:'||max(pl.colorText)||';font-size: 14px;','') from PatientListRecord plr left join PatientList pl on pl.id=plr.PatientList where plr.patient=p.id and pl.isViewWhenSeaching='1' group by plr.patient)) end as ColorType ");
-        sqlFld.append(" ,list(case when att.dateto is null n to_char(att.datefrom,'dd.mm.yyyy')||' ('||vat.code||') '||ml.name else null end) as lpuname");
-        sqlFld.append(" ,list(case when att.dateto is null n ma.number else null end) as areaname");
-        sqlFld.append(" ,(select case when pf1.id is null n '-' else 'от '||to_char(pf1.checkdate,'dd.mm.yyyy') ||");
+        sqlFld.append(" ,p.patientSync,case when p.colorType='1' then cast('red' as varchar(200)) else coalesce((select coalesce((select max(pl.colorText) from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'#01D') from SuicideMessage sui where sui.patient_id=p.id),(select coalesce('background:'||max(pl.colorName)||';','')||coalesce('color:'||max(pl.colorText)||';font-size: 14px;','') from PatientListRecord plr left join PatientList pl on pl.id=plr.PatientList where plr.patient=p.id and pl.isViewWhenSeaching='1' group by plr.patient)) end as ColorType ");
+        sqlFld.append(" ,list(case when att.dateto is null then to_char(att.datefrom,'dd.mm.yyyy')||' ('||vat.code||') '||ml.name else null end) as lpuname");
+        sqlFld.append(" ,list(case when att.dateto is null then ma.number else null end) as areaname");
+        sqlFld.append(" ,(select case when pf1.id is null then '-' else 'от '||to_char(pf1.checkdate,'dd.mm.yyyy') ||");
         sqlFld.append(" coalesce(' дата смерти: '||to_char(pf1.deathdate,'dd.mm.yyyy'),'') ");
-        sqlFld.append(" ||case when pf1.lpuattached!='").append(defaultLpu).append("' n ' прикреплен к ЛПУ ' ||pf1.lpuattached ||' с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
-        sqlFld.append(" when pf1.lpuattached='").append(defaultLpu).append("' n ' прикреплен к ЛПУ с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
+        sqlFld.append(" ||case when pf1.lpuattached!='").append(defaultLpu).append("' then ' прикреплен к ЛПУ ' ||pf1.lpuattached ||' с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
+        sqlFld.append(" when pf1.lpuattached='").append(defaultLpu).append("' then ' прикреплен к ЛПУ с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
         sqlFld.append(" else '' end end from PatientFond pf1 ");
         sqlFld.append(" where pf1.id=(select max(pf.id) from PatientFond pf where pf.lastname=p.lastname and pf.firstname=p.firstname and pf.middlename=p.middlename and pf.birthday=p.birthday ) ");
         sqlFld.append(" ) as fondinfo ");
@@ -1260,11 +1260,11 @@ public class PatientServiceBean implements IPatientService {
             QueryClauseBuilder builder = new QueryClauseBuilder();
             StringBuilder sql = new StringBuilder();
             sqlFld = new StringBuilder();
-            sqlFld.append("select p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync,case when p.colorType='1' n cast('red' as varchar(200)) else coalesce((select coalesce((select max(pl.colorText) from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'#01D') from SuicideMessage sui where sui.patient_id=p.id),(select coalesce('background:'||max(pl.colorName)||';','')||coalesce('color:'||max(pl.colorText)||';font-size: 14px;','') from PatientListRecord plr left join PatientList pl on pl.id=plr.PatientList where plr.patient=p.id and pl.isViewWhenSeaching='1' group by plr.patient)) end as ColorType");
-            sqlFld.append(" ,cast('' as varchar(1)) as d1, cast('' as varchar(1)) as d2, cast('' as varchar(1)),(select case when pf1.id is null n '-' else 'от '||to_char(pf1.checkdate,'dd.mm.yyyy') ||");
+            sqlFld.append("select p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync,case when p.colorType='1' then cast('red' as varchar(200)) else coalesce((select coalesce((select max(pl.colorText) from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'#01D') from SuicideMessage sui where sui.patient_id=p.id),(select coalesce('background:'||max(pl.colorName)||';','')||coalesce('color:'||max(pl.colorText)||';font-size: 14px;','') from PatientListRecord plr left join PatientList pl on pl.id=plr.PatientList where plr.patient=p.id and pl.isViewWhenSeaching='1' group by plr.patient)) end as ColorType");
+            sqlFld.append(" ,cast('' as varchar(1)) as d1, cast('' as varchar(1)) as d2, cast('' as varchar(1)),(select case when pf1.id is null then '-' else 'от '||to_char(pf1.checkdate,'dd.mm.yyyy') ||");
             sqlFld.append(" coalesce(' дата смерти: '||to_char(pf1.deathdate,'dd.mm.yyyy'),'') ");
-            sqlFld.append(" ||case when pf1.lpuattached!='").append(defaultLpu).append("' n ' прикреплен к ЛПУ ' ||pf1.lpuattached ||' с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
-            sqlFld.append(" when pf1.lpuattached='").append(defaultLpu).append("' n ' прикреплен к ЛПУ с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
+            sqlFld.append(" ||case when pf1.lpuattached!='").append(defaultLpu).append("' then ' прикреплен к ЛПУ ' ||pf1.lpuattached ||' с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
+            sqlFld.append(" when pf1.lpuattached='").append(defaultLpu).append("' then ' прикреплен к ЛПУ с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
             sqlFld.append(" else '' end end from PatientFond pf1 ");
             sqlFld.append(" where pf1.id=(select max(pf.id) from PatientFond pf where pf.lastname=p.lastname and pf.firstname=p.firstname and pf.middlename=p.middlename and pf.birthday=p.birthday ) ");
             sqlFld.append(" ) as fondinfo ");
@@ -1318,13 +1318,13 @@ public class PatientServiceBean implements IPatientService {
                 Query query = builder.buildNative(manager, sqlFld + " from patient p " + sql + " and " + p1, " group by p.id,p.lastname,p.firstname,p.middlename,p.birthday,p.patientSync,p.ColorType order by p.lastname " + (aNext ? "" : " desc") + ",p.firstname " + (aNext ? "" : " desc") + ",p.middlename " + (aNext ? "" : " desc") + ",p.id " + (aNext ? "" : " desc"));
                 appendNativeToList(query, ret1, null, aNext);
                 sqlFld = new StringBuilder();
-                sqlFld.append("select p.id,p.lastname||' '||list(case when p.lastname!=jcp.lastname n '('||jcp.lastname||')' else '' end) as lastname");
-                sqlFld.append(",p.firstname||' '||list(case when p.firstname!=jcp.firstname n '('||jcp.firstname||')' else '' end) as firstname");
-                sqlFld.append(",p.middlename||' '||list(case when p.middlename!=jcp.middlename n '('||jcp.middlename||')' else '' end) as middlename,p.birthday,p.patientSync,case when p.colorType='1' n cast('red' as varchar(200)) else coalesce((select coalesce((select max(pl.colorText) from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'#01D') from SuicideMessage sui where sui.patient_id=p.id),(select coalesce('background:'||max(pl.colorName)||';','')||coalesce('color:'||max(pl.colorText)||';font-size: 14px;','') from PatientListRecord plr left join PatientList pl on pl.id=plr.PatientList where plr.patient=p.id and pl.isViewWhenSeaching='1' group by plr.patient)) end as ColorType");
-                sqlFld.append(" ,cast('' as varchar(1)) as d1, cast('' as varchar(1)) as d2, cast('' as varchar(1)),(select case when pf1.id is null n '-' else 'от '||to_char(pf1.checkdate,'dd.mm.yyyy') ||");
+                sqlFld.append("select p.id,p.lastname||' '||list(case when p.lastname!=jcp.lastname then '('||jcp.lastname||')' else '' end) as lastname");
+                sqlFld.append(",p.firstname||' '||list(case when p.firstname!=jcp.firstname then '('||jcp.firstname||')' else '' end) as firstname");
+                sqlFld.append(",p.middlename||' '||list(case when p.middlename!=jcp.middlename then '('||jcp.middlename||')' else '' end) as middlename,p.birthday,p.patientSync,case when p.colorType='1' then cast('red' as varchar(200)) else coalesce((select coalesce((select max(pl.colorText) from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'#01D') from SuicideMessage sui where sui.patient_id=p.id),(select coalesce('background:'||max(pl.colorName)||';','')||coalesce('color:'||max(pl.colorText)||';font-size: 14px;','') from PatientListRecord plr left join PatientList pl on pl.id=plr.PatientList where plr.patient=p.id and pl.isViewWhenSeaching='1' group by plr.patient)) end as ColorType");
+                sqlFld.append(" ,cast('' as varchar(1)) as d1, cast('' as varchar(1)) as d2, cast('' as varchar(1)),(select case when pf1.id is null then '-' else 'от '||to_char(pf1.checkdate,'dd.mm.yyyy') ||");
                 sqlFld.append(" coalesce(' дата смерти: '||to_char(pf1.deathdate,'dd.mm.yyyy'),'') ");
-                sqlFld.append(" ||case when pf1.lpuattached!='").append(defaultLpu).append("' n ' прикреплен к ЛПУ ' ||pf1.lpuattached ||' с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
-                sqlFld.append(" when pf1.lpuattached='").append(defaultLpu).append("' n ' прикреплен к ЛПУ с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
+                sqlFld.append(" ||case when pf1.lpuattached!='").append(defaultLpu).append("' then ' прикреплен к ЛПУ ' ||pf1.lpuattached ||' с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
+                sqlFld.append(" when pf1.lpuattached='").append(defaultLpu).append("' then ' прикреплен к ЛПУ с '||to_char(pf1.attacheddate,'dd.mm.yyyy') ");
                 sqlFld.append(" else '' end end from PatientFond pf1 ");
                 sqlFld.append(" where pf1.id=(select max(pf.id) from PatientFond pf where pf.lastname=p.lastname and pf.firstname=p.firstname and pf.middlename=p.middlename and pf.birthday=p.birthday ) ");
                 sqlFld.append(" ) as fondinfo ");
@@ -1389,19 +1389,19 @@ public class PatientServiceBean implements IPatientService {
             appendNativeToList(query, ret1, null, aNext);
             if (ret1.isEmpty() && aIdNext != null && !aIdNext.equals(""))
                 return findPatient(aLpuId, aLpuAreaId, aLastname, aYear, !aNext, null);
-            String sqlFld1 = "select p.id,p.lastname||' '||list(case when p.lastname!=jcp.lastname n '('||jcp.lastname||')' else '' end) as lastname" +
-                    ",p.firstname||' '||list(case when p.firstname!=jcp.firstname n '('||jcp.firstname||')' else '' end) firstname" +
-                    ",p.middlename||' '||list(case when p.middlename!=jcp.middlename n '('||jcp.middlename||')' else '' end) as middlename" +
+            String sqlFld1 = "select p.id,p.lastname||' '||list(case when p.lastname!=jcp.lastname then '('||jcp.lastname||')' else '' end) as lastname" +
+                    ",p.firstname||' '||list(case when p.firstname!=jcp.firstname then '('||jcp.firstname||')' else '' end) firstname" +
+                    ",p.middlename||' '||list(case when p.middlename!=jcp.middlename then '('||jcp.middlename||')' else '' end) as middlename" +
                     " ,p.birthday" +
-                    " ,p.patientSync,case when p.colorType='1' n cast('color: red' as varchar(200)) else coalesce((select coalesce((select 'color: '||max(pl.colorText) " +
+                    " ,p.patientSync,case when p.colorType='1' then cast('color: red' as varchar(200)) else coalesce((select coalesce((select 'color: '||max(pl.colorText) " +
                     " from PatientList pl left join VocPatientListType vplt on vplt.id=pl.type where vplt.code='SUICIDE'),'#01D') from SuicideMessage sui where sui.patient_id=p.id)" +
                     ",(select coalesce('background:'||max(pl.colorName)||';','')||coalesce('color:'||max(pl.colorText)||';font-size: 14px;','') from PatientListRecord plr left join PatientList pl on pl.id=plr.PatientList where plr.patient=p.id and pl.isViewWhenSeaching='1' group by plr.patient)) end as ColorType " +
-                    " ,list(case when att.dateto is null n to_char(att.datefrom,'dd.mm.yyyy')||' ('||vat.code||') '||ml.name else null end) as lpuname" +
-                    " ,list(case when att.dateto is null n ma.number else null end) as areaname" +
-                    " ,(select case when pf1.id is null n '-' else 'от '||to_char(pf1.checkdate,'dd.mm.yyyy') ||" +
+                    " ,list(case when att.dateto is null then to_char(att.datefrom,'dd.mm.yyyy')||' ('||vat.code||') '||ml.name else null end) as lpuname" +
+                    " ,list(case when att.dateto is null then ma.number else null end) as areaname" +
+                    " ,(select case when pf1.id is null then '-' else 'от '||to_char(pf1.checkdate,'dd.mm.yyyy') ||" +
                     " coalesce(' дата смерти: '||to_char(pf1.deathdate,'dd.mm.yyyy'),'') " +
-                    " ||case when pf1.lpuattached!='" + defaultLpu + "' n ' прикреплен к ЛПУ ' ||pf1.lpuattached ||' с '||to_char(pf1.attacheddate,'dd.mm.yyyy') " +
-                    " when pf1.lpuattached='" + defaultLpu + "' n ' прикреплен к ЛПУ с '||to_char(pf1.attacheddate,'dd.mm.yyyy') " +
+                    " ||case when pf1.lpuattached!='" + defaultLpu + "' then ' прикреплен к ЛПУ ' ||pf1.lpuattached ||' с '||to_char(pf1.attacheddate,'dd.mm.yyyy') " +
+                    " when pf1.lpuattached='" + defaultLpu + "' then ' прикреплен к ЛПУ с '||to_char(pf1.attacheddate,'dd.mm.yyyy') " +
                     " else '' end end from PatientFond pf1 " +
                     " where pf1.id=(select max(pf.id) from PatientFond pf where pf.lastname=p.lastname and pf.firstname=p.firstname and pf.middlename=p.middlename and pf.birthday=p.birthday ) " +
                     " ) as fondinfo ";

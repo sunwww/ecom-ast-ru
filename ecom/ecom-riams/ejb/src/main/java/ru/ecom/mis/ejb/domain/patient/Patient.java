@@ -103,10 +103,7 @@ public class Patient extends BaseEntity {
 	/** Социальный статус, в т.ч. и занятость */
 	@Comment("Социальный статус, в т.ч. и занятость")
 	@OneToOne
-	public VocSocialStatus getSocialStatus() { return statusSocial ; }
-	public void setSocialStatus(VocSocialStatus statusSocial) {
-		this.statusSocial = statusSocial;
-	}
+	public VocSocialStatus getSocialStatus() { return socialStatus ; }
 
 	/** Адрес */
 	@Comment("Адрес")
@@ -190,17 +187,11 @@ public class Patient extends BaseEntity {
 		add(sb, lastname,"");
 		add(sb, firstname," ");
 		add(sb, middlename," ");
-		if(getBirthdate()!=null) {
+		if(getBirthday()!=null) {
 			add(sb, " г.р.", " ");
 			add(sb, DateFormat.formatToDate(getBirthday())," ") ;
 		}
 		return sb.toString();
-	}
-	public Date getBirthday() {
-		return getBirthdate();
-	}
-	public void setBirthday(Date date) {
-		setBirthdate(date);
 	}
 	private String patientSync;
 
@@ -274,7 +265,6 @@ public class Patient extends BaseEntity {
 	private String zipcode;
 	/** Дополнительный статус */
 	private VocAdditionStatus additionStatus;
-
 	/** Квартира (иногороднего) */
 	private String apartmentNonresident;
 	/** Корпус дома (иногороднего) */
@@ -293,10 +283,8 @@ public class Patient extends BaseEntity {
 	private String regionRegistrationNonresident;
 	/** Территория регистрации  (иногороднего) */
 	private OmcKodTer territoryRegistrationNonresident;
-
 	/** Гражданство */
 	private OmcOksm nationality;
-
 	/** Участок основного прикрепления */
 	private LpuArea lpuArea ;
 	/** Адрес участка основного прикрепления */
@@ -312,7 +300,7 @@ public class Patient extends BaseEntity {
 	/** Отчества */
 	private String middlename ;
 	/** Дата рождения */
-	private Date birthdate ;
+	private Date birthday;
 	/** Пол */
 	private VocSex sex ;
 	/** Место работы */
@@ -322,7 +310,7 @@ public class Patient extends BaseEntity {
 	/** Тип удостоверения личности */
 	private VocIdentityCard passportType ;
 	/** Социальный статус, в т.ч. и занятость */
-	private VocSocialStatus statusSocial ;
+	private VocSocialStatus socialStatus;
 	/** Номер паспорта */
 	private String passportNumber ;
 	/** Серия паспорта */
@@ -492,4 +480,8 @@ public class Patient extends BaseEntity {
 	@Comment("Цвета браслета пациента")
 	@ManyToMany
 	public List<ColorIdentityPatient> getColorsIdentity() {return colorsIdentity;}
+
+	/** Название участка */
+	@Transient
+	public String getLpuAreaName() { return lpuArea!=null ? lpuArea.getName() : ""; }
 }

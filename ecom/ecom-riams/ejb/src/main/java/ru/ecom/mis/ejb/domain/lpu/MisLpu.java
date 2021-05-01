@@ -94,7 +94,7 @@ public class MisLpu extends BaseEntity {
     /**
      * Срок действия лицензии
      */
-    private Date lincenseExpired;
+    private Date licenseExpired;
     /**
      * Номер лицензии
      */

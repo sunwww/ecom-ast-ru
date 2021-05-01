@@ -229,9 +229,9 @@ public class PrescriptionServiceBean implements IPrescriptionService {
                             ", vmu.id as v13muid,vmu.name as v14muname" +
                             ", vd.id as v15did,vd.name as v16dname" +
                             ", p.cntdecimal as p17cntdecimal" +
-                            ", ''||p.id||case when p.type='2' n 'Name' else '' end as p18enterid " +
+                            ", ''||p.id||case when p.type='2' then 'Name' else '' end as p18enterid " +
                             ", ").append(createSQLQuery(parsedPdfInfo)).append(" as p19valuetextdefault " +
-                            ",case when uv.useByDefault='1' n uv.name else '' end as p20valueVoc " +
+                            ",case when uv.useByDefault='1' then uv.name else '' end as p20valueVoc " +
                             "from prescription pres " +
                             "left join templateprotocol tp on tp.medservice_id=pres.medservice_id " +
                             "left join parameterbyform pf on pf.template_id = tp.id " +
@@ -311,7 +311,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
         s.append("case");
         List<ParsedPdfInfoResult> r = parsedPdfInfo.getResults();
         for (ParsedPdfInfoResult p : r) {
-            s.append(" when p.externalcode='").append(p.getCode()).append("' n '").append(p.getValue()).append("' ");
+            s.append(" when p.externalcode='").append(p.getCode()).append("' then '").append(p.getValue()).append("' ");
         }
         s.append(" end");
         return s.toString();
@@ -841,8 +841,8 @@ public class PrescriptionServiceBean implements IPrescriptionService {
     //Если был брак, вернёт того, кто отбраковал.
     // Если это - бак. исследование - вернёт того, кто принял в лабораторию, иначе - того, кто выполнил
     public String getRealLabTechUsername(Long aPrescriptId, String aUsername) {
-        List<Object> transferUsername = manager.createNativeQuery("select case when p.cancelusername is not null n " +
-                " p.cancelusername else case when msgr.code='Q06' n p.transferusername else null end end from medservice ms" +
+        List<Object> transferUsername = manager.createNativeQuery("select case when p.cancelusername is not null then " +
+                " p.cancelusername else case when msgr.code='Q06' then p.transferusername else null end end from medservice ms" +
                 " left join medservice msgr on msgr.id=ms.parent_id" +
                 " left join prescription p on p.medservice_id=ms.id" +
                 " left join templateProtocol tp on tp.medservice_id=ms.id" +
@@ -861,7 +861,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
     public void sendEmergencyReferenceMsg(Long aDiaryId, Long aPrescriptId) {
         StringBuilder sql = new StringBuilder();
         sql.append("select p.name||': '||round(fip.valuebd,2)||' '||unit.name")
-                .append("||' '||(case when fip.valuebd<prv.normamin n '▼' else '▲' end)||cast('<br>' as varchar)")
+                .append("||' '||(case when fip.valuebd<prv.normamin then '▼' else '▲' end)||cast('<br>' as varchar)")
                 .append(" from FormInputProtocol fip")
                 .append(" left join parameter p on fip.parameter_id=p.id")
                 .append(" left join diary d on d.id=fip.docprotocol_id")
@@ -884,8 +884,8 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 
     public Long checkLabAnalyzed(Long aPrescriptId, Long aWorkFunctionId, String aUsername) {
         StringBuilder sql = new StringBuilder();
-        sql.append("select pat.id as patid,case when slo.dtype='DepartmentMedCase' n sls.id");
-        sql.append(" when slo.dtype='Visit' n coalesce (sls.id,slo.id) else slo.id end as pmo");
+        sql.append("select pat.id as patid,case when slo.dtype='DepartmentMedCase' then sls.id");
+        sql.append(" when slo.dtype='Visit' then coalesce (sls.id,slo.id) else slo.id end as pmo");
         sql.append(" ,p.prescriptSpecial_id as presspec");
         sql.append(" ,p.prescriptCabinet_id as cabinet");
         sql.append(" ,p.medService_id as service");
@@ -1064,7 +1064,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss");
         String sqlquery = "select mc.datestart || '-' || mc.entrancetime as datetime " +
-                " ,case when mc.emergency='1' n '1' when mcs.emergency='1' n '1' else null end as caseEmergency " +
+                " ,case when mc.emergency='1' then '1' when mcs.emergency='1' then '1'  end as caseEmergency " +
                 " from medCase mc " +
                 " left join medcase mcs on mcs.id = mc.parent_id ";
 
@@ -1117,7 +1117,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
     public String getPrescriptionTypes(boolean isEmergency) {
         StringBuilder req = new StringBuilder();
         StringBuilder res = new StringBuilder();
-        req.append("select vpt.id, vpt.name, case when vpt.isOnlyCurrentDate='1' n '1' else '0' end as onlyCurrentDate from vocprescripttype vpt ");
+        req.append("select vpt.id, vpt.name, case when vpt.isOnlyCurrentDate='1' then '1' else '0' end as onlyCurrentDate from vocprescripttype vpt ");
         if (!isEmergency) {
             req.append("where vpt.code!='EMERGENCY' ");
         }

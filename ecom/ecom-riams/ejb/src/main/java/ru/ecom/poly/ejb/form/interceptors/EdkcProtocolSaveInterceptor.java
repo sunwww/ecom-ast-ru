@@ -47,7 +47,7 @@ public class EdkcProtocolSaveInterceptor implements IFormInterceptor {
     private void checkAfterFirstProtocol(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
         String pregString = getPregnantOrNot(aEntity);
         if (((Protocol) aEntity).getType().getCode().equals("edkc_1"+pregString)) {
-            Object val = aContext.getEntityManager().createNativeQuery("select case when count(p.id)>0 n '1' else '0' end " +
+            Object val = aContext.getEntityManager().createNativeQuery("select case when count(p.id)>0 then '1' else '0' end " +
                     "from diary p left join voctypeprotocol vtp on vtp.id=p.type_id " +
                     "where p.obssheet_id='"+((EdkcProtocolForm)aForm).getObsSheet()+"' and vtp.code='edkc_1"+pregString+"'").getSingleResult();
             if (val.toString().equals("1"))

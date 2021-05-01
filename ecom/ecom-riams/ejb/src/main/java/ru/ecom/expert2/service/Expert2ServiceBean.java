@@ -898,7 +898,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 " and (e2.isDiagnosticSpo is null or e2.isDiagnosticSpo='0') " +
                 " and e2.medhelpprofile_id is not null" +
                 " group by " + (isGroupBySpo ? "e2.externalparentid" : "e2.externalpatientid , e2.medhelpprofile_id, e2.servicestream") +
-                " having count(e2.id)>1 " + (isGroupBySpo ? "" : "and count(case when substring(e2.mainmkb,1,1)='Z' n 1 else null end)<count(e2.id)")).setParameter("listId", listEntryId).getResultList();
+                " having count(e2.id)>1 " + (isGroupBySpo ? "" : "and count(case when substring(e2.mainmkb,1,1)='Z' then 1 else null end)<count(e2.id)")).setParameter("listId", listEntryId).getResultList();
         //   LOG.info("sql = "+searchSql+", size = "+list.size());
         int i = 0;
         for (Object[] spo : list) {
@@ -3780,8 +3780,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                     long slsId = medCase instanceof DepartmentMedCase ? medCase.getParent().getId() : medcaseId;
 
                     // находим койкодни
-                    String sql = "select list(''||(case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 n '1'" +
-                            " else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vbst.code='1' n 0 else 1 end end" +
+                    String sql = "select list(''||(case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 then '1'" +
+                            " else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vbst.code='1' then 0 else 1 end end" +
                             " * pp.cost)) as ppsum" +
                             " from medcase slo" +
                             " left join bedfund bf on bf.id=slo.bedfund_id" +

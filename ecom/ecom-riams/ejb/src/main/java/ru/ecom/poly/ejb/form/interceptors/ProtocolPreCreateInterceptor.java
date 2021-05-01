@@ -35,7 +35,7 @@ public class ProtocolPreCreateInterceptor implements IParentFormInterceptor {
 		//скрининг ещё не был создан
 		Object val = aContext.getEntityManager().createNativeQuery("select case when ml.IsCreateCardiacScreening='1' " +
 				"and (select count(id) from diary where medcase_id='" + form.getMedCase() + "')=0 " +
-				"and (select count(id) from screeningcardiac where dtype='ScreeningCardiacFirst' and medcase_id='" + form.getMedCase() + "')=0 n '1' else '0' end " +
+				"and (select count(id) from screeningcardiac where dtype='ScreeningCardiacFirst' and medcase_id='" + form.getMedCase() + "')=0 then '1' else '0' end " +
 				"from medcase slo left join mislpu ml on ml.id=slo.department_id where  slo.id='" + form.getMedCase() + "'").getSingleResult();
 		if (String.valueOf(val).equals("1"))
 			throw new IllegalStateException("<a href='entityParentPrepareCreate-stac_screeningCardiacFirst.do?id=" + form.getMedCase() + "'>I этап кардиоскрининга</a> в отд. новорождённых должен быть создан до создания первого дневника!");

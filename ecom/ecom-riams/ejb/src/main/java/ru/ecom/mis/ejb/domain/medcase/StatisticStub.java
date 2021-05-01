@@ -96,7 +96,7 @@ public abstract class StatisticStub extends BaseEntity {
 	private Integer weight;
 
 	/** Индекс массы тела */
-	private Double iMT;
+	private Double imt;
 
 	/** Визит оформлен диетологом */
 	private Boolean dietDone;

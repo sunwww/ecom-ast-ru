@@ -186,7 +186,7 @@ abstract public class MedCase extends BaseEntity {
 	/**Тип СМО */
 	private VocMedCaseDefect medCaseDefect;
 	/**Недействительность */
-	private boolean noActuality;
+	private Boolean noActuality;
 
 	/**ЛПУ - место исполнения */
 	private MisLpu lpu;
@@ -257,7 +257,7 @@ abstract public class MedCase extends BaseEntity {
 	/** Гарантийное письмо */
 	private ContractGuarantee guarantee;
 
-	private Boolean isUpload=false;
+	private Boolean upload =false;
 
 	/**Код в промеде**/
 	private String promedCode;

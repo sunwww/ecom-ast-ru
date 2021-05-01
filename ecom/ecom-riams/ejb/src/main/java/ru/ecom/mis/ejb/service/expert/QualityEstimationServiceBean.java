@@ -137,7 +137,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			return null ;
 		}
         boolean ifTypeBool=false,isKmp=false;
-        String sql2 = "select case when vqec.code='PR203' n '1' else case when vqec. code='KMP' n '-1' else '0' end end from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=:cardId";
+        String sql2 = "select case when vqec.code='PR203' then '1' else case when vqec. code='KMP' then '-1' else '0' end end from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=:cardId";
         List<Object[]> listkind = manager.createNativeQuery(sql2).setParameter("cardId",aCardId).getResultList() ;
         if (!listkind.isEmpty()) {
             Object one = "1", _one="-1";
@@ -229,7 +229,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			sql.append(" and reg.code='4' and (prior.code='1' and (vqecrit_d.isconcomitant is null or vqecrit_d.isconcomitant=false)")
 					.append(" or prior.code='3' and vqecrit_d.isconcomitant=true)")
 					.append(" and ds.idc10_id=vqecrit_d.vocidc10_id and d.id=ds.idc10_id")
-					.append(" and case when vqecrit_d_conc.id is not null n (select count(ds.id) from diagnosis ds")
+					.append(" and case when vqecrit_d_conc.id is not null then (select count(ds.id) from diagnosis ds")
 					.append(" left join medcase mc on mc.id=ds.medcase_id")
 					.append(" left join vocprioritydiagnosis prior on prior.id=ds.priority_id")
 					.append(" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id")
@@ -404,7 +404,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 
 		.append(" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqec.id");
 		boolean ifTypeBool=false;
-		String sql2 = "select case when vqec.code='PR203' n '1' else case when vqec.code='KMP' n '-1' else '0' end end from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=" + aCard;
+		String sql2 = "select case when vqec.code='PR203' then '1' else case when vqec.code='KMP' then '-1' else '0' end end from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=" + aCard;
 
 		List<Object[]> listkind = manager.createNativeQuery(sql2).getResultList() ;
 		if (!listkind.isEmpty()) {
@@ -437,7 +437,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 			sql.append(" and reg.code='4' and (prior.code='1' and (vqecrit_d.isconcomitant is null or vqecrit_d.isconcomitant=false)")
 					.append(" or prior.code='3' and vqecrit_d.isconcomitant=true)")
 					.append(" and ds.idc10_id=vqecrit_d.vocidc10_id and d.id=ds.idc10_id")
-					.append(" and case when vqecrit_d_conc.id is not null n (select count(ds.id) from diagnosis ds")
+					.append(" and case when vqecrit_d_conc.id is not null then (select count(ds.id) from diagnosis ds")
 					.append(" left join medcase mc on mc.id=ds.medcase_id")
 					.append(" left join vocprioritydiagnosis prior on prior.id=ds.priority_id")
 					.append(" left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id")
@@ -743,7 +743,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		String startDate, finishDate;
 		Long patId;
 		List<Object[]> list0 = manager.createNativeQuery("select to_char(dateStart,'dd.mm.yyyy') as ds" +
-				" , to_char(case when datefinish is null n current_date else datefinish end,'dd.mm.yyyy') as df" +
+				" , to_char(case when datefinish is null then current_date else datefinish end,'dd.mm.yyyy') as df" +
 				" ,patient_id as pat" +
 				" from medcase sls where id=" +aMedcaseId).getResultList();
 		if (!list0.isEmpty()) {
@@ -887,7 +887,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
 		else {
 			if (aCode.equals("KMP"))
 				return ConvertSql.parseLong(ids.get(0));
-			Object isdraft= manager.createNativeQuery("select case when isdraft=true  n '1' else '0' end from qualityestimation where id="+ids.get(0)).getResultList().get(0);
+			Object isdraft= manager.createNativeQuery("select case when isdraft=true  then '1' else '0' end from qualityestimation where id="+ids.get(0)).getResultList().get(0);
 			if (isdraft.equals("1")) return ConvertSql.parseLong(ids.get(0));  //это черновик
 			else return null; //ЗАВ УЖЕ ЗАПОЛНИЛ!
 		}

@@ -41,7 +41,7 @@ public class DisabilityDocument extends BaseEntity{
 	/** Дефект экспорта */
 	private String exportDefect;
 	/** Признак дубликата (ЭЛН) **/
-	private Boolean isElnDuplicate;
+	private Boolean elnDuplicate;
 	/** Следующий номер (ЭЛН) **/
 	private String nextElnNumber;
 	/** Предыдущий номер (ЭЛН) **/
@@ -51,9 +51,9 @@ public class DisabilityDocument extends BaseEntity{
 	/** Диагноз из импорта(ЭЛН) **/
 	private String diagnos;
 	/** Экспортировано закрытие (ЭЛН)*/
-	private Boolean isCloseExport=false;
+	private Boolean closeExport=false;
 	/** Является ли электронным */
-	private Boolean isELN=false;
+	private Boolean eln=false;
 
 	private String anotherLpuName;
 	private String anotherLpuAddress;

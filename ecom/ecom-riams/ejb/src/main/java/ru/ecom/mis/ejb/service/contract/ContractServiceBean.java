@@ -40,7 +40,7 @@ public class ContractServiceBean implements IContractService {
     public String getGuaranteeLimit(Long letterId, EntityManager manager) throws NamingException {
         StringBuilder sb = new StringBuilder();
         sb.append("select cg.id as id,cg.numberdoc as number, to_char(cg.issueDate,'dd.MM.yyyy') as issueDate")
-                .append(",cg.limitMoney, case when cg.isnolimit ='1' n true else false end as f6_noLimit")
+                .append(",cg.limitMoney, case when cg.isnolimit ='1' then true else false end as f6_noLimit")
                 .append(",coalesce(sum(cams.cost*coalesce(cams.countmedservice,1)),0) as f7_spent ")
                 .append(",cg.limitMoney - coalesce(sum(cams.cost*coalesce(cams.countmedservice,1)),0) as f8_ostatok ")
                 .append(" from contractguarantee cg")
@@ -116,8 +116,8 @@ public class ContractServiceBean implements IContractService {
             String discontSql = StringUtil.isNullOrEmpty(aDiscont) ? "cams.cost" : "round(cams.cost*(100-" + aDiscont + ")/100,2)";
             String sb = "select pp.id, pp.code as f2_code, pp.name as f3_name, cams.countmedservice as f4_count, cast(" + discontSql +
                     " as varchar) as f5_cost, cast(" + discontSql + "*cams.countmedservice as varchar) as f6_sum" +
-                    ",case when pp.isVat='1' n 'Ставка налога НДС '||coalesce(vv.taxrate,0) ||'%' end as f7_taxName" +
-                    ",case when pp.isVat='1' n cast(round(" + discontSql + "*cams.countmedservice*vv.taxrate/100,2) as varchar) end as f8_taxSum" +
+                    ",case when pp.isVat='1' then 'Ставка налога НДС '||coalesce(vv.taxrate,0) ||'%' end as f7_taxName" +
+                    ",case when pp.isVat='1' then cast(round(" + discontSql + "*cams.countmedservice*vv.taxrate/100,2) as varchar) end as f8_taxSum" +
                     " from contractaccount  ca" +
                     " left join contractaccountmedservice cams on cams.account_id=ca.id" +
                     " left join pricemedservice pms on pms.id=cams.medservice_id" +
@@ -303,7 +303,7 @@ public class ContractServiceBean implements IContractService {
                             + "    	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id"
                             + "    	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id"
                             + "    	where diag.medCase_id=sls.id"
-                            + " and vpd.code='1' and vdrt.code='4') as diag, case when vhr.code='11' n vhr.code else null end as result"
+                            + " and vpd.code='1' and vdrt.code='4') as diag, case when vhr.code='11' then vhr.code else null end as result"
                             + ",sls.serviceStream_id"
                             + " from medcase sls"
                             + " left join contractperson cpp on cpp.patient_id=sls.patient_id "
@@ -366,7 +366,7 @@ public class ContractServiceBean implements IContractService {
             sql.append("select pat.id as patid,pat.lastname, pat.firstname,pat.middlename,pat.birthday");
             sql.append(",slo.id as sloid,ml.id as mlid,vbt.id as vbtid,vbst.id as vbstid,vrt.id as vrtid");
             sql.append(",to_char(slo.datestart,'dd.mm.yyyy') as slodatestart, to_char(coalesce(slo.datefinish,slo.transferdate,current_date),'dd.mm.yyyy') as slodatefinish");
-            sql.append(",case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 n '1' else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vht.code='ALLTIMEHOSP' n 0 else 1 end end as cntDays");
+            sql.append(",case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 then '1' else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vht.code='ALLTIMEHOSP' then 0 else 1 end end as cntDays");
             sql.append(" from medcase slo ");
             sql.append("       left join medcase sls on sls.id=slo.parent_id");
             sql.append(" left join Vochosptype vht on vht.id=sls.hosptype_id");
@@ -676,7 +676,7 @@ public class ContractServiceBean implements IContractService {
                     + " , (select max(cg.id) from ContractGuarantee cg where cg.contract_id=mc.id and cg.contractPerson_id=cpp.id and sls.datestart between cg.actionDate and cg.actionDateTo) as cgid"
                     + ", to_char(sls.datestart,'dd.mm.yyyy') as datestart"
                     + ", to_char(coalesce(sls.datefinish,current_date),'dd.mm.yyyy') as datefinish"
-                    + ", max(case when mp.dtype like 'MedPolicyD%' and mp.dtype like 'MedPolicyDmc%' and sls.datestart between mp.actualDateFrom and coalesce(mp.actualDateTo,current_date) n mp.polNumber else '' end) as polnumber"
+                    + ", max(case when mp.dtype like 'MedPolicyD%' and mp.dtype like 'MedPolicyDmc%' and sls.datestart between mp.actualDateFrom and coalesce(mp.actualDateTo,current_date) then mp.polNumber else '' end) as polnumber"
                     + ",pat.lastname, pat.firstname,pat.middlename,to_char(pat.birthday,'dd.mm.yyyy') as birthday"
                     + ",sls.serviceStream_id"
                     + " from medcase sls"
@@ -718,7 +718,7 @@ public class ContractServiceBean implements IContractService {
             sql = new StringBuilder();
             sql.append("      select so.id as smoid,to_char(coalesce(so.dateStart,slo.datestart),'dd.mm.yyyy') as dt");
             sql.append("	  ,ms.id as msid,coalesce(wf.id,slo.workFunctionExecute_id) as wfid ");
-            sql.append("	  ,coalesce(so.idc10_id,max(case when vpd.code='1' n d1.idc10_id else null end) )    as mkb");
+            sql.append("	  ,coalesce(so.idc10_id,max(case when vpd.code='1' then d1.idc10_id else null end) )    as mkb");
             sql.append("      from MedCase so");
             sql.append("      left join VocIdc10 mkb on mkb.id=so.idc10_id");
             sql.append("      left join workfunction wf on wf.id=so.workFunctionExecute_id");

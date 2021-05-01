@@ -1181,11 +1181,11 @@ order by wcd.calendarDate, wct.timeFrom" />
                         if (ret!=null && ret!='null') {
                             ret = JSON.parse(ret);
                             if (!$('sex').value) {
-                                $('sex').value = ret.theId;
-                                $('sexName').value = ret.theName;
-                            } else if ($('sex').value != ret.theId && confirm('Пол человека, возможно, указан неверно. Заменить пол на '+ret.theName+"? ")) {
-                                $('sex').value = ret.theId;
-                                $('sexName').value = ret.theName;
+                                $('sex').value = ret.id;
+                                $('sexName').value = ret.name;
+                            } else if ($('sex').value != ret.id && confirm('Пол человека, возможно, указан неверно. Заменить пол на '+ret.theName+"? ")) {
+                                $('sex').value = ret.id;
+                                $('sexName').value = ret.name;
                             }
                         }
                     }

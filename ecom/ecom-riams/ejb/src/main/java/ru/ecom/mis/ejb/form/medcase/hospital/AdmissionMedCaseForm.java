@@ -228,8 +228,8 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	}
 	/* Индекс массы тела */
 	@Comment("Индекс массы тела")
-	public Double getIMT() {
-		return iMT;
+	public Double getImt() {
+		return imt;
 	}
 
 	/** Откуда поступил */
@@ -366,7 +366,7 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	/** Рост */
 	private Integer height;
 	/** Индекс массы тела */
-	private Double iMT;
+	private Double imt;
 
 	/** Была ли проведена идентификация пациента */
 	private Boolean isIdentified;

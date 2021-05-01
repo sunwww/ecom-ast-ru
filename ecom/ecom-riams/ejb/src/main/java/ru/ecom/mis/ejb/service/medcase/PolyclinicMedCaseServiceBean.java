@@ -68,7 +68,7 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
 
     public Long getWorkCalendar(Long aWorkFunction) {
         if (aWorkFunction > Long.valueOf(0)) {
-            List<Object[]> list = manager.createNativeQuery("select wc.id,case when wf.group_id is null n wc.id else wcg.id end "
+            List<Object[]> list = manager.createNativeQuery("select wc.id,case when wf.group_id is null then wc.id else wcg.id end "
                     + " from WorkFunction as wf"
                     + " left join WorkCalendar as wc on wf.id=wc.workFunction_id"
                     + " left join WorkCalendar as wcg on wf.group_id=wcg.workFunction_id"
@@ -81,16 +81,16 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
             return Long.valueOf(list.get(0)[1].toString());
         } else {
             String username = context.getCallerPrincipal().toString();
-            List<Object[]> list = manager.createNativeQuery("select wc.id  as wcid,case when wf.group_id is null n wc.id else "
+            List<Object[]> list = manager.createNativeQuery("select wc.id  as wcid,case when wf.group_id is null then wc.id else "
                     + " wcg.id end  as wcname from WorkFunction as wf"
                     + " left join WorkCalendar as wc on wf.id=wc.workFunction_id"
                     + " left join WorkCalendar as wcg on wf.group_id=wcg.workFunction_id"
                     + " left join SecUser su on su.id=wf.secUser_id"
-                    + " where su.login = :username and case when wf.group_id is not null n wcg.id else wc.id end is not null order by wcg.id,wc.id")
+                    + " where su.login = :username and case when wf.group_id is not null then wcg.id else wc.id end is not null order by wcg.id,wc.id")
                     .setParameter("username", username)
                     .getResultList();
             if (list.isEmpty()) {
-                list = manager.createNativeQuery("select wc.id as wcid, case when wf.group_id is not null n wcg.id else wc.id end as wcname"
+                list = manager.createNativeQuery("select wc.id as wcid, case when wf.group_id is not null then wcg.id else wc.id end as wcname"
                         + " from WorkFunction wf"
                         + " left join Worker w on w.id=wf.worker_id"
                         + " left join Worker sw on sw.person_id=w.person_id"
@@ -98,7 +98,7 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
                         + " left join SecUser su on su.id=swf.secUser_id"
                         + " left join WorkCalendar wc on wc.workFunction_id=wf.id"
                         + " left join WorkCalendar wcg on wcg.workFunction_id=wf.group_id"
-                        + " where su.login = :username and case when wf.group_id is not null n wcg.id else wc.id end is not null order by wcg.id,wc.id")
+                        + " where su.login = :username and case when wf.group_id is not null then wcg.id else wc.id end is not null order by wcg.id,wc.id")
                         .setParameter("username", username)
                         .getResultList();
                 if (list.isEmpty() || list.get(0)[1] == null) {
@@ -129,7 +129,7 @@ public class PolyclinicMedCaseServiceBean implements IPolyclinicMedCaseService {
                 .setParameter("workFunction", workFunc)
                 .setParameter("date", date)
                 .getSingleResult();
-        Object planned = manager.createNativeQuery("select count(id)||' из них оформлены '||count(distinct case when dateStart is not null n id else null end) from medcase"
+        Object planned = manager.createNativeQuery("select count(id)||' из них оформлены '||count(distinct case when dateStart is not null then id else null end) from medcase"
                 + " where workfunctionplan_id =:workFunction"
                 + " and datePlan_id=:workCalendarDay"
         )

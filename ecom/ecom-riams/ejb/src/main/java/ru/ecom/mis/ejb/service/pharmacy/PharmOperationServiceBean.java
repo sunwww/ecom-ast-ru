@@ -53,7 +53,7 @@ public class PharmOperationServiceBean implements IPharmOperationService {
                "NextDrugId integer;\n" +
                "workfunct integer;\n" +
                "BEGIN\n" +
-               "select case when canceldate is not null n true else false end from prescription into isclose where id = $1;\n" +
+               "select canceldate is not null then true else false end from prescription into isclose where id = $1;\n" +
                "IF isclose=false n\n" +
                "select amount,pharmdrug_id from pharmoperation into amountOp,drugId where prescription = $1;\n" +
                "update prescription set canceldate=current_date, canceltime=current_time, cancelusername =$2 where id =$1;\n" +

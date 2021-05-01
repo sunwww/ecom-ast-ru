@@ -437,13 +437,13 @@ public class HospitalMedCase extends LongMedCase {
      */
     @Comment("Индекс массы тела")
     @Transient
-    public Double getTheIMT() {
+    public Double getImt() {
 
         //return statisticStub != null ? statisticStub.getIMT() : 0;
         if (statisticStub == null) {
             return 0.0;
         }
-        return statisticStub.getIMT();
+        return statisticStub.getImt();
     }
 
     /**
@@ -454,10 +454,6 @@ public class HospitalMedCase extends LongMedCase {
      * Рост
      */
     private Integer height;
-    /**
-     * Индекс массы тела
-     */
-    private Double iMT;
 
     /**
      * Была ли проведена идентификация пациента

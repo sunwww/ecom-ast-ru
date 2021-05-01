@@ -586,22 +586,22 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
             StringBuilder vssSelect = new StringBuilder();
             String vbtSelect2 = "";
             if ("BANK".equals(aReportType)) {
-                ageSelect = " ,case when EXTRACT(YEAR from AGE(pat.birthday))>=18 n 'AGE02' else 'AGE01' end as f_age ";
+                ageSelect = " ,case when EXTRACT(YEAR from AGE(pat.birthday))>=18 then 'AGE02' else 'AGE01' end as f_age ";
                 ageGroup = ", pat.birthday";
-                highTechSelect = " ,case when count(h.id)>0 n 'TMC03' else 'TMC02' end as f7_code_vid_mp";
+                highTechSelect = " ,case when count(h.id)>0 then 'TMC03' else 'TMC02' end as f7_code_vid_mp";
                 highTechJoin.append(" left join medcase slo on slo.parent_id=sls.id and slo.dtype='DepartmentMedCase'")
                         .append(" left join hitechmedicalcase h on h.medcase_id=slo.id ");
-                vbtSelect = " ,case when (vbt.code='78') n 'CMC02 в дневном стационаре' else 'CMC03 стационарно' end as f8_code_usl_mp";
-                emSelect = " ,case when sls.emergency n 'FMC01 экстренная' else 'FMC03 плановая' end as f9_code_form_ok";
+                vbtSelect = " ,case when (vbt.code='78') then 'CMC02 в дневном стационаре' else 'CMC03 стационарно' end as f8_code_usl_mp";
+                emSelect = " ,case when sls.emergency then 'FMC01 экстренная' else 'FMC03 плановая' end as f9_code_form_ok";
                 emGroup = " ,sls.emergency";
-                periodSelect.append(" ,case when sls.datefinish-sls.datestart <=1 n 'DMC01' else")
-                        .append(" case when sls.datefinish-sls.datestart between 2 and 5 n 'DMC02' else")
-                        .append(" case when sls.datefinish-sls.datestart between 6 and 14 n 'DMC03' else")
-                        .append(" case when sls.datefinish-sls.datestart between 15 and 30 n 'DMC04' else")
-                        .append(" case when sls.datefinish-sls.datestart >31 n 'DMC05' end end end end end as f10_count");
+                periodSelect.append(" ,case when sls.datefinish-sls.datestart <=1 then 'DMC01' else")
+                        .append(" case when sls.datefinish-sls.datestart between 2 and 5 then 'DMC02' else")
+                        .append(" case when sls.datefinish-sls.datestart between 6 and 14 then 'DMC03' else")
+                        .append(" case when sls.datefinish-sls.datestart between 15 and 30 then 'DMC04' else")
+                        .append(" case when sls.datefinish-sls.datestart >31 then 'DMC05' end end end end end as f10_count");
                 perGroup = ",sls.datefinish-sls.datestart";
-                vssSelect.append(",case when vss.code='CHARGED' n 'SFC05' else case when vss.code in ('OBLIGATORYINSURANCE','BUDGET') n 'SFC03'")
-                        .append(" else case when vss.code='PRIVATEINSURANCE' n 'SFC04' else 'SFC06' end end end as f11_code_fin_md");
+                vssSelect.append(",case when vss.code='CHARGED' then 'SFC05' else case when vss.code in ('OBLIGATORYINSURANCE','BUDGET') then 'SFC03'")
+                        .append(" else case when vss.code='PRIVATEINSURANCE' then 'SFC04' else 'SFC06' end end end as f11_code_fin_md");
                 vssGroup = " ,vss.code";
                 vbtSelect2 = ", vbt.name as vbtNameNote ";
             }
@@ -876,7 +876,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
      * @return String Тип оплаты PAY01 (нал) / PAY03 (безнал)
      */
     private String getPayType(String aMedcaseId, Integer findDays) {
-        String sql = "select case when co.ispaymentterminal =true n '1' else '0' end" +
+        String sql = "select case when co.ispaymentterminal =true then '1' else '0' end" +
                 " from contractaccount c" +
                 " left join contractaccountoperation co on co.account_id =c.id" +
                 " where c.datefrom between (select datestart from medcase where id=" +
@@ -978,12 +978,12 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
                     StringBuilder sql = new StringBuilder().append("select slo.id as f0,ml.name||' '||vbt.name||' '||vbst.name||' '||vrt.name as sloinfo")
                             .append(" ,list(pp.code||' '||pp.name) as f2_ppname")
-                            .append(" ,case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 n '1'")
-                            .append("else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vbst.code='1' n 0 else 1 end end as f3_cntDays")
+                            .append(" ,case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 then '1'")
+                            .append("else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vbst.code='1' then 0 else 1 end end as f3_cntDays")
                             .append(",max(pp.cost) as f4_ppcost")
                             .append(",max((")
-                            .append("case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 n '1'")
-                            .append("else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vbst.code='1' n 0 else 1 end end")
+                            .append("case when coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart=0 then '1'")
+                            .append("else coalesce(slo.datefinish,slo.transferdate,current_date)-slo.datestart+case when vbst.code='1' then 0 else 1 end end")
                             .append("* pp.cost)) as f5_ppsum,list(ms.code||' '||ms.name) as f6_msifo,ms.code ")
                             .append(" from medcase slo")
                             .append(" left join medcase sls on sls.id=slo.parent_id")
@@ -1304,7 +1304,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                         ",to_char(ct1.decisiondate,'dd.mm.yyyy') as d2ecisiondate,to_char(ct1.datereplace,'dd.mm.yyyy') as d3atereplace " +
                         " ,(select count(*) from CompulsoryTreatment ct2 where ct2.careCard_id='" + obj[1] + "' and ct2.orderNumber='" + obj[0] + "' and ct2.kind_id in (2,3) and ct1.decisiondate=ct2.datereplace) as p4revCT" +
                         " ,(select list(''||mc.id) from medcase mc where mc.patient_id=pcc.patient_id and upper(mc.dtype)='HOSPITALMEDCASE' and case when (mc.datestart <= coalesce(ct1.datereplace,current_date)" +
-                        " and coalesce(mc.datefinish,current_date) >=ct1.decisiondate  ) n 1 else 0 end = 1) as s5ls" +
+                        " and coalesce(mc.datefinish,current_date) >=ct1.decisiondate  ) then 1 else 0 end = 1) as s5ls" +
                         " ,vs.omcCode as f6sex" +
                         " from CompulsoryTreatment ct1 " +
                         " left join PsychiatricCareCard pcc on pcc.id=ct1.careCard_id" +
@@ -1334,17 +1334,17 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                 for (Object[] o2 : l2) {
                     hospInd++;
 
-                    String sql3 = "select mc.parent_id as s0ls,mc.id as s1lo,case when mc.datestart>to_date('" + (o2[2] == null ? curDate : o2[2]) + "','dd.mm.yyyy') n '1' else null end as s2rdate" +
+                    String sql3 = "select mc.parent_id as s0ls,mc.id as s1lo,case when mc.datestart>to_date('" + (o2[2] == null ? curDate : o2[2]) + "','dd.mm.yyyy') then '1' else null end as s2rdate" +
                             ", to_char(mc.datestart,'dd.mm.yyyy') as d3atestart,to_char(mc.transferdate,'dd.mm.yyyy') as t4ransferdate,to_char(mc.datefinish,'dd.mm.yyyy') as d5atefinish,mc.department_id as d6epartment" +
-                            ",case when ('" + (o2[3] == null ? "" : o2[3]) + "'='' or '" + (o2[3] == null ? "" : o2[3]) + "'!='' and coalesce(mc.transferdate,mc.datefinish) is not null and coalesce(mc.transferdate,mc.datefinish)<to_date('" + (o2[3] == null ? curDate : o2[3]) + "','dd.mm.yyyy')) n to_char(coalesce(mc.transferdate,mc.datefinish),'dd.mm.yyyy') else '" + (o2[3] == null ? "" : o2[3]) + "' end  as s7rdate" +
-                            " ,list(distinct case when vdrtD.code='4' and vpdD.code='1' n mkbD.code else null end) as f8depDiag" +
-                            " ,list(distinct case when vdrt.code='2' n mkb.code else null end) as f9orderDiag" +
-                            " ,list(distinct case when vdrt.code='3' and vpd.code='1' n mkb.code else null end) as f10dischargeDiag" +
-                            " ,case when vhr.code='11' n cast('1' as int) else null end as f11isDeath" +
-                            " , case when sls.dateFinish is not null n cast(to_char(sls.dateFinish,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateFinish, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateFinish,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) n -1 else 0 end)<0) n -1 else 0 end) else null end as f12ageDischarge" +
-                            " , cast(to_char(sls.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) n -1 else 0 end)<0) n -1 else 0 end) as f13ageEntranceSls" +
-                            " , cast(to_char(mc.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(mc.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(mc.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) n -1 else 0 end)<0) n -1 else 0 end) as f14ageEntranceSlo" +
-                            " , case when coalesce(mc.transferDate,mc.dateFinish) is not null n cast(to_char(coalesce(mc.transferDate,mc.dateFinish),'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(coalesce(mc.transferDate,mc.dateFinish), 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(coalesce(mc.transferDate,mc.dateFinish),'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) n -1 else 0 end)<0) n -1 else 0 end) else null end as f15ageDischarge" +
+                            ",case when ('" + (o2[3] == null ? "" : o2[3]) + "'='' or '" + (o2[3] == null ? "" : o2[3]) + "'!='' and coalesce(mc.transferdate,mc.datefinish) is not null and coalesce(mc.transferdate,mc.datefinish)<to_date('" + (o2[3] == null ? curDate : o2[3]) + "','dd.mm.yyyy')) then to_char(coalesce(mc.transferdate,mc.datefinish),'dd.mm.yyyy') else '" + (o2[3] == null ? "" : o2[3]) + "' end  as s7rdate" +
+                            " ,list(distinct case when vdrtD.code='4' and vpdD.code='1' then mkbD.code else null end) as f8depDiag" +
+                            " ,list(distinct case when vdrt.code='2' then mkb.code else null end) as f9orderDiag" +
+                            " ,list(distinct case when vdrt.code='3' and vpd.code='1' then mkb.code else null end) as f10dischargeDiag" +
+                            " ,case when vhr.code='11' then cast('1' as int) else null end as f11isDeath" +
+                            " , case when sls.dateFinish is not null then cast(to_char(sls.dateFinish,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateFinish, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateFinish,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) else null end as f12ageDischarge" +
+                            " , cast(to_char(sls.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) as f13ageEntranceSls" +
+                            " , cast(to_char(mc.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(mc.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(mc.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) as f14ageEntranceSlo" +
+                            " , case when coalesce(mc.transferDate,mc.dateFinish) is not null then cast(to_char(coalesce(mc.transferDate,mc.dateFinish),'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(coalesce(mc.transferDate,mc.dateFinish), 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(coalesce(mc.transferDate,mc.dateFinish),'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) end as f15ageDischarge" +
                             " , pat.birthday as f16birthday" +
                             " from medcase mc" +
                             " left join medcase sls on mc.parent_id=sls.id" +
@@ -1365,7 +1365,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                             " left join VocHospType vht on vht.id=sls.targetHospType_id" +
                             " left join VocHospType vhtHosp on vhtHosp.id=sls.hospType_id" +
                             " where mc.patient_id='" + obj[2] + "' and upper(mc.dtype)='DEPARTMENTMEDCASE' and case when coalesce(mc.transferdate,mc.datefinish,current_date) >= to_date('" + (o2[0] == null ? curDate : o2[0]) + "','dd.mm.yyyy') and mc.datestart<=to_date('" + (o2[3] == null ? curDate : o2[3]) + "','dd.mm.yyyy') " +
-                            " n 1 else 0 end = 1" +
+                            " then 1 else 0 end = 1" +
                             " group by mc.datestart,mc.datefinish,mc.transferdate" +
                             " ,sls.id,mc.id" +
                             " ,sls.admissionInHospital_id,vh.code" +
@@ -1483,38 +1483,38 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                     " ,vs.omccode as f3assex" +
                     " ,slo.datestart as f4entrancedate" +
                     " ,coalesce(slo.datefinish,slo.transferdate) as f5dischargedate" +
-                    " ,case when a.addressisvillage='1' n cast('1' as int) else null end as f6isvillage" +
-                    " ,case when sls.admissionInHospital_id='1' n cast('1' as int) else null end as f7isFirstLife" +
-                    " ,case when (vh.code='1' or vh.code='2' or sls.admissionInHospital_id='1') n cast('1' as int) else null end as f8isFirstCurrentYear" +
-                    " ,case when sls.admissionOrder_id in (2,4,5,6,7,8,9) n cast('1' as int) else null end as f9isIncompetent" +
-                    " ,case when vhr.code='11' n cast('1' as int) else null end as f10isDeath" +
+                    " ,case when a.addressisvillage='1' then cast('1' as int) else null end as f6isvillage" +
+                    " ,case when sls.admissionInHospital_id='1' then cast('1' as int) else null end as f7isFirstLife" +
+                    " ,case when (vh.code='1' or vh.code='2' or sls.admissionInHospital_id='1') then cast('1' as int) else null end as f8isFirstCurrentYear" +
+                    " ,case when sls.admissionOrder_id in (2,4,5,6,7,8,9) then cast('1' as int) end as f9isIncompetent" +
+                    " ,case when vhr.code='11' then cast('1' as int) end as f10isDeath" +
                     " ,slo.department_id as f11slodepartment" +
                     " ,nextslo.department_id as f12nextslodepartment" +
                     " ,prevslo.department_id as f13prevslodepartment" +
-                    " ,list(distinct case when vdrtD.code='4' and vpdD.code='1' n mkbD.code else null end) as f14depDiag" +
-                    " ,list(distinct case when vdrt.code='2' n mkb.code else null end) as f15orderDiag" +
-                    " ,list(distinct case when vdrt.code='3' and vpd.code='1' n mkb.code else null end) as f16dischargeDiag" +
-                    " ,case when count(ahr.id)>0 n cast('1' as int) else null end as f17cntAggregate" +
+                    " ,list(distinct case when vdrtD.code='4' and vpdD.code='1' then mkbD.code end) as f14depDiag" +
+                    " ,list(distinct case when vdrt.code='2' then mkb.code end) as f15orderDiag" +
+                    " ,list(distinct case when vdrt.code='3' and vpd.code='1' then mkb.code end) as f16dischargeDiag" +
+                    " ,case when count(ahr.id)>0 then cast('1' as int) end as f17cntAggregate" +
                     " ,bf.bedType_id as f18bedType" +
                     " ,bf.bedSubType_id as f19bedSubType" +
                     " ,sls.serviceStream_id as f20serviceStream" +
-                    " , case when slo.entranceTime<cast('07:00' as time) n cast('1' as int) else null end as f21entranceTime7" +
-                    " , case when slo.entranceTime<cast('09:00' as time) n cast('1' as int) else null end as f22entranceTime9" +
-                    " , case when coalesce(slo.dischargeTime,slo.transferTime)<cast('07:00' as time) n cast('1' as int) else null end as f23entranceTime7" +
-                    " , case when coalesce(slo.dischargeTime,slo.transferTime)<cast('09:00' as time) n cast('1' as int) else null end as f24entranceTime9" +
-                    " , case when sls.emergency='1' n cast('1' as int) else null end as f25emergency" +
+                    " , case when slo.entranceTime<cast('07:00' as time) then cast('1' as int) end as f21entranceTime7" +
+                    " , case when slo.entranceTime<cast('09:00' as time) then cast('1' as int) end as f22entranceTime9" +
+                    " , case when coalesce(slo.dischargeTime,slo.transferTime)<cast('07:00' as time) then cast('1' as int) end as f23entranceTime7" +
+                    " , case when coalesce(slo.dischargeTime,slo.transferTime)<cast('09:00' as time) then cast('1' as int) end as f24entranceTime9" +
+                    " , case when sls.emergency='1' then cast('1' as int) end as f25emergency" +
                     " , cast('0' as int) as f26operation" +
                     " , vht.code as f27transferLpu" +
                     " , vhtHosp.id as f28hospTypeId" +
                     " , vs.id as f29sexId" +
-                    " , case when firstSlo.entranceTime<cast('07:00' as time) n cast('1' as int) else null end as f30entranceTime7" +
-                    " , case when firstSlo.entranceTime<cast('09:00' as time) n cast('1' as int) else null end as f31entranceTime9" +
+                    " , case when firstSlo.entranceTime<cast('07:00' as time) then cast('1' as int) end as f30entranceTime7" +
+                    " , case when firstSlo.entranceTime<cast('09:00' as time) then cast('1' as int) end as f31entranceTime9" +
                     " , firstSlo.datestart as f32entrancedate" +
-                    " , case when vbst.code='1' n '0' else '1' end  as f33isdayhosp" +
-                    " ,list(distinct case when prevVdrtD.code='4' and prevVpdD.code='1' n prevMkbD.code else null end) as f34prevdepDiag" +
-                    " , case when sls.dateFinish is not null n cast(to_char(sls.dateFinish,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateFinish, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateFinish,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) n -1 else 0 end)<0) n -1 else 0 end) else null end as f35ageDischarge" +
-                    " , cast(to_char(sls.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) n -1 else 0 end)<0) n -1 else 0 end) as f36ageEntranceSls" +
-                    " , cast(to_char(slo.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(slo.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(slo.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) n -1 else 0 end)<0) n -1 else 0 end) as f37ageEntranceSlo" +
+                    " , case when vbst.code='1' then '0' else '1' end  as f33isdayhosp" +
+                    " ,list(distinct case when prevVdrtD.code='4' and prevVpdD.code='1' then prevMkbD.code end) as f34prevdepDiag" +
+                    " , case when sls.dateFinish is not null then cast(to_char(sls.dateFinish,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateFinish, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateFinish,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) end as f35ageDischarge" +
+                    " , cast(to_char(sls.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(sls.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(sls.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) as f36ageEntranceSls" +
+                    " , cast(to_char(slo.dateStart,'yyyy') as int)-cast(to_char(pat.birthday,'yyyy') as int) +(case when (cast(to_char(slo.dateStart, 'mm') as int)-cast(to_char(pat.birthday, 'mm') as int) +(case when (cast(to_char(slo.dateStart,'dd') as int) - cast(to_char(pat.birthday,'dd') as int)<0) then -1 else 0 end)<0) then -1 else 0 end) as f37ageEntranceSlo" +
                     " , pat.birthday as f38birthday" +
                     " from medcase sls" +
                     " left join medcase slo on sls.id=slo.parent_id" +
@@ -1736,7 +1736,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     public void unionSloWithNextSlo(Long aSlo) {
         List<Object[]> list = manager.createNativeQuery("select  "
                 + "case when sloNext1.department_id is not null and"
-                + " sloNext1.department_id=slo.department_id n '1' else null end equalsDep"
+                + " sloNext1.department_id=slo.department_id then '1' end equalsDep"
                 + " ,sloNext.id as sloNext,sloNext1.id as sloNext1,sloNext2.id as sloNext2"
                 + " ,sloNext.dateFinish as sloNextDateFinish,sloNext.dischargeTime as sloNextDischargeTime"
                 + " ,sloNext.transferDate as sloNextTransferDate,sloNext.transferTime as sloNextTransferTime"
@@ -1793,8 +1793,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                     manager.createNativeQuery("update robsonclass d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
                     manager.createNativeQuery("update assessmentCard cb set medcase_id='" + aSlo + "' where cb.medCase_id='" + obj[1] + "'").executeUpdate();
                     manager.createNativeQuery("update qualityestimationcard set medcase_id='" + aSlo + "' where medCase_id='" + obj[1] + "'").executeUpdate();
-                    manager.createNativeQuery("update childBirth cb set medcase_id='" + aSlo + "' where cb.medCase_id='" + obj[1] + "' and '1'=(select case when dep.isMaternityWard='1' n '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='" + aSlo + "')").executeUpdate();
-                    manager.createNativeQuery("update newBorn nb    set medcase_id='" + aSlo + "' where nb.medCase_id='" + obj[1] + "' and '1'=(select case when dep.isMaternityWard='1' n '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='" + aSlo + "')").executeUpdate();
+                    manager.createNativeQuery("update childBirth cb set medcase_id='" + aSlo + "' where cb.medCase_id='" + obj[1] + "' and '1'=(select case when dep.isMaternityWard='1' then '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='" + aSlo + "')").executeUpdate();
+                    manager.createNativeQuery("update newBorn nb    set medcase_id='" + aSlo + "' where nb.medCase_id='" + obj[1] + "' and '1'=(select case when dep.isMaternityWard='1' then '1' else '0' end from medcase slo left join mislpu dep on dep.id=slo.department_id where slo.id='" + aSlo + "')").executeUpdate();
                     manager.createNativeQuery("update medcase  set parent_id='" + aSlo + "' where parent_id='" + obj[1] + "'").executeUpdate();
 
                     manager.createNativeQuery("update prescription " +
@@ -1867,8 +1867,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                 manager.createNativeQuery("update MedCase set dateFinish=to_date('" + aDate + "','dd.mm.yyyy') where id='" + id + "' and dtype='HospitalMedCase' and dischargeTime is null")
                         .executeUpdate();
             } else {
-                List<Object[]> list = manager.createNativeQuery("select p.lastname||' '||p.firstname||' '||coalesce(p.middlename)||' '||to_char(p.birthday,'dd.mm.yyyy'),ss.code,case when sls.deniedHospitalizating_id is not null n 'при отказе от госпитализации дата выписки не ставится' when sls.dischargeTime is not null n 'Изменение даты выписки у оформленных историй болезни производится через выписку' when sls.dateStart>to_date('" + aDate + "','dd.mm.yyyy') n 'Дата выписки должна быть больше, чем дата поступления' else '' end from medcase sls left join patient p on p.id=sls.patient_id left join statisticstub ss on ss.id=sls.statisticstub_id where sls.id='" + id + "'")
-                        //.setParameter("dat", date)
+                List<Object[]> list = manager.createNativeQuery("select p.lastname||' '||p.firstname||' '||coalesce(p.middlename)||' '||to_char(p.birthday,'dd.mm.yyyy'),ss.code,case when sls.deniedHospitalizating_id is not null then 'при отказе от госпитализации дата выписки не ставится' when sls.dischargeTime is not null then 'Изменение даты выписки у оформленных историй болезни производится через выписку' when sls.dateStart>to_date('" + aDate + "','dd.mm.yyyy') then 'Дата выписки должна быть больше, чем дата поступления' else '' end from medcase sls left join patient p on p.id=sls.patient_id left join statisticstub ss on ss.id=sls.statisticstub_id where sls.id='" + id + "'")
                         .getResultList();
                 if (!list.isEmpty()) {
                     Object[] objs = list.get(0);
@@ -1960,7 +1959,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     public String findDoubleServiceByPatient(Long aMedService, Long aPatient, Long aService, String aDate) throws ParseException {
         StringBuilder sql = new StringBuilder();
         Date date = DateFormat.parseSqlDate(aDate);
-        sql.append("select smc.id,to_char(smc.dateExecute,'dd.mm.yyyy') as dateexecute,smc.timeExecute,vss.name,'Оказана в '|| case when p.DTYPE='DepartmentMedCase' n ' отделении '||d.name when p.DTYPE='HospitalMedCase' n 'приемном отделении ' else 'поликлинике' end from medcase as smc ")
+        sql.append("select smc.id,to_char(smc.dateExecute,'dd.mm.yyyy') as dateexecute,smc.timeExecute,vss.name,'Оказана в '|| case when p.DTYPE='DepartmentMedCase' then ' отделении '||d.name when p.DTYPE='HospitalMedCase' then 'приемном отделении ' else 'поликлинике' end from medcase as smc ")
                 .append(" left join medcase as p on p.id=smc.parent_id ")
                 .append(" left join mislpu as d on d.id=p.department_id ")
                 .append(" left join vocservicestream as vss on vss.id=smc.servicestream_id")
@@ -1997,7 +1996,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     public String findDoubleOperationByPatient(Long aSurOperation, Long aParentMedCase, Long aOperation, String aDate) throws ParseException {
         StringBuilder sql = new StringBuilder();
         Date date = DateFormat.parseSqlDate(aDate);
-        sql.append("select so.id,to_char(so.operationDate,'dd.mm.yyyy'),so.operationTime,to_char(so.operationDateTo,'dd.mm.yyyy'),so.operationTimeTo,'Зарегистрирована в '|| case when p.DTYPE='DepartmentMedCase' n ' отделении '||d.name when p.DTYPE='HospitalMedCase' n 'приемном отделении ' else 'поликлинике' end ")
+        sql.append("select so.id,to_char(so.operationDate,'dd.mm.yyyy'),so.operationTime,to_char(so.operationDateTo,'dd.mm.yyyy'),so.operationTimeTo,'Зарегистрирована в '|| case when p.DTYPE='DepartmentMedCase' then ' отделении '||d.name when p.DTYPE='HospitalMedCase' then 'приемном отделении ' else 'поликлинике' end ")
                 .append(" from medcase as mc")
                 .append(" left join SurgicalOperation as so on so.patient_id=mc.patient_id")
                 .append(" left join medcase as p on p.id=so.medcase_id ")
@@ -2106,7 +2105,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
         HospitalMedCase hospital = manager.find(HospitalMedCase.class, aMedCase);
         List<Object[]> listPolicies = manager.createNativeQuery("select p.id,count(case when mp.medCase_id='"
                 + aMedCase
-                + "' n 1 else null end) from MedPolicy p left join MedCase_MedPolicy mp on p.id=mp.policies_id left join MedCase m on m.id=mp.medCase_id where p.patient_id='"
+                + "' then 1 end) from MedPolicy p left join MedCase_MedPolicy mp on p.id=mp.policies_id left join MedCase m on m.id=mp.medCase_id where p.patient_id='"
                 + hospital.getPatient().getId() + "' group by p.id")
                 .getResultList();
         List<MedPolicy> allPolicies = new ArrayList<>();

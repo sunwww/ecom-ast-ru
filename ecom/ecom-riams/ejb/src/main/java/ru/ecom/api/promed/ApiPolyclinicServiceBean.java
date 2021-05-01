@@ -4,7 +4,6 @@ package ru.ecom.api.promed;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import ru.ecom.api.record.ApiRecordServiceBean;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
 import ru.ecom.mis.ejb.domain.medcase.ShortMedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
@@ -263,7 +262,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
         patient.put(PATLASTNAME, patientEntity.getLastname())
                 .put(PATFIRSTNAME, patientEntity.getFirstname())
                 .put(PATMIDNAME, patientEntity.getMiddlename())
-                .put(PATBIRTHDAY, patientEntity.getBirthdate())
+                .put(PATBIRTHDAY, patientEntity.getBirthday())
                 .put(PATSNILS, patientEntity.getSnils());
         return patient;
     }

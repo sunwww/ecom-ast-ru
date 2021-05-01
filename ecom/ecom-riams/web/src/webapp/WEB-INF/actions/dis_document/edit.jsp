@@ -58,7 +58,7 @@
                     <msh:textField property="number" label="Номер"  size="20" fieldColSpan="30" />
                     <msh:ifFormTypeIsCreate formName="dis_documentForm">
                         <td><input id="getFreeNumberButton" type="button" onclick="getFreeNumber('number',this)" value="Получить номер"></td>
-                        <msh:checkBox property="ELN" label="Электронный"/>
+                        <msh:checkBox property="eln" label="Электронный"/>
                     </msh:ifFormTypeIsCreate>
                 </msh:row>
                 <msh:row>

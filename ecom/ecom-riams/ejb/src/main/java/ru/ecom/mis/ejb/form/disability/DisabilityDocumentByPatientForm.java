@@ -30,14 +30,11 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Setter
 public class DisabilityDocumentByPatientForm extends DisabilityDocumentForm {
 
-	private Boolean isELN;
+	private Boolean eln;
 	@Comment("Электронный")
 	@Persist
-	public Boolean getELN() {
-		return isELN;
-	}
-	public void setELN(Boolean ELN) {
-		isELN = ELN;
+	public Boolean getEln() {
+		return eln;
 	}
 
 	/** Дата начала нетрудоспособности */

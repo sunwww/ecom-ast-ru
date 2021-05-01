@@ -33,14 +33,11 @@ import ru.nuzmsh.forms.validator.validators.Required;
 public class DisabilityDocumentForm extends IdEntityForm{
 
 
-	private Boolean isELN;
+	private Boolean eln;
 	@Comment("Электронный")
 	@Persist
-	public Boolean getELN() {
-		return isELN;
-	}
-	public void setELN(Boolean ELN) {
-		isELN = ELN;
+	public Boolean getEln() {
+		return eln;
 	}
 
 	/** Первичность предыдущего листа нетрудоспособности  */

@@ -539,15 +539,15 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	/* Индекс массы тела */
 	@Comment("Индекс массы тела")
 	@Persist
-	public Double getTheIMT() {
-		return iMT;
+	public Double getImt() {
+		return imt;
 	}
 	/** Вес */
 	private Integer weight;
 	/** Рост */
 	private Integer height;
 	/** Индекс массы тела */
-	private Double iMT;
+	private Double imt;
 
 	/** Дата идентификации */
 	@Comment("Дата идентификации")

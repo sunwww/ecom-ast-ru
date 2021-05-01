@@ -33,12 +33,12 @@ public class HospitalLibrary {
                     .append("( ")
                     .append(aPatientAtr).append(".territoryRegistrationNonresident_id is not null or ")
                     .append(aSocialStatusAtr).append(".omcCode='И0' ")
-                    .append("or  coalesce((   select  count(case when ").append(aMedPolicyAtr).append(".dtype='MedPolicyOmcForeign' n 1 else null end) ")
+                    .append("or  coalesce((   select  count(case when ").append(aMedPolicyAtr).append(".dtype='MedPolicyOmcForeign' then 1 else null end) ")
                     .append("  from medpolicy ").append(aMedPolicyAtr).append(" ")
                     .append("  where ").append(aPatientAtr).append(".id=").append(aMedPolicyAtr).append(".patient_id and ").append(aMedPolicyAtr).append(".actualDateFrom <=").append(aFieldDate).append(" ")
                     .append("  and coalesce(")
                     .append(aMedPolicyAtr).append(".actualDateTo,current_date) >=").append(aFieldDate).append(" ")
-                    .append("  having count(case when ").append(aMedPolicyAtr).append(".dtype='MedPolicyOmc' n 1 else null end)=0 ")
+                    .append("  having count(case when ").append(aMedPolicyAtr).append(".dtype='MedPolicyOmc' then 1 else null end)=0 ")
                     .append(" )");
             sql.append(",0)>0 ");
         } else {
@@ -52,11 +52,11 @@ public class HospitalLibrary {
                     .append(" and ")
                     .append(" coalesce(( ")
                     .append("  select ")
-                    .append("      count(case when ").append(aMedPolicyAtr).append(".dtype='MedPolicyOmcForeign' n 1 else null end) ")
+                    .append("      count(case when ").append(aMedPolicyAtr).append(".dtype='MedPolicyOmcForeign' then 1 else null end) ")
                     .append("  from medpolicy ").append(aMedPolicyAtr).append(" ")
                     .append("  where ").append(aPatientAtr).append(".id=").append(aMedPolicyAtr).append(".patient_id and ").append(aMedPolicyAtr).append(".actualDateFrom <=").append(aFieldDate).append(" ")
                     .append("  and coalesce(").append(aMedPolicyAtr).append(".actualDateTo,current_date) >=").append(aFieldDate).append(" ")
-                    .append("  having count(case when ").append(aMedPolicyAtr).append(".dtype='MedPolicyOmc' n 1 else null end)=0 ")
+                    .append("  having count(case when ").append(aMedPolicyAtr).append(".dtype='MedPolicyOmc' then 1 else null end)=0 ")
                     .append(" ),0)");
             sql.append("=0 ");
         }

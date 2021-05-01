@@ -16,6 +16,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static ru.nuzmsh.util.BooleanUtils.isTrue;
+
 /**
  * Стат карта
  *
@@ -38,7 +40,7 @@ public class StatisticStubStac {
         setPigeonHole(pigeonHole);
         setContext(aContext);
         isEmergAndPlan = pigeonHole != null && pigeonHole.getIsStatStubEmerPlan() != null;
-        isEmergency = aMedCase != null && aMedCase.getEmergency() != null && aMedCase.getEmergency();
+        isEmergency = aMedCase != null && isTrue(aMedCase.getEmergency());
         if (aMedCase != null) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(aMedCase.getDateStart());
@@ -46,39 +48,6 @@ public class StatisticStubStac {
         } else {
             setYear(-1);
         }
-    }
-
-    /**
-     * Если ли ограничение на выписку
-     */
-    public static boolean isDischargeOnlyCurrentDay(SessionContext aContext) {
-        return aContext.isCallerInRole(THE_DISCARGE_ONLY_CURRENT_DAY);
-    }
-
-    /**
-     * Нужно ли создавать новый номер стат. карты
-     */
-    public boolean isStatCardNumberMustCreate() {
-        boolean ret;
-        if (!context.isCallerInRole(ALWAYS_STAT_CARD_NUMBER)) {
-            ret = (medCase.getDeniedHospitalizating() == null
-                    && (medCase.getAmbulanceTreatment() == null
-                    || !medCase.getAmbulanceTreatment())
-            );
-        } else {
-            ret = true;
-        }
-        return ret;
-    }
-
-    public boolean isStatCardMustDelete() {
-        boolean ret;
-        if (!context.isCallerInRole(ALWAYS_STAT_CARD_NUMBER)) {
-            ret = medCase.getDeniedHospitalizating() != null && medCase.getStatisticStub() != null;
-        } else {
-            ret = false;
-        }
-        return ret;
     }
 
     /**
@@ -174,17 +143,6 @@ public class StatisticStubStac {
         aManager.persist(jour);
     }
 
-
-    /**
-     * * Есть ли номер такой карты по году
-     *
-     * @param aStatCardNumber номер стат. карты
-     * @param aYear           год
-     * @return true - если есть
-     */
-    public boolean isStatCardNumberExists(String aStatCardNumber, int aYear) {
-        return isStatCardNumberExists(entityManager, aStatCardNumber, Long.valueOf(aYear));
-    }
 
     @SuppressWarnings("unchecked")
     public static boolean isStatCardNumberExists(EntityManager aManager, String aStatCardNumber, Long aYear) {
@@ -455,7 +413,7 @@ public class StatisticStubStac {
         if (imt != 0) {
             medCase.getStatisticStub().setHeight(height);
             medCase.getStatisticStub().setWeight(weight);
-            medCase.getStatisticStub().setIMT(imt);
+            medCase.getStatisticStub().setImt(imt);
         }
     }
 
@@ -541,8 +499,6 @@ public class StatisticStubStac {
     public static final String CREATE_HOUR = "/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateHour";
     public static final String EDIT_HOUR = "/Policy/Mis/MedCase/Stac/Ssl/Admission/EditHour";
     public static final String CHANGE_STAT_CARD_NUMBER = "/Policy/Mis/MedCase/Stac/Ssl/Admission/ChangeStatCardNumber";
-    public static final String CREATE_STAT_CARD_BEFORE_DENIED_BY_HAND = "/Policy/Mis/MedCase/Stac/Ssl/Admission/CreateStatCardBeforeDeniedByHand";
-    private static final String THE_DISCARGE_ONLY_CURRENT_DAY = "/Policy/Mis/MedCase/Stac/Ssl/Discharge/OnlyCurrentDay";
 
     /**
      * Экстренная госпитализация

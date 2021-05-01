@@ -85,10 +85,8 @@ public class AdmissionSaveInterceptor implements IFormInterceptor {
         boolean adding1is = (!isEmpty(form.getOrderDiagnos()) || (!isEmpty(form.getOrderMkb())));
         boolean adding2is = (!isEmpty(form.getEntranceDiagnos()) || (!isEmpty(form.getEntranceMkb())));
         if (adding1is || adding2is) {
-            boolean adding1 = false;
-            if (!adding1is) adding1 = true;
-            boolean adding2 = false;
-            if (!adding2is) adding2 = true;
+            boolean adding1 = !adding1is;
+            boolean adding2 = !adding2is;
             VocDiagnosisRegistrationType vocTypeOrder = manager.find(VocDiagnosisRegistrationType.class, 1L);
             VocDiagnosisRegistrationType vocTypeEnter = manager.find(VocDiagnosisRegistrationType.class, 2L);
             List<Diagnosis> diagList = manager.createQuery("from Diagnosis where medCase=:med").setParameter("med", medCase).getResultList();

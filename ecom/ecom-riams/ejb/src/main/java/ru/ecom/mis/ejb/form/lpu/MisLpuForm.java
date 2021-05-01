@@ -72,7 +72,7 @@ public class MisLpuForm extends IdNameEntityForm {
     /**
      * Срок действия лицензии
      */
-    private String lincenseExpired;
+    private String licenseExpired;
     /**
      * Номер лицензии
      */
@@ -400,7 +400,7 @@ public class MisLpuForm extends IdNameEntityForm {
     @DateString
     @DoDateString
     public String getLicenseExpired() {
-        return lincenseExpired;
+        return licenseExpired;
     }
 
     /**
