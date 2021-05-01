@@ -7,7 +7,6 @@ import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.oncological.ejb.domain.voc.*;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.ejb.Startup;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
