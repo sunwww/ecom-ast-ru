@@ -19,76 +19,134 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Setter
 public class VocKsgForm extends IdEntityForm {
 
-    /** Группа КСГ */
+    private Long group;
+    private Integer year;
+    private Boolean longKsg;
+    private Boolean isOperation;
+    private Boolean isFullPayment;
+    private Double kz;
+    private String profile;
+    private Long bedSubType;
+    private Boolean doNotUseCusmo;
+    private Boolean isCovid19;
+    private String code;
+    private String name;
+    private String doctorCost;
+
+    /**
+     * Группа КСГ
+     */
     @Comment("Группа КСГ")
     @Persist
-    public Long getGroup() {return group;}
-    private Long group ;
+    public Long getGroup() {
+        return group;
+    }
 
-    /** Год КСГ */
+    /**
+     * Год КСГ
+     */
     @Comment("Год КСГ")
     @Persist
-    public Integer getYear() {return year;}
-    private Integer year ;
+    public Integer getYear() {
+        return year;
+    }
 
-    /** Сверхдлительный КСГ (45 дней)	*/
+    /**
+     * Сверхдлительный КСГ (45 дней)
+     */
     @Comment("Длительный срок лечения КСГ")
     @Persist
-    public Boolean getLongKsg() {return longKsg;}
-    private Boolean longKsg ;
+    public Boolean getLongKsg() {
+        return longKsg;
+    }
 
-    /** Является операцией */
+    /**
+     * Является операцией
+     */
     @Comment("Является операцией")
     @Persist
-    public Boolean getIsOperation() {return isOperation;}
-    private Boolean isOperation ;
+    public Boolean getIsOperation() {
+        return isOperation;
+    }
 
-    /** Оплачивать в полном объеме */
+    /**
+     * Оплачивать в полном объеме
+     */
     @Comment("Оплачивать в полном объеме")
     @Persist
-    public Boolean getIsFullPayment() {return isFullPayment;}
-    private Boolean isFullPayment ;
+    public Boolean getIsFullPayment() {
+        return isFullPayment;
+    }
 
-    /** Коэффициент затрат */
+    /**
+     * Коэффициент затрат
+     */
     @Comment("Коэффициент затрат")
-    @Persist @Required
-    public Double getKZ() {return kZ;}
-    private Double kZ ;
+    @Persist
+    @Required
+    public Double getKz() {
+        return kz;
+    }
 
-    /** Профиль помощи */
+    /**
+     * Профиль помощи
+     */
     @Comment("Профиль помощи")
     @Persist
-    public String getProfile() {return profile;}
-    private String profile ;
+    public String getProfile() {
+        return profile;
+    }
 
-    /** Тип коек */
+    /**
+     * Тип коек
+     */
     @Comment("Тип коек")
-    @Persist @Required
-    public Long getBedSubType() {return bedSubType;}
-    private Long bedSubType ;
+    @Persist
+    @Required
+    public Long getBedSubType() {
+        return bedSubType;
+    }
 
-    /** Не учитывать КУСмо */
+    /**
+     * Не учитывать КУСмо
+     */
     @Comment("Не учитывать КУСмо")
     @Persist
-    public Boolean getDoNotUseCusmo() {return doNotUseCusmo;}
-    private Boolean doNotUseCusmo ;
+    public Boolean getDoNotUseCusmo() {
+        return doNotUseCusmo;
+    }
 
-    /** Covid-19 КСГ */
+    /**
+     * Covid-19 КСГ
+     */
     @Comment("Covid-19 КСГ")
     @Persist
-    public Boolean getIsCovid19() {return isCovid19;}
-    private Boolean isCovid19 ;
+    public Boolean getIsCovid19() {
+        return isCovid19;
+    }
 
-    /** Код */
+    /**
+     * Код
+     */
     @Comment("Код")
     @Persist
-    public String getCode() { return code ; }
-    private String code ;
+    public String getCode() {
+        return code;
+    }
 
-    /** Название */
+    /**
+     * Название
+     */
     @Comment("Название")
     @Persist
-    public String getName() { return name ; }
-    private String name ;
+    public String getName() {
+        return name;
+    }
+
+    @Comment("Доля врача в КСГ")
+    @Persist
+    public String getDoctorCost() {
+        return doctorCost;
+    }
 
 }
