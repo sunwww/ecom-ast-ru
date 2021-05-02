@@ -1149,28 +1149,33 @@ order by wcd.calendarDate, wct.timeFrom" />
   </script>
   </msh:ifFormTypeIsCreate>
   <msh:ifFormTypeIsNotView formName="mis_patientForm">
-    <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
-    <script type="text/javascript">// <![CDATA[//
+      <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+      <script type="text/javascript">
 
-    	var oldaction = document.forms[0].action ;
-    	document.forms[0].action = 'javascript:isExistPatient()';
-			eventutil.addEventListener($('birthday'),'change',function(){updateAge() ;}) ;
-			eventutil.addEventListener($('firstname'),'change',function(){getSexByName();}) ;
-		if ($('passportDivision')) {
-			passportDivisionAutocomplete.addOnChangeCallback(function() {
-				if ((+$('passportDivision').value)>0) {
-					var divName = $('passportDivisionName').value ;
-					var ind = divName.indexOf(' ') ;
-	            	$('passportCodeDivision').value = divName.substring(0,ind) ;
-	            	$('passportWhomIssued').value = divName.substring(ind+1) ;
-				}
-            }) ;
-		}
-    	function updateAge() {
-    		PatientService.getAge($('birthday').value, {
-        		callback: function(aResult) {
-       				$('ageReadOnly').value = aResult ;
-        		}
+          var oldaction = document.forms[0].action;
+          document.forms[0].action = 'javascript:isExistPatient()';
+          eventutil.addEventListener($('birthday'), 'change', function () {
+              updateAge();
+          });
+          eventutil.addEventListener($('firstname'), 'change', function () {
+              getSexByName();
+          });
+          if ($('passportDivision')) {
+              passportDivisionAutocomplete.addOnChangeCallback(function () {
+                  if ((+$('passportDivision').value) > 0) {
+                      var divName = $('passportDivisionName').value;
+                      var ind = divName.indexOf(' ');
+                      $('passportCodeDivision').value = divName.substring(0, ind);
+                      $('passportWhomIssued').value = divName.substring(ind + 1);
+                  }
+              });
+          }
+
+          function updateAge() {
+              PatientService.getAge($('birthday').value, {
+                  callback: function (aResult) {
+                      $('ageReadOnly').value = aResult;
+                  }
         	});
     	}
         getSexByName(); //проверим при открытии редактирования

@@ -31,8 +31,6 @@ public class E2EntryForm extends IdEntityForm {
     private Long bedProfile;
     /** Комментарии эксперта */
     private String comment;
-    /** КДП */
-    private Long kdpVisit;
     /** Родовое отделение */
     private Boolean isChildBirthDepartment;
     /** Специальность врача по фонду */
@@ -243,30 +241,54 @@ public class E2EntryForm extends IdEntityForm {
     private String kinsmanRole;
     /** Фамилия пациента */
     private String lastname;
-    /** Имя пациента */
+    /**
+     * Имя пациента
+     */
     private String firstname;
-    /** Отчество пациента */
+    /**
+     * Отчество пациента
+     */
     private String middlename;
-    /** СНИЛС пациента */
+    /**
+     * СНИЛС пациента
+     */
     private String patientSnils;
-    /** Гражданство пациента */
+    /**
+     * Гражданство пациента
+     */
     private String nationality;
-    /** КЛАДР регистрации пациента (представителя) */
+    /**
+     * КЛАДР регистрации пациента (представителя)
+     */
     private String kladrRegistration;
-    /** КЛАДР проживания пациента (представителя) */
+    /**
+     * КЛАДР проживания пациента (представителя)
+     */
     private String kladrReal;
-    /** Адрес проживания пациента (представителя) */
-    private String dddressRegistration;
-    /** Адрес проживания пациента (представителя) */
+    /**
+     * Адрес проживания пациента (представителя)
+     */
+    private String addressRegistration;
+    /**
+     * Адрес проживания пациента (представителя)
+     */
     private String addressReal;
 
-    /** Тип паспорта (ДУЛ) */
+    /**
+     * Тип паспорта (ДУЛ)
+     */
     private String passportType;
-    /** Серия паспорта */
+    /**
+     * Серия паспорта
+     */
     private String passportSeries;
-    /** Номер паспорта */
+    /**
+     * Номер паспорта
+     */
     private String passportNumber;
-    /** Дата выдачи паспорта */
+    /**
+     * Дата выдачи паспорта
+     */
     private String passportDateIssued;
     /** Кем выдан паспорт */
     private String passportWhomIssued;
@@ -402,15 +424,19 @@ public class E2EntryForm extends IdEntityForm {
 
     @Comment("КЛАДР регистрации пациента (представителя)")
     @Persist
-    public String getKladrRegistration() {return kladrRegistration;}
+    public String getKladrRegistration() {
+        return kladrRegistration;
+    }
 
     @Comment("КЛАДР проживания пациента (представителя)")
     @Persist
-    public String getKladrReal() {return kladrReal;}
+    public String getKladrReal() {
+        return kladrReal;
+    }
 
     @Comment("Адрес проживания пациента (представителя)")
     @Persist
-    public String getAddressRegistration() {return dddressRegistration;}
+    public String getAddressRegistration() {return addressRegistration;}
 
     @Comment("Адрес проживания пациента (представителя)")
     @Persist
@@ -834,10 +860,6 @@ public class E2EntryForm extends IdEntityForm {
     @Comment("Родовое отделение")
     @Persist
     public Boolean getIsChildBirthDepartment() {return isChildBirthDepartment !=null && isChildBirthDepartment ;}
-
-    @Comment("КДП")
-    @Persist
-    public Long getKdpVisit() {return kdpVisit;}
 
     @Comment("Комментарии эксперта")
     @Persist
