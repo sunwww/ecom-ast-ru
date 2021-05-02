@@ -22,7 +22,8 @@ import java.sql.Date;
 @AIndexes({
         @AIndex(properties = {"entry"})
 })
-@Data
+@Getter
+@Setter
 public class EntryMedService extends BaseEntity {
 
     /** Запись */
