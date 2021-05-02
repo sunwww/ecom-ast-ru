@@ -294,7 +294,6 @@ public class Expert2ServiceBean implements IExpert2Service {
             LOG.info("Success!");
             monitor.finish("Законцено формирование нового заполнения");
         } catch (Exception e) {
-            isCheckIsRunning = false;
             monitor.error("Ошибка формирования нового заполнения: " + e.getLocalizedMessage(), e);
             LOG.error(e.getMessage(), e);
         }
