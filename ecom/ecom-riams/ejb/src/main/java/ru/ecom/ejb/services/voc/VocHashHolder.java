@@ -13,16 +13,10 @@ public class VocHashHolder implements IDestroyable {
 
 	public void destroy(DestroyContext aContext) {
         LOG.info("Destroying all vocs...");
-        for (Map.Entry<String, IVocContextService> entry : theHash.entrySet()) {
+        for (Map.Entry<String, IVocContextService> entry : hash.entrySet()) {
             IVocContextService service = entry.getValue();
             StringBuilder sb = new StringBuilder();
             sb.append(" Destroyed ");
-       /*     if (service instanceof IPersistenceContextRequired) {
-                ((IPersistenceContextRequired) service).setEntityManager(null);
-                sb.append(" p ");
-            } else {
-                sb.append("   ");
-            } */
             if (service instanceof IVocServiceManagement) {
                 ((IVocServiceManagement) service).destroy();
                 sb.append(" m ");
@@ -32,13 +26,13 @@ public class VocHashHolder implements IDestroyable {
 
             LOG.info(sb.append(entry.getKey()).toString());
         }
-        theHash.clear();
+        hash.clear();
 	}
 
 	
-    private final TreeMap<String, IVocContextService> theHash = new TreeMap<String, IVocContextService>();
+    private final TreeMap<String, IVocContextService> hash = new TreeMap<String, IVocContextService>();
 
 	public Map<String, IVocContextService> getHash() {
-		return theHash ;
+		return hash ;
 	}
 }

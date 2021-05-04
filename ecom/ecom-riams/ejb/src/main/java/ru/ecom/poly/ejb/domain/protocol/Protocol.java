@@ -1,5 +1,7 @@
 package ru.ecom.poly.ejb.domain.protocol;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.diary.ejb.domain.Diary;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -33,154 +35,103 @@ import java.sql.Time;
 	@AIndex(properties="dateRegistration",table="Diary"),
 	@AIndex(properties="obsSheet",table="Diary")
     })
+@Getter
+@Setter
 public class Protocol extends Diary {
 
 	/** Медицинская услуга */
 	@Comment("Медицинская услуга")
 	@OneToOne
-	public ServiceMedCase getServiceMedCase() {return theServiceMedCase;}
-	public void setServiceMedCase(ServiceMedCase aServiceMedCase) {theServiceMedCase = aServiceMedCase;}
-	/** Медицинская услуга */
-	private ServiceMedCase theServiceMedCase;
+	public ServiceMedCase getServiceMedCase() {return serviceMedCase;}
+	private ServiceMedCase serviceMedCase;
 	
 	/** Шаблон, на основе которого создано заключение */
-	@Comment("Шаблон, на основе которого создано заключение")
-	public Long getTemplateProtocol() {return theTemplateProtocol;}
-	public void setTemplateProtocol(Long aTemplateProtocol) {theTemplateProtocol = aTemplateProtocol;}
-	/** Шаблон, на основе которого создано заключение */
-	private Long theTemplateProtocol;
+	private Long templateProtocol;
 	
 	/** Запрет на ручное редактирование */
-	@Comment("Запрет на ручное редактирование")
-	public Boolean getDisableEdit() {return theDisableEdit;}
-	public void setDisableEdit(Boolean aDisableEdit) {theDisableEdit = aDisableEdit;}
-	/** Запрет на ручное редактирование */
-	private Boolean theDisableEdit;
+	private Boolean disableEdit;
 
-	/** Дата регистрации талона */
-    public Date getDateRegistration() { return theDateRegistration ; }
-    public void setDateRegistration(Date aDateRegistration) { theDateRegistration = aDateRegistration ; }
 
     /** Визит */
 	@Comment("Визит")
 	@OneToOne
-	public MedCase getMedCase() {return theMedCase;}
-	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
+	public MedCase getMedCase() {return medCase;}
 
 	/** Специалист */
 	@Comment("Специалист")
 	@OneToOne
-	public WorkFunction getSpecialist() {return theSpecialist;}
-	public void setSpecialist(WorkFunction aSpecialist) {theSpecialist = aSpecialist;}
-	
-	/** Пользователь */
-	@Comment("Пользователь")
-	public String getUsername() {return theUsername;}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
-	
+	public WorkFunction getSpecialist() {return specialist;}
+
 	/** Тип протокола */
 	@Comment("Тип протокола")
 	@OneToOne
-	public VocTypeProtocol getType() {return theType;}
-	public void setType(VocTypeProtocol aType) {theType = aType;}
-	
-	/** Для выписки */
-	@Comment("Для выписки")
-	public Boolean getIsDischarge() {return theIsDischarge;}
-	public void setIsDischarge(Boolean aIsDischange) {theIsDischarge = aIsDischange;}
-	
-	/** Время регистрации */
-	@Comment("Время регистрации")
-	public Time getTimeRegistration() {return theTimeRegistration;}
-	public void setTimeRegistration(Time aTimeRegistration) {theTimeRegistration = aTimeRegistration;}
+	public VocTypeProtocol getType() {return type;}
 
 	/** Общая информация о протоколе */
 	@Transient
     public String getInfo() {
         StringBuilder info = new StringBuilder() ;
-        if (theType!=null) {
-        	info.append(theType.getName()) ;
+        if (type!=null) {
+        	info.append(type.getName()) ;
         }
-        if (theSpecialist!=null) {
-            info.append(" Врач: ").append(theSpecialist.getName()).append(". ") ;
+        if (specialist!=null) {
+            info.append(" Врач: ").append(specialist.getName()).append(". ") ;
         }
-        return info.append(" Дата: ").append(DateFormat.formatToDate(theDateRegistration)).toString() ;
+        return info.append(" Дата: ").append(DateFormat.formatToDate(dateRegistration)).toString() ;
     }
 
 	@Transient
 	public String getSpecialistInfo() {
-		return theSpecialist!=null ?theSpecialist.getWorkFunctionInfo() :"" ;
+		return specialist!=null ?specialist.getWorkFunctionInfo() :"" ;
 	}
 	
 	@Transient
 	public String getTypeInfo() {
-		return theType!=null?theType.getName():"" ;
+		return type!=null?type.getName():"" ;
 	}
 	
-	/** Дата печати */
-	@Comment("Дата печати")
-	public Date getPrintDate() {return thePrintDate;}
-	public void setPrintDate(Date aPrintDate) {thePrintDate = aPrintDate;}
-	
-	/** Время печати */
-	@Comment("Время печати")
-	public Time getPrintTime() {return thePrintTime;}
-	public void setPrintTime(Time aPrintTime) {thePrintTime = aPrintTime;}
 
 	/** Время печати */
-	private Time thePrintTime;
+	private Time printTime;
 	/** Дата печати */
-	private Date thePrintDate;
+	private Date printDate;
 	/** Время регистрации*/
-	private Time theTimeRegistration;
+	private Time timeRegistration;
 	/** Для выписки */
-	private Boolean theIsDischarge;
+	private Boolean isDischarge;
 	/** Тип протокола */
-	private VocTypeProtocol theType;
+	private VocTypeProtocol type;
 	/** Пользователь */
-	private String theUsername;
+	private String username;
 	/** Специалист */
-	private WorkFunction theSpecialist;
+	private WorkFunction specialist;
 	/** Визит */
-	private MedCase theMedCase;
+	private MedCase medCase;
     /** Дата регистрации талона */
-    private Date theDateRegistration ;
+    private Date dateRegistration ;
     
-    /** Информация для журнала */
-	@Comment("Информация для журнала")
-	public String getJournalText() {return theJournalText;}
-	public void setJournalText(String aJournalText) {theJournalText = aJournalText;}
-
 	/** Информация для журнала */
-	private String theJournalText;
+	private String journalText;
 	
 	/** Режим */
 	@Comment("Режим")
 	@OneToOne
-	public VocProtocolMode getMode() {return theMode;}
-	public void setMode(VocProtocolMode aMode) {theMode = aMode;}
+	public VocProtocolMode getMode() {return mode;}
 
 	/** Режим */
-	private VocProtocolMode theMode;
+	private VocProtocolMode mode;
 
 	/** Лист наблюдения (для ЕДКЦ) */
 	@Comment("Лист наблюдения (для ЕДКЦ)")
 	@ManyToOne
-	public ObservationSheet getObsSheet() {return theObsSheet;}
-	public void setObsSheet(ObservationSheet aObsSheet) {theObsSheet = aObsSheet;}
+	public ObservationSheet getObsSheet() {return obsSheet;}
 
 	/** Лист наблюдения (для ЕДКЦ) */
-	private ObservationSheet theObsSheet;
+	private ObservationSheet obsSheet;
 
 	/** Заголовок дневника */
-	@Comment("Заголовок дневника")
-	public String getTitle() {return theTitle;}
-	public void setTitle(String aTitle) {theTitle = aTitle;}
-	private String theTitle ="";
+	private String title ="";
 
 	/** Подвал */
-	@Comment("Подвал")
-	public String getBottom() {return theBottom;}
-	public void setBottom(String aBottom) {theBottom = aBottom;}
-	private String theBottom ;
+	private String bottom ;
 }

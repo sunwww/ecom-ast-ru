@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.worker;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
@@ -15,104 +16,91 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Рабочая функция")
 @WebTrail(comment = "Рабочая функция", nameProperties= "name", view="entityView-voc_workFunction.do")
 @EntityFormSecurityPrefix("/Policy/Voc/VocWorkFunction")
+@Setter
 public class VocWorkFunctionForm extends IdEntityForm {
 	/** Должности */
 	@Comment("Должности")
 	@Persist @Required
-	public Long getVocPost() {return theVocPost;}
-	public void setVocPost(Long aVocPost) {theVocPost = aVocPost;}
-	private Long theVocPost;
+	public Long getVocPost() {return vocPost;}
+	private Long vocPost;
 	
 	/** Наименование */
 	@Comment("Наименование")
 	@Persist @Required
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
-	private String theName;
+	public String getName() {return name;}
+	private String name;
 
 	/** Код */
 	@Comment("Код")
 	@Persist @Required
-	public String getCode() {return theCode;}
-	public void setCode(String aCode) {theCode = aCode;}
-	private String theCode;
+	public String getCode() {return code;}
+	private String code;
 
 	/** Короткое название */
 	@Comment("Короткое название")
 	@Persist
-	public String getShortName() {return theShortName;}
-	public void setShortName(String aShortName) {theShortName = aShortName;}
-	private String theShortName;
+	public String getShortName() {return shortName;}
+	private String shortName;
 
 	/** Не заполняется диагноз */
 	@Comment("Не заполняется диагноз")
 	@Persist
-	public Boolean getIsNoDiagnosis() {return theIsNoDiagnosis;}
-	public void setIsNoDiagnosis(Boolean aIsNoDiagnosis) {theIsNoDiagnosis = aIsNoDiagnosis;}
-	private Boolean theIsNoDiagnosis;
+	public Boolean getIsNoDiagnosis() {return isNoDiagnosis;}
+	private Boolean isNoDiagnosis;
 
 	/** Функциональная диагностика */
 	@Comment("Функциональная диагностика")
 	@Persist
-	public Boolean getIsFuncDiag() {return theIsFuncDiag;}
-	public void setIsFuncDiag(Boolean aIsFuncDiag) {theIsFuncDiag = aIsFuncDiag;}
-	private Boolean theIsFuncDiag;
+	public Boolean getIsFuncDiag() {return isFuncDiag;}
+	private Boolean isFuncDiag;
 
 	/** Лаборатория */
 	@Comment("Лаборатория")
 	@Persist
-	public Boolean getIsLab() {return theIsLab;}
-	public void setIsLab(Boolean aIsLab) {theIsLab = aIsLab;}
-	private Boolean theIsLab;
+	public Boolean getIsLab() {return isLab;}
+	private Boolean isLab;
 
 	/** Лучевая диагностика */
 	@Comment("Лучевая диагностика")
 	@Persist
-	public Boolean getIsRadiationDiagnosis() {return theIsRadiationDiagnosis;}
-	public void setIsRadiationDiagnosis(Boolean aIsRadiationDiagnosis) {theIsRadiationDiagnosis = aIsRadiationDiagnosis;}
-	private Boolean theIsRadiationDiagnosis;
+	public Boolean getIsRadiationDiagnosis() {return isRadiationDiagnosis;}
+	private Boolean isRadiationDiagnosis;
 
 
 	/** Не включать в 039 форму */
 	@Comment("Не включать в 039 форму")
 	@Persist
-	public Boolean getIsNo039() {return theIsNo039;}
-	public void setIsNo039(Boolean aIsNo039) {theIsNo039 = aIsNo039;}
-	private Boolean theIsNo039;
+	public Boolean getIsNo039() {return isNo039;}
+	private Boolean isNo039;
 
 	/** Профиль медицинской помощи */
 	@Comment("Профиль медицинской помощи")
 	@Persist
-	public Long getMedHelpProfile() {return theMedHelpProfile;}
-	public void setMedHelpProfile(Long aMedHelpProfile) {theMedHelpProfile = aMedHelpProfile;}
-	private Long theMedHelpProfile ;
+	public Long getMedHelpProfile() {return medHelpProfile;}
+	private Long medHelpProfile ;
 
 	/** Специальность по справочнику V021 */
 	@Comment("Специальность по справочнику V021")
 	@Persist
-	public Long getFondSpeciality() {return theFondSpeciality;}
-	public void setFondSpeciality(Long aFondSpeciality) {theFondSpeciality = aFondSpeciality;}
-	private Long theFondSpeciality ;
+	public Long getFondSpeciality() {return fondSpeciality;}
+	private Long fondSpeciality ;
 
 	/** Не подавать по ОМС */
 	@Comment("Не подавать по ОМС")
 	@Persist
-	public Boolean getIsNoOmc() {return theIsNoOmc;}
-	public void setIsNoOmc(Boolean aIsNoOmc) {theIsNoOmc = aIsNoOmc;}
-	private Boolean theIsNoOmc ;
+	public Boolean getIsNoOmc() {return isNoOmc;}
+	private Boolean isNoOmc ;
 
 	/** Создавать заголовок в дневнике */
 	@Comment("Создавать заголовок в дневнике")
 	@Persist
-	public Boolean getIsDiaryTitle() {return theIsDiaryTitle;}
-	public void setIsDiaryTitle(Boolean aIsDiaryTitle) {theIsDiaryTitle = aIsDiaryTitle;}
-	private Boolean theIsDiaryTitle ;
+	public Boolean getIsDiaryTitle() {return isDiaryTitle;}
+	private Boolean isDiaryTitle ;
 
 	/** Можно назначать в инфекционном? */
 	@Comment("Можно назначать в инфекционном?")
 	@Persist
-	public Boolean getIsSuitForCovid() {return theIsSuitForCovid;}
-	public void setIsSuitForCovid(Boolean aIsSuitForCovid) {theIsSuitForCovid = aIsSuitForCovid;}
+	public Boolean getIsSuitForCovid() {return isSuitForCovid;}
 	/** Можно назначать в инфекционном?? */
-	private Boolean theIsSuitForCovid;
+	private Boolean isSuitForCovid;
 }

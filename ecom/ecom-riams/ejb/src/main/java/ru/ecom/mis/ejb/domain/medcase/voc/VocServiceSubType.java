@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase.voc;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -12,20 +14,12 @@ import javax.persistence.Table;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes(value = { @AIndex(properties = { "serviceType" }) })
+@Getter
+@Setter
 public class VocServiceSubType extends VocBaseEntity {
 	/** Код типа */
-	@Comment("Код типа")
-	public String getServiceType() {return theServiceType;}
-	public void setServiceType(String aServiceType) {theServiceType = aServiceType;}
-
-	/** Код типа */
-	private String theServiceType;
+	private String serviceType;
 	
 	/** Тип биоматериала */
-	@Comment("Тип биоматериала")
-	public String getBiomaterial() {return theBiomaterial;}
-	public void setBiomaterial(String aBiomaterial) {theBiomaterial = aBiomaterial;}
-
-	/** Тип биоматериала */
-	private String theBiomaterial;
+	private String biomaterial;
 }

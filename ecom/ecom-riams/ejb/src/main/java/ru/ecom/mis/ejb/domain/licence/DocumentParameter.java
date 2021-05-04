@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.licence;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -19,6 +21,8 @@ import java.sql.Time;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes(value = { @AIndex(properties = { "document" }) })
+	@Getter
+	@Setter
 public class DocumentParameter extends BaseEntity{
 	/**
 	 * Параметр
@@ -26,86 +30,37 @@ public class DocumentParameter extends BaseEntity{
 	@Comment("Параметр")
 	@OneToOne
 	public VocDocumentParameter getParameter() {
-		return theParameter;
-	}
-	public void setParameter(VocDocumentParameter aParameter) {
-		theParameter = aParameter;
+		return parameter;
 	}
 	/**
 	 * Параметр
 	 */
-	private VocDocumentParameter theParameter;
+	private VocDocumentParameter parameter;
 	/**
 	 * Значение
 	 */
-	@Comment("Значение")
-	
-	public String getValue() {
-		return theValue;
-	}
-	public void setValue(String aValue) {
-		theValue = aValue;
-	}
-	/**
-	 * Значение
-	 */
-	private String theValue;
+	private String value;
 	/**
 	 * Дата получения значения
 	 */
-	@Comment("Дата получения значения")
-	
-	public Date getValueDate() {
-		return theValueDate;
-	}
-	public void setValueDate(Date aValueDate) {
-		theValueDate = aValueDate;
-	}
-	/**
-	 * Дата получения значения
-	 */
-	private Date theValueDate;
+	private Date valueDate;
 	/**
 	 * Время получения значения
 	 */
-	@Comment("Время получения значения")
-	
-	public Time getValueTime() {
-		return theValueTime;
-	}
-	public void setValueTime(Time aValueTime) {
-		theValueTime = aValueTime;
-	}
-	/**
-	 * Время получения значения
-	 */
-	private Time theValueTime;
+	private Time valueTime;
 	/**
 	 * Документ
 	 */
 	@Comment("Документ")
 	@OneToOne
 	public ExternalDocument getDocument() {
-		return theDocument;
-	}
-	public void setDocument(ExternalDocument aDocument) {
-		theDocument = aDocument;
+		return document;
 	}
 	/**
 	 * Документ
 	 */
-	private ExternalDocument theDocument;
+	private ExternalDocument document;
 	
 	/** Порядковый номер */
-	@Comment("Порядковый номер")
-	public int getOrderNumber() {
-		return theOrderNumber;
-	}
-
-	public void setOrderNumber(int aOrderNumber) {
-		theOrderNumber = aOrderNumber;
-	}
-
-	/** Порядковый номер */
-	private int theOrderNumber;
+	private int orderNumber;
 }

@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 
 /**
@@ -20,28 +22,22 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 @SuppressWarnings("serial")
 @Entity
 @Table(name="CHECKER_PROPERTY",schema="SQLUser")
+@Getter
+@Setter
 public class CheckProperty extends BaseEntity {
-    /** Свойство */
-    public String getProperty() { return theProperty ; }
-    public void setProperty(String aProperty) { theProperty = aProperty ; }
 
     /** Значение свойства */
-    // IKO002 ***
-    //@Column(columnDefinition="TEXT")
     @Column(length = 400)
-    // IKO002 ===
-    public String getValue() { return theValue ; }
-    public void setValue(String aValue) { theValue = aValue ; }
+    public String getValue() { return value; }
 
     /** Проверка */
     @ManyToOne
-    public Check getCheck() { return theCheck ; }
-    public void setCheck(Check aCheck) { theCheck = aCheck ; }
+    public Check getCheck() { return check; }
 
     /** Проверка */
-    private Check theCheck ;
+    private Check check;
     /** Значение свойства */
-    private String theValue ;
+    private String value;
     /** Свойство */
-    private String theProperty ;
+    private String property;
 }

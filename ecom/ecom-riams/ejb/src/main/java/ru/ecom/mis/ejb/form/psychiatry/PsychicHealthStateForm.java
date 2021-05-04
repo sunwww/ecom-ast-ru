@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.psychiatry;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.psychiatry.PsychicHealthState;
@@ -19,6 +20,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Динамика состояний", nameProperties= "id",list="entityParentList-psych_healthState.do",listComment="список по пациенту", view="entityParentView-psych_healthState.do")
 @Parent(property="careCard", parentForm=PsychiatricCareCardForm.class,orderBy="startDate")
 @EntityFormSecurityPrefix("/Policy/Mis/Psychiatry/CareCard/HealthState")
+@Setter
 public class PsychicHealthStateForm extends IdEntityForm {
 	 /**
 	  * Карта обратившегося за психиатрической помощью
@@ -26,87 +28,67 @@ public class PsychicHealthStateForm extends IdEntityForm {
 	 @Comment("Карта обратившегося за психиатрической помощью")
 	 @Persist @Required
 	 public Long getCareCard() {
-	  return theCareCard;
-	 }
-	 public void setCareCard(Long aCareCard) {
-	  theCareCard = aCareCard;
+	  return careCard;
 	 }
 	 /**
 	  * Карта обратившегося за психиатрической помощью
 	  */
-	 private Long theCareCard;
+	 private Long careCard;
 	 /**
 	  * Дата начала
 	  */
 	 @Comment("Дата начала")
 	 @Persist @DoDateString @DateString @Required
 	 public String getStartDate() {
-	  return theStartDate;
-	 }
-	 public void setStartDate(String aStartDate) {
-	  theStartDate = aStartDate;
+	  return startDate;
 	 }
 	 /**
 	  * Дата начала
 	  */
-	 private String theStartDate;
+	 private String startDate;
 	 /**
 	  * Вид состояния психического здоровья
 	  */
 	 @Comment("Вид состояния психического здоровья")
 	 @Persist @Required
 	 public Long getKind() {
-	  return theKind;
-	 }
-	 public void setKind(Long aKind) {
-	  theKind = aKind;
+	  return kind;
 	 }
 	 /**
 	  * Вид состояния психического здоровья
 	  */
-	 private Long theKind;
+	 private Long kind;
 	 /**
 	  * Дата окончания
 	  */
 	 @Comment("Дата окончания")
 	 @Persist @DoDateString @DateString 
 	 public String getFinishDate() {
-	  return theFinishDate;
-	 }
-	 public void setFinishDate(String aFinishDate) {
-	  theFinishDate = aFinishDate;
+	  return finishDate;
 	 }
 	 /**
 	  * Дата окончания
 	  */
-	 private String theFinishDate;
+	 private String finishDate;
 	 /**
 	  * Описание
 	  */
 	 @Comment("Описание")
 	 @Persist
 	 public String getNotes() {
-	  return theNotes;
-	 }
-	 public void setNotes(String aNotes) {
-	  theNotes = aNotes;
+	  return notes;
 	 }
 	 /**
 	  * Описание
 	  */
-	 private String theNotes;
+	 private String notes;
 	 
 	 /** Вид состояния психического здоровья (ИНФО) */
 	@Comment("Вид состояния психического здоровья (ИНФО)")
 	@Persist
 	public String getKindInfo() {
-		return theKindInfo;
+		return kindInfo;
 	}
-
-	public void setKindInfo(String aKindInfo) {
-		theKindInfo = aKindInfo;
-	}
-
 	/** Вид состояния психического здоровья (ИНФО) */
-	private String theKindInfo;
+	private String kindInfo;
 }

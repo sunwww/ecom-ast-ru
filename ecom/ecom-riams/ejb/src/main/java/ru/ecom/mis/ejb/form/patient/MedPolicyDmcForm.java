@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.patient;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -25,12 +26,12 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(MedPolicyPreCreate.class)
 )
+@Setter
 public class MedPolicyDmcForm extends MedPolicyForm {
     /** Страховая компания */
     @Comment("Страховая компания")
     @Persist @Required
-    public Long getCompany() { return theCompany ; }
-    public void setCompany(Long aCompany) { theCompany = aCompany ; }
+    public Long getCompany() { return company ; }
     /** Страховая компания */
-    private Long theCompany ;
+    private Long company ;
 }

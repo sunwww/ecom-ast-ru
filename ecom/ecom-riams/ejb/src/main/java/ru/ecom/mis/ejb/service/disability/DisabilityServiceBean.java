@@ -118,7 +118,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 	}
 
 	public String getSoftConfigValue(String aKey, String aDefaultValue) {
-		List<Object[]> list = theManager.createNativeQuery("select sc.id, sc.keyvalue from softconfig sc where sc.key=:key").setParameter("key",aKey).getResultList();
+		List<Object[]> list = manager.createNativeQuery("select sc.id, sc.keyvalue from softconfig sc where sc.key=:key").setParameter("key",aKey).getResultList();
 		return  list.isEmpty() ? aDefaultValue : list.get(0)[1].toString();
 	}
 
@@ -127,7 +127,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 		String lpuId = getSoftConfigValue("DEFAULT_LPU", null);
 		String ogrn = null;
 		if (lpuId != null) {
-			List<Object[]> list = theManager.createNativeQuery("select id,coalesce(ogrn,0) from mislpu where id = " + lpuId).getResultList();
+			List<Object[]> list = manager.createNativeQuery("select id,coalesce(ogrn,0) from mislpu where id = " + lpuId).getResultList();
 			if (!list.isEmpty()) {
 				ogrn = list.get(0)[1].toString();
 			}
@@ -226,7 +226,7 @@ public class DisabilityServiceBean implements IDisabilityService {
    }
     public DisabilityDocument getDocument (String aNumber) {
 		try {
-			return (DisabilityDocument ) theManager.createQuery("from DisabilityDocument where number=:num").setParameter("num", aNumber).getSingleResult();
+			return (DisabilityDocument ) manager.createQuery("from DisabilityDocument where number=:num").setParameter("num", aNumber).getSingleResult();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -283,7 +283,7 @@ public class DisabilityServiceBean implements IDisabilityService {
     	sql.append("  and duplicate_id is null and vddcr.code='1' and workComboType_id is null") ;
     	sql.append(" order by dc.id,dd.issueDate desc") ;
     	LOG.info("sql--->"+sql) ;
-    	List<Object[]> list = theManager.createNativeQuery(sql.toString()).getResultList() ;
+    	List<Object[]> list = manager.createNativeQuery(sql.toString()).getResultList() ;
     	
     	Long dcaseold=0L ;
     	for (Object[] obj:list) {
@@ -361,7 +361,7 @@ public class DisabilityServiceBean implements IDisabilityService {
     		LOG.info("str--->"+str) ;
     			str = str.substring(1) ;
     			String[] strs = str.split(",") ;
-    			theManager.createNativeQuery("delete from DisabilityReport where caseR='"+obj[0]+"'").executeUpdate() ;
+    			manager.createNativeQuery("delete from DisabilityReport where caseR='"+obj[0]+"'").executeUpdate() ;
     			if (strs.length>0) {
 	    			for (String s:strs) {
 		    			LOG.info("line--->"+s) ;
@@ -369,12 +369,12 @@ public class DisabilityServiceBean implements IDisabilityService {
 	    				DisabilityReport dr = new DisabilityReport() ;
 	    				dr.setLineR(Long.valueOf(s)) ;
 	    				dr.setCaseR(dcase) ;
-	    				theManager.persist(dr) ;
+	    				manager.persist(dr) ;
 	    			}
 	    			String age = AgeUtil.getAgeCache((java.sql.Date)obj[6], (java.sql.Date)obj[4], 0);
 	    			LOG.info("age--->"+age) ;
 	    			LOG.info("duration--->"+obj[5]) ;
-	    			theManager.createNativeQuery("update DisabilityCase set agePatient='"+age+"', durationCase='"+obj[5]+"' where id='"+obj[0]+"'").executeUpdate() ;
+	    			manager.createNativeQuery("update DisabilityCase set agePatient='"+age+"', durationCase='"+obj[5]+"' where id='"+obj[0]+"'").executeUpdate() ;
     			}
     		}
     			
@@ -383,8 +383,8 @@ public class DisabilityServiceBean implements IDisabilityService {
     }
     public Long createDuplicateDocument( Long aDocId,Long aReasonId, String aSeries, String aNumber,Long aWorkFunction2
     		,String aJob, Boolean aUpdateJob){
-    	DisabilityDocument doc = theManager.find(DisabilityDocument.class, aDocId) ;
-		boolean isPaperDocument = theManager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id=:docId").setParameter("docId",doc.getId()).getResultList().isEmpty();
+    	DisabilityDocument doc = manager.find(DisabilityDocument.class, aDocId) ;
+		boolean isPaperDocument = manager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id=:docId").setParameter("docId",doc.getId()).getResultList().isEmpty();
 
     	if (isPaperDocument && (doc.getIsClose()==null || !doc.getIsClose())) {
     		throw new IllegalDataException("ДУБЛИКАТ МОЖНО СДЕЛАТЬ ТОЛЬКО ЗАКРЫТОГО ДОКУМЕНТА!!!") ;
@@ -393,7 +393,7 @@ public class DisabilityServiceBean implements IDisabilityService {
     		throw new IllegalDataException("ДУБЛИКАТ МОЖНО СДЕЛАТЬ ТОЛЬКО ДЕЙСТВУЮЩЕГО ДОКУМЕНТА!!!") ;
     	}
     	
-    	VocDisabilityStatus stat = theManager.find(VocDisabilityStatus.class, aReasonId) ;
+    	VocDisabilityStatus stat = manager.find(VocDisabilityStatus.class, aReasonId) ;
     	DisabilityDocument newDoc = copyDocument(doc, aSeries, aNumber,new java.sql.Date(new java.util.Date().getTime()),aWorkFunction2, true) ;
     	if (aJob!=null && !aJob.equals("")) {
     		aJob = aJob.trim().toUpperCase() ;
@@ -402,23 +402,23 @@ public class DisabilityServiceBean implements IDisabilityService {
     			Patient pat = doc.getDisabilityCase()!=null && doc.getDisabilityCase().getPatient()!=null ? doc.getDisabilityCase().getPatient():null ;
 				if (pat!=null) {
 					pat.setWorks(aJob) ;
-					theManager.persist(pat) ;
+					manager.persist(pat) ;
 				}
     		}
     	}
     	doc.setStatus(stat) ;
     	doc.setNoActuality(true) ;
     	doc.setDuplicate(newDoc) ;
-    	theManager.persist(doc) ;
+    	manager.persist(doc) ;
     	return newDoc.getId() ;
     	
     }
     public Long createWorkComboDocument(Long aDocId,String aJob, String aSeries, String aNumber, Long aVocCombo, Long aPrevDocument){
-    	DisabilityDocument doc = theManager.find(DisabilityDocument.class, aDocId) ;
-    	DisabilityDocument docPrev = aPrevDocument!=null&&!aPrevDocument.equals(0L)?theManager.find(DisabilityDocument.class, aPrevDocument):null ;
-    	VocCombo newVocComb = theManager.find(VocCombo.class, aVocCombo) ;
+    	DisabilityDocument doc = manager.find(DisabilityDocument.class, aDocId) ;
+    	DisabilityDocument docPrev = aPrevDocument!=null&&!aPrevDocument.equals(0L)?manager.find(DisabilityDocument.class, aPrevDocument):null ;
+    	VocCombo newVocComb = manager.find(VocCombo.class, aVocCombo) ;
 
-		boolean isPaperDocument = theManager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id=:docId").setParameter("docId",aDocId).getResultList().isEmpty();//Уберем проверки для ЭЛН
+		boolean isPaperDocument = manager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id=:docId").setParameter("docId",aDocId).getResultList().isEmpty();//Уберем проверки для ЭЛН
     	if (isPaperDocument && doc.getWorkComboType()!=null) {
     		throw new IllegalDataException("БЛАНК ПО СОВМЕСТИТЕЛЬСТВУ МОЖНО ДОБАВИТЬ ТОЛЬКО ПО ОСНОВНОМУ МЕСТУ РАБОТЫ") ;
     	}
@@ -436,7 +436,7 @@ public class DisabilityServiceBean implements IDisabilityService {
     	newDoc.setMainWorkDocumentSeries(doc.getSeries()) ;
     	newDoc.setWorkComboType(newVocComb);
     	newDoc.setPrevDocument(docPrev) ;
-    	theManager.persist(newDoc) ;
+    	manager.persist(newDoc) ;
     	return newDoc.getId() ;
     }
     private DisabilityDocument copyDocument(DisabilityDocument aDocument, String aSeries, String aNumber,Date aIssuedDate,Long aWorkFunction2) {
@@ -444,8 +444,8 @@ public class DisabilityServiceBean implements IDisabilityService {
     }
     
     private DisabilityDocument copyDocument(DisabilityDocument aDocument, String aSeries, String aNumber,Date aIssuedDate,Long aWorkFunction2, boolean isDuplicate) {
-    	WorkFunction wf2 = aWorkFunction2!=null?theManager.find(WorkFunction.class,aWorkFunction2):null ;
-    	String username = theContext.getCallerPrincipal().toString();
+    	WorkFunction wf2 = aWorkFunction2!=null?manager.find(WorkFunction.class,aWorkFunction2):null ;
+    	String username = context.getCallerPrincipal().toString();
 		DisabilityDocument newDoc = new DisabilityDocument() ;
     	newDoc.setAnotherLpu(aDocument.getAnotherLpu()) ;
     	newDoc.setBeginWorkDate(aDocument.getBeginWorkDate()) ;
@@ -495,7 +495,7 @@ public class DisabilityServiceBean implements IDisabilityService {
     	newDoc.setSupposeBirthDate(aDocument.getSupposeBirthDate()) ;
     	newDoc.setWorkComboType(aDocument.getWorkComboType()) ;
     	newDoc.setWorks(aDocument.getWorks()) ;
-    	theManager.persist(newDoc) ;
+    	manager.persist(newDoc) ;
     	//newDoc.set(doc.get) ;
     	//newDoc.set(doc.get) ;
     	List<DisabilityRecord> list1 = new ArrayList<>() ;
@@ -546,15 +546,15 @@ public class DisabilityServiceBean implements IDisabilityService {
 		}
     	newDoc.setDisabilityRecords(list1) ;
     	newDoc.setRegimeViolationRecords(list2) ;
-    	theManager.persist(newDoc) ;
+    	manager.persist(newDoc) ;
 		//Проверяем, является ли больничный лист - электронным
-		List<ElectronicDisabilityDocumentNumber> elns = theManager.createQuery(" from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",aNumber).getResultList();
+		List<ElectronicDisabilityDocumentNumber> elns = manager.createQuery(" from ElectronicDisabilityDocumentNumber where number=:num").setParameter("num",aNumber).getResultList();
 		if (elns!=null && !elns.isEmpty()) {
 			LOG.warn("При создании дубликата выявилось что больничный лист - электронный");
 			ElectronicDisabilityDocumentNumber eln = elns.get(0);
 			eln.setDisabilityDocument(newDoc);
 			eln.setUsername(username);
-			theManager.persist(eln);
+			manager.persist(eln);
 		}
     	return newDoc ;
 
@@ -564,7 +564,7 @@ public class DisabilityServiceBean implements IDisabilityService {
      * Получить основные сведения для закрытия документа
      */
     public String getDataByClose(Long aDocumentId) {
-    	DisabilityDocument doc = theManager.find(DisabilityDocument.class, aDocumentId) ;
+    	DisabilityDocument doc = manager.find(DisabilityDocument.class, aDocumentId) ;
     	StringBuilder ret = new StringBuilder() ;
     	ret.append(doc.getSeries()).append("#") ;
     	
@@ -584,11 +584,11 @@ public class DisabilityServiceBean implements IDisabilityService {
     }
     
     public String closeDisabilityDocument(Long aDocumentId, Long aReasonId,String aSeries,String aNumber,String aOtherCloseDate, String dateGoToWork) {
-		DisabilityDocument doc = theManager.find(DisabilityDocument.class, aDocumentId) ;
+		DisabilityDocument doc = manager.find(DisabilityDocument.class, aDocumentId) ;
 		if (doc.getDateTo()==null) {
 			throw new IllegalStateException("Нельзя закрыть документ, так как есть не закрытое продление!") ;  
 		}
-		VocDisabilityDocumentCloseReason reason = theManager.find(VocDisabilityDocumentCloseReason.class, aReasonId) ;
+		VocDisabilityDocumentCloseReason reason = manager.find(VocDisabilityDocumentCloseReason.class, aReasonId) ;
 		doc.setCloseReason(reason) ;
 		doc.setSeries(aSeries) ;
 		doc.setNumber(aNumber) ;
@@ -624,7 +624,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 			}
 		}
 
-		theManager.persist(doc) ;
+		manager.persist(doc) ;
 		return reason.getName() ;
 	}
 	public List<DisabilityDocumentForm> findDocumentBySeriesAndNumber(String aFind) {
@@ -649,7 +649,7 @@ public class DisabilityServiceBean implements IDisabilityService {
         	}
 	        if (series!=null) builder.addLike("series", "%"+series+"%");
 	        builder.addLike("number", number+"%");
-	        Query query = builder.build(theManager, "from DisabilityDocument where", " order by Number");
+	        Query query = builder.build(manager, "from DisabilityDocument where", " order by Number");
 	        return createList(query);
         }
 	}
@@ -659,7 +659,7 @@ public class DisabilityServiceBean implements IDisabilityService {
 		List<DisabilityDocumentForm> ret = new LinkedList<>();
 		for (DisabilityDocument doc : list) {
 			try {
-				DisabilityDocumentForm frm = theEntityFormService.loadForm(DisabilityDocumentForm.class, doc) ;
+				DisabilityDocumentForm frm = entityFormService.loadForm(DisabilityDocumentForm.class, doc) ;
 				if (frm.getPatientFio()==null || frm.getPatientFio().equals("")) {
 					frm.setPatientFio(doc.getDisabilityCase()!=null&&doc.getDisabilityCase().getPatient()!=null?
 							doc.getDisabilityCase().getPatient().getFio():"") ;
@@ -672,8 +672,8 @@ public class DisabilityServiceBean implements IDisabilityService {
 		}
 		return ret;
 	}
-    private @EJB ILocalEntityFormService theEntityFormService;
-    @PersistenceContext EntityManager theManager ;
+    private @EJB ILocalEntityFormService entityFormService;
+    @PersistenceContext EntityManager manager ;
 
     public  List<GroupByDate> findOpenDocumentGroupByDate() {
 		StringBuilder sql = new StringBuilder();
@@ -689,7 +689,7 @@ public class DisabilityServiceBean implements IDisabilityService {
     }
     
 	private List<GroupByDate> findDocumentGroupByDate(StringBuilder aSql) {
-		List<Object[]> list = theManager.createNativeQuery(aSql.toString())
+		List<Object[]> list = manager.createNativeQuery(aSql.toString())
 				.getResultList() ;
 		LinkedList<GroupByDate> ret = new LinkedList<>() ;
 		long i =0 ;
@@ -715,7 +715,7 @@ public class DisabilityServiceBean implements IDisabilityService {
         }
         if (date == null) throw new IllegalDataException("Неправильная дата") ;
         
-        List<Object> idlist = theManager.createNativeQuery("select dd.id from DisabilityDocument as dd"
+        List<Object> idlist = manager.createNativeQuery("select dd.id from DisabilityDocument as dd"
         		+ " left join DisabilityRecord as dr on dr.disabilityDocument_id=dd.id"
         		+" where ((dd.isclose is null) or (cast(dd.isclose as int)=0))  and dr.dateFrom=:dateFrom").setParameter("dateFrom",date).setMaxResults(50).getResultList();
         List<DisabilityDocumentForm> ret = new LinkedList<>();
@@ -725,10 +725,10 @@ public class DisabilityServiceBean implements IDisabilityService {
 	        	ids.append(",").append(obj) ;
 	        }
 
-            List<DisabilityDocument> list = theManager.createQuery("from DisabilityDocument where id in (" + ids.substring(1) + ")").setMaxResults(50).getResultList() ;
+            List<DisabilityDocument> list = manager.createQuery("from DisabilityDocument where id in (" + ids.substring(1) + ")").setMaxResults(50).getResultList() ;
 	        for (DisabilityDocument doc : list) {
 	            try {
-	                ret.add(theEntityFormService.loadForm(DisabilityDocumentForm.class, doc));
+	                ret.add(entityFormService.loadForm(DisabilityDocumentForm.class, doc));
 	            } catch (EntityFormException e) {
 	                throw new IllegalStateException(e);
 	            }
@@ -758,7 +758,7 @@ public class DisabilityServiceBean implements IDisabilityService {
         		.append("where cast(dd.isclose as int)=1 ")
         		.append("and (select min(dr2.dateFrom) from disabilityrecord as dr2 where dr2.disabilitydocument_id=dd.id) = cast(:date as date)") ;
         }
-        List<Object> idlist = theManager.createNativeQuery(sql.toString()).setParameter("date",date).setMaxResults(50).getResultList();
+        List<Object> idlist = manager.createNativeQuery(sql.toString()).setParameter("date",date).setMaxResults(50).getResultList();
         List<DisabilityDocumentForm> ret = new LinkedList<>();
         if (!idlist.isEmpty()) {
         	StringBuilder ids = new StringBuilder() ;
@@ -768,10 +768,10 @@ public class DisabilityServiceBean implements IDisabilityService {
 	        }
 	        sql.append("from DisabilityDocument where id in (").append(ids.substring(1)).append(")") ;
 
-	        List<DisabilityDocument> list = theManager.createQuery(sql.toString()).setMaxResults(50).getResultList() ;
+	        List<DisabilityDocument> list = manager.createQuery(sql.toString()).setMaxResults(50).getResultList() ;
 	        for (DisabilityDocument doc : list) {
 	            try {
-	                ret.add(theEntityFormService.loadForm(DisabilityDocumentForm.class, doc));
+	                ret.add(entityFormService.loadForm(DisabilityDocumentForm.class, doc));
 	            } catch (EntityFormException e) {
 	                throw new IllegalStateException(e);
 	            }
@@ -782,5 +782,5 @@ public class DisabilityServiceBean implements IDisabilityService {
 	public List<GroupByDate> findCloseDocumentGroupByDate(String aDateFrom, String aDateTo) {
 		return new ArrayList<>();
 	}
-	@Resource SessionContext theContext ;
+	@Resource SessionContext context ;
 }

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -10,20 +12,11 @@ import java.sql.Time;
 	 */
 	@Comment("Шаблон времени рабочего календаря")
 @Entity
+	@Getter
+	@Setter
 public class WorkCalendarTimeExample extends WorkCalendarTimePattern{
 	/**
 	 * Время
 	 */
-	@Comment("Время")
-	
-	public Time getCalendarTime() {
-		return theCalendarTime;
-	}
-	public void setCalendarTime(Time aCalendarTime) {
-		theCalendarTime = aCalendarTime;
-	}
-	/**
-	 * Время
-	 */
-	private Time theCalendarTime;
+	private Time calendarTime;
 }

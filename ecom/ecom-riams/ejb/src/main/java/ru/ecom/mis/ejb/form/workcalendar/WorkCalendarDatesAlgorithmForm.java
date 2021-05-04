@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarDatesAlgorithm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -18,6 +19,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Алгоритм по датам", nameProperties= "id", list="entityParentList-cal_datesAlgorithm.do", view="entityParentView-cal_datesAlgorithm.do")
 @Parent(property="pattern", parentForm=WorkCalendarPatternForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/WorkCalendar/Pattern/Algorithm")
+@Setter
 public class WorkCalendarDatesAlgorithmForm extends WorkCalendarAlgorithmForm{
 	/**
 	 * Начиная с даты
@@ -26,15 +28,12 @@ public class WorkCalendarDatesAlgorithmForm extends WorkCalendarAlgorithmForm{
 	@Persist @Required
 	@DateString @DoDateString
 	public String getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(String aDateFrom) {
-		theDateFrom = aDateFrom;
+		return dateFrom;
 	}
 	/**
 	 * Начиная с даты
 	 */
-	private String theDateFrom;
+	private String dateFrom;
 	/**
 	 * Заканчивая датой
 	 */
@@ -42,28 +41,22 @@ public class WorkCalendarDatesAlgorithmForm extends WorkCalendarAlgorithmForm{
 	@Persist @Required
 	@DateString @DoDateString
 	public String getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(String aDateTo) {
-		theDateTo = aDateTo;
+		return dateTo;
 	}
 	/**
 	 * Заканчивая датой
 	 */
-	private String theDateTo;
+	private String dateTo;
 	/**
 	 * Шаблон дня рабочего календаря
 	 */
 	@Comment("Шаблон дня рабочего календаря")
 	@Persist @Required
 	public Long getDayPattern() {
-		return theDayPattern;
-	}
-	public void setDayPattern(Long aDayPattern) {
-		theDayPattern = aDayPattern;
+		return dayPattern;
 	}
 	/**
 	 * Шаблон дня рабочего календаря
 	 */
-	private Long theDayPattern;
+	private Long dayPattern;
 }

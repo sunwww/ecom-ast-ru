@@ -1,5 +1,7 @@
 package ru.ecom.diary.ejb.form;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.diary.ejb.domain.Diary;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -21,69 +23,59 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Comment("Протоколы")
 @WebTrail(comment = "Протокол", nameProperties= "record", view="entityView-diary_protocol.do")
 @EntityFormSecurityPrefix("/Policy/Diary/Diary")
-
+@Setter
 public class DiaryForm extends IdEntityForm {
    
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DateString @DoDateString
-    public String getDate() { return theDate ; }
-    public void setDate(String aDate) { theDate = aDate ; }
+    public String getDate() { return date ; }
 
     /** Запись дневника (протокола) */
     @Comment("Запись дневника")
     @Persist
-    public String getRecord() { return theRecord ; }
-    public void setRecord(String aRecord) { theRecord = aRecord ; }
-    
+    public String getRecord() { return record ; }
+
     /** Ключевые слова */
     @Comment("Ключевые слова")
     @Persist
-    public String getKeyWord() { return theKeyWord ; }
-    public void setKeyWord(String aKeyWord) { theKeyWord = aKeyWord ; }
+    public String getKeyWord() { return keyWord ; }
 
     /** Время создания */
 	@Comment("Время создания")
 	@Persist @TimeString @DoTimeString
-	public String getTime() {return theTime;}
-	public void setTime(String aTime) {theTime = aTime;}
+	public String getTime() {return time;}
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@Persist @DoDateString @DateString
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	public String getEditDate() {return editDate;}
 
 	/** Пользователь последний, изменявший запись */
 	@Comment("Пользователь последний, изменявший запись")
 	@Persist
 	public String getEditUsername() {
-		return theEditUsername;
-	}
-
-	public void setEditUsername(String aEditUsername) {
-		theEditUsername = aEditUsername;
+		return editUsername;
 	}
 
 	/** Пользователь последний, изменявший запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Время создания */
-	private String theTime;
+	private String time;
     /** Ключевые слова */
-    private String theKeyWord ;
+    private String keyWord ;
     /** Запись дневника (протокол) */
-    private String theRecord ;
+    private String record ;
     /** Дата создания */
-    private String theDate ;
+    private String date ;
 	/** Тяжесть состояния */
 	@Comment("Тяжесть состояния")
 	@Persist 
-	public Long getState() {return theState;}
-	public void setState(Long aState) {theState = aState;}
+	public Long getState() {return state;}
 
 	/** Тяжесть состояния */
-	private Long theState;
+	private Long state;
 
 
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.userdocument;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.userdocument.UserDocument;
@@ -17,31 +18,28 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Пользовательский документ")
 @WebTrail(comment = "Пользовательский документ", nameProperties= "id", view="entityView-mis_userDocument.do")
 @EntityFormSecurityPrefix("/Policy/Mis/UserDocument")
-
+@Setter
 public class UserDocumentForm extends IdEntityForm{
 
 	/** Название */
 	@Comment("Название")
 	@Persist @Required
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
+	public String getName() {return name;}
 	/** Название */
-	private String theName;		
+	private String name;		
 	
 	/** Название файла */
 	@Comment("Название файла")
 	@Persist @Required
-	public String getFileName() {return theFileName;}
-	public void setFileName(String aFileName) {theFileName = aFileName;}
+	public String getFileName() {return fileName;}
 	/** Название файла */
-	private String theFileName;
+	private String fileName;
 	
 	
 	/** Тип группы документа */
 	@Comment("Тип группы документа")
 	@Persist @Required
-	public Long getGroupType() {return theGroupType;}
-	public void setGroupType(Long aGroupType) {theGroupType = aGroupType;}
+	public Long getGroupType() {return groupType;}
 	/** Тип группы документа */
-	private Long theGroupType;
+	private Long groupType;
 }

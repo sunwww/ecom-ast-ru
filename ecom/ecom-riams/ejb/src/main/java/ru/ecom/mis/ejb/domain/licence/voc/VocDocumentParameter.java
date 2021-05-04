@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.licence.voc;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -18,6 +20,8 @@ import javax.persistence.Table;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes(value = { @AIndex(properties = { "parameterGroup" }) })
+	@Getter
+	@Setter
 public class VocDocumentParameter extends VocBaseEntity{
 	/**
 	 * Группа параметров
@@ -25,73 +29,34 @@ public class VocDocumentParameter extends VocBaseEntity{
 	@Comment("Группа параметров")
 	@OneToOne
 	public VocDocumentParameterGroup getParameterGroup() {
-		return theParameterGroup;
-	}
-	public void setParameterGroup(VocDocumentParameterGroup aParameterGroup) {
-		theParameterGroup = aParameterGroup;
+		return parameterGroup;
 	}
 	/**
 	 * Группа параметров
 	 */
-	private VocDocumentParameterGroup theParameterGroup;
+	private VocDocumentParameterGroup parameterGroup;
 	/**
 	 * Минимум нормы
 	 */
-	@Comment("Минимум нормы")
-	
-	public String getNormMinimum() {
-		return theNormMinimum;
-	}
-	public void setNormMinimum(String aNormMinimum) {
-		theNormMinimum = aNormMinimum;
-	}
-	/**
-	 * Минимум нормы
-	 */
-	private String theNormMinimum;
+	private String normMinimum;
 	/**
 	 * Максимум нормы
 	 */
-	@Comment("Максимум нормы")
-	
-	public String getNormMaximum() {
-		return theNormMaximum;
-	}
-	public void setNormMaximum(String aNormMaximum) {
-		theNormMaximum = aNormMaximum;
-	}
-	/**
-	 * Максимум нормы
-	 */
-	private String theNormMaximum;
+	private String normMaximum;
 	/**
 	 * Размерность
 	 */
-	@Comment("Размерность")
-	
-	public String getDimension() {
-		return theDimension;
-	}
-	public void setDimension(String aDimension) {
-		theDimension = aDimension;
-	}
-	/**
-	 * Размерность
-	 */
-	private String theDimension;
+	private String dimension;
 	/**
 	 * Норма
 	 */
 	@Comment("Норма")
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
 	public String getNorm() {
-		return theNorm;
-	}
-	public void setNorm(String aNorm) {
-		theNorm = aNorm;
+		return norm;
 	}
 	/**
 	 * Норма
 	 */
-	private String theNorm;
+	private String norm;
 }

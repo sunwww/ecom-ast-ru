@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form.voc.federal;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV021;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -17,60 +18,54 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Медицинская специальность V021")
 @WebTrail(comment = "Медицинская специальность V021", nameProperties = {"code","name"}, view = "entityView-e2_vocFondV021.do")
 @EntityFormSecurityPrefix("/Policy/E2")
+@Setter
 public class VocE2FondV021Form extends VocBaseFederalForm {
 
     /** Название */
     @Comment("Название")
     @Persist @Required
-    public String getName() {return theName;}
-    public void setName(String aName) {theName = aName;}
+    public String getName() {return name;}
     /** Название */
-    private String theName ;
+    private String name ;
 
     /** Код */
     @Comment("Код")
     @Persist @Required
-    public String getCode() {return theCode;}
-    public void setCode(String aCode) {theCode = aCode;}
+    public String getCode() {return code;}
     /** Код */
-    private String theCode ;
+    private String code ;
 
     /** Услуга по умолчанию для поликлиники */
     @Comment("Услуга по умолчанию для поликлиники")
     @Persist
-    public Long getDefaultMedService() {return theDefaultMedService;}
-    public void setDefaultMedService(Long aDefaultMedService) {theDefaultMedService = aDefaultMedService;}
+    public Long getDefaultMedService() {return defaultMedService;}
     /** Услуга по умолчанию для поликлиники */
-    private Long theDefaultMedService ;
+    private Long defaultMedService ;
 
     /** Услуга по умолчания (повторный визит) */
     @Comment("Услуга по умолчания (повторный визит)")
     @Persist
-    public Long getRepeatMedService() {return theRepeatMedService;}
-    public void setRepeatMedService(Long aRepeatMedService) {theRepeatMedService = aRepeatMedService;}
+    public Long getRepeatMedService() {return repeatMedService;}
     /** Услуга по умолчания (повторный визит) */
-    private Long theRepeatMedService ;
+    private Long repeatMedService ;
 
     /** Профиль мед. помощи для подачи по стационару */
     @Comment("Профиль мед. помощи для подачи по стационару")
     @Persist
-    public Long getStacProfile() {return theStacProfile;}
-    public void setStacProfile(Long aStacProfile) {theStacProfile = aStacProfile;}
+    public Long getStacProfile() {return stacProfile;}
     /** Профиль мед. помощи для подачи по стационару */
-    private Long theStacProfile ;
+    private Long stacProfile ;
 
     /** Профиль мед. помощи для подачи по поликлинике */
     @Comment("Профиль мед. помощи для подачи по поликлинике")
     @Persist
-    public Long getPolicProfile() {return thePolicProfile;}
-    public void setPolicProfile(Long aPolicProfile) {thePolicProfile = aPolicProfile;}
+    public Long getPolicProfile() {return policProfile;}
     /** Профиль мед. помощи для подачи по поликлинике */
-    private Long thePolicProfile ;
+    private Long policProfile ;
 
     /** Признак подушевого финансирования специальности */
     @Comment("Признак подушевого финансирования специальности")
     @Persist
-    public Boolean getIsPodushevoy() {return theIsPodushevoy;}
-    public void setIsPodushevoy(Boolean aIsPodushevoy) {theIsPodushevoy = aIsPodushevoy;}
-    private Boolean theIsPodushevoy ;
+    public Boolean getIsPodushevoy() {return isPodushevoy;}
+    private Boolean isPodushevoy ;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.PriceGroup;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,74 +17,67 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Группа", nameProperties= "name", list="entityParentList-contract_priceGroup.do", view="entityParentView-contract_priceGroup.do")
 @Parent(property="parent", parentForm=PriceGroupForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/PriceList/PriceGroup")
+@Setter
 public class PriceGroupForm  extends PricePositionForm {
 	/** Прейскурант */
 	@Comment("Прейскурант")
 	@Persist @Required
-	public Long getPriceList() {return thePriceList;}
-	public void setPriceList(Long aPriceList) {thePriceList = aPriceList;}
+	public Long getPriceList() {return priceList;}
 
 	/** Наименование */
 	@Comment("Наименование")
 	@Persist
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
+	public String getName() {return name;}
 
 	/** Код */
 	@Comment("Код")
 	@Persist
-	public String getCode() {return theCode;}
-	public void setCode(String aCode) {theCode = aCode;}
+	public String getCode() {return code;}
 
 
 	/** Родитель */
 	@Comment("Родитель")
 	@Persist
-	public Long getParent() {return theParent;}
-	public void setParent(Long aParent) {theParent = aParent;}
+	public Long getParent() {return parent;}
 
 	/** Комментарий */
 	@Comment("Комментарий")
 	@Persist
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
+	public String getComment() {return comment;}
 
 	/** Комментарий */
-	private String theComment;
+	private String comment;
 	/** Родитель */
-	private Long theParent;
+	private Long parent;
 	/** Код */
-	private String theCode;
+	private String code;
 	/** Наименование */
-	private String theName;
+	private String name;
 	/** Прейскурант */
-	private Long thePriceList;
+	private Long priceList;
 	
 	/** Сразу открывать */
 	@Comment("Сразу открывать")
 	@Persist
-	public Boolean getIsOnceView() {return theIsOnceView;}
-	public void setIsOnceView(Boolean aIsOnceView) {theIsOnceView = aIsOnceView;}
+	public Boolean getIsOnceView() {return isOnceView;}
 
 	/** Сразу открывать */
-	private Boolean theIsOnceView;
+	private Boolean isOnceView;
 	
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@Persist
-	public Long getLpu() {return theLpu;}
-	public void setLpu(Long aLpu) {theLpu = aLpu;}
+	public Long getLpu() {return lpu;}
 
 	/** ЛПУ */
-	private Long theLpu;
+	private Long lpu;
 	/** Тип услуги */
 	@Comment("Тип услуги")
 	@Persist
-	public Long getPositionType() {return thePositionType;}
-	public void setPositionType(Long aPositionType) {thePositionType = aPositionType;}
+	public Long getPositionType() {return positionType;}
 
 	/** Тип услуги */
-	private Long thePositionType;
+	private Long positionType;
 
 	
 }

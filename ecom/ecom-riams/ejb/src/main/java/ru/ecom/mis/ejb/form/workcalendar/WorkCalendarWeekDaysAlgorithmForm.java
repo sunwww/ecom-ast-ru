@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarWeekDaysAlgorithm;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
@@ -11,6 +12,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Алгоритм по дням недели", nameProperties= "id", list="entityParentList-cal_weekDaysAlgorithm.do", view="entityParentView-cal_weekDaysAlgorithm.do")
 @Parent(property="pattern", parentForm=WorkCalendarPatternForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/WorkCalendar/Pattern/Algorithm")
+@Setter
 public class WorkCalendarWeekDaysAlgorithmForm extends WorkCalendarAlgorithmForm{
 	/**
 	 * Понедельник
@@ -18,133 +20,106 @@ public class WorkCalendarWeekDaysAlgorithmForm extends WorkCalendarAlgorithmForm
 	@Comment("Понедельник")
 	@Persist
 	public Long getMonday() {
-		return theMonday;
-	}
-	public void setMonday(Long aMonday) {
-		theMonday = aMonday;
+		return monday;
 	}
 	/**
 	 * Понедельник
 	 */
-	private Long theMonday;
+	private Long monday;
 	/**
 	 * Вторник
 	 */
 	@Comment("Вторник")
 	@Persist
 	public Long getTuesday() {
-		return theTuesday;
-	}
-	public void setTuesday(Long aTuesday) {
-		theTuesday = aTuesday;
+		return tuesday;
 	}
 	/**
 	 * Вторник
 	 */
-	private Long theTuesday;
+	private Long tuesday;
 	/**
 	 * Среда
 	 */
 	@Comment("Среда")
 	@Persist
 	public Long getWednesday() {
-		return theWednesday;
-	}
-	public void setWednesday(Long aWednesday) {
-		theWednesday = aWednesday;
+		return wednesday;
 	}
 	/**
 	 * Среда
 	 */
-	private Long theWednesday;
+	private Long wednesday;
 	/**
 	 * Четверг
 	 */
 	@Comment("Четверг")
 	@Persist
 	public Long getThursday() {
-		return theThursday;
-	}
-	public void setThursday(Long aThursday) {
-		theThursday = aThursday;
+		return thursday;
 	}
 	/**
 	 * Четверг
 	 */
-	private Long theThursday;
+	private Long thursday;
 	/**
 	 * Пятница
 	 */
 	@Comment("Пятница")
 	@Persist
 	public Long getFriday() {
-		return theFriday;
-	}
-	public void setFriday(Long aFriday) {
-		theFriday = aFriday;
+		return friday;
 	}
 	/**
 	 * Пятница
 	 */
-	private Long theFriday;
+	private Long friday;
 	/**
 	 * Суббота
 	 */
 	@Comment("Суббота")
 	@Persist
 	public Long getSaturday() {
-		return theSaturday;
-	}
-	public void setSaturday(Long aSaturday) {
-		theSaturday = aSaturday;
+		return saturday;
 	}
 	/**
 	 * Суббота
 	 */
-	private Long theSaturday;
+	private Long saturday;
 	/**
 	 * Воскресенье
 	 */
 	@Comment("Воскресенье")
 	@Persist
 	public Long getSunday() {
-		return theSunday;
-	}
-	public void setSunday(Long aSunday) {
-		theSunday = aSunday;
+		return sunday;
 	}
 	/**
 	 * Воскресенье
 	 */
-	private Long theSunday;
+	private Long sunday;
 	/**
 	 * Четный день
 	 */
 	@Comment("Четный день")
 	@Persist 
 	public Long getParity() {
-		return theParity;
-	}
-	public void setParity(Long aParity) {
-		theParity = aParity;
+		return parity;
 	}
 	/**
 	 * Четный день
 	 */
-	private Long theParity;
+	private Long parity;
 	/**
 	 * Тип четности
 	 */
 	@Comment("Тип четности")
 	@Persist
 	public Long getCalendarParity() {
-		return theCalendarParity;
-	}
-	public void setCalendarParity(Long aCalendarParity) {
-		theCalendarParity = aCalendarParity;
+		return calendarParity;
 	}
 	/**
 	 * Тип четности
 	 */
-	private Long theCalendarParity;
+	private Long calendarParity;
 }

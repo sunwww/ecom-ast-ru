@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.patient.voc;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -20,23 +22,21 @@ import javax.persistence.Table;
         @AIndex(properties = {"oldFondNumber","name","fondNumber"},name="vocOrg_oldFondNumber_name_fondNumber")
         }) 
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VocOrg extends VocIdName {
-
-
     /** Старый код ФОНДА */
     @AFormatFieldSuggest("RNUMBER")
     @Comment("Старый код ФОНДА")
-    public String getOldFondNumber() { return theOldFondNumber ; }
-    public void setOldFondNumber(String aOldFondNumber) { theOldFondNumber = aOldFondNumber ; }
+    public String getOldFondNumber() { return oldFondNumber ; }
 
     /** Код ФОНДА */
     @AFormatFieldSuggest("RNUMBER15")
     @Comment("Новый код ФОНДА")
-    public String getFondNumber() { return theFondNumber ; }
-    public void setFondNumber(String aFondNumber) { theFondNumber = aFondNumber ; }
+    public String getFondNumber() { return fondNumber ; }
 
     /** Код ФОНДА */
-    private String theFondNumber ;
+    private String fondNumber ;
     /** Старый код ФОНДА */
-    private String theOldFondNumber ;
+    private String oldFondNumber ;
 }

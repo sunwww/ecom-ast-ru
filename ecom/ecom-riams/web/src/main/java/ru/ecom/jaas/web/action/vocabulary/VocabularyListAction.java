@@ -27,7 +27,7 @@ public class VocabularyListAction extends BaseAction{
 		for(VocEntityInfo voc : list) {
 			
 			if (RolesHelper.checkRoles("/Policy/Voc/"+voc.getSimpleName(),aRequest)) {
-				VocabularyForm vocForm = new VocabularyForm(voc.getClassname(),voc.getSimpleName(),voc.getComment(),service.getCount(voc.getSimpleName()),voc.getIsSystem()) ;
+				VocabularyForm vocForm = new VocabularyForm(voc.getClassname(),voc.getSimpleName(),voc.getComment(),service.getCount(voc.getSimpleName()),voc.isSystem()) ;
 				listForm.add(vocForm) ;
 			}
 		}

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.contract;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -20,8 +22,10 @@ import java.sql.Date;
 @Entity
 @Table(schema="SQLUser")
 	@AIndexes({
-		@AIndex(unique= false, properties = {"contract"})
+		@AIndex(properties = {"contract"})
 	})
+	@Getter
+	@Setter
 public class ContractRule extends BaseEntity{
 	/**
 	 * Договор
@@ -29,201 +33,109 @@ public class ContractRule extends BaseEntity{
 	@Comment("Договор")
 	@ManyToOne
 	public MedContract getContract() {
-		return theContract;
-	}
-	public void setContract(MedContract aContract) {
-		theContract = aContract;
+		return contract;
 	}
 	/**
 	 * Договор
 	 */
-	private MedContract theContract;
+	private MedContract contract;
 	/**
 	 * Нозологическая группа
 	 */
 	@Comment("Нозологическая группа")
 	@OneToOne
 	public ContractNosologyGroup getNosologyGroup() {
-		return theNosologyGroup;
-	}
-	public void setNosologyGroup(ContractNosologyGroup aNosologyGroup) {
-		theNosologyGroup = aNosologyGroup;
+		return nosologyGroup;
 	}
 	/**
 	 * Нозологическая группа
 	 */
-	private ContractNosologyGroup theNosologyGroup;
+	private ContractNosologyGroup nosologyGroup;
 	/**
 	 * Группа медицинских услуг
 	 */
 	@Comment("Группа медицинских услуг")
 	@OneToOne
 	public ContractMedServiceGroup getMedServiceGroup() {
-		return theMedServiceGroup;
-	}
-	public void setMedServiceGroup(ContractMedServiceGroup aMedServiceGroup) {
-		theMedServiceGroup = aMedServiceGroup;
+		return medServiceGroup;
 	}
 	/**
 	 * Группа медицинских услуг
 	 */
-	private ContractMedServiceGroup theMedServiceGroup;
+	private ContractMedServiceGroup medServiceGroup;
 	/**
 	 * Группа гарантийных документов
 	 */
 	@Comment("Группа гарантийных документов")
 	@OneToOne
 	public ContractGuaranteeGroup getGuaranteeGroup() {
-		return theGuaranteeGroup;
-	}
-	public void setGuaranteeGroup(ContractGuaranteeGroup aGuaranteeGroup) {
-		theGuaranteeGroup = aGuaranteeGroup;
+		return guaranteeGroup;
 	}
 	/**
 	 * Группа гарантийных документов
 	 */
-	private ContractGuaranteeGroup theGuaranteeGroup;
+	private ContractGuaranteeGroup guaranteeGroup;
 	/**
 	 * Период действия
 	 */
 	@Comment("Период действия")
 	@OneToOne
 	public VocContractRulePeriod getPeriod() {
-		return thePeriod;
-	}
-	public void setPeriod(VocContractRulePeriod aPeriod) {
-		thePeriod = aPeriod;
+		return period;
 	}
 	/**
 	 * Период действия
 	 */
-	private VocContractRulePeriod thePeriod;
+	private VocContractRulePeriod period;
 	/**
 	 * Количество медицинских услуг
 	 */
-	@Comment("Количество медицинских услуг")
-	
-	public Integer getMedserviceAmount() {
-		return theMedserviceAmount;
-	}
-	public void setMedserviceAmount(Integer aMedserviceAmount) {
-		theMedserviceAmount = aMedserviceAmount;
-	}
-	/**
-	 * Количество медицинских услуг
-	 */
-	private Integer theMedserviceAmount;
+	private Integer medserviceAmount;
 	/**
 	 * Количество курсов
 	 */
-	@Comment("Количество курсов")
-	
-	public Integer getCourseAmount() {
-		return theCourseAmount;
-	}
-	public void setCourseAmount(Integer aCourseAmount) {
-		theCourseAmount = aCourseAmount;
-	}
-	/**
-	 * Количество курсов
-	 */
-	private Integer theCourseAmount;
+	private Integer courseAmount;
 	/**
 	 * Количество медицинских услуг на курс
 	 */
-	@Comment("Количество медицинских услуг на курс")
-	
-	public Integer getMedserviceCourseAmount() {
-		return theMedserviceCourseAmount;
-	}
-	public void setMedserviceCourseAmount(Integer aMedserviceCourseAmount) {
-		theMedserviceCourseAmount = aMedserviceCourseAmount;
-	}
-	/**
-	 * Количество медицинских услуг на курс
-	 */
-	private Integer theMedserviceCourseAmount;
+	private Integer medserviceCourseAmount;
 	/**
 	 * Разрешение
 	 */
 	@Comment("Разрешение")
 	@OneToOne
 	public VocContractPermission getPermission() {
-		return thePermission;
-	}
-	public void setPermission(VocContractPermission aPermission) {
-		thePermission = aPermission;
+		return permission;
 	}
 	/**
 	 * Разрешение
 	 */
-	private VocContractPermission thePermission;
+	private VocContractPermission permission;
 	/**
 	 * Дата начала действия
 	 */
-	@Comment("Дата начала действия")
-	
-	public Date getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(Date aDateFrom) {
-		theDateFrom = aDateFrom;
-	}
-	/**
-	 * Дата начала действия
-	 */
-	private Date theDateFrom;
+	private Date dateFrom;
 	/**
 	 * Дата окончания действия
 	 */
-	@Comment("Дата окончания действия")
-	
-	public Date getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(Date aDateTo) {
-		theDateTo = aDateTo;
-	}
-	/**
-	 * Дата окончания действия
-	 */
-	private Date theDateTo;
+	private Date dateTo;
 	/**
 	 * Обслуживаемая персона
 	 */
 	@Comment("Обслуживаемая персона")
 	@OneToOne
 	public ServedPerson getServedPerson() {
-		return theServedPerson;
-	}
-	public void setServedPerson(ServedPerson aServedPerson) {
-		theServedPerson = aServedPerson;
+		return servedPerson;
 	}
 	/**
 	 * Обслуживаемая персона
 	 */
-	private ServedPerson theServedPerson;
+	private ServedPerson servedPerson;
 	/**
 	 * Раздельный учет по каждому виду медицинских услуг
 	 */
-	@Comment("Раздельный учет по каждому виду медицинских услуг")
-	
-	public Boolean getForEachMedservice() {
-		return theForEachMedservice;
-	}
-	public void setForEachMedservice(Boolean aForEachMedservice) {
-		theForEachMedservice = aForEachMedservice;
-	}
-	/**
-	 * Раздельный учет по каждому виду медицинских услуг
-	 */
-	private Boolean theForEachMedservice;
+	private Boolean forEachMedservice;
 	
 	/** Название правила */
-	@Comment("Название правила")
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
-
-	/** Название правила */
-	private String theName;
+	private String name;
 }

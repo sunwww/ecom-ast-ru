@@ -4,48 +4,27 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
 @Table(schema="SQLUser")
 @Comment("Справочник заключений по КЭР. Направляется на...")
+@Getter
+@Setter
 public class VocExpertConclusionSent extends VocBaseEntity {
 	/** Обоснование  */
 	@Comment("Обоснование ")
 	@OneToOne
-	public VocExpertConclusion getConclusion() {return theConclusion;}
-	public void setConclusion(VocExpertConclusion aConclusion) {theConclusion = aConclusion;}
-
+	public VocExpertConclusion getConclusion() {return conclusion;}
 	/** Обоснование  */
-	private VocExpertConclusion theConclusion;
-	
+	private VocExpertConclusion conclusion;
 	/** Неактуальный */
-	@Comment("Неактуальный")
-	public Boolean getNoActuality() {return theNoActuality;}
-	public void setNoActuality(Boolean aNoActuality) {theNoActuality = aNoActuality;}
-
-	/** Неактуальный */
-	private Boolean theNoActuality;
-	
+	private Boolean noActuality;
 	/** Доп. данные */
-	@Comment("Доп. данные")
-	public String getAdditionData() {
-		return theAdditionData;
-	}
-
-	public void setAdditionData(String aAdditionData) {
-		theAdditionData = aAdditionData;
-	}
-
-	/** Доп. данные */
-	private String theAdditionData;
-	
+	private String additionData;
 	/** Код обоснования */
-	@Comment("Код обоснования")
-	public String getConclusionCode() {return theConclusionCode;}
-	public void setConclusionCode(String aConclusionCode) {theConclusionCode = aConclusionCode;}
-
-	/** Код обоснования */
-	private String theConclusionCode;
+	private String conclusionCode;
 }

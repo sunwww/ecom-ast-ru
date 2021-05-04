@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.extdisp;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.CascadeType;
@@ -12,33 +14,22 @@ import java.util.List;
 	 */
 	@Comment("Визит по дополнительной диспансеризации")
 @Entity
+	@Getter
+	@Setter
 public class ExtDispVisit extends ExtDispService {
 
 	@OneToMany(mappedBy="visit", cascade=CascadeType.ALL)
-	public List<ExtDispServiceIndication> getServiceIndications() {return theServiceIndications;}
-	public void setServiceIndications(List<ExtDispServiceIndication> aServiceIndications) {theServiceIndications = aServiceIndications;}
+	public List<ExtDispServiceIndication> getServiceIndications() {return serviceIndications;}
 	/**
 	 * Показания к услугам 2 этапа
 	 */
-	private List<ExtDispServiceIndication> theServiceIndications;
+	private List<ExtDispServiceIndication> serviceIndications;
 	/**
 	 * Подозрение на ранее перенесенное нарушение мозгового кровообращения (suspicion on earlier transferred disturbance of a cerebral circulation)
 	 */
-	@Comment("Подозрение на ранее перенесенное нарушение мозгового кровообращения (suspicion on earlier transferred disturbance of a cerebral circulation)")
-	public Boolean getIsEtdccSuspicion() {return theIsEtdccSuspicion;}
-	public void setIsEtdccSuspicion(Boolean aIsEtdccSuspicion) {theIsEtdccSuspicion = aIsEtdccSuspicion;}
-	/**
-	 * Подозрение на ранее перенесенное нарушение мозгового кровообращения (suspicion on earlier transferred disturbance of a cerebral circulation)
-	 */
-	private Boolean theIsEtdccSuspicion;
+	private Boolean isEtdccSuspicion;
 	/**
 	 * Рекомендации
 	 */
-	@Comment("Рекомендации")
-	public String getRecommendation() {return theRecommendation;}
-	public void setRecommendation(String aRecommendation) {theRecommendation = aRecommendation;}
-	/**
-	 * Рекомендации
-	 */
-	private String theRecommendation;
+	private String recommendation;
 }

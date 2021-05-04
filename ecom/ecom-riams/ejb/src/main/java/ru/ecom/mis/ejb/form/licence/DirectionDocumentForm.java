@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.licence;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -22,113 +23,101 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(DocumentPrepareCreateInterceptor.class)
 )
+@Setter
 public class DirectionDocumentForm extends InternalDocumentsForm {
 	/** Диагноз */
 	@Comment("Диагноз")
 	@Persist @Required
-	public String getDiagnosis() {return theDiagnosis;}
-	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
+	public String getDiagnosis() {return diagnosis;}
 
 	/** Код диагноза */
 	@Comment("Код диагноза")
 	@Persist @Required
-	public Long getIdc10() {return theIdc10;}
-	public void setIdc10(Long aIdc10) {theIdc10 = aIdc10;}
+	public Long getIdc10() {return idc10;}
 
 	/** Код диагноза */
-	private Long theIdc10;
+	private Long idc10;
 	/** Диагноз */
-	private String theDiagnosis;
+	private String diagnosis;
 	
 	/** Отделение */
 	@Comment("Отделение")
 	@Persist
-	public Long getDepartment() {return theDepartment;}
-	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+	public Long getDepartment() {return department;}
 
 	/** Профиль коек */
 	@Comment("Профиль коек")
 	@Persist @Required
-	public Long getBedType() {return theBedType;}
-	public void setBedType(Long aBedType) {theBedType = aBedType;}
+	public Long getBedType() {return bedType;}
 
 	/** Профиль коек */
-	private Long theBedType;
+	private Long bedType;
 	/** Отделение */
-	private Long theDepartment;
+	private Long department;
 	
 	/** Телефон */
 	@Comment("Телефон")
 	@Persist @Required
-	public String getPhonePatient() {return thePhonePatient;}
-	public void setPhonePatient(String aPhonePatient) {thePhonePatient = aPhonePatient;}
+	public String getPhonePatient() {return phonePatient;}
 
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@Persist @Required
-	public Long getServiceStream() {return theServiceStream;}
-	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+	public Long getServiceStream() {return serviceStream;}
 
 	
 	/** Поток обслуживания */
-	private Long theServiceStream;
+	private Long serviceStream;
 	/** Телефон */
-	private String thePhonePatient;
+	private String phonePatient;
 	/** Куда направлен */
 	@Comment("Куда направлен")
 	@Persist @Required
-	public Long getSentToLpu() {return theSentToLpu;}
-	public void setSentToLpu(Long aSentToLpu) {theSentToLpu = aSentToLpu;}
+	public Long getSentToLpu() {return sentToLpu;}
 	/** Куда направлен */
-	private Long theSentToLpu;
+	private Long sentToLpu;
 	/** Планируемая дата с */
 	@Comment("Планируемая дата с")
 	@Persist @DateString @DoDateString @Required
-	public String getPlanDateFrom() {return thePlanDateFrom;}
-	public void setPlanDateFrom(String aPlanDateFrom) {thePlanDateFrom = aPlanDateFrom;}
+	public String getPlanDateFrom() {return planDateFrom;}
 
 	/** Планируемая дата по */
 	@Comment("Планируемая дата по")
 	@Persist @DateString @DoDateString
-	public String getPlanDateTo() {return thePlanDateTo;}
-	public void setPlanDateTo(String aPlanDateTo) {thePlanDateTo = aPlanDateTo;}
+	public String getPlanDateTo() {return planDateTo;}
 
 	/** Планируемая дата по */
-	private String thePlanDateTo;
+	private String planDateTo;
 	/** Планируемая дата с */
-	private String thePlanDateFrom;
+	private String planDateFrom;
 	
 	/** Планируется операция? */
 	@Comment("Планируется операция?")
 	@Persist
-	public Boolean getIsPlanOperation() {return theIsPlanOperation;}
-	public void setIsPlanOperation(Boolean aIsPlanOperation) {theIsPlanOperation = aIsPlanOperation;}
+	public Boolean getIsPlanOperation() {return isPlanOperation;}
 
 	/** Планируется операция? */
-	private Boolean theIsPlanOperation;
+	private Boolean isPlanOperation;
 	
 	/** Создать запись о план. госпитализаций */
 	@Comment("Создать запись о план. госпитализаций")
-	public Boolean getIsCreatePlanHosp() {return theIsCreatePlanHosp;}
-	public void setIsCreatePlanHosp(Boolean aIsCreatePlanHosp) {theIsCreatePlanHosp = aIsCreatePlanHosp;}
+	public Boolean getIsCreatePlanHosp() {return isCreatePlanHosp;}
 
 	/** Создать запись о план. госпитализаций */
-	private Boolean theIsCreatePlanHosp;
+	private Boolean isCreatePlanHosp;
 	
 	/** Пред.госпитал. */
 	@Comment("Пред.госпитал.")
 	@Persist
-	public Long getPlanHospitalBed() {return thePlanHospitalBed;}
-	public void setPlanHospitalBed(Long aPlanHospitalBed) {thePlanHospitalBed = aPlanHospitalBed;}
+	public Long getPlanHospitalBed() {return planHospitalBed;}
 
 	/** Пред.госпитал. */
-	private Long thePlanHospitalBed;
+	private Long planHospitalBed;
 	/** Тип коек */
 	@Comment("Тип коек")
 	@Persist @Required
-	public Long getBedSubType() {return theBedSubType;}
-	public void setBedSubType(Long aBedSubType) {theBedSubType = aBedSubType;}
+	public Long getBedSubType() {return bedSubType;}
 
 	/** Тип коек */
-	private Long theBedSubType;
+	private Long bedSubType;
 }

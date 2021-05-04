@@ -1,5 +1,7 @@
 package ru.ecom.ejb.domain.simple;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.live.LiveListener;
 
 import javax.persistence.*;
@@ -16,12 +18,12 @@ public class BaseEntity implements Serializable {
 
     /** Идентификатор */
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    public long getId() { return theId ; }
-    public void setId(long aId) { theId = aId ; }
+    public long getId() { return id ; }
+    public void setId(long aId) { id = aId ; }
 	
     
     /** Идентификатор */
-    private long theId ;
+    private long id ;
 
 
 	/* 
@@ -29,7 +31,7 @@ public class BaseEntity implements Serializable {
 	 */
 	@Override
 	public int hashCode() {
-		return (int)(theId ^ (theId >>> 32));
+		return (int)(id ^ (id >>> 32));
 	}
 	/* 
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -40,12 +42,12 @@ public class BaseEntity implements Serializable {
 		if (obj == null) return false;
 		if (getClass() != obj.getClass()) return false;
 		final BaseEntity other = (BaseEntity) obj;
-		return theId == other.theId;
+		return id == other.id;
 	}
     
 	@Override 
 	public String toString() {
-		return getClass().getName()+":"+theId ;
+		return getClass().getName()+":"+id ;
 	}
 
 }

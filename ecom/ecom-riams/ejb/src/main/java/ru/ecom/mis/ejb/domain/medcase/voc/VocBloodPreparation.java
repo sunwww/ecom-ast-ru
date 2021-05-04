@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -16,20 +18,18 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Справочник препаратов крови")
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VocBloodPreparation extends VocBaseEntity{
 	
 	/** Тип препарата */
 	@Comment("Тип препарата")
 	@OneToOne
 	public VocBloodPreparationType getBloodPreparationType() {
-		return theBloodPreparationType;
-	}
-
-	public void setBloodPreparationType(VocBloodPreparationType aBloodPreparationType) {
-		theBloodPreparationType = aBloodPreparationType;
+		return bloodPreparationType;
 	}
 
 	/** Тип препарата */
-	private VocBloodPreparationType theBloodPreparationType;
+	private VocBloodPreparationType bloodPreparationType;
 
 }

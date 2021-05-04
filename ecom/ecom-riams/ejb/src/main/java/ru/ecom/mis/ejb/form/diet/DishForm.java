@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.diet;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
@@ -22,465 +23,335 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @Comment("Блюдо")
 @WebTrail(comment = "Блюдо", nameProperties= "name", view="entityView-diet_dish.do")
 @EntityFormSecurityPrefix("/Policy/Mis/Dish")
+@Setter
 public class DishForm extends IdEntityForm{
 	
 	/** Растительные белки */
 	@Comment("Растительные белки")
 	@Persist
 	public String getPlantProteins() {
-		return thePlantProteins;
-	}
-
-	public void setPlantProteins(String aPlantProteins) {
-		thePlantProteins = aPlantProteins;
+		return plantProteins;
 	}
 
 	/** Растительные белки */
-	private String thePlantProteins;
+	private String plantProteins;
 	
 	/** Животные белки */
 	@Comment("Животные белки")
 	@Persist
 	public String getAnimalProteins() {
-		return theAnimalProteins;
-	}
-
-	public void setAnimalProteins(String aAnimalProteins) {
-		theAnimalProteins = aAnimalProteins;
+		return animalProteins;
 	}
 
 	/** Животные белки */
-	private String theAnimalProteins;
+	private String animalProteins;
 	
 	/** Растительные жиры */
 	@Comment("Растительные жиры")
 	@Persist
 	public String getPlantLipids() {
-		return thePlantLipids;
-	}
-
-	public void setPlantLipids(String aPlantLipids) {
-		thePlantLipids = aPlantLipids;
+		return plantLipids;
 	}
 
 	/** Растительные жиры */
-	private String thePlantLipids;
+	private String plantLipids;
 	
 	/** Животные жиры */
 	@Comment("Животные жиры")
 	@Persist
 	public String getAnimalLipids() {
-		return theAnimalLipids;
-	}
-
-	public void setAnimalLipids(String aAnimalLipids) {
-		theAnimalLipids = aAnimalLipids;
+		return animalLipids;
 	}
 
 	/** Животные жиры */
-	private String theAnimalLipids;
+	private String animalLipids;
 	
 	/** Железо */
 	@Comment("Железо")
 	@Persist
 	public String getFerrum() {
-		return theFerrum;
-	}
-
-	public void setFerrum(String aFerrum) {
-		theFerrum = aFerrum;
+		return ferrum;
 	}
 
 	/** Железо */
-	private String theFerrum;
+	private String ferrum;
 	
 	/** Фосфор */
 	@Comment("Фосфор")
 	@Persist
 	public String getPhosphorus() {
-		return thePhosphorus;
-	}
-
-	public void setPhosphorus(String aPhosphorus) {
-		thePhosphorus = aPhosphorus;
+		return phosphorus;
 	}
 
 	/** Фосфор */
-	private String thePhosphorus;
+	private String phosphorus;
 	
 	/** Магний */
 	@Comment("Магний")
 	@Persist
 	public String getMagnesium() {
-		return theMagnesium;
-	}
-
-	public void setMagnesium(String aMagnesium) {
-		theMagnesium = aMagnesium;
+		return magnesium;
 	}
 
 	/** Магний */
-	private String theMagnesium;
+	private String magnesium;
 	
 	/** Кальций */
 	@Comment("Кальций")
 	@Persist
 	public String getCalcium() {
-		return theCalcium;
-	}
-
-	public void setCalcium(String aCalcium) {
-		theCalcium = aCalcium;
+		return calcium;
 	}
 
 	/** Кальций */
-	private String theCalcium;
+	private String calcium;
 	
 	/** Калий */
 	@Comment("Калий")
 	@Persist
 	public String getPotassium() {
-		return thePotassium;
-	}
-
-	public void setPotassium(String aPotassium) {
-		thePotassium = aPotassium;
+		return potassium;
 	}
 
 	/** Калий */
-	private String thePotassium;
+	private String potassium;
 	
 	/** Натрий */
 	@Comment("Натрий")
 	@Persist
 	public String getNatrium() {
-		return theNatrium;
-	}
-
-	public void setNatrium(String aNatrium) {
-		theNatrium = aNatrium;
+		return natrium;
 	}
 
 	/** Натрий */
-	private String theNatrium;
+	private String natrium;
 	
 	/** Витамин C */
 	@Comment("Витамин C")
 	@Persist
 	public String getCevitamicAcid() {
-		return theCevitamicAcid;
-	}
-
-	public void setCevitamicAcid(String aCevitamicAcid) {
-		theCevitamicAcid = aCevitamicAcid;
+		return cevitamicAcid;
 	}
 
 	/** Витамин C */
-	private String theCevitamicAcid;
+	private String cevitamicAcid;
 	
 	/** Витамин PP */
 	@Comment("Витамин PP")
 	@Persist
 	public String getNicotinamid() {
-		return theNicotinamid;
-	}
-
-	public void setNicotinamid(String aNicotinamid) {
-		theNicotinamid = aNicotinamid;
+		return nicotinamid;
 	}
 
 	/** Витамин PP */
-	private String theNicotinamid;
+	private String nicotinamid;
 	
 	/** Витамин B2 */
 	@Comment("Витамин B2")
 	@Persist
 	public String getRiboflavin() {
-		return theRiboflavin;
-	}
-
-	public void setRiboflavin(String aRiboflavin) {
-		theRiboflavin = aRiboflavin;
+		return riboflavin;
 	}
 
 	/** Витамин B2 */
-	private String theRiboflavin;
+	private String riboflavin;
 	
 	/** Витамин B1 */
 	@Comment("Витамин B1")
 	@Persist
 	public String getTiamin() {
-		return theTiamin;
-	}
-
-	public void setTiamin(String aTiamin) {
-		theTiamin = aTiamin;
+		return tiamin;
 	}
 
 	/** Витамин B1 */
-	private String theTiamin;
+	private String tiamin;
 	
 	/** Бета-каротин */
 	@Comment("Бета-каротин")
 	@Persist
 	public String getBetaCarotin() {
-		return theBetaCarotin;
-	}
-
-	public void setBetaCarotin(String aBetaCarotin) {
-		theBetaCarotin = aBetaCarotin;
+		return betaCarotin;
 	}
 
 	/** Бета-каротин */
-	private String theBetaCarotin;
+	private String betaCarotin;
 	
 	/** Витамин А */
 	@Comment("Витамин А")
 	@Persist
 	public String getRetinol() {
-		return theRetinol;
-	}
-
-	public void setRetinol(String aRetinol) {
-		theRetinol = aRetinol;
+		return retinol;
 	}
 
 	/** Витамин А */
-	private String theRetinol;
+	private String retinol;
 	
 	/** Внешний вид блюда */
 	@Comment("Внешний вид блюда")
 	@Persist
 	public String getDishAppearance() {
-		return theDishAppearance;
-	}
-	public void setDishAppearance(String aDishAppearance) {
-		theDishAppearance = aDishAppearance;
+		return dishAppearance;
 	}
 	/** Внешний вид блюда */
-	private String theDishAppearance; 
+	private String dishAppearance; 
 	
 	/** Цвет блюда */
 	@Comment("Цвет блюда")
 	@Persist
 	public String getDishColor() {
-		return theDishColor;
-	}
-
-	public void setDishColor(String aDishColor) {
-		theDishColor = aDishColor;
+		return dishColor;
 	}
 
 	/** Цвет блюда */
-	private String theDishColor;
+	private String dishColor;
 	
 	/** Запах блюда */
 	@Comment("Запах блюда")
 	@Persist
 	public String getDishScent() {
-		return theDishScent;
-	}
-
-	public void setDishScent(String aDishScent) {
-		theDishScent = aDishScent;
+		return dishScent;
 	}
 
 	/** Запах блюда */
-	private String theDishScent;
+	private String dishScent;
 	
 	/** Вкус блюда */
 	@Comment("Вкус блюда")
 	@Persist
 	public String getDishTaste() {
-		return theDishTaste;
-	}
-
-	public void setDishTaste(String aDishTaste) {
-		theDishTaste = aDishTaste;
+		return dishTaste;
 	}
 
 	/** Вкус блюда */
-	private String theDishTaste;
+	private String dishTaste;
 	
 	/** Консистенция блюда */
 	@Comment("Консистенция блюда")
 	@Persist
 	public String getDishConsistence() {
-		return theDishConsistence;
-	}
-
-	public void setDishConsistence(String aDishConsistence) {
-		theDishConsistence = aDishConsistence;
+		return dishConsistence;
 	}
 
 	/** Консистенция блюда */
-	private String theDishConsistence;
+	private String dishConsistence;
 	
 	/** Срок годности и условия хранения блюда */
 	@Comment("Срок годности и условия хранения блюда")
 	@Persist
 	public String getDishStorageConditions() {
-		return theDishStorageConditions;
-	}
-
-	public void setDishStorageConditions(String aDishStorageConditions) {
-		theDishStorageConditions = aDishStorageConditions;
+		return dishStorageConditions;
 	}
 
 	/** Срок годности и условия хранения блюда */
-	private String theDishStorageConditions;
+	private String dishStorageConditions;
 	
 	
 	/** Номер карточки-раскладки */
 	@Comment("Номер карточки-раскладки")
 	@Persist
 	public String getDishNumber() {
-		return theDishNumber;
-	}
-
-	public void setDishNumber(String aDishNumber) {
-		theDishNumber = aDishNumber;
+		return dishNumber;
 	}
 
 	/** Номер карточки-раскладки */
-	private String theDishNumber; 
+	private String dishNumber; 
 	
 	
 	/** Вес */
 	@Comment("Вес")
 	@Persist
 	public String  getWeight() {
-		return theWeight;
-	}
-
-	public void setWeight(String aWeight) {
-		theWeight = aWeight;
+		return weight;
 	}
 
 	/** Вес */
-	private String theWeight;
+	private String weight;
 	
 	/** Калорийность */
 	@Comment("Калорийность")
 	@Persist
 	public String getCalorieContent() {
-		return theCalorieContent;
-	}
-
-	public void setCalorieContent(String aCalorieContent) {
-		theCalorieContent = aCalorieContent;
+		return calorieContent;
 	}
 
 	/** Калорийность */
-	private String theCalorieContent;
+	private String calorieContent;
 	
 	/** Углеводы */
 	@Comment("Углеводы")
 	@Persist
 	public String getCarbohydrates() {
-		return theCarbohydrates;
-	}
-
-	public void setCarbohydrates(String aCarbohydrates) {
-		theCarbohydrates = aCarbohydrates;
+		return carbohydrates;
 	}
 
 	/** Углеводы */
-	private String theCarbohydrates;
+	private String carbohydrates;
 	
 	/** Жиры */
 	@Comment("Жиры")
 	@Persist
 	public String getLipids() {
-		return theLipids;
-	}
-
-	public void setLipids(String aLipids) {
-		theLipids = aLipids;
+		return lipids;
 	}
 
 	/** Жиры */
-	private String theLipids;
+	private String lipids;
 	
 	/** Белки */
 	@Comment("Белки")
 	@Persist
 	public String getProteins() {
-		return theProteins;
-	}
-
-	public void setProteins(String aProteins) {
-		theProteins = aProteins;
+		return proteins;
 	}
 
 	/** Белки */
-	private String theProteins;
+	private String proteins;
 	
 	/** Название диеты */
 	@Comment("Название диеты")
 	@Persist
 	public String getDietsShortName() {
-		return theDietsShortName;
-	}
-
-	public void setDietsShortName(String aDietsShortName) {
-		theDietsShortName = aDietsShortName;
+		return dietsShortName;
 	}
 
 	/** Название диеты */
-	private String theDietsShortName;
+	private String dietsShortName;
 	
 	/** Технология приготовления */
 	@Comment("Технология приготовления")
 	@Persist
 	public String getPreparationTechnology() {
-		return thePreparationTechnology;
-	}
-
-	public void setPreparationTechnology(String aPreparationTechnology) {
-		thePreparationTechnology = aPreparationTechnology;
+		return preparationTechnology;
 	}
 
 	/** Технология приготовления */
-	private String thePreparationTechnology;
+	private String preparationTechnology;
 	
 	/** Наименование */
 	@Comment("Наименование")
 	@Persist
 	public String getName() {
-		return theName;
-	}
-
-	public void setName(String aName) {
-		theName = aName;
+		return name;
 	}
 
 	/** Наименование */
-	private String theName;
+	private String name;
 	
 	/** Тип блюда */
 	@Comment("Тип блюда")
 	@Persist
 	public Long getDishType() {
-		return theDishType;
-	}
-
-	public void setDishType(Long aDishType) {
-		theDishType = aDishType;
+		return dishType;
 	}
 
 	/** Тип блюда */
-	private Long theDishType;
+	private Long dishType;
 	
 	/** Диеты */
 	@Comment("Диета")
 	@Persist
 	@PersistManyToManyOneProperty(collectionGenericType=Diet.class)
-	   public String getDiets() {    return theDiets ;}
-
+	   public String getDiets() {    return diets ;}
 	   /** Диеты */
-	   public void setDiets(String aDiets ) {  theDiets = aDiets ; }
-	    
-	   /** Диеты */
-	   private String theDiets ;
+	   private String diets ;
 	}

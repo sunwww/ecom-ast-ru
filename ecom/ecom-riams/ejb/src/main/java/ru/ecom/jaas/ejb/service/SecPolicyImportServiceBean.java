@@ -25,7 +25,6 @@ import java.util.*;
 public class SecPolicyImportServiceBean implements ISecPolicyImportService {
 
     private static final Logger LOG = Logger.getLogger(SecPolicyImportServiceBean.class);
-    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
     
     public Long addPolicy(String aPolicy, String aName) {
     	Map<String, SecPolicy> hash = new HashMap<>() ;
@@ -37,7 +36,7 @@ public class SecPolicyImportServiceBean implements ISecPolicyImportService {
     		if (!StringUtil.isNullOrEmpty(aName) && StringUtil.isNullOrEmpty(policy.getName())) {
     			policy.setName(aName) ;
     			policy.setComment(aName) ;
-    			theManager.persist(policy) ;
+    			manager.persist(policy) ;
     		}
     		return policy.getId() ;
     	}
@@ -74,7 +73,7 @@ public class SecPolicyImportServiceBean implements ISecPolicyImportService {
 
     private SecPolicy findRootPolicy() {
     	SecPolicy policy = QueryResultUtil.getFirst(SecPolicy.class
-    			, theManager.createQuery("from SecPolicy where key=:key")
+    			, manager.createQuery("from SecPolicy where key=:key")
     				.setParameter("key", "/")) ; 
         if (policy == null) {
             //throw new IllegalStateException("Нет корневой политики с идентификатором 1");
@@ -83,25 +82,25 @@ public class SecPolicyImportServiceBean implements ISecPolicyImportService {
             policy.setKey("/");
             policy.setName("ROOT");
             policy.setComment("Корневая политика безопасности");
-            theManager.persist(policy);
+            manager.persist(policy);
         }
         return policy;
     }
 
 //    private SecPolicy findPolicyByKey(String aStr) {
-//        List<SecPolicy> list = theManager.createQuery("from SecPolicy where key = :key").setParameter("key", aStr).getResultList() ;
+//        List<SecPolicy> list = manager.createQuery("from SecPolicy where key = :key").setParameter("key", aStr).getResultList() ;
 //        return list!=null && !list.isEmpty() ? list.iterator().next() : null ;
 //    }
 
 
     public void addToRole(long aRoleId, String aStr) {
         SecPolicy policy = importPolicy(aStr);
-        policy = theManager.find(SecPolicy.class, policy.getId()) ;
-        SecRole role = theManager.find(SecRole.class, aRoleId);
+        policy = manager.find(SecPolicy.class, policy.getId()) ;
+        SecRole role = manager.find(SecRole.class, aRoleId);
         if (!role.getSecPolicies().contains(policy)) {
 
             role.getSecPolicies().add(policy);
-            theManager.persist(role);
+            manager.persist(role);
         }
     }
 
@@ -112,16 +111,15 @@ public class SecPolicyImportServiceBean implements ISecPolicyImportService {
      */
     public void importPolicies(long aMonitorId, Collection<String> aPolicies, Map<String,String> aNames, Map<String,String> aComments) {
     	if(aNames==null) aNames = new CreateReplaceMapHelper().create() ;
-    	IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
+    	IMonitor monitor = monitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
     	try {
-    		monitor = theMonitorService.startMonitor(aMonitorId, "Импорт политик безопасности", aPolicies.size()) ;
+    		monitor = monitorService.startMonitor(aMonitorId, "Импорт политик безопасности", aPolicies.size()) ;
         	Map<String, SecPolicy> hash = new HashMap<>() ;
         	hash.put("/", findRootPolicy()) ;
         	for(String policy : aPolicies) {
         		if(monitor.isCancelled()) throw new IllegalStateException("Прервано пользователем") ;
         		monitor.advice(1) ;
         		monitor.setText("Импортируется "+policy);
-        		if (CAN_DEBUG) LOG.debug("importPolicies: policy = " + policy);
         		importPolicy(policy, hash, aNames, aComments) ;
         	}
         	monitor.finish(hash.get("/").getId()+"") ;
@@ -154,7 +152,7 @@ public class SecPolicyImportServiceBean implements ISecPolicyImportService {
     	SecPolicy policy = aHash.get(aFullPath) ;
     	if(policy==null) {
     		policy = QueryResultUtil.getFirst(SecPolicy.class
-    				, theManager.createQuery("from SecPolicy where key=:key and parentSecPolicy=:parent")
+    				, manager.createQuery("from SecPolicy where key=:key and parentSecPolicy=:parent")
     		  .setParameter("key", aKey)
     		  .setParameter("parent", aParentPolicy));
     		if(policy==null) {
@@ -163,7 +161,7 @@ public class SecPolicyImportServiceBean implements ISecPolicyImportService {
     			policy.setKey(aKey) ;
     			// name
     			policy.setParentSecPolicy(aParentPolicy) ;
-    			theManager.persist(policy) ;
+    			manager.persist(policy) ;
     			aHash.put(aFullPath, policy) ;
     		}
     	}
@@ -176,23 +174,21 @@ public class SecPolicyImportServiceBean implements ISecPolicyImportService {
 	}
 
 	public SecPolicy importPolicy(String aStr, Map<String, String> aNames) {
-        if (CAN_DEBUG) LOG.debug("importPolicy() " + aStr+" "+aNames);
         for (Map.Entry<String, String> entry : aNames.entrySet()) {
-            theMap.put(entry.getKey(), entry.getValue());
+            map.put(entry.getKey(), entry.getValue());
         }
         return importPolicy(aStr);
     }
 
     
     public SecPolicy importPolicy(String aStr) {
-        if (CAN_DEBUG) LOG.debug("importPolicy() " + aStr);
-        SecPolicy parentPolicy = findRootPolicy(); //theManager.find(SecPolicy.class, ROOT_POLICY_ID) ;
+        SecPolicy parentPolicy = findRootPolicy(); //manager.find(SecPolicy.class, ROOT_POLICY_ID) ;
         StringTokenizer st = new StringTokenizer(aStr, "/ ");
         while (st.hasMoreTokens()) {
             parentPolicy = createOrFindPolicy(parentPolicy, st.nextToken());
         }
-        theManager.flush();
-        theManager.clear();
+        manager.flush();
+        manager.clear();
         return parentPolicy;
     }
 
@@ -215,36 +211,30 @@ public class SecPolicyImportServiceBean implements ISecPolicyImportService {
             ret.setParentSecPolicy(aParentPolicy);
             ret.setKey(aKey);
             ret.setComment(aComment);
-            if (theMap.containsKey(aKey)) {
-                ret.setName(theMap.get(aKey));
+            if (map.containsKey(aKey)) {
+                ret.setName(map.get(aKey));
             } else {
                 ret.setName(aKey);
             }
-            theManager.persist(ret);
+            manager.persist(ret);
         } else {
-            if (CAN_DEBUG) LOG.debug("aKey = " + aKey);
-            if (theMap.containsKey(aKey)) {
-                ret.setName(theMap.get(aKey));
-                theManager.persist(ret);
+            if (map.containsKey(aKey)) {
+                ret.setName(map.get(aKey));
+                manager.persist(ret);
             }
         }
-        if (CAN_DEBUG) LOG.debug("ret = " + ret);
         return ret;
     }
 
     public void standartPolicyByParent(Long aParentPolicy) {
-    	SecPolicy parentpolicy = theManager.find(SecPolicy.class,aParentPolicy) ;
+    	SecPolicy parentpolicy = manager.find(SecPolicy.class,aParentPolicy) ;
     	createOrFindPolicy(parentpolicy,"View", "Просмотр объекта") ;
-    	if (CAN_DEBUG) LOG.debug("Создана политика View");
     	createOrFindPolicy(parentpolicy,"Delete","Удаление объекта") ;
-    	if (CAN_DEBUG) LOG.debug("Создана политика Delete");
     	createOrFindPolicy(parentpolicy,"Create","Создание объекта") ;
-    	if (CAN_DEBUG) LOG.debug("Создана политика Create");
     	createOrFindPolicy(parentpolicy,"Edit","Редактирование объекта") ;
-    	if (CAN_DEBUG) LOG.debug("Создана политика Edit");
     }
     
-    private @PersistenceContext EntityManager theManager;
-    private @EJB ILocalMonitorService theMonitorService ;
-    private Map<String, String> theMap = new CreateReplaceMapHelper().create();
+    private @PersistenceContext EntityManager manager;
+    private @EJB ILocalMonitorService monitorService ;
+    private final Map<String, String> map = new CreateReplaceMapHelper().create();
 }

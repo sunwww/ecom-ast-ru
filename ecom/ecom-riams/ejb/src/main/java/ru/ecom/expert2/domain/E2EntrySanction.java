@@ -1,5 +1,7 @@
 package ru.ecom.expert2.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -17,50 +19,38 @@ import javax.persistence.OneToOne;
         @AIndex(properties= {"dopCode"})
 
 })
+@Getter
+@Setter
 public class E2EntrySanction extends BaseEntity {
     /** Запись */
     @Comment("Запись")
     @ManyToOne
-    public E2Entry getEntry() {return theEntry;}
-    public void setEntry(E2Entry aEntry) {theEntry = aEntry;}
-    /** Запись */
-    private E2Entry theEntry ;
+    public E2Entry getEntry() {return entry;}
+    private E2Entry entry;
 
     /** Санкция */
     @Comment("Санкция")
     @OneToOne
-    public VocE2Sanction getSanction() {return theSanction;}
-    public void setSanction(VocE2Sanction aSanction) {theSanction = aSanction;}
-    /** Санкция */
-    private VocE2Sanction theSanction ;
+    public VocE2Sanction getSanction() {return sanction;}
+    private VocE2Sanction sanction;
 
     /** Доп. код */
-    @Comment("Доп. код")
-    public String getDopCode() {return theDopCode;}
-    public void setDopCode(String aDopCode) {theDopCode = aDopCode;}
-    /** Доп. код */
-    private String theDopCode ;
+    private String dopCode;
 
     public E2EntrySanction(){}
-    public E2EntrySanction (E2Entry aEntry, VocE2Sanction aSanction, String aDopCode, Boolean aIsMainDefect) {
-        theEntry=aEntry;theSanction=aSanction;theDopCode=aDopCode;theIsMainDefect=aIsMainDefect;
-    }
+
     public E2EntrySanction (E2Entry aEntry, VocE2Sanction aSanction, String aDopCode, Boolean aIsMainDefect, String aComment) {
-        theEntry=aEntry;theSanction=aSanction;theDopCode=aDopCode;theIsMainDefect=aIsMainDefect;theComment=aComment;
+        entry =aEntry;
+        sanction =aSanction;
+        dopCode =aDopCode;
+        isMainDefect =aIsMainDefect;
+        comment =aComment;
     }
 
     /** Примечание */
-    @Comment("Примечание")
-    public String getComment() {return theComment;}
-    public void setComment(String aComment) {theComment = aComment;}
-    /** Примечание */
-    private String theComment ;
+    private String comment;
 
     /** Главыный дефект случая */
-    @Comment("Главыный дефект случая")
-    public Boolean getIsMainDefect() {return theIsMainDefect;}
-    public void setIsMainDefect(Boolean aIsMainDefect) {theIsMainDefect = aIsMainDefect;}
-    /** Главыный дефект случая */
-    private Boolean theIsMainDefect ;
+    private Boolean isMainDefect;
 
 }

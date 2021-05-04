@@ -45,9 +45,9 @@ public class ApiRecordServiceBean implements IApiRecordService {
     private static final Logger LOG = Logger.getLogger(ApiRecordServiceBean.class);
     private static final String ANNUL_ERROR = "ANNUL_ERROR";
     @Resource
-    SessionContext theContext;
+    SessionContext context;
     private @PersistenceContext
-    EntityManager theManager;
+    EntityManager manager;
 
     private Patient getPatientByFIO(String aLastname, String aFirstname, String aMiddlename, Date aBirthdate) {
         return getPatientByGuidOrFio(aLastname, aFirstname, aMiddlename, aBirthdate);
@@ -64,12 +64,12 @@ public class ApiRecordServiceBean implements IApiRecordService {
             findSql.append(" and upper(middlename)=upper('").append(aMiddlename).append("')");
         }
         findSql.append(" and birthday=to_date('").append(DateFormat.formatToDate(aBirthdate)).append("','dd.MM.yyyy')");
-        List<BigInteger> list = theManager.createNativeQuery(findSql.toString()).getResultList();
+        List<BigInteger> list = manager.createNativeQuery(findSql.toString()).getResultList();
         if (list.size() != 1) {
             LOG.warn("search patient sql = " + findSql + " .found = " + list.size());
             return null;
         }
-        return theManager.find(Patient.class, list.get(0).longValue());
+        return manager.find(Patient.class, list.get(0).longValue());
     }
 
     /**
@@ -77,7 +77,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
      * Находим подходящее время
      */
     public String recordPromedPatient(String aPromedDoctorId, String aLastname, String aFirstname, String aMiddlename, Date aBirthdate, Date aCalendarDate, Time aCalendarTime, String aPhone) {
-        List<WorkFunction> workFunctions = theManager.createQuery("from WorkFunction where promedCodeWorkstaff=:promedCode")
+        List<WorkFunction> workFunctions = manager.createQuery("from WorkFunction where promedCodeWorkstaff=:promedCode")
                 .setParameter("promedCode", aPromedDoctorId).getResultList();
         if (workFunctions.size() != 1) {
             LOG.error("Невозможно записать пациента, т.к. по коду " + aPromedDoctorId + " найдено " + workFunctions.size() + " рабочих функций");
@@ -85,7 +85,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
         }
         WorkFunction doctor = workFunctions.get(0);
         LOG.info(DateFormat.formatToTime(aCalendarTime) + "=====");
-        List<BigInteger> workCalendarTimeList = theManager.createNativeQuery("select wct.id from workfunction wf" +
+        List<BigInteger> workCalendarTimeList = manager.createNativeQuery("select wct.id from workfunction wf" +
                 " left join workcalendar wc on wf.id = wc.workfunction_id" +
                 " left join workcalendarday wcd on wc.id = wcd.workcalendar_id" +
                 " left join workcalendartime wct on wcd.id = wct.workcalendarday_id" +
@@ -96,7 +96,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
                 " and wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')"
         ).setParameter("doctorId", doctor).setParameter("calendarDate", aCalendarDate).setParameter("timeFrom", aCalendarTime).getResultList();
         if (workCalendarTimeList.isEmpty()) {
-            workCalendarTimeList = theManager.createNativeQuery("select wct.id from workfunction wf" +
+            workCalendarTimeList = manager.createNativeQuery("select wct.id from workfunction wf" +
                     " left join workcalendar wc on wf.id = wc.workfunction_id" +
                     " left join workcalendarday wcd on wc.id = wcd.workcalendar_id" +
                     " left join workcalendartime wct on wcd.id = wct.workcalendarday_id" +
@@ -134,7 +134,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
         } catch (Exception e) {
             return getErrorJson("Проверьте дату рождения пациента", "TOO_YOUNG");
         }
-        WorkCalendarTime wct = theManager.find(WorkCalendarTime.class, aCalendarTimeId);
+        WorkCalendarTime wct = manager.find(WorkCalendarTime.class, aCalendarTimeId);
         if (wct == null) {
             LOG.error("Не найдено время");
             return getErrorJson("Неизвестная ошибка при записи, обратитесь к программистам", "SOME_UNKNOWN_ERROR");
@@ -156,7 +156,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
         }
         Date currentDate = new Date(currentDateLong);
         Time currentTime = new Time(currentDateLong);
-        String username = "ApiClient " + theContext.getCallerPrincipal().getName();
+        String username = "ApiClient " + context.getCallerPrincipal().getName();
         StringBuilder recordLogInfo = new StringBuilder().append("Записан пациент через API. Пользователь: ").append(username).append(", дата создания:")
                 .append(currentDate).append(" время:").append(currentTime).append(", WCT_ID").append(aCalendarTimeId).append(". Дата записи:").append(wct.getWorkCalendarDay().getCalendarDate())
                 .append(", время:").append(wct.getTimeFrom());
@@ -175,7 +175,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
             //visit.setWorkPlaceType();
             visit.setOrderWorkFunction(null);
             visit.setPatient(patient);
-            theManager.persist(visit);
+            manager.persist(visit);
             wct.setMedCase(visit);
             recordLogInfo.append("Пациент: ").append(patient.getPatientInfo()).append(". Создан визит c ИД:").append(visit.getId());
         } else { //Создаем предварительную запись
@@ -184,7 +184,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
             wct.setCreateTimePreRecord(currentTime);
             if (aRecordType != null) {
                 try {
-                    wct.setWayOfRecord((VocWayOfRecord) theManager.createQuery("from VocWayOfRecord where code=:way").setParameter("way", aRecordType).getResultList().get(0));
+                    wct.setWayOfRecord((VocWayOfRecord) manager.createQuery("from VocWayOfRecord where code=:way").setParameter("way", aRecordType).getResultList().get(0));
                 } catch (Exception e) {
                     wct.setWayOfRecord(null);
                     LOG.error("Не смог определить способ записи по коду: " + aRecordType);
@@ -202,8 +202,8 @@ public class ApiRecordServiceBean implements IApiRecordService {
             wct.setPatientComment(aComment);
             recordLogInfo.append(".Создана предварительная запись");
         }
-        theManager.persist(wct);
-        theManager.persist(new ApiRecordJournal(recordLogInfo.toString()));
+        manager.persist(wct);
+        manager.persist(new ApiRecordJournal(recordLogInfo.toString()));
         JSONObject ret = new JSONObject(createJson("successCalendarTimeId", wct.getId() + "", null, null));
         ret.put("patientInfo", patient != null ? patient.getPatientInfo() : prePatientInfo);
         ret.put("recordDate", DateFormat.formatToDate(wct.getWorkCalendarDay().getCalendarDate()));
@@ -238,7 +238,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
         } else {
             return getErrorJson("При аннулировании необходимо указать GUID или ФИО + ДР пациента", "WRONG_PAR");
         }
-        WorkCalendarTime wct = theManager.find(WorkCalendarTime.class, aCalendarTimeId);
+        WorkCalendarTime wct = manager.find(WorkCalendarTime.class, aCalendarTimeId);
         if (patient != null && wct != null && wct.getPrePatient() != null) { //Аннулируем если только точно нашли пациента!
             if (wct.getMedCase() != null && wct.getMedCase().getDateStart() != null) {
                 return getErrorJson("Ошибка аннулирования записи, визит уже оформлен", ANNUL_ERROR);
@@ -250,13 +250,13 @@ public class ApiRecordServiceBean implements IApiRecordService {
                     visit.setNoActuality(true);
                     visit.setVisitResult(null);
                     visit.setTimePlan(null);
-                    theManager.persist(visit);
+                    manager.persist(visit);
                     wct.setMedCase(null);
                 } else {
                     wct.setPrePatientInfo(null);
                     wct.setPrePatient(null);
                 }
-                theManager.persist(wct);
+                manager.persist(wct);
                 return new JSONObject().put("status", "ok").put("info", "Запись успешно аннулирована").put("calendarTimeId", "" + wct.getId()).toString();
             }
         } else {
@@ -274,28 +274,28 @@ public class ApiRecordServiceBean implements IApiRecordService {
         aFilename = saveFile(aFilename, base64String);
         if (aFilename != null) { //Файл сохранен в нужную папку, создаем "сущность"
             long currentDateLong = System.currentTimeMillis();
-            String username = "ApiClient " + theContext.getCallerPrincipal().getName();
+            String username = "ApiClient " + context.getCallerPrincipal().getName();
             ExternalDocument document = new ExternalDocument();
             document.setCreateDate(new Date(currentDateLong));
             document.setCreateTime(new Time(currentDateLong));
             document.setCreateUsername(username);
             document.setReferenceTo(aFilename);
             if (aPatientId != null) {
-                document.setPatient(theManager.find(Patient.class, aPatientId));
+                document.setPatient(manager.find(Patient.class, aPatientId));
             }
             if (aMedcaseId != null) {
-                document.setMedCase(theManager.find(MedCase.class, aMedcaseId));
+                document.setMedCase(manager.find(MedCase.class, aMedcaseId));
             }
             if (aCalendartimeId != null) {
-                document.setCalendarTime(theManager.find(WorkCalendarTime.class, aCalendartimeId));
+                document.setCalendarTime(manager.find(WorkCalendarTime.class, aCalendartimeId));
             }
             if (!StringUtil.isNullOrEmpty(aDocumentType)) {
-                List<VocExternalDocumentType> list = theManager.createQuery(" from VocExternalDocumentType where code=:code").setParameter("code", aDocumentType).getResultList();
+                List<VocExternalDocumentType> list = manager.createQuery(" from VocExternalDocumentType where code=:code").setParameter("code", aDocumentType).getResultList();
                 if (!list.isEmpty()) {
                     document.setType(list.get(0));
                 }
             }
-            theManager.persist(document);
+            manager.persist(document);
 
             return document.getId();
         }
@@ -385,7 +385,7 @@ public class ApiRecordServiceBean implements IApiRecordService {
 
         }
         if (sql != null) {
-            vocServiceStream = (VocServiceStream) theManager.createQuery("from VocServiceStream where " + sql).getSingleResult();
+            vocServiceStream = (VocServiceStream) manager.createQuery("from VocServiceStream where " + sql).getSingleResult();
         }
         return vocServiceStream;
     }

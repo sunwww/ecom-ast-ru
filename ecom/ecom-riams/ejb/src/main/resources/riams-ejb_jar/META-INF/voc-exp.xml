@@ -1,11 +1,4 @@
 <vocconfig>
-    <voc id='vocDiagnosticVisit' type='EntityVocService'>
-        <EntityVocService
-                entity='ru.ecom.expert2.domain.voc.VocDiagnosticVisit'
-                names='name, cost'
-                queried='code, name'
-        />
-    </voc>
     <voc id='vocE2BillStatus' type='EntityVocService'>
         <EntityVocService
                 entity='ru.ecom.expert2.domain.voc.VocE2BillStatus'
@@ -431,10 +424,6 @@
     </voc>
     <voc id='stacDataExportFileFormat' type='AllValueHelper'>
         <IAllValue>ru.ecom.expomc.ejb.services.registry.voc.ListDataExportFileFormatAllValue</IAllValue>
-    </voc>
-
-    <voc id='regExportType' type='AllValueHelper'>
-        <IAllValue>ru.ecom.expomc.ejb.services.registry.GroupAllValueVoc</IAllValue>
     </voc>
 
     <voc id='regExcelTemplate' type='AllValueHelper'>

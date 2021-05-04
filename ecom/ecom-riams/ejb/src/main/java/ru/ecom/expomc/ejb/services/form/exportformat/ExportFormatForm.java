@@ -5,6 +5,8 @@
 
 package ru.ecom.expomc.ejb.services.form.exportformat;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expomc.ejb.domain.format.ExportFormat;
@@ -23,36 +25,32 @@ import java.sql.ResultSet;
 @Parent(property = "document", parentForm= ImportDocumentForm.class)
 @WebTrail(comment = "Формат", nameProperties={"comment"}, view="entityParentEdit-exp_exportFormat.do")
 @EntityFormSecurityPrefix("/Policy/Exp/ExportFormat")
-
+@Getter
+@Setter
 public class ExportFormatForm extends IdEntityForm {
 
     /** Дата с которой начинает действовать формат */
     @Persist
     @Required
     @DateString
-    public String getActualDateFrom() { return theActualDateFrom ; }
-    public void setActualDateFrom(String aActualDateFrom) { theActualDateFrom = aActualDateFrom ; }
+    public String getActualDateFrom() { return actualDateFrom ; }
 
     /** Дата, до которой формат действует */
     @Persist
     @DateString
-    public String getActualDateTo() { return theActualDateTo ; }
-    public void setActualDateTo(String aActualDateTo) { theActualDateTo = aActualDateTo ; }
+    public String getActualDateTo() { return actualDateTo ; }
 
     /** Комментарий к формату */
     @Persist
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
+    public String getComment() { return comment ; }
 
     /** Отключен */
     @Persist
-    public boolean isDisabled() { return theDisabled ; }
-    public void setDisabled(boolean aDisabled) { theDisabled = aDisabled ; }
+    public boolean isDisabled() { return disabled ; }
 
     /** Документ */
     @Persist
-    public long getDocument() { return theDocument ; }
-    public void setDocument(long aDocument) { theDocument = aDocument ; }
+    public long getDocument() { return document ; }
 
 
     /** Запрос в формате SQL */
@@ -65,21 +63,18 @@ public class ExportFormatForm extends IdEntityForm {
     /** HQL запрос к базе данных, на основании которого формируется отчет */
     @Persist
     @Column(length = 5000)
-    public String getQuery() { return theQuery ; }
-    public void setQuery(String aQuery) { theQuery = aQuery ; }
+    public String getQuery() { return query ; }
 
 
     /** XSLT преобразование над XML, сформмированным на базе запроса */
     @Persist
     @Column(length = 15000)
-    public String getXslt() { return theXslt ; }
-    public void setXslt(String aXslt) { theXslt = aXslt ; }
+    public String getXslt() { return xslt ; }
 
 
     /** Адаптер вывода в выходной формат: reserved */
     @Persist
-    public String getOutputAdapter() { return theOutputAdapter ; }
-    public void setOutputAdapter(String aOutputAdapter) { theOutputAdapter = aOutputAdapter ; }
+    public String getOutputAdapter() { return outputAdapter ; }
 
     // Non-persistent
 
@@ -87,34 +82,34 @@ public class ExportFormatForm extends IdEntityForm {
     public ResultSet getResultSet() {
         return null ;
     }
-    //public void setResultSet(ResultSet aResultSet) { theResultSet = aResultSet ; }
+    //public void setResultSet(ResultSet aResultSet) { resultSet = aResultSet ; }
     /** Результат запроса */
-    //private ResultSet theResultSet ;
+    //private ResultSet resultSet ;
 
 
 
     /** Документ */
-    private long theDocument ;
+    private long document ;
     /** Отключен */
-    private boolean theDisabled ;
+    private boolean disabled ;
     /** Комментарий к формату */
-    private String theComment ;
+    private String comment ;
     /** Дата, до которой формат действует */
-    private String theActualDateTo ;
+    private String actualDateTo ;
     /** Дата с которой начинает действовать формат */
-    private String theActualDateFrom ;
+    private String actualDateFrom ;
 
     /** Запрос в формате SQL */
     private boolean theNative;
 
     /** HQL запрос к базе данных, на основании которого формируется отчет */
-    private String theQuery ;
+    private String query ;
 
     /** XSLT преобразование над XML, сформмированным на базе запроса */
-    private String theXslt ;
+    private String xslt ;
 
     /** Адаптер вывода в выходной формат: reserved */
-    private String theOutputAdapter ;
+    private String outputAdapter ;
 
 
 

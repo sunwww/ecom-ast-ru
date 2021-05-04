@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.psychiatry;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.psychiatry.PsychiaticObservation;
@@ -19,6 +20,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Динамика наблюдений", nameProperties= "id",list="entityParentList-psych_observation.do",listComment="список по пациенту", view="entityParentView-psych_observation.do")
 @Parent(property="lpuAreaPsychCareCard", parentForm=LpuAreaPsychCareCardForm.class,orderBy="startDate")
 @EntityFormSecurityPrefix("/Policy/Mis/Psychiatry/CareCard/PsychiaticObservation")
+@Setter
 public class PsychiatricObservationForm extends IdEntityForm {
 	/**
 	  * Карта обратившегося за психиатрической помощью
@@ -26,113 +28,85 @@ public class PsychiatricObservationForm extends IdEntityForm {
 	 @Comment("Карта обратившегося за психиатрической помощью")
 	 @Persist 
 	 public Long getCareCard() {
-	  return theCareCard;
-	 }
-	 public void setCareCard(Long aCareCard) {
-	  theCareCard = aCareCard;
+	  return careCard;
 	 }
 	 /**
 	  * Карта обратившегося за психиатрической помощью
 	  */
-	 private Long theCareCard;
+	 private Long careCard;
 	 /**
 	  * Диспансерная группа
 	  */
 	 @Comment("Диспансерная группа")
 	 @Persist
 	 public Long getDispensaryGroup() {
-	  return theDispensaryGroup;
-	 }
-	 public void setDispensaryGroup(Long aDispensaryGroup) {
-	  theDispensaryGroup = aDispensaryGroup;
+	  return dispensaryGroup;
 	 }
 	 /**
 	  * Диспансерная группа
 	  */
-	 private Long theDispensaryGroup;
+	 private Long dispensaryGroup;
 	 /**
 	  * Вид амбулаторного наблюдения
 	  */
 	 @Comment("Вид амбулаторного наблюдения")
 	 @Persist @Required
 	 public Long getAmbulatoryCare() {
-	  return theAmbulatoryCare;
-	 }
-	 public void setAmbulatoryCare(Long aAmbulatoryCare) {
-	  theAmbulatoryCare = aAmbulatoryCare;
+	  return ambulatoryCare;
 	 }
 	 /**
 	  * Вид амбулаторного наблюдения
 	  */
-	 private Long theAmbulatoryCare;
+	 private Long ambulatoryCare;
 	 /**
 	  * Дата начала наблюдения
 	  */
 	 @Comment("Дата начала наблюдения")
 	 @Persist @DateString @DoDateString @Required
 	 public String getStartDate() {
-	  return theStartDate;
-	 }
-	 public void setStartDate(String aStartDate) {
-	  theStartDate = aStartDate;
+	  return startDate;
 	 }
 	 /**
 	  * Дата начала наблюдения
 	  */
-	 private String theStartDate;
+	 private String startDate;
 	 /** Диспансерная группа (ИНФО) */
 	@Comment("Диспансерная группа (ИНФО)")
 	@Persist
 	public String getDispensaryGroupInfo() {
-		return theDispensaryGroupInfo;
-	}
-
-	public void setDispensaryGroupInfo(String aDispensaryGroupInfo) {
-		theDispensaryGroupInfo = aDispensaryGroupInfo;
+		return dispensaryGroupInfo;
 	}
 
 	/** Диспансерная группа (ИНФО) */
-	private String theDispensaryGroupInfo;
+	private String dispensaryGroupInfo;
 	
 	/** Вид амбулаторного наблюдения (ИНФО) */
 	@Comment("Вид амбулаторного наблюдения (ИНФО)")
 	@Persist
 	public String getAmbulatoryCareInfo() {
-		return theAmbulatoryCareInfo;
-	}
-
-	public void setAmbulatoryCareInfo(String aAmbulatoryCareInfo) {
-		theAmbulatoryCareInfo = aAmbulatoryCareInfo;
+		return ambulatoryCareInfo;
 	}
 
 	/** Вид амбулаторного наблюдения (ИНФО) */
-	private String theAmbulatoryCareInfo;
+	private String ambulatoryCareInfo;
 	 /** Дата окончания наблюдения */
 	@Comment("Дата окончания наблюдения")
 	@Persist @DoDateString @DateString
 	public String getFinishDate() {
-		return theFinishDate;
+		return finishDate;
 	}
-	
-	public void setFinishDate(String aFinishDate) {
-		theFinishDate = aFinishDate;
-	}
-	
+
 	/** Дата окончания наблюдения */
-	private String theFinishDate;
+	private String finishDate;
 	 /** Участок */
 	@Comment("Участок")
 	@Persist
 	public Long getLpuAreaPsychCareCard() {
-		return theLpuAreaPsychCareCard;
-	}
-
-	public void setLpuAreaPsychCareCard(Long aLpuAreaPsychCareCard) {
-		theLpuAreaPsychCareCard = aLpuAreaPsychCareCard;
+		return lpuAreaPsychCareCard;
 	}
 
 	/** Участок */
-	private Long theLpuAreaPsychCareCard;
+	private Long lpuAreaPsychCareCard;
 	
 	/** Статья уголовного кодекса */
 
@@ -140,14 +114,10 @@ public class PsychiatricObservationForm extends IdEntityForm {
 	@Comment("Причина снятия")
 	@Persist
 	public Long getStrikeOffReason() {
-		return theStrikeOffReason;
-	}
-
-	public void setStrikeOffReason(Long aStrikeOffReason) {
-		theStrikeOffReason = aStrikeOffReason;
+		return strikeOffReason;
 	}
 
 	/** Причина снятия */
-	private Long theStrikeOffReason;
+	private Long strikeOffReason;
 
 }

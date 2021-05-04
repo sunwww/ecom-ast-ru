@@ -1,28 +1,21 @@
 package ru.ecom.diary.ejb.service.protocol;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class ParsedPdfInfoResult {
 	/** Код показателя */
-	public String getCode() {return theCode;}
-	public void setCode(String aCode) {theCode = aCode;}
-	/** Код показателя */
-	private String theCode;
+	private String code;
 
 	/** Значение показателя */
-	public String getValue() {return theValue;}
-	public void setValue(String aValue) {theValue = aValue;}
-	/** Значение показателя */
-	private String theValue;
+	private String value;
 	
-	/** Единица измерения */
-	public String getMeasurementUnit() {return theMeasurementUnit;}
-	public void setMeasurementUnit(String aMeasurementUnit) {theMeasurementUnit = aMeasurementUnit;}
 	/** Едицица измерения */
-	private String theMeasurementUnit;
+	private String measurementUnit;
 	
 	/** Референтный интервал */
-	public String getRefInterval() {return theRefInterval;}
-	public void setRefInterval(String aRefInterval) {theRefInterval = aRefInterval;}
-	/** Референтный интервал */
-	private String theRefInterval;
+	private String refInterval;
 	
 }

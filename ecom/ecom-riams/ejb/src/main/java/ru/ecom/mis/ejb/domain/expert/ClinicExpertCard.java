@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -37,356 +39,196 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 ,@AIndex(properties={"patient"})
 ,@AIndex(properties={"expertDate"})
 })
+@Getter
+@Setter
 public class ClinicExpertCard extends BaseEntity {
 
 	/** Описание состояния здоровья пациента */
 	@Comment("Описание состояния здоровья пациента")
 	@Column(length= ColumnConstants.TEXT_MAXLENGHT)
-	public String getPatientHealthInfo() {return thePatientHealthInfo;}
-	public void setPatientHealthInfo(String aPatientHealthInfo) {thePatientHealthInfo = aPatientHealthInfo;}
+	public String getPatientHealthInfo() {return patientHealthInfo;}
 	/** Описание состояния здоровья пациента */
-	private String thePatientHealthInfo ;
+	private String patientHealthInfo ;
 
 	/** Лист нетрудоспособности выданный другим ЛПУ */
-	@Comment("Лист нетрудоспособности выданный другим ЛПУ")
-	public String getAnotherDisabilityNumber() {return theAnotherDisabilityNumber;}
-	public void setAnotherDisabilityNumber(String aAnotherDisabilityNumber) {theAnotherDisabilityNumber = aAnotherDisabilityNumber;}
-	/** Лист нетрудоспособности выданный другим ЛПУ */
-	private String theAnotherDisabilityNumber ;
+	private String anotherDisabilityNumber ;
 
 	/** СМО */
 	@Comment("СМО")
 	@OneToOne
-	public MedCase getMedCase() {return theMedCase;}
-	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
+	public MedCase getMedCase() {return medCase;}
 
-	/** Профессия */
-	@Comment("Профессия")
-	public String getProfession() {return theProfession;}
-	public void setProfession(String aProfession) {theProfession = aProfession;}
 
 	/** Характеристика случая экспертизы */
 	@Comment("Характеристика случая экспертизы")
 	@OneToOne
-	public VocExpertPatternCase getPatternCase() {return thePatternCase;}
-	public void setPatternCase(VocExpertPatternCase aPatternCase) {thePatternCase = aPatternCase;}
+	public VocExpertPatternCase getPatternCase() {return patternCase;}
 
 	/** Листок нетрудоспособности */
 	@Comment("Листок нетрудоспособности")
 	@OneToOne
-	public DisabilityDocument getDisabilityDocument() {return theDisabilityDocument;}
-	public void setDisabilityDocument(DisabilityDocument aDisabilityDocument) {theDisabilityDocument = aDisabilityDocument;}
+	public DisabilityDocument getDisabilityDocument() {return disabilityDocument;}
 
 	/** Вид экспертизы */
 	@Comment("Вид экспертизы")
 	@OneToOne
-	public VocExpertModeCase getModeCase() {return theModeCase;}
-	public void setModeCase(VocExpertModeCase aModeCase) {theModeCase = aModeCase;}
+	public VocExpertModeCase getModeCase() {return modeCase;}
 
 	/** Предмет экспертизы */
 	@Comment("Предмет экспертизы")
 	@OneToOne
-	public VocExpertSubject getSubjectCase() {return theSubjectCase;}
-	public void setSubjectCase(VocExpertSubject aSubjectCase) {theSubjectCase = aSubjectCase;}
+	public VocExpertSubject getSubjectCase() {return subjectCase;}
 
 	/** Отклонение от стандартов */
 	@Comment("Отклонение от стандартов")
 	@OneToOne
-	public VocExpertDeviationStandards getDeviationStandards() {return theDeviationStandards;}
-	public void setDeviationStandards(VocExpertDeviationStandards aDeviationStandards) {theDeviationStandards = aDeviationStandards;}
+	public VocExpertDeviationStandards getDeviationStandards() {return deviationStandards;}
 
-	/** Текст оклонения от стандартов */
-	@Comment("Текст оклонения от стандартов")
-	public String getDeviationStandardsText() {return theDeviationStandardsText;}
-	public void setDeviationStandardsText(String aDeviationStandardsText) {theDeviationStandardsText = aDeviationStandardsText;}
-
-	/** Дефекты */
-	@Comment("Дефекты")
-	public String getDefects() {return theDefects;}
-	public void setDefects(String aDefects) {theDefects = aDefects;}
-
-	/** Достижение результата этапа */
-	@Comment("Достижение результата этапа")
-	public String getResultStep() {return theResultStep;}
-	public void setResultStep(String aResultStep) {theResultStep = aResultStep;}
 
 	/** Обоснование заключения */
 	@Comment("Обоснование заключения")
 	@OneToOne
-	public VocExpertConclusion getConclusion() {return theConclusion;}
-	public void setConclusion(VocExpertConclusion aConclusion) {theConclusion = aConclusion;}
-
-	/** Продление */
-	@Comment("Продление")
-	public Date getConclusionDate() {return theConclusionDate;}
-	public void setConclusionDate(Date aConclusionDate) {theConclusionDate = aConclusionDate;}
-
-	/** Дата направления в бюро МСЭ */
-	@Comment("Дата направления в бюро МСЭ")
-	public Date getOrderHADate() {return theOrderHADate;}
-	public void setOrderHADate(Date aOrderDate) {theOrderHADate = aOrderDate;}
-
-	/** Заключение МСЭ */
-	@Comment("Заключение МСЭ")
-	public String getConclusionHA() {return theConclusionHA;}
-	public void setConclusionHA(String aConclusionHealthAssessment) {theConclusionHA = aConclusionHealthAssessment;}
-
-	/** Дата получения заключения МСЭ */
-	@Comment("Дата получения заключения МСЭ")
-	public Date getReceiveHADate() {return theReceiveHADate;}
-	public void setReceiveHADate(Date aReceiveHADate) {theReceiveHADate = aReceiveHADate;}
-
-	/** Дополнительная информация по заключению */
-	@Comment("Дополнительная информация по заключению")
-	public String getAdditionInfo() {return theAdditionInfo;}
-	public void setAdditionInfo(String aAdditionInfo) {theAdditionInfo = aAdditionInfo;}
-	
-	/** Дополнительная информация по МСЭ */
-	@Comment("Дополнительная информация по МСЭ")
-	public String getAdditionInfoHA() {return theAdditionInfoHA;}
-	public void setAdditionInfoHA(String aAdditionInfoHA) {theAdditionInfoHA = aAdditionInfoHA;}
+	public VocExpertConclusion getConclusion() {return conclusion;}
 
 	/** Состав экспертов */
 	@Comment("Состав экспертов")
 	@OneToOne
-	public VocExpertComposition getExpComposition() {return theExpComposition;}
-	public void setExpComposition(VocExpertComposition aExpComposition) {theExpComposition = aExpComposition;}
+	public VocExpertComposition getExpComposition() {return expComposition;}
 
 	/** Статус пациента */
 	@Comment("Статус пациента")
 	@OneToOne
-	public VocExpertPatientStatus getPatientStatus() {return thePatientStatus;}
-	public void setPatientStatus(VocExpertPatientStatus aPatientStatus) {thePatientStatus = aPatientStatus;}
-
-	/** Причина задержки */
-	@Comment("Причина задержки")
-	public String getDelayReason() {return theDelayReason;}
-	public void setDelayReason(String aDelayReason) {theDelayReason = aDelayReason;}
+	public VocExpertPatientStatus getPatientStatus() {return patientStatus;}
 
 	/** Причина направления */
 	@Comment("Причина направления")
 	@OneToOne
-	public VocExpertReason getReasonDirect() {return theReasonDirect;}
-	public void setReasonDirect(VocExpertReason aReasonDirect) {theReasonDirect = aReasonDirect;}
-
-	/** Лечение на момент подачи */
-	@Comment("Лечение на момент подачи")
-	public String getTreatmentCurrent() {return theTreatmentCurrent;}
-	public void setTreatmentCurrent(String aTreatmentCurrent) {theTreatmentCurrent = aTreatmentCurrent;}
-
-	/** Срок предполагаемого лечения */
-	@Comment("Срок предполагаемого лечения")
-	public Date getPreFinishDate() {return thePreFinishDate;}
-	public void setPreFinishDate(Date aPreFinishDate) {thePreFinishDate = aPreFinishDate;}
+	public VocExpertReason getReasonDirect() {return reasonDirect;}
 
 	/** Заключение. Направляется... */
 	@Comment("Заключение. Направляется...")
 	@OneToOne
-	public VocExpertConclusionSent getConclusionSent() {return theConclusionSent;}
-	public void setConclusionSent(VocExpertConclusionSent aConclusionSent) {theConclusionSent = aConclusionSent;}
-
-	/** Заключение дополнение */
-	@Comment("Заключение дополнение")
-	public String getConclusionSentAdd() {return theConclusionSentAdd;}
-	public void setConclusionSentAdd(String aConclusionSentAdd) {theConclusionSentAdd = aConclusionSentAdd;}
+	public VocExpertConclusionSent getConclusionSent() {return conclusionSent;}
 
 	/** Причина дополнение */
-	@Comment("Причина дополнение")
-	public String getReasonAdd() {return theReasonAdd;}
-	public void setReasonAdd(String aReasonAdd) {theReasonAdd = aReasonAdd;}
-
-	/** Причина дополнение */
-	private String theReasonAdd;
+	private String reasonAdd;
 	/** Заключение дополнение */
-	private String theConclusionSentAdd;
+	private String conclusionSentAdd;
 	/** Заключение. Направляется... */
-	private VocExpertConclusionSent theConclusionSent;
+	private VocExpertConclusionSent conclusionSent;
 	/** Срок предполагаемого лечения */
-	private Date thePreFinishDate;
+	private Date preFinishDate;
 	/** Лечение на момент подачи */
-	private String theTreatmentCurrent;
+	private String treatmentCurrent;
 	/** Причина направления */
-	private VocExpertReason theReasonDirect;
+	private VocExpertReason reasonDirect;
 	/** Причина задержки */
-	private String theDelayReason;
+	private String delayReason;
 	/** Статус пациента */
-	private VocExpertPatientStatus thePatientStatus;
+	private VocExpertPatientStatus patientStatus;
 	/** Состав экспертов */
-	private VocExpertComposition theExpComposition;
+	private VocExpertComposition expComposition;
 	/** Дополнительная информация по МСЭ */
-	private String theAdditionInfoHA;
+	private String additionInfoHA;
 	/** Дополнительная информация по заключению */
-	private String theAdditionInfo;
+	private String additionInfo;
 	/** Дата получения заключения МСЭ */
-	private Date theReceiveHADate;
+	private Date receiveHADate;
 	/** Заключение МСЭ */
-	private String theConclusionHA;
+	private String conclusionHA;
 	/** Дата направления в бюро МСЭ */
-	private Date theOrderHADate;
+	private Date orderHADate;
 	/** Продление */
-	private Date theConclusionDate;
+	private Date conclusionDate;
 	/** Обоснование заключения */
-	private VocExpertConclusion theConclusion;
+	private VocExpertConclusion conclusion;
 	/** Достижение результата этапа */
-	private String theResultStep;
+	private String resultStep;
 	/** Дефекты */
-	private String theDefects;
+	private String defects;
 	/** Текст оклонения от стандартов */
-	private String theDeviationStandardsText;
+	private String deviationStandardsText;
 	/** Отклонение от стандартов */
-	private VocExpertDeviationStandards theDeviationStandards;
+	private VocExpertDeviationStandards deviationStandards;
 	/** Предмет экспертизы */
-	private VocExpertSubject theSubjectCase;
+	private VocExpertSubject subjectCase;
 	/** Вид экспертизы */
-	private VocExpertModeCase theModeCase;
+	private VocExpertModeCase modeCase;
 	/** Листок нетрудоспособности */
-	private DisabilityDocument theDisabilityDocument;
+	private DisabilityDocument disabilityDocument;
 	/** Характеристика случая экспертизы */
-	private VocExpertPatternCase thePatternCase;
+	private VocExpertPatternCase patternCase;
 	/** Профессия */
-	private String theProfession;
+	private String profession;
 	/** СМО */
-	private MedCase theMedCase;
+	private MedCase medCase;
 	
 	/** Пациент */
 	@Comment("Пациент")
 	@OneToOne
-	public Patient getPatient() {return thePatient;}
-	public void setPatient(Patient aPatient) {thePatient = aPatient;}
+	public Patient getPatient() {return patient;}
 
 	/** Пациент */
-	private Patient thePatient;
+	private Patient patient;
 	
-	/** Дата экспертизы */
-	@Comment("Дата экспертизы")
-	public Date getExpertDate() {return theExpertDate;}
-	public void setExpertDate(Date aExpertDate) {theExpertDate = aExpertDate;}
-
-	/** Дата направления */
-	@Comment("Дата направления")
-	public Date getOrderDate() {return theOrderDate;}
-	public void setOrderDate(Date aOrderDate) {theOrderDate = aOrderDate;}
-
-	/** Дата выхода на нетрудосп. */
-	@Comment("Дата выхода на нетрудосп.")
-	public Date getDisabilityDate() {return theDisabilityDate;}
-	public void setDisabilityDate(Date aDisabilityDate) {theDisabilityDate = aDisabilityDate;}
-
 	/** Диагноз осн. */
 	@Comment("Диагноз осн.")
 	@OneToOne
-	public VocIdc10 getMainDiagnosis() {return theMainDiagnosis;}
-	public void setMainDiagnosis(VocIdc10 aMainDiagnosis) {theMainDiagnosis = aMainDiagnosis;}
+	public VocIdc10 getMainDiagnosis() {return mainDiagnosis;}
 
 	/** Обоснование направления */
 	@Comment("Обоснование направления")
 	@OneToOne
-	public VocExpertOrderConclusion getOrderConclusion() {return theOrderConclusion;}
-	public void setOrderConclusion(VocExpertOrderConclusion aOrderConclusion) {theOrderConclusion = aOrderConclusion;}
-
-	/** Диагноз сопутствующий */
-	@Comment("Диагноз сопутствующий")
-	public String getConcomitantDiagnosis() {return theConcomitantDiagnosis;}
-	public void setConcomitantDiagnosis(String aConcomitantDiagnosis) {theConcomitantDiagnosis = aConcomitantDiagnosis;}
-
-	/** Диагноз осложнение */
-	@Comment("Диагноз осложнение")
-	public String getComplicationDiagnosis() {return theComplicationDiagnosis;}
-	public void setComplicationDiagnosis(String aComplicationDiagnosis) {theComplicationDiagnosis = aComplicationDiagnosis;}
+	public VocExpertOrderConclusion getOrderConclusion() {return orderConclusion;}
 
 	/** Направивший специалист */
 	@Comment("Направивший специалист")
 	@OneToOne
-	public WorkFunction getOrderFunction() {return theOrderFunction;}
-	public void setOrderFunction(WorkFunction aOrderFunction) {theOrderFunction = aOrderFunction;}
+	public WorkFunction getOrderFunction() {return orderFunction;}
 
 	/** Направившее ЛПУ */
 	@Comment("Направившее ЛПУ")
 	@OneToOne
-	public MisLpu getOrderLpu() {return theOrderLpu;}
-	public void setOrderLpu(MisLpu aOrderLpu) {theOrderLpu = aOrderLpu;}
+	public MisLpu getOrderLpu() {return orderLpu;}
 
 	/** Направившее ЛПУ */
-	private MisLpu theOrderLpu;
+	private MisLpu orderLpu;
 	/** Направивший специалист */
-	private WorkFunction theOrderFunction;
+	private WorkFunction orderFunction;
 	/** Диагноз осложнение */
-	private String theComplicationDiagnosis;
+	private String complicationDiagnosis;
 	/** Диагноз сопутствующий */
-	private String theConcomitantDiagnosis;
+	private String concomitantDiagnosis;
 	/** Обоснование направления */
-	private VocExpertOrderConclusion theOrderConclusion;
+	private VocExpertOrderConclusion orderConclusion;
 	/** Диагноз осн. */
-	private VocIdc10 theMainDiagnosis;
+	private VocIdc10 mainDiagnosis;
 	/** Дата выхода на нетрудосп. */
-	private Date theDisabilityDate;
+	private Date disabilityDate;
 	/** Дата направления */
-	private Date theOrderDate;
+	private Date orderDate;
 	/** Дата экспертизы */
-	private Date theExpertDate;
-
-	
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-	
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	/** Время редактрования */
-	@Comment("Время редактрования")
-	public Time getEditTime() {return theEditTime;}
-	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-	/** Пользователь, который создал запись */
-	@Comment("Пользователь, который создал запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	private Date expertDate;
 	/** Пользователь, который последний редактировал запись */
-	@Comment("Пользователь, который последний редактировал запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-
-	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private Time theEditTime;
+	private Time editTime;
 	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 	/** Дата создания */
-	private Date theCreateDate;
-	
+	private Date createDate;
 	/** Замечания */
-	@Comment("Замечания")
-	public String getNotes() {return theNotes;}
-	public void setNotes(String aNotes) {theNotes = aNotes;}
-
-	/** Замечания */
-	private String theNotes;
-	
+	private String notes;
 	/** ТИп ВК */
 	@Comment("ТИп ВК")
 	@OneToOne
-	public VocExpertType getType() {return theType;}
-	public void setType(VocExpertType aType) {theType = aType;}
-
+	public VocExpertType getType() {return type;}
 	/** ТИп ВК */
-	private VocExpertType theType;
+	private VocExpertType type;
 	/** Порядковый номер в журнале */
-	@Comment("Порядковый номер в журнале")
-	public String getNumberInJournal() {return theNumberInJournal;}
-	public void setNumberInJournal(String aNumberInJournal) {theNumberInJournal = aNumberInJournal;}
-
-	/** Порядковый номер в журнале */
-	private String theNumberInJournal;
+	private String numberInJournal;
 }

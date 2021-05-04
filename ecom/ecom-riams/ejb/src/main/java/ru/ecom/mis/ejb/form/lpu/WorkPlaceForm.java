@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.lpu;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -20,58 +21,52 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormSecurityPrefix("/Policy/Mis/WorkPlace")
 @Subclasses(value = { ConsultingRoomForm.class, HospitalRoomForm.class
 		,OperatingRoomForm.class,BuildingPlaceForm.class, FloorBuildingForm.class,UserComputerForm.class })
+@Setter
 public class WorkPlaceForm extends IdEntityForm {
 	/** Название */
 	@Comment("Название")
 	@Persist @Required
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
+	public String getName() {return name;}
 
 	/** Лечебное учреждение */
 	@Comment("Лечебное учреждение")
 	@Persist
-	public Long getLpu() {return theLpu;}
-	public void setLpu(Long aLpu) {theLpu = aLpu;}
+	public Long getLpu() {return lpu;}
 
 	/** Родитель */
 	@Comment("Родитель")
 	@Persist
-	public Long getParent() {return theParent;}
-	public void setParent(Long aParent) {theParent = aParent;}
-
+	public Long getParent() {return parent;}
 
 	/** Комментарий */
 	@Comment("Комментарий")
 	@Persist
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
+	public String getComment() {return comment;}
 
 	/** Не актуален */
 	@Comment("Неактуален")
 	@Persist
-	public Boolean getIsNoActuality() {return theIsNoActuality;}
-	public void setIsNoActuality(Boolean aIsNoActuality) {theIsNoActuality = aIsNoActuality;}
+	public Boolean getIsNoActuality() {return isNoActuality;}
 
 	/**
 	 * Номер телефона
 	 */
 	@Comment("Номер телефона")
 	@Persist
-	public String getPhoneNumber() {return thePhoneNumber;}
-	public void setPhoneNumber(String aPhoneNumber) {thePhoneNumber = aPhoneNumber;}
+	public String getPhoneNumber() {return phoneNumber;}
 	/**
 	 * Номер телефона
 	 */
-	private String thePhoneNumber;
+	private String phoneNumber;
 	/** Неактуален */
-	private Boolean theIsNoActuality;
+	private Boolean isNoActuality;
 	/** Комментарий */
-	private String theComment;
+	private String comment;
 	/** Родитель */
-	private Long theParent;
+	private Long parent;
 	/** Лечебное учреждение */
-	private Long theLpu;
+	private Long lpu;
 	/** Название */
-	private String theName;
+	private String name;
 
 }

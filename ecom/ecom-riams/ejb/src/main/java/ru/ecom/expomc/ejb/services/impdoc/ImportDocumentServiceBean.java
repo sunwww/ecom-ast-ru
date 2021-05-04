@@ -15,11 +15,11 @@ import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
 public class ImportDocumentServiceBean  implements IImportDocumentService {
 
 	public int deleteAllValues(long aDocumentId) {
-		ImportDocument doc = theManager.find(ImportDocument.class, aDocumentId) ;
+		ImportDocument doc = manager.find(ImportDocument.class, aDocumentId) ;
 		try {
 			Class clazz = ClassLoaderHelper.getInstance().loadClass(doc.getEntityClassName()) ;
 			String entityName = EntityHelper.getInstance().getEntityName(clazz) ;
-			return theManager.createQuery("delete from "+entityName).executeUpdate() ;
+			return manager.createQuery("delete from "+entityName).executeUpdate() ;
 		} catch (Exception e) {
 			throw new IllegalStateException("Ошибка удаления "+doc.getKeyName()+": "+e.getMessage(), e) ;
 		}
@@ -27,7 +27,7 @@ public class ImportDocumentServiceBean  implements IImportDocumentService {
 	}
 	
 	
-    private @PersistenceContext EntityManager theManager;
+    private @PersistenceContext EntityManager manager;
 	
 
 }

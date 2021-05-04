@@ -26,8 +26,8 @@ public class BeanShellCheck implements ICheck {
     	Interpreter interpreter = new Interpreter() ;
     	try {
     		interpreter.set("ctx", aContext) ;
-    		interpreter.set("util", theUtil) ;
-    		interpreter.eval(theSource);
+    		interpreter.set("util", util) ;
+    		interpreter.eval(source);
     		CheckResult result = (CheckResult) interpreter.get("result") ;
     		if(result==null) {
     			Boolean accepted = (Boolean) interpreter.get("accepted") ;
@@ -37,7 +37,7 @@ public class BeanShellCheck implements ICheck {
     		}
     		return result ;
     	} catch (Exception e) {
-    		throw new CheckException("Ошибка BeanShell\n"+theSource,e) ;
+    		throw new CheckException("Ошибка BeanShell\n"+source,e) ;
     	}
     }
 
@@ -67,12 +67,12 @@ public class BeanShellCheck implements ICheck {
     
     /** Свойство */
     @Comment("Свойство")
-    public String getSource() { return theSource ; }
-    public void setSource(String aSource) { theSource = aSource ; }
+    public String getSource() { return source ; }
+    public void setSource(String aSource) { source = aSource ; }
 
     /** Свойство */
-    private String theSource ;
+    private String source ;
     
     @Transient
-    private final Util theUtil = new Util() ;
+    private final Util util = new Util() ;
 }

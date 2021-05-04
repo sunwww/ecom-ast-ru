@@ -1149,28 +1149,33 @@ order by wcd.calendarDate, wct.timeFrom" />
   </script>
   </msh:ifFormTypeIsCreate>
   <msh:ifFormTypeIsNotView formName="mis_patientForm">
-    <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
-    <script type="text/javascript">// <![CDATA[//
+      <script type="text/javascript" src="./dwr/interface/PatientService.js"></script>
+      <script type="text/javascript">
 
-    	var oldaction = document.forms[0].action ;
-    	document.forms[0].action = 'javascript:isExistPatient()';
-			eventutil.addEventListener($('birthday'),'change',function(){updateAge() ;}) ;
-			eventutil.addEventListener($('firstname'),'change',function(){getSexByName();}) ;
-		if ($('passportDivision')) {
-			passportDivisionAutocomplete.addOnChangeCallback(function() {
-				if ((+$('passportDivision').value)>0) {
-					var divName = $('passportDivisionName').value ;
-					var ind = divName.indexOf(' ') ;
-	            	$('passportCodeDivision').value = divName.substring(0,ind) ;
-	            	$('passportWhomIssued').value = divName.substring(ind+1) ;
-				}
-            }) ;
-		}
-    	function updateAge() {
-    		PatientService.getAge($('birthday').value, {
-        		callback: function(aResult) {
-       				$('ageReadOnly').value = aResult ;
-        		}
+          var oldaction = document.forms[0].action;
+          document.forms[0].action = 'javascript:isExistPatient()';
+          eventutil.addEventListener($('birthday'), 'change', function () {
+              updateAge();
+          });
+          eventutil.addEventListener($('firstname'), 'change', function () {
+              getSexByName();
+          });
+          if ($('passportDivision')) {
+              passportDivisionAutocomplete.addOnChangeCallback(function () {
+                  if ((+$('passportDivision').value) > 0) {
+                      var divName = $('passportDivisionName').value;
+                      var ind = divName.indexOf(' ');
+                      $('passportCodeDivision').value = divName.substring(0, ind);
+                      $('passportWhomIssued').value = divName.substring(ind + 1);
+                  }
+              });
+          }
+
+          function updateAge() {
+              PatientService.getAge($('birthday').value, {
+                  callback: function (aResult) {
+                      $('ageReadOnly').value = aResult;
+                  }
         	});
     	}
         getSexByName(); //проверим при открытии редактирования
@@ -1181,11 +1186,11 @@ order by wcd.calendarDate, wct.timeFrom" />
                         if (ret!=null && ret!='null') {
                             ret = JSON.parse(ret);
                             if (!$('sex').value) {
-                                $('sex').value = ret.theId;
-                                $('sexName').value = ret.theName;
-                            } else if ($('sex').value != ret.theId && confirm('Пол человека, возможно, указан неверно. Заменить пол на '+ret.theName+"? ")) {
-                                $('sex').value = ret.theId;
-                                $('sexName').value = ret.theName;
+                                $('sex').value = ret.id;
+                                $('sexName').value = ret.name;
+                            } else if ($('sex').value != ret.id && confirm('Пол человека, возможно, указан неверно. Заменить пол на '+ret.theName+"? ")) {
+                                $('sex').value = ret.id;
+                                $('sexName').value = ret.name;
                             }
                         }
                     }

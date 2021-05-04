@@ -6,20 +6,20 @@ package ru.ecom.mis.ejb.service.bypass;
  */
 public class QueryResponseProperty {
     public QueryResponseProperty(String aProperty, String aTitle) {
-        theProperty = aProperty ;
-        theTitle = aTitle ;
+        property = aProperty ;
+        title = aTitle ;
     }
 
     /** Свойство */
-    public String getProperty() { return theProperty ; }
-    public void setProperty(String aProperty) { theProperty = aProperty ; }
+    public String getProperty() { return property ; }
+    public void setProperty(String aProperty) { property = aProperty ; }
 
     /** Название */
-    public String getTitle() { return theTitle ; }
-    public void setTitle(String aTitle) { theTitle = aTitle ; }
+    public String getTitle() { return title ; }
+    public void setTitle(String aTitle) { title = aTitle ; }
 
     /** Название */
-    private String theTitle ;
+    private String title ;
     /** Свойство */
-    private String theProperty ;
+    private String property ;
 }

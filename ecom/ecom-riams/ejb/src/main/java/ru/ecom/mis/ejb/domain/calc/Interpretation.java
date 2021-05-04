@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.calc;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,23 +18,18 @@ import javax.persistence.Table;
 @Entity
 @Table(schema="SQLUser")
 @EntityListeners(DeleteListener.class)
+@Getter
+@Setter
 public class Interpretation extends BaseEntity {
     /** Калькулятор */
     @Comment("Калькулятор")
     @OneToOne
-    public Calculator getCalculator() {return theCalculator;}
-    public void setCalculator(Calculator aCalculator) {theCalculator = aCalculator;	}
-    private Calculator theCalculator;
+    public Calculator getCalculator() {return calculator;}
+    private Calculator calculator;
 
     /** Значение */
-    @Comment("Значение")
-    public String getValue() {return theValue;}
-    public void setValue(String aValue) {theValue = aValue;	}
-    private String theValue;
+    private String value;
 
     /** Результат */
-    @Comment("Результат")
-    public String getResult() {return theResult;}
-    public void setResult(String aResult) {theResult = aResult;}
-    private String theResult;
+    private String result;
 }

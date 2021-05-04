@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
@@ -26,36 +27,31 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @ACreateInterceptors(
 		@AEntityFormInterceptor(WorkCalendarHospitalBedSave.class)
 )
+@Setter
 public class WorkCalendarHospitalBedByVisitForm extends WorkCalendarHospitalBedForm {
 
 	/** Отделение */
 	@Comment("Отделение")
 	@Persist @Required
-	public Long getDepartment() {return theDepartment;}
-	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
-	private Long theDepartment;
+	public Long getDepartment() {return department;}
+	private Long department;
 
 	/** Показания для госпитализации */
 	@Comment("Показания для госпитализации")
 	@Persist
-	public Long getIndicationToHosp() {return theIndicationToHosp;}
-	public void setIndicationToHosp(Long aIndicationToHosp) {theIndicationToHosp = aIndicationToHosp;}
+	public Long getIndicationToHosp() {return indicationToHosp;}
 	/** Показания для госпитализации */
-	private Long theIndicationToHosp;
+	private Long indicationToHosp;
 	
 	/** Палата */
 	@Comment("Палата")
 	@Persist 
-	public Long getHospitalRoom() {return theHospitalRoom;}
-	public void setHospitalRoom(Long aHospitalRoom) {theHospitalRoom = aHospitalRoom;}
+	public Long getHospitalRoom() {return hospitalRoom;}
 	/** Палата */
-	private Long theHospitalRoom;
+	private Long hospitalRoom;
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@Persist @Required
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
-
-	/** Рабочая функция */
-	private Long theWorkFunction;
+	public Long getWorkFunction() {return workFunction;}
+	private Long workFunction;
 }

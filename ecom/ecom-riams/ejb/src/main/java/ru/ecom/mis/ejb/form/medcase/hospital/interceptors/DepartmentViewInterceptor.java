@@ -26,8 +26,8 @@ import java.util.List;
 
 public class DepartmentViewInterceptor implements IFormInterceptor {
 
-    private final EjbInjection theEjbInjection = EjbInjection.getInstance();
-    EjbEcomConfig theEcomConfig = EjbEcomConfig.getInstance();
+    private final EjbInjection ejbInjection = EjbInjection.getInstance();
+    EjbEcomConfig ecomConfig = EjbEcomConfig.getInstance();
 
     public static String getDiagnosis(EntityManager aManager, Long aMedCase, String aRegistrationType, String aPriority) {
         StringBuilder sql = new StringBuilder();
@@ -98,7 +98,7 @@ public class DepartmentViewInterceptor implements IFormInterceptor {
 
         String jsResourceName = "/META-INF/scriptService/" + aServiceName + ".js";
         try {
-            InputStream inputStream = theEcomConfig.getInputStream(jsResourceName, EjbEcomConfig.SCRIPT_SERVICE_PREFIX, true);
+            InputStream inputStream = ecomConfig.getInputStream(jsResourceName, EjbEcomConfig.SCRIPT_SERVICE_PREFIX, true);
             if (inputStream != null) {
                 Context jsContext = Context.enter();
                 try (Reader in = new InputStreamReader(inputStream, "utf-8")) {
@@ -110,7 +110,7 @@ public class DepartmentViewInterceptor implements IFormInterceptor {
                     Object o = scope.get(aMethodName, scope);
                     if (o instanceof Function) {
                         Function f = (Function) o;
-                        ScriptServiceContext ctx = new ScriptServiceContext(aManager, aContext, theEjbInjection);
+                        ScriptServiceContext ctx = new ScriptServiceContext(aManager, aContext, ejbInjection);
                         Object[] args = new Object[aArgs.length + 1];
                         args[0] = ctx;
                         System.arraycopy(aArgs, 0, args, 1, aArgs.length);

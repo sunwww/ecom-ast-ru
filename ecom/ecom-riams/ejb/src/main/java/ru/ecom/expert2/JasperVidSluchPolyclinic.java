@@ -1,7 +1,7 @@
-package ru.ecom.expert2;/**
- * Created by Milamesher on 21.01.2019.
- */
+package ru.ecom.expert2;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expert2.domain.voc.VocE2VidSluch;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -14,20 +14,17 @@ import java.util.List;
 
 @Entity
 @Table(schema="SQLUser")
+@Setter
+@Getter
 /**Вид случая для поликлинике для отчётов*/
 public class JasperVidSluchPolyclinic extends BaseEntity {
     /** Наименование */
-    @Comment("Наименование")
-    public String getName() {return theName;}
-    public void setName(String aName) {theName = aName;}
-    /** Наименование */
-    private String theName ;
+    private String name ;
 
     /** Коды видов случая */
     @Comment("Коды видов случая")
     @OneToMany
-    public List<VocE2VidSluch> getVidSluchCode() {return theVidSluchCode;}
-    public void setVidSluchCode(List<VocE2VidSluch> aVidSluchCode) {theVidSluchCode = aVidSluchCode;}
+    public List<VocE2VidSluch> getVidSluchCode() {return vidSluchCode;}
     /** Коды видов случая */
-    private List<VocE2VidSluch> theVidSluchCode ;
+    private List<VocE2VidSluch> vidSluchCode ;
 }

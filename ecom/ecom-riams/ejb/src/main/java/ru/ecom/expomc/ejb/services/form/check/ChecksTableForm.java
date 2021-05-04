@@ -9,16 +9,16 @@ import ru.nuzmsh.forms.validator.BaseValidatorForm;
  */
 public class ChecksTableForm extends BaseValidatorForm {
     /** Формат  */
-    public long getFormat() { return theFormat ; }
-    public void setFormat(long aFormat) { theFormat = aFormat ; }
+    public long getFormat() { return format ; }
+    public void setFormat(long aFormat) { format = aFormat ; }
 
     /** Поля */
-    public Collection<ChecksTableFormRow> getChecksTableFormRows() { return theChecksTableFormRows ; }
-    public void setChecksTableFormRows(Collection<ChecksTableFormRow> aChecksTableFormRows) { theChecksTableFormRows = aChecksTableFormRows ; }
+    public Collection<ChecksTableFormRow> getChecksTableFormRows() { return checksTableFormRows ; }
+    public void setChecksTableFormRows(Collection<ChecksTableFormRow> aChecksTableFormRows) { checksTableFormRows = aChecksTableFormRows ; }
 
     /** Поля */
-    private Collection<ChecksTableFormRow> theChecksTableFormRows ;
+    private Collection<ChecksTableFormRow> checksTableFormRows ;
     /** Формат  */
-    private long theFormat ;
+    private long format ;
 
 }

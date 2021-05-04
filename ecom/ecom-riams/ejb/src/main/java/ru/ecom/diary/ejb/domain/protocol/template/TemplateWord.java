@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.jaas.ejb.domain.SecGroup;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -21,57 +23,35 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  */
 @Entity
 @Table(schema="SQLUser")
+@Setter
+@Getter
 public class TemplateWord extends BaseEntity {
 
     /** Сокращение */
     @Column(unique = true)
-    public String getReduction() { return theReduction ; }
-    public void setReduction(String aReduction) { theReduction = aReduction ; }
+    public String getReduction() { return reduction ; }
+
 
     /** Расшифровка */
-    public String getDecryption() { return theDecryption ; }
-    public void setDecryption(String aDecryption) { theDecryption = aDecryption ; }
-
-    /** Расшифровка */
-    private String theDecryption ;
+    private String decryption ;
     /** Сокращение */
-    private String theReduction ;
+    private String reduction ;
     
-    /** Пользователь */
-    @Comment("Пользователь")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
 
 	/** Группы пользователей */
 	@Comment("Группы пользователей")
 	@ManyToMany
-	public List<SecGroup> getSecGroups() {return theSecGroups;}
-	public void setSecGroups(List<SecGroup> aSecGroups) {theSecGroups = aSecGroups;}
+	public List<SecGroup> getSecGroups() {return secGroups;}
 
 	/** Группы пользователей */
-	private List<SecGroup> theSecGroups;
+	private List<SecGroup> secGroups;
 	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	/** Пользователь */
-	private String theCreateUsername;
+	private String createUsername;
 	
 	/** Пользователь, отредактировающий запись */
-	@Comment("Пользователь, отредактировающий запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-
-	/** Пользователь, отредактировающий запись */
-	private String theEditUsername;
+	private String editUsername;
 }

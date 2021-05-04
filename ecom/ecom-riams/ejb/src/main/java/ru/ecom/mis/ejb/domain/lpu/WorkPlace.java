@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -17,54 +19,35 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	,@AIndex(properties={"lpu"})
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class WorkPlace extends BaseEntity{
-	/** Название */
-	@Comment("Название")
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
 
 	/** Лечебное учреждение */
 	@Comment("Лечебное учреждение")
 	@OneToOne
-	public MisLpu getLpu() {return theLpu;}
-	public void setLpu(MisLpu aLpu) {theLpu = aLpu;}
+	public MisLpu getLpu() {return lpu;}
 
 	/** Родитель */
 	@Comment("Родитель")
 	@OneToOne
-	public WorkPlace getParent() {return theParent;}
-	public void setParent(WorkPlace aParent) {theParent = aParent;}
+	public WorkPlace getParent() {return parent;}
 
 
-	/** Комментарий */
-	@Comment("Комментарий")
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
-
-	/** Не актуален */
-	@Comment("Неактуален")
-	public Boolean getIsNoActuality() {return theIsNoActuality;}
-	public void setIsNoActuality(Boolean aIsNoActuality) {theIsNoActuality = aIsNoActuality;}
 
 	/** Неактуален */
-	private Boolean theIsNoActuality;
+	private Boolean isNoActuality;
 	/** Комментарий */
-	private String theComment;
+	private String comment;
 	/** Родитель */
-	private WorkPlace theParent;
+	private WorkPlace parent;
 	/** Лечебное учреждение */
-	private MisLpu theLpu;
+	private MisLpu lpu;
 	/** Название */
-	private String theName;
+	private String name;
 	
 	/**
 	 * Номер телефона
 	 */
-	@Comment("Номер телефона")
-	public String getPhoneNumber() {return thePhoneNumber;}
-	public void setPhoneNumber(String aPhoneNumber) {thePhoneNumber = aPhoneNumber;}
-	/**
-	 * Номер телефона
-	 */
-	private String thePhoneNumber;
+	private String phoneNumber;
 }

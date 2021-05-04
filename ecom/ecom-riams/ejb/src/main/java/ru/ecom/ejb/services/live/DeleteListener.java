@@ -17,39 +17,37 @@ import java.util.Objects;
 public class DeleteListener {
 	private static final Logger LOG = Logger.getLogger(DeleteListener.class);
 	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
-	EntityManager theManager ;
-	StringBuilder theSerialization ;
-	String theUsername ;
-	String theClassHibernate ;
-	String theEntityId ;
-	
+	EntityManager manager ;
+	StringBuilder serialization ;
+	String username ;
+	String classHibernate ;
+
 	@PostRemove
 	public void check_remove(Object aObject) {
 		ILiveService service = EjbInjection.getInstance().getLocalService(ILiveService.class) ;
 		LiveTransactionContext ctx = LiveTransactionContext.get() ;
-		//String username = service.getUsername() ;
 
 		if(ctx.getEntityManager()==null) { // начинаем транзакцию
 			ctx.setEntityManager(service.getEntityManagerFactory().createEntityManager()) ;
-			theManager = ctx.getEntityManager() ;
+			manager = ctx.getEntityManager() ;
 		} else {
-			theManager = ctx.getEntityManager() ;
+			manager = ctx.getEntityManager() ;
 		}
 		Class clazz = aObject.getClass() ;
 		
-		theUsername = service.getUsername() ;
-		Object entityId = theEntityHelper.getEntityId(aObject) ;
+		username = service.getUsername() ;
+		Object entityId = entityHelper.getEntityId(aObject) ;
 		
-		String clazzHib = theEntityHelper.getHibernateName(clazz) ;
-		List<DeleteJournal>list = theManager.createQuery("from DeleteJournal where objectId=:entityId and className=:className and loginName=:username order by id desc")
+		String clazzHib = entityHelper.getHibernateName(clazz) ;
+		List<DeleteJournal>list = manager.createQuery("from DeleteJournal where objectId=:entityId and className=:className and loginName=:username order by id desc")
 			.setParameter("entityId", String.valueOf(entityId))
 			.setParameter("className", clazzHib)
-			.setParameter("username",theUsername)
+			.setParameter("username",username)
 			.setMaxResults(1).getResultList();
 		if (!list.isEmpty()) {
 			DeleteJournal deleteJournal = list.iterator().next();
 			deleteJournal.setStatus(1L) ;
-			theManager.persist(deleteJournal) ;
+			manager.persist(deleteJournal) ;
 
 		}
 	}
@@ -63,14 +61,14 @@ public class DeleteListener {
 					
 			if(ctx.getEntityManager()==null) { // начинаем транзакцию
 				ctx.setEntityManager(service.getEntityManagerFactory().createEntityManager()) ;
-				theManager = ctx.getEntityManager() ;
+				manager = ctx.getEntityManager() ;
 			} else {
-				theManager = ctx.getEntityManager() ;
+				manager = ctx.getEntityManager() ;
 			}
 			Class clazz = aObject.getClass() ;
-			String clazzHib = theEntityHelper.getHibernateName(clazz) ;
+			String clazzHib = entityHelper.getHibernateName(clazz) ;
 			if(CAN_DEBUG) LOG.debug("Saving "+clazz) ;
-			Object entityId = theEntityHelper.getEntityId(aObject) ;
+			Object entityId = entityHelper.getEntityId(aObject) ;
 			
 			StringBuilder ret = new StringBuilder() ;
 			try {
@@ -90,7 +88,7 @@ public class DeleteListener {
 							if(obj!=null) {
 								if(obj.getClass().isAnnotationPresent(Entity.class)) {
 									// замена объекта на его идентификатор !!!
-									value = String.valueOf(theEntityHelper.getEntityId(obj));
+									value = String.valueOf(entityHelper.getEntityId(obj));
 								} else {
 									value = obj.toString() ;
 								}
@@ -111,23 +109,15 @@ public class DeleteListener {
 				}				
 				ret.append("</").append(clazzHib).append(">") ;
 				
-				//manager.createNativeQuery("select top 1 $$Add^ZDeleteJournal(:username,:classname,:entityId,:comment) from VocSex")
-				//	.setParameter("username", username)
-				//	.setParameter("classname",theEntityHelper.getHibernateName(clazz))
-				//	.setParameter("entityId", entityId)
-				//	.setParameter("comment", "fdsfsdfsdf").getResultList();
 			} catch (Exception e) {
 				LOG.error("ERROR... "+e.getMessage()) ;
 			}
 			DeleteJournal dj = new DeleteJournal() ;
-		//	String keyAttribute = new StringBuilder().append("DeleteListener.")
-		//		.append(clazz.getName()).append(".").append(theUsername)
-		//		.append(".").append(entityId).toString() ;
-			theSerialization = new StringBuilder() ;
-			theSerialization.append(ret) ;
-			theUsername = username ;
-			theClassHibernate = clazzHib ;
-			theEntityId = String.valueOf(entityId) ;
+			serialization = new StringBuilder() ;
+			serialization.append(ret) ;
+			username = username ;
+			classHibernate = clazzHib ;
+			entityId = String.valueOf(entityId) ;
 			
 			dj.setSerialization(ret.toString()) ;
 			dj.setLoginName(username) ;
@@ -140,15 +130,10 @@ public class DeleteListener {
 			dj.setDeleteDate(new java.sql.Date(date.getTime())) ;
 			dj.setDeleteTime(new java.sql.Time(date.getTime())) ;
 			dj.setStatus(0L) ;
-			theManager.persist(dj) ;
-
+			manager.persist(dj) ;
 		}
-		
-		
 	}
 	
-	
-	private EntityHelper theEntityHelper = EntityHelper.getInstance() ;
-	//@Resource SessionContext theContext ;
+	private final EntityHelper entityHelper = EntityHelper.getInstance() ;
 
 }

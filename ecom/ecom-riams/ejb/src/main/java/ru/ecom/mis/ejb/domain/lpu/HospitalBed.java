@@ -1,17 +1,16 @@
 package ru.ecom.mis.ejb.domain.lpu;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 
 @Entity
+@Getter
+@Setter
 public class HospitalBed extends HospitalRoom {
 	/** Дополнительные */
-	@Comment("Дополнительные")
-	public Boolean getIsAddition() {return theIsAddition;}
-	public void setIsAddition(Boolean aIsAddition) {theIsAddition = aIsAddition;}
-
-	/** Дополнительные */
-	private Boolean theIsAddition;
+	private Boolean isAddition;
 
 }

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.birth;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -25,64 +27,37 @@ import java.sql.Date;
 }
 )
 @EntityListeners(DeleteListener.class)
+@Getter
+@Setter
 public class RobsonClass extends BaseEntity {
     /** СМО */
     @Comment("СМО")
     @OneToOne
-    public MedCase getMedCase() {return theMedCase;}
-    public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
+    public MedCase getMedCase() {return medCase;}
     /** Классификация */
     @Comment("Классификация")
     @OneToOne
-    public VocRobsonClass getRobsonType() {return theRobsonType;}
-    public void setRobsonType(VocRobsonClass aRobsonType) {theRobsonType = aRobsonType;}
-    /** Дата создания */
-    @Comment("Дата создания")
-    public Date getCreateDate() {return theCreateDate;}
-    public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-    /** Дата редактирования */
-    @Comment("Дата редактирования")
-    public Date getEditDate() {return theEditDate;}
-    public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-    /** Время создания */
-    @Comment("Время создания")
-    public Time getCreateTime() {return theCreateTime;}
-    public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-    /** Время редактрования */
-    @Comment("Время редактирования")
-    public Time getEditTime() {return theEditTime;}
-    public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-    /** Пользователь, который создал запись */
-    @Comment("Пользователь, который создал запись")
-    @Persist
-    public String getCreateUsername() {return theCreateUsername;}
-    public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-    /** Пользователь, который последний редактировал запись */
-    @Comment("Пользователь, который последний редактировал запись")
-    @Persist
-    public String getEditUsername() {return theEditUsername;}
-    public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+    public VocRobsonClass getRobsonType() {return robsonType;}
     @Comment("Подгруппа классификации")
     @OneToOne
-    public VocSubRobson getRobsonSub() {return theRobsonSub;}
-    public void setRobsonSub(VocSubRobson aRobsonSub) {theRobsonSub = aRobsonSub;}
+    public VocSubRobson getRobsonSub() {return robsonSub;}
 
     /** СМО */
-    private MedCase theMedCase;
+    private MedCase medCase;
     /** Классификация */
-    private VocRobsonClass theRobsonType;
+    private VocRobsonClass robsonType;
     /** Пользователь, который последний редактировал запись */
-    private String theEditUsername;
+    private String editUsername;
     /** Пользователь, который создал запись */
-    private String theCreateUsername;
+    private String createUsername;
     /** Время редактрования */
-    private Time theEditTime;
+    private Time editTime;
     /** Время создания */
-    private Time theCreateTime;
+    private Time createTime;
     /** Дата редактирования */
-    private Date theEditDate;
+    private Date editDate;
     /** Дата создания */
-    private Date theCreateDate;
+    private Date createDate;
     /** Подгруппа классификации */
-    private VocSubRobson theRobsonSub;
+    private VocSubRobson robsonSub;
 }

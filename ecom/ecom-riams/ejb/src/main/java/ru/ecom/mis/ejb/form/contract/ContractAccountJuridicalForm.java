@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractAccount;
@@ -18,6 +19,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Договорной счет", nameProperties= "accountNumber", list="entityParentList-contract_juridicalAccount.do", view="entityParentView-contract_juridicalAccount.do")
 @Parent(property="contract", parentForm=MedContractForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ServedPerson/ContractAccount")
+@Setter
 public class ContractAccountJuridicalForm extends IdEntityForm{
 
 	/**
@@ -26,39 +28,32 @@ public class ContractAccountJuridicalForm extends IdEntityForm{
 	@Comment("Сумма баланса")
 	@Persist
 	public String getBalanceSum() {
-		return theBalanceSum;
-	}
-	public void setBalanceSum(String aBalanceSum) {
-		theBalanceSum = aBalanceSum;
+		return balanceSum;
 	}
 	/**
 	 * Сумма баланса
 	 */
-	private String theBalanceSum;
+	private String balanceSum;
 	
 	/** Мед.договор */
 	@Comment("Мед.договор")
 	@Persist
-	public Long getContract() {return theContract;}
-	public void setContract(Long aContract) {theContract = aContract;}
+	public Long getContract() {return contract;}
 
 	/** Мед.договор */
-	private Long theContract;
+	private Long contract;
 	/**
 	 * Резервированная сумма
 	 */
 	@Comment("Резервированная сумма")
 	@Persist
 	public String getReservationSum() {
-		return theReservationSum;
-	}
-	public void setReservationSum(String aReservationSum) {
-		theReservationSum = aReservationSum;
+		return reservationSum;
 	}
 	/**
 	 * Резервированная сумма
 	 */
-	private String theReservationSum;
+	private String reservationSum;
 	/**
 	 * Дата открытия
 	 */
@@ -67,15 +62,12 @@ public class ContractAccountJuridicalForm extends IdEntityForm{
 	@Required
 	@DateString @DoDateString
 	public String getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(String aDateFrom) {
-		theDateFrom = aDateFrom;
+		return dateFrom;
 	}
 	/**
 	 * Дата открытия
 	 */
-	private String theDateFrom;
+	private String dateFrom;
 	/**
 	 * Дата закрытия
 	 */
@@ -83,87 +75,74 @@ public class ContractAccountJuridicalForm extends IdEntityForm{
 	@Persist
 	@DateString @DoDateString
 	public String getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(String aDateTo) {
-		theDateTo = aDateTo;
+		return dateTo;
 	}
 	/**
 	 * Дата закрытия
 	 */
-	private String theDateTo;
+	private String dateTo;
 	/**
 	 * Блокирован
 	 */
 	@Comment("Блокирован")
 	@Persist
 	public Boolean getBlock() {
-		return theBlock;
-	}
-	public void setBlock(Boolean aBlock) {
-		theBlock = aBlock;
+		return block;
 	}
 	/**
 	 * Блокирован
 	 */
-	private Boolean theBlock;
+	private Boolean block;
 	
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DoDateString @DateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
+
 	/** Время создания */
 	@Comment("Время создания")
 	@Persist @DoTimeString @TimeString
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
-	
+	public String getCreateTime() {return createTime;}
+
 	/** Пользователь, создавший запись */
 	@Comment("Пользователь, создавший запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	
+	public String getCreateUsername() {return createUsername;}
+
 	/** Дата последнего изменения */
 	@Comment("Дата последнего изменения")
 	@Persist @DoDateString @DateString
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
-	
+	public String getEditDate() {return editDate;}
+
 	/** Время, последнего изменения */
 	@Comment("Время, последнего изменения")
 	@Persist @DoTimeString @TimeString
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
-	
+	public String getEditTime() {return editTime;}
+
 	/** Пользователь, последний изменивший запись */
 	@Comment("Пользователь, последний изменивший запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-	
+	public String getEditUsername() {return editUsername;}
+
 	/** Информация */
 	@Comment("Информация")
 	@Persist
-	public String getInfo() {return theInfo;}
-	public void setInfo(String aInfo) {theInfo = aInfo;}
+	public String getInfo() {return info;}
 
 	/** Информация */
-	private String theInfo;
+	private String info;
 	/** Пользователь, последний изменивший запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Время, последнего изменения */
-	private String theEditTime;
+	private String editTime;
 	/** Дата последнего изменения */
-	private String theEditDate;
+	private String editDate;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	
 
 
@@ -171,55 +150,42 @@ public class ContractAccountJuridicalForm extends IdEntityForm{
 	@Comment("Номер счета")
 	@Persist
 	public String getAccountNumber() {
-		return theAccountNumber;
-	}
-
-	public void setAccountNumber(String aAccountNumber) {
-		theAccountNumber = aAccountNumber;
+		return accountNumber;
 	}
 
 	/** Номер счета */
-	private String theAccountNumber;
+	private String accountNumber;
 	
 	/** Оплачен */
 	@Comment("Оплачен")
 	@Persist
 	public Boolean getIsFinished() {
-		return theIsFinished;
+		return isFinished;
 	}
 
-	public void setIsFinished(Boolean aIsFinished) {
-		theIsFinished = aIsFinished;
-	}
 
 	/** Оплачен */
-	private Boolean theIsFinished;
+	private Boolean isFinished;
 	
 	/** Период с */
 	@Comment("Период с")
 	@Persist @DateString @DoDateString @Required
 	public String getPeriodFrom() {
-		return thePeriodFrom;
+		return periodFrom;
 	}
 
-	public void setPeriodFrom(String aPeriodFrom) {
-		thePeriodFrom = aPeriodFrom;
-	}
-	
+
 	/** Период по */
 	@Comment("Период по")
 	@Persist @DateString @DoDateString @Required
 	public String getPeriodTo() {
-		return thePeriodTo;
+		return periodTo;
 	}
 
-	public void setPeriodTo(String aPeriodTo) {
-		thePeriodTo = aPeriodTo;
-	}
 
 	/** Период по */
-	private String thePeriodTo;
+	private String periodTo;
 	/** Период с */
-	private String thePeriodFrom;
+	private String periodFrom;
 }
 

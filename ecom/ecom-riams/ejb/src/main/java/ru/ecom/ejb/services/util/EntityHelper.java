@@ -72,7 +72,7 @@ public class EntityHelper {
 	        	List<String> list = listAllEntitiesClassnames(in) ;
 	        	List<Class> ret = new LinkedList<>() ;
 	        	for(String className: list) {
-	                Class entityClass = theClassLoaderHelper.loadClass(className);
+	                Class entityClass = classLoaderHelper.loadClass(className);
 	        		ret.add(entityClass) ;
 	                sb.append(getEntityName(entityClass));
 	                sb.append(", ");
@@ -165,7 +165,7 @@ public class EntityHelper {
                     List<Element> classes = persistenceUnit.getChildren("class");
                     for (Element clazz : classes) {
                         String className = clazz.getTextTrim();
-                        //Class entityClass = theClassLoaderHelper.loadClass(className);
+                        //Class entityClass = classLoaderHelper.loadClass(className);
                         list.add(className);
                     }
                 }
@@ -179,7 +179,7 @@ public class EntityHelper {
         }
     }
 
-    private final ClassLoaderHelper theClassLoaderHelper = ClassLoaderHelper.getInstance();
+    private final ClassLoaderHelper classLoaderHelper = ClassLoaderHelper.getInstance();
 
     
     public String getTableName(Class aEntitClass) {

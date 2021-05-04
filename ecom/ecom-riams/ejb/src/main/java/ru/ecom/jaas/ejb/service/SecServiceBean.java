@@ -29,8 +29,7 @@ import java.util.*;
 @Remote(ISecService.class)
 public class SecServiceBean implements ISecService {
     private static final Logger LOG = Logger.getLogger(SecServiceBean.class);
-    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
-    
+
     public Long findRole(PolicyForm aRole) {
     	SecRole role;
 		if (aRole.getKey()==null || aRole.getKey().equals("") || aRole.getName()==null 
@@ -38,11 +37,11 @@ public class SecServiceBean implements ISecService {
 		
 		if (aRole.getName()!=null && !aRole.getName().equals("")){
 			role = QueryResultUtil.getFirst(SecRole.class
-    				, theManager.createQuery("from SecRole where name=:name")
+    				, manager.createQuery("from SecRole where name=:name")
     	    		  .setParameter("name", aRole.getName())) ;
 		} else {
 			role = QueryResultUtil.getFirst(SecRole.class
-    				, theManager.createQuery("from SecRole where key=:key")
+    				, manager.createQuery("from SecRole where key=:key")
     	    		  .setParameter("key", aRole.getKey())) ;
 		}
     	return role!=null?role.getId():null;
@@ -50,7 +49,7 @@ public class SecServiceBean implements ISecService {
     
     public List<SecRoleForm> listRoles() {
     	List<SecRoleForm> list = new LinkedList<>();
-    	List<SecRole> allRoles = theManager.createQuery("from SecRole").getResultList();
+    	List<SecRole> allRoles = manager.createQuery("from SecRole").getResultList();
     	  LOG.debug(allRoles);
     	 for (SecRole role : allRoles) {
     		 LOG.info(role);
@@ -75,7 +74,7 @@ public class SecServiceBean implements ISecService {
     	
     	SecUserServiceBean userbean = new SecUserServiceBean() ;
     	for (Long idrole:aRoles) {
-    		SecRole role = theManager.find(SecRole.class, idrole) ;
+    		SecRole role = manager.find(SecRole.class, idrole) ;
     		Collection<SecPolicy> listPolicies = role.getSecPolicies() ;
     		
     		Element roleEl = xmlDoc.newElement(root, "role", null);
@@ -109,7 +108,7 @@ public class SecServiceBean implements ISecService {
         
 		SecUserServiceBean userbean = new SecUserServiceBean() ;
 		for (Long idpol:aPolicies) {
-			SecPolicy policy = theManager.find(SecPolicy.class, idpol) ;
+			SecPolicy policy = manager.find(SecPolicy.class, idpol) ;
 			String key = userbean.getPolicyFullKey(policy,hash) ;
 			String name= policy.getName() ;
 			String comment = policy.getComment() ;
@@ -129,17 +128,15 @@ public class SecServiceBean implements ISecService {
 	 */
 	public void importPolicies(long aMonitorId, List<PolicyForm> aPolicies) {
 		
-		IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
+		IMonitor monitor = monitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
 		try {
-			monitor = theMonitorService.startMonitor(aMonitorId, "Импорт политик безопасности", aPolicies.size()) ;
+			monitor = monitorService.startMonitor(aMonitorId, "Импорт политик безопасности", aPolicies.size()) ;
 			Map<String, SecPolicy> hash = new HashMap<>() ;
 			hash.put("/", findRootPolicy()) ;
 			for(PolicyForm policy : aPolicies) {
 				if(monitor.isCancelled()) throw new IllegalStateException("Прервано пользователем") ;
 				monitor.advice(1) ;
 				monitor.setText("Импортируется "+policy);
-				if (CAN_DEBUG)
-					LOG.debug("importPolicies: policy = " + policy); 
 				importPolicy(policy, hash) ;
 			}
 			monitor.finish(hash.get("/").getId()+"") ;
@@ -154,13 +151,13 @@ public class SecServiceBean implements ISecService {
 	 * @param aListRoles - список ролей с их политиками
 	 */
 	public void importRoles(long aMonitorId, boolean aClearRole, List<ImportRoles> aListRoles) {
-		IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
+		IMonitor monitor = monitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
 		try {
 			double size = 0 ;
 			for (ImportRoles role : aListRoles) {
 				size=size+role.getPolicies().size() ;
 			}
-			monitor = theMonitorService.startMonitor(aMonitorId, "Импорт политик безопасности", size) ;
+			monitor = monitorService.startMonitor(aMonitorId, "Импорт политик безопасности", size) ;
 			Map<String, SecPolicy> hash = new HashMap<>() ;
 			for (ImportRoles role : aListRoles) {
 				importPoliciesByRole(monitor,hash, aClearRole,role.getRole() , role.getPolicies()) ;
@@ -186,7 +183,6 @@ public class SecServiceBean implements ISecService {
 		}
 		
 		aMonitor.setText("Импортируется РОЛЬ: "+role.getName());
-		if (CAN_DEBUG) LOG.debug("importPolicies: role = " + role.getName());
     	
     	aHash.put("/", findRootPolicy()) ;
     	if(aMonitor.isCancelled()) throw new IllegalStateException("Прервано пользователем") ;
@@ -200,19 +196,19 @@ public class SecServiceBean implements ISecService {
     	}
     	role.setSecPolicies(listPolicy);
     	
-    	theManager.persist(role) ;
+    	manager.persist(role) ;
     }
 
     private SecPolicy findRootPolicy() {
     	SecPolicy policy = QueryResultUtil.getFirst(SecPolicy.class
-    			, theManager.createQuery("from SecPolicy where key=:key")
+    			, manager.createQuery("from SecPolicy where key=:key")
     				.setParameter("key", "/")) ; 
         if (policy == null) {
             policy = new SecPolicy();
             policy.setKey("/");
             policy.setName("ROOT");
             policy.setComment("Корневая политика безопасности");
-            theManager.persist(policy);
+            manager.persist(policy);
         }
         return policy;
     }    
@@ -242,7 +238,7 @@ public class SecServiceBean implements ISecService {
     	SecPolicy policy = aHash.get(aFullPath) ;
     	if(policy==null) {
     		policy = QueryResultUtil.getFirst(SecPolicy.class
-    				, theManager.createQuery("from SecPolicy where key=:key and parentSecPolicy=:parent")
+    				, manager.createQuery("from SecPolicy where key=:key and parentSecPolicy=:parent")
     		  .setParameter("key", aKey)
     		  .setParameter("parent", aParentPolicy));
     		if(policy==null) {
@@ -251,7 +247,7 @@ public class SecServiceBean implements ISecService {
     			policy.setKey(aKey) ;
     			// name
     			policy.setParentSecPolicy(aParentPolicy) ;
-    			theManager.persist(policy) ;
+    			manager.persist(policy) ;
     			aHash.put(aFullPath, policy) ;
     		}
     	}
@@ -273,11 +269,11 @@ public class SecServiceBean implements ISecService {
 		
 		if (aRole.getName()!=null && !aRole.getName().equals("")){
 			role = QueryResultUtil.getFirst(SecRole.class
-    				, theManager.createQuery("from SecRole where name=:name")
+    				, manager.createQuery("from SecRole where name=:name")
     	    		  .setParameter("name", aRole.getName())) ;
 		} else {
 			role = QueryResultUtil.getFirst(SecRole.class
-    				, theManager.createQuery("from SecRole where key=:key")
+    				, manager.createQuery("from SecRole where key=:key")
     	    		  .setParameter("key", aRole.getKey())) ;
 		}
 		if (role ==null) {
@@ -286,13 +282,13 @@ public class SecServiceBean implements ISecService {
             role.setName(aRole.getName());
             role.setComment(aRole.getComment());
             role.setSecPolicies(new LinkedList<>()) ;
-            theManager.persist(role);
+            manager.persist(role);
 		} 
     	return role;
     }
     
-	@PersistenceContext private EntityManager theManager ;
-    private @EJB ILocalMonitorService theMonitorService ;
+	@PersistenceContext private EntityManager manager ;
+    private @EJB ILocalMonitorService monitorService ;
 
 
 

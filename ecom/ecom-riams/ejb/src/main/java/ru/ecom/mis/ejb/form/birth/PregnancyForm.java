@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.birth.Pregnancy;
@@ -23,75 +24,67 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Беременность", nameProperties= "id", view="entityParentView-preg_pregnancy.do")
 @Parent(property="patient", parentForm= PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Pregnancy")
+@Setter
 public class PregnancyForm extends IdEntityForm {
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
+	public Long getPatient() {return patient;}
 
 	
 	/** Обменная карта беременной */
 	@Comment("Обменная карта беременной")
 	@Persist
-	public Long getPregnanExchangeCard() {return thePregnanExchangeCard;}
-	public void setPregnanExchangeCard(Long aPregnanExchangeCard) {thePregnanExchangeCard = aPregnanExchangeCard;}
+	public Long getPregnanExchangeCard() {return pregnanExchangeCard;}
 
 	
 	/** Обменная карта родильницы */
 	@Comment("Обменная карта родильницы")
 	@Persist
-	public Long getConfinedExchangeCard() {return theConfinedExchangeCard;}
-	public void setConfinedExchangeCard(Long aConfinedExchangeCard) {theConfinedExchangeCard = aConfinedExchangeCard;}
+	public Long getConfinedExchangeCard() {return confinedExchangeCard;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DateString @DoDateString
-	public String getDateCreate() {return theDateCreate;}
-	public void setDateCreate(String aDateCreate) {theDateCreate = aDateCreate;}
+	public String getDateCreate() {return dateCreate;}
 
 	/** Заведена пользователем */
 	@Comment("Заведена пользователем")
 	@Persist
-	public String getUsername() {return theUsername;	}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
+	public String getUsername() {return username;	}
 
 	/** Какая по счету беременность */
 	@Comment("Какая по счету беременность")
 	@Persist @Required
-	public Integer getOrderNumber() {return theOrderNumber;}
-	public void setOrderNumber(Integer aNAME) {theOrderNumber = aNAME;	}
+	public Integer getOrderNumber() {return orderNumber;}
 
 	/** В каком случае медицинского обслуживания заведена */
 	@Comment("В каком случае медицинского обслуживания заведена")
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+	public Long getMedCase() {return medCase;}
 
 	@Comment("Количество родов")
 	@Required @Persist
-	public Integer getChildbirthAmount() {return theChildbirthAmount;}
-	public void setChildbirthAmount(Integer aChildbirthAmount) {theChildbirthAmount = aChildbirthAmount;}
+	public Integer getChildbirthAmount() {return childbirthAmount;}
 
 	/** Информация */
 	@Comment("Информация") @Persist
-	public String getInformation() {return theInformation;}
-	public void setInformation(String aInformation) {theInformation = aInformation;}
+	public String getInformation() {return information;}
 
 	/** Информация */
-	private String theInformation;
+	private String information;
 	/** Количество родов */
-	private Integer theChildbirthAmount;
+	private Integer childbirthAmount;
 	/** В каком случае медицинского обслуживания заведена */
-	private Long theMedCase;
+	private Long medCase;
 	/** Какая по счету беременность */
-	private Integer theOrderNumber;
+	private Integer orderNumber;
 	/** Заведена пользователем */
-	private String theUsername;
+	private String username;
 	/** Дата создания */
-	private String theDateCreate;	/** Обменная карта родильницы */
-	private Long theConfinedExchangeCard;
+	private String dateCreate;	/** Обменная карта родильницы */
+	private Long confinedExchangeCard;
 	/** Обменная карта беременной */
-	private Long thePregnanExchangeCard;
+	private Long pregnanExchangeCard;
 	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 }

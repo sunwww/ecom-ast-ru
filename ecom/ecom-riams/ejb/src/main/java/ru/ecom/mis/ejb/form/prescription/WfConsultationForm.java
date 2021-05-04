@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.prescription;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.prescription.WfConsultation;
@@ -20,137 +21,120 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Parent(property="prescriptionList", parentForm=AbstractPrescriptionListForm.class)
 @WebTrail(comment = "Консультация специалиста", nameProperties= "id", view="entityParentView-pres_wfConsultation.do")
 @EntityFormSecurityPrefix("/Policy/Mis/Prescription/ServicePrescription")
+@Setter
 public class WfConsultationForm extends IdEntityForm {
     /** Тип консультации */
-    private Long theVocConsultingType;
+    private Long vocConsultingType;
     /** Заключение */
-    private Long theDiary;
+    private Long diary;
     /** Пользователь - создатель */
-    private String theCreateUsername;
+    private String createUsername;
     /** Дата создания */
-    private String theCreateDate;
+    private String createDate;
     /** Пользователь последний, изменявший запись */
-    private String theEditUsername;
+    private String editUsername;
     /** Дата редактирования */
-    private String theEditDate;
+    private String editDate;
     /** Пользователь, передавший направление специалисту */
-    private String theTransferUsername;
+    private String transferUsername;
     /** Дата передачи специалисту */
-    private String theTransferDate;
+    private String transferDate;
     /** Лист назначений */
-    private Long thePrescriptionList;
+    private Long prescriptionList;
     /** Специалист */
-    private Long thePrescriptCabinet;
+    private Long prescriptCabinet;
     /** Время создания */
-    private String theCreateTime;
+    private String createTime;
     /** Время редактрования */
-    private String theEditTime;
+    private String editTime;
     /** Время передачи */
-    private String theTransferTime;
+    private String transferTime;
     /** Дата выполнения */
-    private String theIntakeDate;
+    private String intakeDate;
     /** Время выполнения */
-    private String theIntakeTime;
+    private String intakeTime;
     /** Пользователь, который выполнил */
-    private Long theIntakeSpecial;
+    private Long intakeSpecial;
 
     /** Тип консультации */
     @Comment("Тип консультации")
     @Persist @Required
-    public Long getVocConsultingType() {return theVocConsultingType; }
-    public void setVocConsultingType(Long aVocConsultingType) { theVocConsultingType = aVocConsultingType; }
+    public Long getVocConsultingType() {return vocConsultingType; }
 
     /** Заключение */
     @Comment("Заключение")
     @Persist
-    public Long getDiary() { return theDiary; }
-    public void setDiary(Long aDiary) { theDiary = aDiary; }
+    public Long getDiary() { return diary; }
 
     /** Пользователь - создатель */
     @Comment("Пользователь - создатель")
     @Persist
-    public String getCreateUsername() { return theCreateUsername; }
-    public void setCreateUsername(String aCreateUsername) { theCreateUsername = aCreateUsername; }
+    public String getCreateUsername() { return createUsername; }
 
     /** Дата создания */
     @Comment("Дата создания")
     @Persist @DateString
-    public String getCreateDate() { return theCreateDate; }
-    public void setCreateDate(String aCreateDate) { theCreateDate = aCreateDate; }
+    public String getCreateDate() { return createDate; }
 
     /** Пользователь последний, изменявший запись */
     @Comment("Пользователь последний, изменявший запись")
     @Persist
-    public String getEditUsername() { return theEditUsername; }
-    public void setEditUsername(String aEditUsername) { theEditUsername = aEditUsername; }
+    public String getEditUsername() { return editUsername; }
 
     /** Дата редактирования */
     @Comment("Дата редактирования")
     @Persist @DateString
-    public String getEditDate() { return theEditDate; }
-    public void setEditDate(String aEditDate) { theEditDate = aEditDate; }
+    public String getEditDate() { return editDate; }
 
     /** Пользователь, передавший направление специалисту */
     @Comment("Пользователь, передавший направление специалисту")
     @Persist
-    public String getTransferUsername() { return theTransferUsername; }
-    public void setTransferUsername(String aTransferUsername) { theTransferUsername = aTransferUsername; }
+    public String getTransferUsername() { return transferUsername; }
 
     /** Дата передачи специалисту */
     @Comment("Дата передачи специалисту")
     @Persist @DateString
-    public String getTransferDate() { return theTransferDate; }
-    public void setTransferDate(String aTransferDate) { theTransferDate = aTransferDate; }
+    public String getTransferDate() { return transferDate; }
 
     /** Лист назначений */
     @Comment("Лист назначений")
     @Persist @DateString
-    public Long getPrescriptionList() { return thePrescriptionList; }
-    public void setPrescriptionList(Long aPrescriptionList) { thePrescriptionList = aPrescriptionList; }
+    public Long getPrescriptionList() { return prescriptionList; }
 
     /** Кабинет назначения */
     @Comment("Кабинет назначения")
     @Persist @Required
     public Long getPrescriptCabinet() {
-        return thePrescriptCabinet;
-    }
-    public void setPrescriptCabinet(Long aPrescriptCabinet) {
-        thePrescriptCabinet = aPrescriptCabinet;
+        return prescriptCabinet;
     }
 
     /** Время создания */
     @Comment("Время создания")
     @TimeString @DoTimeString @Persist
-    public String getCreateTime() {return theCreateTime;}
-    public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+    public String getCreateTime() {return createTime;}
 
     /** Время редактрования */
     @Comment("Время редактрования")
     @TimeString @DoTimeString @Persist
-    public String getEditTime() {return theEditTime;}
-    public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+    public String getEditTime() {return editTime;}
 
     /** Время передачи */
     @Comment("Время передачи")
     @TimeString @DoTimeString @Persist
-    public String getTransferTime() {return theTransferTime;}
-    public void setTransferTime(String aTransferTime) {theTransferTime = aTransferTime;}
+    public String getTransferTime() {return transferTime;}
 
     /** Дата выполнения */
     @Comment("Дата выполнения")
     @Persist @DateString
-    public String getIntakeDate() { return theIntakeDate; }
-    public void setIntakeDate(String aIntakeDate) { theIntakeDate = aIntakeDate; }
+    public String getIntakeDate() { return intakeDate; }
 
     /** Время выполнения */
     @Comment("Время выполнения")
     @TimeString @DoTimeString @Persist
-    public String getIntakeTime() {return theIntakeTime;}
-    public void setIntakeTime(String aIntakeTime) {theIntakeTime = aIntakeTime;}
+    public String getIntakeTime() {return intakeTime;}
 
     /** Пользователь, который выполнил */
     @Comment("Пользователь, который выполнил")
     @Persist
-    public Long getIntakeSpecial() { return theIntakeSpecial; }
-    public void setIntakeSpecial(Long aIntakeSpecial) { theIntakeSpecial = aIntakeSpecial; }
+    public Long getIntakeSpecial() { return intakeSpecial; }
 }

@@ -21,9 +21,8 @@ public class ConsultingRoomForm extends WorkPlaceForm{
 	/** Специалист */
 	@Comment("Специалист")
 	@Persist @PersistManyToManyOneProperty(collectionGenericType = WorkFunction.class)
-	public String getWorkFunctions() {return theWorkFunctions;}
-	public void setWorkFunctions(String aWorkFunction) {theWorkFunctions = aWorkFunction;}
+	public String getWorkFunctions() {return workFunctions;}
 
 	/** Специалист */
-	private String theWorkFunctions;
+	private String workFunctions;
 }

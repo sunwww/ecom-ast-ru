@@ -18,53 +18,28 @@ import javax.persistence.PreUpdate;
 @Getter
 @Setter
 public class VocE2FondV021 extends VocBaseFederal {
-    @PrePersist
-    void prePersist() {
-    }
-
-    @PreUpdate
-    void preUpdate() {
-    }
-
-    private VocMedService defaultMedService;
-    private VocMedService repeatMedService;
-    private VocE2MedHelpProfile stacProfile;
-    private VocE2MedHelpProfile policProfile;
-    /**
-     * Признак подушевого финансирования специальности
-     */
-    private Boolean isPodushevoy;
-    /**
-     * Стоматолог
-     */
-    private Boolean isDentalDoctor;
 
     /**
      * Услуга по умолчанию для поликлиники
      */
     @Comment("Услуга по умолчанию для поликлиники")
     @OneToOne
-    public VocMedService getDefaultMedService() {
-        return defaultMedService;
-    }
-
-    /**
-     * Услуга по умолчания (повторный визит)
-     */
+    public VocMedService getDefaultMedService() {return defaultMedService;}
+    private VocMedService defaultMedService;
+    
+    /** Услуга по умолчания (повторный визит) */
     @Comment("Услуга по умолчания (повторный визит)")
     @OneToOne
-    public VocMedService getRepeatMedService() {
-        return repeatMedService;
-    }
+    public VocMedService getRepeatMedService() {return repeatMedService;}
+    private VocMedService repeatMedService;
 
     /**
      * Профиль мед. помощи для подачи по стационару
      */
     @Comment("Профиль мед. помощи для подачи по стационару")
     @OneToOne
-    public VocE2MedHelpProfile getStacProfile() {
-        return stacProfile;
-    }
+    public VocE2MedHelpProfile getStacProfile() {return stacProfile;}
+    private VocE2MedHelpProfile stacProfile;
 
     /**
      * Профиль мед. помощи для подачи по поликлинике
@@ -72,4 +47,11 @@ public class VocE2FondV021 extends VocBaseFederal {
     @Comment("Профиль мед. помощи для подачи по поликлинике")
     @OneToOne
     public VocE2MedHelpProfile getPolicProfile() {return policProfile;}
+    private VocE2MedHelpProfile policProfile;
+
+    /** Признак подушевого финансирования специальности */
+    private Boolean isPodushevoy;
+
+    /** Стоматолог */
+    private Boolean isDentalDoctor;
 }

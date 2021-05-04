@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.birth.NewBornInformation;
@@ -23,111 +24,98 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @WebTrail(comment = "Информация о новорожденном", nameProperties= "id", view="entityView-preg_newBornInformation.do")
 @Parent(property="confinedExchangeCard", parentForm= ConfinedExchangeCardForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Pregnancy/NewBornInformation")
+@Setter
 public class NewBornInformationForm extends IdEntityForm{
 	/** Обменная карта родильницы */
 	@Comment("Обменная карта родильницы")
 	@Persist
-	public Long getConfinedExchangeCard() {return theConfinedExchangeCard;}
-	public void setConfinedExchangeCard(Long aConfinedExchangeCard) {theConfinedExchangeCard = aConfinedExchangeCard;}
+	public Long getConfinedExchangeCard() {return confinedExchangeCard;}
 
 	@Comment("Состояние при рождении")
 	@Persist
-	public String getBirthCondition() {return theBirthCondition;}
-	public void setBirthCondition(String aBirthCondition) {theBirthCondition = aBirthCondition;}
+	public String getBirthCondition() {return birthCondition;}
 
 	/** Состояние при выписке */
 	@Comment("Состояние при выписке")
 	@Persist
-	public String getDischargeCondition() {return theDischargeCondition;}
-	public void setDischargeCondition(String aDischargeCondition) {theDischargeCondition = aDischargeCondition;}
+	public String getDischargeCondition() {return dischargeCondition;}
 
 	/** Вес при рождении */
 	@Comment("Вес при рождении")
 	@Persist
-	public String getBirthWeight() {return theBirthWeight;}
-	public void setBirthWeight(String aBirthWeight) {theBirthWeight = aBirthWeight;}
+	public String getBirthWeight() {return birthWeight;}
 
 	/** Вес при выписке */
 	@Comment("Вес при выписке")
 	@Persist
-	public String getDischargeWeight() {return theDischargeWeight;}
-	public void setDischargeWeight(String aDischargeWeight) {theDischargeWeight = aDischargeWeight;}
+	public String getDischargeWeight() {return dischargeWeight;}
 
 	/** Рост при рождении */
 	@Comment("Рост при рождении")
 	@Persist
-	public String getBirthHeight() {return theBirthHeight;}
-	public void setBirthHeight(String aBIrthHeight) {theBirthHeight = aBIrthHeight;}
+	public String getBirthHeight() {return birthHeight;}
 
 	/** Особенности течения родов */
 	@Comment("Особенности течения родов")
 	@Persist
-	public String getBirthFeatures() {return theBirthFeatures;}
-	public void setBirthFeatures(String aBirthFeatures) {theBirthFeatures = aBirthFeatures;}
+	public String getBirthFeatures() {return birthFeatures;}
 
 	/** Особенности течения послеродового периода */
 	@Comment("Особенности течения послеродового периода")
 	@Persist
-	public String getPostNatalFeatures() {return thePostNatalFeatures;}
-	public void setPostNatalFeatures(String aPostNatalFeatures) {thePostNatalFeatures = aPostNatalFeatures;}
+	public String getPostNatalFeatures() {return postNatalFeatures;}
 
 	/** Противотуберкулезная вакцинация */
 	@Comment("Противотуберкулезная вакцинация")
 	@Persist
-	public Boolean getVcgVaccination() {return theVcgVaccination;}
-	public void setVcgVaccination(Boolean aVCGVaccination) {theVcgVaccination = aVCGVaccination;}
+	public Boolean getVcgVaccination() {return vcgVaccination;}
 
 	/** Причины отказа в противотуберкулезной вакцинации */
 	@Comment("Причины отказа в противотуберкулезной вакцинации")
 	@Persist
-	public String getVcgEstop() {return theVcgEstop;}
-	public void setVcgEstop(String aVCGEstop) {theVcgEstop = aVCGEstop;}
+	public String getVcgEstop() {return vcgEstop;}
 
 	
 	/** Другие мероприятия */
 	@Comment("Другие мероприятия")
 	@Persist
-	public String getOtherActions() {return theOtherActions;}
-	public void setOtherActions(String aOtherActions) {theOtherActions = aOtherActions;
-	}
+	public String getOtherActions() {return otherActions;}
 
 	/** Особые замечания */
 	@Comment("Особые замечания")
 	@Persist
-	public String getNotes() {return theNotes;}
-	public void setNotes(String aNotes) {theNotes = aNotes;}
-	
+	public String getNotes() {return notes;}
+
 	/** Дата заполнения */
 	@Comment("Дата заполнения")
 	@Persist @DateString @DoDateString
-	public String getFillingDate() {return theFillingDate;}
-	public void setFillingDate(String aFillingDate) {theFillingDate = aFillingDate;}
+	public String getFillingDate() {return fillingDate;}
 
 	/** Другие мероприятия */
-	private String theOtherActions;
+	private String otherActions;
 	/** Особые замечания */
-	private String theNotes;
+	private String notes;
 	/** Дата заполнения */
-	private String theFillingDate;
+	private String fillingDate;
 	/** Обменная карта родильницы */
-	private Long theConfinedExchangeCard;
+	private Long confinedExchangeCard;
 	/** Состояние при рождении */
-	private String theBirthCondition;
+	private String birthCondition;
 	/** Состояние при выписке */
-	private String theDischargeCondition;
+	private String dischargeCondition;
 	/** Противотуберкулезная вакцинация */
-	private Boolean theVcgVaccination;
+	private Boolean vcgVaccination;
 	/** Рост при рождении */
-	private String theBirthHeight;
+	private String birthHeight;
 	/** Вес при рождении */
-	private String theBirthWeight;
+	private String birthWeight;
 	/** Вес при выписке */
-	private String theDischargeWeight;
+	private String dischargeWeight;
 	/** Особенности течения родов */
-	private String theBirthFeatures;
+	private String birthFeatures;
 	/** Особенности течения послеродового периода */
-	private String thePostNatalFeatures;
+	private String postNatalFeatures;
 	/** Причины отказа в противотуберкулезной вакцинации */
-	private String theVcgEstop;
+	private String vcgEstop;
 
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.worker;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.worker.GroupWorkFunction;
 import ru.ecom.mis.ejb.form.lpu.MisLpuForm;
@@ -18,6 +19,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Групповая рабочая функция", nameProperties = "name", view = "entityParentView-work_groupWorkFunction.do", list = "entityParentList-work_groupWorkFunction.do")
 @Parent(property = "lpu", parentForm = MisLpuForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/WorkFunction")
+@Setter
 
 public class GroupWorkFunctionForm extends WorkFunctionForm {
 
@@ -27,17 +29,13 @@ public class GroupWorkFunctionForm extends WorkFunctionForm {
     @Comment("Направлять анализы по умолчанию в этот кабинет")
     @Persist
     public Boolean getIsDefaultLabCabinet() {
-        return theIsDefaultLabCabinet;
-    }
-
-    public void setIsDefaultLabCabinet(Boolean aIsDefaultLabCabinet) {
-        theIsDefaultLabCabinet = aIsDefaultLabCabinet;
+        return isDefaultLabCabinet;
     }
 
     /**
      * Направлять анализы по умолчанию в этот кабинет
      */
-    private Boolean theIsDefaultLabCabinet;
+    private Boolean isDefaultLabCabinet;
 
     /**
      * Есть обслуживающий персонал
@@ -45,17 +43,13 @@ public class GroupWorkFunctionForm extends WorkFunctionForm {
     @Comment("Есть обслуживающий персонал")
     @Persist
     public Boolean getHasServiceStuff() {
-        return theHasServiceStuff;
-    }
-
-    public void setHasServiceStuff(Boolean aHasServiceStuff) {
-        theHasServiceStuff = aHasServiceStuff;
+        return hasServiceStuff;
     }
 
     /**
      * Есть обслуживающий персонал
      */
-    private Boolean theHasServiceStuff;
+    private Boolean hasServiceStuff;
 
     /**
      * Наименование
@@ -63,11 +57,7 @@ public class GroupWorkFunctionForm extends WorkFunctionForm {
     @Comment("Наименование")
     @Persist
     public String getName() {
-        return theName;
-    }
-
-    public void setName(String aName) {
-        theName = aName;
+        return name;
     }
 
     /**
@@ -77,11 +67,7 @@ public class GroupWorkFunctionForm extends WorkFunctionForm {
     @Persist
     @Required
     public Long getLpu() {
-        return theLpu;
-    }
-
-    public void setLpu(Long aLpu) {
-        theLpu = aLpu;
+        return lpu;
     }
 
     /**
@@ -92,25 +78,21 @@ public class GroupWorkFunctionForm extends WorkFunctionForm {
     @Required
     @DoUpperCase
     public String getGroupName() {
-        return theGroupName;
-    }
-
-    public void setGroupName(String aGroupName) {
-        theGroupName = aGroupName;
+        return groupName;
     }
 
     /**
      * Название группы
      */
-    private String theGroupName;
+    private String groupName;
     /**
      * ЛПУ
      */
-    private Long theLpu;
+    private Long lpu;
     /**
      * Наименование
      */
-    private String theName;
+    private String name;
 
     /**
      * Разрешено создавать направление без указания услуг
@@ -118,15 +100,11 @@ public class GroupWorkFunctionForm extends WorkFunctionForm {
     @Comment("Разрешено создавать направление без указания услуг")
     @Persist
     public Boolean getIsCreateDIrectionWithoutService() {
-        return theIsCreateDIrectionWithoutService;
-    }
-
-    public void setIsCreateDIrectionWithoutService(Boolean aIsCreateDIrectionWithoutService) {
-        theIsCreateDIrectionWithoutService = aIsCreateDIrectionWithoutService;
+        return isCreateDIrectionWithoutService;
     }
 
     /**
      * Разрешено создавать направление без указания услуг
      */
-    private Boolean theIsCreateDIrectionWithoutService = false;
+    private Boolean isCreateDIrectionWithoutService = false;
 }

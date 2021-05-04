@@ -24,22 +24,8 @@ import java.sql.Date;
 @Setter
 public class EntryMedService extends BaseEntity {
 
-    /**
-     * Запись
-     */
     private E2Entry entry;
-    /**
-     * Мед. услуга
-     */
     private VocMedService medService;
-    /**
-     * СНИЛС специалиста, выполневшего услугу
-     */
-    private String doctorSnils;
-    /**
-     * Дата оказания мед. услуги
-     */
-    private Date serviceDate;
     private VocE2FondV021 doctorSpeciality;
     private VocIdc10 mkb;
     /**
@@ -50,6 +36,16 @@ public class EntryMedService extends BaseEntity {
      * Коммент
      */
     private String comment;
+
+    /**
+     * СНИЛС специалиста, выполневшего услугу
+     */
+    private String doctorSnils;
+
+    /**
+     * Дата оказания мед. услуги
+     */
+    private Date serviceDate;
     /**
      * Цена
      */
@@ -69,18 +65,12 @@ public class EntryMedService extends BaseEntity {
         cost = aMedService.getCost();
     }
 
-    /**
-     * Запись
-     */
+    /** Запись */
     @Comment("Запись")
     @ManyToOne
-    public E2Entry getEntry() {
-        return entry;
-    }
+    public E2Entry getEntry() {return entry;}
 
-    /**
-     * Мед. услуга
-     */
+    /** Мед. услуга */
     @Comment("Мед. услуга")
     @OneToOne
     public VocMedService getMedService() {
@@ -104,8 +94,6 @@ public class EntryMedService extends BaseEntity {
      */
     @Comment("Диагноз, выявленный при оказании услуги")
     @OneToOne
-    public VocIdc10 getMkb() {
-        return mkb;
-    }
+    public VocIdc10 getMkb() {return mkb;}
 
 }

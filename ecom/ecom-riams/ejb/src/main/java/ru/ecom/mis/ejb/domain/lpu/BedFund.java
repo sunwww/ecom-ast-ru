@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.lpu;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -24,110 +26,76 @@ import java.sql.Timestamp;
 @Entity
 @AIndexes(
 	{
-		@AIndex(unique= false, properties = {"lpu","serviceStream","bedType"})
-		,@AIndex(unique= false, properties = {"bedType"})
-		,@AIndex(unique= false, properties = {"lpu"})
-		,@AIndex(unique= false, properties = {"serviceStream"})
-			,@AIndex(unique= false, properties = {"bedSubType"})
+		@AIndex(properties = {"lpu","serviceStream","bedType"})
+		,@AIndex(properties = {"bedType"})
+		,@AIndex(properties = {"lpu"})
+		,@AIndex(properties = {"serviceStream"})
+			,@AIndex(properties = {"bedSubType"})
 		}
 )
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class BedFund extends BaseEntity{
 
 	/** Количество коек */
-	@Comment("Количество коек")
-	public Integer getAmount() {
-		return theAmount;
-	}
-
-	public void setAmount(Integer aAmount) {
-		theAmount = aAmount;
-	}
-
-	/** Количество коек */
-	private Integer theAmount;
+	private Integer amount;
 
 	/** Тип развертывания-свертывания */
 	@Comment("Тип развертывания-свертывания")
 	@OneToOne
 	public VocBedReductionType getReductionType() {
-		return theReductionType;
-	}
-
-	public void setReductionType(VocBedReductionType aReductionType) {
-		theReductionType = aReductionType;
+		return reductionType;
 	}
 
 	/** Тип развертывания-свертывания */
-	private VocBedReductionType theReductionType;
+	private VocBedReductionType reductionType;
 
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@OneToOne
 	public VocServiceStream getServiceStream() {
-		return theServiceStream;
-	}
-
-	public void setServiceStream(VocServiceStream aServiceStream) {
-		theServiceStream = aServiceStream;
+		return serviceStream;
 	}
 
 	/** Поток обслуживания */
-	private VocServiceStream theServiceStream;
+	private VocServiceStream serviceStream;
 
 	/** Профиль коек */
 	@Comment("Профиль коек")
 	@OneToOne
 	public VocBedType getBedType() {
-		return theBedType;
-	}
-
-	public void setBedType(VocBedType aBedType) {
-		theBedType = aBedType;
+		return bedType;
 	}
 
 	/** Профиль коек */
-	private VocBedType theBedType;
+	private VocBedType bedType;
 
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@ManyToOne
 	public MisLpu getLpu() {
-		return theLpu;
-	}
-
-	public void setLpu(MisLpu aLpu) {
-		theLpu = aLpu;
+		return lpu;
 	}
 
 	/** ЛПУ */
-	private MisLpu theLpu;
+	private MisLpu lpu;
 
 	/** Для детей */
-	@Comment("Для детей")
-	public Boolean getForChild() {
-		return theForChild;
-	}
-
-	public void setForChild(Boolean aForChild) {
-		theForChild = aForChild;
-	}
-
-	/** Для детей */
-	private Boolean theForChild;
+	private Boolean forChild;
 
 	/** Тип свертывания (текст) */
 	@Comment("Тип свертывания (текст)")
 	@Transient
 	public String getReductionTypeName() {
-		return theReductionType!=null? theReductionType.getName():"";
+		return reductionType!=null? reductionType.getName():"";
 	}
 
 	/** Поток обслуживания (текст) */
 	@Comment("Поток обслуживания (текст)")
 	@Transient
 	public String getServiceStreamName() {
-		return theServiceStream!=null?theServiceStream.getName():"";
+		return serviceStream!=null?serviceStream.getName():"";
 	}
 
 
@@ -135,7 +103,7 @@ public class BedFund extends BaseEntity{
 	@Comment("Профиль коек (текст)")
 	@Transient
 	public String getBedTypeName() {
-		return theBedType!=null?theBedType.getName():"";
+		return bedType!=null?bedType.getName():"";
 	}
 
 
@@ -149,145 +117,64 @@ public class BedFund extends BaseEntity{
 	/** Время окончания актуальности */
 	@Comment("Время окончания актуальности")
 	public Timestamp getVTE() {
-		return theVTE;
-	}
-
-	public void setVTE(Timestamp aVTE) {
-		theVTE = aVTE;
+		return VTE;
 	}
 
 	/** Время окончания актуальности */
-	private Timestamp theVTE;
+	private Timestamp VTE;
 
 	/** Время начала актуальности */
 	@Comment("Время начала актуальности")
 	public Timestamp getVTS() {
-		return theVTS;
-	}
-
-	public void setVTS(Timestamp aVTS) {
-		theVTS = aVTS;
+		return VTS;
 	}
 
 	/** Время начала актуальности */
-	private Timestamp theVTS;
+	private Timestamp VTS;
 
 	/** Дата начала актуальности */
-	@Comment("Дата начала актуальности")
-	public Date getDateStart() {
-		return theDateStart;
-	}
-
-	public void setDateStart(Date aDateStart) {
-		theDateStart = aDateStart;
-	}
-
-	/** Дата начала актуальности */
-	private Date theDateStart;
+	private Date dateStart;
 
 	/** Время начала актуальности */
-	@Comment("Время начала актуальности")
-	public Time getTimeStart() {
-		return theTimeStart;
-	}
-
-	public void setTimeStart(Time aTimeStart) {
-		theTimeStart = aTimeStart;
-	}
-
-	/** Время начала актуальности */
-	private Time theTimeStart;
+	private Time timeStart;
 
 	/** Дата окончания актуальности */
-	@Comment("Дата окончания актуальности")
-	public Date getDateFinish() {
-		return theDateFinish;
-	}
-
-	public void setDateFinish(Date aDateFinish) {
-		theDateFinish = aDateFinish;
-	}
-
-	/** Дата окончания актуальности */
-	private Date theDateFinish;
+	private Date dateFinish;
 
 	/** Время окончания актуальности */
-	@Comment("Время окончания актуальности")
-	public Time getTimeFinish() {
-		return theTimeFinish;
-	}
-
-	public void setTimeFinish(Time aTimeFinish) {
-		theTimeFinish = aTimeFinish;
-	}
-
-	/** Время окончания актуальности */
-	private Time theTimeFinish;
+	private Time timeFinish;
 
 	/** Тип койки */
 	@Comment("Тип койки")
 	@OneToOne
-	public VocBedSubType getBedSubType() {return theBedSubType;}
-	public void setBedSubType(VocBedSubType aBedSubType) {theBedSubType = aBedSubType;	}
-
+	public VocBedSubType getBedSubType() {return bedSubType;}
 	/** Тип койки */
-	private VocBedSubType theBedSubType;
+	private VocBedSubType bedSubType;
 
 	/** Тип койки (текст) */
 	@Comment("Тип койки (текст)")
 	@Transient
 	public String getBedSubTypeName() {
-		return theBedSubType!=null? theBedSubType.getName():"";
+		return bedSubType!=null? bedSubType.getName():"";
 	}
 
 	/** Без питания */
-	@Comment("Без питания")
-	public Boolean getNoFood() {
-		return theNoFood;
-	}
-
-	public void setNoFood(Boolean aNoFood) {
-		theNoFood = aNoFood;
-	}
-
-	/** Без питания */
-	private Boolean theNoFood;
+	private Boolean noFood;
 
 	/** День выписки и день поступления считать разными днями */
-	@Comment("День выписки и день поступления считать разными днями")
-	public Boolean getAddCaseDuration() {return theAddCaseDuration;}
-	public void setAddCaseDuration(Boolean aAddCaseDuration) {theAddCaseDuration = aAddCaseDuration;}
-
-	/** День выписки и день поступления считать разными днями */
-	private Boolean theAddCaseDuration;
+	private Boolean addCaseDuration;
 
 	/** Реабилитационные */
-	@Comment("Реабилитационные")
-	public Boolean getIsRehab() {return theIsRehab;}
-	public void setIsRehab(Boolean aIsRehab) {theIsRehab = aIsRehab;}
-
-	/** Реабилитационные */
-	private Boolean theIsRehab;
+	private Boolean isRehab;
 
 	/** По умолчанию снилс врача генерации направлений для 263 приказа */
 	@Comment("По умолчанию снилс врача генерации направлений для 263 приказа")
 	@Deprecated
-	public String getSnilsDoctorDirect263() {return theSnilsDoctorDirect263;}
-	public void setSnilsDoctorDirect263(String aSnilsDoctorDirect263) {theSnilsDoctorDirect263 = aSnilsDoctorDirect263;}
-
+	public String getSnilsDoctorDirect263() {return snilsDoctorDirect263;}
 	/** По умолчанию снилс врача генерации направлений для 263 приказа */
-	private String theSnilsDoctorDirect263;
-
-	public String getDepartmentAddressCode() {
-		return theDepartmentAddressCode;
-	}
-
-	public void setDepartmentAddressCode(String aDepartmentAddressCode) {
-		theDepartmentAddressCode = aDepartmentAddressCode;
-	}
-
+	private String snilsDoctorDirect263;
 	/**
 	 * Код адреса отделения
 	 */
-	private String theDepartmentAddressCode;
+	private String departmentAddressCode;
 }

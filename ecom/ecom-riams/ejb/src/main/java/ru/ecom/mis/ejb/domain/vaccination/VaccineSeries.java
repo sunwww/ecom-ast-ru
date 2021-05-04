@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 /**
@@ -16,47 +18,19 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Серия вакцинного материала")
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VaccineSeries extends BaseEntity {
 
 	/**
 	 * Серия
 	 */
-	@Comment("Серия")
-	public String getSeries() {
-		return theSeries;
-	}
-
-	/**
-	 * Серия
-	 */
-	public void setSeries(String a_Property) {
-		theSeries = a_Property;
-	}
-
-	/**
-	 * Серия
-	 */
-	private String theSeries;
+	private String series;
 
 	/**
 	 * Дата окончания годности
 	 */
-	@Comment("Дата окончания годности")
-	public Date getExpirationDate() {
-		return theExpirationDate;
-	}
-
-	/**
-	 * Дата окончания годности
-	 */
-	public void setExpirationDate(Date a_Property) {
-		theExpirationDate = a_Property;
-	}
-
-	/**
-	 * Дата окончания годности
-	 */
-	private Date theExpirationDate;
+	private Date expirationDate;
 
 	/**
 	 * Вакцина
@@ -64,39 +38,18 @@ public class VaccineSeries extends BaseEntity {
 	@Comment("Вакцина")
 	@OneToOne
 	public Vaccine getVaccine() {
-		return theVaccine;
+		return vaccine;
 	}
+
 
 	/**
 	 * Вакцина
 	 */
-	public void setVaccine(Vaccine a_Property) {
-		theVaccine = a_Property;
-	}
-
-	/**
-	 * Вакцина
-	 */
-	private Vaccine theVaccine;
+	private Vaccine vaccine;
 
 	/**
 	 * Недействительность
 	 */
-	@Comment("Недействительность")
-	public Boolean getNoActuality() {
-		return theNoActuality;
-	}
-
-	/**
-	 * Недействительность
-	 */
-	public void setNoActuality(Boolean a_Property) {
-		theNoActuality = a_Property;
-	}
-
-	/**
-	 * Недействительность
-	 */
-	private Boolean theNoActuality;
+	private Boolean noActuality;
 
 }

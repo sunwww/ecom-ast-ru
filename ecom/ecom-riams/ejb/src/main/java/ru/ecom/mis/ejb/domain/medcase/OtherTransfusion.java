@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocOtherTransfusPreparation;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -14,16 +16,14 @@ import javax.persistence.OneToOne;
 
 @Comment("Переливания других трансфузионных жидкостей")
 @Entity
+@Getter
+@Setter
 public class OtherTransfusion extends Transfusion {
 	
 	/** Другая трансфузионная жидкость */
 	@Comment("Другая трансфузионная жидкость")
 	@OneToOne
-	public VocOtherTransfusPreparation getOtherPreparation() {return theOtherPreparation;}
-	public void setOtherPreparation(VocOtherTransfusPreparation aOtherPreparation) {theOtherPreparation = aOtherPreparation;}
-
-
-	/** Другая трансфузионная жидкость */
-	private VocOtherTransfusPreparation theOtherPreparation;
+	public VocOtherTransfusPreparation getOtherPreparation() {return otherPreparation;}
+	private VocOtherTransfusPreparation otherPreparation;
 
 }

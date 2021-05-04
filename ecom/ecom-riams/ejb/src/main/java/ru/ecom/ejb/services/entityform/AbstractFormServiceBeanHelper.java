@@ -40,13 +40,13 @@ import java.util.Map.Entry;
 public class AbstractFormServiceBeanHelper implements IFormService {
     private static final Logger LOG = Logger
             .getLogger(AbstractFormServiceBeanHelper.class);
-    private final EjbInjection theEjbInjection = EjbInjection.getInstance();
-    private final RowPersistDelegate theRowPersistDelegate = new RowPersistDelegate();
+    private final EjbInjection ejbInjection = EjbInjection.getInstance();
+    private final RowPersistDelegate rowPersistDelegate = new RowPersistDelegate();
     @PersistenceContext
-    EntityManager theManager;
+    EntityManager manager;
     @Resource
-    SessionContext theContext;
-    JavaScriptFormInterceptorManager theJavaScriptFormInterceptorManager = JavaScriptFormInterceptorManager.getInstance();
+    SessionContext context;
+    JavaScriptFormInterceptorManager javaScriptFormInterceptorManager = JavaScriptFormInterceptorManager.getInstance();
 
     private static boolean hasManyToManyOneProperty(Class aClass) {
         Method[] methods = aClass.getMethods();
@@ -128,8 +128,8 @@ public class AbstractFormServiceBeanHelper implements IFormService {
         ADynamicSecurityInterceptor interceptor = (ADynamicSecurityInterceptor) aFormClass
                 .getAnnotation(ADynamicSecurityInterceptor.class);
         if (interceptor != null) {
-            InterceptorContext ctx = new InterceptorContext(theManager,
-                    theContext);
+            InterceptorContext ctx = new InterceptorContext(manager,
+                    context);
             for (Class interceptorClass : interceptor.value()) {
                 try {
                     IDynamicSecurityInterceptor dynamicInterceptor = (IDynamicSecurityInterceptor) interceptorClass
@@ -156,7 +156,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 
     void checkPermission(Class aFormClass, String aSuffix) {
         String policy = getSecurityRole(aFormClass, aSuffix);
-        if (!theContext.isCallerInRole(policy)) {
+        if (!context.isCallerInRole(policy)) {
             throw new IllegalStateException("Нет политики " + policy);
         }
     }
@@ -179,7 +179,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
             throws EntityFormException {
         checkPermission(aFormClass, "View");
 
-        Object entity = theManager.find(findFormPersistanceClass(aFormClass),
+        Object entity = manager.find(findFormPersistanceClass(aFormClass),
                 aId);
         if (entity == null)
             throw new IllegalArgumentException("Не найден объект типа "
@@ -194,8 +194,8 @@ public class AbstractFormServiceBeanHelper implements IFormService {
                 AViewInterceptors interceptors = aFormClass.getAnnotation(AViewInterceptors.class);
                 invokeFormInterceptors(interceptors.value(), form, entity);
             }
-            if (theRowPersistDelegate.isRowPersistEnable(aFormClass)) {
-                theRowPersistDelegate.load(form, theManager, entity);
+            if (rowPersistDelegate.isRowPersistEnable(aFormClass)) {
+                rowPersistDelegate.load(form, manager, entity);
             }
             invokeJavaScriptInterceptor("onView", form, entity, null, null);
             return form;
@@ -210,7 +210,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
         if (aFormClass.getAnnotation(Subclasses.class) == null)
             throw new IllegalArgumentException("У класса формы "
                     + aFormClass.getName() + " нет аннотации @Subclasses");
-        Object entity = theManager.find(findFormPersistanceClass(aFormClass),
+        Object entity = manager.find(findFormPersistanceClass(aFormClass),
                 aId);
         if (entity == null)
             throw new IllegalArgumentException("Не найден объект типа "
@@ -293,7 +293,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
         try {
             Object entity = entityClass.newInstance();
             Method getIdMethod = entityClass.getMethod("getId");
-            EntityManager manager = theManager; //theFactory.createEntityManager();
+            EntityManager manager2 = manager; //theFactory.createEntityManager();
             try {
                 boolean doPersistBefore = hasManyToManyOneProperty(aForm.getClass());
                 if (doPersistBefore) {
@@ -304,9 +304,9 @@ public class AbstractFormServiceBeanHelper implements IFormService {
                     createManyToManyOneProperty(aForm, entity, getIdMethod.invoke(entity));
                 }
                 copyFormToEntity(aForm, entity, false); // не копируем @Id
-                if (!doPersistBefore) manager.persist(entity);
-                if (theRowPersistDelegate.isRowPersistEnable(aForm.getClass())) {
-                    theRowPersistDelegate.create(aForm, theManager, entity);
+                if (!doPersistBefore) manager2.persist(entity);
+                if (rowPersistDelegate.isRowPersistEnable(aForm.getClass())) {
+                    rowPersistDelegate.create(aForm, manager, entity);
                 }
 
                 if (aForm.getClass().isAnnotationPresent(ACreateInterceptors.class)) {
@@ -382,7 +382,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
         checkPermission(aForm.getClass(), "Edit");
         try {
             Object idValue = getIdValue(aForm, aForm.getClass());
-            Object entity = theManager.find(findFormPersistanceClass(aForm
+            Object entity = manager.find(findFormPersistanceClass(aForm
                     .getClass()), idValue);
             checkIsObjectDeleted(entity);
             invokeJavaScriptInterceptor("onPreSave", aForm, entity, null, null);
@@ -391,8 +391,8 @@ public class AbstractFormServiceBeanHelper implements IFormService {
                 ASaveInterceptors interceptors = aForm.getClass().getAnnotation(ASaveInterceptors.class);
                 invokeFormInterceptors(interceptors.value(), aForm, entity);
             }
-            if (theRowPersistDelegate.isRowPersistEnable(aForm.getClass())) {
-                theRowPersistDelegate.save(aForm, theManager, entity);
+            if (rowPersistDelegate.isRowPersistEnable(aForm.getClass())) {
+                rowPersistDelegate.save(aForm, manager, entity);
             }
             invokeJavaScriptInterceptor("onSave", aForm, entity, null, null);
             checkDynamicPermission(aForm.getClass(), idValue, "Edit");
@@ -406,19 +406,19 @@ public class AbstractFormServiceBeanHelper implements IFormService {
     }
 
     private void invokeJavaScriptInterceptor(String aFunctionName, IEntityForm aForm, Object aEntity, Object aId, Class aStrutsFormClass) {
-        JavaScriptFormInterceptorContext ctx = new JavaScriptFormInterceptorContext(theManager, theContext, theEjbInjection);
-        theJavaScriptFormInterceptorManager.invoke(aFunctionName, aForm, aEntity, aId, aStrutsFormClass, ctx);
+        JavaScriptFormInterceptorContext ctx = new JavaScriptFormInterceptorContext(manager, context, ejbInjection);
+        javaScriptFormInterceptorManager.invoke(aFunctionName, aForm, aEntity, aId, aStrutsFormClass, ctx);
     }
 
     private void invokeFormInterceptors(AEntityFormInterceptor[] aInterceptors, IEntityForm aForm, Object aEntity) throws InstantiationException, IllegalAccessException {
         for (AEntityFormInterceptor interceptor : aInterceptors) {
             if (interceptor.value().newInstance() instanceof IFormInterceptor) {
                 IFormInterceptor formInterceptor = (IFormInterceptor) interceptor.value().newInstance();
-                formInterceptor.intercept(aForm, aEntity, theManager);
+                formInterceptor.intercept(aForm, aEntity, manager);
             }
             if (interceptor.value().newInstance() instanceof ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor) {
                 ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor formInterceptor = (ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor) interceptor.value().newInstance();
-                formInterceptor.intercept(aForm, aEntity, new InterceptorContext(theManager, theContext));
+                formInterceptor.intercept(aForm, aEntity, new InterceptorContext(manager, context));
             }
         }
     }
@@ -432,13 +432,13 @@ public class AbstractFormServiceBeanHelper implements IFormService {
         checkPermission(aFormClass, "Delete");
         checkDynamicPermission(aFormClass, aId, "Delete");
         Class entityClass = findFormPersistanceClass(aFormClass);
-        Object entity = theManager.find(entityClass, aId);
+        Object entity = manager.find(entityClass, aId);
         checkIsObjectDeleted(entity);
         invokeJavaScriptInterceptor("onPreDelete", null, null, aId, aFormClass);
         if (entityClass.isAnnotationPresent(UnDeletable.class)) { //Если у формы есть аннотация, не удаляем
-            String username = theContext.getCallerPrincipal().getName();
+            String username = context.getCallerPrincipal().getName();
             String fieldName = ((UnDeletable) entityClass.getAnnotation(UnDeletable.class)).fieldName();
-            theManager.createQuery("update " + entityClass.getCanonicalName() + " set " + fieldName + "='1' where id=:id").setParameter("id", aId).executeUpdate();
+            manager.createQuery("update " + entityClass.getCanonicalName() + " set " + fieldName + "='1' where id=:id").setParameter("id", aId).executeUpdate();
             DeleteJournal deleteJournal = new DeleteJournal();
             deleteJournal.setClassName(entityClass.getCanonicalName());
             deleteJournal.setDeleteDate(new java.sql.Date(new java.util.Date().getTime()));
@@ -446,10 +446,10 @@ public class AbstractFormServiceBeanHelper implements IFormService {
             deleteJournal.setLoginName(username);
             deleteJournal.setObjectId("" + aId);
             deleteJournal.setSerialization("Помечено на удаление");
-            theManager.persist(deleteJournal);
+            manager.persist(deleteJournal);
             deleteJournal.setStatus(2L);
         } else {
-            theManager.remove(theManager.find(entityClass, aId));
+            manager.remove(manager.find(entityClass, aId));
         }
         invokeJavaScriptInterceptor("onDelete", null, null, aId, aFormClass);
 
@@ -474,7 +474,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
             for (Class<IDynamicSecurityInterceptor> interClass : interceptor.value()) {
                 IDynamicSecurityInterceptor inter = interClass.newInstance();
                 try {
-                    inter.check("View", id, new InterceptorContext(theManager, theContext, ElementType.METHOD));
+                    inter.check("View", id, new InterceptorContext(manager, context, ElementType.METHOD));
                     isViewable = true;
                 } catch (Exception e) {
                     isViewable = false;
@@ -531,12 +531,12 @@ public class AbstractFormServiceBeanHelper implements IFormService {
                 if (clazz.newInstance() instanceof IFormInterceptor) {
                     IFormInterceptor interceptor = (IFormInterceptor) clazz
                             .newInstance();
-                    interceptor.intercept(aForm, aEntity, theManager);
+                    interceptor.intercept(aForm, aEntity, manager);
                 }
                 if (clazz.newInstance() instanceof ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor) {
                     ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor interceptor = (ru.ecom.ejb.services.entityform.interceptors.IFormInterceptor) clazz
                             .newInstance();
-                    interceptor.intercept(aForm, aEntity, new InterceptorContext(theManager, theContext));
+                    interceptor.intercept(aForm, aEntity, new InterceptorContext(manager, context));
                 }
             }
         }
@@ -563,7 +563,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
                 j.endObject();
                 return out.toString();
             } else {
-                return PersistList.getArrayJson(tableName, aAnnotation.parentProperty(), PersistList.parseLong(aId), aAnnotation.valueProperty(), theManager);
+                return PersistList.getArrayJson(tableName, aAnnotation.parentProperty(), PersistList.parseLong(aId), aAnnotation.valueProperty(), manager);
             }
 
 
@@ -634,7 +634,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 
                         if (ejbReturnType.getAnnotation(Entity.class) != null) {
                             Object idEntity = method.invoke(aForm);
-                            Object entity = idEntity != null ? theManager.find(
+                            Object entity = idEntity != null ? manager.find(
                                     ejbReturnType, idEntity) : null;
                             Method ejbSetterMethod = PropertyUtil.getSetterMethod(
                                     entityClass, ejbGetterMethod);
@@ -667,7 +667,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
                 if (!StringUtil.isNullOrEmpty(jsonId) || "0".equals(jsonId)) {
                     Object id = PropertyUtil.convertValue(String.class,
                             getIdClass(aType), jsonId);
-                    Object entity = theManager.find(aType, id);
+                    Object entity = manager.find(aType, id);
                     set.add(entity);
                 }
             }
@@ -694,7 +694,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
         } else {
             Long id = PersistList.parseLong(aId);
             if (id != null && id > 0)
-                PersistList.saveArrayJson(aTableName, id, aJson, aParentProperty, aValueProperty, theManager);
+                PersistList.saveArrayJson(aTableName, id, aJson, aParentProperty, aValueProperty, manager);
         }
     }
 

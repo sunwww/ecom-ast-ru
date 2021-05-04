@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.uc.privilege.form;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -34,45 +35,40 @@ import ru.nuzmsh.forms.validator.validators.Required;
 	@AEntityFormInterceptor(ClassificatorSave.class)
 	
 })
+@Setter
 public class DrugClassificatorForm extends IdEntityForm {
 	/** Наименование */
 	@Comment("Наименование")
 	@Persist @Required
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
+	public String getName() {return name;}
 
-	
 	/** Родитель */
 	@Comment("Родитель")
 	@Persist
-	public Long getParent() {return theParent;}
-	public void setParent(Long aParent) {theParent = aParent;}
-	
+	public Long getParent() {return parent;}
+
 	/** Пользователь */
 	@Comment("Пользователь")
 	@Persist
-	public String getUsername() {return theUsername;}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
+	public String getUsername() {return username;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DoDateString @DateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	public String getCreateDate() {return createDate;}
 
 	/** Список лек. средств */
 	@Comment("Список лек. средств")
-	public String getDrugList() {return theDrugList;}
-	public void setDrugList(String aDrugList) {theDrugList = aDrugList;}
+	public String getDrugList() {return drugList;}
 
 	/** Список лек. средств */
-	private String theDrugList;
+	private String drugList;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	/** Пользователь */
-	private String theUsername;
+	private String username;
 	/** Наименование */
-	private String theName;
+	private String name;
 	/** Родитель */
-	private Long theParent;
+	private Long parent;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.prescription;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -27,98 +28,85 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(PrescriptionPreCreateInterceptor.class)
 )
+@Setter
 public class ServicePrescriptionForm extends PrescriptionForm{
 
 	/** Продолжительность услуги (операции) */
 	@Comment("Продолжительность услуги (операции)")
-	public Integer getDuration() {return theDuration;}
-	public void setDuration(Integer aDuration) {theDuration = aDuration;}
-	private Integer theDuration ;
+	public Integer getDuration() {return duration;}
+	private Integer duration ;
 
 	/** Подтверждено назначение услуги без оплаты */
 	@Comment("Подтверждено назначение услуги без оплаты")
-	public Boolean getUnpaidConfirmation() {return theUnpaidConfirmation;}
-	public void setUnpaidConfirmation(Boolean aUnpaidConfirmation) {theUnpaidConfirmation = aUnpaidConfirmation;}
-	private Boolean theUnpaidConfirmation ;
+	public Boolean getUnpaidConfirmation() {return unpaidConfirmation;}
+	private Boolean unpaidConfirmation ;
 
 	/** Номер штрих-кода */
 	@Comment("Номер штрих-кода")
 	@Persist
-	public String getBarcodeNumber() {return theBarcodeNumber;}
-	public void setBarcodeNumber(String aBarcodeNumber) {theBarcodeNumber = aBarcodeNumber;}
-	private String theBarcodeNumber;
+	public String getBarcodeNumber() {return barcodeNumber;}
+	private String barcodeNumber;
 	
 	/** количество дней */
 	@Comment("количество дней")
-	public Long getCountDays() {return theCountDays;}
-	public void setCountDays(Long aCountDays) {theCountDays = aCountDays;}
-	private Long theCountDays;
+	public Long getCountDays() {return countDays;}
+	private Long countDays;
 
 	/** Назначивший */
-	private Long thePrescriptSpecial;
+	private Long prescriptSpecial;
 	/** Плановая дата начала */
 	@Comment("Плановая дата начала")
 	@Persist @DateString @DoDateString
-	public String getPlanStartDate() {return thePlanStartDate;}
-	public void setPlanStartDate(String aPlanStartDate) {thePlanStartDate = aPlanStartDate;}
-    private String thePlanStartDate;
+	public String getPlanStartDate() {return planStartDate;}
+    private String planStartDate;
 
 	/** Плановое время начала */
 	@Comment("Плановое время начала")
 	@Persist @TimeString @DoTimeString
-	public String getPlanStartTime() {return thePlanStartTime;}
-	public void setPlanStartTime(String aPlanStartTime) {thePlanStartTime = aPlanStartTime;}
-    private String thePlanStartTime;
+	public String getPlanStartTime() {return planStartTime;}
+    private String planStartTime;
 
 	/** Медицинская услуга */
 	@Comment("Медицинская услуга")
 	@Persist 
-	public Long getMedService() {return theMedService;}
-	public void setMedService(Long aMedService) {theMedService = aMedService;}
-	private Long theMedService;
+	public Long getMedService() {return medService;}
+	private Long medService;
 
    /** Операци */
 	@Comment("Операци")
-	public String getSurgServicies() {return theSurgServicies;}
-	public void setSurgServicies(String aSurgServicies) {theSurgServicies = aSurgServicies;	}
-	private String theSurgServicies;
+	public String getSurgServicies() {return surgServicies;}
+	private String surgServicies;
 
 	/** Время для направления на операцию */
 	@Comment("Время для направления на операцию")
-	public Long getSurgCalTime() {return theSurgCalTime;}
-	public void setSurgCalTime(Long aSurgCalTime) {	theSurgCalTime = aSurgCalTime;}
-	private Long theSurgCalTime;
+	public Long getSurgCalTime() {return surgCalTime;}
+	private Long surgCalTime;
 	
 	/** Дата для направления на операцию */
 	@Comment("Дата для направления на операцию")
-	public Long getSurgCalDate() {return theSurgCalDate;}
-	public void setSurgCalDate(Long aSurgCalDate) {theSurgCalDate = aSurgCalDate;}
-	private Long theSurgCalDate;
+	public Long getSurgCalDate() {return surgCalDate;}
+	private Long surgCalDate;
 	
 	/** Операционная */
 	@Comment("Операционная")
-	public Long getSurgCabinet() {return theSurgCabinet;}
-	public void setSurgCabinet(Long aSurgCabinet) {theSurgCabinet = aSurgCabinet;}
-	private Long theSurgCabinet;
+	public Long getSurgCabinet() {return surgCabinet;}
+	private Long surgCabinet;
 
 	/** Вид наркоза */
 	@Comment("Вид наркоза")
 	@Persist
-	public Long getAnesthesiaType() {return theAnesthesiaType;}
-	public void setAnesthesiaType(Long aAnesthesiaType) {theAnesthesiaType = aAnesthesiaType;}
-	private Long theAnesthesiaType ;
+	public Long getAnesthesiaType() {return anesthesiaType;}
+	private Long anesthesiaType ;
 
 	/** Группа крови пациента */
 	@Comment("Группа крови пациента")
 	@Persist
-	public Long getBloodGroup() {return theBloodGroup;}
-	public void setBloodGroup(Long aBloodGroup) {theBloodGroup = aBloodGroup;}
-	private Long theBloodGroup;
+	public Long getBloodGroup() {return bloodGroup;}
+	private Long bloodGroup;
 
 	/** Резус-фактор пациента */
 	@Comment("Резус-фактор пациента")
 	@Persist
-	public Long getRhesusFactor() {return theRhesusFactor;}
-	public void setRhesusFactor(Long aRhesusFactor) {theRhesusFactor = aRhesusFactor;}
-	private Long theRhesusFactor;
+	public Long getRhesusFactor() {return rhesusFactor;}
+	private Long rhesusFactor;
 }

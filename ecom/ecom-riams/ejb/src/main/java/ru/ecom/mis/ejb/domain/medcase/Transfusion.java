@@ -8,6 +8,8 @@ import javax.persistence.EntityListeners;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -36,295 +38,150 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
     })
 @Table(schema="SQLUser")
 @EntityListeners(DeleteListener.class)
+@Getter
+@Setter
 public abstract class Transfusion extends BaseEntity{
-	
-	/** Дата начала */
-	@Comment("Дата начала")
-	public Date getStartDate() {return theStartDate;}
-	public void setStartDate(Date aStartDate) {theStartDate = aStartDate;}
-
-	
-	/** Первичное */
-	@Comment("Первичное")
-	public Boolean getPrimaryCase() {return thePrimaryCase;}
-	public void setPrimaryCase(Boolean aPrimary) {thePrimaryCase = aPrimary;}
 
 	/** СМО */
 	@Comment("СМО")
 	@OneToOne
-	public MedCase getMedCase() {return theMedCase;}
-	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
+	public MedCase getMedCase() {return medCase;}
 
 	/** Показания к применению */
 	@Comment("Показания к применению")
 	@OneToOne
-	public VocTransfusionReason getReason() {return theReason;}
-	public void setReason(VocTransfusionReason aReason) {theReason = aReason;}
-
-	/** Доза (мл) */
-	@Comment("Доза (мл)")
-	public Integer getDoze() {return theDoze;}
-	public void setDoze(Integer aDoze) {theDoze = aDoze;}
-
-	/** Серия */
-	@Comment("Серия")
-	public String getSeries() {return theSeries;}
-	public void setSeries(String aSeries) {theSeries = aSeries;}
-	
-	/** Дата приготовления */
-	@Comment("Дата приготовления")
-	public Date getPreparationDate() {return thePreparationDate;}
-	public void setPreparationDate(Date aPreparationDate) {thePreparationDate = aPreparationDate;}
+	public VocTransfusionReason getReason() {return reason;}
 
 	/** Изготовитель */
 	@Comment("Изготовитель")
 	@OneToOne
-	public VocPreparatorBlood getPreparator() {return thePreparator;}
-	public void setPreparator(VocPreparatorBlood aPreparator) {thePreparator = aPreparator;}
+	public VocPreparatorBlood getPreparator() {return preparator;}
 
 	/** Способ переливания */
 	@Comment("Способ переливания")
 	@OneToOne
-	public VocTransfusionMethod getTransfusionMethod() {return theTransfusionMethod;}
-	public void setTransfusionMethod(VocTransfusionMethod aTransfusionMethod) {theTransfusionMethod = aTransfusionMethod;}
+	public VocTransfusionMethod getTransfusionMethod() {return transfusionMethod;}
 
 	/** Исполнитель */
 	@Comment("Исполнитель")
 	@OneToOne
-	public WorkFunction getExecutor() {return theExecutor;}
-	public void setExecutor(WorkFunction aExecutor) {theExecutor = aExecutor;}
+	public WorkFunction getExecutor() {return executor;}
 
 	/** Трансфузионная реакция */
 	@Comment("Трансфузионная реакция")
 	@OneToOne
-	public VocTransfusionReaction getTransfusionReaction() {return theTransfusionReaction;}
-	public void setTransfusionReaction(VocTransfusionReaction aTransfusionReaction) {theTransfusionReaction = aTransfusionReaction;}
-
-	/** Осложнения после переливания */
-	@Comment("Осложнения после переливания")
-	public String getComplications() {return theComplications;}
-	public void setComplications(String aComplications) {theComplications = aComplications;}
-
-	/** Номер в журнале */
-	@Comment("Номер в журнале")
-	public Integer getJournalNumber() {return theJournalNumber;}
-	public void setJournalNumber(Integer aJournalNumber) {theJournalNumber = aJournalNumber;}
+	public VocTransfusionReaction getTransfusionReaction() {return transfusionReaction;}
 
 	/** Дата начала */
-	private Date theStartDate;
+	private Date startDate;
 	/** Первичное */
-	private Boolean thePrimaryCase;
+	private Boolean primaryCase;
 	/** СМО */
-	private MedCase theMedCase;
+	private MedCase medCase;
 	/** Показания к применению */
-	private VocTransfusionReason theReason;
+	private VocTransfusionReason reason;
 	/** Доза (мл) */
-	private Integer theDoze;
+	private Integer doze;
 	/** Серия */
-	private String theSeries;
+	private String series;
 	/** Дата приготовления */
-	private Date thePreparationDate;
+	private Date preparationDate;
 	/** Изготовитель */
-	private VocPreparatorBlood thePreparator;
+	private VocPreparatorBlood preparator;
 	/** Способ переливания */
-	private VocTransfusionMethod theTransfusionMethod;
+	private VocTransfusionMethod transfusionMethod;
 	/** Исполнитель */
-	private WorkFunction theExecutor;
+	private WorkFunction executor;
 	/** Трансфузионная реакция */
-	private VocTransfusionReaction theTransfusionReaction;
+	private VocTransfusionReaction transfusionReaction;
 	/** Осложнения после переливания */
-	private String theComplications;
+	private String complications;
 	/** Номер в журнале */
-	private Integer theJournalNumber;
+	private Integer journalNumber;
 	
-	/** Время переливание с */
-	@Comment("Время переливание с")
-	public Time getTimeFrom() {return theTimeFrom;}
-	public void setTimeFrom(Time aTimeFrom) {theTimeFrom = aTimeFrom;}
-
 	/** Время переливания по */
-	@Comment("Время переливания по")
-	public Time getTimeTo() {return theTimeTo;}
-	public void setTimeTo(Time aTimeTo) {theTimeTo = aTimeTo;}
-
-	/** Время переливания по */
-	private Time theTimeTo;
+	private Time timeTo;
 	/** Время переливание с */
-	private Time theTimeFrom;
-	
-	/** Фенотип */
-	@Comment("Фенотип")
-	public String getPhenotype() {return thePhenotype;}
-	public void setPhenotype(String aPhenotype) {thePhenotype = aPhenotype;}
-
-	/** Фенотип C */
-	@Comment("Фенотип C")
-	public Boolean getPhenotypeC() {return thePhenotypeC;}
-	public void setPhenotypeC(Boolean aPhenotypeC) {thePhenotypeC = aPhenotypeC;}
-
-	/** Фенотип с */
-	@Comment("Фенотип с")
-	public Boolean getPhenotypec1() {return thePhenotypec1;}
-	public void setPhenotypec1(Boolean aPhenotypec1) {thePhenotypec1 = aPhenotypec1;}
-
-	/** Фенотип Е */
-	@Comment("Фенотип Е")
-	public Boolean getPhenotypeD() {return thePhenotypeD;}
-	public void setPhenotypeD(Boolean aPhenotypeD) {thePhenotypeD = aPhenotypeD;}
-
-	/** Фенотип e */
-	@Comment("Фенотип e")
-	public Boolean getPhenotypeE() {return thePhenotypeE;}
-	public void setPhenotypeE(Boolean aPhenotypeE) {thePhenotypeE = aPhenotypeE;}
-
+	private Time timeFrom;
 	/** Фенотип E */
-	@Comment("Фенотип E")
-	public Boolean getPhenotypee1() {return thePhenotypee1;}
-	public void setPhenotypee1(Boolean aPhenotypee1) {thePhenotypee1 = aPhenotypee1;}
-
-	/** Фенотип не определялся */
-	@Comment("Фенотип не определялся")
-	public Boolean getPhenotypeNone() {return thePhenotypeNone;}
-	public void setPhenotypeNone(Boolean aPhenotypeNone) {thePhenotypeNone = aPhenotypeNone;}
-
-	/** Фенотип E */
-	private Boolean thePhenotypee1;	
+	private Boolean phenotypee1;	
 	/** Фенотип e */
-	private Boolean thePhenotypeE;
+	private Boolean phenotypeE;
 	/** Фенотип Е */
-	private Boolean thePhenotypeD;
+	private Boolean phenotypeD;
 	/** Фенотип с */
-	private Boolean thePhenotypec1;
+	private Boolean phenotypec1;
 	/** Фенотип C */
-	private Boolean thePhenotypeC;
+	private Boolean phenotypeC;
 	/** Фенотип не определялся*/
-	private Boolean thePhenotypeNone;
+	private Boolean phenotypeNone;
 	/** Фенотип */
-	private String thePhenotype;
+	private String phenotype;
 	
-	/** Срок годности */
-	@Comment("Срок годности")
-	public Date getExpirationDate() {return theExpirationDate;}
-	public void setExpirationDate(Date aExpirationDate) {theExpirationDate = aExpirationDate;}
-
-	/** Номер контейнера */
-	@Comment("Номер контейнера")
-	public String getContainerNumber() {return theContainerNumber;}
-	public void setContainerNumber(String aContainerNumber) {theContainerNumber = aContainerNumber;}
 
 	/** Исследования антител */
 	@Comment("Исследования антител")
 	@OneToOne
-	public VocTransfusionResearchAntibodies getResearchAntibodies() {return theResearchAntibodies;}
-	public void setResearchAntibodies(VocTransfusionResearchAntibodies aResearchAntibodies) {theResearchAntibodies = aResearchAntibodies;}
-
-	/** Выявленные антитела */
-	@Comment("Выявленные антитела")
-	public String getAntibodiesList() {return theAntibodiesList;}
-	public void setAntibodiesList(String aAntibodiesList) {theAntibodiesList = aAntibodiesList;}
+	public VocTransfusionResearchAntibodies getResearchAntibodies() {return researchAntibodies;}
 
 	/** Трансфузионный анамнез */
 	@Comment("Трансфузионный анамнез")
 	@OneToOne
-	public VocYesNo getTransfusionHistory() {return theTransfusionHistory;}
-	public void setTransfusionHistory(VocYesNo aTransfusionHistory) {theTransfusionHistory = aTransfusionHistory;}
+	public VocYesNo getTransfusionHistory() {return transfusionHistory;}
 
 	
 	/** Трансфузионный по индив. подбору в прошлом */
 	@Comment("Трансфузионный по индив. подбору в прошлом")
 	@OneToOne
-	public VocYesNo getPersonalTransfusionHistory() {return thePersonalTransfusionHistory;}
-	public void setPersonalTransfusionHistory(VocYesNo aTransfusionHistory) {thePersonalTransfusionHistory = aTransfusionHistory;}
-
-	/** Кол-во беременностей */
-	@Comment("Кол-во беременностей")
-	public String getCountPregnancy() {return theCountPregnancy;}
-	public void setCountPregnancy(String aCountPregnancy) {theCountPregnancy = aCountPregnancy;}
+	public VocYesNo getPersonalTransfusionHistory() {return personalTransfusionHistory;}
 
 	/** Особенности беременности */
 	@Comment("Особенности беременности")
 	@OneToOne
-	public VocTransfusionPregnancyHang getPregnancyHang() {return thePregnancyHang;}
-	public void setPregnancyHang(VocTransfusionPregnancyHang aPregnancyHang) {thePregnancyHang = aPregnancyHang;}
+	public VocTransfusionPregnancyHang getPregnancyHang() {return pregnancyHang;}
 
 	/** Особенности беременности */
-	private VocTransfusionPregnancyHang thePregnancyHang;
+	private VocTransfusionPregnancyHang pregnancyHang;
 	/** Кол-во беременностей */
-	private String theCountPregnancy;
+	private String countPregnancy;
 	/** Трансфузионный по индив. подбору в прошлом */
-	private VocYesNo thePersonalTransfusionHistory;
+	private VocYesNo personalTransfusionHistory;
 	/** Трансфузионный анамнез */
-	private VocYesNo theTransfusionHistory;
+	private VocYesNo transfusionHistory;
 	/** Выявленные антитела */
-	private String theAntibodiesList;
+	private String antibodiesList;
 	/** Исследования антител */
-	private VocTransfusionResearchAntibodies theResearchAntibodies;
+	private VocTransfusionResearchAntibodies researchAntibodies;
 	/** Номер контейнера */
-	private String theContainerNumber;
+	private String containerNumber;
 	/** Срок годности */
-	private Date theExpirationDate;
+	private Date expirationDate;
 
 	/** Реакции на переливания в прошлом */
 	@Comment("Реакции на переливания в прошлом")
 	@OneToOne
-	public VocYesNo getTransfusionReactionLast() {return theTransfusionReactionLast;}
-	public void setTransfusionReactionLast(VocYesNo aTransfusionReactionLast) {theTransfusionReactionLast = aTransfusionReactionLast;}
+	public VocYesNo getTransfusionReactionLast() {return transfusionReactionLast;}
 
 	/** Реакции на переливания в прошлом */
-	private VocYesNo theTransfusionReactionLast;
+	private VocYesNo transfusionReactionLast;
 	
 	/** Определение резус-принадлежности рециента производилось */
 	@Comment("Определение резус-принадлежности рециента производилось")
 	@OneToOne
-	public VocTransfusionDefinitionRhesus getDefinitionRhesus() {return theDefinitionRhesus;}
-	public void setDefinitionRhesus(VocTransfusionDefinitionRhesus aDefinitionRhesus) {theDefinitionRhesus = aDefinitionRhesus;}
+	public VocTransfusionDefinitionRhesus getDefinitionRhesus() {return definitionRhesus;}
 
 	/** Определение резус-принадлежности рециента производилось */
-	private VocTransfusionDefinitionRhesus theDefinitionRhesus;
-	
-	/** Пользователь, создавший запись */
-	@Comment("Пользователь, создавший запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;	}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-
-	/** Пользователь, которые последним редактировал запись */
-	@Comment("Пользователь, которые последним редактировал запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-
-	/** Дата редакции */
-	@Comment("Дата редакции")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-
+	private VocTransfusionDefinitionRhesus definitionRhesus;
 	/** Время редакции */
-	
-	@Comment("Время редакции")
-	public Time getEditTime() {return theEditTime;}
-	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-
-	/** Время редакции */
-	private Time theEditTime;
+	private Time editTime;
 	/** Дата редакции */
-	private Date theEditDate;
+	private Date editDate;
 	/** Пользователь, которые последним редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
-	
+	private String createUsername;
 }
-//lastrelease milamesher 02.04.2018 #95

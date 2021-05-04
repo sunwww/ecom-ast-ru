@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.prescription.template;
 
+import lombok.Setter;
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
@@ -30,148 +31,126 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @ACreateInterceptors({
     @AEntityFormInterceptor(PrescriptListCreateInterceptor.class)
 })
+@Setter
 public class PrescriptListForm extends AbstractPrescriptionListForm {
 	
 	/** Отделение (лаборатория) */
 	@Comment("Отделение (лаборатория)")
-	public Long getLabDepartment() {return theLabDepartment;}
-	public void setLabDepartment(Long aLabDepartment) {theLabDepartment = aLabDepartment;}
+	public Long getLabDepartment() {return labDepartment;}
 	/** Отделение (лаборатория) */
-	private Long theLabDepartment;
+	private Long labDepartment;
 	
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@Persist 
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
-
-	private Long theWorkFunction ;
+	public Long getWorkFunction() {return workFunction;}
+	private Long workFunction ;
 	
 	/** Тип назначения */
 	@Comment("Тип назначения")
 	@Persist 
-	public Long getPrescriptType() {return thePrescriptType;}
-	public void setPrescriptType(Long aPrescriptType) {thePrescriptType = aPrescriptType;}
-
-	private Long thePrescriptType;
+	public Long getPrescriptType() {return prescriptType;}
+	private Long prescriptType;
 	
 	/** Категории классификатора */
 	@Comment("Категории классификатора")
 	@PersistManyToManyOneProperty(collectionGenericType=TemplateCategory.class)
 	@Persist
-	public String getCategories() {return theCategories;}
-	public void setCategories(String aCategories) {theCategories = aCategories;	}
-	
+	public String getCategories() {return categories;}
+
 	/** Название шаблона */
 	@Comment("Название шаблона")
 	@Persist @Required
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
-	
-	private String theName ;
+	public String getName() {return name;}
+	private String name ;
 	/** Категории классификатора */
-	private String theCategories;
+	private String categories;
 	
 	/** Группы пользователей */
 	@Comment("Группы пользователей")
 	@Persist @PersistManyToManyOneProperty(collectionGenericType = SecGroup.class)
-	public String getSecGroups() {return theSecGroups;}
-	public void setSecGroups(String aSecGroups) {theSecGroups = aSecGroups;}
-
+	public String getSecGroups() {return secGroups;}
 	/** Группы пользователей */
-	private String theSecGroups;
+	private String secGroups;
 
 	/** Лек. ср-во 1 */
 	@Comment("Лек. ср-во 1")
-	public DrugPrescriptionForm getDrugForm1() {return theDrugForm1;}
-	public void setDrugForm1(DrugPrescriptionForm aDrugForm1) {theDrugForm1 = aDrugForm1;}
+	public DrugPrescriptionForm getDrugForm1() {return drugForm1;}
 
 	/** Лек. ср-во 2 */
 	@Comment("Лек. ср-во 2")
-	public DrugPrescriptionForm getDrugForm2() {return theDrugForm2;}
-	public void setDrugForm2(DrugPrescriptionForm aDrugForm2) {theDrugForm2 = aDrugForm2;}
+	public DrugPrescriptionForm getDrugForm2() {return drugForm2;}
 
 	/** Лек. ср-во 3 */
 	@Comment("Лек. ср-во 3")
-	public DrugPrescriptionForm getDrugForm3() {return theDrugForm3;}
-	public void setDrugForm3(DrugPrescriptionForm aDrugForm3) {theDrugForm3 = aDrugForm3;}
+	public DrugPrescriptionForm getDrugForm3() {return drugForm3;}
 
 	/** Лек. ср-во 4 */
 	@Comment("Лек. ср-во 4")
-	public DrugPrescriptionForm getDrugForm4() {return theDrugForm4;}
-	public void setDrugForm4(DrugPrescriptionForm aDrugForm4) {theDrugForm4 = aDrugForm4;}
+	public DrugPrescriptionForm getDrugForm4() {return drugForm4;}
 
 	/** Лек. ср-во 5 */
 	@Comment("Лек. ср-во 5")
-	public DrugPrescriptionForm getDrugForm5() {return theDrugForm5;}
-	public void setDrugForm5(DrugPrescriptionForm aDrugForm5) {theDrugForm5 = aDrugForm5;}
+	public DrugPrescriptionForm getDrugForm5() {return drugForm5;}
 
 	/** Лек. ср-во 6 */
 	@Comment("Лек. ср-во 6")
-	public DrugPrescriptionForm getDrugForm6() {return theDrugForm6;}
-	public void setDrugForm6(DrugPrescriptionForm aDrugForm6) {theDrugForm6 = aDrugForm6;}
+	public DrugPrescriptionForm getDrugForm6() {return drugForm6;}
 
 	/** Лек. ср-во 7 */
 	@Comment("Лек. ср-во 7")
-	public DrugPrescriptionForm getDrugForm7() {return theDrugForm7;}
-	public void setDrugForm7(DrugPrescriptionForm aDrugForm7) {theDrugForm7 = aDrugForm7;}
+	public DrugPrescriptionForm getDrugForm7() {return drugForm7;}
 
 	/** Лек. ср-во 8 */
 	@Comment("Лек. ср-во 8")
-	public DrugPrescriptionForm getDrugForm8() {return theDrugForm8;}
-	public void setDrugForm8(DrugPrescriptionForm aDrugForm8) {theDrugForm8 = aDrugForm8;}
+	public DrugPrescriptionForm getDrugForm8() {return drugForm8;}
 
 	/** Лек. ср-во 9 */
 	@Comment("Лек. ср-во 9")
-	public DrugPrescriptionForm getDrugForm9() {return theDrugForm9;}
-	public void setDrugForm9(DrugPrescriptionForm aDrugForm9) {theDrugForm9 = aDrugForm9;}
+	public DrugPrescriptionForm getDrugForm9() {return drugForm9;}
 
 	/** Лек. ср-во 10 */
 	@Comment("Лек. ср-во 10")
-	public DrugPrescriptionForm getDrugForm10() {return theDrugForm10;}
-	public void setDrugForm10(DrugPrescriptionForm aDrugForm10) {theDrugForm10 = aDrugForm10;}
+	public DrugPrescriptionForm getDrugForm10() {return drugForm10;}
 
 	/** Лек. ср-во 11 */
 	@Comment("Лек. ср-во 11")
-	public DrugPrescriptionForm getDrugForm11() {return theDrugForm11;}
-	public void setDrugForm11(DrugPrescriptionForm aDrugForm11) {theDrugForm11 = aDrugForm11;}
+	public DrugPrescriptionForm getDrugForm11() {return drugForm11;}
 
 	/** Лек. ср-во 1 */
-	private DrugPrescriptionForm theDrugForm11= new DrugPrescriptionForm();
+	private DrugPrescriptionForm drugForm11= new DrugPrescriptionForm();
 	/** Лек. ср-во 1 */
-	private DrugPrescriptionForm theDrugForm10= new DrugPrescriptionForm() ;
+	private DrugPrescriptionForm drugForm10= new DrugPrescriptionForm() ;
 	/** Лек. ср-во 1 */
-	private DrugPrescriptionForm theDrugForm9 = new DrugPrescriptionForm();
+	private DrugPrescriptionForm drugForm9 = new DrugPrescriptionForm();
 	/** Лек. ср-во 1 */
-	private DrugPrescriptionForm theDrugForm8 = new DrugPrescriptionForm();
+	private DrugPrescriptionForm drugForm8 = new DrugPrescriptionForm();
 	/** Лек. ср-во 1 */
-	private DrugPrescriptionForm theDrugForm7 = new DrugPrescriptionForm();
+	private DrugPrescriptionForm drugForm7 = new DrugPrescriptionForm();
 	/** Лек. ср-во 1 */
-	private DrugPrescriptionForm theDrugForm6 = new DrugPrescriptionForm();
+	private DrugPrescriptionForm drugForm6 = new DrugPrescriptionForm();
 	/** Лек. ср-во 1 */
-	private DrugPrescriptionForm theDrugForm5 = new DrugPrescriptionForm();
+	private DrugPrescriptionForm drugForm5 = new DrugPrescriptionForm();
 	/** Лек. ср-во 1 */
-	private DrugPrescriptionForm theDrugForm4 = new DrugPrescriptionForm();
+	private DrugPrescriptionForm drugForm4 = new DrugPrescriptionForm();
 	/** Лек. ср-во 1 */
-	private DrugPrescriptionForm theDrugForm3 = new DrugPrescriptionForm();
+	private DrugPrescriptionForm drugForm3 = new DrugPrescriptionForm();
 	/** Лек. ср-во 1 */
-	private DrugPrescriptionForm theDrugForm2 = new DrugPrescriptionForm();
+	private DrugPrescriptionForm drugForm2 = new DrugPrescriptionForm();
 	/** Лек. ср-во 1 */
-	private DrugPrescriptionForm theDrugForm1 = new DrugPrescriptionForm();
+	private DrugPrescriptionForm drugForm1 = new DrugPrescriptionForm();
 
 	/** Форма диеты */
 	@Comment("Форма диеты")
-	public DietPrescriptionForm getDietForm() {return theDietForm;}
-	public void setDietForm(DietPrescriptionForm aDietPrescriptionForm) {theDietForm = aDietPrescriptionForm;}
+	public DietPrescriptionForm getDietForm() {return dietForm;}
 
 	/** Режим */
 	@Comment("Режим")
-	public ModePrescriptionForm getModeForm() {return theModeForm;}
-	public void setModeForm(ModePrescriptionForm aModePrescriptionForm) {theModeForm = aModePrescriptionForm;}
+	public ModePrescriptionForm getModeForm() {return modeForm;}
 
 	/** Режим */
-	private ModePrescriptionForm theModeForm = new ModePrescriptionForm();
+	private ModePrescriptionForm modeForm = new ModePrescriptionForm();
 	/** Форма диеты */
-	private DietPrescriptionForm theDietForm = new DietPrescriptionForm();
+	private DietPrescriptionForm dietForm = new DietPrescriptionForm();
 	
 }

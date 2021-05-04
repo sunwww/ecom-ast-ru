@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.JuridicalPerson;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,6 +17,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Юридическое лицо", nameProperties= "id", list="entityParentList-contract_juridicalPerson.do", view="entityParentView-contract_juridicalPerson.do")
 //@Parent(property="parent", parentForm=PARENT.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/ContractPerson/JuridicalPerson")
+@Setter
 public class JuridicalPersonForm extends ContractPersonForm{
 	/**
 	 * Электронная почта
@@ -23,279 +25,224 @@ public class JuridicalPersonForm extends ContractPersonForm{
 	@Comment("Электронная почта")
 	@Persist
 	public String getEmail() {
-		return theEmail;
-	}
-	public void setEmail(String aEmail) {
-		theEmail = aEmail;
+		return email;
 	}
 	/**
 	 * Электронная почта
 	 */
-	private String theEmail;
+	private String email;
 	/**
 	 * Телефоны
 	 */
 	@Comment("Телефоны")
 	@Persist
 	public String getPhones() {
-		return thePhones;
-	}
-	public void setPhones(String aPhones) {
-		thePhones = aPhones;
+		return phones;
 	}
 	/**
 	 * Телефоны
 	 */
-	private String thePhones;
+	private String phones;
 	/**
 	 * Факс
 	 */
 	@Comment("Факс")
 	@Persist
 	public String getFax() {
-		return theFax;
-	}
-	public void setFax(String aFax) {
-		theFax = aFax;
+		return fax;
 	}
 	/**
 	 * Факс
 	 */
-	private String theFax;
+	private String fax;
 	/**
 	 * КПП
 	 */
 	@Comment("КПП")
 	@Persist
 	public String getKpp() {
-		return theKpp;
-	}
-	public void setKpp(String aKpp) {
-		theKpp = aKpp;
+		return kpp;
 	}
 	/**
 	 * КПП
 	 */
-	private String theKpp;
+	private String kpp;
 	/**
 	 * ИНН
 	 */
 	@Comment("ИНН")
 	@Persist
 	public String getInn() {
-		return theInn;
-	}
-	public void setInn(String aInn) {
-		theInn = aInn;
+		return inn;
 	}
 	/**
 	 * ИНН
 	 */
-	private String theInn;
+	private String inn;
 	/**
 	 * БИК
 	 */
 	@Comment("БИК")
 	@Persist
 	public String getBic() {
-		return theBic;
-	}
-	public void setBic(String aBic) {
-		theBic = aBic;
+		return bic;
 	}
 	/**
 	 * БИК
 	 */
-	private String theBic;
+	private String bic;
 	/**
 	 * Короткое название
 	 */
 	@Comment("Короткое название")
 	@Persist @DoUpperCase
 	public String getShortName() {
-		return theShortName;
-	}
-	public void setShortName(String aShortName) {
-		theShortName = aShortName;
+		return shortName;
 	}
 	/**
 	 * Короткое название
 	 */
-	private String theShortName;
+	private String shortName;
 	/**
 	 * Полное название
 	 */
 	@Comment("Полное название")
 	@Persist @Required @DoUpperCase
 	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
+		return name;
 	}
 	/**
 	 * Полное название
 	 */
-	private String theName;
+	private String name;
 	/**
 	 * Директор
 	 */
 	@Comment("Директор")
 	@Persist
 	public String getDirector() {
-		return theDirector;
-	}
-	public void setDirector(String aDirector) {
-		theDirector = aDirector;
+		return director;
 	}
 	/**
 	 * Директор
 	 */
-	private String theDirector;
+	private String director;
 	/**
 	 * Почтовый адрес
 	 */
 	@Comment("Почтовый адрес")
 	@Persist
 	public String getPostAddress() {
-		return thePostAddress;
-	}
-	public void setPostAddress(String aPostAddress) {
-		thePostAddress = aPostAddress;
+		return postAddress;
 	}
 	/**
 	 * Почтовый адрес
 	 */
-	private String thePostAddress;
+	private String postAddress;
 	/**
 	 * Счет
 	 */
 	@Comment("Счет")
 	@Persist
 	public String getAccount() {
-		return theAccount;
-	}
-	public void setAccount(String aAccount) {
-		theAccount = aAccount;
+		return account;
 	}
 	/**
 	 * Счет
 	 */
-	private String theAccount;
+	private String account;
 	/**
 	 * Корреспондентский счет
 	 */
 	@Comment("Корреспондентский счет")
 	@Persist
 	public String getCorAccount() {
-		return theCorAccount;
-	}
-	public void setCorAccount(String aCorAccount) {
-		theCorAccount = aCorAccount;
+		return corAccount;
 	}
 	/**
 	 * Корреспондентский счет
 	 */
-	private String theCorAccount;
+	private String corAccount;
 	/**
 	 * Юридический адрес
 	 */
 	@Comment("Юридический адрес")
 	@Persist
 	public String getJuridicalAddress() {
-		return theJuridicalAddress;
-	}
-	public void setJuridicalAddress(String aJuridicalAddress) {
-		theJuridicalAddress = aJuridicalAddress;
+		return juridicalAddress;
 	}
 	/**
 	 * Юридический адрес
 	 */
-	private String theJuridicalAddress;
+	private String juridicalAddress;
 	/**
 	 * Тип юридической персоны
 	 */
 	@Comment("Тип юридической персоны")
 	@Persist
 	public Long getJuridicalPersonType() {
-		return theJuridicalPersonType;
-	}
-	public void setJuridicalPersonType(Long aJuridicalPersonType) {
-		theJuridicalPersonType = aJuridicalPersonType;
+		return juridicalPersonType;
 	}
 	/**
 	 * Тип юридической персоны
 	 */
-	private Long theJuridicalPersonType;
+	private Long juridicalPersonType;
 	/**
 	 * Организация
 	 */
 	@Comment("Организация")
 	@Persist
 	public Long getOrganization() {
-		return theOrganization;
-	}
-	public void setOrganization(Long aOrganization) {
-		theOrganization = aOrganization;
+		return organization;
 	}
 	/**
 	 * Организация
 	 */
-	private Long theOrganization;
+	private Long organization;
 	/**
 	 * Статус обслуживаемой персоны
 	 */
 	@Comment("Статус обслуживаемой персоны")
 	@Persist
 	public Long getServedPersonStatus() {
-		return theServedPersonStatus;
-	}
-	public void setServedPersonStatus(Long aServedPersonStatus) {
-		theServedPersonStatus = aServedPersonStatus;
+		return servedPersonStatus;
 	}
 	/**
 	 * Статус обслуживаемой персоны
 	 */
-	private Long theServedPersonStatus;
+	private Long servedPersonStatus;
 	/**
 	 * Программа обслуживания
 	 */
 	@Comment("Программа обслуживания")
 	@Persist
 	public Long getServiceProgram() {
-		return theServiceProgram;
-	}
-	public void setServiceProgram(Long aServiceProgram) {
-		theServiceProgram = aServiceProgram;
+		return serviceProgram;
 	}
 	/**
 	 * Программа обслуживания
 	 */
-	private Long theServiceProgram;
+	private Long serviceProgram;
 	/**
 	 * Территория
 	 */
 	@Comment("Территория")
 	@Persist
 	public Long getTerritory() {
-		return theTerritory;
-	}
-	public void setTerritory(Long aTerritory) {
-		theTerritory = aTerritory;
+		return territory;
 	}
 	/**
 	 * Территория
 	 */
-	private Long theTerritory;
+	private Long territory;
 
 	/** Страховая компания */
 	@Comment("Страховая компания")
 	@Persist
-	public Long getRegCompany() {return theRegCompany;}
-	public void setRegCompany(Long aRegCompany) {theRegCompany = aRegCompany;}
+	public Long getRegCompany() {return regCompany;}
 
 	/** Страховая компания */
-	private Long theRegCompany;
+	private Long regCompany;
 
 	/**
 	 * ЛПУ
@@ -303,13 +250,10 @@ public class JuridicalPersonForm extends ContractPersonForm{
 	@Comment("ЛПУ")
 	@Persist
 	public Long getLpu() {
-		return theLpu;
-	}
-	public void setLpu(Long aLpu) {
-		theLpu = aLpu;
+		return lpu;
 	}
 	/**
 	 * ЛПУ
 	 */
-	private Long theLpu;
+	private Long lpu;
 }

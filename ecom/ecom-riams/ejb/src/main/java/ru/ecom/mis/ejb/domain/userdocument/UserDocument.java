@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.userdocument.voc.VocUserDocumentGroup;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -15,28 +17,20 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Пользовательские документы")
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class UserDocument extends BaseEntity {
 	
 	/** Название */
-	@Comment("Название")
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
-	/** Название */
-	private String theName;		
+	private String name;
 	
 	/** Название файла */
-	@Comment("Название файла")
-	public String getFileName() {return theFileName;}
-	public void setFileName(String aFileName) {theFileName = aFileName;}
-	/** Название файла */
-	private String theFileName;
+	private String fileName;
 
 	/** Тип группы документа */
 	@Comment("Тип группы документа")
 	@OneToOne
-	public VocUserDocumentGroup getGroupType() {return theGroupType;}
-	public void setGroupType(VocUserDocumentGroup aGroupType) {theGroupType = aGroupType;}
-	/** Тип группы документа */
-	private VocUserDocumentGroup theGroupType;
+	public VocUserDocumentGroup getGroupType() {return groupType;}
+	private VocUserDocumentGroup groupType;
 
 }

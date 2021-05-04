@@ -9,6 +9,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -22,38 +24,31 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Группа параметров")
 @Entity
 @Table(schema="SQLUser")
-@AIndexes(value = { @AIndex(properties = { "parent" }) })
+@Setter
+@Getter
 public class ParameterGroup extends BaseEntity {
 	
 	/** Доверительные группы */
 	@Comment("Доверительные группы")
 	@ManyToMany
-	public List<SecGroup> getSecGroups() {return theSecGroups;}
-	public void setSecGroups(List<SecGroup> aSecGroups) {theSecGroups = aSecGroups;}
+	public List<SecGroup> getSecGroups() {return secGroups;}
 	/** Доверительные группы */
-	private List<SecGroup> theSecGroups;
-	/** Наименование */
-	@Comment("Наименование")
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
+	private List<SecGroup> secGroups;
 
 	/** Список параметров, входящих в группу */
 	@Comment("Список параметров, входящих в группу")
 	@OneToMany(mappedBy="group")
-	public List<Parameter> getParameters() {return theParameters;}
-	public void setParameters(List<Parameter> aParameters) {theParameters = aParameters;}
+	public List<Parameter> getParameters() {return parameters;}
 
 	/** Родительская группа */
 	@Comment("Родительская группа")
 	@ManyToOne
-	public ParameterGroup getParent() {return theParent;}
-	public void setParent(ParameterGroup aParent) {theParent = aParent;}
+	public ParameterGroup getParent() {return parent;}
 
 	/** Дочерние группы */
 	@Comment("Дочерние группы")
 	@OneToMany(mappedBy="parent")
-	public List<ParameterGroup> getChildGroups() {return theChildGroups;}
-	public void setChildGroups(List<ParameterGroup> aChildGroups) {theChildGroups = aChildGroups;}
+	public List<ParameterGroup> getChildGroups() {return childGroups;}
 
 	/** Информация о параметрах */
 	@Comment("Информация о параметрах")
@@ -64,12 +59,12 @@ public class ParameterGroup extends BaseEntity {
 	}
 	
 	/** Дочерние группы */
-	private List<ParameterGroup> theChildGroups;
+	private List<ParameterGroup> childGroups;
 	/** Родительская группа */
-	private ParameterGroup theParent;
+	private ParameterGroup parent;
 	/** Список параметров, входящих в группу */
-	private List<Parameter> theParameters;
+	private List<Parameter> parameters;
 	/** Наименование */
-	private String theName;
+	private String name;
 
 }

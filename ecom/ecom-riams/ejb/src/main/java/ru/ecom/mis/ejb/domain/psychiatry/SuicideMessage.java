@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -25,334 +27,155 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@AIndex(properties={"patient"})
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class SuicideMessage extends BaseEntity {
-	/** Дата суицида */
-	@Comment("Дата суицида")
-	public Date getSuicideDate() {return theSuicideDate;}
-	public void setSuicideDate(Date aSuicideDate) {theSuicideDate = aSuicideDate;}
-
-	/** Дата заполения извещения */
-	@Comment("Дата заполения извещения")
-	public Date getRegOtherLpuDate() {return theRegOtherLpuDate;}
-	public void setRegOtherLpuDate(Date aRegOtherLpuDate) {theRegOtherLpuDate = aRegOtherLpuDate;}
-
-	/** Время заполнения извещения */
-	@Comment("Время заполнения извещения")
-	public Time getRegOtherLpuTime() {return theRegOtherLpuTime;}
-	public void setRegOtherLpuTime(Time aRegOtherLpuTime) {theRegOtherLpuTime = aRegOtherLpuTime;}
-
-	/** Дата регистрации */
-	@Comment("Дата регистрации")
-	public Date getRegDate() {return theRegDate;}
-	public void setRegDate(Date aRegDate) {theRegDate = aRegDate;}
-
-	/** Время регистрации */
-	@Comment("Время регистрации")
-	public Time getRegTime() {return theRegTime;}
-	public void setRegTime(Time aRegTime) {theRegTime = aRegTime;}
-
 	/** Извещение заполнено в ЛПУ */
 	@Comment("Извещение заполнено в ЛПУ")
 	@OneToOne
-	public MisLpu getRegOtherLpu() {return theRegOtherLpu;}
-	public void setRegOtherLpu(MisLpu aRegOtherLpu) {theRegOtherLpu = aRegOtherLpu;}
+	public MisLpu getRegOtherLpu() {return regOtherLpu;}
 
 	/** Извещение заполнено в ЛПУ */
-	private MisLpu theRegOtherLpu;
+	private MisLpu regOtherLpu;
 	/** Время регистрации */
-	private Time theRegTime;
+	private Time regTime;
 	/** Дата регистрации */
-	private Date theRegDate;
+	private Date regDate;
 	/** Время заполнения извещения */
-	private Time theRegOtherLpuTime;
+	private Time regOtherLpuTime;
 	/** Дата заполения извещения */
-	private Date theRegOtherLpuDate;
+	private Date regOtherLpuDate;
 	/** Дата суицида */
-	private Date theSuicideDate;
-	
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {
-		return theCreateDate;
-	}
-
-	public void setCreateDate(Date aCreateDate) {
-		theCreateDate = aCreateDate;
-	}
-
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {
-		return theEditDate;
-	}
-
-	public void setEditDate(Date aEditDate) {
-		theEditDate = aEditDate;
-	}
-
-	/** Пользователь, создавший запись */
-	@Comment("Пользователь, создавший запись")
-	public String getCreateUsername() {
-		return theCreateUsername;
-	}
-
-	public void setCreateUsername(String aCreateUsername) {
-		theCreateUsername = aCreateUsername;
-	}
-
-	/** Пользователь, последний редактировавший запись */
-	@Comment("Пользователь, последний редактировавший запись")
-	public String getEditUsername() {
-		return theEditUsername;
-	}
-
-	public void setEditUsername(String aEditUsername) {
-		theEditUsername = aEditUsername;
-	}
+	private Date suicideDate;
+	/** Время редактрования */
+	private Time editTime;
 
 	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {
-		return theCreateTime;
-	}
-
-	public void setCreateTime(Time aCreateTime) {
-		theCreateTime = aCreateTime;
-	}
-
-	/** Время редактрования */
-	@Comment("Время редактрования")
-	public Time getEditTime() {
-		return theEditTime;
-	}
-
-	public void setEditTime(Time aEditTime) {
-		theEditTime = aEditTime;
-	}
-
-	/** Время редактрования */
-	private Time theEditTime;
-
-	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 
 	/** Пользователь, последний редактировавший запись */
-	private String theEditUsername;
+	private String editUsername;
 
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 
 	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	
 	/** Представитель */
-	@Comment("Представитель")
-	public String getKinsman() {
-		return theKinsman;
-	}
-
-	public void setKinsman(String aKinsman) {
-		theKinsman = aKinsman;
-	}
-
-	/** Представитель */
-	private String theKinsman;
+	private String kinsman;
 	
 	/** Телефон */
-	@Comment("Телефон")
-	public String getPhone() {
-		return thePhone;
-	}
-
-	public void setPhone(String aPhone) {
-		thePhone = aPhone;
-	}
-
-	/** Телефон */
-	private String thePhone;
+	private String phone;
 	
 	/** Пациент */
 	@Comment("Пациент")
 	@OneToOne
 	public Patient getPatient() {
-		return thePatient;
-	}
-
-	public void setPatient(Patient aPatient) {
-		thePatient = aPatient;
+		return patient;
 	}
 
 	/** Пациент */
-	private Patient thePatient;
+	private Patient patient;
 	
 	/** Вид суицида */
 	@Comment("Вид суицида")
 	@OneToOne
 	public VocSuicideMesType getType() {
-		return theType;
-	}
-
-	public void setType(VocSuicideMesType aType) {
-		theType = aType;
+		return type;
 	}
 
 	/** Вид суицида */
-	private VocSuicideMesType theType;
+	private VocSuicideMesType type;
 	
 	/** Другой вид суицида */
-	@Comment("Другой вид суицида")
-	public String getOtherType() {
-		return theOtherType;
-	}
-
-	public void setOtherType(String aOtherType) {
-		theOtherType = aOtherType;
-	}
-
-	/** Другой вид суицида */
-	private String theOtherType;
+	private String otherType;
 	
 	/** Место */
 	@Comment("Место")
 	@OneToOne
 	public VocSuicideMesPlace getPlace() {
-		return thePlace;
-	}
-
-	public void setPlace(VocSuicideMesPlace aPlace) {
-		thePlace = aPlace;
-	}
-	
-	/** Другое место суицида */
-	@Comment("Другое место суицида")
-	public String getOtherPlace() {
-		return theOtherPlace;
-	}
-
-	public void setOtherPlace(String aOtherPlace) {
-		theOtherPlace = aOtherPlace;
+		return place;
 	}
 
 	/** Другое место суицида */
-	private String theOtherPlace;
+	private String otherPlace;
 
 	/** Место */
-	private VocSuicideMesPlace thePlace;
+	private VocSuicideMesPlace place;
 	
 	/** Присутствовали др. люди при суициде */
 	@Comment("Присутствовали др. люди при суициде")
 	@OneToOne
 	public VocYesNo getOtherPeople() {
-		return theOtherPeople;
-	}
-
-	public void setOtherPeople(VocYesNo aOtherPeople) {
-		theOtherPeople = aOtherPeople;
+		return otherPeople;
 	}
 
 	/** Присутствовали др. люди при суициде */
-	private VocYesNo theOtherPeople;
+	private VocYesNo otherPeople;
 	
 	/** Опьянение */
 	@Comment("Опьянение")
 	@OneToOne
 	public VocYesNo getIntoxication() {
-		return theIntoxication;
-	}
-
-	public void setIntoxication(VocYesNo aIntoxication) {
-		theIntoxication = aIntoxication;
+		return intoxication;
 	}
 
 	/** Опьянение */
-	private VocYesNo theIntoxication;
+	private VocYesNo intoxication;
 	
 	/** Направлен */
 	@Comment("Направлен")
 	@OneToOne
 	public MisLpu getOrderLpu() {
-		return theOrderLpu;
-	}
-
-	public void setOrderLpu(MisLpu aOrderLpu) {
-		theOrderLpu = aOrderLpu;
+		return orderLpu;
 	}
 
 	/** Направлен */
-	private MisLpu theOrderLpu;
+	private MisLpu orderLpu;
 	
 	/** Доставлен */
 	@Comment("Доставлен")
 	@OneToOne
 	public MisLpu getPostedLpu() {
-		return thePostedLpu;
-	}
-
-	public void setPostedLpu(MisLpu aPostedLpu) {
-		thePostedLpu = aPostedLpu;
+		return postedLpu;
 	}
 
 	/** Доставлен */
-	private MisLpu thePostedLpu;
+	private MisLpu postedLpu;
 	
 	/** Завершен */
-	@Comment("Завершен")
-	public Boolean getIsFinished() {
-		return theIsFinished;
-	}
-
-	public void setIsFinished(Boolean aIsFinished) {
-		theIsFinished = aIsFinished;
-	}
-
-	/** Завершен */
-	private Boolean theIsFinished;
+	private Boolean isFinished;
 	
 	/** Социальный статус */
 	@Comment("Социальный статус")
 	@OneToOne
-	public VocSocialStatus getSocialStatus() {return theSocialStatus;}
-	public void setSocialStatus(VocSocialStatus aSocialStatus) {theSocialStatus = aSocialStatus;}
+	public VocSocialStatus getSocialStatus() {return socialStatus;}
 
 	/** Социальный статус */
-	private VocSocialStatus theSocialStatus;
+	private VocSocialStatus socialStatus;
 	
 	/** Мед.помощь оказано СМП */
 	@Comment("Мед.помощь оказано СМП")
 	@OneToOne
-	public VocYesNo getHelpSMP() {return theHelpSMP;}
-	public void setHelpSMP(VocYesNo aHelpSMP) {theHelpSMP = aHelpSMP;}
+	public VocYesNo getHelpSMP() {return helpSMP;}
 
 	/** Мед.помощь оказано СМП */
-	private VocYesNo theHelpSMP;
+	private VocYesNo helpSMP;
  	/** Характер суицида */
 	@Comment("Характер суицида")
 	@OneToOne
 	public VocPsychSuicideNature getNature() {
-		return theNature;
-	}
-
-	public void setNature(VocPsychSuicideNature aNature) {
-		theNature = aNature;
+		return nature;
 	}
 	/** Характер суицида */
-	private VocPsychSuicideNature theNature;
+	private VocPsychSuicideNature nature;
 	
-	/**
-	  * Описание
-	  */
-	 @Comment("Описание")
-	 public String getNotes() {
-	  return theNotes;
-	 }
-	 public void setNotes(String aNotes) {
-	  theNotes = aNotes;
-	 }
 	 /**
 	  * Описание
 	  */
-	 private String theNotes;
+	 private String notes;
 }

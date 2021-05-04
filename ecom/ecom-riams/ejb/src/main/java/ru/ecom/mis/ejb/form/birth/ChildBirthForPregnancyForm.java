@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.birth.ChildBirth;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,13 +17,13 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Роды", nameProperties= "id", view="entityParentView-preg_childBirthForPregnancy.do")
 @Parent(property="pregnancy", parentForm= PregnancyForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Pregnancy/ChildBirth")
+@Setter
 public class ChildBirthForPregnancyForm extends ChildBirthForm {
 	/** Госпитализация */
 	@Comment("Госпитализация")
 	@Persist @Required
-	public Long getSls() {return theSls;}
-	public void setSls(Long aSls) {theSls = aSls;}
+	public Long getSls() {return sls;}
 
 	/** Госпитализация */
-	private Long theSls;
+	private Long sls;
 }

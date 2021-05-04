@@ -42,9 +42,9 @@ public class ImportServiceBean implements IImportService {
      private static final Logger LOG = Logger.getLogger(ImportServiceBean.class) ;
 
      public ImportFileResult importFile(String aOriginalFilename, long aMonitorId, String aFilename, ImportFileForm aImportForm) {
-    	 IMonitor monitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
+    	 IMonitor monitor = monitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
     	 try {
-             Format format = theManager.find(Format.class, aImportForm.getImportFormat()) ;
+             Format format = manager.find(Format.class, aImportForm.getImportFormat()) ;
              File file = new File(aFilename) ;
              ImportTime time = createImportTime(aImportForm, format, aOriginalFilename, file.length()) ;
         	 
@@ -55,7 +55,7 @@ public class ImportServiceBean implements IImportService {
         		 extractJar.extract(tempDir, file) ;
         		 //File tempDir =  ;
         		 File[] files = tempDir.listFiles() ;
-        		 monitor = theMonitorService.startMonitor(aMonitorId, "Импорт файлов из архива "+aOriginalFilename, files.length) ;
+        		 monitor = monitorService.startMonitor(aMonitorId, "Импорт файлов из архива "+aOriginalFilename, files.length) ;
         		 ImportFileResult result = null ;
         		 for( File f : files) {
         			 monitor.setText(f.getName()) ;
@@ -87,7 +87,7 @@ public class ImportServiceBean implements IImportService {
          time.setComment(aImportForm.getComment());
          time.setOriginalFilename(aOriginalFilename) ;
          time.setSizeInBytes(aFileLength) ;
-         theManager.persist(time);
+         manager.persist(time);
          return time ;
      }
 
@@ -107,7 +107,7 @@ public class ImportServiceBean implements IImportService {
             long count ;
                 dbfFile.load(inFile);
                 count = dbfFile.getRecordsCount() ;
-            monitor = theMonitorService.startMonitor(aMonitorId, "Импорт файла "+aFilename, count);
+            monitor = monitorService.startMonitor(aMonitorId, "Импорт файла "+aFilename, count);
 
             Collection<Field> fields = Collections.unmodifiableCollection(format.getFields());
             ImportDocument document = format.getDocument();
@@ -135,7 +135,7 @@ public class ImportServiceBean implements IImportService {
                 }
 
                 copyMapToEntity(fields, map, data);
-                theManager.persist(data);
+                manager.persist(data);
 
                 if(!firstPassed) {
                     checkFormat(ret, format, new File(aFilename)) ;
@@ -144,8 +144,8 @@ public class ImportServiceBean implements IImportService {
                 firstPassed = true ;
                 if(i%300==0) {
                     monitor.setText("Импортировано "+i);
-                    theManager.flush();
-                    theManager.clear();
+                    manager.flush();
+                    manager.clear();
                 }
             }
             monitor.setText("Импортировано "+i);
@@ -244,8 +244,8 @@ public class ImportServiceBean implements IImportService {
         return aEntity.getFormats().iterator().next() ;
     }
 
-    @EJB ILocalMonitorService theMonitorService ;
+    @EJB ILocalMonitorService monitorService ;
     @PersistenceContext
-    public EntityManager theManager;
+    public EntityManager manager;
 
 }

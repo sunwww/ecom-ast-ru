@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.patient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -28,127 +30,65 @@ import java.sql.Date;
 })
 @Table(schema="SQLUser")
 @EntityListeners(DeleteListener.class)
+@Getter
+@Setter
 abstract public class MedPolicy extends BaseEntity {
 
 	/** Единый номер застрахованного */
-	private String theCommonNumber;
+	private String commonNumber;
 	/** Отчество */
-	private String theMiddlename;
+	private String middlename;
 	/** Имя */
-	private String theFirstname;
+	private String firstname;
 	/** Фамилия */
-	private String theLastname;
+	private String lastname;
 	/** Пациент */
-	private Patient thePatient ;
+	private Patient patient ;
 	/** Дата действия по */
-	private Date theActualDateTo ;
+	private Date actualDateTo ;
 	/** Дата действия с */
-	private Date theActualDateFrom ;
+	private Date actualDateFrom ;
 	/** Номер полиса */
-	private String theNumber ;
+	@Column(name = "number")
+	private String polNumber;
 	/** Серия полиса */
-	private String theSeries ;
+	private String series ;
 	/** Страховая компания */
-	private RegInsuranceCompany theCompany ;
+	private RegInsuranceCompany company ;
 	/** Область нахождения СМО */
-	private OmcKodTer theInsuranceCompanyArea;
+	private OmcKodTer insuranceCompanyArea;
 	/** Тип подтверждения по полису */
-	private VocPolicyConfirmationType theConfirmationType;
+	private VocPolicyConfirmationType confirmationType;
 	/** Дата подтверждения */
-	private Date theConfirmationDate;
+	private Date confirmationDate;
 	/** Дата рождения */
-	private Date theBirthday;
+	private Date birthday;
 
 
     /** Страховая компания */
     @OneToOne
-    public RegInsuranceCompany getCompany() { return theCompany ; }
-    public void setCompany(RegInsuranceCompany aCompany) { theCompany = aCompany ; }
-
-    /** Серия полиса */
-    public String getSeries() { return theSeries ; }
-    public void setSeries(String aSeries) { theSeries = aSeries ; }
-
-    /** Номер полиса */
-    public String getPolNumber() { return theNumber ; }
-    public void setPolNumber(String aNumber) { theNumber = aNumber ; }
-
-    /** Дата действия с */
-    public Date getActualDateFrom() { return theActualDateFrom ; }
-    public void setActualDateFrom(Date aActualDateFrom) { theActualDateFrom = aActualDateFrom ; }
-
-    /** Дата действия по */
-    public Date getActualDateTo() { return theActualDateTo ; }
-    public void setActualDateTo(Date aActualDateTo) { theActualDateTo = aActualDateTo ; }
+    public RegInsuranceCompany getCompany() { return company ; }
 
     /** Пациент */
     @ManyToOne
-    public Patient getPatient() { return thePatient ; }
-    public void setPatient(Patient aPatient) { thePatient = aPatient ; }
+    public Patient getPatient() { return patient ; }
 
     /** Текст */
     @Transient
     public String getText() { return "Не переопределен метод getText() у класса "+getClass().getName() ; }
     public void setText(String aText) { }
 
-    /** Фамилия */
-	@Comment("Фамилия")
-	public String getLastname() {return theLastname;	}
-	public void setLastname(String aLastname) {theLastname = aLastname;	}
-
-	/** Имя */
-	@Comment("Имя")
-	public String getFirstname() {return theFirstname;	}
-	public void setFirstname(String aFirstname) {theFirstname = aFirstname;	}
-
-	/** Отчество */
-	@Comment("Отчество")
-	public String getMiddlename() {return theMiddlename;	}
-	public void setMiddlename(String aMiddlename) {theMiddlename = aMiddlename;}
-	
-	/** Единый номер застрахованного */
-	@Comment("Единый номер застрахованного")
-	public String getCommonNumber() {return theCommonNumber;}
-	public void setCommonNumber(String aCommonNumber) {theCommonNumber = aCommonNumber;}
-
     /** Область нахождения СМО */
 	@Comment("Область нахождения СМО")
 	@OneToOne
 	public OmcKodTer getInsuranceCompanyArea() {
-		return theInsuranceCompanyArea;
-	}
-	public void setInsuranceCompanyArea(OmcKodTer aInsuranceCompanyArea) {
-		theInsuranceCompanyArea = aInsuranceCompanyArea;
-	}
-
-	/** Дата подтверждения */
-	@Comment("Дата подтверждения")
-	public Date getConfirmationDate() {
-		return theConfirmationDate;
-	}
-	public void setConfirmationDate(Date aConfirmationDate) {
-		theConfirmationDate = aConfirmationDate;
+		return insuranceCompanyArea;
 	}
 
 	/** Тип подтверждения по полису */
 	@Comment("Тип подтверждения по полису")
 	@OneToOne
 	public VocPolicyConfirmationType getConfirmationType() {
-		return theConfirmationType;
+		return confirmationType;
 	}
-	public void setConfirmationType(VocPolicyConfirmationType aConfirmationType) {
-		theConfirmationType = aConfirmationType;
-	}
-
-	/** Дата рождения */
-	@Comment("Дата рождения")
-	public Date getBirthday() {
-		return theBirthday;
-	}
-	public void setBirthday(Date aBirthday) {
-		theBirthday = aBirthday;
-	}
-
-
-
 }

@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -16,41 +18,24 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Родственная роль")
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VocKinsmanRole extends VocBaseEntity{
 	
 	/** Противоположная роль */
 	@Comment("Противоположная роль")
 	@OneToOne
 	public VocKinsmanRole getOppositeRole() {
-		return theOppositeRole;
-	}
-
-	public void setOppositeRole(VocKinsmanRole aOppositeRole) {
-		theOppositeRole = aOppositeRole;
+		return oppositeRole;
 	}
 
 	/** Противоположная роль */
-	private VocKinsmanRole theOppositeRole;
+	private VocKinsmanRole oppositeRole;
 	
 	/** Код ОМС */
-	@Comment("Код ОМС")
-	public String getOmcCode() {
-		return theOmcCode;
-	}
-
-	public void setOmcCode(String aOmcCode) {
-		theOmcCode = aOmcCode;
-	}
-
-	/** Код ОМС */
-	private String theOmcCode;
+	private String omcCode;
 	
 	/** Код прот. роли */
-	@Comment("Код прот. роли")
-	public String getOppositeRoleCode() {return theOppositeRoleCode;}
-	public void setOppositeRoleCode(String aOppositeRoleCode) {theOppositeRoleCode = aOppositeRoleCode;}
-
-	/** Код прот. роли */
-	private String theOppositeRoleCode;
+	private String oppositeRoleCode;
 
 }

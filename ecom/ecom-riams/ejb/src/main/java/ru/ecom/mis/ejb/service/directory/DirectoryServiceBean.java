@@ -31,10 +31,10 @@ public class DirectoryServiceBean implements IDirectoryService{
     }
     public Long setDepartment(Long buildingId,Long buildingLevelId,Long misLpuId){
         Department department = new Department();
-        department.setBuilding(theManager.find(VocBuilding.class,buildingId));
-        department.setBuildingLevel(theManager.find(VocBuildingLevel.class,buildingLevelId));
-        department.setDepartment(theManager.find(MisLpu.class,misLpuId));
-        theManager.persist(department);
+        department.setBuilding(manager.find(VocBuilding.class,buildingId));
+        department.setBuildingLevel(manager.find(VocBuildingLevel.class,buildingLevelId));
+        department.setDepartment(manager.find(MisLpu.class,misLpuId));
+        manager.persist(department);
         return department.getId();
     }
 
@@ -42,9 +42,9 @@ public class DirectoryServiceBean implements IDirectoryService{
         Entry entry = new Entry();
         entry.setComment(comment);
         entry.setInsideNumber(insideNumber);
-        entry.setDepartment(theManager.find(Department.class,departmentId));
-        entry.setPerson(theManager.find(WorkFunction.class,personId));
-        theManager.persist(entry);
+        entry.setDepartment(manager.find(Department.class,departmentId));
+        entry.setPerson(manager.find(WorkFunction.class,personId));
+        manager.persist(entry);
         return entry.getId();
     }
 
@@ -52,24 +52,24 @@ public class DirectoryServiceBean implements IDirectoryService{
         Entry entry = new Entry();
         entry.setComment(comment);
         entry.setInsideNumber(insideNumber);
-        entry.setDepartment(theManager.find(Department.class,departmentId));
-        theManager.persist(entry);
+        entry.setDepartment(manager.find(Department.class,departmentId));
+        manager.persist(entry);
         return entry.getId();
     }
 
     public void setTelephoneNumber(String telNumber, Long entryId, Long typenumber){
         TelephoneNumber telephoneNumber = new TelephoneNumber();
         telephoneNumber.setTelNumber(telNumber);
-        telephoneNumber.setEntry(theManager.find(Entry.class,entryId));
-        telephoneNumber.setTypeNumber(theManager.find(VocTypeNumber.class,typenumber));
-        theManager.persist(telephoneNumber);
+        telephoneNumber.setEntry(manager.find(Entry.class,entryId));
+        telephoneNumber.setTypeNumber(manager.find(VocTypeNumber.class,typenumber));
+        manager.persist(telephoneNumber);
     }
 
     @EJB
     ILocalEntityFormService
-            theEntityFormService;
+            entityFormService;
     @PersistenceContext
-    EntityManager theManager;
+    EntityManager manager;
     @Resource
-    SessionContext theContext;
+    SessionContext context;
 }

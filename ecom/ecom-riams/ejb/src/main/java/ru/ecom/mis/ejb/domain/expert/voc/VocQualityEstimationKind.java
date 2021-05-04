@@ -1,6 +1,9 @@
 package ru.ecom.mis.ejb.domain.expert.voc;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  /**
@@ -9,11 +12,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  @Comment("Справочник видов оценок качества")
 @Entity
 @Table(schema="SQLUser")
+ @Getter
+ @Setter
 public class VocQualityEstimationKind extends VocBaseEntity{
   /** Признак, можно ли создавать в госпитализации */
-  @Comment("Признак, можно ли создавать в госпитализации")
-  public Boolean getCreateInHMC() {return theCreateInHMC;}
-  public void setCreateInHMC(Boolean aCreateInHMC) {theCreateInHMC = aCreateInHMC;}
-  /** Признак, можно ли создавать в госпитализации */
-  private Boolean theCreateInHMC;
+  private Boolean createInHMC;
 }

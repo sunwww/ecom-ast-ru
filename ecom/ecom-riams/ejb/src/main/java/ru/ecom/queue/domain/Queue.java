@@ -1,5 +1,7 @@
 package ru.ecom.queue.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.queue.domain.voc.VocQueue;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -10,29 +12,26 @@ import java.sql.Date;
 
 /* Очередь */
 @Entity
+@Getter
+@Setter
 public class Queue extends BaseEntity {
     /** Тип очереди */
     @Comment("Тип очереди")
     @OneToOne
-    public VocQueue getType() {return theType;}
-    public void setType(VocQueue aType) {theType = aType;}
+    public VocQueue getType() {return type;}
     /** Тип очереди */
-    private VocQueue theType ;
+    private VocQueue type ;
 
     /** Дата очереди */
-    @Comment("Дата очереди")
-    public Date getDate() {return theDate;}
-    public void setDate(Date aDate) {theDate = aDate;}
-    /** Дата очереди */
-    private Date theDate ;
+    private Date date ;
 
     public Queue() {
-        theDate=new Date(System.currentTimeMillis());
+        date=new Date(System.currentTimeMillis());
     }
     public Queue(VocQueue aVocQueue) {
-        theType=aVocQueue;
-        theDate=new Date(System.currentTimeMillis());
+        type=aVocQueue;
+        date=new Date(System.currentTimeMillis());
     }
 
-    public Queue(VocQueue aVocQueue, Date aDate) {theType=aVocQueue;theDate=aDate;}
+    public Queue(VocQueue aVocQueue, Date aDate) {type=aVocQueue;date=aDate;}
 }

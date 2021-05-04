@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractNosologyGroup;
@@ -15,14 +16,14 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Нозологическая группа по договору")
 @WebTrail(comment = "Нозологическая группа по договору", nameProperties= "id", list="entityList-contract_nosologyGroup.do", view="entityView-contract_nosologyGroup.do")
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/GroupRules/ContractNosologyGroup")
+@Setter
 public class ContractNosologyGroupForm extends IdEntityForm{
 	
 	/** Правило установки диагноза по отделению */
 	@Comment("Правило установки диагноза по отделению")
-	public Long getDiagnosisRule() {return theDiagnosisRule;}
-	public void setDiagnosisRule(Long aDiagnosisRule) {theDiagnosisRule = aDiagnosisRule;}
+	public Long getDiagnosisRule() {return diagnosisRule;}
 	/** Правило установки диагноза по отделению */
-	private Long theDiagnosisRule;
+	private Long diagnosisRule;
 
 	/**
 	 * Название
@@ -30,26 +31,19 @@ public class ContractNosologyGroupForm extends IdEntityForm{
 	@Comment("Название")
 	@Persist @DoUpperCase @Required
 	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
+		return name;
 	}
 	/**
 	 * Название
 	 */
-	private String theName;
+	private String name;
 	
 	/** Диапозон */
 	@Comment("Диапозон")
 	public String getRangeMkb() {
-		return theRangeMkb;
-	}
-
-	public void setRangeMkb(String aRangeMkb) {
-		theRangeMkb = aRangeMkb;
+		return rangeMkb;
 	}
 
 	/** Диапозон */
-	private String theRangeMkb;
+	private String rangeMkb;
 }

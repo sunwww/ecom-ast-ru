@@ -1,5 +1,7 @@
 package ru.ecom.jaas.ejb.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -23,131 +25,52 @@ import java.util.List;
     ,@AIndex(properties="isRemoteUser")
 })
 @Table(schema="SQLUser")
+@Setter
+@Getter
 public class SecUser extends BaseEntity {
 
 	/** Сменить пароль при входе в систему */
-	@Comment("Сменить пароль при входе в систему")
-	public Boolean getChangePasswordAtLogin() {return theChangePasswordAtLogin;}
-	public void setChangePasswordAtLogin(Boolean aChangePasswordAtLogin) {theChangePasswordAtLogin = aChangePasswordAtLogin;}
-	/** Сменить пароль при входе в систему */
-	private Boolean theChangePasswordAtLogin;
+	private Boolean changePasswordAtLogin;
 
 	/** Дата последнего изменение пароля */
-	@Comment("Дата последнего изменение пароля")
-	public Date getPasswordChangedDate() {return thePasswordChangedDate;}
-	public void setPasswordChangedDate(Date aPasswordChangedDate) {thePasswordChangedDate = aPasswordChangedDate;}
-	/** Дата последнего изменение пароля */
-	private Date thePasswordChangedDate;
-
-	/** Наименование пользователя */
-    public String getLogin() { return theLogin ; }
-    public void setLogin(String aLogin) { theLogin = aLogin ; }
-
-    /** Полное имя пользователя */
-    public String getFullname() { return theFullname ; }
-    public void setFullname(String aFullname) { theFullname = aFullname ; }
-
-    /** Комментарий */
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
-
-    /** Пароль */
-    public String getPassword() { return thePassword ; }
-    public void setPassword(String aPassword) { thePassword = aPassword ; }
-
-    /** Отключен */
-    public boolean getDisabled() { return theDisabled ; }
-    public void setDisabled(boolean aDisabled) { theDisabled = aDisabled ; }
+	private Date passwordChangedDate;
 
     /** Роли пользователя */
     @ManyToMany
-    public List<SecRole> getRoles() { return theRoles ; }
-    public void setRoles(List<SecRole> aRoles) { theRoles = aRoles ; }
-
-    /** Отключен */
-	@Comment("Отключен")
-	public Boolean getDisable() {return theDisable;}
-	public void setDisable(Boolean aDisable) {theDisable = aDisable;}
-
-	/** Закеширован */
-	@Comment("Закеширован")
-	public Boolean getIsHash() {return theIsHash;}
-	public void setIsHash(Boolean aIsHash) {theIsHash = aIsHash;}
-
-	/** Удаленный пользователь */
-	@Comment("Удаленный пользователь")
-	public Boolean getIsRemoteUser() {return theIsRemoteUser;}
-	public void setIsRemoteUser(Boolean aIsRemoteUser) {theIsRemoteUser = aIsRemoteUser;}
-
-	/** Системный? */
-	@Comment("Системный?")
-	public Boolean getIsSystems() {return theIsSystems;}
-	public void setIsSystems(Boolean aIsSystems) {theIsSystems = aIsSystems;}
-
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-	
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	/** Время редактрования */
-	@Comment("Время редактрования")
-	public Time getEditTime() {return theEditTime;}
-	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-	/** Пользователь, который создал запись */
-	@Comment("Пользователь, который создал запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	/** Пользователь, который последний редактировал запись */
-	@Comment("Пользователь, который последний редактировал запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-
-	/** Можно копировать роли в инфекционное отделение */
-	@Comment("Можно копировать роли в инфекционное отделение")
-	public Boolean getEnabledForCopy() {return theEnabledForCopy;}
-	public void setEnabledForCopy(Boolean aEnabledForCopy) {theEnabledForCopy = aEnabledForCopy;}
+    public List<SecRole> getRoles() { return roles ; }
 
 	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private Time theEditTime;
+	private Time editTime;
 	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	/** Системный? */
-	private Boolean theIsSystems;
+	private Boolean isSystems;
 	/** Удаленный пользователь */
-	private Boolean theIsRemoteUser;
+	private Boolean isRemoteUser;
 	/** Закеширован */
-	private Boolean theIsHash;
+	private Boolean isHash;
 	/** Отключен */
-	private Boolean theDisable;
+	private Boolean disable;
 /** Роли пользователя */
-    private List<SecRole> theRoles ;
+    private List<SecRole> roles ;
     /** Отключен */
-    private boolean theDisabled ;
+    private boolean disabled ;
     /** Комментарий */
-    private String theComment ;
+    private String comment ;
     /** Полное имя пользователя */
-    private String theFullname ;
+    private String fullname ;
     /** Наименование пользователя */
-    private String theLogin ;
+    private String login ;
     /** Пароль */
-    private String thePassword ;
+    private String password ;
     /** Можно копировать роли в инфекционное отделение*/
-	private Boolean theEnabledForCopy ;
+	private Boolean enabledForCopy ;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form.voc.federal;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.IEntityForm;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -11,58 +12,52 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 import java.io.Serializable;
 
 @EntityForm
+@Setter
 public abstract class VocBaseFederalForm extends IdEntityForm implements IEntityForm, Serializable {
     /** Дата начала действия */
     @Comment("Дата начала действия")
     @Persist
     @DoDateString @DateString
-    public String getStartDate() {return theStartDate;}
-    public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
+    public String getStartDate() {return startDate;}
     /** Дата начала действия */
-    private String theStartDate ;
+    private String startDate ;
 
     /** Дата окончания действия */
     @Comment("Дата окончания действия")
     @Persist @DateString @DoDateString
-    public String getFinishDate() {return theFinishDate;}
-    public void setFinishDate(String aFinishDate) {theFinishDate = aFinishDate;}
+    public String getFinishDate() {return finishDate;}
     /** Дата окончания действия */
-    private String theFinishDate ;
+    private String finishDate ;
 
     /** Неактуальная запись */
     @Comment("Неактуальная запись")
     @Persist
-    public Boolean getIsNoActual() {return theIsNoActual;}
-    public void setIsNoActual(Boolean aIsNoActual) {theIsNoActual = aIsNoActual;}
+    public Boolean getIsNoActual() {return isNoActual;}
     /** Неактуальная запись */
-    private Boolean theIsNoActual =false;
+    private Boolean isNoActual =false;
 
     /** Название */
     @Comment("Название")
     @Persist
-    public String getName() {return theName;}
-    public void setName(String aName) {theName = aName;}
+    public String getName() {return name;}
     /** Название */
-    private String theName ;
+    private String name ;
 
     /** Код */
     @Comment("Код")
     @Persist
-    public String getCode() {return theCode;}
-    public void setCode(String aCode) {theCode = aCode;}
+    public String getCode() {return code;}
     /** Код */
-    private String theCode ;
+    private String code ;
 
     /** Добавить привязку */
     @Comment("Добавить привязку")
-    public Long getMedServiceAdd() {return theMedServiceAdd;}
-    public void setMedServiceAdd(Long aMedServiceAdd) {theMedServiceAdd = aMedServiceAdd;}
-    private Long theMedServiceAdd ;
+    public Long getMedServiceAdd() {return medServiceAdd;}
+    private Long medServiceAdd ;
 
     /** Булево поле на форме */
     @Comment("Булево поле на форме")
-    public Boolean getBooleanAdd() {return theBooleanAdd;}
-    public void setBooleanAdd(Boolean aBooleanAdd) {theBooleanAdd = aBooleanAdd;}
-    private Boolean theBooleanAdd ;
+    public Boolean getBooleanAdd() {return booleanAdd;}
+    private Boolean booleanAdd ;
 
 }

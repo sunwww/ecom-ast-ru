@@ -24,7 +24,6 @@ import java.util.StringTokenizer;
 public class XmlVocValueLoader {
 
 	private static final Logger LOG = Logger.getLogger(XmlVocValueLoader.class) ;
-//    private static final boolean CAN_DEBUG = LOG.isDebugEnabled() ;
 
     public void load(Map<String, IVocContextService> aHash) throws IOException, JDOMException, IllegalAccessException, InstantiationException, ClassNotFoundException {
         loadFile(aHash, "/META-INF/voc.xml");
@@ -54,7 +53,7 @@ public class XmlVocValueLoader {
     }
 
     private InputStream getInputStream(String aResourceString) throws FileNotFoundException {
-    	return theEcomConfig.getInputStream(aResourceString, EjbEcomConfig.VOC_DIR_PREFIX);
+    	return ecomConfig.getInputStream(aResourceString, EjbEcomConfig.VOC_DIR_PREFIX);
     }
     
     private static String fixedCharString(String aInitial) {
@@ -77,7 +76,7 @@ public class XmlVocValueLoader {
             if (iAllValueElement == null) throw new IllegalStateException("Нет элемента IAllValue у справочника " + key);
             String clazz = iAllValueElement.getTextTrim();
             if (StringUtil.isNullOrEmpty(clazz)) throw new IllegalStateException("Пустой элемент IAllValue");
-            IAllValue iAllValueObject = (IAllValue) theClassLoaderHelper.loadClass(clazz).newInstance() ;
+            IAllValue iAllValueObject = (IAllValue) classLoaderHelper.loadClass(clazz).newInstance() ;
             AllValueHelper allValueHelper = new AllValueHelper(iAllValueObject);
             put(aHash, key, allValueHelper);
         } else if("AllValueHelperEntityVoc".equals(type)) {
@@ -93,11 +92,9 @@ public class XmlVocValueLoader {
             put(aHash, key, allValueHelper) ;
         } else if("IVocService".equals(type)) {
 
-//            Element iVocServiceElement = aElement.getChild("IVocService");
-//            if(iVocServiceElement==null) throw new IllegalStateException("Нет элемента IVocService") ;
             String className = aElement.getAttributeValue("class") ;
             if(StringUtil.isNullOrEmpty(className)) throw new IllegalStateException("Нет аттрибута class в справочнике "+key) ;
-            Class clazz = theClassLoaderHelper.loadClass(className) ;
+            Class clazz = classLoaderHelper.loadClass(className) ;
             IVocContextService service = (IVocContextService) clazz.newInstance() ;
             if(service instanceof IVocConfigXmlService) {
                 IVocConfigXmlService iVocConfigXmlService = (IVocConfigXmlService) service ;
@@ -144,13 +141,7 @@ public class XmlVocValueLoader {
         } else if("XmlFileVocService".equals(type)){
         	Element elm = aElement.getChild("XmlFileVocService") ;
             if (elm == null) throw new IllegalStateException("Нет элемента XmlFileVocService у справочника " + key);
-        	//String[] names = getAsArray(elm.getAttributeValue("names")) ;
         	String filename = elm.getAttributeValue("filename") ;
-       // 	String parent = elm.getAttributeValue("parent") ;
-       /* 	if(StringUtil.isNullOrEmpty(parent)) {
-                parent = elm.getAttributeValue("parentProperty") ;
-            }*/
-        	//Element iAllValueElement = aElement.getChild("IAllValue");
             if (StringUtil.isNullOrEmpty(filename)) throw new IllegalStateException("Пустой элемент filename");
             XmlFileVocService service = new XmlFileVocService(filename) ;
             
@@ -195,6 +186,6 @@ public class XmlVocValueLoader {
         return ret ;
     }
     
-    ClassLoaderHelper theClassLoaderHelper = ClassLoaderHelper.getInstance();
-    EjbEcomConfig theEcomConfig = EjbEcomConfig.getInstance(); 
+    ClassLoaderHelper classLoaderHelper = ClassLoaderHelper.getInstance();
+    EjbEcomConfig ecomConfig = EjbEcomConfig.getInstance(); 
 }

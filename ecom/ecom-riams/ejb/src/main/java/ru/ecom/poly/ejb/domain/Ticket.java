@@ -1,5 +1,7 @@
 package ru.ecom.poly.ejb.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -25,7 +27,6 @@ import java.util.List;
 
 /**
  * Талон амбулаторного пациента
- * @param <NursingPatientAge>
  */
 @Entity
 @AIndexes({
@@ -37,6 +38,8 @@ import java.util.List;
 })
 @EntityListeners(DeleteListener.class)
 @Table(schema="SQLUser")
+@Setter
+@Getter
 public class Ticket extends BaseEntity {
 
     /** Открыт */
@@ -49,151 +52,122 @@ public class Ticket extends BaseEntity {
     /** КСГ */
 	@Comment("КСГ")
 	@OneToOne
-	public VocKsg getKsg() {return theKsg;}
-	public void setKsg(VocKsg aKsg) {theKsg = aKsg;}
+	public VocKsg getKsg() {return ksg;}
 
 	/** КСГ */
-	private VocKsg theKsg;
+	private VocKsg ksg;
 	/** Сопутствующие заболевания */
 	@Comment("Сопутствующие заболевания")
 	@ManyToMany
-	public List<VocIdc10> getConcomitantDiseases() {return theConcomitantDiseases;}
-	public void setConcomitantDiseases(List<VocIdc10> aConcomitantDiseases) {theConcomitantDiseases = aConcomitantDiseases;}
+	public List<VocIdc10> getConcomitantDiseases() {return concomitantDiseases;}
 
     
 	/**  Медицинская карта */
     @ManyToOne
-    public Medcard getMedcard() {return theMedcard;}
-    public void setMedcard(Medcard aMedcard) {theMedcard = aMedcard;}
-
-    /** Дата выдачи/создания(?) талона */
-    public Date getDate() {return theDate;}
-    public void setDate(Date aDate) {theDate = aDate;}
+    public Medcard getMedcard() {return medcard;}
 
     /**
      * Вид оплаты
      */
     @ManyToOne
-    public VocServiceStream getVocPaymentType() {return theVocPaymentType;}
-    public void setVocPaymentType(VocServiceStream aVocPaymentType) {theVocPaymentType = aVocPaymentType;}
+    public VocServiceStream getVocPaymentType() {return vocPaymentType;}
 
     /**
      * Место обслуживания
      */
     @ManyToOne
-    public VocWorkPlaceType getVocServicePlace() {return theVocServicePlace;}
-    public void setVocServicePlace(VocWorkPlaceType aVocServicePlace) {theVocServicePlace = aVocServicePlace;}
+    public VocWorkPlaceType getVocServicePlace() {return vocServicePlace;}
 
     /**
      * Цель посещения
      */
     @ManyToOne
-    public VocReason getVocReason() {return theVocReason;}
-    public void setVocReason(VocReason aVocReason) {theVocReason = aVocReason;}
+    public VocReason getVocReason() {return vocReason;}
 
     /** Результат обращения */
     @ManyToOne
-    public VocVisitResult getVocVisitResult() {return theVocVisitResult;}
-    public void setVocVisitResult(VocVisitResult aVocVisitResult) {theVocVisitResult = aVocVisitResult;}
+    public VocVisitResult getVocVisitResult() {return vocVisitResult;}
 
     /**
      * @return Диагноз код МКБ *
      */
     @OneToOne
-    public VocIdc10 getIdc10() {return theVocIdc10;}
-    public void setIdc10(VocIdc10 idc10) {theVocIdc10 = idc10;}
+    public VocIdc10 getIdc10() {return idc10;}
 
     /**
      * @return Код мед. услуги (посещения, СМП, КЭС)
      */
     @ManyToOne
-    public VocMedUsluga getVocMedUsluga() {return theVocMedUsluga;}
-    public void setVocMedUsluga(VocMedUsluga aVocMedUsluga) {theVocMedUsluga = aVocMedUsluga;}
+    public VocMedUsluga getVocMedUsluga() {return vocMedUsluga;}
 
     /**
      * @return Характер заболевания *
      */
     @ManyToOne
-    public VocAcuityDiagnosis getVocIllnesType() {return theVocIllnesType;}
-    public void setVocIllnesType(VocAcuityDiagnosis aVocIllnesType) {theVocIllnesType = aVocIllnesType;}
+    public VocAcuityDiagnosis getVocIllnesType() {return vocIllnesType;}
 
     /**
      * @return Диспансерный учет *
      */
     @OneToOne
-    public VocDispanseryRegistration getDispRegistration() {return theDispRegistration;}
-    public void setDispRegistration(VocDispanseryRegistration aVocDispanseryRegistration) {theDispRegistration = aVocDispanseryRegistration;}
+    public VocDispanseryRegistration getDispRegistration() {return dispRegistration;}
 
     /**
      * @return Травма *
      */
     @ManyToOne
-    public VocTrauma getVocTrauma() {return theVocTrauma;}
-    public void setVocTrauma(VocTrauma aVocTrauma) {theVocTrauma = aVocTrauma;}
+    public VocTrauma getVocTrauma() {return vocTrauma;}
 
-    
-    
     /** Статус документа нетрудоспособности*/
 	@Comment("Статус документа нетрудоспособности")
 	@OneToOne
-	public VocDisabilityDocumentStatus getDisabilityDocumentStatus() {return theDisabilityDocumentStatus;}
-	public void setDisabilityDocumentStatus(VocDisabilityDocumentStatus aDisabilityDocumentStatus) {theDisabilityDocumentStatus = aDisabilityDocumentStatus;}
+	public VocDisabilityDocumentStatus getDisabilityDocumentStatus() {return disabilityDocumentStatus;}
 
 	/** Статус документа нетрудоспособности */
-	private VocDisabilityDocumentStatus theDisabilityDocumentStatus;
+	private VocDisabilityDocumentStatus disabilityDocumentStatus;
 
 
     /** Причина нетрудоспособности */
 	@Comment("Причина нетрудоспособности")
 	@OneToOne
-	public VocDisabilityReason getDisabilityReason() {return theDisabilityReason;}
-	public void setDisabilityReason(VocDisabilityReason aDisabilityReason) {theDisabilityReason = aDisabilityReason;}
-	
+	public VocDisabilityReason getDisabilityReason() {return disabilityReason;}
+
     /** @return Специальная метка **/
     @OneToOne
-    public VocSpecLabel getSpecialLabel() { return theLabel; }
-    public void setSpecialLabel(VocSpecLabel aLabel) { theLabel = aLabel; }
+    public VocSpecLabel getSpecialLabel() { return label; }
+    public void setSpecialLabel(VocSpecLabel aLabel) { label = aLabel; }
 
     /** @return Время записи **/
     @Column(name="recordTime")
-    public Time getTime() { return theTime; }
-    public void setTime(Time aTime) { theTime = aTime; }
+    public Time getTime() { return time; }
+    public void setTime(Time aTime) { time = aTime; }
 
     @ManyToOne
     /** 27.1. Ранее зарегистрированный диагноз код МКБ10*/
-    public VocIdc10 getPrevIdc10() {return thePreviousDiagnosisIdc;}
-    public void setPrevIdc10(VocIdc10 idc10) {thePreviousDiagnosisIdc = idc10;}
+    public VocIdc10 getPrevIdc10() {return previousDiagnosisIdc;}
+    public void setPrevIdc10(VocIdc10 idc10) {previousDiagnosisIdc = idc10;}
 
     /** 27.1. Ранее зарегистрированный диагноз дата*/
-    public Date getPrevIdc10Date(){return thePrevIdc10Date;}
-    public void setPrevIdc10Date(Date aDate){thePrevIdc10Date = aDate;}
-
-    /** Статус талона */
-    public long getStatus() {return theStatus;}
-    public void setStatus(long aStatus) {theStatus = aStatus;}
+    public Date getPrevIdc10Date(){return prevIdc10Date;}
 
     /**
 	 * Рабочая функция исполнения
 	 */
 	@Comment("Рабочая функция исполнения")
 	@OneToOne
-	public WorkFunction getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(WorkFunction aNewProperty) {theWorkFunction = aNewProperty;}
-	
+	public WorkFunction getWorkFunction() {return workFunction;}
+
 
 	@Comment("Справочник по ДТП")
 	@OneToOne
-	public OmcRoadTrafficInjury  getRoadTrafficInjury() {return theRoadTrafficInjury;}
-	public void setRoadTrafficInjury(OmcRoadTrafficInjury aNewProperty) {theRoadTrafficInjury = aNewProperty;}
-	
+	public OmcRoadTrafficInjury  getRoadTrafficInjury() {return roadTrafficInjury;}
+
 	/**
 	 * Первичность 
 	 */
 	@Comment("Первичность")
 	@OneToOne
-	public VocPrimaryDiagnosis getPrimary() {return thePrimary;}
-	public void setPrimary(VocPrimaryDiagnosis aNewProperty) {thePrimary = aNewProperty;}
-
+	public VocPrimaryDiagnosis getPrimary() {return primary;}
 
     @Transient
     public String getPatientName() {
@@ -202,12 +176,12 @@ public class Ticket extends BaseEntity {
 
     @Transient
     public String getStatusName() {
-    	switch((int)theStatus) {
+    	switch((int)status) {
     	case STATUS_OPEN: return "Открыт" ; 
     	case STATUS_INPROCESS: return "В производстве" ; 
     	case STATUS_CLOSED: return "Закрыт" ;
     	default: 
-    		throw new IllegalStateException("Неизвестный статус "+theStatus) ;
+    		throw new IllegalStateException("Неизвестный статус "+status) ;
     	}
     }
 
@@ -217,173 +191,128 @@ public class Ticket extends BaseEntity {
      */
     @Transient
     public Boolean getIsTicketClosed() {
-    	return (int)theStatus==STATUS_CLOSED;
+    	return (int)status==STATUS_CLOSED;
     }
 
     /** Информация о рабочей ф-ии леч врача */
 	@Comment("Информация о рабочей ф-ии леч врача")
 	@Transient
 	public String getWorkFunctionInfo() {
-		return theWorkFunction!=null?theWorkFunction.getWorkFunctionInfo():"";
+		return workFunction!=null?workFunction.getWorkFunctionInfo():"";
 	}
 
 	@Transient
 	@Comment("Информация по талону")
 	public String getTicketInfo() {
-		String sb = "№" + getId() + " " +
+		return "№" + getId() + " " +
 				(getDate() != null ? getDate() : "нет даты") +
 				" " + getWorkFunctionInfo();
-		return sb;
 	}
-	
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getDateCreate() {return theDateCreate;}
-	public void setDateCreate(Date aDateCreate) {theDateCreate = aDateCreate;}
 
-	/** Пользователь */
-	@Comment("Пользователь")
-	public String getUsernameCreate() {return theUsernameCreate;}
-	public void setUsernameCreate(String aUsername) {theUsernameCreate = aUsername;}
-
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getTimeCreate() {return theTimeCreate;}
-	public void setTimeCreate(Time aTimeCreate) {theTimeCreate = aTimeCreate;}
-
-	
 	/** Представитель */
 	@Comment("Представитель")
 	@OneToOne
-	public Kinsman getKinsman() {return theKinsman;}
-	public void setKinsman(Kinsman aKinsman) {theKinsman = aKinsman;}
-	
+	public Kinsman getKinsman() {return kinsman;}
+
 	@Comment("Обращение по поводу данного заболевания в текущем году (впервые, повторно)")
 	@OneToOne
-	public VocHospitalization getHospitalization() {return theHospitalization;}
-	public void setHospitalization(VocHospitalization aHospitalization) {theHospitalization = aHospitalization;}
-	
-	/** Условная единица трудоемкости */
-	@Comment("Условная единица трудоемкости")
-	public BigDecimal getUet() {return theUet;}
-	public void setUet(BigDecimal aUet) {theUet = aUet;}
+	public VocHospitalization getHospitalization() {return hospitalization;}
 
-	/** Направлен на стац. лечение */
-	@Comment("Направлен на стац. лечение")
-	public Boolean getDirectHospital() {return theDirectHospital;}
-	public void setDirectHospital(Boolean aDirectHospital) {theDirectHospital = aDirectHospital;}
 
-	/** Разговор с родственником */
-	@Comment("Разговор с родственником")
-	public Boolean getTalk() {return theTalk;}
-	public void setTalk(Boolean aTalk) {theTalk = aTalk;}
-	
-	/** Неотложная помощь */
-	@Comment("Неотложная помощь")
-	public Boolean getEmergency() {return theEmergency;}
-	public void setEmergency(Boolean aEmergency) {theEmergency = aEmergency;}
-	
 	@Transient
 	public String getMedServices() {return "";}
 
 	/** Неотложная помощь */
-	private Boolean theEmergency;
+	private Boolean emergency;
 
 	/** Разговор с родственником */
-	private Boolean theTalk;
+	private Boolean talk;
 	/** Направлен на стац. лечение */
-	private Boolean theDirectHospital;
+	private Boolean directHospital;
 	/** Условная единица трудоемкости */
-	private BigDecimal theUet;
-	private VocHospitalization theHospitalization;
+	private BigDecimal uet;
+	private VocHospitalization hospitalization;
 	/** Представитель */
-	private Kinsman theKinsman;
+	private Kinsman kinsman;
 	/** Время создания */
-	private Time theTimeCreate;
+	private Time timeCreate;
 	/** Пользователь */
-	private String theUsernameCreate;
+	private String usernameCreate;
 	/** Дата создания */
-	private Date theDateCreate;
+	private Date dateCreate;
 	/** Первичность */
-	private VocPrimaryDiagnosis thePrimary;
+	private VocPrimaryDiagnosis primary;
     /** Результат обращения */
-    private VocVisitResult theVocVisitResult;
+    private VocVisitResult vocVisitResult;
     /**Цель посещения */
-    private VocReason theVocReason;
+    private VocReason vocReason;
     /** Место обслуживания */
-    private VocWorkPlaceType theVocServicePlace;
+    private VocWorkPlaceType vocServicePlace;
     /**Вид оплаты */
-    private VocServiceStream theVocPaymentType;
+    private VocServiceStream vocPaymentType;
     /**Дата выдачи/создания(?) талона */
-    private Date theDate;
+    private Date date;
 	/** Сопутствующие заболевания */
-	private List<VocIdc10> theConcomitantDiseases;
+	private List<VocIdc10> concomitantDiseases;
     /** Медицинская карта */
-    private Medcard theMedcard;
+    private Medcard medcard;
 	/** Справочник по ДТП*/
-	private OmcRoadTrafficInjury theRoadTrafficInjury;
+	private OmcRoadTrafficInjury roadTrafficInjury;
 	/** Рабочая функция исполнения*/
-	private WorkFunction theWorkFunction;
+	private WorkFunction workFunction;
 	/** Причина нетрудоспособности */
-	private VocDisabilityReason theDisabilityReason;
+	private VocDisabilityReason disabilityReason;
     /** Время записи **/
-    private Time theTime;
+    private Time time;
     /** Специальная метка **/
-    private VocSpecLabel theLabel;
+    private VocSpecLabel label;
     /** Травма */
-    private VocTrauma theVocTrauma;
+    private VocTrauma vocTrauma;
     /** Диспансерный учет */
-    private VocDispanseryRegistration theDispRegistration;
+    private VocDispanseryRegistration dispRegistration;
     /** Характер заболевания */
-    private VocAcuityDiagnosis theVocIllnesType;
+    private VocAcuityDiagnosis vocIllnesType;
     /** Код мед. услуги (посещения, СМП, КЭС) */
-    private VocMedUsluga theVocMedUsluga;
+    private VocMedUsluga vocMedUsluga;
     /** Диагноз код МКБ */
-    private VocIdc10 theVocIdc10;
+    private VocIdc10 idc10;
     /** 27.1. Ранее зарегистрированный диагноз код МКБ10*/
-    private VocIdc10 thePreviousDiagnosisIdc;
+    private VocIdc10 previousDiagnosisIdc;
     /** 27.1. Ранее зарегистрированный диагноз дата*/
-    private Date thePrevIdc10Date;
+    private Date prevIdc10Date;
     /** Статус */
-    private long theStatus;
+    private long status;
     
     /** Характер заболевания */
 	@Comment("Характер заболевания")
 	@OneToOne
-	public VocIllnesPrimary getIllnesPrimary() {return theIllnesPrimary;}
-	public void setIllnesPrimary(VocIllnesPrimary aIllnesPrimary) {theIllnesPrimary = aIllnesPrimary;}
+	public VocIllnesPrimary getIllnesPrimary() {return illnesPrimary;}
 
 	/** Характер заболевания */
-	private VocIllnesPrimary theIllnesPrimary;
+	private VocIllnesPrimary illnesPrimary;
 
 	/** СПО */
 	@Comment("СПО")
 	@OneToOne
 	public MedCase getParent() {
-		return theParent;
-	}
-
-	public void setParent(MedCase aParent) {
-		theParent = aParent;
+		return parent;
 	}
 
 	/** СПО */
-	private MedCase theParent;
+	private MedCase parent;
 	/** Бригада скорой помощи */
 	@Comment("Бригада скорой помощи")
 	@OneToOne
-	public VocAmbulance getAmbulance() {return theAmbulance;}
-	public void setAmbulance(VocAmbulance aAmbulance) {theAmbulance = aAmbulance;}
+	public VocAmbulance getAmbulance() {return ambulance;}
 
 	/** Исход визита */
 	@Comment("Исход визита")
 	@OneToOne
-	public VocVisitOutcome getVisitOutcome() {return theVisitOutcome;}
-	public void setVisitOutcome(VocVisitOutcome aVisitOutcome) {theVisitOutcome = aVisitOutcome;}
+	public VocVisitOutcome getVisitOutcome() {return visitOutcome;}
 
 	/** Исход визита */
-	private VocVisitOutcome theVisitOutcome;
+	private VocVisitOutcome visitOutcome;
 	/** Бригада скорой помощи */
-	private VocAmbulance theAmbulance;
+	private VocAmbulance ambulance;
 
 }

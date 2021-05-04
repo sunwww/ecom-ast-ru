@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceReserveType;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocWorkBusy;
@@ -14,6 +16,8 @@ import java.util.List;
 	@Comment("Шаблон времени рабочего календаря")
 @Entity
 @Table(schema="SQLUser")
+	@Getter
+	@Setter
 public class WorkCalendarTimePattern extends BaseEntity{
 	/**
 	 * Шаблон дня
@@ -21,47 +25,37 @@ public class WorkCalendarTimePattern extends BaseEntity{
 	@Comment("Шаблон дня")
 	@ManyToOne
 	public WorkCalendarDayPattern getDayPattern() {
-		return theDayPattern;
-	}
-	public void setDayPattern(WorkCalendarDayPattern aDayPattern) {
-		theDayPattern = aDayPattern;
+		return dayPattern;
 	}
 	/**
 	 * Шаблон дня
 	 */
-	private WorkCalendarDayPattern theDayPattern;
+	private WorkCalendarDayPattern dayPattern;
 	@OneToMany(mappedBy="timePattern", cascade=CascadeType.ALL)
 	public List<WorkCalendarReservePattern> getReservePatterns() {
-		return theReservePatterns;
-	}
-	public void setReservePatterns(List<WorkCalendarReservePattern> aReservePatterns) {
-		theReservePatterns = aReservePatterns;
+		return reservePatterns;
 	}
 	/**
 	 * Шаблоны резервов
 	 */
-	private List<WorkCalendarReservePattern> theReservePatterns;
+	private List<WorkCalendarReservePattern> reservePatterns;
 	/**
 	 * Тип занятости
 	 */
 	@Comment("Тип занятости")
 	@OneToOne
 	public VocWorkBusy getWorkBusy() {
-		return theWorkBusy;
-	}
-	public void setWorkBusy(VocWorkBusy aWorkBusy) {
-		theWorkBusy = aWorkBusy;
+		return workBusy;
 	}
 	/**
 	 * Тип занятости
 	 */
-	private VocWorkBusy theWorkBusy;
+	private VocWorkBusy workBusy;
 	/** Резерв времени */
 	@Comment("Резерв времени")
 	@OneToOne
-	public VocServiceReserveType getReserveType() {return theReserveType;}
-	public void setReserveType(VocServiceReserveType aReserveType) {theReserveType = aReserveType;}
+	public VocServiceReserveType getReserveType() {return reserveType;}
 
 	/** Резерв времени */
-	private VocServiceReserveType theReserveType;
+	private VocServiceReserveType reserveType;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.birth.ConfinedInspection;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
@@ -17,68 +18,62 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Осмотр родильницы", nameProperties= "id", view="entitySubclassView-preg_inspection.do" ,list = "entityParentList-preg_inspection.do")
 @Parent(property="medCase", parentForm= MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Inspection/Confined")
+@Setter
 public class ConfinedInspectionForm extends InspectionForm {
 	/** Общее состояние */
 	@Comment("Общее состояние")
 	@Persist @Required
-	public Long getCondition() {return theCondition;}
-	public void setCondition(Long aCondition) {theCondition = aCondition;}
+	public Long getCondition() {return condition;}
 
 	
 	/** Состояние молочных желез */
 	@Comment("Состояние молочных желез")
 	@Persist 
-	public String getMammariesCondition() {return theMammariesCondition;}
-	public void setMammariesCondition(String aMammariesCondition) {theMammariesCondition = aMammariesCondition;}
+	public String getMammariesCondition() {return mammariesCondition;}
 
 
 	/** Высота матки */
 	@Comment("Высота матки")
 	@Persist
-	public Integer getUterusHeight() {return theUterusHeight;}
-	public void setUterusHeight(Integer aUterusHeight) {theUterusHeight = aUterusHeight;}
+	public Integer getUterusHeight() {return uterusHeight;}
 
 	
 	/** Лохии */
 	@Comment("Лохии")
 	@Persist
-	public String getLochia() {return theLochia;}
-	public void setLochia(String aLochia) {theLochia = aLochia;}
+	public String getLochia() {return lochia;}
 
 	
 	/** Функции мочевого пузыря */
 	@Comment("Функции мочевого пузыря")
 	@Persist
-	public String getUrinaryBladderFunctions() {return theUrinaryBladderFunctions;}
-	public void setUrinaryBladderFunctions(String aUrinaryBladderFunctions) {theUrinaryBladderFunctions = aUrinaryBladderFunctions;}
+	public String getUrinaryBladderFunctions() {return urinaryBladderFunctions;}
 
 	
 	/** Функции кишечника */
 	@Comment("Функции кишечника")
 	@Persist
-	public String getIntestinesFunctions() {return theIntestinesFunctions;}
-	public void setIntestinesFunctions(String aIntestinesFunctions) {theIntestinesFunctions = aIntestinesFunctions;}
+	public String getIntestinesFunctions() {return intestinesFunctions;}
 
 	
 	/** Назначения */
 	@Comment("Назначения")
 	@Persist
-	public String getPrescriptions() {return thePrescriptions;}
-	public void setPrescriptions(String aPrescriptions) {thePrescriptions = aPrescriptions;}
+	public String getPrescriptions() {return prescriptions;}
 
 	/** Общее состояние */
-	private Long theCondition;
+	private Long condition;
 	/** Состояние молочных желез */
-	private String theMammariesCondition;
+	private String mammariesCondition;
 	/** Высота матки */
-	private Integer theUterusHeight;
+	private Integer uterusHeight;
 	/** Лохии */
-	private String theLochia;
+	private String lochia;
 	/** Функции мочевого пузыря */
-	private String theUrinaryBladderFunctions;
+	private String urinaryBladderFunctions;
 	/** Функции кишечника */
-	private String theIntestinesFunctions;
+	private String intestinesFunctions;
 	/** Назначения */
-	private String thePrescriptions;
+	private String prescriptions;
 
 }

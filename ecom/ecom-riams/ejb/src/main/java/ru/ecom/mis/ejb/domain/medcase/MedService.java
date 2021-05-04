@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -34,41 +36,20 @@ import java.util.List;
         @AIndex(properties = {"serviceType"})
 })
 @Table(schema = "SQLUser")
+@Getter
+@Setter
 public class MedService extends BaseEntity {
 
-    /**
-     * Отображать результат выполнения услуги в отчете по состоящим в отделении пациентам
-     */
-    @Comment("Отображать результат выполнения услуги в отчете по состоящим в отделении пациентам")
-    public Boolean getShowInReport() {
-        return theShowInReport;
-    }
-
-    public void setShowInReport(Boolean aShowInReport) {
-        theShowInReport = aShowInReport;
-    }
 
     /**
      * Отображать результат выполнения услуги в отчете по состоящим в отделении пациентам
      */
-    private Boolean theShowInReport;
+    private Boolean showInReport;
 
     /**
      * Может назначаться врачом лаборатории
      */
-    @Comment("Может назначаться врачом лаборатории")
-    public Boolean getIsForLabDoctor() {
-        return theIsForLabDoctor;
-    }
-
-    public void setIsForLabDoctor(Boolean aIsForLabDoctor) {
-        theIsForLabDoctor = aIsForLabDoctor;
-    }
-
-    /**
-     * Может назначаться врачом лаборатории
-     */
-    private Boolean theIsForLabDoctor;
+    private Boolean isForLabDoctor;
 
 
     /**
@@ -77,11 +58,7 @@ public class MedService extends BaseEntity {
     @Comment("Медицинская услуга по справочнику V001")
     @OneToOne
     public VocMedService getVocMedService() {
-        return theVocMedService;
-    }
-
-    public void setVocMedService(VocMedService aVocMedService) {
-        theVocMedService = aVocMedService;
+        return vocMedService;
     }
 
     /**
@@ -90,11 +67,7 @@ public class MedService extends BaseEntity {
     @Comment("Родитель")
     @ManyToOne
     public MedService getParent() {
-        return theParent;
-    }
-
-    public void setParent(MedService aParent) {
-        theParent = aParent;
+        return parent;
     }
 
     /**
@@ -103,11 +76,7 @@ public class MedService extends BaseEntity {
     @Comment("Вложенные медицинские услуги")
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     public List<MedService> getChildMedService() {
-        return theChildMedService;
-    }
-
-    public void setChildMedService(List<MedService> aChildMedService) {
-        theChildMedService = aChildMedService;
+        return childMedService;
     }
 
     /**
@@ -116,7 +85,7 @@ public class MedService extends BaseEntity {
     @Comment("Справочная услуга инфо")
     @Transient
     public String getVocMedServiceInfo() {
-        return theVocMedService != null ? theVocMedService.getName() : "";
+        return vocMedService != null ? vocMedService.getName() : "";
     }
 
     /**
@@ -125,41 +94,13 @@ public class MedService extends BaseEntity {
     @Comment("Шаблоны заключений")
     @OneToMany(mappedBy = "medService")
     public List<TemplateProtocol> getTemplates() {
-        return theTemplates;
-    }
-
-    public void setTemplates(List<TemplateProtocol> aTemplates) {
-        theTemplates = aTemplates;
+        return templates;
     }
 
     /**
      * Шаблоны заключений
      */
-    private List<TemplateProtocol> theTemplates;
-
-    /**
-     * Наименование
-     */
-    @Comment("Наименование")
-    public String getName() {
-        return theName;
-    }
-
-    public void setName(String aName) {
-        theName = aName;
-    }
-
-    /**
-     * Код услуги
-     */
-    @Comment("Код услуги")
-    public String getCode() {
-        return theCode;
-    }
-
-    public void setCode(String aCode) {
-        theCode = aCode;
-    }
+    private List<TemplateProtocol> templates;
 
     /**
      * Пользователь
@@ -167,47 +108,7 @@ public class MedService extends BaseEntity {
     @Comment("Пользователь")
     @Persist
     public String getCreateUsername() {
-        return theCreateUsername;
-    }
-
-    public void setCreateUsername(String aCreateUsername) {
-        theCreateUsername = aCreateUsername;
-    }
-
-    /**
-     * Дата создания
-     */
-    @Comment("Дата создания")
-    public Date getCreateDate() {
-        return theCreateDate;
-    }
-
-    public void setCreateDate(Date aCreateDate) {
-        theCreateDate = aCreateDate;
-    }
-
-    /**
-     * Дата начала актуальности
-     */
-    @Comment("Дата начала актуальности")
-    public Date getStartDate() {
-        return theStartDate;
-    }
-
-    public void setStartDate(Date aStartDate) {
-        theStartDate = aStartDate;
-    }
-
-    /**
-     * Дата окончания актуальности
-     */
-    @Comment("Дата окончания актуальности")
-    public Date getFinishDate() {
-        return theFinishDate;
-    }
-
-    public void setFinishDate(Date aFinishDate) {
-        theFinishDate = aFinishDate;
+        return createUsername;
     }
 
     @Transient
@@ -221,16 +122,12 @@ public class MedService extends BaseEntity {
     @Comment("Тип услуги")
     @OneToOne
     public VocServiceType getServiceType() {
-        return theServiceType;
-    }
-
-    public void setServiceType(VocServiceType aServiceType) {
-        theServiceType = aServiceType;
+        return serviceType;
     }
 
     @Transient
     public String getServiceTypeInfo() {
-        return theServiceType != null ? theServiceType.getName() : "";
+        return serviceType != null ? serviceType.getName() : "";
     }
 
     /**
@@ -239,158 +136,82 @@ public class MedService extends BaseEntity {
     @Comment("Рабочие функции")
     @OneToMany(mappedBy = "medService", cascade = CascadeType.ALL)
     public List<WorkFunctionService> getWorkFunctionServices() {
-        return theWorkFunctionServices;
-    }
-
-    public void setWorkFunctionServices(List<WorkFunctionService> aWorkFunctionServices) {
-        theWorkFunctionServices = aWorkFunctionServices;
+        return workFunctionServices;
     }
 
     /**
      * Доп. код услуги
      */
-    @Comment("Доп. код услуги")
-    public String getAdditionCode() {
-        return theAdditionCode;
-    }
-
-    public void setAdditionCode(String aAdditionCode) {
-        theAdditionCode = aAdditionCode;
-    }
-
-    /**
-     * Доп. код услуги
-     */
-    private String theAdditionCode;
+    private String additionCode;
     /**
      * Рабочие функции
      */
-    private List<WorkFunctionService> theWorkFunctionServices;
+    private List<WorkFunctionService> workFunctionServices;
     /**
      * Тип услуги
      */
-    private VocServiceType theServiceType;
+    private VocServiceType serviceType;
     /**
      * Дата окончания актуальности
      */
-    private Date theFinishDate;
+    private Date finishDate;
     /**
      * Дата начала актуальности
      */
-    private Date theStartDate;
+    private Date startDate;
     /**
      * Дата создания
      */
-    private Date theCreateDate;
+    private Date createDate;
     /**
      * Пользователь
      */
-    private String theCreateUsername;
+    private String createUsername;
     /**
      * Код услуги
      */
-    private String theCode;
+    private String code;
     /**
      * Наименование
      */
-    private String theName;
+    private String name;
     /**
      * Вложенные медицинские услуги
      */
-    private List<MedService> theChildMedService;
+    private List<MedService> childMedService;
     /**
      * Родитель
      */
-    private MedService theParent;
+    private MedService parent;
     /**
      * Справочная услуга
      */
-    private VocMedService theVocMedService;
+    private VocMedService vocMedService;
 
     /**
      * Уровонь сложности
      */
-    @Comment("Уровонь сложности")
-    public Long getComplexity() {
-        return theComplexity;
-    }
-
-    public void setComplexity(Long aComplexity) {
-        theComplexity = aComplexity;
-    }
-
-    /**
-     * Уровонь сложности
-     */
-    private Long theComplexity;
+    private Long complexity;
 
     /**
      * Поликлиническая услуга
      */
-    @Comment("Поликлиническая услуга")
-    public Boolean getIsPoliclinic() {
-        return theIsPoliclinic;
-    }
-
-    public void setIsPoliclinic(Boolean aIsPoliclinic) {
-        theIsPoliclinic = aIsPoliclinic;
-    }
-
-    /**
-     * Поликлиническая услуга
-     */
-    private Boolean theIsPoliclinic;
+    private Boolean isPoliclinic;
 
     /**
      * Круглосуточный стационар
      */
-    @Comment("Круглосуточный стационар")
-    public Boolean getIsHospital() {
-        return theIsHospital;
-    }
-
-    public void setIsHospital(Boolean aHospital) {
-        theIsHospital = aHospital;
-    }
-
-    /**
-     * Круглосуточный стационар
-     */
-    private Boolean theIsHospital;
+    private Boolean isHospital;
 
     /**
      * Дневной стационар
      */
-    @Comment("Дневной стационар")
-    public Boolean getIsDayHospital() {
-        return theIsDayHospital;
-    }
-
-    public void setIsDayHospital(Boolean aIsDayHospital) {
-        theIsDayHospital = aIsDayHospital;
-    }
-
-    /**
-     * Дневной стационар
-     */
-    private Boolean theIsDayHospital;
+    private Boolean isDayHospital;
 
     /**
      * Не входит в ОМС
      */
-    @Comment("Не входит в ОМС")
-    public Boolean getIsNoOmc() {
-        return theIsNoOmc;
-    }
-
-    public void setIsNoOmc(Boolean aIsNoOmc) {
-        theIsNoOmc = aIsNoOmc;
-    }
-
-    /**
-     * Не входит в ОМС
-     */
-    private Boolean theIsNoOmc;
+    private Boolean isNoOmc;
 
     /**
      * Подтип назначения
@@ -398,58 +219,18 @@ public class MedService extends BaseEntity {
     @Comment("Подтип назначения")
     @OneToOne
     public VocServiceSubType getServiceSubType() {
-        return theServiceSubType;
-    }
-
-    public void setServiceSubType(VocServiceSubType aServiceSubType) {
-        theServiceSubType = aServiceSubType;
+        return serviceSubType;
     }
 
     /**
      * Подтип назначения
      */
-    private VocServiceSubType theServiceSubType;
+    private VocServiceSubType serviceSubType;
 
     /**
      * Короткое наименование
      */
-    @Comment("Короткое наименование")
-    public String getShortName() {
-        return theShortName;
-    }
-
-    public void setShortName(String aShortName) {
-        theShortName = aShortName;
-    }
-
-    /**
-     * Короткое наименование
-     */
-    private String theShortName;
-
-    /**
-     * В другом ЛПУ выполняется
-     */
-    @Comment("В другом ЛПУ выполняется")
-    public Boolean getIsOtherLpu() {
-        return theIsOtherLpu;
-    }
-
-    public void setIsOtherLpu(Boolean aIsOtherLpu) {
-        theIsOtherLpu = aIsOtherLpu;
-    }
-
-    /**
-     * Префикс шаблона печати
-     */
-    @Comment("Префикс шаблона печати")
-    public String getPrefixTemplate() {
-        return thePrefixTemplate;
-    }
-
-    public void setPrefixTemplate(String aPrefixTemplate) {
-        thePrefixTemplate = aPrefixTemplate;
-    }
+    private String shortName;
 
     /**
      * Организация
@@ -457,136 +238,55 @@ public class MedService extends BaseEntity {
     @Comment("Организация")
     @OneToOne
     public ContractPerson getOrganization() {
-        return theOrganization;
-    }
-
-    public void setOrganization(ContractPerson aOrganization) {
-        theOrganization = aOrganization;
+        return organization;
     }
 
     /**
      * Организация
      */
-    private ContractPerson theOrganization;
+    private ContractPerson organization;
     /**
      * Префикс шаблона печати
      */
-    private String thePrefixTemplate;
+    private String prefixTemplate;
     /**
      * В другом ЛПУ выполняется
      */
-    private Boolean theIsOtherLpu;
+    private Boolean isOtherLpu;
 
     /**
      * Обязательное заполнение комментария
      */
-    @Comment("Обязательное заполнение комментария")
-    public String getIsReqComment() {
-        return theIsReqComment;
-    }
-
-    public void setIsReqComment(String aIsReqComment) {
-        theIsReqComment = aIsReqComment;
-    }
-
-    /**
-     * Обязательное заполнение комментария
-     */
-    private String theIsReqComment;
+    private String isReqComment;
 
     /**
      * Не федеральный код
      */
-    @Comment("Не федеральный код")
     @Deprecated
-    public Boolean getIsNoFederal() {
-        return theIsNoFederal;
-    }
+    private Boolean isNoFederal;
 
-    public void setIsNoFederal(Boolean aIsNoFederal) {
-        theIsNoFederal = aIsNoFederal;
-    }
-
-    /**
-     * Не федеральный код
-     */
-    private Boolean theIsNoFederal;
 
     /**
      * УЕТ
      */
-    @Comment("УЕТ")
-    public BigDecimal getUet() {
-        return theUet;
-    }
-
-    public void setUet(BigDecimal aUet) {
-        theUet = aUet;
-    }
-
-    /**
-     * УЕТ
-     */
-    private BigDecimal theUet;
+    private BigDecimal uet;
 
     private String promedCode;
-
-    @Comment("Код в промеде")
-    public String getPromedCode() {
-        return promedCode;
-    }
-
-    public void setPromedCode(String promedCode) {
-        this.promedCode = promedCode;
-    }
 
     /**
      * Отображать код услуги при печати в реестре назначений для лаборатории
      */
     private Boolean printCodeLabReestr;
 
-    @Comment("Отображать код услуги при печати в реестре назначений для лаборатории")
-    public Boolean getPrintCodeLabReestr() {
-        return printCodeLabReestr;
-    }
-
-    public void setPrintCodeLabReestr(Boolean printCodeLabReestr) {
-        this.printCodeLabReestr = printCodeLabReestr;
-    }
-
     /**
      * Указывать тип аборта при создании операции
      */
-    @Comment("Указывать тип аборта при создании операции")
-    public Boolean getIsAbortRequired() {
-        return theIsAbortRequired;
-    }
-
-    public void setIsAbortRequired(Boolean aIsAbortRequired) {
-        theIsAbortRequired = aIsAbortRequired;
-    }
-
-    /**
-     * Указывать тип аборта при создании операции
-     */
-    private Boolean theIsAbortRequired = false;
+    private Boolean isAbortRequired = false;
 
     /**
      * Отображать на сайте как услугу по умолчанию у специалиста
      */
-    @Comment("Отображать на сайте как услугу по умолчанию у специалиста")
-    public Boolean getIsShowSiteAsDefault() {
-        return theIsShowSiteAsDefault;
-    }
-
-    public void setIsShowSiteAsDefault(Boolean aIsShowSiteAsDefault) {
-        theIsShowSiteAsDefault = aIsShowSiteAsDefault;
-    }
-
-    /**
-     * Отображать на сайте как услугу по умолчанию у специалиста
-     */
-    private Boolean theIsShowSiteAsDefault = false;
+    private Boolean isShowSiteAsDefault = false;
 
     /**
      * Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии
@@ -594,84 +294,31 @@ public class MedService extends BaseEntity {
     @Comment("Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии")
     @OneToOne
     public VocColorIdentityPatient getVocColorIdentity() {
-        return theVocColorIdentity;
-    }
-
-    public void setVocColorIdentity(VocColorIdentityPatient aVocColorIdentity) {
-        theVocColorIdentity = aVocColorIdentity;
+        return vocColorIdentity;
     }
 
     /**
      * Браслет, который автоматически регистрируется при пустых даты-времени окончания операциии
      */
-    private VocColorIdentityPatient theVocColorIdentity;
+    private VocColorIdentityPatient vocColorIdentity;
 
     /**
      * Всегда выполняется для реанимаций
      */
-    @Comment("Всегда выполняется для реанимаций")
-    public Boolean getIsAvailableReanimAlways() {
-        return theIsAvailableReanimAlways;
-    }
-
-    public void setIsAvailableReanimAlways(Boolean aIsAvailableReanimAlways) {
-        theIsAvailableReanimAlways = aIsAvailableReanimAlways;
-    }
-
-    /**
-     * Всегда выполняется для реанимаций
-     */
-    private Boolean theIsAvailableReanimAlways;
-
+    private Boolean isAvailableReanimAlways;
 
     /**
      * Обязательно указывать статус пациентки?
      */
-    @Comment("Обязательно указывать статус пациентки?")
-    public Boolean getIsAskStatusWomen() {
-        return theIsAskStatusWomen;
-    }
-
-    public void setIsAskStatusWomen(Boolean aIsAskStatusWomen) {
-        theIsAskStatusWomen = aIsAskStatusWomen;
-    }
-
-    /**
-     * Обязательно указывать статус пациентки?
-     */
-    private Boolean theIsAskStatusWomen;
+    private Boolean isAskStatusWomen;
 
     /**
      * Обязательно указывать вид биоматериала?
      */
-    @Comment("Обязательно указывать вид биоматериала?")
-    public Boolean getIsAskBioType() {
-        return theIsAskBioType;
-    }
-
-    public void setIsAskBioType(Boolean aIsAskBioType) {
-        theIsAskBioType = aIsAskBioType;
-    }
-
-    /**
-     * Обязательно указывать вид биоматериала?
-     */
-    private Boolean theIsAskBioType;
+    private Boolean isAskBioType;
 
     /**
      * Обязательно указывать рост, вес и возраст?
      */
-    @Comment("Обязательно указывать рост, вес и возраст?")
-    public Boolean getIsAskHWA() {
-        return theIsAskHWA;
-    }
-
-    public void setIsAskHWA(Boolean aIsAskHWA) {
-        theIsAskHWA = aIsAskHWA;
-    }
-
-    /**
-     * Обязательно указывать рост, вес и возраст?
-     */
-    private Boolean theIsAskHWA;
+    private Boolean isAskHWA;
 }

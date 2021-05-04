@@ -20,18 +20,18 @@ import javax.persistence.PersistenceContext;
 @Remote(IExtDispPlanService.class)
 public class ExtDispPlanServiceBean implements IExtDispPlanService {
 
-    public Boolean addPersonToPlan(Long aPlanId, Long aPersonId) {return addPersonToPlan(theManager.find(ExtDispPlanPopulation.class,aPlanId),aPersonId);}
+    public Boolean addPersonToPlan(Long aPlanId, Long aPersonId) {return addPersonToPlan(manager.find(ExtDispPlanPopulation.class,aPlanId),aPersonId);}
     public Boolean addPersonToPlan(ExtDispPlanPopulation aPlan, Long aPersonId) {
         //Проверка на наличия пациента в плане
-        if (!theManager.createNativeQuery("select id from  extdispplanpopulationrecord where plan_id=:plan and patient_id=:pat")
+        if (!manager.createNativeQuery("select id from  extdispplanpopulationrecord where plan_id=:plan and patient_id=:pat")
                 .setParameter("plan",aPlan.getId()).setParameter("pat",aPersonId).getResultList().isEmpty()) {
             log.warn("Пациент с ИД "+aPersonId+" уже находится в плане ИД "+aPlan.getId());
             return false;
         }
         ExtDispPlanPopulationRecord rec = new ExtDispPlanPopulationRecord();
-        rec.setPatient(theManager.find(Patient.class,aPersonId));
+        rec.setPatient(manager.find(Patient.class,aPersonId));
         rec.setPlan(aPlan);
-        theManager.persist(rec);
+        manager.persist(rec);
         return true;
     }
 
@@ -39,7 +39,7 @@ public class ExtDispPlanServiceBean implements IExtDispPlanService {
     public int fillExtDispPlanByPersons(String aPersonJson, Long aPlanId)  {
         int cnt=0;
         try {
-            ExtDispPlanPopulation plan = theManager.find(ExtDispPlanPopulation.class,aPlanId);
+            ExtDispPlanPopulation plan = manager.find(ExtDispPlanPopulation.class,aPlanId);
             JSONArray patients = new JSONArray(aPersonJson); //id, *name
             for (int i=0;i<patients.length();i++) {
                 JSONObject pat = patients.getJSONObject(i);
@@ -52,6 +52,6 @@ public class ExtDispPlanServiceBean implements IExtDispPlanService {
     }
 
     private @PersistenceContext
-    EntityManager theManager;
+    EntityManager manager;
     private static final Logger log = Logger.getLogger(ExtDispPlanServiceBean.class);
 }

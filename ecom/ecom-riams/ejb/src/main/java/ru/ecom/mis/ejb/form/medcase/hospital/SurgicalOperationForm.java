@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
@@ -33,514 +34,444 @@ import javax.persistence.Id;
 @AViewInterceptors(
 		@AEntityFormInterceptor(SurgicalOperationViewInterceptor.class)
 )
+@Setter
 public class SurgicalOperationForm extends IdEntityForm{
 	/** Дата операции */
 	@Comment("Дата операции")
 	@Persist @Required
 	@DateString @DoDateString @MaxDateCurrent
-	public String getOperationDate() {return theOperationDate;}
-	public void setOperationDate(String aOperationDate) {theOperationDate = aOperationDate;	}
+	public String getOperationDate() {return operationDate;}
 
 	/** Время операции */
 	@Comment("Время операции")
 	@Persist @Required
 	@TimeString @DoTimeString
-	public String getOperationTime() {return theOperationTime;}
-	public void setOperationTime(String aOperationTime) {theOperationTime = aOperationTime;	}
+	public String getOperationTime() {return operationTime;}
 
 	/** Хирург */
 	@Comment("Хирург")
 	@Persist @Required
-	public Long getSurgeon() {return theSurgeon;	}
-	public void setSurgeon(Long aSurgeon) {theSurgeon = aSurgeon;}
-	
+	public Long getSurgeon() {return surgeon;	}
+
 	/** Отделение */
 	@Comment("Отделение")
 	@Persist @Required
-	public Long getDepartment() {return theDepartment;}
-	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+	public Long getDepartment() {return department;}
 
 	/** Операция */
 	@Comment("Операция")
 	@Persist 
-	public Long getOperation() {return theOperation;}
-	public void setOperation(Long aOperation) {theOperation = aOperation;}
+	public Long getOperation() {return operation;}
 
 	/** Анестизия */
 	@Comment("Анестезия")
-	public Long getAnesthesia() {return theAnesthesia;}
-	public void setAnesthesia(Long aAnesthesia) {theAnesthesia = aAnesthesia;	}
+	public Long getAnesthesia() {return anesthesia;}
 
 	/** Флаг основной операции */
 	@Comment("Флаг основной операции")
 	@Persist 
-	public Boolean getBase() {return theBase;	}
-	public void setBase(Boolean aBase) {theBase = aBase;}
+	public Boolean getBase() {return base;	}
 
 	/** Флаг использования эндоскопии */
 	@Comment("Флаг использования эндоскопии")
 	@Persist 
-	public Boolean getEndoscopyUse() {return theEndoscopyUse;	}
-	public void setEndoscopyUse(Boolean aEndoscopyUse) {theEndoscopyUse = aEndoscopyUse;	}
+	public Boolean getEndoscopyUse() {return endoscopyUse;	}
 
 	/** Флаг использования лазерной аппаратуры */
 	@Comment("Флаг использования лазерной аппаратуры")
 	@Persist 
-	public Boolean getLaserUse() {	return theLaserUse;	}
-	public void setLaserUse(Boolean aLaserUse) {theLaserUse = aLaserUse;}
+	public Boolean getLaserUse() {	return laserUse;	}
 
 	/** Флаг использования криогенной аппаратуры */
 	@Comment("Флан использования криогенной аппаратуры")
 	@Persist 
-	public Boolean getCryogenicUse() {return theCryogenicUse;	}
-	public void setCryogenicUse(Boolean aCryogenicUse) {theCryogenicUse = aCryogenicUse;	}
+	public Boolean getCryogenicUse() {return cryogenicUse;	}
 
 	/** Случай медицинского обслуживания */
 	@Comment("Случай медицинского обслуживания")
 	@Persist
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+	public Long getMedCase() {return medCase;}
 
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
+	public Long getPatient() {return patient;}
 
 	/** Лечебное учреждение */
 	@Comment("Лечебное учреждение")
 	@Persist
-	public Long getLpu() {return theLpu;}
-	public void setLpu(Long aLpu) {theLpu = aLpu;}
+	public Long getLpu() {return lpu;}
 
 	/** Кол-во  анастезии */
 	@Comment("Кол-во  анастезии")
 	@IntegerString @DoIntegerString
-	public String getAnesthesiaAmount() {return theAnesthesiaAmount;}
-	public void setAnesthesiaAmount(String aAnesthesiaAmount) {theAnesthesiaAmount = aAnesthesiaAmount;}
+	public String getAnesthesiaAmount() {return anesthesiaAmount;}
 
 	/** Дата операции по */
 	@Comment("Дата операции по")
 	@DateString @DoDateString @MaxDateCurrent
 	@Persist
-	public String getOperationDateTo() {return theOperationDateTo;}
-	public void setOperationDateTo(String aOperationDateTo) {theOperationDateTo = aOperationDateTo;}
+	public String getOperationDateTo() {return operationDateTo;}
 
 	
 	/** Анестезиолог */
 	@Comment("Анестезиолог")
-	public Long getAnaesthetist() {return theAnaesthetist;}
-	public void setAnaesthetist(Long aAnaesthetist) {theAnaesthetist = aAnaesthetist;}
+	public Long getAnaesthetist() {return anaesthetist;}
 
 	
 	/** Операционная медсестра */
 	@Comment("Операционная медсестра")
 	@Persist
-	public Long getOperatingNurse() {return theOperatingNurse;}
-	public void setOperatingNurse(Long aOperatingNurse) {theOperatingNurse = aOperatingNurse;}
+	public Long getOperatingNurse() {return operatingNurse;}
 
 	
 	/** Предоперационный эпикриз */
 	@Comment("Предоперационный эпикриз")
 	@Persist
-	public String getPreoperativeEpicrisis() {return thePreoperativeEpicrisis;}
-	public void setPreoperativeEpicrisis(String aPreoperativeEpicrisis) {thePreoperativeEpicrisis = aPreoperativeEpicrisis;}
+	public String getPreoperativeEpicrisis() {return preoperativeEpicrisis;}
 
 	
 	/** Описание операции */
 	@Comment("Описание операции")
 	@Persist
-	public String getOperationText() {return theOperationText;}
-	public void setOperationText(String aOperationText) {theOperationText = aOperationText;}
+	public String getOperationText() {return operationText;}
 
 	
 	/** МКБ до операции */
 	@Comment("МКБ до операции")
 	@Persist
-	public Long getIdc10Before() {return theIdc10Before;}
-	public void setIdc10Before(Long aIdc10Before) {theIdc10Before = aIdc10Before;}
+	public Long getIdc10Before() {return idc10Before;}
 
 	
 	/** МКБ после операции */
 	@Comment("МКБ после операции")
 	@Persist 
-	public Long getIdc10After() {return theIdc10After;}
-	public void setIdc10After(Long aIdc10After) {theIdc10After = aIdc10After;}
+	public Long getIdc10After() {return idc10After;}
 
 	
 	/** Гистологическое исследование */
 	@Comment("Гистологическое исследование")
 	@Persist
-	public String getHistologicalStudy() {return theHistologicalStudy;}
-	public void setHistologicalStudy(String aHistologicalStudy) {theHistologicalStudy = aHistologicalStudy;	}
+	public String getHistologicalStudy() {return histologicalStudy;}
 
 	
 	/** Хирурги */
 	@Comment("Хирурги")
 	@Persist @PersistManyToManyOneProperty(collectionGenericType=WorkFunction.class)
-	public String getSurgeonFunctions() {return theSurgeonFunctions;}
-	public void setSurgeonFunctions(String aSurgeonFunctions) {theSurgeonFunctions = aSurgeonFunctions;}
+	public String getSurgeonFunctions() {return surgeonFunctions;}
 
 	/** Хирурги */
-	private String theSurgeonFunctions;
+	private String surgeonFunctions;
 	/** Время операции по */
 	@Comment("Время операции по")
 	@Persist
 	@TimeString @DoTimeString
-	public String getOperationTimeTo() {return theOperationTimeTo;}
-	public void setOperationTimeTo(String aOperationTimeTo) {theOperationTimeTo = aOperationTimeTo;}
+	public String getOperationTimeTo() {return operationTimeTo;}
 
 	/** Информация о хир.операции */
 	@Comment("Информация о хир.операции")
 	@Persist
-	public String getInformation() {return theInformation;}
-	public void setInformation(String aInformation) {theInformation = aInformation;}
-	
+	public String getInformation() {return information;}
+
 	/** Период */
 	@Comment("Период")
 	@Persist
-	public String getPeriod() {return thePeriod;}
-	public void setPeriod(String aPeriod) {thePeriod = aPeriod;}
+	public String getPeriod() {return period;}
 
 	/** Информация о пациенте */
 	@Comment("Информация о пациенте")
 	@Persist
-	public String getPatientInfo() {return thePatientInfo;}
-	public void setPatientInfo(String aPatientInfo) {thePatientInfo = aPatientInfo;}
+	public String getPatientInfo() {return patientInfo;}
 
 	 /** Экстренность */
 	@Comment("Экстренность")
 	@Persist
 	public Boolean getEmergency() {
-		return theEmergency;
-	}
-
-	public void setEmergency(Boolean aEmergency) {
-		theEmergency = aEmergency;
+		return emergency;
 	}
 
 	/** Экстренность */
-	private Boolean theEmergency;
+	private Boolean emergency;
 	
 	/** Малая */
 	@Comment("Малая")
 	@Persist
 	public Boolean getMinor() {
-		return theMinor;
-	}
-
-	public void setMinor(Boolean aMinor) {
-		theMinor = aMinor;
+		return minor;
 	}
 
 	/** Номер в журнале */
 	@Comment("Номер в журнале")
 	@Persist
-	public String getNumberInJournal() {return theNumberInJournal;}
-	public void setNumberInJournal(String aNumberInJournal) {theNumberInJournal = aNumberInJournal;}
+	public String getNumberInJournal() {return numberInJournal;}
 
 	/** Профиль */
 	@Comment("Профиль")
 	@Persist
-	public Long getProfile() {return theProfile;}
-	public void setProfile(Long aProfile) {theProfile = aProfile;}
+	public Long getProfile() {return profile;}
 
 	/** Операция с использованием высоких медицинских технологий */
 	@Comment("Операция с использованием высоких медицинских технологий")
 	@Persist 
-	public Long getTechnology() {return theTechnology;}
-	public void setTechnology(Long aTechnology) {theTechnology = aTechnology;}
+	public Long getTechnology() {return technology;}
 
 	/** Показания для операции */
 	@Comment("Показания для операции")
 	@Persist @Required
-	public Long getAspect() {return theAspect;}
-	public void setAspect(Long aAspect) {theAspect = aAspect;}
+	public Long getAspect() {return aspect;}
 
 	/** Исход операции */
 	@Comment("Исход операции")
 	@Persist 
-	public Long getOutcome() {return theOutcome;}
-	public void setOutcome(Long aOutcome) {theOutcome = aOutcome;}
+	public Long getOutcome() {return outcome;}
 
 	
 	/** Метод операции */
 	@Comment("Метод операции")
 	@Persist
-	public Long getMethod() {return theMethod;}
-	public void setMethod(Long aMethod) {theMethod = aMethod;}
+	public Long getMethod() {return method;}
 
 	/** Метод операции */
-	private Long theMethod;
+	private Long method;
 	/** Исход операции */
-	private Long theOutcome;
+	private Long outcome;
 	/** Показания для операции */
-	private Long theAspect;
+	private Long aspect;
 	/** Операция с использованием высоких медицинских технологий */
-	private Long theTechnology;
+	private Long technology;
 	/** Профиль */
-	private Long theProfile;
+	private Long profile;
 	/** Номер в журнале */
-	private String theNumberInJournal;
+	private String numberInJournal;
 	/** Малая */
-	private Boolean theMinor;
+	private Boolean minor;
 
 	/** Информация о пациенте */
-	private String thePatientInfo;
+	private String patientInfo;
 	/** Период */
-	private String thePeriod;
+	private String period;
 	/** Информация о хир.операции */
-	private String theInformation;
+	private String information;
 	/** Время операции по */
-	private String theOperationTimeTo;
+	private String operationTimeTo;
 	/** Гистологическое исследование */
-	private String theHistologicalStudy;
+	private String histologicalStudy;
 	/** МКБ после операции */
-	private Long theIdc10After;
+	private Long idc10After;
 	/** МКБ до операции */
-	private Long theIdc10Before;
+	private Long idc10Before;
 	/** Описание операции */
-	private String theOperationText;
+	private String operationText;
 	/** Предоперационный эпикриз */
-	private String thePreoperativeEpicrisis;
+	private String preoperativeEpicrisis;
 	/** Операционная медсестра */
-	private Long theOperatingNurse;
+	private Long operatingNurse;
 	/** Анестезиолог */
-	private Long theAnaesthetist;
+	private Long anaesthetist;
 	/** Дата операции по */
-	private String theOperationDateTo;
+	private String operationDateTo;
 
 	/** Рабочая функция врача, проводившего операцию */
-	private Long theSurgeon;
+	private Long surgeon;
 	/** Кол-во  анастезии */
-	private String theAnesthesiaAmount;
+	private String anesthesiaAmount;
 	
 	/** Лечебное учреждение */
-	private Long theLpu;
+	private Long lpu;
 	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	/** Случай медицинского обслуживания */
-	private Long theMedCase;
+	private Long medCase;
 	/** Флаг использования криогенной аппаратуры */
-	private Boolean theCryogenicUse;
+	private Boolean cryogenicUse;
 	/** Флаг использования лазерной аппаратуры */
-	private Boolean theLaserUse;
+	private Boolean laserUse;
 	/** Флаг использования эндоскопии */
-	private Boolean theEndoscopyUse;
+	private Boolean endoscopyUse;
 	/** Флаг основной операции */
-	private Boolean theBase;
+	private Boolean base;
 	/** Анестезия */
-	private Long theAnesthesia;
+	private Long anesthesia;
 	/** Операция */
-	private Long theOperation;
+	private Long operation;
 	/** Отделение */
-	private Long theDepartment;
+	private Long department;
 	/** Время операции */
-	private String theOperationTime;
+	private String operationTime;
 	/** Дата операции */
-	private String theOperationDate;
+	private String operationDate;
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DoDateString @DateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
+
 	/** Пользователь, создавший запись */
 	@Comment("Пользователь, создавший запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aUsername) {theCreateUsername = aUsername;}
-	
+	public String getCreateUsername() {return createUsername;}
+
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@Persist @DoDateString @DateString
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
-	
+	public String getEditDate() {return editDate;}
+
 	/** Пользователь, последний изменявший запись */
 	@Comment("Пользователь, последний изменявший запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-	
+	public String getEditUsername() {return editUsername;}
+
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@Persist @Required
-	public Long getServiceStream() {return theServiceStream;}
-	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+	public Long getServiceStream() {return serviceStream;}
 
 	/** Поток обслуживания */
-	private Long theServiceStream;
+	private Long serviceStream;
 
 	/** Пользователь, последний изменявший запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	
 	/** Мед. услуга */
 	@Comment("Мед. услуга")
 	@Persist @Required
-	public Long getMedService() {return theMedService;}
-	public void setMedService(Long aMedService) {theMedService = aMedService;}
-
+	public Long getMedService() {return medService;}
 
 	/** Мед. услуга */
-	private Long theMedService;
+	private Long medService;
 	/** Аборта */
 	@Comment("Аборта")
 	@Persist
-	public Long getAbortion() {return theAbortion;}
-	public void setAbortion(Long aAbortion) {theAbortion = aAbortion;}
+	public Long getAbortion() {return abortion;}
 
 	/** Аборта */
-	private Long theAbortion;
+	private Long abortion;
 	
 	/** Дата печати */
 	@Comment("Дата печати")
 	@Persist @DateString @DoDateString
-	public String getPrintDate() {return thePrintDate;}
-	public void setPrintDate(String aPrintDate) {thePrintDate = aPrintDate;}
+	public String getPrintDate() {return printDate;}
 
 	/** Дата печати */
-	private String thePrintDate;
+	private String printDate;
 	
 	/** Время печати */
 	@Comment("Время печати")
 	@Persist @TimeString @DoTimeString
-	public String getPrintTime() {return thePrintTime;}
-	public void setPrintTime(String aPrintTime) {thePrintTime = aPrintTime;}
+	public String getPrintTime() {return printTime;}
 
 	/** Время печати */
-	private String thePrintTime;
+	private String printTime;
 	
 	/** Пользователь, посл. распечат. документ */
 	@Comment("Пользователь, посл. распечат. документ")
 	@Persist
-	public String getPrintUsername() {return thePrintUsername;}
-	public void setPrintUsername(String aPrintUsername) {thePrintUsername = aPrintUsername;}
+	public String getPrintUsername() {return printUsername;}
 
 	/** Пользователь, посл. распечат. документ */
-	private String thePrintUsername;
+	private String printUsername;
 	
 	/** Проводилась анестезия */
 	@Comment("Проводилась анестезия")
-	public Long getIsAnesthesia() {return theIsAnesthesia;}
-	public void setIsAnesthesia(Long aIsAnesthesia) {theIsAnesthesia = aIsAnesthesia;}
+	public Long getIsAnesthesia() {return isAnesthesia;}
 
 	/** Проводилась анестезия */
-	private Long theIsAnesthesia;
+	private Long isAnesthesia;
 	
 	/** Анестезия вида */
 	@Comment("Анестезия вида")
-	public Long getAnesthesiaType() {return theAnesthesiaType;}
-	public void setAnesthesiaType(Long aAnesthesiaType) {theAnesthesiaType = aAnesthesiaType;}
+	public Long getAnesthesiaType() {return anesthesiaType;}
 
 	/** Анестезия вида */
-	private Long theAnesthesiaType;
+	private Long anesthesiaType;
 	
 	/** Анестезия услуга */
 	@Comment("Анестезия услуга")
 	public Long getAnesthesiaService() {
-		return theAnesthesiaService;
-	}
-
-	public void setAnesthesiaService(Long aAnesthesiaService) {
-		theAnesthesiaService = aAnesthesiaService;
+		return anesthesiaService;
 	}
 
 	/** Анестезия услуга */
-	private Long theAnesthesiaService;
+	private Long anesthesiaService;
 	
 	/** Длительность */
 	@Comment("Длительность")
 	public Integer getAnesthesiaDuration() {
-		return theAnesthesiaDuration;
-	}
-
-	public void setAnesthesiaDuration(Integer aAnesthesiaDuration) {
-		theAnesthesiaDuration = aAnesthesiaDuration;
+		return anesthesiaDuration;
 	}
 
 	/** Длительность */
-	private Integer theAnesthesiaDuration;
+	private Integer anesthesiaDuration;
 
 	/** На какой конечности была сделана операция */
 	@Comment("На какой конечности была сделана операция")
 	@Persist
-	public Long getLeftRight() {return theLeftRight;}
-	public void setLeftRight(Long aLeftRight) {theLeftRight = aLeftRight;}
+	public Long getLeftRight() {return leftRight;}
 	/** На какой конечности была сделана операция */
-	private Long theLeftRight ;
+	private Long leftRight ;
 
 	/** Идентификатор */
 	@Id
 	@Comment("Идентификатор")
-	public long getId() { return theId ; }
-	public void setId(long aId) { theId = aId ; }
+	public long getId() { return id ; }
 	/** Идентификатор */
-	private long theId ;
+	private long id ;
 
 
 	/** Класс раны */
 	@Comment("Класс раны")
 	@Persist
-	public Long getClassWound() {return theClassWound;}
-	public void setClassWound(Long aClassWound) {theClassWound = aClassWound;}
+	public Long getClassWound() {return classWound;}
 	/** Класс раны */
-	private Long theClassWound ;
+	private Long classWound ;
 
 	/** Препарат периоперационной антибиотикопрофилактики */
 	@Comment("Препарат периоперационной антибиотикопрофилактики")
 	@Persist
-	public Long getAntibioticDrug() {return theAntibioticDrug;}
-	public void setAntibioticDrug(Long aAntibioticDrug) {theAntibioticDrug = aAntibioticDrug;}
+	public Long getAntibioticDrug() {return antibioticDrug;}
 	/** Препарат периоперационной антибиотикопрофилактики */
-	private Long theAntibioticDrug ;
+	private Long antibioticDrug ;
 
 	/** Доза (мл) */
 	@Comment("Доза (мл)")
 	@Persist
-	public Double getDose() {return theDose;}
-	public void setDose(Double aDose) {theDose = aDose;}
+	public Double getDose() {return dose;}
 	/** Доза (мл) */
-	private Double theDose;
+	private Double dose;
 
 	/** Способы введения препаратов при периоперационной антибиотикопрофилактике */
 	@Comment("Способы введения препаратов при периоперационной антибиотикопрофилактике")
 	@Persist
-	public Long getMethodsDrugAdm() {return theMethodsDrugAdm;}
-	public void setMethodsDrugAdm(Long aMethodsDrugAdm) {theMethodsDrugAdm = aMethodsDrugAdm;}
+	public Long getMethodsDrugAdm() {return methodsDrugAdm;}
 	/** Способы введения препаратов при периоперационной антибиотикопрофилактике */
-	private Long theMethodsDrugAdm ;
+	private Long methodsDrugAdm ;
 
 	/** Время первой дозы */
 	@Comment("Время первой дозы")
 	@TimeString @DoTimeString
 	@Persist
-	public String getFirstDoseTime() {return theFirstDoseTime;}
-	public void setFirstDoseTime(String aFirstDoseTime) {theFirstDoseTime = aFirstDoseTime;	}
+	public String getFirstDoseTime() {return firstDoseTime;}
 	/** Время первой дозы */
-	private String theFirstDoseTime;
+	private String firstDoseTime;
 
 	/** Время повторной (при необходимости) дозы */
 	@Comment("Время повторной (при необходимости) дозы")
 	@TimeString @DoTimeString
 	@Persist
-	public String getSecondDoseTime() {return theSecondDoseTime;}
-	public void setSecondDoseTime(String aSecondDoseTime) {theSecondDoseTime = aSecondDoseTime;	}
+	public String getSecondDoseTime() {return secondDoseTime;}
 	/** Время повторной (при необходимости) дозы */
-	private String theSecondDoseTime;
+	private String secondDoseTime;
 
 	/** данные для сохранения осложнений*/
 	public String getAllComps() {
-		return theAllComps;
+		return allComps;
 	}
-	public void setAllComps(String aAllComps) { theAllComps = aAllComps; }
 	/** данные для сохранения осложнений*/
-	private String theAllComps;
+	private String allComps;
 }

@@ -1,34 +1,24 @@
 package ru.ecom.ejb.services.quickquery.config;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Collection;
 import java.util.LinkedList;
 
+@Getter
+@Setter
 public class ConfigQuickQuery {
 
 	/** Добавление ограничения */
 	public ConfigWhereClause getWhereClauseConfig() {
-		return theWhereClause;
-	}
-
-	/** Название */
-	public String getName() {
-		return theName;
-	}
-
-	public void setName(String aName) {
-		theName = aName;
+		return whereClause;
 	}
 
 	/** Запросы */
-	public Collection<ConfigQuery> getQueries() {
-		return theQueries;
-	}
-
-
-	/** Запросы */
-	private final Collection<ConfigQuery> theQueries = new LinkedList<ConfigQuery>();
+	private final Collection<ConfigQuery> queries = new LinkedList<ConfigQuery>();
 	/** Название */
-	private String theName;
+	private String name;
 	/** Добавление ограничения */
-	private final ConfigWhereClause theWhereClause = new ConfigWhereClause();
+	private final ConfigWhereClause whereClause = new ConfigWhereClause();
 }

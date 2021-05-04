@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.equipment;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.equipment.Equipment;
@@ -20,94 +21,84 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Оборудование", nameProperties= "nameTypeEquip", view="entityView-mis_equipment.do")
 @Parent(property="lpu", parentForm= MisLpuForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Equipment/Equipment")
+@Setter
 public class EquipmentForm extends IdEntityForm {
 
     /** Название */
 	@Comment("Название")
 	@Persist
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
+	public String getName() {return name;}
 	/** Название */
-	private String theName;
+	private String name;
 	
 	/** Марка оборудования */
     @Persist
     @Comment("Марка оборудования")
-    public Long getMarka() {    return theMarka ;}
-    public void setMarka(Long aMarka ) {  theMarka = aMarka ; }
+    public Long getMarka() {    return marka ;}
 
     /** Марка оборудовани */
     @Persist
     @Comment("Марка оборудовани")
-    public String getNameMarka() {    return theNameMarka ;}
-    public void setNameMarka(String aNameMarka ) {  theNameMarka = aNameMarka ; }
+    public String getNameMarka() {    return nameMarka ;}
 
     /** Тип оборудования */
     @Persist
     @Comment("Тип оборудования")
-    public Long getTypeEquip() {    return theTypeEquip ;}
-    public void setTypeEquip(Long aTypeEquip ) {  theTypeEquip = aTypeEquip ; }
+    public Long getTypeEquip() {    return typeEquip ;}
 
     /** Наименование типа оборудования */
     @Persist
     @Comment("Наименование типа оборудования")
-    public String getNameTypeEquip() {    return theNameTypeEquip ;}
-    public void setNameTypeEquip(String aNameTypeEquip ) {  theNameTypeEquip = aNameTypeEquip ; }
+    public String getNameTypeEquip() {    return nameTypeEquip ;}
 
     /** Год выпуска */
     @Persist
     @Comment("Год выпуска")
-    public Integer getCreateYear() {    return theCreateYear ;}
-    public void setCreateYear(Integer aCreateYear ) {  theCreateYear = aCreateYear ; }
+    public Integer getCreateYear() {    return createYear ;}
 
     /** Год установки */
     @Persist
     @Comment("Год установки")
-    public Integer getStayYear() {    return theStayYear ;}
-    public void setStayYear(Integer aStayYear ) {  theStayYear = aStayYear ; }
+    public Integer getStayYear() {    return stayYear ;}
 
     /** Производитель */
     @Persist
     @Comment("Производитель")
-    public Long getCreater() {    return theCreater ;}
-    public void setCreater(Long aCreater ) {  theCreater = aCreater ; }
+    public Long getCreater() {    return creater ;}
 
     /** Поставщик */
     @Persist
     @Comment("Поставщик")
-    public Long getProvider() {    return theProvider ;}
-    public void setProvider(Long aProvider ) {  theProvider = aProvider ; }
+    public Long getProvider() {    return provider ;}
 
     /** Примечание */
     @Persist
     @Comment("Примечание")
-    public String getInfo() {    return theInfo ;}
-    public void setInfo(String aInfo ) {  theInfo = aInfo ; }
+    public String getInfo() {    return info ;}
 
     /** ЛПУ */
     @Persist
     @Comment("ЛПУ")
-    public Long getLpu() {    return theLpu ;}
-    public void setLpu(Long aLpu ) {  theLpu = aLpu ; }
+    public Long getLpu() {    return lpu ;}
 
     /** ЛПУ */
-    private Long theLpu ;
+    private Long lpu ;
     /** Примечание */
-    private String theInfo ;
+    private String info ;
     /** Поставщик */
-    private Long theProvider ;
+    private Long provider ;
     /** Производитель */
-    private Long theCreater ;
+    private Long creater ;
     /** Год установки */
-    private Integer theStayYear ;
+    private Integer stayYear ;
     /** Год выпуска */
-    private Integer theCreateYear ;
+    private Integer createYear ;
     /** Наименование типа оборудования */
-    private String theNameTypeEquip ;
+    private String nameTypeEquip ;
     /** Тип оборудования */
-    private Long theTypeEquip ;
+    private Long typeEquip ;
     /** Наименование марки оборудования */
-    private String theNameMarka ;
+    private String nameMarka ;
     /** Марка оборудования */
-    private Long theMarka ;
+    private Long marka ;
 }

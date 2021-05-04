@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.E2CancerEntry;
@@ -17,212 +18,187 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @WebTrail(comment = "Случай онкологического лечения", nameProperties = "id", view = "entityParentView-e2_cancerEntry.do")
 @EntityFormSecurityPrefix("/Policy/E2")
 @Parent(property = "entry", parentForm = E2EntryForm.class)
+@Setter
 public class E2CancerEntryForm extends IdEntityForm {
 
     /** Запись */
     @Comment("Запись")
     @Persist
-    public Long getEntry() {return theEntry;}
-    public void setEntry(Long aEntry) {theEntry = aEntry;}
+    public Long getEntry() {return entry;}
     /** Запись */
-    private Long theEntry ;
+    private Long entry ;
 
     /** Признак подозрения на на ЗО */
     @Comment("Признак подозрения на на ЗО")
     @Persist
-    public Boolean getMaybeCancer() {return theMaybeCancer;}
-    public void setMaybeCancer(Boolean aMaybeCancer) {theMaybeCancer = aMaybeCancer;}
+    public Boolean getMaybeCancer() {return maybeCancer;}
     /** Признак подозрения на на ЗО */
-    private Boolean theMaybeCancer ;
+    private Boolean maybeCancer ;
 
     /** Повод обращения */
     @Comment("Повод обращения")
     @Persist
-    public String getOccasion() {return theOccasion;}
-    public void setOccasion(String aOccasion) {theOccasion = aOccasion;}
+    public String getOccasion() {return occasion;}
     /** Повод обращения */
-    private String theOccasion ;
+    private String occasion ;
 
     /** Стадия */
     @Comment("Стадия")
     @Persist
-    public String getStage() {return theStage;}
-    public void setStage(String aStage) {theStage = aStage;}
+    public String getStage() {return stage;}
     /** Стадия */
-    private String theStage ;
+    private String stage ;
 
     /** Tumor */
     @Comment("Tumor")
     @Persist
-    public String getTumor() {return theTumor;}
-    public void setTumor(String aTumor) {theTumor = aTumor;}
+    public String getTumor() {return tumor;}
     /** Tumor */
-    private String theTumor ;
+    private String tumor ;
 
     /** Nodus */
     @Comment("Nodus")
     @Persist
-    public String getNodus() {return theNodus;}
-    public void setNodus(String aNodus) {theNodus = aNodus;}
+    public String getNodus() {return nodus;}
     /** Nodus */
-    private String theNodus ;
+    private String nodus ;
 
     /** Metastasis */
     @Comment("Metastasis")
     @Persist
-    public String getMetastasis() {return theMetastasis;}
-    public void setMetastasis(String aMetastasis) {theMetastasis = aMetastasis;}
+    public String getMetastasis() {return metastasis;}
     /** Metastasis */
-    private String theMetastasis ;
+    private String metastasis ;
 
     /** Выявлены отдаленные метастазы */
     @Comment("Выявлены отдаленные метастазы")
     @Persist
-    public Boolean getIsMetastasisFound() {return theIsMetastasisFound;}
-    public void setIsMetastasisFound(Boolean aIsMetastasisFound) {theIsMetastasisFound = aIsMetastasisFound;}
+    public Boolean getIsMetastasisFound() {return isMetastasisFound;}
     /** Выявлены отдаленные метастазы */
-    private Boolean theIsMetastasisFound ;
+    private Boolean isMetastasisFound ;
 
     /** Суммарная очаговая доза */
     @Comment("Суммарная очаговая доза")
     @Persist
-    public String getSod() {return theSod;}
-    public void setSod(String aSod) {theSod = aSod;}
+    public String getSod() {return sod;}
     /** Суммарная очаговая доза */
-    private String theSod ;
+    private String sod ;
 
     /** Сведения о решении консилиума */
     @Comment("Сведения о решении консилиума")
     @Persist
-    public String getConsiliumResult() {return theConsiliumResult;}
-    public void setConsiliumResult(String aConsiliumResult) {theConsiliumResult = aConsiliumResult;}
+    public String getConsiliumResult() {return consiliumResult;}
     /** Сведения о решении консилиума */
-    private String theConsiliumResult ;
+    private String consiliumResult ;
 
     /** Дата проведения консилиума */
     @Comment("Дата проведения консилиума")
     @Persist
     @DateString @DoDateString
-    public String getConsiliumDate() {return theConsiliumDate;}
-    public void setConsiliumDate(String aConsiliumDate) {theConsiliumDate = aConsiliumDate;}
+    public String getConsiliumDate() {return consiliumDate;}
     /** Дата проведения консилиума */
-    private String theConsiliumDate ;
+    private String consiliumDate ;
 
     /** Тип услуги */
     @Comment("Тип услуги")
     @Persist
-    public String getServiceType() {return theServiceType;}
-    public void setServiceType(String aServiceType) {theServiceType = aServiceType;}
+    public String getServiceType() {return serviceType;}
     /** Тип услуги */
-    private String theServiceType ;
+    private String serviceType ;
 
     /** Тип хирургического лечения */
     @Comment("Тип хирургического лечения")
     @Persist
-    public String getSurgicalType() {return theSurgicalType;}
-    public void setSurgicalType(String aSurgicalType) {theSurgicalType = aSurgicalType;}
+    public String getSurgicalType() {return surgicalType;}
     /** Тип хирургического лечения */
-    private String theSurgicalType ;
+    private String surgicalType ;
 
     /** Линия лекарственной терапии */
     @Comment("Линия лекарственной терапии")
     @Persist
-    public String getDrugLine() {return theDrugLine;}
-    public void setDrugLine(String aDrugLine) {theDrugLine = aDrugLine;}
+    public String getDrugLine() {return drugLine;}
     /** Линия лекарственной терапии */
-    private String theDrugLine ;
+    private String drugLine ;
 
     /** Цикл лекарственной терапии */
     @Comment("Цикл лекарственной терапии")
     @Persist
-    public String getDrugCycle() {return theDrugCycle;}
-    public void setDrugCycle(String aDrugCycle) {theDrugCycle = aDrugCycle;}
+    public String getDrugCycle() {return drugCycle;}
     /** Цикл лекарственной терапии */
-    private String theDrugCycle ;
+    private String drugCycle ;
 
     /** Тип лучевой терапии */
     @Comment("Тип лучевой терапии")
     @Persist
-    public String getRadiationTherapy() {return theRadiationTherapy;}
-    public void setRadiationTherapy(String aRadiationTherapy) {theRadiationTherapy = aRadiationTherapy;}
+    public String getRadiationTherapy() {return radiationTherapy;}
     /** Тип лучевой терапии */
-    private String theRadiationTherapy ;
+    private String radiationTherapy ;
 
     //Поля чисто для формы
 
     //Направление
     @Comment("Дата направления")
     @DateString @DoDateString
-    public String getDirectionDate() {return theDirectionDate;}
-    public void setDirectionDate(String aDirectionDate) {theDirectionDate = aDirectionDate;}
+    public String getDirectionDate() {return directionDate;}
     /** Дата направления */
-    private String theDirectionDate ;
+    private String directionDate ;
 
     /** Вид направление */
     @Comment("Вид направление")
-    public String getDirectionType() {return theDirectionType;}
-    public void setDirectionType(String aDirectionType) {theDirectionType = aDirectionType;}
+    public String getDirectionType() {return directionType;}
     /** Вид направление */
-    private String theDirectionType ;
+    private String directionType ;
 
     /** ЛПУ направления */
     @Comment("ЛПУ направления")
-    public String getDirectionDirectLpu() {return theDirectionDirectLpu;}
-    public void setDirectionDirectLpu(String aDirectionDirectLpu) {theDirectionDirectLpu = aDirectionDirectLpu;}
+    public String getDirectionDirectLpu() {return directionDirectLpu;}
     /** ЛПУ направления */
-    private String theDirectionDirectLpu ;
+    private String directionDirectLpu ;
 
     /** Метод диагностического исследования */
     @Comment("Метод диагностического исследования")
-    public String getDirectionSurveyMethod() {return theDirectionSurveyMethod;}
-    public void setDirectionSurveyMethod(String aDirectionSurveyMethod) {theDirectionSurveyMethod = aDirectionSurveyMethod;}
+    public String getDirectionSurveyMethod() {return directionSurveyMethod;}
     /** Метод диагностического исследования */
-    private String theDirectionSurveyMethod ;
+    private String directionSurveyMethod ;
 
     /** Медицинская услуга */
     @Comment("Медицинская услуга")
-    public String getDirectionMedService() {return theDirectionMedService;}
-    public void setDirectionMedService(String aDirectionMedService) {theDirectionMedService = aDirectionMedService;}
+    public String getDirectionMedService() {return directionMedService;}
     /** Медицинская услуга */
-    private String theDirectionMedService ;
+    private String directionMedService ;
 
     //Противопоказания
     /** Код противопоказания */
     @Comment("Код противопоказания")
-    public String getRefusalCode() {return theRefusalCode;}
-    public void setRefusalCode(String aRefusalCode) {theRefusalCode = aRefusalCode;}
+    public String getRefusalCode() {return refusalCode;}
     /** Код противопоказания */
-    private String theRefusalCode ;
+    private String refusalCode ;
 
     /** Дата регистрации противопоказания */
     @Comment("Дата регистрации противопоказания")
     @DateString @DoDateString
-    public String getRefusalDate() {return theRefusalDate;}
-    public void setRefusalDate(String aRefusalDate) {theRefusalDate = aRefusalDate;}
+    public String getRefusalDate() {return refusalDate;}
     /** Дата регистрации противопоказания */
-    private String theRefusalDate ;
+    private String refusalDate ;
 
     //Диагностика
     /** Тип показателя */
     @Comment("Тип показателя")
-    public String getDiagnosticType() {return theDiagnosticType;}
-    public void setDiagnosticType(String aDiagnosticType) {theDiagnosticType = aDiagnosticType;}
+    public String getDiagnosticType() {return diagnosticType;}
     /** Тип показателя */
-    private String theDiagnosticType ;
+    private String diagnosticType ;
 
     /** Код показателя */
     @Comment("Код показателя")
-    public String getDiagnosticCode() {return theDiagnosticCode;}
-    public void setDiagnosticCode(String aDiagnosticCode) {theDiagnosticCode = aDiagnosticCode;}
+    public String getDiagnosticCode() {return diagnosticCode;}
     /** Код показателя */
-    private String theDiagnosticCode ;
+    private String diagnosticCode ;
 
     /** Результат показателя */
     @Comment("Результат показателя")
-    public String getDiagnosticResult() {return theDiagnosticResult;}
-    public void setDiagnosticResult(String aDiagnosticResult) {theDiagnosticResult = aDiagnosticResult;}
+    public String getDiagnosticResult() {return diagnosticResult;}
     /** Результат показателя */
-    private String theDiagnosticResult ;
+    private String diagnosticResult ;
 
 
 

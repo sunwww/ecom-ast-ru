@@ -1,5 +1,7 @@
 package ru.ecom.jaas.ejb.form;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.jaas.ejb.domain.SecUser;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -22,159 +24,140 @@ import javax.persistence.Id;
 @EntityFormPersistance(clazz= SecUser.class)
 @Comment("Пользователь")
 @EntityFormSecurityPrefix("/Policy/Jaas/SecUser")
+@Setter
 public class SecUserForm  extends IdEntityForm {
 
 	/** Сменить пароль при входе в систему */
 	@Comment("Сменить пароль при входе в систему")
 	@Persist
-	public Boolean getChangePasswordAtLogin() {return theChangePasswordAtLogin;}
-	public void setChangePasswordAtLogin(Boolean aChangePasswordAtLogin) {theChangePasswordAtLogin = aChangePasswordAtLogin;}
+	public Boolean getChangePasswordAtLogin() {return changePasswordAtLogin;}
 	/** Сменить пароль при входе в систему */
-	private Boolean theChangePasswordAtLogin;
+	private Boolean changePasswordAtLogin;
 	
 	/** Дата изменение пароля */
 	@Comment("Дата изменение пароля")
 	@Persist
-	public String getPasswordChangedDate() {return thePasswordChangedDate;}
-	public void setPasswordChangedDate(String aPasswordChangedDate) {thePasswordChangedDate = aPasswordChangedDate;}
+	public String getPasswordChangedDate() {return passwordChangedDate;}
 	/** Дата изменение пароля */
-	private String thePasswordChangedDate;
+	private String passwordChangedDate;
 	
 	/** Идентификатор */
     @Id
-    public long getId() { return theId ; }
-    public void setId(long aId) { theId = aId ; }
+    public long getId() { return id ; }
 
     /** Пароль */
     @Required
     @Persist
-    public String getPassword() { return thePassword ; }
-    public void setPassword(String aPassword) { thePassword = aPassword ; }
+    public String getPassword() { return password ; }
 
     /** Логин */
     @Required
     @Persist
-    public String getLogin() { return theLogin ; }
-    public void setLogin(String aLogin) { theLogin = aLogin ; }
+    public String getLogin() { return login ; }
 
     /** Полное имя */
     @Required
     @Persist
-    public String getFullname() { return theFullname ; }
-    public void setFullname(String aFullname) { theFullname = aFullname ; }
+    public String getFullname() { return fullname ; }
 
     /** Комментарий */
     @Persist
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
+    public String getComment() { return comment ; }
 
     /** Отключен */
 	@Comment("Отключен")
 	@Persist
-	public Boolean getDisable() {return theDisable;}
-	public void setDisable(Boolean aDisable) {theDisable = aDisable;}
+	public Boolean getDisable() {return disable;}
 
 	/** Закеширован */
 	@Comment("Закеширован")
 	@Persist
-	public Boolean getIsHash() {return theIsHash;}
-	public void setIsHash(Boolean aIsHash) {theIsHash = aIsHash;}
+	public Boolean getIsHash() {return isHash;}
 
 	/** Удаленный пользователь */
 	@Comment("Удаленный пользователь")
 	@Persist
-	public Boolean getIsRemoteUser() {return theIsRemoteUser;}
-	public void setIsRemoteUser(Boolean aIsRemoteUser) {theIsRemoteUser = aIsRemoteUser;}
+	public Boolean getIsRemoteUser() {return isRemoteUser;}
 
 	
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public Long getWorkFunction() {return workFunction;}
 
 	/** Системный? */
 	@Comment("Системный?")
 	@Persist
-	public Boolean getIsSystems() {return theIsSystems;}
-	public void setIsSystems(Boolean aIsSystems) {theIsSystems = aIsSystems;}
+	public Boolean getIsSystems() {return isSystems;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@DateString @DoDateString @Persist
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
+
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@DateString @DoDateString @Persist
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
-	
+	public String getEditDate() {return editDate;}
+
 	/** Время создания */
 	@Comment("Время создания")
 	@TimeString @DoTimeString @Persist
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;}
 	/** Время редактрования */
 	@Comment("Время редактрования")
 	@TimeString @DoTimeString @Persist
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+	public String getEditTime() {return editTime;}
 	/** Пользователь, который создал запись */
 	@Comment("Пользователь, который создал запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 	/** Пользователь, который последний редактировал запись */
 	@Comment("Пользователь, который последний редактировал запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Пользователь */
 	@Comment("Пользователь")
-	public Long getUserCopy() {return theUserCopy;}
-	public void setUserCopy(Long aUserCopy) {theUserCopy = aUserCopy;}
+	public Long getUserCopy() {return userCopy;}
 
 	/** Можно копировать роли в инфекционное отделение */
 	@Comment("Можно копировать роли в инфекционное отделение")
-	public Boolean getEnabledForCopy() {return theEnabledForCopy;}
-	public void setEnabledForCopy(Boolean aEnabledForCopy) {theEnabledForCopy = aEnabledForCopy;}
+	public Boolean getEnabledForCopy() {return enabledForCopy;}
 
 	/** Пользователь */
-	private Long theUserCopy;
+	private Long userCopy;
 	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private String theEditTime;
+	private String editTime;
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	/** Системный? */
-	private Boolean theIsSystems;
+	private Boolean isSystems;
 	/** Рабочая функция */
-	private Long theWorkFunction;
+	private Long workFunction;
 	/** Удаленный пользователь */
-	private Boolean theIsRemoteUser;
+	private Boolean isRemoteUser;
 	/** Закеширован */
-	private Boolean theIsHash;
+	private Boolean isHash;
 	/** Отключен */
-	private Boolean theDisable;
+	private Boolean disable;
     /** Логин */
-    private String theLogin ;
+    private String login ;
     /** Комментарий */
-    private String theComment ;
+    private String comment ;
     /** Идентификатор */
-    private long theId ;
+    private long id ;
     /** Полное имя */
-    private String theFullname ;
+    private String fullname ;
     /** Пароль */
-    private String thePassword ;
+    private String password ;
 	/** Можно копировать роли в инфекционное отделение*/
-	private Boolean theEnabledForCopy ;
+	private Boolean enabledForCopy ;
 }

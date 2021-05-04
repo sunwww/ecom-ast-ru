@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.worker;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
@@ -19,46 +21,25 @@ import java.util.List;
 @AIndexes({
         @AIndex(properties = "groupName", table = "WorkFunction")
 })
+@Getter
+@Setter
 public class GroupWorkFunction extends WorkFunction {
 
     /**
      * Направлять анализы по умолчанию в этот кабинет
      */
-    @Comment("Направлять анализы по умолчанию в этот кабинет")
-    public Boolean getIsDefaultLabCabinet() {
-        return theIsDefaultLabCabinet;
-    }
+    private Boolean isDefaultLabCabinet;
 
-    public void setIsDefaultLabCabinet(Boolean aIsDefaultLabCabinet) {
-        theIsDefaultLabCabinet = aIsDefaultLabCabinet;
-    }
-
-    /**
-     * Направлять анализы по умолчанию в этот кабинет
-     */
-    private Boolean theIsDefaultLabCabinet;
 
     /**
      * Есть обслуживающий персонал
      */
-    @Comment("Есть обслуживающий персонал")
-    public Boolean getHasServiceStuff() {
-        return theHasServiceStuff;
-    }
-
-    public void setHasServiceStuff(Boolean aHasServiceStuff) {
-        theHasServiceStuff = aHasServiceStuff;
-    }
-
-    /**
-     * Есть обслуживающий персонал
-     */
-    private Boolean theHasServiceStuff;
+    private Boolean hasServiceStuff;
 
     @Transient
     @Comment("Информация")
     public String getWorkFunctionInfo() {
-        return getName() + " " + theGroupName;
+        return getName() + " " + groupName;
     }
 
     @Transient
@@ -72,11 +53,7 @@ public class GroupWorkFunction extends WorkFunction {
     @Comment("Рабочие функции входящие в состав группы")
     @OneToMany(mappedBy = "group")
     public List<PersonalWorkFunction> getFunctions() {
-        return theFunctions;
-    }
-
-    public void setFunctions(List<PersonalWorkFunction> aFunctions) {
-        theFunctions = aFunctions;
+        return functions;
     }
 
     @Transient
@@ -86,25 +63,13 @@ public class GroupWorkFunction extends WorkFunction {
 
     @Transient
     public String getWorkerInfo() {
-        return theGroupName;
+        return groupName;
     }
 
     /**
      * Название группы
      */
-    @Comment("Название группы")
-    public String getGroupName() {
-        return theGroupName;
-    }
-
-    public void setGroupName(String aGroupName) {
-        theGroupName = aGroupName;
-    }
-
-    /**
-     * Название группы
-     */
-    private String theGroupName;
+    private String groupName;
 
     @Transient
     public String getInfo() {
@@ -114,23 +79,11 @@ public class GroupWorkFunction extends WorkFunction {
     /**
      * Рабочие функции входящие в состав группы
      */
-    private List<PersonalWorkFunction> theFunctions;
+    private List<PersonalWorkFunction> functions;
 
     /**
      * Разрешено создавать направление без указания услуг
      */
-    @Comment("Разрешено создавать направление без указания услуг")
-    public Boolean getIsCreateDIrectionWithoutService() {
-        return theIsCreateDIrectionWithoutService;
-    }
-
-    public void setIsCreateDIrectionWithoutService(Boolean aIsCreateDIrectionWithoutService) {
-        theIsCreateDIrectionWithoutService = aIsCreateDIrectionWithoutService;
-    }
-
-    /**
-     * Разрешено создавать направление без указания услуг
-     */
-    private Boolean theIsCreateDIrectionWithoutService = false;
+    private Boolean isCreateDIrectionWithoutService = false;
 
 }

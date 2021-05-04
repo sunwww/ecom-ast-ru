@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.contract;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -24,195 +26,102 @@ import java.util.List;
 	,@AIndex(properties = {"priceList"})
 	,@AIndex(properties = {"parent"})
 })
+	@Getter
+	@Setter
 public class PricePosition extends BaseEntity{
 	/**
 	 * Прайс-лист
 	 */
 	@Comment("Прайс-лист")
 	@ManyToOne
-	public PriceList getPriceList() {return thePriceList;}
-	public void setPriceList(PriceList aPriceList) {thePriceList = aPriceList;}
+	public PriceList getPriceList() {return priceList;}
 	/**
 	 * Прайс-лист
 	 */
-	private PriceList thePriceList;
+	private PriceList priceList;
 	@OneToMany(mappedBy="pricePosition", cascade=CascadeType.ALL)
-	public List<PriceMedService> getMedServices() {return theMedServices;}
-	public void setMedServices(List<PriceMedService> aMedServices) {theMedServices = aMedServices;}
+	public List<PriceMedService> getMedServices() {return medServices;}
 	/**
 	 * Медицинские услуги
 	 */
-	private List<PriceMedService> theMedServices;
+	private List<PriceMedService> medServices;
 	/**
 	 * Название
 	 */
-	@Comment("Название")
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
-	/**
-	 * Название
-	 */
-	private String theName;
+	private String name;
 	/**
 	 * Код
 	 */
-	@Comment("Код")
-	public String getCode() {return theCode;}
-	public void setCode(String aCode) {theCode = aCode;}
-	/**
-	 * Код
-	 */
-	private String theCode;
+	private String code;
 	/**
 	 * Цена
 	 */
-	@Comment("Цена")
-	public BigDecimal getCost() {return theCost;}
-	public void setCost(BigDecimal aCost) {theCost = aCost;}
-	/**
-	 * Цена
-	 */
-	private BigDecimal theCost;
+	private BigDecimal cost;
 	/**
 	 * Дата начала действия
 	 */
-	@Comment("Дата начала действия")
-	public Date getDateFrom() {return theDateFrom;}
-	public void setDateFrom(Date aDateFrom) {theDateFrom = aDateFrom;}
-	/**
-	 * Дата начала действия
-	 */
-	private Date theDateFrom;
+	private Date dateFrom;
 	/**
 	 * Дата окончания действия
 	 */
-	@Comment("Дата окончания действия")
-	public Date getDateTo() {return theDateTo;}
-	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;}
-	/**
-	 * Дата окончания действия
-	 */
-	private Date theDateTo;
-	
-	/** Ед.измерения */
-	@Comment("Ед.измерения")
-	public String getExpUnit() {return theExpUnit;}
-	public void setExpUnit(String aExpUnit) {theExpUnit = aExpUnit;}
+	private Date dateTo;
 
-	/** Код экспорта */
-	@Comment("Код экспорта")
-	public String getExpParentCode() {return theExpParentCode;}
-	public void setExpParentCode(String aExpCode) {theExpParentCode = aExpCode;}
 
 	/** Группа */
 	@Comment("Группа")
 	@OneToOne
-	public PricePosition getParent() {return theParent;}
-	public void setParent(PricePosition aPriceGroup) {theParent = aPriceGroup;}
+	public PricePosition getParent() {return parent;}
+
 
 	/** Комментарий */
-	@Comment("Комментарий")
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
-
-	/** Комментарий */
-	private String theComment;
+	private String comment;
 	/** Группа */
-	private PricePosition theParent;
+	private PricePosition parent;
 	/** Код экспорта */
-	private String theExpParentCode;
+	private String expParentCode;
 	/** Ед.измерения */
-	private String theExpUnit;
-	
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-	
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	/** Время редактрования */
-	@Comment("Время редактрования")
-	public Time getEditTime() {return theEditTime;}
-	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-	/** Пользователь, который создал запись */
-	@Comment("Пользователь, который создал запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	private String expUnit;
 	/** Пользователь, который последний редактировал запись */
-	@Comment("Пользователь, который последний редактировал запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-
-	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private Time theEditTime;
+	private Time editTime;
 	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 	/** Дата создания */
-	private Date theCreateDate;
-	
+	private Date createDate;
 	/** С НДС */
-	@Comment("С НДС")
-	public Boolean getIsVat() {return theIsVat;}
-	public void setIsVat(Boolean aIsVat) {theIsVat = aIsVat;}
-
-	/** С НДС */
-	private Boolean theIsVat;
+	private Boolean isVat;
 	/** Отображать на инфомате */
-	@Comment("Отображать на инфомате")
-	public Boolean getIsViewInfomat() {return theIsViewInfomat;}
-	public void setIsViewInfomat(Boolean aIsViewInfomat) {theIsViewInfomat = aIsViewInfomat;}
-
-	/** Отображать на инфомате */
-	private Boolean theIsViewInfomat;
-	
+	private Boolean isViewInfomat;
 	/** Тип услуги */
 	@Comment("Тип услуги")
 	@OneToOne
-	public VocPositionType getPositionType() {return thePositionType;}
-	public void setPositionType(VocPositionType aPositionType) {thePositionType = aPositionType;}
+	public VocPositionType getPositionType() {return positionType;}
 
 	/** Тип услуги */
-	private VocPositionType thePositionType;
+	private VocPositionType positionType;
 	/**
 	 * НДС
 	 */
-	@Comment("Цена")
-	public BigDecimal getCostVat() {return theCostVat;}
-	public void setCostVat(BigDecimal aCostVat) {theCostVat = aCostVat;}
-	/**
-	 * НДС
-	 */
-	private BigDecimal theCostVat;
+	private BigDecimal costVat;
 	
 	/** Примечание для печати */
 	@Comment("Примечание для печати")
 	@Column(length= 1000)
-	public String getPrintComment() {return thePrintComment;}
-	public void setPrintComment(String aPrintComment) {thePrintComment = aPrintComment;}
+	public String getPrintComment() {return printComment;}
 
 	/** Примечание для печати */
-	private String thePrintComment;
+	private String printComment;
 	
 	/** Ставка налога */
 	@Comment("Ставка налога")
 	@OneToOne
-	public VocVat getTax() {return theTax;}
-	public void setTax(VocVat aTax) {theTax = aTax;}
+	public VocVat getTax() {return tax;}
 	/** Ставка налога */
-	private VocVat theTax;
+	private VocVat tax;
 
 	}

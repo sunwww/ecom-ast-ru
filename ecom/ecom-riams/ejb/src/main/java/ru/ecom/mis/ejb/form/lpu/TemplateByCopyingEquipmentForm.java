@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.lpu;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.lpu.TemplateByCopyingEquipment;
@@ -17,45 +18,41 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Шаблон документа", nameProperties= "id", list="entityParentList-mis_templateByCopyingEquipment.do", view="entityParentView-mis_copyingEquipment.do")
 @Parent(property="copyingEquipment", parentForm=CopyingEquipmentForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Asset/PermanentAsset/AutomatedWorkplace/Equipment/CopyingEquipment/Template")
+@Setter
 public class TemplateByCopyingEquipmentForm extends IdEntityForm{
 	/** Название шаблона */
 	@Comment("Название шаблона")
 	@Persist @Required
-	public String getNameTemplate() {return theNameTemplate;}
-	public void setNameTemplate(String aNameTemplate) {theNameTemplate = aNameTemplate;}
+	public String getNameTemplate() {return nameTemplate;}
 
 	/** Новое название */
 	@Comment("Новое название")
 	@Persist
-	public String getNewNameTemplate() {return theNewNameTemplate;}
-	public void setNewNameTemplate(String aNewNameTemplate) {theNewNameTemplate = aNewNameTemplate;}
+	public String getNewNameTemplate() {return newNameTemplate;}
 
 	/** Не отображать документ */
 	@Comment("Не отображать документ")
 	@Persist
-	public Boolean getIsNotViewDisplay() {return theIsNotViewDisplay;}
-	public void setIsNotViewDisplay(Boolean aNotViewDisplay) {theIsNotViewDisplay = aNotViewDisplay;}
+	public Boolean getIsNotViewDisplay() {return isNotViewDisplay;}
 
 	/** Копировальное оборудование */
 	@Comment("Копировальное оборудование")
 	@Persist
-	public Long getCopyingEquipment() {return theCopyingEquipment;}
-	public void setCopyingEquipment(Long aCopyingEquipment) {theCopyingEquipment = aCopyingEquipment;}
+	public Long getCopyingEquipment() {return copyingEquipment;}
 
 	/** Печать в txt файл */
 	@Comment("Печать в txt файл")
 	@Persist
-	public Boolean getIsTxtFile() {return theIsTxtFile;}
-	public void setIsTxtFile(Boolean aIsTxtFile) {theIsTxtFile = aIsTxtFile;}
+	public Boolean getIsTxtFile() {return isTxtFile;}
 
 	/** Печать в txt файл */
-	private Boolean theIsTxtFile;
+	private Boolean isTxtFile;
 	/** Копировальное оборудование */
-	private Long theCopyingEquipment;
+	private Long copyingEquipment;
 	/** Не отображать документ */
-	private Boolean theIsNotViewDisplay;
+	private Boolean isNotViewDisplay;
 	/** Новое название */
-	private String theNewNameTemplate;
+	private String newNameTemplate;
 	/** Название шаблона */
-	private String theNameTemplate;
+	private String nameTemplate;
 }

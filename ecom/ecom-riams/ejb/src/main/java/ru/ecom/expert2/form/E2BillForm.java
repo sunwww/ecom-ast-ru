@@ -1,5 +1,7 @@
 package ru.ecom.expert2.form;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.E2Bill;
@@ -20,56 +22,49 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Счет")
 @WebTrail(comment = "Счет", nameProperties = {"billNumber", "billDate"}, view = "entityView-e2_bill.do")
 @EntityFormSecurityPrefix("/Policy/E2")
+@Setter
 public class E2BillForm extends IdEntityForm {
 
     /** Номер счета */
     @Comment("Номер счета")
     @Persist @Required
-    public String getBillNumber() {return theBillNumber;}
-    public void setBillNumber(String aBillNumber) {theBillNumber = aBillNumber;}
-    private String theBillNumber ;
+    public String getBillNumber() {return billNumber;}
+    private String billNumber ;
 
     /** Дата счета */
     @Comment("Дата счета")
     @Persist @Required
     @DateString @DoDateString
-    public String getBillDate() {return theBillDate;}
-    public void setBillDate(String aBillDate) {theBillDate = aBillDate;}
-    private String theBillDate ;
+    public String getBillDate() {return billDate;}
+    private String billDate ;
 
     /** Статус счета */
     @Comment("Статус счета")
     @Persist @Required
-    public Long getStatus() {return theStatus;}
-    public void setStatus(Long aStatus) {theStatus = aStatus;}
-    private Long theStatus ;
+    public Long getStatus() {return status;}
+    private Long status ;
 
     /** Страховая компания */
     @Comment("Страховая компания")
     @Persist
-    public Long getCompany() {return theCompany;}
-    public void setCompany(Long aCompany) {theCompany = aCompany;}
-    private Long theCompany ;
+    public Long getCompany() {return company;}
+    private Long company ;
 
     /** Сумма счета */
     @Comment("Сумма счета")
     @Persist
-    public String getSum() {return theSum;}
-    public void setSum(String aSum) {theSum = aSum;}
-    private String theSum ;
+    public String getSum() {return sum;}
+    private String sum ;
 
     /** Примечание к счету */
     @Comment("Примечание к счету")
     @Persist
-    public String getComment() {return theComment;}
-    public void setComment(String aComment) {theComment = aComment;}
-    private String theComment ;
+    public String getComment() {return comment;}
+    private String comment ;
 
     /** Назначение счета */
     @Comment("Назначение счета")
     @Persist
-    public String getBillProperty() {return theBillProperty;}
-    public void setBillProperty(String aBillProperty) {theBillProperty = aBillProperty;}
-    private String theBillProperty ;
-
+    public String getBillProperty() {return billProperty;}
+    private String billProperty ;
 }

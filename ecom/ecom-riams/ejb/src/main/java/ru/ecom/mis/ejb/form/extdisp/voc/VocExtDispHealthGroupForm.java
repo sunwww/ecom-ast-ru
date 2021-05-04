@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.extdisp.voc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.extdisp.voc.VocExtDispHealthGroup;
@@ -17,29 +18,27 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 , view="entityView-extDisp_vocHealthGroup.do")
 @Parent(property="dispType", parentForm=VocExtDispForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card/Voc/HealthGroup")
+@Setter
 public class VocExtDispHealthGroupForm extends IdEntityForm{
 	/** Вид доп. диспансеризации */
 	@Comment("Вид доп. диспансеризации")
 	@Persist
-	public Long getDispType() {return theDispType;}
-	public void setDispType(Long aDispType) {theDispType = aDispType;}
+	public Long getDispType() {return dispType;}
 
 	/** Наименование */
 	@Comment("Наименование")
 	@Persist
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
+	public String getName() {return name;}
 
 	/** Код */
 	@Comment("Код")
 	@Persist
-	public String getCode() {return theCode;}
-	public void setCode(String aCode) {theCode = aCode;}
+	public String getCode() {return code;}
 
 	/** Код */
-	private String theCode;
+	private String code;
 	/** Наименование */
-	private String theName;
+	private String name;
 	/** Вид доп. диспансеризации */
-	private Long theDispType;
+	private Long dispType;
 }

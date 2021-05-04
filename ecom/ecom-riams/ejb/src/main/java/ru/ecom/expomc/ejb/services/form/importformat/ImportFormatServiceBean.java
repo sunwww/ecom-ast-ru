@@ -56,28 +56,28 @@ public class ImportFormatServiceBean implements IImportFormatService {
 
     private static final Logger LOG = Logger.getLogger(ImportFormatServiceBean.class);
 
-    private void log(String message) { theImportLogger.log(message);  }
-    private void inclev() { theImportLogger.inclev(); }
-    private void declev() { theImportLogger.declev(); }
-    private ImportLogger theImportLogger;// = new ImportLogger();
+    private void log(String message) { importLogger.log(message);  }
+    private void inclev() { importLogger.inclev(); }
+    private void declev() { importLogger.declev(); }
+    private ImportLogger importLogger;// = new ImportLogger();
 
-    private long theLogFileId;
-    private File theLogFile;
+    private long logFileId;
+    private File logFile;
 
     public void ensureImportLogger() {
-        if (theImportLogger == null) {
-            theImportLogger = new ImportLogger();
-            LOG.info("create: Logger="+theImportLogger);
+        if (importLogger == null) {
+            importLogger = new ImportLogger();
+            LOG.info("create: Logger="+importLogger);
         }
     }
 
     public void setLogFile(File aFile) throws IOException {
-        theLogFileId = 0;
-        theLogFile = aFile;
-        FileWriter fileWriter = new FileWriter(theLogFile);
+        logFileId = 0;
+        logFile = aFile;
+        FileWriter fileWriter = new FileWriter(logFile);
         ensureImportLogger();
-        LOG.info("setLogFile(...): setWriter '"+fileWriter+"' Logger = '"+theImportLogger+"'");
-        theImportLogger.setImportReportWriter(fileWriter);
+        LOG.info("setLogFile(...): setWriter '"+fileWriter+"' Logger = '"+importLogger+"'");
+        importLogger.setImportReportWriter(fileWriter);
     }
 
     public void setLogFileId(long aFileId) throws IOException {
@@ -85,323 +85,33 @@ public class ImportFormatServiceBean implements IImportFormatService {
             ensureImportLogger();
             return;
         }
-        File file = theJbossGetFileLocalService.createFile(aFileId, "importlog.txt");
+        File file = jbossGetFileLocalService.createFile(aFileId, "importlog.txt");
         LOG.info("setLogFileId("+aFileId+"): create file "+file);
         setLogFile(file);
-        theLogFileId = aFileId;
+        logFileId = aFileId;
     }
 
     public String getLogFileName() {
-        if (theLogFile==null) return "NULL VALUE";
-        return theLogFile.getAbsolutePath();
+        if (logFile==null) return "NULL VALUE";
+        return logFile.getAbsolutePath();
     }
 
-    private boolean theUpdateModifiedOnly;
+    private boolean updateModifiedOnly;
     public boolean isUpdateModifiedOnly() {
-        return theUpdateModifiedOnly;
+        return updateModifiedOnly;
     }
 
     public void setUpdateModifiedOnly(boolean aUpdateModifiedOnly) {
-        theUpdateModifiedOnly = aUpdateModifiedOnly;
+        updateModifiedOnly = aUpdateModifiedOnly;
     }
 
-    private boolean theVerifyAfterSave;
+    private boolean verifyAfterSave;
     public boolean isVerifyAfterSave() {
-        return theVerifyAfterSave;
+        return verifyAfterSave;
     }
 
     public void setVerifyAfterSave(boolean aVerifyAfterSave) {
-        theVerifyAfterSave =  aVerifyAfterSave;
-    }
-
-    @Deprecated
-    private void importFileFromText(
-            MyMonitor monitor,
-            String aFilename,String dbfName,
-            ImportFormat importFormat,
-            ImportConfig importConfig,
-            ImportStatistics importStatistics,
-            String comment,
-            Date importDate,
-            java.sql.Date actualDateFrom,
-            java.sql.Date actualDateTo) throws Exception {
-        if (theLogFile != null) LOG.info("IMPORT TEXT from:"+aFilename+" table: "+dbfName+" \n\tLOG:"+theLogFile.getAbsolutePath()+"\n");
-        else                    LOG.info("IMPORT TEXT from:"+aFilename+" table: "+dbfName+" \twithout logging\n");
-        log("== Импорт файла "+aFilename+" =========================================");
-        inclev();
-
-        //InputStream inFile = new FileInputStream(aFilename);
-        //Reader inReader = new FileReader(aFilename);
-
-        //LineNumberReader inReader = null;
-        long count = 0;
-        String[] columnNames = null;
-        try (LineNumberReader inReader = new LineNumberReader(new FileReader(aFilename))) {
-            monitor.setText("Расчет общего кол-ва записей");
-            while(inReader.ready()) {
-                String s = inReader.readLine();
-                if (s.length()==0) continue;
-                if (s.startsWith("#"))  {
-                    Matcher matcher = Pattern.compile("^#(.*):(.*)$").matcher(s);
-                    if (matcher.matches()) {
-                        String id = matcher.group(1);
-                        String[] values = matcher.group(2).split(",");
-                        if ("name".equals(id)) {
-                            dbfName = values[0];
-                        } else if ("cols".equals(id)) {
-                            columnNames = values;
-                        }
-                    }
-                    continue;
-                }
-                count++;
-            }
-        }
-
-        HashMap<String, Object> mapInValues = new HashMap<>();
-
-        monitor.setValue(3);
-
-        HashMap<String, Object> mapStoredValues = new HashMap<>();
-        List<ImportEntity> entities = importConfig.getEntities();
-
-        StringBuilder sb = new StringBuilder("Импортируемые сущности: ");
-        LOG.info("match table '" +dbfName+"':"+count);
-        for (ImportEntity entity : entities) {
-            if (!entity.getFormat().equals("dbf")) continue;
-            if (!entity.getTableName().equalsIgnoreCase(dbfName)) continue;
-
-            importStatistics.addTotalRecords(count);
-            LOG.info("match entity '" +entity.getEntityName());
-            sb.append(entity.getEntityName()).append(" ");
-        }
-        log(sb.toString());
-        monitor.setValue(5);
-        MyMonitor oldMonitor = monitor;
-        monitor = monitor.getSubMonitor(100,importStatistics.getTotalRecords());
-
-        monitor.setText("Импорт");
-        for (ImportEntity entity : entities) {
-            if (!entity.getFormat().equals("dbf")) continue;
-            if (!entity.getTableName().equalsIgnoreCase(dbfName)) continue;
-
-
-            importStatistics.clearEntityCounters();
-            log("Импорт таблицы '" + entity.getEntityName() + "'  \t\t class " + entity.getEntityClassName());
-            inclev();
-            log("Таблица TEXT: " + dbfName);
-            entity.setImportLogger(theImportLogger);
-
-            ImportSyncKeyList keys = entity.getKeyList(theManager);
-            List<ImportMap> maps = entity.getMaps(theManager);
-            Class entityClass = Class.forName(entity.getEntityClassName());
-          //  String entityName = EntityNameUtil.getInstance().getEntityName(entityClass);
-            ImportTime time = null;
-
-            boolean debug = entity.isDebug() || isDebug();
-            long debugCount = 0;
-            if (entity.isDebug()) debugCount = entity.getDebugCount();
-            else if (isDebug()) debugCount = Long.MAX_VALUE;
-
-            if (count == 0) {
-                declev();
-                continue;
-            }
-
-            if (debug) {
-                if (entity.isDebug()) log("Режим отладки для " + debugCount + " записей");
-                else log("Режим отладки для всех записей");
-            }
-
-            // Сохранение данных о выполненной транзакции импорта данных
-            if (!isDebug()) {
-                time = new ImportTime();
-                time.setImportDate(importDate);
-                time.setActualDateFrom(actualDateFrom);
-                time.setActualDateTo(actualDateTo);
-                ImportDocument entityDocument = null;
-
-                List<ImportDocument> importDocuments =
-                        theManager.createQuery(
-                                "FROM ImportDocument WHERE entityClassName=:cn").
-                                setParameter("cn", entityClass.getCanonicalName()).
-                                getResultList();
-
-                if (!importDocuments.isEmpty()) {
-                    entityDocument = importDocuments.get(0);
-                }
-                if (entityDocument == null) entityDocument = importFormat.getDocument();
-
-//                    LOG.info("ENTITY-DOC:"+
-//                            entityDocument.getEntityClassName()+" KY:"+
-//                            entityDocument.getKeyName());
-
-                time.setDocument(entityDocument);
-                time.setFormat(importFormat);
-                time.setComment(comment);
-                theManager.persist(time);
-                log("Код транзакции импорта: " + time.getId() + " (" + time.getImportDate() + ") в документ '" + entityDocument.getKeyName() + "'");
-            } else {
-                log("Транзакция импорта не создается");
-            }
-
-            LOG.info("Импорт таблицы " + entity.getEntityClassName() + " - " + count + " записей");
-            //LOG.info("match:" + match + "\tfound:" + count);
-
-            monitor.setText("Импорт таблицы " + entity.getEntityClassName() + " - " + count + " записей");
-            long i = 0;
-
-            try (LineNumberReader inReader = new LineNumberReader(new FileReader(aFilename))) {
-            while (inReader.ready()) {
-                if (monitor.isCancelled()) break;
-                String inputString = inReader.readLine();
-                if (inputString.length() == 0) continue;
-                if (inputString.startsWith("#")) continue;
-
-                i++;
-
-                if (debug && i > debugCount) break;
-                if (/*i<2000 && i%100==0 ||*/ i < 20000 && i % 100 == 0 || i % 1000 == 0) {
-                    monitor.setText("Импорт таблицы " + entity.getEntityClassName() + " - " + i + "/" + count);
-                }
-                log("Строка: " + i);
-                inclev();
-                importStatistics.incLoadedEntity();
-
-                String[] values = ("~\t" + inputString + "\t~").split("[\\t]");
-                for (int j = 0; j < columnNames.length; j++) {
-                    if (j >= values.length - 2) mapInValues.put(columnNames[j], "");
-                    else mapInValues.put(columnNames[j], values[j + 1]);
-                }
-
-                Object data = null;
-
-                String id = keys.findId(mapInValues);
-                if (id != null) {
-                    data = theManager.find(entityClass, new Long(id));
-                }
-
-                boolean isModified = false;
-
-                // Дамп свойств
-                for (ImportMap importMap : maps) {
-                    Object value = importMap.getValue(mapInValues, theManager);
-                    if (data != null) {
-                        String oldValue = getEntityPropertyAsString(importMap, data);
-                        if (oldValue == null) oldValue = "";
-                        if (value.toString().equals(oldValue)) {
-                            log(importMap.getProperty() + "\t:=\t'" + value + "' \t\t// " + importMap.getComment());
-                        } else {
-                            log(importMap.getProperty() + "\t:=\t'" + value + "'\t ==> \t'" + oldValue + "'\t// " + importMap.getComment());
-                            isModified = true;
-                        }
-                    } else {
-                        log(importMap.getProperty() + "\t:=\t'" + value + "' \t\t// " + importMap.getComment());
-                    }
-
-                    mapStoredValues.put(importMap.getProperty(), value);
-
-                }
-
-                if (id != null) {
-                    if (isModified) {
-                        log("(" + i + ") Обновлено с ID:" + id);
-                        importStatistics.incUpdEntity();
-                    } else {
-                        log("(" + i + ") Синхронизировано без изменений с ID:" + id);
-                        importStatistics.incSyncEntity();
-                    }
-                } else {
-                    importStatistics.incAddEntity();
-                    log("(" + i + ") Запись  добавлена");
-                    isModified = true;
-                }
-
-                if (!debug) {
-                    if (data == null) data = entityClass.newInstance();
-
-                    long savedId = -1;
-
-                    if (isModified || !isUpdateModifiedOnly()) {
-                        // Сохранение данных -----------
-                        if (data instanceof IImportData) {
-                            ((IImportData) data).setTime(time.getId());
-                            log("TIME:" + time.getId());
-                        }
-                        copyMapToEntity(maps, mapStoredValues, data);
-                        try {
-                            theManager.persist(data);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        log("PERSIST");
-                        if (data instanceof BaseEntity) savedId = ((BaseEntity) data).getId();
-
-                    }
-
-                    if (isModified && isVerifyAfterSave()) {
-                        boolean isCorrect = true;
-                        if (savedId == -1) {
-                            isCorrect = false;
-                            log("Ошибка верификации:\n\tСущность не наследована от BaseEntity");
-                        } else {
-                            BaseEntity savedData = (BaseEntity) theManager.find(entityClass, savedId);
-                            if (savedData == null) {
-                                log("Ошибка верификации:\n\tСущность несохранена");
-                            } else {
-                                for (ImportMap importMap : maps) {
-                                    Object value = importMap.getValue(mapInValues, theManager);
-                                    String savedValue = getEntityPropertyAsString(importMap, savedData);
-                                    if (savedValue == null) savedValue = "";
-                                    if (!value.toString().equals(savedValue)) {
-                                        isCorrect = false;
-                                        importStatistics.incErrEntity();
-                                        log("Ошибка верификации:\n\t\tСохранено='" + savedValue +
-                                                "' \n\t\tТребуется='" + value +
-                                                "'");
-                                    }
-                                }
-                            }
-
-                        }
-
-                        if (isCorrect) {
-                            log("Данные сохранены ID:" + savedId + " \t\t" + entityClass.getCanonicalName());
-                        }
-                    }
-
-                }
-
-                mapStoredValues.clear();
-
-                // ===============================
-                monitor.advice(1);
-                declev();
-            }
-        }
-
-            if (monitor.isCancelled()) {
-                log("Импорт таблицы '"+entity.getEntityName()+"' прерван");
-                declev();
-                break;
-            } else {
-                log("Импорт таблицы '"+entity.getEntityName()+"' завершен");
-                inclev();
-                log("Загружено:             "+importStatistics.getLoadedEntity()+"\n");
-                log("Добавлено:             "+importStatistics.getAddEntity());
-                log("Обновлено:             "+importStatistics.getUpdEntity());
-                log("Синхронизировано б/изм:"+importStatistics.getSyncEntity()+"\n");
-                log("Ошибок сохранения     :"+importStatistics.getErrEntity()+"\n");
-
-                declev();
-                importStatistics.flushEntityCounters(i);
-                declev();
-            }
-            monitor.dump();
-        }
-
-        declev();
-        oldMonitor.update();
+        verifyAfterSave =  aVerifyAfterSave;
     }
 
     private static boolean isEmpty(Object aObject) {
@@ -424,7 +134,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
             java.sql.Date actualDateFrom,
             java.sql.Date actualDateTo) throws Exception {
 
-        if (theLogFile != null) LOG.info("IMPORT DBF from:"+aFilename+" table: "+dbfName+" \n\tLOG:"+theLogFile.getAbsolutePath()+"\n");
+        if (logFile != null) LOG.info("IMPORT DBF from:"+aFilename+" table: "+dbfName+" \n\tLOG:"+logFile.getAbsolutePath()+"\n");
         else                    LOG.info("IMPORT DBF from:"+aFilename+" table: "+dbfName+" \twithout logging\n");
         log("== Импорт файла "+aFilename+" =========================================");
         inclev();
@@ -491,10 +201,10 @@ public class ImportFormatServiceBean implements IImportFormatService {
             log("Импорт таблицы '"+entity.getEntityName()+"'  \t\t class "+entity.getEntityClassName());
             inclev();
             log("Таблица DBF: "+dbfName);
-            entity.setImportLogger(theImportLogger);
+            entity.setImportLogger(importLogger);
 
-            ImportSyncKeyList keys = entity.getKeyList(theManager);
-            List<ImportMap> maps = entity.getMaps(theManager);
+            ImportSyncKeyList keys = entity.getKeyList(manager);
+            List<ImportMap> maps = entity.getMaps(manager);
             Class entityClass = Class.forName(entity.getEntityClassName());
         //    String entityName = EntityNameUtil.getInstance().getEntityName(entityClass);
             ImportTime time = null;
@@ -523,7 +233,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
                 ImportDocument entityDocument = null;
 
                 List<ImportDocument> importDocuments =
-                        theManager.createQuery(
+                        manager.createQuery(
                         "FROM ImportDocument WHERE entityClassName=:cn").
                         setParameter("cn",entityClass.getCanonicalName()).
                         getResultList();
@@ -540,7 +250,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
                 time.setDocument(entityDocument);
                 time.setFormat(importFormat);
                 time.setComment(comment);
-                theManager.persist(time);
+                manager.persist(time);
                 log("Код транзакции импорта: "+time.getId()+" ("+time.getImportDate()+") в документ '"+entityDocument.getKeyName()+"'");
             } else {
                 log("Транзакция импорта не создается");
@@ -577,18 +287,18 @@ public class ImportFormatServiceBean implements IImportFormatService {
                 
                 String id = keys.findId(mapDbfValues);
                 if (id != null) {
-                    data = theManager.find(entityClass, new Long(id));
+                    data = manager.find(entityClass, new Long(id));
                 }
 
                 boolean isModified = false;
 
                 // Дамп свойств
                 for (ImportMap importMap : maps) {
-                    Object value = importMap.getValue(mapDbfValues,theManager);
+                    Object value = importMap.getValue(mapDbfValues,manager);
                     if (data != null) {
                         String oldValue = getEntityPropertyAsString(importMap,data);
                         
-                        if(importMap.getUpdateIfEmpty() || !isEmpty(value)) {
+                        if(importMap.isUpdateIfEmpty() || !isEmpty(value)) {
                             if (oldValue == null) oldValue = "";
                             
                             if ((value==null && oldValue.equals("")) || (value!=null && value.toString().equals(oldValue))) {
@@ -647,7 +357,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
                         // persist ТОЛЬКО для созданных
                         if(newEntityCreated) {
                             try {
-                                theManager.persist(data);
+                                manager.persist(data);
                                 log("PERSIST");
                             } catch (Exception e) {
                                 log("PERSIST ERROR: "+e.getMessage());
@@ -665,12 +375,12 @@ public class ImportFormatServiceBean implements IImportFormatService {
                             isCorrect = false;
                             log("Ошибка верификации:\n\tСущность не наследована от BaseEntity");
                         } else {
-                            BaseEntity savedData = (BaseEntity) theManager.find(entityClass, savedId);
+                            BaseEntity savedData = (BaseEntity) manager.find(entityClass, savedId);
                             if (savedData == null) {
                                 log("Ошибка верификации:\n\tСущность несохранена");
                             } else {
                                 for (ImportMap importMap : maps) {
-                                    Object value = importMap.getValue(mapDbfValues,theManager);
+                                    Object value = importMap.getValue(mapDbfValues,manager);
                                     String savedValue = getEntityPropertyAsString(importMap,savedData);
                                     if (savedValue == null) savedValue = "";
                                     if (value == null) value="";
@@ -698,8 +408,8 @@ public class ImportFormatServiceBean implements IImportFormatService {
                 // ===============================
 
                 // очищаем кэш
-                theManager.flush() ;
-                theManager.clear() ;
+                manager.flush() ;
+                manager.clear() ;
 
                 monitor.advice(1);
                 declev();
@@ -740,7 +450,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
             String comment,
             Date importDate,java.sql.Date actualDateFrom,java.sql.Date actualDateTo) throws Exception {
 
-        if (theLogFile != null) LOG.info("IMPORT XML from:"+aFilename+" \n\tLOG:"+theLogFile.getAbsolutePath()+"\n");
+        if (logFile != null) LOG.info("IMPORT XML from:"+aFilename+" \n\tLOG:"+logFile.getAbsolutePath()+"\n");
         else                    LOG.info("IMPORT XML from:"+aFilename+" \twithout logging\n");
         log("== Импорт файла "+aFilename+" =========================================");
         inclev();
@@ -785,10 +495,10 @@ public class ImportFormatServiceBean implements IImportFormatService {
             importStatistics.clearEntityCounters();
             log("Импорт таблицы '"+entity.getEntityName()+"'  \t\t class "+entity.getEntityClassName());
             inclev();
-            entity.setImportLogger(theImportLogger);
+            entity.setImportLogger(importLogger);
             
-            ImportSyncKeyList keys = entity.getKeyList(theManager);
-            List<ImportMap> maps = entity.getMaps(theManager);
+            ImportSyncKeyList keys = entity.getKeyList(manager);
+            List<ImportMap> maps = entity.getMaps(manager);
             Class entityClass = Class.forName(entity.getEntityClassName());
         //    String entityName = EntityNameUtil.getInstance().getEntityName(entityClass);
             ImportTime time = null;
@@ -826,7 +536,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
                 ImportDocument entityDocument = null;
 
                 List<ImportDocument> importDocuments =
-                        theManager.createQuery(
+                        manager.createQuery(
                         "FROM ImportDocument WHERE entityClassName=:cn").
                         setParameter("cn",entityClass.getCanonicalName()).
                         getResultList();
@@ -843,7 +553,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
                 time.setDocument(entityDocument);
                 time.setFormat(importFormat);
                 time.setComment(comment);
-                theManager.persist(time);
+                manager.persist(time);
                 log("Код транзакции импорта: "+time.getId()+" ("+time.getImportDate()+") в документ '"+entityDocument.getKeyName()+"'");
             } else {
                 log("Транзакция импорта не создается");
@@ -874,14 +584,14 @@ public class ImportFormatServiceBean implements IImportFormatService {
 
                 String id = keys.findId(row);
                 if (id != null && !id.equals("0")) {
-                    data = theManager.find(entityClass, new Long(id));
+                    data = manager.find(entityClass, new Long(id));
                 }
 
                 boolean isModified = false;
 
                 // Дамп свойств
                 for (ImportMap importMap : maps) {
-                    Object value = importMap.getValue(row,theManager);
+                    Object value = importMap.getValue(row,manager);
                     if (data != null) {
                         String oldValue = getEntityPropertyAsString(importMap,data);
                         if (oldValue == null) oldValue = "";
@@ -941,7 +651,7 @@ public class ImportFormatServiceBean implements IImportFormatService {
                         // persist ТОЛЬКО для НОВЫХ и вообще
                         if(isNewEntityCreated) {
                             try {
-                                theManager.persist(data);
+                                manager.persist(data);
                             } catch (Exception e) {
                                 e.printStackTrace() ;
                             }
@@ -957,12 +667,12 @@ public class ImportFormatServiceBean implements IImportFormatService {
                             isCorrect = false;
                             log("Ошибка верификации:\n\tСущность не наследована от BaseEntity");
                         } else {
-                            BaseEntity savedData = (BaseEntity) theManager.find(entityClass, savedId);
+                            BaseEntity savedData = (BaseEntity) manager.find(entityClass, savedId);
                             if (savedData == null) {
                                 log("Ошибка верификации:\n\tСущность несохранена");
                             } else {
                                 for (ImportMap importMap : maps) {
-                                    Object value = importMap.getValue(row,theManager);
+                                    Object value = importMap.getValue(row,manager);
                                     String savedValue = getEntityPropertyAsString(importMap,savedData);
                                     if (savedValue == null) savedValue = "";
                                     if (!value.toString().equals(savedValue)) {
@@ -1153,16 +863,16 @@ LOG.info("File= "+file.getAbsolutePath());
 
 
     public void importFile(long aMonitorId, long importLogFileId,String aFilename,String originalFileName, ImportFileForm aImportForm) throws ImportException {
-        IMonitor standardMonitor = theMonitorService.acceptMonitor(aMonitorId, "Подготовка к импорту");
+        IMonitor standardMonitor = monitorService.acceptMonitor(aMonitorId, "Подготовка к импорту");
         MyMonitor monitor = new MyMonitor();
         ImportStatistics importStatistics = new ImportStatistics();
         try {
 
-            standardMonitor = theMonitorService.startMonitor(aMonitorId, "Импорт файла " + aFilename, 100);
+            standardMonitor = monitorService.startMonitor(aMonitorId, "Импорт файла " + aFilename, 100);
             monitor.attachMonitor(standardMonitor);
             // Загрузка конфигурации импорта
             long formatId = aImportForm.getImportFormat();
-            ImportFormat importFormat = theManager.find(ImportFormat.class, formatId);
+            ImportFormat importFormat = manager.find(ImportFormat.class, formatId);
             ImportDocument document = importFormat.getDocument();
             final boolean isImportTimeSupport = document.isTimeSupport();
             //ensureImportLogger();
@@ -1218,8 +928,8 @@ LOG.info("File= "+file.getAbsolutePath());
             log("Ошибок сохранения     :"+importStatistics.getErrTotal()+"\n");
 
             monitor.setText("Импортировано " + importStatistics.getImportedRecords());
-            LOG.info("theLogFileId: "+theLogFileId);
-            monitor.finish(""+theLogFileId);
+            LOG.info("logFileId: "+logFileId);
+            monitor.finish(""+logFileId);
 
         } catch (Exception e) {
             LOG.error("SomeError",e);
@@ -1227,11 +937,11 @@ LOG.info("File= "+file.getAbsolutePath());
             throw new ImportException("Ошибка импорта файла " + aFilename, e);
         } finally {
             new File(aFilename).delete() ;
-            if (theImportLogger != null) {
+            if (importLogger != null) {
                 try {
-                    theImportLogger.getImportReportWriter().close();
-                    theLogFile = null;
-                    theImportLogger = null;
+                    importLogger.getImportReportWriter().close();
+                    logFile = null;
+                    importLogger = null;
                 } catch (Exception e) {}
             }
         }
@@ -1347,23 +1057,23 @@ LOG.info("File= "+file.getAbsolutePath());
         return PropertyUtil.getSetterMethod(aClass, getterMethod);
     }
 
-//    @Resource UserTransaction theUserTransaction;
+//    @Resource UserTransaction userTransaction;
 
 
 
     /** Отладка */
-    public boolean isDebug() { return theDebug ; }
-    public void setDebug(boolean aDebug) { theDebug = aDebug ; }
+    public boolean isDebug() { return debug ; }
+    public void setDebug(boolean aDebug) { debug = aDebug ; }
 
 
     @EJB
-    ILocalMonitorService theMonitorService;
+    ILocalMonitorService monitorService;
     @PersistenceContext
-    public EntityManager theManager;
+    public EntityManager manager;
 
     /** Отладка */
-    private boolean theDebug = false;
+    private boolean debug = false;
 
     private @EJB
-    IJbossGetFileLocalService theJbossGetFileLocalService;
+    IJbossGetFileLocalService jbossGetFileLocalService;
 }

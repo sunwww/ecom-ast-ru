@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.expert;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.expert.QualityEstimationCard;
@@ -20,6 +21,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Экспертная карта", nameProperties = "id", view = "entityView-expert_card.do")
 @Parent(property = "medcase", parentForm=MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/QualityEstimationCard")
+@Setter
 public class QualityEstimationCardForm extends IdEntityForm{
 	/**
 	  * Номер карты
@@ -27,152 +29,112 @@ public class QualityEstimationCardForm extends IdEntityForm{
 	 @Comment("Номер карты")
 	 @Persist
 	 public String getCardNumber() {
-	  return theCardNumber;
-	 }
-	 public void setCardNumber(String aCardNumber) {
-	  theCardNumber = aCardNumber;
+	  return cardNumber;
 	 }
 	 /**
 	  * Номер карты
 	  */
-	 private String theCardNumber;
+	 private String cardNumber;
 	 /**
 	  * Случай медицинского обслуживания
 	  */
 	 @Comment("Случай медицинского обслуживания")
 	 @Persist @Required
 	 public Long getMedcase() {
-	  return theMedcase;
-	 }
-	 public void setMedcase(Long aMedcase) {
-	  theMedcase = aMedcase;
+	  return medcase;
 	 }
 	 /**
 	  * Случай медицинского обслуживания
 	  */
-	 private Long theMedcase;
+	 private Long medcase;
 	 /**
 	  * Вид оценки качества
 	  */
 	 @Comment("Вид оценки качества")
 	 @Persist @Required
 	 public Long getKind() {
-	  return theKind;
-	 }
-	 public void setKind(Long aKind) {
-	  theKind = aKind;
+	  return kind;
 	 }
 	 /**
 	  * Вид оценки качества
 	  */
-	 private Long theKind;
+	 private Long kind;
 	 
 	 /** Пациент */
 	@Comment("Пациент")
 	@Persist 
 	public Long getPatient() {
-		return thePatient;
-	}
-
-	public void setPatient(Long aPatient) {
-		thePatient = aPatient;
+		return patient;
 	}
 
 	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DateString @DoDateString
 	public String getCreateDate() {
-		return theCreateDate;
+		return createDate;
 	}
 
-	public void setCreateDate(String aNAME) {
-		theCreateDate = aNAME;
-	}
 	/** Пользователь, создавший экспертную карту */
 	@Comment("Пользователь, создавший экспертную карту")
 	@Persist
 	public String getCreateUsername() {
-		return theCreateUsername;
+		return createUsername;
 	}
 
-	public void setCreateUsername(String aCreateUsername) {
-		theCreateUsername = aCreateUsername;
-	}
 
-	
 	/** Лечащий врач */
 	@Comment("Лечащий врач")
 	@Persist 
 	public Long getDoctorCase() {
-		return theDoctorCase;
+		return doctorCase;
 	}
 
-	public void setDoctorCase(Long aLechDoctor) {
-		theDoctorCase = aLechDoctor;
-	}
-	
 	/** Отделение */
 	@Comment("Отделение")
 	@Persist 
 	public Long getDepartment() {
-		return theDepartment;
+		return department;
 	}
 
-	public void setDepartment(Long aDepartment) {
-		theDepartment = aDepartment;
-	}
-	
 	/** Диагноз */
 	@Comment("Диагноз")
 	@Persist
 	public Long getIdc10() {
-		return theIdc10;
+		return idc10;
 	}
 
-	public void setIdc10(Long aIdc10) {
-		theIdc10 = aIdc10;
-	}
-	
 	/** Текст диагноза */
 	@Comment("Текст диагноза")
 	@Persist
 	public String getDiagnosis() {
-		return theDiagnosis;
+		return diagnosis;
 	}
 
-	public void setDiagnosis(String aDiagnosis) {
-		theDiagnosis = aDiagnosis;
-	}
-	
 	/** СЛО */
 	@Comment("СЛО")
 	public Long getSlo() {
-		return theSlo;
-	}
-
-	public void setSlo(Long aSlo) {
-		theSlo = aSlo;
+		return slo;
 	}
 
 	/** СЛО */
-	private Long theSlo;
+	private Long slo;
 
 	/** Текст диагноза */
-	private String theDiagnosis;
+	private String diagnosis;
 
 	/** Диагноз */
-	private Long theIdc10;
+	private Long idc10;
 
 	/** Отделение */
-	private Long theDepartment;
+	private Long department;
 
 	/** Лечащий врач */
-	private Long theDoctorCase;
+	private Long doctorCase;
 	/** Пользователь, создавший экспертную карту */
-	private String theCreateUsername;
+	private String createUsername;
 
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 }

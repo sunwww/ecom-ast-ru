@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.diet.voc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.diet.voc.VocFoodStuffTemplate;
@@ -22,106 +23,79 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Шаблон продукта блюда", nameProperties= "id", view="entityView-diet_vocFoodStuffTemplate.do")
 @Parent(property = "foodStuff", parentForm = VocFoodStuffForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/InvalidFood/VocFoodStuffTemplate")
+@Setter
 public class VocFoodStuffTemplateForm  extends IdEntityForm {
 
 	/** Продукт */
 	@Comment("Продукт")
 	@Persist
 	public Long getFoodStuff() {
-		return theFoodStuff;
-	}
-
-	public void setFoodStuff(Long aFoodStuff) {
-		theFoodStuff = aFoodStuff;
+		return foodStuff;
 	}
 
 	/** Продукт */
-	private Long theFoodStuff;
+	private Long foodStuff;
 
 	
 	/** Брутто */
 	@Comment("Брутто")
 	@Persist
 	public String getGross() {
-		return theGross;
-	}
-
-	public void setGross(String aGross) {
-		theGross = aGross;
+		return gross;
 	}
 
 	/** Брутто */
-	private String theGross;
+	private String gross;
 	
 	/** Месяц начала действия */
 	@Comment("Месяц начала действия")
 	@Persist
 	public Long getMonthStart() {
-		return theMonthStart;
-	}
-
-	public void setMonthStart(Long aMonthStart) {
-		theMonthStart = aMonthStart;
+		return monthStart;
 	}
 
 	/** Месяц начала действия */
-	private Long theMonthStart;
+	private Long monthStart;
 	
 	/** Месяц окончания действия (включительно) */
 	@Comment("Месяц окончания действия (включительно)")
 	@Persist
 	public Long getMonthEnd() {
-		return theMonthEnd;
-	}
-
-	public void setMonthEnd(Long aMonthEnd) {
-		theMonthEnd = aMonthEnd;
+		return monthEnd;
 	}
 
 	/** Месяц окончания действия (включительно) */
-	private Long theMonthEnd;
+	private Long monthEnd;
 	
 	 /** Месяц начала действия (текст) */
 	@Comment("Месяц начала действия (текст)")
 	@Persist
 	public String getMonthStartText() {
-		return theMonthStartText;
+		return monthStartText;
 	}
-	
-	public void setMonthStartText(String aMonthStartText) {
-		theMonthStartText = aMonthStartText;
-	}
-	
+
 	/** Месяц начала действия (текст) */
-	private String theMonthStartText;
+	private String monthStartText;
 	
 	/** Месяц окончания действия (текст) */
 	@Comment("Месяц окончания действия (текст)")
 	@Persist
 	public String getMonthEndText() {
-		return theMonthEndText;
-	}
-
-	public void setMonthEndText(String aMonthEndText) {
-		theMonthEndText = aMonthEndText;
+		return monthEndText;
 	}
 
 	/** Месяц окончания действия (текст) */
-	private String theMonthEndText;
+	private String monthEndText;
 
 	/** Продукт питания (текст) */
 	@Comment("Продукт питания (текст)")
 	@Persist
 	public String getFoodStuffText() {
-		return theFoodStuffText;
-	}
-
-	public void setFoodStuffText(String aFoodStuffText) {
-		theFoodStuffText = aFoodStuffText;
+		return foodStuffText;
 	}
 
 	/** Продукт питания (текст) */
-	private String theFoodStuffText;
+	private String foodStuffText;
 
 }
 

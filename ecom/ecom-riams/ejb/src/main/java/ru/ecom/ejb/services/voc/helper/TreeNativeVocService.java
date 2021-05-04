@@ -11,25 +11,25 @@ import java.util.Collection;
 public class TreeNativeVocService implements IVocContextService {
 	public TreeNativeVocService(String aTreeField, String aFrom, String [] aNames, String aJoin
 			, String aQueried, String aParent, String aOrder) {
-		theTreeField = aTreeField ;
-		theFrom = aFrom ;
-		theNames = aNames ;
-		theJoin = aJoin ;
-		theQueried = aQueried ;
-		theParent = aParent ;
-		theOrder = aOrder ;
+		treeField = aTreeField ;
+		from = aFrom ;
+		names = aNames ;
+		join = aJoin ;
+		queried = aQueried ;
+		parent = aParent ;
+		order = aOrder ;
 		
 	}
 	public String getFrom() {
-		return theFrom ;
+		return from ;
 	}
-	private final String theTreeField ;
-	private final String theFrom ;
-	private final String[] theNames ;
-	private final String theJoin ;
-	private final String theQueried ;
-	private final String theParent ;
-	private final String theOrder ;
+	private final String treeField ;
+	private final String from ;
+	private final String[] names ;
+	private final String join ;
+	private final String queried ;
+	private final String parent ;
+	private final String order ;
 	public Collection<VocValue> findVocValueByQuery(String aVocName, String aQuery, int aCount, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
 		// TODO Auto-generated method stub
 		return null;

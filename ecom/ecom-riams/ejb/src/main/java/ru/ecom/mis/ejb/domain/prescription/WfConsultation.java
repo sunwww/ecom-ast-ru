@@ -4,6 +4,8 @@ package ru.ecom.mis.ejb.domain.prescription;
  * Консультация специалиста
  */
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.diary.ejb.domain.Diary;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocConsultingType;
@@ -15,21 +17,21 @@ import javax.persistence.OneToOne;
 
 @Entity
 @EntityListeners(DeleteListener.class)
+@Getter
+@Setter
 public class WfConsultation extends Prescription {
     /** Тип консультации */
-    private VocConsultingType theVocConsultingType;
+    private VocConsultingType vocConsultingType;
     /** Заключение */
-    private Diary theDiary;
+    private Diary diary;
 
     /** Тип консультации */
     @Comment("Тип консультации")
     @OneToOne
-    public VocConsultingType getVocConsultingType() {return theVocConsultingType; }
-    public void setVocConsultingType(VocConsultingType aVocConsultingType) { theVocConsultingType = aVocConsultingType; }
+    public VocConsultingType getVocConsultingType() {return vocConsultingType; }
 
     /** Заключение */
     @Comment("Заключение")
     @OneToOne
-    public Diary getDiary() { return theDiary; }
-    public void setDiary(Diary aDiary) { theDiary = aDiary; }
+    public Diary getDiary() { return diary; }
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.hospital.OmcCriterion;
@@ -16,21 +17,20 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Классификационные критерии", nameProperties = "id", view = "entityView-stac_omcCriterion.do")
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/Slo/OmcCriterion")
 @Parent(property = "medCase", parentForm = HospitalMedCaseForm.class)
+@Setter
 public class OmcCriterionForm extends IdEntityForm {
     /** Случай лечения */
     @Comment("Случай лечения")
     @Persist @Required
-    public Long getMedCase() {return theMedCase;}
-    public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+    public Long getMedCase() {return medCase;}
     /** Случай лечения */
-    private Long theMedCase ;
+    private Long medCase ;
 
     /** Критерий */
     @Comment("Критерий")
     @Persist @Required
-    public Long getCriterion() {return theCriterion;}
-    public void setCriterion(Long aCriterion) {theCriterion = aCriterion;}
+    public Long getCriterion() {return criterion;}
     /** Критерий */
-    private Long theCriterion ;
+    private Long criterion ;
 
 }

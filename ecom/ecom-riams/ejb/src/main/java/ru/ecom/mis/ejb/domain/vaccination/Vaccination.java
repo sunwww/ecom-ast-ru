@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.vaccination;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.mis.ejb.domain.patient.Patient;
@@ -20,29 +22,26 @@ import java.sql.Time;
 @Entity
 @Comment("Вакцинация")
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class Vaccination extends BaseEntity {
 
 	/** Вакцина */
 	@Comment("Вакцина")
 	@OneToOne
-	public Vaccine getVaccine() {return theVaccine;}
-	public void setVaccine(Vaccine aNewProperty) {theVaccine = aNewProperty;}
-
+	public Vaccine getVaccine() {return vaccine;}
 	/** Вакцина */
-	private Vaccine theVaccine;
+	private Vaccine vaccine;
 
 	/** Вакцинный материал */
 	@Comment("Вакцинный материал")
 	@OneToOne
-	public VocVaccinationMaterial getMaterial() {return theMaterial;}
+	public VocVaccinationMaterial getMaterial() {return material;}
 
 	/**
 	 * Вакцинный материал
 	 */
-	public void setMaterial(VocVaccinationMaterial aNewProperty) {
-		theMaterial = aNewProperty;
-	}
-	private VocVaccinationMaterial theMaterial;
+	private VocVaccinationMaterial material;
 
 	/**
 	 * Исполнитель
@@ -50,100 +49,36 @@ public class Vaccination extends BaseEntity {
 	@Comment("Исполнитель")
 	@OneToOne
 	public WorkFunction getExecuteWorker() {
-		return theExecuteWorker;
+		return executeWorker;
 	}
 
 	/**
 	 * Исполнитель
 	 */
-	public void setExecuteWorker(WorkFunction aNewProperty) {
-		theExecuteWorker = aNewProperty;
-	}
+	private WorkFunction executeWorker;
 
-	/**
-	 * Исполнитель
-	 */
-	private WorkFunction theExecuteWorker;
 
 	/**
 	 * Дата исполнения
 	 */
-	@Comment("Дата исполнения")
-	public Date getExecuteDate() {
-		return theExecuteDate;
-	}
-
-	/**
-	 * Дата исполнения
-	 */
-	public void setExecuteDate(Date aNewProperty) {
-		theExecuteDate = aNewProperty;
-	}
-
-	/**
-	 * Дата исполнения
-	 */
-	private Date theExecuteDate;
+	private Date executeDate;
 
 	/**
 	 * Время исполнения
 	 */
-	@Comment("Время исполнения")
-	public Time getExecuteTime() {
-		return theExecuteTime;
-	}
+	private Time executeTime;
 
-	/**
-	 * Время исполнения
-	 */
-	public void setExecuteTime(Time aNewProperty) {
-		theExecuteTime = aNewProperty;
-	}
-
-	/**
-	 * Время исполнения
-	 */
-	private Time theExecuteTime;
 
 	/**
 	 * Доза
 	 */
-	@Comment("Доза")
-	public String getDose() {
-		return theDose;
-	}
+	private String dose;
 
-	/**
-	 * Доза
-	 */
-	public void setDose(String aNewProperty) {
-		theDose = aNewProperty;
-	}
-
-	/**
-	 * Доза
-	 */
-	private String theDose;
 
 	/**
 	 * Серия
 	 */
-	@Comment("Серия")
-	public String getSeries() {
-		return theSeries;
-	}
-
-	/**
-	 * Серия
-	 */
-	public void setSeries(String aNewProperty) {
-		theSeries = aNewProperty;
-	}
-
-	/**
-	 * Серия
-	 */
-	private String theSeries;
+	private String series;
 
 	/**
 	 * Метод вакцинации
@@ -151,82 +86,30 @@ public class Vaccination extends BaseEntity {
 	@Comment("Метод вакцинации")
 	@OneToOne
 	public VocVaccinationMethod getMethod() {
-		return theMethod;
+		return method;
 	}
 
 	/**
 	 * Метод вакцинации
 	 */
-	public void setMethod(VocVaccinationMethod aNewProperty) {
-		theMethod = aNewProperty;
-	}
+	private VocVaccinationMethod method;
 
-	/**
-	 * Метод вакцинации
-	 */
-	private VocVaccinationMethod theMethod;
 
 	/**
 	 * Контрольный номер
 	 */
-	@Comment("Контрольный номер")
-	public String getControlNumber() {
-		return theControlNumber;
-	}
+	private String controlNumber;
 
-	/**
-	 * Контрольный номер
-	 */
-	public void setControlNumber(String aNewProperty) {
-		theControlNumber = aNewProperty;
-	}
-
-	/**
-	 * Контрольный номер
-	 */
-	private String theControlNumber;
-
-	
 
 	/**
 	 * Дата, на которую планировалась вакцинация
 	 */
-	@Comment("Дата, на которую планировалась вакцинация")
-	public Date getPlanDate() {
-		return thePlanDate;
-	}
-
-	/**
-	 * Дата, на которую планировалась вакцинация
-	 */
-	public void setPlanDate(Date aNewProperty) {
-		thePlanDate = aNewProperty;
-	}
-
-	/**
-	 * Дата, на которую планировалась вакцинация
-	 */
-	private Date thePlanDate;
+	private Date planDate;
 
 	/**
 	 * Дата следующей вакцинации
 	 */
-	@Comment("Дата следующей вакцинации")
-	public Date getNextDate() {
-		return theNextDate;
-	}
-
-	/**
-	 * Дата следующей вакцинации
-	 */
-	public void setNextDate(Date aNewProperty) {
-		theNextDate = aNewProperty;
-	}
-
-	/**
-	 * Дата следующей вакцинации
-	 */
-	private Date theNextDate;
+	private Date nextDate;
 
 	/**
 	 * Фаза вакцинации
@@ -234,20 +117,13 @@ public class Vaccination extends BaseEntity {
 	@Comment("Фаза вакцинации")
 	@OneToOne
 	public VocVaccinationPhase getPhase() {
-		return thePhase;
+		return phase;
 	}
 
 	/**
 	 * Фаза вакцинации
 	 */
-	public void setPhase(VocVaccinationPhase aNewProperty) {
-		thePhase = aNewProperty;
-	}
-
-	/**
-	 * Фаза вакцинации
-	 */
-	private VocVaccinationPhase thePhase;
+	private VocVaccinationPhase phase;
 
 	/**
 	 * 
@@ -255,40 +131,18 @@ public class Vaccination extends BaseEntity {
 	@Comment("Тип причины вакцинации")
 	@OneToOne
 	public VocVaccinationReasonType getReasonType() {
-		return theReasonType;
+		return reasonType;
 	}
 
 	/**
 	 * Тип причины вакцинации
 	 */
-	public void setReasonType(VocVaccinationReasonType aNewProperty) {
-		theReasonType = aNewProperty;
-	}
-
-	/**
-	 * Тип причины вакцинации
-	 */
-	private VocVaccinationReasonType theReasonType;
+	private VocVaccinationReasonType reasonType;
 
 	/**
 	 * Комментарии
 	 */
-	@Comment("Комментарии")
-	public String getComments() {
-		return theComments;
-	}
-
-	/**
-	 * Комментарии
-	 */
-	public void setComments(String a_Property) {
-		theComments = a_Property;
-	}
-
-	/**
-	 * Комментарии
-	 */
-	private String theComments;
+	private String comments;
 
 	/**
 	 * Медотвод
@@ -296,20 +150,13 @@ public class Vaccination extends BaseEntity {
 	@Comment("Медотвод")
 	@OneToOne
 	public VaccinationEstop getEstop() {
-		return theEstop;
+		return estop;
 	}
 
 	/**
 	 * Медотвод
 	 */
-	public void setEstop(VaccinationEstop a_Property) {
-		theEstop = a_Property;
-	}
-
-	/**
-	 * Медотвод
-	 */
-	private VaccinationEstop theEstop;
+	private VaccinationEstop estop;
 
 	/**
 	 * Оценка
@@ -317,29 +164,22 @@ public class Vaccination extends BaseEntity {
 	@Comment("Оценка")
 	@OneToOne
 	public VaccinationAssesment getAssesment() {
-		return theAssesment;
+		return assesment;
 	}
+
 
 	/**
 	 * Оценка
 	 */
-	public void setAssesment(VaccinationAssesment a_Property) {
-		theAssesment = a_Property;
-	}
-
-	/**
-	 * Оценка
-	 */
-	private VaccinationAssesment theAssesment;
+	private VaccinationAssesment assesment;
 
 	/** Пациент */
 	@Comment("Пациент")
 	@OneToOne
-	public Patient getPatient() {return thePatient;}
-	public void setPatient(Patient aPatient) {thePatient = aPatient;}
+	public Patient getPatient() {return patient;}
 
 	/** Пациент */
-	private Patient thePatient;
+	private Patient patient;
 	
 	/**
 	 * СМО
@@ -347,40 +187,18 @@ public class Vaccination extends BaseEntity {
 	@Comment("СМО")
 	@OneToOne
 	public MedCase getMedCase() {
-		return theMedCase;
+		return medCase;
 	}
 
 	/**
 	 * СМО
 	 */
-	public void setMedCase(MedCase a_Property) {
-		theMedCase = a_Property;
-	}
-
-	/**
-	 * СМО
-	 */
-	private MedCase theMedCase;
+	private MedCase medCase;
 
 	/**
 	 * Дата окончания годности
 	 */
-	@Comment("Дата окончания годности")
-	public Date getExpirationDate() {
-		return theExpirationDate;
-	}
-
-	/**
-	 * Дата окончания годности
-	 */
-	public void setExpirationDate(Date a_Property) {
-		theExpirationDate = a_Property;
-	}
-
-	/**
-	 * Дата окончания годности
-	 */
-	private Date theExpirationDate;
+	private Date expirationDate;
 
 	/**
 	 * Разрешил
@@ -388,46 +206,24 @@ public class Vaccination extends BaseEntity {
 	@Comment("Разрешил")
 	@OneToOne
 	public WorkFunction getPermitWorker() {
-		return thePermitWorker;
+		return permitWorker;
 	}
 
 	/**
 	 * Разрешил
 	 */
-	public void setPermitWorker(WorkFunction a_Property) {
-		thePermitWorker = a_Property;
-	}
-
-	/**
-	 * Разрешил
-	 */
-	private WorkFunction thePermitWorker;
+	private WorkFunction permitWorker;
 	
 	/**
 	 * Недействительность
 	 */
-	@Comment("Недействительность")
-	public Boolean getNoActuality() {
-		return theNoActuality;
-	}
-
-	/**
-	 * Недействительность
-	 */
-	public void setNoActuality(Boolean a_Property) {
-		theNoActuality = a_Property;
-	}
-
-	/**
-	 * Недействительность
-	 */
-	private Boolean theNoActuality;
+	private Boolean noActuality;
 	
 	/** Название вакцины */
 	@Comment("Название вакцины")
 	@Transient
 	public String getVaccineInfo() {
-		return theVaccine!=null?theVaccine.getName():"";	}
+		return vaccine!=null?vaccine.getName():"";	}
 	public void setVaccineInfo(String aVaccineInfo) {
 		
 	}
@@ -436,7 +232,7 @@ public class Vaccination extends BaseEntity {
 	@Comment("Разрешил (инфо)")
 	@Transient
 	public String getPermitWorkerInfo() {
-		return thePermitWorker!=null?thePermitWorker.getWorkFunctionInfo():"";
+		return permitWorker!=null?permitWorker.getWorkFunctionInfo():"";
 	}
 
 	public void setPermitWorkerInfo(String aPermitWorkerInfo) {
@@ -447,7 +243,7 @@ public class Vaccination extends BaseEntity {
 	@Comment("Исполнитель (инфо)")
 	@Transient
 	public String getExecuteWorkerInfo() {
-		return theExecuteWorker!=null?theExecuteWorker.getWorkFunctionInfo():"";
+		return executeWorker!=null?executeWorker.getWorkFunctionInfo():"";
 	}
 
 	public void setExecuteWorkerInfo(String aExecuteWorkerInfo) {
@@ -458,7 +254,7 @@ public class Vaccination extends BaseEntity {
 	@Comment("Фаза вакцинации (текст)")
 	@Transient
 	public String getPhaseText() {
-		return thePhase!=null?thePhase.getName():"";
+		return phase!=null?phase.getName():"";
 	}
 
 	public void setPhaseText(String aPhaseText) {
@@ -469,7 +265,7 @@ public class Vaccination extends BaseEntity {
 	@Comment("Метод вакцинации (текст)")
 	@Transient
 	public String getMethodText() {
-		return theMethod!=null?theMethod.getName():"";
+		return method!=null?method.getName():"";
 	}
 
 	public void setMethodText(String aMethodText) {
@@ -480,32 +276,22 @@ public class Vaccination extends BaseEntity {
 	@Comment("Вакцинный материал (текст)")
 	@Transient
 	public String getMaterialText() {
-		return theMaterial!=null?theMaterial.getName():"";
+		return material!=null?material.getName():"";
 	}
 
 	public void setMaterialText(String aMaterialText) {
 		
 	}
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-
-	/** Пользователь, создавший запись */
-	@Comment("Пользователь, создавший запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
 
 	/** Реакция вакцинации */
 	@Comment("Реакция вакцинации")
 	@OneToOne
-	public VocVaccinationReaction getVaccinationReaction() {return theVaccinationReaction;}
-	public void setVaccinationReaction(VocVaccinationReaction aVaccinationReaction) {theVaccinationReaction = aVaccinationReaction;}
+	public VocVaccinationReaction getVaccinationReaction() {return vaccinationReaction;}
 
 	/** Реакция вакцинации */
-	private VocVaccinationReaction theVaccinationReaction;
+	private VocVaccinationReaction vaccinationReaction;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 }

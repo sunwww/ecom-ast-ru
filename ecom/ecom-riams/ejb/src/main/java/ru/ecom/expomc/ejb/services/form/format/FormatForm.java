@@ -24,48 +24,48 @@ public class FormatForm extends IdEntityForm {
 
     /** Идентификатор */
     @Id
-    public long getId() { return theId ; }
-    public void setId(long aId) { theId = aId ; }
+    public long getId() { return id ; }
+    public void setId(long aId) { id = aId ; }
 
     /** Дата с которой начинает действовать формат */
     @DateString
     @Persist
     @Required
-    public String getActualDateFrom() { return theActualDateFrom ; }
-    public void setActualDateFrom(String aActualDateFrom) { theActualDateFrom = aActualDateFrom ; }
+    public String getActualDateFrom() { return actualDateFrom ; }
+    public void setActualDateFrom(String aActualDateFrom) { actualDateFrom = aActualDateFrom ; }
 
     /** Дата, до которой формат действует */
     @DateString
     @Persist
-    public String getActualDateTo() { return theActualDateTo ; }
-    public void setActualDateTo(String aActualDateTo) { theActualDateTo = aActualDateTo ; }
+    public String getActualDateTo() { return actualDateTo ; }
+    public void setActualDateTo(String aActualDateTo) { actualDateTo = aActualDateTo ; }
 
     /** Комментарий к формату */
     @Persist
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
+    public String getComment() { return comment ; }
+    public void setComment(String aComment) { comment = aComment ; }
 
     /** Отключен */
     @Persist
-    public boolean isDisabled() { return theDisabled ; }
-    public void setDisabled(boolean aDisabled) { theDisabled = aDisabled ; }
+    public boolean isDisabled() { return disabled ; }
+    public void setDisabled(boolean aDisabled) { disabled = aDisabled ; }
 
     /** Документ */
     @Persist
-    public long getDocument() { return theDocument ; }
-    public void setDocument(long aDocument) { theDocument = aDocument ; }
+    public long getDocument() { return document ; }
+    public void setDocument(long aDocument) { document = aDocument ; }
 
     /** Документ */
-    private long theDocument ;
+    private long document ;
     /** Отключен */
-    private boolean theDisabled ;
+    private boolean disabled ;
     /** Комментарий к формату */
-    private String theComment ;
+    private String comment ;
     /** Дата, до которой формат действует */
-    private String theActualDateTo ;
+    private String actualDateTo ;
     /** Дата с которой начинает действовать формат */
-    private String theActualDateFrom ;
+    private String actualDateFrom ;
     /** Идентификатор */
-    private long theId ;
+    private long id ;
 
 }

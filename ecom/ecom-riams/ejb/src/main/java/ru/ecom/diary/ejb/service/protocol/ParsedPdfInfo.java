@@ -1,19 +1,18 @@
 package ru.ecom.diary.ejb.service.protocol;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Getter
+@Setter
 public class ParsedPdfInfo {
 
 	/** Номер пробирки */
-	public String getBarcode() {return theBarcode;}
-	public void setBarcode(String aBarcode) {theBarcode = aBarcode;}
-	/** Номер пробирки */
-	private String theBarcode;
+	private String barcode;
 	
 	/** Список показателей */
-	public List<ParsedPdfInfoResult> getResults() {return theResults;}
-	public void setResults(List<ParsedPdfInfoResult> aResults) {theResults = aResults;}
-	/** Список показателей */
-	private List<ParsedPdfInfoResult> theResults;
+	private List<ParsedPdfInfoResult> results;
 
 }

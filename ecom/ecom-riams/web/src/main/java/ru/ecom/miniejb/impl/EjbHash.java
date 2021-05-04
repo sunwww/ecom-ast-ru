@@ -1,7 +1,5 @@
 package ru.ecom.miniejb.impl;
 
-import org.apache.log4j.Logger;
-
 import java.util.HashMap;
 
 /**
@@ -12,8 +10,6 @@ import java.util.HashMap;
  * To change this template use File | Settings | File Templates.
  */
 public class EjbHash {
-    private static final Logger LOG = Logger.getLogger(EjbHash.class) ;
-    private static final boolean CAN_TRACE = LOG.isDebugEnabled() ;
 
 
     public EjbHash() {
@@ -21,14 +17,12 @@ public class EjbHash {
     }
 
     public void put(Class aClass, String aJndi) {
-        if (CAN_TRACE) LOG.info(" putting " + aClass+" to "+aJndi);
-        theHashMap.put(aClass.getName(), aJndi) ;
+        theHashMap.put(aClass.getName(), aJndi);
     }
 
     public String get(Class aClass) {
-        String jndi = theHashMap.get(aClass.getName()) ;
-        if (CAN_TRACE) LOG.info(" getting " + aClass+" ("+jndi+")");
-        return  jndi;
+        return theHashMap.get(aClass.getName());
     }
+
     private final HashMap<String, String> theHashMap = new HashMap<>();
 }

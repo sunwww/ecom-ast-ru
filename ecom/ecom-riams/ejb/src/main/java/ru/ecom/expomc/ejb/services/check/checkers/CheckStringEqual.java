@@ -10,15 +10,15 @@ import ru.nuzmsh.forms.validator.validators.Required;
 public class CheckStringEqual extends AbstractCheckStringProperty {
 
     public boolean accept(String aStr) {
-        return theValue.equals(aStr) ;
+        return value.equals(aStr) ;
     }
 
     /** Значение */
     @Comment("Значение")
     @Required
-    public String getValue() { return theValue ; }
-    public void setValue(String aValue) { theValue = aValue ; }
+    public String getValue() { return value ; }
+    public void setValue(String aValue) { value = aValue ; }
 
     /** Значение */
-    private String theValue ;
+    private String value ;
 }

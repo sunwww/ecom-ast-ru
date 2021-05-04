@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.disability;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -30,63 +31,57 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(RegimeViolationRecordPreCreate.class)
 )
+@Setter
 public class RegimeViolationRecordForm extends IdEntityForm {
 
 	/** Документ нетрудоспособности */
 	@Comment("Документ нетрудоспособности")
 	@Persist @Required
-	public Long getDisabilityDocument() {return theDisabilityDocument;}
-	public void setDisabilityDocument(Long aDisabilityDocument) {theDisabilityDocument = aDisabilityDocument;}
-	
+	public Long getDisabilityDocument() {return disabilityDocument;}
+
 	/** Дата начала нарушения */
 	@Comment("Дата начала нарушения")
 	@Persist @DateString @DoDateString @Required
-	public String getDateFrom() {return theDateFrom;}
-	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
-	
+	public String getDateFrom() {return dateFrom;}
+
 	/** Дата окончания нарушения */
 	@Comment("Дата окончания нарушения")
 	@Persist @DateString @DoDateString
-	public String getDateTo() {return theDateTo;}
-	public void setDateTo(String aDateTo) {theDateTo = aDateTo;}
+	public String getDateTo() {return dateTo;}
 
 	/** Тип нарушения */
 	@Comment("Тип нарушения")
 	@Persist @Required
-	public Long getRegimeViolationType() {return theRegimeViolationType;}
-	public void setRegimeViolationType(Long aRegimeViolationType) {theRegimeViolationType = aRegimeViolationType;}
-	
+	public Long getRegimeViolationType() {return regimeViolationType;}
+
 	/** Комментарии */
 	@Comment("Комментарии")
 	@Persist
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
-	
+	public String getComment() {return comment;}
+
 	/** Тип нарушения инфо */
 	@Comment("Тип нарушения инфо")
 	@Persist
-	public String getRegimeViolationTypeInfo() {return theRegimeViolationTypeInfo;	}
-	public void setRegimeViolationTypeInfo(String aRegimeViolationTypeInfo) {theRegimeViolationTypeInfo = aRegimeViolationTypeInfo;}
+	public String getRegimeViolationTypeInfo() {return regimeViolationTypeInfo;	}
 
 	/** Информация о нарушении режима */
 	@Comment("Информация о нарушении режима")
 	@Persist
-	public String getInfo() {return theInfo;}
-	public void setInfo(String aInfo) {theInfo = aInfo;}
+	public String getInfo() {return info;}
 
 	/** Информация о нарушении режима */
-	private String theInfo;
+	private String info;
 	/** Тип нарушения инфо */
-	private String theRegimeViolationTypeInfo;
+	private String regimeViolationTypeInfo;
 	/** Документ нетрудоспособности */
-	private Long theDisabilityDocument;
+	private Long disabilityDocument;
 	/** Дата начала нарушения */
-	private String theDateFrom;
+	private String dateFrom;
 	/** Дата окончания нарушения */
-	private String theDateTo;
+	private String dateTo;
 	/** Тип нарушения */
-	private Long theRegimeViolationType;
+	private Long regimeViolationType;
 	/** Комментарии */
-	private String theComment;
+	private String comment;
 
 }

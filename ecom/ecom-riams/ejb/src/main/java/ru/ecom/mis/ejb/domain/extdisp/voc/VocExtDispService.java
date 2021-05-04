@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.extdisp.voc;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -15,52 +17,20 @@ import javax.persistence.Table;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes(value = { @AIndex(properties = { "WorkFunctionCode" }) })
+	@Getter
+	@Setter
 public class VocExtDispService extends VocBaseEntity{
-		/** Визит */
-		@Comment("Визит")
-		public Boolean getIsVisit() {return theIsVisit;}
-		public void setIsVisit(Boolean aIsVisit) {theIsVisit = aIsVisit;}
 		/** Визит		 */
-		private Boolean theIsVisit;
+		private Boolean isVisit;
 		
 		/** Код для экспорта (orph.rosminzdrav.ru) */
-		@Comment("Код для экспорта (orph.rosminzdrav.ru)")
-		public String getOrphCode() {
-			return theOrphCode;
-		}
-
-		public void setOrphCode(String aOrphCode) {
-			theOrphCode = aOrphCode;
-		}
-
-		/** Код для экспорта (orph.rosminzdrav.ru) */
-		private String theOrphCode;
-		
+		private String orphCode;
 		
 		/** Специальность врача */
-		@Comment("Специальность врача")
-		public String getWorkFunctionCode() {
-			return theWorkFunctionCode;
-		}
-
-		public void setWorkFunctionCode(String aWorkFunctionCode) {
-			theWorkFunctionCode = aWorkFunctionCode;
-		}
-
-		/** Специальность врача */
-		private String theWorkFunctionCode;
+		private String workFunctionCode;
 		
 		/** Код главной услуги */
-		@Comment("Код главной услуги")
-		public String getMainCode() {return theMainCode;}
-		public void setMainCode(String aMainCode) {theMainCode = aMainCode;}
-		/** Код главной услуги */
-		private String theMainCode;
-
+		private String mainCode;
 		/** Код ФОМС */
-		@Comment("Код ФОМС")
-		public String getOmcCode() {return theOmcCode;}
-		public void setOmcCode(String aOmcCode) {theOmcCode = aOmcCode;}
-		/** Код ФОМС */
-		private String theOmcCode ;
+		private String omcCode ;
 }

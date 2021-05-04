@@ -36,7 +36,7 @@ public class ImportTimeServiceBean implements IImportTimeService {
         StringBuilder query = new StringBuilder("from ");
         query.append(aClass.getSimpleName()) ;
         query.append(" where code = :code and time=:time") ;
-        List<T> finded = theManager.createQuery(query.toString())
+        List<T> finded = manager.createQuery(query.toString())
                 .setParameter("code",aCode)
                 .setParameter("time",findTime(aClass, aActualDate))
                 .getResultList();
@@ -48,7 +48,7 @@ public class ImportTimeServiceBean implements IImportTimeService {
     }
 
     public long findTime(Class aClass, java.util.Date aActualDate) {
-        List<ImportDocument> docs = theManager.createNamedQuery("ImportDocument.findByName")
+        List<ImportDocument> docs = manager.createNamedQuery("ImportDocument.findByName")
                 .setParameter("entityClassName",aClass.getName()).getResultList();
         if(isEmpty(docs)) {
             throw new IllegalArgumentException("Не зарегистрирован документ класса "+aClass.getName()) ;
@@ -76,6 +76,6 @@ public class ImportTimeServiceBean implements IImportTimeService {
     }
 
     @PersistenceContext
-    private EntityManager theManager;
+    private EntityManager manager;
 
 }

@@ -10,25 +10,25 @@ import java.util.TreeMap;
 public class AbstractChangeLetters extends AbstractChangeStringProperty {
 
     public AbstractChangeLetters(Map<Character, Character> aMap) {
-        theMap = aMap;
+        map = aMap;
     }
 
     public AbstractChangeLetters() {
-        theMap = new HashMap<>();
+        map = new HashMap<>();
     }
 
     void put(char aSource, char aDest) {
-        theMap.put(aSource, aDest);
+        map.put(aSource, aDest);
     }
 
     void revert() {
         TreeMap<Character, Character> revert = new TreeMap<>();
-        for (Map.Entry<Character, Character> entry : theMap.entrySet()) {
+        for (Map.Entry<Character, Character> entry : map.entrySet()) {
             revert.put(entry.getKey(), entry.getValue());
         }
-        theMap.clear();
+        map.clear();
         for (Map.Entry<Character, Character> entry : revert.entrySet()) {
-            theMap.put(entry.getValue(), entry.getKey());
+            map.put(entry.getValue(), entry.getKey());
         }
     }
 
@@ -37,7 +37,7 @@ public class AbstractChangeLetters extends AbstractChangeStringProperty {
         StringBuilder sb = new StringBuilder(aStr);
         for (int i = 0; i < len; i++) {
             char ch = sb.charAt(i);
-            Character repChar = theMap.get(ch);
+            Character repChar = map.get(ch);
             if (repChar != null) {
                 sb.setCharAt(i, repChar);
             }
@@ -46,5 +46,5 @@ public class AbstractChangeLetters extends AbstractChangeStringProperty {
 
     }
 
-    private final Map<Character, Character> theMap;
+    private final Map<Character, Character> map;
 }

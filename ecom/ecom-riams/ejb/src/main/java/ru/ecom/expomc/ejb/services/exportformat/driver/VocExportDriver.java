@@ -18,14 +18,14 @@ public class VocExportDriver implements IExportFomatDriver {
 
     private Collection<VocValue> values;
 
-    public VocExportDriver(EntityManager theManager, String params) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public VocExportDriver(EntityManager manager, String params) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         //params="AllowedChecksAllValues";
         Class clazz = Class.forName("ru.ecom.expomc.ejb.services.voc.allvalues."+
                 params);
 
         IAllValue allValue = (IAllValue) clazz.newInstance();
 
-        AllValueContext context = new AllValueContext(null, theManager, null);
+        AllValueContext context = new AllValueContext(null, manager, null);
         values = allValue.listAll(context);
     }
 

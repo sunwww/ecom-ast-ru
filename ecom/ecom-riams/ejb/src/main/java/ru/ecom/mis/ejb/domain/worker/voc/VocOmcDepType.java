@@ -3,6 +3,8 @@ package ru.ecom.mis.ejb.domain.worker.voc;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.patient.voc.VocIdName;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -12,12 +14,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Код профиля отделения для стационара или специалиста поликлиники")
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VocOmcDepType extends VocIdName {
 	/** Код федеральный */
-	@Comment("Код федеральный")
-	public String getCodef() {return theCodef;}
-	public void setCodef(String aCodef) {theCodef = aCodef;}
-
-	/** Код федеральный */
-	private String theCodef;
+	private String codef;
 }

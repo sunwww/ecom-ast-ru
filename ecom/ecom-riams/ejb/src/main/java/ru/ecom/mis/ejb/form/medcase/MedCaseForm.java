@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -12,309 +13,487 @@ import ru.ecom.mis.ejb.form.medcase.poly.PolyclinicMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.poly.VisitMedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.ticket.TicketMedCaseForm;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityForm;
-import ru.nuzmsh.commons.formpersistence.annotation.EntityFormSecurityPrefix;
-import ru.nuzmsh.commons.formpersistence.annotation.Parent;
-import ru.nuzmsh.commons.formpersistence.annotation.Persist;
+import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.transforms.DoTimeString;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.TimeString;
+
 /**
  * Форма случая медицинского обслуживания
+ *
  * @author STkacheva
  */
 @EntityForm
 @EntityFormPersistance(clazz = MedCase.class)
 @Comment("Случай медицинского обслуживания")
-@WebTrail(comment = "СМО", nameProperties= "info", view="entitySubclassView-mis_medCase.do")
-@Parent(property="patient", parentForm=PatientForm.class)
-@Subclasses({ ServiceMedCaseForm.class, PolyclinicMedCaseForm.class
-	, VisitMedCaseForm.class, DepartmentMedCaseForm.class, AdmissionMedCaseForm.class
-	, TicketMedCaseForm.class
-	, ExtHospitalMedCaseForm.class,HospitalMedCaseForm.class
-	})
+@WebTrail(comment = "СМО", nameProperties = "info", view = "entitySubclassView-mis_medCase.do")
+@Parent(property = "patient", parentForm = PatientForm.class)
+@Subclasses({ServiceMedCaseForm.class, PolyclinicMedCaseForm.class
+        , VisitMedCaseForm.class, DepartmentMedCaseForm.class, AdmissionMedCaseForm.class
+        , TicketMedCaseForm.class
+        , ExtHospitalMedCaseForm.class, HospitalMedCaseForm.class
+})
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase")
+@Setter
 public class MedCaseForm extends IdEntityForm {
 
-	/** Поток обслуживания */
-	@Comment("Поток обслуживания")
-	@Persist
-	public Long getServiceStream() {return theServiceStream;}
-	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+    /**
+     * Поток обслуживания
+     */
+    @Comment("Поток обслуживания")
+    @Persist
+    public Long getServiceStream() {
+        return serviceStream;
+    }
 
-	/** Пациент */
-	@Comment("Пациент")
-	@Persist
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aNewProperty) {thePatient = aNewProperty;}
+    /**
+     * Пациент
+     */
+    @Comment("Пациент")
+    @Persist
+    public Long getPatient() {
+        return patient;
+    }
 
-	/** Дата начала */
-	@Comment("Дата начала")
-	@Persist @DateString @DoDateString
-	public String getDateStart() {return theDateStart;}
-	public void setDateStart(String aNewProperty) {theDateStart = aNewProperty;}
-	
-	/** Родительский СМО */
-	@Comment("Родительский СМО")
-	@Persist
-	public Long getParent() {return theParent;}
-	public void setParent(Long aNewProperty) {theParent = aNewProperty;}
+    /**
+     * Дата начала
+     */
+    @Comment("Дата начала")
+    @Persist
+    @DateString
+    @DoDateString
+    public String getDateStart() {
+        return dateStart;
+    }
 
-	/** Недействительность */
-	@Comment("Недействительность")
-	@Persist
-	public Boolean getNoActuality() {return theNoActuality;	}
-	public void setNoActuality(Boolean aNewProperty) {theNoActuality = aNewProperty;}
+    /**
+     * Родительский СМО
+     */
+    @Comment("Родительский СМО")
+    @Persist
+    public Long getParent() {
+        return parent;
+    }
 
-	/** Исполнитель */
-	@Comment("Исполнитель")
-	@Persist
-	public Long getStartFunction() {	return theStartFunction;}
-	public void setStartFunction(Long aNewProperty) {theStartFunction = aNewProperty;}
+    /**
+     * Недействительность
+     */
+    @Comment("Недействительность")
+    @Persist
+    public Boolean getNoActuality() {
+        return noActuality;
+    }
 
-	/** ЛПУ - место исполнения */
-	@Comment("ЛПУ - место исполнения ")
-	@Persist
-	public Long getLpu() {return theLpu;}
-	public void setLpu(Long aNewProperty) {theLpu = aNewProperty;}
+    /**
+     * Исполнитель
+     */
+    @Comment("Исполнитель")
+    @Persist
+    public Long getStartFunction() {
+        return startFunction;
+    }
 
-	/** Опьянение */
-	@Comment("Опьянение")
-	@Persist
-	public Long getIntoxication() {	return theIntoxication;	}
-	public void setIntoxication(Long aIntoxication) {theIntoxication = aIntoxication;}	
-	
-	/** Информация о пациенте */
-	@Comment("Информация о пациенте")
-	@Persist
-	public String getPatientInfo() {return thePatientInfo;}
-	public void setPatientInfo(String aPatientInfo) {thePatientInfo = aPatientInfo;}
+    /**
+     * ЛПУ - место исполнения
+     */
+    @Comment("ЛПУ - место исполнения ")
+    @Persist
+    public Long getLpu() {
+        return lpu;
+    }
 
-	/** Информация о СМО */
-	@Comment("Информация о СМО")
-	@Persist
-	public String getInfo() {return theInfo;}
-	public void setInfo(String aInfo) {theInfo = aInfo;}
-	
-	/** Оператор */
-	@Comment("Оператор")
-	@Persist
-	public String getUsername() {return theUsername;}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
-	
-	/** Дата создания */
-	@Comment("Дата создания")
-	@DoDateString @DateString @Persist
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+    /**
+     * Опьянение
+     */
+    @Comment("Опьянение")
+    @Persist
+    public Long getIntoxication() {
+        return intoxication;
+    }
 
-	/** Представитель */
-	@Comment("Представитель")
-	@Persist
-	public Long getKinsman() {return theKinsman;}
-	public void setKinsman(Long aKinsman) {theKinsman = aKinsman;}
-	/** Госпитализация (впервые, повторно) */
-	@Comment("Госпитализация (впервые, повторно)")
-	@Persist
-	public Long getHospitalization() {return theHospitalization;}
-	public void setHospitalization(Long aHospitalization) {theHospitalization = aHospitalization;}
+    /**
+     * Информация о пациенте
+     */
+    @Comment("Информация о пациенте")
+    @Persist
+    public String getPatientInfo() {
+        return patientInfo;
+    }
 
-	/** Условная единица трудоемкости */
-	@Comment("Условная единица трудоемкости")
-	@Persist
-	public String getUet() {return theUet;}
-	public void setUet(String aUet) {theUet = aUet;}
+    /**
+     * Информация о СМО
+     */
+    @Comment("Информация о СМО")
+    @Persist
+    public String getInfo() {
+        return info;
+    }
 
-	/** Распечатан? */
-	@Comment("Распечатан?")
-	@Persist
-	public Long getIsPrint() {return theIsPrint;}
-	public void setIsPrint(Long aIsPrint) {theIsPrint = aIsPrint;}
+    /**
+     * Оператор
+     */
+    @Comment("Оператор")
+    @Persist
+    public String getUsername() {
+        return username;
+    }
 
-	/** Диагноз? */
-	@Comment("Диагноз?")
-	@Persist
-	public Long getIsDiagnosisCreate() {return theIsDiagnosisCreate;}
-	public void setIsDiagnosisCreate(Long aIsDiagnosisCreate) {theIsDiagnosisCreate = aIsDiagnosisCreate;}
+    /**
+     * Дата создания
+     */
+    @Comment("Дата создания")
+    @DoDateString
+    @DateString
+    @Persist
+    public String getCreateDate() {
+        return createDate;
+    }
 
-	/** Создавать дневник */
-	@Comment("Создавать дневник")
-	@Persist
-	public Long getIsDiaryCreate() {return theIsDiaryCreate;}
-	public void setIsDiaryCreate(Long aIsDairyCreate) {theIsDiaryCreate = aIsDairyCreate;}
+    /**
+     * Представитель
+     */
+    @Comment("Представитель")
+    @Persist
+    public Long getKinsman() {
+        return kinsman;
+    }
 
-	/** IsPrintInfo */
-	@Comment("IsPrintInfo")
-	@Persist
-	public Boolean getIsPrintInfo() {return theIsPrintInfo;}
-	public void setIsPrintInfo(Boolean aIsPrintInfo) {theIsPrintInfo = aIsPrintInfo;}
+    /**
+     * Госпитализация (впервые, повторно)
+     */
+    @Comment("Госпитализация (впервые, повторно)")
+    @Persist
+    public Long getHospitalization() {
+        return hospitalization;
+    }
 
-	/** Экстренность */
-	@Comment("Экстренность")
-	@Persist
-	public Boolean getEmergency() {return theEmergency;}
-	public void setEmergency(Boolean aNewProperty) {theEmergency = aNewProperty;}
-	
-	/** Дата печати */
-	@Comment("Дата печати")
-	@DateString @DoDateString
-	public String getPrintDate() {return thePrintDate;}
-	public void setPrintDate(String aPrintDate) {thePrintDate = aPrintDate;}
-	
-	/** Время печати */
-	@Comment("Время печати")
-	@DoTimeString @TimeString
-	public String getPrintTime() {return thePrintTime;}
-	public void setPrintTime(String aPrintTime) {thePrintTime = aPrintTime;}
+    /**
+     * Условная единица трудоемкости
+     */
+    @Comment("Условная единица трудоемкости")
+    @Persist
+    public String getUet() {
+        return uet;
+    }
 
-	/** Беременность */
-	@Comment("Беременность")
-	@Persist
-	public Long getPregnancy() {return thePregnancy;}
-	public void setPregnancy(Long aPregnancy) {thePregnancy = aPregnancy;}
+    /**
+     * Распечатан?
+     */
+    @Comment("Распечатан?")
+    @Persist
+    public Long getIsPrint() {
+        return isPrint;
+    }
 
-	/** Какая по счету беременность */
-	@Comment("Какая по счету беременность")
-	public Integer getPregnancyOrderNumber() {return thePregnancyOrderNumber;}
-	public void setPregnancyOrderNumber(Integer aNAME) {thePregnancyOrderNumber = aNAME;	}
-	
-	@Comment("Количество родов")
-	public Integer getChildbirthAmount() {return theChildbirthAmount;}
-	public void setChildbirthAmount(Integer aChildbirthAmount) {theChildbirthAmount = aChildbirthAmount;}
+    /**
+     * Диагноз?
+     */
+    @Comment("Диагноз?")
+    @Persist
+    public Long getIsDiagnosisCreate() {
+        return isDiagnosisCreate;
+    }
 
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	@Persist @DoDateString @DateString
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+    /**
+     * Создавать дневник
+     */
+    @Comment("Создавать дневник")
+    @Persist
+    public Long getIsDiaryCreate() {
+        return isDiaryCreate;
+    }
 
-	/** Пользователь последний, изменявший запись */
-	@Comment("Пользователь последний, изменявший запись")
-	@Persist
-	public String getEditUsername() {
-		return theEditUsername;
-	}
+    /**
+     * IsPrintInfo
+     */
+    @Comment("IsPrintInfo")
+    @Persist
+    public Boolean getIsPrintInfo() {
+        return isPrintInfo;
+    }
 
-	public void setEditUsername(String aEditUsername) {
-		theEditUsername = aEditUsername;
-	}
+    /**
+     * Экстренность
+     */
+    @Comment("Экстренность")
+    @Persist
+    public Boolean getEmergency() {
+        return emergency;
+    }
 
-	/** Пользователь последний, изменявший запись */
-	private String theEditUsername;
-	/** Дата редактирования */
-	private String theEditDate;
-	/** Количество родов */
-	private Integer theChildbirthAmount;
-	/** Какая по счету беременность */
-	private Integer thePregnancyOrderNumber;
-	/** Беременность */
-	private Long thePregnancy;
-	/** Время печати */
-	private String thePrintTime;
-	/** Дата печати */
-	private String thePrintDate;
-	/** Экстренность */
-	private Boolean theEmergency;
-	/** IsPrintInfo */
-	private Boolean theIsPrintInfo;
-	/** Создавать дневник */
-	private Long theIsDiaryCreate;
-	/** Диагноз? */
-	private Long theIsDiagnosisCreate;
-	/** Распечатан? */
-	private Long theIsPrint;
-	/** Условная единица трудоемкости */
-	private String theUet;
-	/** Госпитализация (впервые, повторно) */
-	private Long theHospitalization;
-	/** Представитель */
-	private Long theKinsman;
-	/** Дата создания */
-	private String theCreateDate;
-	/** Оператор */
-	private String theUsername;
-	/** Информация о СМО */
-	private String theInfo;
-	/** Информация о пациенте */
-	private String thePatientInfo;
-		/** Опьянение */
-	private Long theIntoxication;
-	/** ЛПУ - место исполнения */
-	private Long theLpu;
-	/** Исполнитель */
-	private Long theStartFunction;
-	/** Недействительность */
-	private Boolean theNoActuality;
-	/** Родительский СМО */
-	private Long theParent;
-	/** Дата начала */
-	private String theDateStart;
-	/** Пациент */
-	private Long thePatient;
-	/** Поток обслуживания */
-	private Long theServiceStream;
-	
-    /** Закрыть */
-	@Comment("Закрыть СПО")
-	public Boolean getIsCloseSpo() {return theIsCloseSpo;}
-	public void setIsCloseSpo(Boolean aIsCloseSpo) {theIsCloseSpo = aIsCloseSpo;}
+    /**
+     * Дата печати
+     */
+    @Comment("Дата печати")
+    @DateString
+    @DoDateString
+    public String getPrintDate() {
+        return printDate;
+    }
 
-	/** Закрыть */
-	private Boolean theIsCloseSpo;
-	
-	/** Гостиничная услуга */
-	@Comment("Гостиничная услуга")
-	@Persist
-	public Boolean getHotelServices() {return theHotelServices;}
-	public void setHotelServices(Boolean aHotelServices) {theHotelServices = aHotelServices;}
+    /**
+     * Время печати
+     */
+    @Comment("Время печати")
+    @DoTimeString
+    @TimeString
+    public String getPrintTime() {
+        return printTime;
+    }
 
-	/** Гостиничная услуга */
-	private Boolean theHotelServices;
-	
-	/** Дефект */
-	@Comment("Дефект")
-	@Persist
-	public Long getMedCaseDefect() {return theMedCaseDefect;}
-	public void setMedCaseDefect(Long aMedCaseDefect) {theMedCaseDefect = aMedCaseDefect;}
+    /**
+     * Беременность
+     */
+    @Comment("Беременность")
+    @Persist
+    public Long getPregnancy() {
+        return pregnancy;
+    }
 
-	/** Дефект */
-	private Long theMedCaseDefect;
+    /**
+     * Какая по счету беременность
+     */
+    @Comment("Какая по счету беременность")
+    public Integer getPregnancyOrderNumber() {
+        return pregnancyOrderNumber;
+    }
 
-	/** Время создания */
-	@Comment("Время создания")
-	@Persist @DoTimeString @TimeString
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+    @Comment("Количество родов")
+    public Integer getChildbirthAmount() {
+        return childbirthAmount;
+    }
 
-	/** Время создания */
-	private String theCreateTime;
-	/** Время редактирования */
-	@Comment("Время редактирования")
-	@Persist @DoTimeString @TimeString
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+    /**
+     * Дата редактирования
+     */
+    @Comment("Дата редактирования")
+    @Persist
+    @DoDateString
+    @DateString
+    public String getEditDate() {
+        return editDate;
+    }
 
-	/** Время редактирования */
-	private String theEditTime;
-	
-	/** Услуга оплачена */
-	@Comment("Услуга оплачена")
-	@Persist
-	public Boolean getIsPaid() {return theIsPaid;}
-	public void setIsPaid(Boolean aIsPaid) {theIsPaid = aIsPaid;}
-	/** Услуга оплачена */
-	private Boolean theIsPaid;
-	
+    /**
+     * Пользователь последний, изменявший запись
+     */
+    @Comment("Пользователь последний, изменявший запись")
+    @Persist
+    public String getEditUsername() {
+        return editUsername;
+    }
 
-	/** Гарантийное письмо */
-	@Comment("Гарантийное письмо")
-	@Persist
-	public Long getGuarantee() {return theGuarantee;}
-	public void setGuarantee(Long aGuarantee) {theGuarantee = aGuarantee;}
-	/** Гарантийное письмо */
-	private Long theGuarantee;
+    /**
+     * Пользователь последний, изменявший запись
+     */
+    private String editUsername;
+    /**
+     * Дата редактирования
+     */
+    private String editDate;
+    /**
+     * Количество родов
+     */
+    private Integer childbirthAmount;
+    /**
+     * Какая по счету беременность
+     */
+    private Integer pregnancyOrderNumber;
+    /**
+     * Беременность
+     */
+    private Long pregnancy;
+    /**
+     * Время печати
+     */
+    private String printTime;
+    /**
+     * Дата печати
+     */
+    private String printDate;
+    /**
+     * Экстренность
+     */
+    private Boolean emergency;
+    /**
+     * IsPrintInfo
+     */
+    private Boolean isPrintInfo;
+    /**
+     * Создавать дневник
+     */
+    private Long isDiaryCreate;
+    /**
+     * Диагноз?
+     */
+    private Long isDiagnosisCreate;
+    /**
+     * Распечатан?
+     */
+    private Long isPrint;
+    /**
+     * Условная единица трудоемкости
+     */
+    private String uet;
+    /**
+     * Госпитализация (впервые, повторно)
+     */
+    private Long hospitalization;
+    /**
+     * Представитель
+     */
+    private Long kinsman;
+    /**
+     * Дата создания
+     */
+    private String createDate;
+    /**
+     * Оператор
+     */
+    private String username;
+    /**
+     * Информация о СМО
+     */
+    private String info;
+    /**
+     * Информация о пациенте
+     */
+    private String patientInfo;
+    /**
+     * Опьянение
+     */
+    private Long intoxication;
+    /**
+     * ЛПУ - место исполнения
+     */
+    private Long lpu;
+    /**
+     * Исполнитель
+     */
+    private Long startFunction;
+    /**
+     * Недействительность
+     */
+    private Boolean noActuality;
+    /**
+     * Родительский СМО
+     */
+    private Long parent;
+    /**
+     * Дата начала
+     */
+    private String dateStart;
+    /**
+     * Пациент
+     */
+    private Long patient;
+    /**
+     * Поток обслуживания
+     */
+    private Long serviceStream;
+
+    /**
+     * Закрыть
+     */
+    @Comment("Закрыть СПО")
+    public Boolean getIsCloseSpo() {
+        return isCloseSpo;
+    }
+
+    /**
+     * Закрыть
+     */
+    private Boolean isCloseSpo;
+
+    /**
+     * Гостиничная услуга
+     */
+    @Comment("Гостиничная услуга")
+    @Persist
+    public Boolean getHotelServices() {
+        return hotelServices;
+    }
+
+    /**
+     * Гостиничная услуга
+     */
+    private Boolean hotelServices;
+
+    /**
+     * Дефект
+     */
+    @Comment("Дефект")
+    @Persist
+    public Long getMedCaseDefect() {
+        return medCaseDefect;
+    }
+
+    /**
+     * Дефект
+     */
+    private Long medCaseDefect;
+
+    /**
+     * Время создания
+     */
+    @Comment("Время создания")
+    @Persist
+    @DoTimeString
+    @TimeString
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    /**
+     * Время создания
+     */
+    private String createTime;
+
+    /**
+     * Время редактирования
+     */
+    @Comment("Время редактирования")
+    @Persist
+    @DoTimeString
+    @TimeString
+    public String getEditTime() {
+        return editTime;
+    }
+
+    /**
+     * Время редактирования
+     */
+    private String editTime;
+
+    /**
+     * Услуга оплачена
+     */
+    @Comment("Услуга оплачена")
+    @Persist
+    public Boolean getIsPaid() {
+        return isPaid;
+    }
+
+    /**
+     * Услуга оплачена
+     */
+    private Boolean isPaid;
+
+
+    /**
+     * Гарантийное письмо
+     */
+    @Comment("Гарантийное письмо")
+    @Persist
+    public Long getGuarantee() {
+        return guarantee;
+    }
+
+    /**
+     * Гарантийное письмо
+     */
+    private Long guarantee;
 }
 

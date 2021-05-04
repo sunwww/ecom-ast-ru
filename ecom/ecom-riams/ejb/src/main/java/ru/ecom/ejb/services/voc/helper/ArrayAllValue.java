@@ -13,7 +13,7 @@ import java.util.LinkedList;
  */
 public class ArrayAllValue implements IAllValue {
 
-    private final LinkedList<VocValue> theValues = new LinkedList<>();
+    private final LinkedList<VocValue> values = new LinkedList<>();
 
     public ArrayAllValue() {
 
@@ -33,15 +33,15 @@ public class ArrayAllValue implements IAllValue {
 
     public void addValue(String aId, String aName) {
 
-        theValues.add(new VocValue(aId, aName));
+        values.add(new VocValue(aId, aName));
     }
 
     public Collection<VocValue> listAll(AllValueContext aContext) {
-        return theValues;
+        return values;
     }
 
     public void destroy() {
-        theValues.clear();
+        values.clear();
     }
 
     public Collection<VocValue> findVocValueByQuery(String aVocName,
@@ -63,11 +63,11 @@ public class ArrayAllValue implements IAllValue {
                     findedId = id;
                     finded = true;
                 }
-                if (name != null && name.toUpperCase().indexOf(query) > -1) {
+                if (name != null && name.toUpperCase().contains(query)) {
                     findedId = id;
                     finded = true;
                 }
-                if (id != null && id.toUpperCase().indexOf(query) > -1) {
+                if (id != null && id.toUpperCase().contains(query)) {
                     findedId = id;
                     finded = true;
                 }

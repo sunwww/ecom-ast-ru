@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -32,138 +34,89 @@ import java.sql.Time;
         @AIndex(properties="dateStart"),
         @AIndex(properties="dateFinish")
 })
+@Getter
+@Setter
 public class ActRVK extends BaseEntity {
     /** Дата начала акта */
-    @Comment("Дата начала акта")
-    public Date getDateStart() {return theDateStart;}
-    public void setDateStart(Date aDateStart) {theDateStart = aDateStart;}
-    /** Дата начала акта */
-    private Date theDateStart;
+    private Date dateStart;
     
     /** Дата окончания акта */
-    @Comment("Дата окончания акта")
-    public Date getDateFinish() {return theDateFinish;}
-    public void setDateFinish(Date aDateFinish) {theDateFinish = aDateFinish;}
-    /** Дата окончания акта */
-    private Date theDateFinish;
+    private Date dateFinish;
 
     /** Примечание */
     @Comment("Примечание")
     @Column(length=ColumnConstants.TEXT_MAXLENGHT)
-    public String getComment() {return theComment;}
-    public void setComment(String aComment) {theComment = aComment;}
+    public String getComment() {return comment;}
     /** Примечание */
-    private String theComment;
+    private String comment;
 
     /** Пациент */
     @Comment("Пациент")
     @OneToOne
-    public Patient getPatient() {return thePatient;}
-    public void setPatient(Patient aPatient) {thePatient = aPatient;}
+    public Patient getPatient() {return patient;}
     /** Пациент */
-    private Patient thePatient;
+    private Patient patient;
 
     /** Окончательный диагноз */
     @Comment("Окончательный диагноз")
     @OneToOne
-    public VocIdc10 getIdc10() {return theFinishIdc10;}
-    public void setIdc10(VocIdc10 aFinishIdc10) {theFinishIdc10 = aFinishIdc10;}
-    /** Окончательный диагноз */
-    private VocIdc10 theFinishIdc10;
+    public VocIdc10 getIdc10() {return idc10;}
+    private VocIdc10 idc10;
 
     /** Текст диагноза */
-    @Comment("Текст диагноза")
-    public String getDiagnosis() {return theDiagnosis;}
-    public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
-    /** Текст диагноза */
-    private String theDiagnosis;
+    private String diagnosis;
     
     /** Parent госпитализация/визит */
     @Comment("Parent госпитализация/визит")
     @OneToOne
-    public MedCase getMedCase() {return theMedCase;}
-    public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
-    /** Parent госпитализация/визит */
-    private MedCase theMedCase;
+    public MedCase getMedCase() {return medCase;}
+    private MedCase medCase;
 
     /** Отделение */
     @Comment("Отделение")
     @OneToOne
-    public MisLpu getDepartment() {return theDepartment;}
-    public void setDepartment(MisLpu aDepartment) {theDepartment = aDepartment;}
-    /** Отделение */
-    private MisLpu theDepartment;
+    public MisLpu getDepartment() {return department;}
+    private MisLpu department;
 
     /** Номер акта */
-    @Comment("Номер акта")
-    public String getNumAct() {return theNumAct;}
-    public void setNumAct(String aNumAct) {theNumAct = aNumAct;}
-    /** Номер акта */
-    private String theNumAct;
+    private String numAct;
 
     /** Дата создания */
-    @Comment("Дата создания")
-    public Date getCreateDate() {return theCreateDate;}
-    public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-    /** Дата создания */
-    private Date theCreateDate;
+    private Date createDate;
 
     /** Дата редактирования */
-    @Comment("Дата редактирования")
-    public Date getEditDate() {return theEditDate;}
-    public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-    /** Дата редактирования */
-    private Date theEditDate;
+    private Date editDate;
 
     /** Время создания */
-    @Comment("Время создания")
-    public Time getCreateTime() {return theCreateTime;}
-    public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-    /** Время создания */
-    private Time theCreateTime;
+    private Time createTime;
 
     /** Время редактрования */
-    @Comment("Время редактрования")
-    public Time getEditTime() {return theEditTime;}
-    public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-    /** Время редактрования */
-    private Time theEditTime;
+    private Time editTime;
 
     /** Пользователь, который создал запись */
-    @Comment("Пользователь, который создал запись")
-    public String getCreateUsername() {return theCreateUsername;}
-    public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-    /** Пользователь, который создал запись */
-    private String theCreateUsername;
+    private String createUsername;
 
     /** Пользователь, который последний редактировал запись */
-    @Comment("Пользователь, который последний редактировал запись")
-    public String getEditUsername() {return theEditUsername;}
-    public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-    /** Пользователь, который последний редактировал запись */
-    private String theEditUsername;
+    private String editUsername;
 
     /** Рабочая функция открывшего*/
     @Comment("Рабочая функция открывшего")
     @OneToOne
-    public WorkFunction getWorkFunctionStart() {return theWorkFunctionStart;}
-    public void setWorkFunctionStart(WorkFunction aWorkFunctionStart) {theWorkFunctionStart = aWorkFunctionStart;}
+    public WorkFunction getWorkFunctionStart() {return workFunctionStart;}
     /** Рабочая функция открывшего*/
-    private WorkFunction theWorkFunctionStart;
+    private WorkFunction workFunctionStart;
     
     /** Рабочая функция закрывшего*/
     @Comment("Рабочая функция закрывшего")
     @OneToOne
-    public WorkFunction getWorkFunctionFinish() {return theWorkFunctionFinish;}
-    public void setWorkFunctionFinish(WorkFunction aWorkFunctionFinish) {theWorkFunctionFinish = aWorkFunctionFinish;}
+    public WorkFunction getWorkFunctionFinish() {return workFunctionFinish;}
     /** Рабочая функция закрывшего*/
-    private WorkFunction theWorkFunctionFinish;
+    private WorkFunction workFunctionFinish;
 
     /** Название раб. функции открывшего акт*/
     @Comment("Название раб. функции открывшего акт")
     @OneToOne
-    public VocWorkFunction getSpecName() {return theSpecName;}
-    public void setSpecName(VocWorkFunction aSpecName) {theSpecName = aSpecName;}
+    public VocWorkFunction getSpecName() {return specName;}
     /** Название раб. функции открывшего акт*/
-    private VocWorkFunction theSpecName;
+    private VocWorkFunction specName;
 }

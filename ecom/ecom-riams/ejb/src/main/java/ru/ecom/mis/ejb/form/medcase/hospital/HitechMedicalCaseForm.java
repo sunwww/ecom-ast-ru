@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -29,119 +30,106 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(HitechMedicalCasePreCreateInterceptor.class)
 )
+@Setter
 
 public class HitechMedicalCaseForm extends IdEntityForm{
 	/** Случай оказания мед. помощи */
 	@Persist
 	@Comment("Случай оказания мед. помощи")
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long  aMedCase) {theMedCase = aMedCase;}
+	public Long getMedCase() {return medCase;}
 	/** Случай оказания мед. помощи */
-	private Long  theMedCase;
+	private Long  medCase;
 	
 	/** Вид ВМП */
 	@Comment("Вид ВМП")
 	@Persist @Required
-	public Long  getKind() {return theKind;}
-	public void setKind(Long  aKind) {theKind = aKind;}
+	public Long  getKind() {return kind;}
 	/** Вид ВМП */
-	private Long  theKind;
+	private Long  kind;
 	
 	/** Метод ВМП */
 	@Comment("Метод ВМП")
 	@Persist @Required
-	public Long  getMethod() {return theMethod;}
-	public void setMethod(Long  aMethod) {theMethod = aMethod;}
+	public Long  getMethod() {return method;}
 	/** Метод ВМП */
-	private Long  theMethod;
+	private Long  method;
 	
 	/** Дата выдачи талона нв ВМП */
 	@Comment("Дата выдачи талона нв ВМП")
 	@Persist
 	@DateString @DoDateString
-	public String getTicketDate() {return theTicketDate;}
-	public void setTicketDate(String aTicketDate) {theTicketDate = aTicketDate;}
+	public String getTicketDate() {return ticketDate;}
 	/** Дата выдачи талона нв ВМП */
-	private String theTicketDate;
+	private String ticketDate;
 	
 	/** Дата планируемой госпитализации */
 	@Comment("Дата планируемой госпитализации")
 	@Persist
 	@DateString @DoDateString
-	public String getPlanHospDate() {return thePlanHospDate;}
-	public void setPlanHospDate(String aPlanHospDate) {thePlanHospDate = aPlanHospDate;}
+	public String getPlanHospDate() {return planHospDate;}
 	/** Дата планируемой госпитализации */
-	private String thePlanHospDate;
+	private String planHospDate;
 	
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist
 	@DateString @DoDateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	public String getCreateDate() {return createDate;}
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@Persist
 	@DateString @DoDateString
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	public String getEditDate() {return editDate;}
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	
 	/** Пользователь, создавший запись */
 	@Comment("Пользователь, создавший запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	
 	/** Пользователь, редактировавший запись */
 	@Comment("Пользователь, редактировавший запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 	/** Пользователь, редактировавший запись */
-	private String theEditUsername;
+	private String editUsername;
 	
 	/** Источник финансировани */
 	@Comment("Источник финансировани")
-	public Long getFinanceSource() {return theFinanceSource;}
-	public void setFinanceSource(Long aFinanceSource) {theFinanceSource = aFinanceSource;}
+	public Long getFinanceSource() {return financeSource;}
 	/** Источник финансировани */
-	private Long theFinanceSource;
+	private Long financeSource;
 
 	/** Количество установленных стентов */
 	@Comment("Количество установленных стентов")
 	@Persist
-	public Long getStantAmount() {return theStantAmount;}
-	public void setStantAmount(Long aStantAmount) {theStantAmount = aStantAmount;}
+	public Long getStantAmount() {return stantAmount;}
 	/** Количество установленных стентов */
-	private Long theStantAmount ;
+	private Long stantAmount ;
 
 	/** Номер талона ВМП */
 	@Comment("Номер талона ВМП")
 	@Persist
-	public String getTicketNumber() {return theTicketNumber;}
-	public void setTicketNumber(String aTicketNumber) {theTicketNumber = aTicketNumber;}
+	public String getTicketNumber() {return ticketNumber;}
 	/** Номер талона ВМП */
-	private String theTicketNumber ;
+	private String ticketNumber ;
 
 	/** Список диагнозов */
 	@Comment("Список диагнозов")
-	public String getDiagnosis() {return theDiagnosis;}
-	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
+	public String getDiagnosis() {return diagnosis;}
 	/** Список диагнозов */
-	private String theDiagnosis ;
+	private String diagnosis ;
 
 	/** Модель пациента */
 	@Comment("Модель пациента")
-	public String getPatientModel() {return thePatientModel;}
-	public void setPatientModel(String aPatientModel) {thePatientModel = aPatientModel;}
+	public String getPatientModel() {return patientModel;}
 	/** Модель пациента */
-	private String thePatientModel ;
+	private String patientModel ;
 	
 }

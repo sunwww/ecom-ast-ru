@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.report;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.report.voc.VocReportSetParameterType;
@@ -13,66 +14,53 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @EntityFormPersistance(clazz= VocReportSetParameterType.class)
 @Comment("Параметр")
 @WebTrail(comment = "Параметр", nameProperties= "id", view="entityView-rep_parameter.do")
-//@Parent(property="parameterType", parentForm= ReportParameterForm.class)
 @EntityFormSecurityPrefix("/Policy/Voc/ReportConfig")
+@Setter
 public class ReportParameterForm  extends IdEntityForm {
 	/** Имя класса данных */
 	@Comment("Имя класса данных")
 	@Persist
-	public String getClassName() {return theClassName;}
-	public void setClassName(String aClassName) {theClassName = aClassName;}
-	
+	public String getClassName() {return className;}
+
 	/** Пол */
 	@Comment("Пол")
 	@Persist
-	public Long getSex() {return theSex;}
-	public void setSex(Long aSex) {theSex = aSex;}
+	public Long getSex() {return sex;}
 	/** Пол код */
 	@Comment("Пол код")
 	@Persist
-	public String getSexCode() {return theSexCode;}
-	public void setSexCode(String aSexCode) {theSexCode = aSexCode;}
+	public String getSexCode() {return sexCode;}
 
 	/** Пол код */
-	private String theSexCode;
+	private String sexCode;
 
 	/** Строка */
 	@Comment("Строка")
 	@Persist
-	public String getStrCode() {return theStrCode;}
-	public void setStrCode(String aStr) {theStrCode = aStr;}
+	public String getStrCode() {return strCode;}
 
 	/** Наименование */
 	@Comment("Наименование")
 	@Persist
 	public String getName() {
-		return theName;
-	}
-
-	public void setName(String aName) {
-		theName = aName;
+		return name;
 	}
 
 	/** Код МКБ */
 	@Comment("Код МКБ")
 	@Persist
 	public String getCode() {
-		return theCode;
-	}
-
-	public void setCode(String aCode) {
-		theCode = aCode;
+		return code;
 	}
 
 	/** Код МКБ */
-	private String theCode;
+	private String code;
 	/** Наименование */
-	private String theName;
+	private String name;
 	/** Строка */
-	private String theStrCode;
+	private String strCode;
 	/** Пол */
-	private Long theSex;
-
+	private Long sex;
 	/** Имя класса данных */
-	private String theClassName;
+	private String className;
 }

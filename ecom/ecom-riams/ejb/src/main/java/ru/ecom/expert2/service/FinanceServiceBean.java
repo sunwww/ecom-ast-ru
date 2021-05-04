@@ -40,19 +40,19 @@ public class FinanceServiceBean implements IFinanceService {
         try {
             String sql = "select id from FinancePlan fp where dtype='" + aType + "' and to_char(fp.startDate,'MM.yyyy')='01." + aYearPlan + "' and to_char(fp.finishDate,'MM.yyyy')='12." + aYearPlan + "'";
             LOG.info("sql0=" + sql);
-            List<Long> plans = theManager.createQuery(sql).getResultList();
+            List<Long> plans = manager.createQuery(sql).getResultList();
             if (CollectionUtil.isEmpty(plans)) {
                 LOG.error("Не найдено планов на год");
                 return;
             }
             sql = "delete from FinancePlan where  dtype='" + aType + "' and to_char(startDate,'MM.yyyy')= to_char(finishDate,'MM.yyyy') and to_char(startDate,'yyyy')='" + aYearPlan + "'";
             LOG.info("sql1=" + sql);
-            theManager.createNativeQuery(sql).executeUpdate();
+            manager.createNativeQuery(sql).executeUpdate();
             FinancePlan yearPlan;
             Calendar startFromCalendar = Calendar.getInstance();
             HashMap<Long, String> littleAmountMonth = new HashMap<>();
             HashMap<String, BigDecimal> caseCost = new HashMap<>();
-            List<MonthLittleAmountTable> monthLittleAmountTables = theManager.createQuery("from MonthLittleAmountTable").getResultList();
+            List<MonthLittleAmountTable> monthLittleAmountTables = manager.createQuery("from MonthLittleAmountTable").getResultList();
             for (MonthLittleAmountTable mLAT : monthLittleAmountTables) {
                 littleAmountMonth.put(mLAT.getAmount(), mLAT.getMonths());
             }
@@ -61,7 +61,7 @@ public class FinanceServiceBean implements IFinanceService {
             boolean polPlan = aType.equals("PolyclinicFinancePlan");
             boolean vmpPlan = aType.equals("VmpFinancePlan");
             for (Long planId : plans) {
-                yearPlan = theManager.find(FinancePlan.class, planId);
+                yearPlan = manager.find(FinancePlan.class, planId);
                 String priceKey;
                 BigDecimal cost;
                 startFromCalendar.setTimeInMillis(yearPlan.getStartDate().getTime());
@@ -117,7 +117,7 @@ public class FinanceServiceBean implements IFinanceService {
                         }
 
                         monthPlan.setCost(cost);
-                        theManager.persist(monthPlan);
+                        manager.persist(monthPlan);
                     } else if (polPlan) { //Считаем цену для плана по поликлиники
                         PolyclinicFinancePlan monthPlan = (PolyclinicFinancePlan) cloneEntity(yearPlan, false);
                         monthPlan.setStartDate(currentMonth);
@@ -134,7 +134,7 @@ public class FinanceServiceBean implements IFinanceService {
 
                         cost = cost.multiply(new BigDecimal(count)).setScale(2, RoundingMode.HALF_UP);
                         monthPlan.setCost(cost);
-                        theManager.persist(monthPlan);
+                        manager.persist(monthPlan);
                     } else if (vmpPlan) {
                         VmpFinancePlan monthPlan = (VmpFinancePlan) cloneEntity(yearPlan, false);
                         monthPlan.setStartDate(currentMonth);
@@ -156,7 +156,7 @@ public class FinanceServiceBean implements IFinanceService {
                         }
                         cost = cost.multiply(new BigDecimal(count)).setScale(2, RoundingMode.HALF_UP);
                         monthPlan.setCost(cost);
-                        theManager.persist(monthPlan);
+                        manager.persist(monthPlan);
                     } else {
                         LOG.warn("Неизвестный тип финансового плана, доделать: " + yearPlan.getId());
                         //sql="1==2";
@@ -178,7 +178,7 @@ public class FinanceServiceBean implements IFinanceService {
     public String copyFinancePlanNextMonth(String aType, Date aMonthPlan, Date aStartMonth, Date aFinishMonth) {
         /* Находим все планы по всем отделениям на выбранный месяц и копируем их на следующие месяцы. Проще простого) */
         LOG.info("monthPlan = " + aMonthPlan + ", startFrom " + aStartMonth + ", finish = " + aFinishMonth);
-        List<HospitalFinancePlan> plans = theManager.createQuery("from HospitalFinancePlan where :date between startDate and finishDate").setParameter("date", aMonthPlan).getResultList();
+        List<HospitalFinancePlan> plans = manager.createQuery("from HospitalFinancePlan where :date between startDate and finishDate").setParameter("date", aMonthPlan).getResultList();
         LOG.info("plans for date = " + aMonthPlan + " found = " + plans.size());
         if (plans.isEmpty()) {
             return "null, no data";
@@ -198,7 +198,7 @@ public class FinanceServiceBean implements IFinanceService {
                 clonedPlan = (HospitalFinancePlan) cloneEntity(plan, false);
                 clonedPlan.setStartDate(currentMonth);
                 clonedPlan.setFinishDate(currentMonth);
-                theManager.persist(clonedPlan);
+                manager.persist(clonedPlan);
             }
             startFromCalendar.add(Calendar.MONTH, 1);
         }
@@ -293,7 +293,7 @@ public class FinanceServiceBean implements IFinanceService {
             sql.append(")");
             LOG.info("sql=" + sql);
             cleanAggregateTable(aType, calendar.getTime());
-            ret += theManager.createNativeQuery(sql.toString()).executeUpdate();
+            ret += manager.createNativeQuery(sql.toString()).executeUpdate();
             calendar.add(Calendar.MONTH, 1);
         }
         LOG.info("Закончили формировать факты/планы");
@@ -305,7 +305,7 @@ public class FinanceServiceBean implements IFinanceService {
         SimpleDateFormat mm = new SimpleDateFormat("MM");
         SimpleDateFormat yyyy = new SimpleDateFormat("yyyy");
         LOG.info("Очищаем сведения о факте-плане за " + aMonthDate + " месяц");
-        theManager.createNativeQuery("delete from aggregatevolumesfinanceplan where type='" + aType + "' and  month=" + mm.format(aMonthDate) + " and year=" + yyyy.format(aMonthDate)).executeUpdate();
+        manager.createNativeQuery("delete from aggregatevolumesfinanceplan where type='" + aType + "' and  month=" + mm.format(aMonthDate) + " and year=" + yyyy.format(aMonthDate)).executeUpdate();
     }
 
     /**
@@ -331,7 +331,7 @@ public class FinanceServiceBean implements IFinanceService {
                 }
             }
             if (needPersist) {
-                theManager.persist(newEntity);
+                manager.persist(newEntity);
             }
             return newEntity;
         } catch (Exception e) {
@@ -342,9 +342,9 @@ public class FinanceServiceBean implements IFinanceService {
     }
 
     private @PersistenceContext
-    EntityManager theManager;
+    EntityManager manager;
     private @EJB
-    ILocalMonitorService theMonitorService;
+    ILocalMonitorService monitorService;
 
     private @EJB
     IExpert2Service expert2Service;

@@ -654,7 +654,6 @@ public class PatientServiceBean implements IPatientService {
         }
         String updateDate = " editdate=current_date, ";
         SoftConfig sc = (SoftConfig) manager.createQuery("from SoftConfig sc where sc.key='DEFAULT_LPU_OMCCODE'").getResultList().get(0);
-        //String lpu = fiodr[7], attachedType=fiodr[8], attachedDate = fiodr[9];
         StringBuilder ret = new StringBuilder();
         RegInsuranceCompany insCompany = null;
         String sqlAdd = "smoCode"; //smoCode - федеральный 5 значный код
@@ -672,7 +671,6 @@ public class PatientServiceBean implements IPatientService {
         }
 
         if (sc != null && sc.getKeyValue().equals(aLpu) && insCompany != null) { //Создаем прикрепления только своей ЛПУ
-            //s(" ЛПУ наше, создаем прикрепления!!");
             List<Object> obj;
             Long areaId = null;
             LpuArea la = null;
@@ -1061,7 +1059,7 @@ public class PatientServiceBean implements IPatientService {
         fond.setDepartment(aCodeDepartment);
         //Patient pat = null;
         if (aPatientId != null && !aPatientId.equals("") && !Long.valueOf(aPatientId).equals(0L)) {
-            //pat = theManager.find(Patient.class, Long.valueOf(aPatientId));
+            //pat = manager.find(Patient.class, Long.valueOf(aPatientId));
             fond.setPatient(Long.valueOf(aPatientId));
         }
         if (aCheckTime != null) {
@@ -1077,7 +1075,7 @@ public class PatientServiceBean implements IPatientService {
     }
 
     public PatientForm getPatientById(Long aId) {
-        //Patient p = theManager.find(Patient.class, aId) ;
+        //Patient p = manager.find(Patient.class, aId) ;
         PatientForm frm = new PatientForm();
         String sql = "select p.lastname,p.firstname,p.middlename,to_char(p.birthday,'dd.mm.yyyy') as birthday,p.snils " +
                 " ,p.passportNumber,p.passportSeries,p.passportType_id,vic.omcCode as vicomccode" +
@@ -1233,7 +1231,7 @@ public class PatientServiceBean implements IPatientService {
                                       String aLastname, String aYear, Boolean aNext, String aIdNext) {
         WebQueryResult wqr = new WebQueryResult();
         String defaultLpu = SoftConfigServiceBean.getDefaultParameterByConfig("DEFAULT_LPU_OMCCODE", "-", manager);
-        boolean isEnableLimitAreas = theSessionContext.isCallerInRole("/Policy/Mis/Patient/EnableLimitPsychAreas");
+        boolean isEnableLimitAreas = sessionContext.isCallerInRole("/Policy/Mis/Patient/EnableLimitPsychAreas");
         String fiIdprev = null;
         if (aIdNext != null) {
             List<Object[]> infoNext = manager.createNativeQuery("select lastname,firstname,middlename from patient where id=" + aIdNext).getResultList();
@@ -1258,7 +1256,7 @@ public class PatientServiceBean implements IPatientService {
         sqlFld.append(" ) as fondinfo ");
 
         if (isEnableLimitAreas) {
-            String username = theSessionContext.getCallerPrincipal().toString();
+            String username = sessionContext.getCallerPrincipal().toString();
             QueryClauseBuilder builder = new QueryClauseBuilder();
             StringBuilder sql = new StringBuilder();
             sqlFld = new StringBuilder();
@@ -1426,7 +1424,7 @@ public class PatientServiceBean implements IPatientService {
             if (!isNullOrEmpty(aLastname) && (ret1.isEmpty() && ret2.isEmpty() && ret3.isEmpty())) {
                 appendNativeToList(findByPatientSync(sqlFld, aLastname, aYear), ret3, null, true);
             }
-            if (theSessionContext.isCallerInRole("/Policy/Mis/Patient/FindByCommonNumber")) {
+            if (sessionContext.isCallerInRole("/Policy/Mis/Patient/FindByCommonNumber")) {
                 // Поиск по RZ
                 if (!isNullOrEmpty(aLastname) && (ret1.isEmpty() && ret2.isEmpty() && ret3.isEmpty())) {
                     appendNativeToList(findByPatientRz(sqlFld, aLastname, aYear), ret3, null, true);
@@ -1589,9 +1587,9 @@ public class PatientServiceBean implements IPatientService {
             throw new IllegalStateException("Нет прикрепленного ЛПУ");
         } else {
             try {
-                theLpuAreaDynamicSecurity.check("Edit", point
+                lpuAreaDynamicSecurity.check("Edit", point
                                 .getLpuAreaAddressText().getArea().getId(),
-                        new InterceptorContext(manager, theSessionContext));
+                        new InterceptorContext(manager, sessionContext));
             } catch (Exception e) {
                 LOG.error(e);
                 throw new IllegalStateException(e);
@@ -1610,7 +1608,7 @@ public class PatientServiceBean implements IPatientService {
                                          String aBuilding, Date aBirthday, String aFlat) {
         // ребенок, если < 18 и есть дата рождения
         boolean isChild = aBirthday != null && AgeUtil.calcAgeYear(aBirthday, new java.util.Date()) < 18;
-        EntityManager manager = this.manager; // theFactory.createEntityManager();
+        EntityManager manager = this.manager; // factory.createEntityManager();
         StringBuilder sb = new StringBuilder();
         sb.append("from LpuAreaAddressPoint where address = :address ");
         if (isChild) {
@@ -1786,10 +1784,10 @@ public class PatientServiceBean implements IPatientService {
     private @PersistenceContext
     EntityManager manager;
 
-    private final LpuAreaDynamicSecurity theLpuAreaDynamicSecurity = new LpuAreaDynamicSecurity();
+    private final LpuAreaDynamicSecurity lpuAreaDynamicSecurity = new LpuAreaDynamicSecurity();
 
     private @Resource
-    SessionContext theSessionContext;
+    SessionContext sessionContext;
 
     public String getConfigValue(String aConfigName, String aDefaultValue) {
         EjbEcomConfig config = EjbEcomConfig.getInstance();

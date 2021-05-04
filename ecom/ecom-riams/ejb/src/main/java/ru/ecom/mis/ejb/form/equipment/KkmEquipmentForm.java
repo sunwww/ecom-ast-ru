@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.equipment;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.equipment.KkmEquipment;
 import ru.ecom.mis.ejb.form.lpu.MisLpuForm;
@@ -15,20 +16,19 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Оборудование", nameProperties= "name", view="entityView-mis_kkmequipment.do", list="entityParentList-mis_kkmequipment.do")
 @Parent(property="lpu", parentForm= MisLpuForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Equipment/KkmEquipment")
+@Setter
 public class KkmEquipmentForm extends EquipmentForm {
     /** Название */
     @Comment("Название")
     @Persist
-    public String getName() {return theName;}
-    public void setName(String aName) {theName = aName;}
+    public String getName() {return name;}
     /** Название */
-    private String theName;
+    private String name;
 
     /** URL аппарата */
     @Persist
     @Comment("URL аппарата ")
-    public String getUrl() {    return theUrl ;}
-    public void setUrl(String aUrl ) {  theUrl = aUrl ; }
+    public String getUrl() {    return url ;}
     /** URL аппарата */
-    private String theUrl;
+    private String url;
 }

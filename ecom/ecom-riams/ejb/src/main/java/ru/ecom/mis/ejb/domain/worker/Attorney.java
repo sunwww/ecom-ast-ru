@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.worker;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.worker.voc.VocAttorneyType;
@@ -11,22 +13,18 @@ import javax.persistence.Transient;
 import java.sql.Date;
 
 @Entity
+@Getter
+@Setter
 public class Attorney extends BaseEntity {
 	
 	/** Лицо, на которое выдана доверенность */
 	@Comment("Лицо, на которое выдана доверенность")
 	@OneToOne
-	public Patient getPerson() {return thePerson;}
-	public void setPerson(Patient aPerson) {thePerson = aPerson;}
-	/** Лицо, на которое выдана доверенность */
-	private Patient thePerson;
+	public Patient getPerson() {return person;}
+	private Patient person;
 	
 	/** ФИО в родительном падеже */
-	@Comment("ФИО в родительном падеже")
-	public String getAltPersonInfo() {return theAltPersonInfo;}
-	public void setAltPersonInfo(String aAltPersonInfo) {theAltPersonInfo = aAltPersonInfo;}
-	/** ФИО в родительном падеже */
-	private String theAltPersonInfo;
+	private String altPersonInfo;
 	
 	/** Фамилия И.О. */
 	@Comment("Фамилия И.О.")
@@ -36,43 +34,26 @@ public class Attorney extends BaseEntity {
 			return null;
 		}
 		Patient p =  getPerson();
-		return p.getLastname() +" "+p.getFirstname().substring(0,1)+" "+p.getMiddlename().substring(0,1);
+		return p.getLastname() +" "+p.getFirstname().charAt(0)+" "+p.getMiddlename().charAt(0);
 	}
 	
 	/** Номер доверенности */
-	@Comment("Номер доверенности")
-	public String getAttorneyNumber() {return theAttorneyNumber;}
-	public void setAttorneyNumber(String aAttorneyNumber) {theAttorneyNumber = aAttorneyNumber;}
-	/** Номер доверенности */
-	private String theAttorneyNumber;
+	private String attorneyNumber;
 	
 	/** Дата выдачи доверенности */
-	@Comment("Дата выдачи доверенности")
-	public Date getAttorneyStartDate() {return theAttorneyStartDate;}
-	public void setAttorneyStartDate(Date aAttorneyStartDate) {theAttorneyStartDate = aAttorneyStartDate;}
-	/** Дата выдачи доверенности */
-	private Date theAttorneyStartDate;
+	private Date attorneyStartDate;
 	
 	/** Недействительна */
-	@Comment("Недействительна")
-	public Boolean getIsArchive() {return theIsArchive;}
-	public void setIsArchive(Boolean aIsArchive) {theIsArchive = aIsArchive;}
-	/** Недействительна */
-	private Boolean theIsArchive;
+	private Boolean isArchive;
 	
 	/** Тип доверенности */
 	@Comment("Тип доверенности")
 	@OneToOne
-	public VocAttorneyType getType() {return theType;}
-	public void setType(VocAttorneyType aType) {theType = aType;}
+	public VocAttorneyType getType() {return type;}
 	/** Тип доверенности */
-	private VocAttorneyType theType;
+	private VocAttorneyType type;
 	
 	/** Использовать в системе по умолчанию */
-	@Comment("Использовать в системе по умолчанию")
-	public Boolean getIsDefault() {return theIsDefault;}
-	public void setIsDefault(Boolean aIsDefault) {theIsDefault = aIsDefault;}
-	/** Использовать в системе по умолчанию */
-	private Boolean theIsDefault;
+	private Boolean isDefault;
 
 }

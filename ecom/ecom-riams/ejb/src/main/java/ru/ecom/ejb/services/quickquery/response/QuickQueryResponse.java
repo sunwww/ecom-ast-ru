@@ -1,28 +1,19 @@
 package ru.ecom.ejb.services.quickquery.response;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 
+@Getter
+@Setter
 public class QuickQueryResponse implements Serializable {
 
-	/** Название */
-	public String getName() {
-		return theName;
-	}
-
-	public void setName(String aName) {
-		theName = aName;
-	}
 
 	/** Название */
-	private String theName;
+	private String name;
 	/** Запросы */
-	public Collection<QuickQuery> getQueries() {
-		return theQueries;
-	}
-
-
-	/** Запросы */
-	private final Collection<QuickQuery> theQueries = new LinkedList<QuickQuery>();
+	private final Collection<QuickQuery> queries = new LinkedList<QuickQuery>();
 }

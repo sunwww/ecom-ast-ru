@@ -1,6 +1,8 @@
 package ru.ecom.oncological.ejb.domain;
 
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
@@ -17,6 +19,8 @@ import java.sql.Date;
  */
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class OncologyDirection extends BaseEntity {
 
     /** Случай окологического лечения */
@@ -35,17 +39,11 @@ public class OncologyDirection extends BaseEntity {
     public OncologyCase getOncologyCase() {
         return oncologyCase;
     }
-    public void setOncologyCase(OncologyCase oncologyCase) {
-        this.oncologyCase = oncologyCase;
-    }
 
     @Comment("Метод диагностического лечения")
     @OneToOne
     public VocOncologyMethodDiagTreat getMethodDiagTreat() {
         return methodDiagTreat;
-    }
-    public void setMethodDiagTreat(VocOncologyMethodDiagTreat methodDiagTreat) {
-        this.methodDiagTreat = methodDiagTreat;
     }
 
     @Comment("Вид направления")
@@ -53,32 +51,17 @@ public class OncologyDirection extends BaseEntity {
     public VocOncologyTypeDirection getTypeDirection() {
         return typeDirection;
     }
-    public void setTypeDirection(VocOncologyTypeDirection typeDirection) {
-        this.typeDirection = typeDirection;
-    }
 
     @Comment("мед услуга по V001")
     @OneToOne
     public VocMedService getMedService() {
         return medService;
     }
-    public void setMedService(VocMedService medService) {
-        this.medService = medService;
-    }
-
-    @Comment("Дата направления")
-    public Date getDate() {
-        return date;
-    }
-    public void setDate(Date date) {
-        this.date = date;
-    }
 
     /** ЛПУ, куда сделано направление */
     @Comment("ЛПУ, куда сделано направление")
     @OneToOne
-    public MisLpu getDirectLpu() {return theDirectLpu;}
-    public void setDirectLpu(MisLpu aDirectLpu) {theDirectLpu = aDirectLpu;}
+    public MisLpu getDirectLpu() {return directLpu;}
     /** ЛПУ, куда сделано направление */
-    private MisLpu theDirectLpu ;
+    private MisLpu directLpu ;
 }

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -15,49 +17,32 @@ import java.sql.Date;
                 , query="from Covid19Contact where card.patient=:patient" +
                 " order by lastname, firstname, middlename ")
 })
+@Getter
+@Setter
 public class Covid19Contact extends BaseEntity {
 
     /** Карта коронавируса 19 */
     @Comment("Карта коронавируса 19")
     @ManyToOne
-    public Covid19 getCard() {return theCard;}
-    public void setCard(Covid19 aCard) {theCard = aCard;}
-    private Covid19 theCard ;
+    public Covid19 getCard() {return card;}
+    private Covid19 card ;
 
     /** Фамилия */
-    @Comment("Фамилия")
-    public String getLastname() {return theLastname;}
-    public void setLastname(String aLastname) {theLastname = aLastname;}
-    private String theLastname ;
+    private String lastname ;
 
     /** Имя */
-    @Comment("Имя")
-    public String getFirstname() {return theFirstname;}
-    public void setFirstname(String aFirstname) {theFirstname = aFirstname;}
-    private String theFirstname ;
+    private String firstname ;
 
     /** Отчество */
-    @Comment("Отчество")
-    public String getMiddlename() {return theMiddlename;}
-    public void setMiddlename(String aMiddlename) {theMiddlename = aMiddlename;}
-    private String theMiddlename ;
+    private String middlename ;
 
     /** Дата рождения */
-    @Comment("Дата рождения")
-    public Date getBirthDate() {return theBirthDate;}
-    public void setBirthDate(Date aBirthDate) {theBirthDate = aBirthDate;}
-    private Date theBirthDate ;
+    private Date birthDate ;
 
     /** Телефон */
-    @Comment("Телефон")
-    public String getPhone() {return thePhone;}
-    public void setPhone(String aPhone) {thePhone = aPhone;}
-    private String thePhone ;
+    private String phone ;
 
     /** Адресс */
-    @Comment("Адресс")
-    public String getAddress() {return theAddress;}
-    public void setAddress(String aAddress) {theAddress = aAddress;}
-    private String theAddress ;
+    private String address ;
 
 }

@@ -26,8 +26,7 @@ public class JbossGetFileServiceBean implements IJbossGetFileService, IJbossGetF
     private static final Logger LOG = Logger.getLogger(JbossGetFileServiceBean.class) ;
     
 
-    private static long theNext = 1;
-    //private static SimpleDateFormat FORMAT = new SimpleDateFormat("yyyyMMddHHmmssSSSSSS");
+    private static long next = 1;
 
     private String getTomcatExportDir() {
         Properties prop = new Properties();
@@ -47,10 +46,10 @@ public class JbossGetFileServiceBean implements IJbossGetFileService, IJbossGetF
     }
 
     public String getRelativeFilename(long aFileId) {
-        if(!theHash.containsKey(aFileId)) {
+        if(!hash.containsKey(aFileId)) {
             throw new IllegalArgumentException("Нет загеристрированного файла с идентификатором "+aFileId) ;
         }
-        return theHash.get(aFileId).getRelativeFilename() ;
+        return hash.get(aFileId).getRelativeFilename() ;
     }
 
     // IKO 070404 +++
@@ -64,7 +63,6 @@ public class JbossGetFileServiceBean implements IJbossGetFileService, IJbossGetF
         sb.append(getRelativeFilename(aFileId));
         return sb.toString();
     }
-    // IKO 070404 ===
 
     private String getUniqueString() {
         return new SimpleDateFormat("yyyyMMddHHmmssSSSSSS").format(new Date()) ;
@@ -72,26 +70,26 @@ public class JbossGetFileServiceBean implements IJbossGetFileService, IJbossGetF
 
     public long register() {
         long id = getNext() ;
-        String sb = theContext.getCallerPrincipal().getName() +
+        String sb = context.getCallerPrincipal().getName() +
                 '/' + getUniqueString() + '/' + id;
         JbossFileInfoLocal file = new JbossFileInfoLocal(id, getTomcatExportDir(), sb);
-        theHash.put(id, file) ;
+        hash.put(id, file) ;
         return id ;
     }
 
     public File createFile(long aId, String aFilename) {
-        if(!theHash.containsKey(aId)) {
+        if(!hash.containsKey(aId)) {
             throw new IllegalArgumentException("Нет загеристрированного файла с идентификатором "+aId) ;
         }
-        return theHash.get(aId).createFile(aFilename) ;
+        return hash.get(aId).createFile(aFilename) ;
     }
 
     private static synchronized long getNext() {
-        return theNext++ ;
+        return next++ ;
     }
 
 
-    private final HashMap<Long, JbossFileInfoLocal> theHash = new HashMap<>();
-    private @Resource SessionContext theContext;
+    private final HashMap<Long, JbossFileInfoLocal> hash = new HashMap<>();
+    private @Resource SessionContext context;
 
 }

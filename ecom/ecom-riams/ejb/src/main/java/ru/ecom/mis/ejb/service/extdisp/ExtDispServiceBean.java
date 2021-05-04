@@ -44,7 +44,7 @@ import java.util.Map;
  *
  */
 public class ExtDispServiceBean implements IExtDispService {
-	private @PersistenceContext EntityManager theManager;
+	private @PersistenceContext EntityManager manager;
 	private static final Logger LOG = Logger.getLogger(ExtDispServiceBean.class);
 
 	/*Упаковка в архив файлов */
@@ -106,7 +106,7 @@ public class ExtDispServiceBean implements IExtDispService {
 				+",pwr.firstname as vrach_f "
 				+",pwr.middlename as vrach_m "
 				+",edc.isServiceIndication as cntIsServiceIndication " 
-				+",case when ml2.id is not null then ml2.name else ml.name end as lpuName " 
+				+",case when ml2.id is not null then ml2.name else ml.name end as lpuName "
 				+",case when ml2.id is not null then ml2.printAddress else ml.printAddress end as lpuAddress "
 				+",case when p.address_addressid is not null then adr.postindex||' :'||adrPar.kladr ||' :'||adr.kladr||' :'||p.housenumber||' :'||p.housebuilding||' :'||p.flatnumber ||' ' else '0' end as fullAddress "
 				+"from ExtDispCard edc " 
@@ -134,7 +134,7 @@ public class ExtDispServiceBean implements IExtDispService {
 				+"and cast(to_char(edc.finishDate,'yyyy')as int)-cast(to_char(p.birthday,'yyyy')as int)+ "
 				+"case when ((cast(to_char(edc.finishDate,'MM')as int))-cast(to_char(p.birthday,'MM')as int)<0) or "
 				+"((cast(to_char(edc.finishDate,'MM')as int))-cast(to_char(p.birthday,'MM')as int)=0 "
-				+ "and ((cast(to_char(edc.finishDate,'dd')as int))-cast(to_char(p.birthday,'dd')as int)<0)) then -1 else 0 end <18 " 
+				+ "and ((cast(to_char(edc.finishDate,'dd')as int))-cast(to_char(p.birthday,'dd')as int)<0)) then -1 else 0 end <18 "
 				+aSqlAdd
 				+"order by p.lastname,p.firstname,p.middlename ";
 				
@@ -179,7 +179,7 @@ public class ExtDispServiceBean implements IExtDispService {
 				String diagnosis = rs.getString("mkbcode");
 				String healthG = rs.getString("vedhgcode");
 				String cardId = rs.getString("did");
-				extDispCard = theManager.find(ExtDispCard.class,Long.valueOf(cardId));
+				extDispCard = manager.find(ExtDispCard.class,Long.valueOf(cardId));
 				String passId = rs.getString("passID");
 				String commonNumber = rs.getString("RZ");
 				String patientInfo = rs.getString("patientinfo");
@@ -415,7 +415,7 @@ public class ExtDispServiceBean implements IExtDispService {
 					rootElement = new Element("children");
 				}
 				extDispCard.setExportDate(currentDate);
-				theManager.persist(extDispCard);
+				manager.persist(extDispCard);
 			}
 			if (!rootElement.getChildren().isEmpty()) {
 				xmlFilenames.add(createFile(rootElement, xmlFilename));
@@ -510,7 +510,7 @@ public class ExtDispServiceBean implements IExtDispService {
 		codeMap.put("N1_009","11"); //Акушер-гинеколог
 
 		for (Map.Entry<String, String> map: codeMap.entrySet()) {
-			theManager.createNativeQuery("update VocExtDispService set orphCode=:orphCode where code=:code").setParameter("orphCode",map.getValue()).setParameter("code",map.getKey()).executeUpdate();
+			manager.createNativeQuery("update VocExtDispService set orphCode=:orphCode where code=:code").setParameter("orphCode",map.getValue()).setParameter("code",map.getKey()).executeUpdate();
 		}
 		return "Коды для экспорта успешно добавлены.";
 	}

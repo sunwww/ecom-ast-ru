@@ -4,7 +4,6 @@ package ru.ecom.api.promed;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import ru.ecom.api.record.ApiRecordServiceBean;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
 import ru.ecom.mis.ejb.domain.medcase.ShortMedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
@@ -76,7 +75,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
      */
     private HashMap<Long, Object[]> doctorMap = new HashMap<>();
     private @PersistenceContext
-    EntityManager theManager;
+    EntityManager manager;
 
     /**
      * Получить cписок закрытых случаев поликлинического обслуживания в JSON.
@@ -97,7 +96,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
         for (BigInteger bigInteger : list) {
             JSONObject json = new JSONObject();
             Long polyclinicCaseId = bigInteger.longValue();
-            PolyclinicMedCase polyclinicCase = theManager.find(PolyclinicMedCase.class, polyclinicCaseId);
+            PolyclinicMedCase polyclinicCase = manager.find(PolyclinicMedCase.class, polyclinicCaseId);
             json.put(POLYCLINICID, polyclinicCaseId)
                     .put(ISCASEFINISHED, "1");
 
@@ -143,7 +142,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
      * @return List<BigInteger>
      */
     private List<BigInteger> getNeoUzi(Date dateTo, String serviceStream, boolean isUpload) {
-        return theManager.createNativeQuery("select m.id from medcase m " +
+        return manager.createNativeQuery("select m.id from medcase m " +
                 " left join vocservicestream vss on vss.id=m.servicestream_id" +
                 " left join medcase vis on vis.parent_id=m.id" +
                 " left join medcase smc on smc.parent_id=vis.id" +
@@ -164,7 +163,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
      * @return List<BigInteger>
      */
     private List<BigInteger> getAllVisitsBeforeDate(Date dateTo, String serviceStream, boolean isUpload) {
-        return theManager.createNativeQuery("select m.id from medcase m " +
+        return manager.createNativeQuery("select m.id from medcase m " +
                 "left join vocservicestream vss on vss.id=m.servicestream_id" +
                 " left join workfunction wf on wf.id=m.finishfunction_id" +
                 " left join vocworkfunction  vwf on vwf.id=wf.workfunction_id" +
@@ -184,7 +183,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
      * @return Long
      */
     private Object[] getDiagnosisFromDiagnosisInVisit(Long visitId) {
-        List<String[]> mkbPromedCode = theManager.createNativeQuery("select mkb.promedCode as dPromed,mkb.code as dCode" +
+        List<String[]> mkbPromedCode = manager.createNativeQuery("select mkb.promedCode as dPromed,mkb.code as dCode" +
                 " from diagnosis ds" +
                 " left join vocidc10 mkb on mkb.id=ds.idc10_id" +
                 " left join vocprioritydiagnosis vpd on vpd.id=ds.priority_id" +
@@ -200,7 +199,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
      */
     private List<ShortMedCase> getAllVisitsInSpo(Long polyclinicCaseId, boolean isUpload) {
         String upStr = isUpload ? " and (upload is null or upload=false)" : "";
-        return theManager.createQuery("from ShortMedCase where parent_id  = :parentId and (noActuality is null or noActuality='0') and dateStart is not null " + upStr + " order by dateStart , timeExecute ")
+        return manager.createQuery("from ShortMedCase where parent_id  = :parentId and (noActuality is null or noActuality='0') and dateStart is not null " + upStr + " order by dateStart , timeExecute ")
                 .setParameter("parentId", polyclinicCaseId).getResultList();
     }
 
@@ -211,14 +210,14 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
      * @return String
      */
     private String getDiaryInVisit(Long visitId) {
-        List<String> diary = theManager.createNativeQuery("select record from Diary where medcase_id=:visitId")
+        List<String> diary = manager.createNativeQuery("select record from Diary where medcase_id=:visitId")
                 .setParameter("visitId", visitId).getResultList();
         return diary.isEmpty() ? "" : diary.get(0);
     }
 
     private Object[] getDoctorInfo(Long wfId) {
         if (doctorMap.containsKey(wfId)) return doctorMap.get(wfId); //Не будем каждый раз искать врача в БД
-        List<Object[]> docInfoList = theManager.createNativeQuery("select wf.id,vwf.name, wpat.lastname,wpat.firstname,wpat.middlename,wpat.snils,wf.promedCode_workstaff as promedCode" +
+        List<Object[]> docInfoList = manager.createNativeQuery("select wf.id,vwf.name, wpat.lastname,wpat.firstname,wpat.middlename,wpat.snils,wf.promedCode_workstaff as promedCode" +
                 " from Workfunction wf" +
                 " left join Worker w on w.id=wf.worker_id" +
                 " left join VocWorkfunction vwf on vwf.id=wf.workfunction_id" +
@@ -317,12 +316,12 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
             res.put("status", "error")
                     .put("reason", "medcase_id is null");
         } else {
-            List<String> info = theManager.createNativeQuery("select promedcode from medcase where id=:medcaseId").setParameter("medcaseId", medcaseId).getResultList();
+            List<String> info = manager.createNativeQuery("select promedcode from medcase where id=:medcaseId").setParameter("medcaseId", medcaseId).getResultList();
             if (info.isEmpty()) {
                 res.put("status", "error")
                         .put("reason", "medcase not found");
             } else {
-                theManager.createNativeQuery("update medcase set promedcode=:tapId,upload=true where id=:medcaseId")
+                manager.createNativeQuery("update medcase set promedcode=:tapId,upload=true where id=:medcaseId")
                         .setParameter("tapId", tapId.toString()).setParameter("medcaseId", medcaseId).executeUpdate();
                 res.put("status", "ok");
             }
@@ -342,7 +341,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
             res.put("status", "error")
                     .put("reason", "workfunction is null");
         } else {
-            List<Object[]> info = theManager.createNativeQuery("select wpat.lastname||' '||wpat.firstname||' '||wpat.middlename,dep.name as dep" +
+            List<Object[]> info = manager.createNativeQuery("select wpat.lastname||' '||wpat.firstname||' '||wpat.middlename,dep.name as dep" +
                     " ,wf.promedcode_lpusection as promedcode_lpusection,wf.promedcode_workstaff as promedcode_workstaff" +
                     " from Workfunction wf" +
                     " left join Worker w on w.id=wf.worker_id" +
@@ -383,12 +382,12 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
             res.put("status", "error")
                     .put("reason", "workfunction is null");
         } else {
-            List<String> info = theManager.createNativeQuery("select id from workfunction where id=:workfunctionId").setParameter("workfunctionId", workfunctionId).getResultList();
+            List<String> info = manager.createNativeQuery("select id from workfunction where id=:workfunctionId").setParameter("workfunctionId", workfunctionId).getResultList();
             if (info.isEmpty()) {
                 res.put("status", "error")
                         .put("reason", "workfunction not found");
             } else {
-                theManager.createNativeQuery("update workfunction set promedcode_lpusection=:promedcode_lpusection,promedcode_workstaff=:promedcode_workstaff where id=:workfunctionId")
+                manager.createNativeQuery("update workfunction set promedcode_lpusection=:promedcode_lpusection,promedcode_workstaff=:promedcode_workstaff where id=:workfunctionId")
                         .setParameter("promedcode_lpusection", promedcodeLpuSection)
                         .setParameter("promedcode_workstaff", promedcodeWorkstaff)
                         .setParameter("workfunctionId", workfunctionId).executeUpdate();

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.worker;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.worker.voc.VocPost;
@@ -15,43 +16,37 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Должность")
 @WebTrail(comment = "Должность", nameProperties= "name", view="entityView-voc_post.do")
 @EntityFormSecurityPrefix("/Policy/Voc/VocPost")
+@Setter
 public class VocPostForm extends IdEntityForm {
 	
     /** Код профиля отделения для стационара или специалиста для поликлиники */
 	@Comment("Код профиля отделения для стационара или специалиста для поликлиники")
 	@Persist
-	public Long getOmcDepType() {return theOmcDepType;}
-	public void setOmcDepType(Long aOmcDepType) {theOmcDepType = aOmcDepType;}
+	public Long getOmcDepType() {return omcDepType;}
 	/** Код профиля отделения для стационара или специалиста для поликлиники */
-	private Long theOmcDepType;
+	private Long omcDepType;
 	
 	/** Врачебная должность по ОМС */
 	@Comment("Врачебная должность по ОМС")
 	@Persist
-	public Long getOmcDoctorPost() {return theOmcDoctorPost;}
-	public void setOmcDoctorPost(Long aOmcDoctorPost) {theOmcDoctorPost = aOmcDoctorPost;}
+	public Long getOmcDoctorPost() {return omcDoctorPost;}
 	/** Врачебная должность по ОМС */
-	private Long theOmcDoctorPost;
+	private Long omcDoctorPost;
 
     /** Название */
     @Comment("Наименование")
     @Persist @Required
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
-    
+    public String getName() { return name ; }
+
     /** Внешний код */
 	@Comment("Внешний код")
 	@Persist
 	public String getCode() {
-		return theCode;
-	}
-
-	public void setCode(String aCode) {
-		theCode = aCode;
+		return code;
 	}
 
 	/** Внешний код */
-	private String theCode;
+	private String code;
     /** Название */
-    private String theName ;
+    private String name ;
 }

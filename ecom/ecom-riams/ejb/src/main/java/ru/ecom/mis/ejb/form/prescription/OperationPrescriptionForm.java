@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.prescription;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -26,6 +27,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(PrescriptionPreCreateInterceptor.class)
 )
+@Setter
 public class OperationPrescriptionForm extends ServicePrescriptionForm {
 
     /**
@@ -35,14 +37,10 @@ public class OperationPrescriptionForm extends ServicePrescriptionForm {
     @Persist
     @Required
     public Long getIntakeSpecial() {
-        return theIntakeSpecial;
+        return intakeSpecial;
     }
 
-    public void setIntakeSpecial(Long aIntakeSpecial) {
-        theIntakeSpecial = aIntakeSpecial;
-    }
-
-    private Long theIntakeSpecial;
+    private Long intakeSpecial;
 
     /**
      * Продолжительность услуги (операции)
@@ -50,15 +48,9 @@ public class OperationPrescriptionForm extends ServicePrescriptionForm {
     @Comment("Продолжительность услуги (операции)")
     @Required
     public Integer getDuration() {
-        return theDuration;
+        return duration;
     }
-
-    public void setDuration(Integer aDuration) {
-        theDuration = aDuration;
-    }
-
-    private Integer theDuration;
-
+    private Integer duration;
 
     /**
      * Плановое время начала
@@ -68,14 +60,9 @@ public class OperationPrescriptionForm extends ServicePrescriptionForm {
     @TimeString
     @DoTimeString
     public String getPlanStartTime() {
-        return thePlanStartTime;
+        return planStartTime;
     }
-
-    public void setPlanStartTime(String aPlanStartTime) {
-        thePlanStartTime = aPlanStartTime;
-    }
-
-    private String thePlanStartTime;
+    private String planStartTime;
 
     /**
      * Медицинская услуга
@@ -84,14 +71,9 @@ public class OperationPrescriptionForm extends ServicePrescriptionForm {
     @Persist
     @Required
     public Long getMedService() {
-        return theMedService;
+        return medService;
     }
-
-    public void setMedService(Long aMedService) {
-        theMedService = aMedService;
-    }
-
-    private Long theMedService;
+    private Long medService;
 
 
     /**
@@ -99,14 +81,9 @@ public class OperationPrescriptionForm extends ServicePrescriptionForm {
      */
     @Comment("Время для направления на операцию")
     public Long getSurgCalTime() {
-        return theSurgCalTime;
+        return surgCalTime;
     }
-
-    public void setSurgCalTime(Long aSurgCalTime) {
-        theSurgCalTime = aSurgCalTime;
-    }
-
-    private Long theSurgCalTime;
+    private Long surgCalTime;
 
     /**
      * Дата для направления на операцию
@@ -114,14 +91,9 @@ public class OperationPrescriptionForm extends ServicePrescriptionForm {
     @Comment("Дата для направления на операцию")
     @Required
     public Long getSurgCalDate() {
-        return theSurgCalDate;
+        return surgCalDate;
     }
-
-    public void setSurgCalDate(Long aSurgCalDate) {
-        theSurgCalDate = aSurgCalDate;
-    }
-
-    private Long theSurgCalDate;
+    private Long surgCalDate;
 
     /**
      * Операционная
@@ -130,14 +102,9 @@ public class OperationPrescriptionForm extends ServicePrescriptionForm {
     @Required
     @Persist
     public Long getPrescriptCabinet() {
-        return thePrescriptCabinet;
+        return prescriptCabinet;
     }
-
-    public void setPrescriptCabinet(Long aPrescriptCabinet) {
-        thePrescriptCabinet = aPrescriptCabinet;
-    }
-
-    private Long thePrescriptCabinet;
+    private Long prescriptCabinet;
 
     /**
      * Вид наркоза
@@ -146,20 +113,13 @@ public class OperationPrescriptionForm extends ServicePrescriptionForm {
     @Persist
     @Required
     public Long getAnesthesiaType() {
-        return theAnesthesiaType;
+        return anesthesiaType;
     }
-
-    public void setAnesthesiaType(Long aAnesthesiaType) {
-        theAnesthesiaType = aAnesthesiaType;
-    }
-
-    private Long theAnesthesiaType;
+    private Long anesthesiaType;
 
     /** Отделение */
     @Comment("Отделение")
     @Required
-    public Long getDepartment() {return theDepartment;}
-    public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
-    /** Отделение */
-    private Long theDepartment;
+    public Long getDepartment() {return department;}
+    private Long department;
 }

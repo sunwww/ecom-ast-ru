@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.AFormatFieldSuggest;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -16,84 +18,66 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 )
 @Table(schema="SQLUser")
 @NamedQuery(name="KladrDoma.findByKladrCode", query="from KladrDoma where code=:code")
+@Setter
+@Getter
 public class KladrDoma extends OmcAbstractVoc {
 	
 	/** Корпус */
 	@Comment("Корпус")
 	@AFormatFieldSuggest("KORP")
 	public String getHouseBuilding() {
-		return theHouseBuilding;
+		return houseBuilding;
 	}
 
 	/** Сокращение */
 	@Comment("Сокращение")
 	@AFormatFieldSuggest("SOCR")
 	public String getSocr() {
-		return theSocr;
-	}
-
-	public void setSocr(String aSocr) {
-		theSocr = aSocr;
-	}
-
-	public void setHouseBuilding(String aHouseBuilding) {
-		theHouseBuilding = aHouseBuilding;
+		return socr;
 	}
 
 	/** Почтовый индекс */
 	@Comment("Почтовый индекс")
 	@AFormatFieldSuggest("INDEX")
 	public String getPostIndex() {
-		return thePostIndex;
-	}
-
-	public void setPostIndex(String aPostIndex) {
-		thePostIndex = aPostIndex;
+		return postIndex;
 	}
 
 	/** ГНИ */
 	@Comment("ГНИ")
 	@AFormatFieldSuggest("GNINMB")
 	public String getGninmb() {
-		return theGnimb;
+		return gnimb;
 	}
 
 	public void setGninmb(String aGnimb) {
-		theGnimb = aGnimb;
+		gnimb = aGnimb;
 	}
 
 	/** UNO */
 	@Comment("UNO")
 	@AFormatFieldSuggest("UNO")
 	public String getUno() {
-		return theUno;
-	}
-
-	public void setUno(String aUno) {
-		theUno = aUno;
+		return uno;
 	}
 
 	/** ОКАТД */
 	@Comment("ОКАТД")
 	@AFormatFieldSuggest("OCATD")
 	public String getOcatd() {
-		return theOcatd;
-	}
-
-	public void setOcatd(String aOcatd) {
-		theOcatd = aOcatd;
+		return ocatd;
 	}
 
 	/** ОКАТД */
-	private String theOcatd;
+	private String ocatd;
 	/** UNO */
-	private String theUno;
+	private String uno;
 	/** ГНИ */
-	private String theGnimb;
+	private String gnimb;
 	/** Почтовый индекс */
-	private String thePostIndex;
+	private String postIndex;
 	/** Сокращение */
-	private String theSocr;
+	private String socr;
 	/** Корпус */
-	private String theHouseBuilding;
+	private String houseBuilding;
 }

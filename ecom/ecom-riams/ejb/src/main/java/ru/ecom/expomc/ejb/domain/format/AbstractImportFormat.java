@@ -4,6 +4,8 @@
  */
 package ru.ecom.expomc.ejb.domain.format;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportDocument;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -20,36 +22,26 @@ import java.sql.Date;
     discriminatorType=DiscriminatorType.STRING
 )
 @DiscriminatorValue("-")
+@Getter
+@Setter
 public class AbstractImportFormat extends BaseEntity {
     /** Дата с которой начинает действовать формат */
-    public Date getActualDateFrom() { return theActualDateFrom ; }
-    public void setActualDateFrom(Date aActualDateFrom) { theActualDateFrom = aActualDateFrom ; }
-    private Date theActualDateFrom ;
+    private Date actualDateFrom;
 
     /** Дата, до которой формат действует */
-    public Date getActualDateTo() { return theActualDateTo ; }
-    public void setActualDateTo(Date aActualDateTo) { theActualDateTo = aActualDateTo ; }
-    private Date theActualDateTo ;
+    private Date actualDateTo;
 
     /** Комментарий к формату */
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
-    private String theComment ;
+    private String comment;
 
     /** Отключен */
-    public boolean isDisabled() { return theDisabled ; }
-    public void setDisabled(boolean aDisabled) { theDisabled = aDisabled ; }
-    private boolean theDisabled ;
+    private boolean disabled;
 
     /** Документ импорта */
     @ManyToOne
-    public ImportDocument getDocument() { return theDocument ; }
-    public void setDocument(ImportDocument aDocument) { theDocument = aDocument ; }
-    private ImportDocument theDocument ;
+    public ImportDocument getDocument() { return document; }
+    private ImportDocument document;
 
     /** Системный формат импорта */
-	@Comment("Системный формат импорта")
-	public Boolean getSystemFormat() {return theSystemFormat;}
-	public void setSystemFormat(Boolean aSystemFormat) {theSystemFormat = aSystemFormat;}
-	private Boolean theSystemFormat;
+	private Boolean systemFormat;
 }

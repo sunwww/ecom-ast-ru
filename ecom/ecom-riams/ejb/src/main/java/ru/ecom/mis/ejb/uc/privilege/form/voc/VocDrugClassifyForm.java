@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.uc.privilege.form.voc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -21,7 +22,6 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance(clazz= VocDrugClassify.class)
 @WebTrail(comment = "Лекарственное средство (торг.)", nameProperties= {"name"}, view="entityView-voc_drug.do")
-//@Parent(property="parent", parentForm=DrugClassificatorForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Drug")
 @ASaveInterceptors(
         @AEntityFormInterceptor(DrugSaveInterceptor.class)
@@ -33,144 +33,106 @@ import ru.nuzmsh.forms.validator.validators.Required;
 	@AEntityFormInterceptor(DrugSaveInterceptor.class)
 	
 })
+@Setter
 public class VocDrugClassifyForm extends IdEntityForm {
 	/** Код */
 	@Comment("Код")
 	@Persist
 	public String getCode() {
-		return theCode;
-	}
-
-	public void setCode(String aCode) {
-		theCode = aCode;
+		return code;
 	}
 
 	/** Код */
-	private String theCode;
+	private String code;
 	/** Позиции классификаторов */
 	@Comment("Позиции классификаторов")
 	public String getDrugClassificatorPositions() {
-		return theDrugClassificatorPositions;
-	}
-
-	public void setDrugClassificatorPositions(String aDrugClassificatorPositions) {
-		theDrugClassificatorPositions = aDrugClassificatorPositions;
+		return drugClassificatorPositions;
 	}
 
 	/** Позиции классификаторов */
-	private String theDrugClassificatorPositions;
+	private String drugClassificatorPositions;
 	
 	/** Производитель */
 	@Comment("Производитель")
 	@Persist
 	public Long getDrugVendor() {
-		return theDrugVendor;
-	}
-
-	public void setDrugVendor(Long aDrugVendor) {
-		theDrugVendor = aDrugVendor;
+		return drugVendor;
 	}
 
 	/** Производитель */
-	private Long theDrugVendor;
+	private Long drugVendor;
 	
 	/** Количество доз в упаковке */
 	@Comment("Количество доз в упаковке")
 	@Persist
 	public Integer getPackingAmount() {
-		return thePackingAmount;
-	}
-
-	public void setPackingAmount(Integer aPackingAmount) {
-		thePackingAmount = aPackingAmount;
+		return packingAmount;
 	}
 
 	/** Количество доз в упаковке */
-	private Integer thePackingAmount;
+	private Integer packingAmount;
 	
 	/** Дозировка */
 	@Comment("Дозировка")
 	@Persist
 	public String getDozage() {
-		return theDozage;
-	}
-
-	public void setDozage(String aDozage) {
-		theDozage = aDozage;
+		return dozage;
 	}
 
 	/** Дозировка */
-	private String theDozage;
+	private String dozage;
 	
 	/** Лекарственная форма */
 	@Comment("Лекарственная форма")
 	@Persist
 	public Long getDrugForm() {
-		return theDrugForm;
-	}
-
-	public void setDrugForm(Long aDrugForm) {
-		theDrugForm = aDrugForm;
+		return drugForm;
 	}
 
 	/** Лекарственная форма */
-	private Long theDrugForm;
+	private Long drugForm;
 	
 	/** Патентованное наименование */
 	@Comment("Патентованное наименование")
 	@Persist
 	public Long getLicensedName() {
-		return theLicensedName;
-	}
-
-	public void setLicensedName(Long aLicensedName) {
-		theLicensedName = aLicensedName;
+		return licensedName;
 	}
 
 	/** Патентованное наименование */
-	private Long theLicensedName;
+	private Long licensedName;
 	
 	/** Международное непатентованное наименование */
 	@Comment("Международное непатентованное наименование")
 	@Persist
 	public Long getDrugUnlicensedName() {
-		return theDrugUnlicensedName;
-	}
-
-	public void setDrugUnlicensedName(Long aDrugUnlicensedName) {
-		theDrugUnlicensedName = aDrugUnlicensedName;
+		return drugUnlicensedName;
 	}
 
 	/** Международное непатентованное наименование */
-	private Long theDrugUnlicensedName;
+	private Long drugUnlicensedName;
 	
 	/** Название */
 	@Comment("Название")
 	@Persist @Required
 	public String getName() {
-		return theName;
-	}
-
-	public void setName(String aName) {
-		theName = aName;
+		return name;
 	}
 
 	/** Пользователь */
 	@Comment("Пользователь")
 	@Persist
-	public String getUsername() {return theUsername;}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
+	public String getUsername() {return username;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DoDateString @DateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	/** Пользователь */
-	private String theUsername;
+	private String username;
 	/** Название */
-	private String theName;
+	private String name;
 }

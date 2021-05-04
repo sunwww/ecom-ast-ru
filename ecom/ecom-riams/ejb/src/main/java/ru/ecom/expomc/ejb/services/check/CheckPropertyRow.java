@@ -12,38 +12,38 @@ import java.io.Serializable;
 public class CheckPropertyRow implements Serializable {
 
     /** Идентификатор */
-    public Long getId() { return theId ; }
-    public void setId(Long aId) { theId = aId ; }
+    public Long getId() { return id ; }
+    public void setId(Long aId) { id = aId ; }
 
 
     /** Проверка */
-    public long getCheck() { return theCheck ; }
-    public void setCheck(long aCheck) { theCheck = aCheck ; }
+    public long getCheck() { return check ; }
+    public void setCheck(long aCheck) { check = aCheck ; }
 
     /** Свойство */
-    public String getProperty() { return theProperty ; }
-    public void setProperty(String aProperty) { theProperty = aProperty ; }
+    public String getProperty() { return property ; }
+    public void setProperty(String aProperty) { property = aProperty ; }
 
     /** Комментарий */
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
+    public String getComment() { return comment ; }
+    public void setComment(String aComment) { comment = aComment ; }
 
     /** Значение */
-    public String getValue() { return theValue ; }
-    public void setValue(String aValue) { theValue = aValue ; }
+    public String getValue() { return value ; }
+    public void setValue(String aValue) { value = aValue ; }
 
     public String getCheckAndProperty() {
-        return theCheck + "," + theProperty;
+        return check + "," + property;
     }
     /** Значение */
-    private String theValue ;
+    private String value ;
     /** Комментарий */
-    private String theComment ;
+    private String comment ;
     /** Свойство */
-    private String theProperty ;
+    private String property ;
     /** Проверка */
-    private long theCheck ;
+    private long check ;
     /** Идентификатор */
-    private Long theId ;
+    private Long id ;
 
 }

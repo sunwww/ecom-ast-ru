@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.util.DurationUtil;
@@ -22,72 +24,54 @@ import java.sql.Time;
 @Entity
 @AIndexes({
 	@AIndex(properties="ownerFunction", table="MedCase")
-}) 
+})
+@Getter
+@Setter
 public abstract class LongMedCase extends MedCase {
 
 	/** МКБ10*/
 	@Comment("МКБ10")
 	@OneToOne
-	public VocIdc10 getIdc10() {return theIdc10;}
-	public void setIdc10(VocIdc10 aNewProperty) {theIdc10 = aNewProperty;	}
+	public VocIdc10 getIdc10() {return idc10;}
 
 	/** Кто завершил */
 	@Comment("Кто завершил")
 	@OneToOne
-	public WorkFunction getFinishFunction() {return theFinishFunction;	}
-	public void setFinishFunction(WorkFunction aFinishWorker) {theFinishFunction = aFinishWorker;}
-
-	/** Время поступления */
-	@Comment("Время поступления")
-	public Time getEntranceTime() {	return theEntranceTime;	}
-	public void setEntranceTime(Time aEntranceTime) {theEntranceTime = aEntranceTime;}
-	
-	/** Время выписки */
-	@Comment("Время выписки")
-	public Time getDischargeTime() {return theDischargeTime;}
-	public void setDischargeTime(Time aDischargeTime) {theDischargeTime = aDischargeTime;	}
+	public WorkFunction getFinishFunction() {return finishFunction;	}
 
 	/** Рабочая функция лечащего врача */
 	@Comment("Рабочая функция лечащего врача")
 	@OneToOne
-	public WorkFunction getOwnerFunction() {	return theOwnerFunction;}
-	public void setOwnerFunction(WorkFunction aOwnerFunction) {	theOwnerFunction = aOwnerFunction;	}
-
+	public WorkFunction getOwnerFunction() {	return ownerFunction;}
 
 	/** Рабочая функция лечащего врача */
-	private WorkFunction theOwnerFunction;
+	private WorkFunction ownerFunction;
 
 	/** Время выписки */
-	private Time theDischargeTime;
+	private Time dischargeTime;
 	/** Время поступления */
-	private Time theEntranceTime;
+	private Time entranceTime;
 
 	/** Кто завершил */
-	private WorkFunction theFinishFunction;
+	private WorkFunction finishFunction;
 	/** МКБ10 */
-	private VocIdc10 theIdc10;
+	private VocIdc10 idc10;
 	
 	/** Откуда поступил */
 	@Comment("Откуда поступил")
 	@OneToOne
 	public VocHospType getSourceHospType() {
-		return theSourceHospType;
+		return sourceHospType;
 	}
-	public void setSourceHospType(VocHospType aSourceHospType) {
-		theSourceHospType = aSourceHospType;
-	}
-	private VocHospType theSourceHospType;
+	private VocHospType sourceHospType;
 	
 	/** Куда переведен */
 	@Comment("Куда переведен")
 	@OneToOne
 	public VocHospType getTargetHospType() {
-		return theTargetHospType;
+		return targetHospType;
 	}
-	public void setTargetHospType(VocHospType aTargetHospType) {
-		theTargetHospType = aTargetHospType;
-	}
-	private VocHospType theTargetHospType;
+	private VocHospType targetHospType;
 
 	
 	// [start] Вычисляемые поля

@@ -19,12 +19,12 @@ public class ApiServiceBean implements IApiService{
     }
 
     public Object persistEntityObj(Object object){
-        if (object!=null && theManager!=null) {
-            theManager.persist(object);
+        if (object!=null && manager!=null) {
+            manager.persist(object);
         }
         return object;
     }
 
-    private @PersistenceContext EntityManager theManager;
-    @Resource SessionContext theContext ;
+    private @PersistenceContext EntityManager manager;
+    @Resource SessionContext context ;
 }

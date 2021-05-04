@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarTimeInterval;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
@@ -16,6 +17,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 		, view="entityParentView-cal_timeInterval.do")
 @Parent(property="dayPattern", parentForm=WorkCalendarDayPatternForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/WorkCalendar/Pattern/Day/Time")
+@Setter
 public class WorkCalendarTimeIntervalForm extends WorkCalendarTimePatternForm{
 	/**
 	 * Начиная с времени
@@ -24,15 +26,12 @@ public class WorkCalendarTimeIntervalForm extends WorkCalendarTimePatternForm{
 	@Persist @Required
 	@TimeString @DoTimeString 
 	public String getTimeFrom() {
-		return theTimeFrom;
-	}
-	public void setTimeFrom(String aTimeFrom) {
-		theTimeFrom = aTimeFrom;
+		return timeFrom;
 	}
 	/**
 	 * Начиная с времени
 	 */
-	private String theTimeFrom;
+	private String timeFrom;
 	/**
 	 * Заканчивая временем
 	 */
@@ -40,37 +39,30 @@ public class WorkCalendarTimeIntervalForm extends WorkCalendarTimePatternForm{
 	@Persist @Required
 	@TimeString @DoTimeString
 	public String getTimeTo() {
-		return theTimeTo;
-	}
-	public void setTimeTo(String aTimeTo) {
-		theTimeTo = aTimeTo;
+		return timeTo;
 	}
 	/**
 	 * Заканчивая временем
 	 */
-	private String theTimeTo;
+	private String timeTo;
 	/**
 	 * Среднее время на визит
 	 */
 	@Comment("Среднее время на визит")
 	@Persist 
 	public Integer getVisitTime() {
-		return theVisitTime;
+		return visitTime;
 	}
-	public void setVisitTime(Integer aVisitTime) {
-		theVisitTime = aVisitTime;
-	}
-	
+
 	/** Кол-во визитов */
 	@Comment("Кол-во визитов")
 	@Persist
-	public Integer getCountVisits() {return theCountVisits;}
-	public void setCountVisits(Integer aCountVisits) {theCountVisits = aCountVisits;}
+	public Integer getCountVisits() {return countVisits;}
 
 	/** Кол-во визитов */
-	private Integer theCountVisits;
+	private Integer countVisits;
 	/**
 	 * Среднее время на визит
 	 */
-	private Integer theVisitTime;
+	private Integer visitTime;
 }

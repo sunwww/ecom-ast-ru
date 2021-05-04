@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -27,6 +28,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(ContractAccountPreCreateInterceptor.class)
 )
+@Setter
 public class ContractAccountForm extends IdEntityForm{
 
 	private Long privilege;
@@ -35,9 +37,6 @@ public class ContractAccountForm extends IdEntityForm{
 	public Long getPrivilege() {
 		return privilege;
 	}
-	public void setPrivilege(Long privilege) {
-		this.privilege = privilege;
-	}
 
 	/**
 	 * Сумма баланса
@@ -45,30 +44,24 @@ public class ContractAccountForm extends IdEntityForm{
 	@Comment("Сумма баланса")
 	@Persist
 	public String getBalanceSum() {
-		return theBalanceSum;
-	}
-	public void setBalanceSum(String aBalanceSum) {
-		theBalanceSum = aBalanceSum;
+		return balanceSum;
 	}
 	/**
 	 * Сумма баланса
 	 */
-	private String theBalanceSum;
+	private String balanceSum;
 	/**
 	 * Резервированная сумма
 	 */
 	@Comment("Резервированная сумма")
 	@Persist
 	public String getReservationSum() {
-		return theReservationSum;
-	}
-	public void setReservationSum(String aReservationSum) {
-		theReservationSum = aReservationSum;
+		return reservationSum;
 	}
 	/**
 	 * Резервированная сумма
 	 */
-	private String theReservationSum;
+	private String reservationSum;
 	/**
 	 * Дата открытия
 	 */
@@ -77,15 +70,12 @@ public class ContractAccountForm extends IdEntityForm{
 	@Required
 	@DateString @DoDateString
 	public String getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(String aDateFrom) {
-		theDateFrom = aDateFrom;
+		return dateFrom;
 	}
 	/**
 	 * Дата открытия
 	 */
-	private String theDateFrom;
+	private String dateFrom;
 	/**
 	 * Дата закрытия
 	 */
@@ -93,137 +83,118 @@ public class ContractAccountForm extends IdEntityForm{
 	@Persist
 	@DateString @DoDateString
 	public String getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(String aDateTo) {
-		theDateTo = aDateTo;
+		return dateTo;
 	}
 	/**
 	 * Дата закрытия
 	 */
-	private String theDateTo;
+	private String dateTo;
 	/**
 	 * Блокирован
 	 */
 	@Comment("Блокирован")
 	@Persist
 	public Boolean getBlock() {
-		return theBlock;
-	}
-	public void setBlock(Boolean aBlock) {
-		theBlock = aBlock;
+		return block;
 	}
 	/**
 	 * Блокирован
 	 */
-	private Boolean theBlock;
+	private Boolean block;
 	
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DoDateString @DateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
+
 	/** Время создания */
 	@Comment("Время создания")
 	@Persist @DoTimeString @TimeString
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
-	
+	public String getCreateTime() {return createTime;}
+
 	/** Пользователь, создавший запись */
 	@Comment("Пользователь, создавший запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	
+	public String getCreateUsername() {return createUsername;}
+
 	/** Дата последнего изменения */
 	@Comment("Дата последнего изменения")
 	@Persist @DoDateString @DateString
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
-	
+	public String getEditDate() {return editDate;}
+
 	/** Время, последнего изменения */
 	@Comment("Время, последнего изменения")
 	@Persist @DoTimeString @TimeString
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
-	
+	public String getEditTime() {return editTime;}
+
 	/** Пользователь, последний изменивший запись */
 	@Comment("Пользователь, последний изменивший запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-	
+	public String getEditUsername() {return editUsername;}
+
 	/** Информация */
 	@Comment("Информация")
 	@Persist
-	public String getInfo() {return theInfo;}
-	public void setInfo(String aInfo) {theInfo = aInfo;}
+	public String getInfo() {return info;}
 
 	/** Информация */
-	private String theInfo;
+	private String info;
 	/** Пользователь, последний изменивший запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Время, последнего изменения */
-	private String theEditTime;
+	private String editTime;
 	/** Дата последнего изменения */
-	private String theEditDate;
+	private String editDate;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	
 	/** Мед.договор */
 	@Comment("Мед.договор")
 	@Persist
-	public Long getContract() {return theContract;}
-	public void setContract(Long aContract) {theContract = aContract;}
+	public Long getContract() {return contract;}
 
 	/** Мед.договор */
-	private Long theContract;
+	private Long contract;
 	
 	/** Скидка по умолчанию */
 	@Comment("Скидка по умолчанию")
 	@Persist
-	public String getDiscountDefault() {return theDiscountDefault;}
-	public void setDiscountDefault(String aDiscountDefault) {theDiscountDefault = aDiscountDefault;}
+	public String getDiscountDefault() {return discountDefault;}
 
 	/** Скидка по умолчанию */
-	private String theDiscountDefault;
+	private String discountDefault;
 	
 	/** Список услуг */
 	@Comment("Список услуг")
-	public String getPriceMedServicies() {return thePriceMedServicies;}
-	public void setPriceMedServicies(String aPriceMedServicies) {thePriceMedServicies = aPriceMedServicies;}
+	public String getPriceMedServicies() {return priceMedServicies;}
 	/** Услуг */
 	@Comment("Услуг")
-	public Long getPriceMedService() {return thePriceMedService;}
-	public void setPriceMedService(Long aPriceMedService) {thePriceMedService = aPriceMedService;}
-	
+	public Long getPriceMedService() {return priceMedService;}
+
 	/** Обслуживаемая персона */
 	@Comment("Обслуживаемая персона")
 	@Required
-	public Long getServedPerson() {return theServedPerson;}
-	public void setServedPerson(Long aServedPerson) {theServedPerson = aServedPerson;}
-	
+	public Long getServedPerson() {return servedPerson;}
+
 	/** Обслуживаемая персона */
-	private Long theServedPerson;
+	private Long servedPerson;
 	/** Услуг */
-	private Long thePriceMedService;	
+	private Long priceMedService;	
 	/** Список услуг */
-	private String thePriceMedServicies;
+	private String priceMedServicies;
 	/**
 	 * Прейскурант
 	 */
 	@Comment("Прейскурант")
-	public Long getPriceList() {return thePriceList;}
-	public void setPriceList(Long aPriceList) {thePriceList = aPriceList;}
+	public Long getPriceList() {return priceList;}
 	/**
 	 * Прейскурант
 	 */
-	private Long thePriceList;
+	private Long priceList;
 
 
 }

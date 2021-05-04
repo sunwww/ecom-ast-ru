@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.form.psychiatry;
 
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.psychiatry.Suicide;
@@ -22,6 +23,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Осмотр после суицида", nameProperties= "id",list="entityParentList-psych_suicide.do",listComment="список по пациенту", view="entityParentView-psych_suicide.do")
 @Parent(property="suiMessage", parentForm=SuicideMessageForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Psychiatry/CareCard/SuicideMessage/Suicide")
+@Setter
 public class SuicideForm extends IdEntityForm {
 	 /**
 	  * Карта обратившегося за психиатрической помощью
@@ -29,433 +31,308 @@ public class SuicideForm extends IdEntityForm {
 	 @Comment("Карта обратившегося за психиатрической помощью")
 	 @Persist 
 	 public Long getCareCard() {
-	  return theCareCard;
-	 }
-	 public void setCareCard(Long aCareCard) {
-	  theCareCard = aCareCard;
+	  return careCard;
 	 }
 	 /**
 	  * Карта обратившегося за психиатрической помощью
 	  */
-	 private Long theCareCard;
+	 private Long careCard;
 	 /**
 	  * Описание
 	  */
 	 @Comment("Описание")
 	 public String getNotes() {
-	  return theNotes;
-	 }
-	 public void setNotes(String aNotes) {
-	  theNotes = aNotes;
+	  return notes;
 	 }
 	 /**
 	  * Описание
 	  */
-	 private String theNotes;
+	 private String notes;
 		 /** Дата регистрации */
 		@Comment("Дата регистрации")
 		@Persist @DateString @DoDateString
 		public String getRegistrationDate() {
-			return theRegistrationDate;
+			return registrationDate;
 		}
-		
-		public void setRegistrationDate(String aRegistrationDate) {
-			theRegistrationDate = aRegistrationDate;
-		}
-		
+
 		/** Дата регистрации */
-		private String theRegistrationDate;
+		private String registrationDate;
 
 		
 		/** Получает психотропную помощь */
 		@Comment("Получает психотропную помощь")
 		@Persist 
 		public Long getPsychotropicHelp() {
-			return thePsychotropicHelp;
-		}
-
-		public void setPsychotropicHelp(Long aPsychotropicHelp) {
-			thePsychotropicHelp = aPsychotropicHelp;
+			return psychotropicHelp;
 		}
 
 		/** Получает психотропную помощь */
-		private Long thePsychotropicHelp;
+		private Long psychotropicHelp;
 		
 		/** Какую психотропную помощь */
 		@Comment("Какую психотропную помощь")
 		@Persist
 		public String getPsychotropicHelpDesc() {
-			return thePsychotropicHelpDesc;
-		}
-
-		public void setPsychotropicHelpDesc(String aPsychotropicHelpDesc) {
-			thePsychotropicHelpDesc = aPsychotropicHelpDesc;
+			return psychotropicHelpDesc;
 		}
 
 		/** Какую психотропную помощь */
-		private String thePsychotropicHelpDesc;
+		private String psychotropicHelpDesc;
 		/** Сообщение о суициде */
 		@Comment("Сообщение о суициде")
 		@Persist
 		public Long getSuiMessage() {
-			return theSuiMessage;
+			return suiMessage;
 		}
-
-		public void setSuiMessage(Long aSuiMessage) {
-			theSuiMessage = aSuiMessage;
-		}
-		
-		
 
 		/** Сообщение о суициде */
-		private Long theSuiMessage;
+		private Long suiMessage;
 		
 		/** Диагноз МКБ */
 		@Comment("Диагноз МКБ")
 		@Persist @Required
 		public Long getDiagnosMkb() {
-			return theDiagnosMkb;
-		}
-
-		public void setDiagnosMkb(Long aDiagnosMkb) {
-			theDiagnosMkb = aDiagnosMkb;
+			return diagnosMkb;
 		}
 
 		/** Диагноз МКБ */
-		private Long theDiagnosMkb;
+		private Long diagnosMkb;
 		
 		/** Диагноз текст */
 		@Comment("Диагноз текст")
 		@Persist @Required
 		public String getDiagnosText() {
-			return theDiagnosText;
-		}
-
-		public void setDiagnosText(String aDiagnosText) {
-			theDiagnosText = aDiagnosText;
+			return diagnosText;
 		}
 
 		/** Диагноз текст */
-		private String theDiagnosText;
+		private String diagnosText;
 		
 		/** Другие суициды */
 		@Comment("Другие суициды")
 		@Persist 
 		public Long getOtherSuicide() {
-			return theOtherSuicide;
-		}
-
-		public void setOtherSuicide(Long aOtherSuicide) {
-			theOtherSuicide = aOtherSuicide;
+			return otherSuicide;
 		}
 
 		/** Другие суициды */
-		private Long theOtherSuicide;
+		private Long otherSuicide;
 
 		/** Другие суициды описание */
 		@Comment("Другие суициды описание")
 		@Persist
 		public String getOtherSuicideDesc() {
-			return theOtherSuicideDesc;
-		}
-
-		public void setOtherSuicideDesc(String aOtherSuicideDesc) {
-			theOtherSuicideDesc = aOtherSuicideDesc;
+			return otherSuicideDesc;
 		}
 
 		/** Другие суициды описание */
-		private String theOtherSuicideDesc;
+		private String otherSuicideDesc;
 		
 		/** Алкоголизм */
 		@Comment("Алкоголизм")
 		@Persist
 		public Long getAlcoholism() {
-			return theAlcoholism;
-		}
-
-		public void setAlcoholism(Long aAlcoholism) {
-			theAlcoholism = aAlcoholism;
+			return alcoholism;
 		}
 
 		/** Алкоголизм */
-		private Long theAlcoholism;
+		private Long alcoholism;
 		
 		/** Алкоголизм стаж */
 		@Comment("Алкоголизм стаж")
 		@Persist
 		public Long getAlcoholismExperience() {
-			return theAlcoholismExperience;
+			return alcoholismExperience;
 		}
-
-		public void setAlcoholismExperience(Long aAlcoholismExperience) {
-			theAlcoholismExperience = aAlcoholismExperience;
-		}
-
 		/** Алкоголизм стаж */
-		private Long theAlcoholismExperience;
+		private Long alcoholismExperience;
 		
 		/** Наркомания */
 		@Comment("Наркомания")
 		@Persist
 		public Long getNarcomania() {
-			return theNarcomania;
-		}
-
-		public void setNarcomania(Long aNarcomania) {
-			theNarcomania = aNarcomania;
+			return narcomania;
 		}
 
 		/** Наркомания */
-		private Long theNarcomania;
+		private Long narcomania;
 		
 		/** Наркомания стаж */
 		@Comment("Наркомания стаж")
 		@Persist
 		public Long getNarcomaniaExperience() {
-			return theNarcomaniaExperience;
-		}
-
-		public void setNarcomaniaExperience(Long aNarcomaniaExperience) {
-			theNarcomaniaExperience = aNarcomaniaExperience;
+			return narcomaniaExperience;
 		}
 
 		/** Наркомания стаж */
-		private Long theNarcomaniaExperience;
+		private Long narcomaniaExperience;
 		
 		/** Получал психотерапевтическую помощь */
 		@Comment("Получал психотерапевтическую помощь")
 		@Persist @Required
 		public Long getPsychoTherapeuticHelp() {
-			return thePsychoTherapeuticHelp;
-		}
-
-		public void setPsychoTherapeuticHelp(Long aPsychoTherapeuticHelp) {
-			thePsychoTherapeuticHelp = aPsychoTherapeuticHelp;
+			return psychoTherapeuticHelp;
 		}
 
 		/** Получал психотерапевтическую помощь */
-		private Long thePsychoTherapeuticHelp;
+		private Long psychoTherapeuticHelp;
 		
 		/** Где оказывалась психотерапевтическая помощь? */
 		@Comment("Где оказывалась психотерапевтическая помощь?")
 		@Persist
 		public String getPsychoTherapeuticHelpWhere() {
-			return thePsychoTherapeuticHelpWhere;
-		}
-
-		public void setPsychoTherapeuticHelpWhere(String aPsychoTherapeuticHelpWhere) {
-			thePsychoTherapeuticHelpWhere = aPsychoTherapeuticHelpWhere;
+			return psychoTherapeuticHelpWhere;
 		}
 
 		/** Где оказывалась психотерапевтическая помощь? */
-		private String thePsychoTherapeuticHelpWhere;
+		private String psychoTherapeuticHelpWhere;
 		
 		/** Семейное положение */
 		@Comment("Семейное положение")
 		@Persist
 		public Long getMarriageStatus() {
-			return theMarriageStatus;
-		}
-
-		public void setMarriageStatus(Long aMarriageStatus) {
-			theMarriageStatus = aMarriageStatus;
+			return marriageStatus;
 		}
 
 		/** Семейное положение */
-		private Long theMarriageStatus;
+		private Long marriageStatus;
 		
 		/** Суицидальная настроенность */
 		@Comment("Суицидальная настроенность")
 		@Persist @Required
 		public Long getSuicidalAttitude() {
-			return theSuicidalAttitude;
-		}
-
-		public void setSuicidalAttitude(Long aSuicidalAttitude) {
-			theSuicidalAttitude = aSuicidalAttitude;
+			return suicidalAttitude;
 		}
 
 		/** Суицидальная настроенность */
-		private Long theSuicidalAttitude;
+		private Long suicidalAttitude;
 		
 		/** Характер суицидальной активности */
 		@Comment("Характер суицидальной активности")
 		@Persist @Required
 		public Long getSuicidalActivity() {
-			return theSuicidalActivity;
-		}
-
-		public void setSuicidalActivity(Long aSuicidalActivity) {
-			theSuicidalActivity = aSuicidalActivity;
+			return suicidalActivity;
 		}
 
 		/** Характер суицидальной активности */
-		private Long theSuicidalActivity;
+		private Long suicidalActivity;
 		
 		/** Мотив */
 		@Comment("Мотив")
 		@Persist @Required
 		public Long getMotive() {
-			return theMotive;
-		}
-
-		public void setMotive(Long aMotive) {
-			theMotive = aMotive;
+			return motive;
 		}
 
 		/** Мотив */
-		private Long theMotive;
+		private Long motive;
 		
 		/** Другие мотивы */
 		@Comment("Другие мотивы")
 		@Persist
 		public String getMotiveOther() {
-			return theMotiveOther;
-		}
-
-		public void setMotiveOther(String aMotiveOther) {
-			theMotiveOther = aMotiveOther;
+			return motiveOther;
 		}
 
 		/** Другие мотивы */
-		private String theMotiveOther;
+		private String motiveOther;
 		
 		/** Материальное положение */
 		@Comment("Материальное положение")
 		@Persist
 		public Long getFinSituation() {
-			return theFinSituation;
-		}
-
-		public void setFinSituation(Long aFinSituation) {
-			theFinSituation = aFinSituation;
+			return finSituation;
 		}
 
 		/** Материальное положение */
-		private Long theFinSituation;
+		private Long finSituation;
 		
 		/** Соматическое заболевание */
 		@Comment("Соматическое заболевание")
 		@Persist @Required
 		public Long getSomaticDisease() {
-			return theSomaticDisease;
-		}
-
-		public void setSomaticDisease(Long aSomaticDisease) {
-			theSomaticDisease = aSomaticDisease;
+			return somaticDisease;
 		}
 
 		/** Соматическое заболевание */
-		private Long theSomaticDisease;
+		private Long somaticDisease;
 		
 		/** Рекомандации */
 		@Comment("Рекомандации")
 		@Persist @Required
 		public Long getRecommendation() {
-			return theRecommendation;
-		}
-
-		public void setRecommendation(Long aRecommendation) {
-			theRecommendation = aRecommendation;
+			return recommendation;
 		}
 
 		/** Рекомандации */
-		private Long theRecommendation;
+		private Long recommendation;
 		
 		/** Сожалеет о суициде */
 		@Comment("Сожалеет о суициде")
 		@Persist @Required
 		public Long getRegret() {
-			return theRegret;
-		}
-
-		public void setRegret(Long aRegret) {
-			theRegret = aRegret;
+			return regret;
 		}
 
 		/** Сожалеет о суициде */
-		private Long theRegret;
+		private Long regret;
 		
 		/** Дата создания */
 		@Comment("Дата создания")
 		@Persist @DateString @DoDateString
 		public String getCreateDate() {
-			return theCreateDate;
-		}
-
-		public void setCreateDate(String aCreateDate) {
-			theCreateDate = aCreateDate;
+			return createDate;
 		}
 
 		/** Дата редактирования */
 		@Comment("Дата редактирования")
 		@Persist @DateString @DoDateString
 		public String getEditDate() {
-			return theEditDate;
-		}
-
-		public void setEditDate(String aEditDate) {
-			theEditDate = aEditDate;
+			return editDate;
 		}
 
 		/** Пользователь, создавший запись */
 		@Persist @Comment("Пользователь, создавший запись")
 		public String getCreateUsername() {
-			return theCreateUsername;
-		}
-
-		public void setCreateUsername(String aCreateUsername) {
-			theCreateUsername = aCreateUsername;
+			return createUsername;
 		}
 
 		/** Пользователь, последний редактировавший запись */
 		@Persist @Comment("Пользователь, последний редактировавший запись")
 		public String getEditUsername() {
-			return theEditUsername;
-		}
-
-		public void setEditUsername(String aEditUsername) {
-			theEditUsername = aEditUsername;
+			return editUsername;
 		}
 
 		/** Время создания */
 		@Persist @Comment("Время создания")
 		@TimeString @DoTimeString
 		public String getCreateTime() {
-			return theCreateTime;
-		}
-
-		public void setCreateTime(String aCreateTime) {
-			theCreateTime = aCreateTime;
+			return createTime;
 		}
 
 		/** Время редактрования */
 		@Persist @Comment("Время редактрования")
 		@TimeString @DoTimeString
 		public String getEditTime() {
-			return theEditTime;
-		}
-
-		public void setEditTime(String aEditTime) {
-			theEditTime = aEditTime;
+			return editTime;
 		}
 
 		/** Время редактрования */
-		private String theEditTime;
+		private String editTime;
 
 		/** Время создания */
-		private String theCreateTime;
+		private String createTime;
 
 		/** Пользователь, последний редактировавший запись */
-		private String theEditUsername;
+		private String editUsername;
 
 		/** Пользователь, создавший запись */
-		private String theCreateUsername;
+		private String createUsername;
 
 		/** Дата редактирования */
-		private String theEditDate;
+		private String editDate;
 
 		/** Дата создания */
-		private String theCreateDate;
+		private String createDate;
 
 }

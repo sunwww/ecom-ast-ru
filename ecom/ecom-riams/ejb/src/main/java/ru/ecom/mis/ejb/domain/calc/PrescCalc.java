@@ -1,6 +1,8 @@
 package ru.ecom.mis.ejb.domain.calc;
 
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -11,24 +13,21 @@ import javax.persistence.OneToOne;
  * Created by Milamesher on 18.12.2018.
  *  Назначения в калькуляторе */
 @Entity
+@Getter
+@Setter
 public class PrescCalc extends BaseEntity {
     /** Калькулятор */
     @Comment("Калькулятор")
     @OneToOne
-    public Calculator getCalculator() {return theCalculator;}
-    public void setCalculator(Calculator aCalculator) {theCalculator = aCalculator;	}
-    private Calculator theCalculator;
+    public Calculator getCalculator() {return calculator;}
+    private Calculator calculator;
 
     /** Назначение */
-    @Comment("Назначение")
-    public String getPrescValue() {return thePrescValue;}
-    public void setPrescValue(String aPrescValue) {thePrescValue = aPrescValue;	}
-    private String thePrescValue;
+    private String prescValue;
 
     /** Риск */
     @Comment("Риск")
     @OneToOne
-    public CalcRisk getCalcRisk() {return theCalcRisk;}
-    public void setCalcRisk(CalcRisk aCalcRisk) {theCalcRisk = aCalcRisk;	}
-    private CalcRisk theCalcRisk;
+    public CalcRisk getCalcRisk() {return calcRisk;}
+    private CalcRisk calcRisk;
 }

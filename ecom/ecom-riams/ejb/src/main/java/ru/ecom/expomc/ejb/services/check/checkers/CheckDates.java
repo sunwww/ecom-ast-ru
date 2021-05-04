@@ -18,7 +18,7 @@ public class CheckDates implements ICheck {
 
     public CheckResult check(ICheckContext aContext) throws CheckException {
         long lastDate = 0 ;
-        StringTokenizer st = new StringTokenizer(theProperties, ", ;");
+        StringTokenizer st = new StringTokenizer(properties, ", ;");
         boolean accepted = false ;
         while(st.hasMoreTokens()) {
             Date date = aContext.getDate(st.nextToken());
@@ -37,9 +37,9 @@ public class CheckDates implements ICheck {
     
     /** Свойства с датами (от меньшей к большей) через запятую*/
     @Comment("Свойства с датами (от меньшей к большей)")
-    public String getProperties() { return theProperties ; }
-    public void setProperties(String aProperties) { theProperties = aProperties ; }
+    public String getProperties() { return properties ; }
+    public void setProperties(String aProperties) { properties = aProperties ; }
 
     /** Свойства с датами (от меньшей к большей) */
-    private String theProperties ;
+    private String properties ;
 }

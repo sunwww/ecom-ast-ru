@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.extdisp;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispServiceIndication;
@@ -16,31 +17,28 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Показание к услуге дополнительной диспансеризации", nameProperties= "id", list="entityParentList-extdisp_extDispServiceIndication.do", view="entityParentView-extdisp_extDispServiceIndication.do")
 @Parent(property="visit", parentForm=ExtDispVisitForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card/Service")
+@Setter
 public class ExtDispServiceIndicationForm extends IdEntityForm{
 	/**
 	 * Визит
 	 */
 	@Comment("Визит")
 	@Persist
-	public Long getVisit() {return theVisit;}
-	public void setVisit(Long aVisit) {theVisit = aVisit;}
+	public Long getVisit() {return visit;}
 	/**
 	 * Визит
 	 */
-	private Long theVisit;
+	private Long visit;
 	/**
 	 * Тип услуги
 	 */
 	@Comment("Тип услуги")
 	@Persist
 	public Long getServiceType() {
-		return theServiceType;
-	}
-	public void setServiceType(Long aServiceType) {
-		theServiceType = aServiceType;
+		return serviceType;
 	}
 	/**
 	 * Тип услуги
 	 */
-	private Long theServiceType;
+	private Long serviceType;
 }

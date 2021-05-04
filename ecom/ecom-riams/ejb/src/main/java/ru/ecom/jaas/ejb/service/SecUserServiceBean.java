@@ -49,7 +49,7 @@ public class SecUserServiceBean implements ISecUserService {
 	public void setDefaultPassword(String aNewPassword, String aUsername, String aUsernameChange) throws IOException {
 		String hashPassword = getHashPassword(aUsername, aNewPassword);
 
-		theManager.createNativeQuery("update secuser set password =:password, editDate=current_date,editTime=current_time,editUsername=:editUsername" +
+		manager.createNativeQuery("update secuser set password =:password, editDate=current_date,editTime=current_time,editUsername=:editUsername" +
 				", passwordchangeddate= current_date, changePasswordAtLogin="+("1".equals(aNewPassword)?"'1'":"'0'")+" where login = :login")
 				.setParameter("editUsername",aUsernameChange).setParameter("password",hashPassword).setParameter("login",aUsername)
 				.executeUpdate();
@@ -60,7 +60,7 @@ public class SecUserServiceBean implements ISecUserService {
 			return "0Новый пароль ничем не отличается от старого";
 		}
 		String oldHash = getHashPassword(aUsername, aOldPassword);
-		List<Object> lo  = theManager.createNativeQuery("select id from secuser where login =:username and password = :password")
+		List<Object> lo  = manager.createNativeQuery("select id from secuser where login =:username and password = :password")
 				.setParameter("username",aUsername).setParameter("password",oldHash)
 				.getResultList();
 		if (lo.isEmpty()) {
@@ -73,7 +73,7 @@ public class SecUserServiceBean implements ISecUserService {
 		String msg = checkMatchPassword(aNewPassword);
 		if (msg.equals("")) {
 			String hashPassword = getHashPassword(aUsername, aNewPassword);
-			theManager.createNativeQuery("update secuser set password =:hash, passwordChangedDate=current_date, changePasswordAtLogin='0' where login =:username")
+			manager.createNativeQuery("update secuser set password =:hash, passwordChangedDate=current_date, changePasswordAtLogin='0' where login =:username")
 					.setParameter("username", aUsername).setParameter("hash", hashPassword)
 					.executeUpdate();
 			exportUsersProperties();
@@ -90,7 +90,7 @@ public class SecUserServiceBean implements ISecUserService {
 	 * @return Сообщение
 	 */
 	private String checkMatchPassword(String aNewPassword) {
-		List<Object[]> l = theManager.createNativeQuery("select sc.KeyValue, sc.description from SoftConfig sc where sc.key='PASSWORDREGEXP'").getResultList() ;
+		List<Object[]> l = manager.createNativeQuery("select sc.KeyValue, sc.description from SoftConfig sc where sc.key='PASSWORDREGEXP'").getResultList() ;
 		if (!l.isEmpty()) {
 			String regexp = l.get(0)[0].toString();
 			Pattern p = Pattern.compile(regexp);
@@ -121,7 +121,7 @@ public class SecUserServiceBean implements ISecUserService {
     public void exportUsersProperties(String aFilename) throws IOException {
 
         try (PrintWriter out = new PrintWriter(new FileWriter(aFilename))){
-            List<SecUser> users = theManager.createQuery("from SecUser where disable is null or cast(disable as integer)=0").getResultList();
+            List<SecUser> users = manager.createQuery("from SecUser where disable is null or cast(disable as integer)=0").getResultList();
             for (SecUser user : users) {
             	if (user.getIsHash()==null || !user.getIsHash()) {
             		user.setPassword(getHashPassword(user.getLogin(), user.getPassword())) ;
@@ -150,7 +150,7 @@ public class SecUserServiceBean implements ISecUserService {
     public void exportRolesProperties(String aFilename) {
         Map<SecPolicy, String> hash = new HashMap<>() ;
         try ( PrintWriter out = new PrintWriter(new FileWriter(aFilename))) {
-            List<SecUser> users = theManager.createQuery("from SecUser where disable is null or cast(disable as integer)=0").getResultList();
+            List<SecUser> users = manager.createQuery("from SecUser where disable is null or cast(disable as integer)=0").getResultList();
             for (SecUser user : users) {
                 out.print("# ") ;
                 out.println(user.getFullname()) ;
@@ -211,13 +211,13 @@ public class SecUserServiceBean implements ISecUserService {
     }
 
     public Collection<SecRoleForm> listRolesToAdd(long aUserId, boolean aIsSystemView) {
-        SecUser user = theManager.find(SecUser.class, aUserId) ;
+        SecUser user = manager.find(SecUser.class, aUserId) ;
         List<SecRole> userRoles = user.getRoles();
         String add="" ;
         if (!aIsSystemView) {
         	add="where (isSystems='0' or isSystems is null)" ;
         }
-        List<SecRole> allRoles = theManager.createQuery("from SecRole "+add).getResultList();
+        List<SecRole> allRoles = manager.createQuery("from SecRole "+add).getResultList();
         for (SecRole role : userRoles) {
         	allRoles.remove(role) ;
         }
@@ -239,22 +239,22 @@ public class SecUserServiceBean implements ISecUserService {
     }
 
     public Collection<SecRoleForm> listUserRoles(long aUserId, boolean aIsSystemView) {
-        SecUser user = theManager.find(SecUser.class, aUserId) ;
+        SecUser user = manager.find(SecUser.class, aUserId) ;
         List<SecRole> roles = user.getRoles();
         return convert(roles,  aIsSystemView) ;
     }
 
     public void addRoles(long aUserId, long[] aRoles) {
     	for (long role:aRoles) {
-			Object check = theManager.createNativeQuery("select count(*) from SecUser_SecRole where roles_id=:idRole and secuser_id=:idUser")
+			Object check = manager.createNativeQuery("select count(*) from SecUser_SecRole where roles_id=:idRole and secuser_id=:idUser")
 			.setParameter("idRole", role)
 			.setParameter("idUser", aUserId)
 			.getSingleResult() ;
 			Long ch = PersistList.parseLong(check) ;
 			java.util.Date date = new java.util.Date() ;
-			String username = theContext.getCallerPrincipal().getName() ;
+			String username = context.getCallerPrincipal().getName() ;
 			if (ch.intValue()==0) {
-				theManager.createNativeQuery("insert into SecUser_SecRole (roles_id,secuser_id) values (:idRole,:idUser)")
+				manager.createNativeQuery("insert into SecUser_SecRole (roles_id,secuser_id) values (:idRole,:idUser)")
 					.setParameter("idRole", role)
 					.setParameter("idUser", aUserId)
 					.executeUpdate() ;
@@ -267,18 +267,18 @@ public class SecUserServiceBean implements ISecUserService {
 				jour.setComment(" add user userid="+aUserId+" roleid="+role) ;
 				jour.setSerializationAfter("user:"+aUserId) ;
 				jour.setSerializationBefore("role:"+role) ;
-				theManager.persist(jour) ;
+				manager.persist(jour) ;
 			}
 		}
     }
 
     public void removeRoles(long aUserId, long[] aRoles) {
-        SecUser user = theManager.find(SecUser.class, aUserId) ;
+        SecUser user = manager.find(SecUser.class, aUserId) ;
         List<SecRole> roles = user.getRoles();
         java.util.Date date = new java.util.Date() ;
-		String username = theContext.getCallerPrincipal().getName() ;
+		String username = context.getCallerPrincipal().getName() ;
         for (long roleId : aRoles) {
-            roles.remove(theManager.find(SecRole.class, roleId)) ;
+            roles.remove(manager.find(SecRole.class, roleId)) ;
             ChangeJournal jour = new ChangeJournal() ;
 			jour.setClassName("SecUser_SecRole") ;
 			
@@ -288,9 +288,9 @@ public class SecUserServiceBean implements ISecUserService {
 			jour.setComment(" remove user userid="+aUserId+" roleid="+roleId) ;
 			jour.setSerializationAfter("user:"+aUserId) ;
 			jour.setSerializationBefore("role:"+roleId) ;
-			theManager.persist(jour) ;
+			manager.persist(jour) ;
         }
-        theManager.persist(user);
+        manager.persist(user);
     }
 
 	/**
@@ -300,7 +300,7 @@ public class SecUserServiceBean implements ISecUserService {
 	 * @return  Worker.id or null (если не существует)
 	 */
 	private Worker getIfWorkerExists(Long aPatId, Long aLpuId) {
-		List<Object> list = theManager.createQuery("from Worker where" +
+		List<Object> list = manager.createQuery("from Worker where" +
 				" person_id=:person" +
 				" and lpu_id = :lpu")
 				.setParameter("person", aPatId)
@@ -318,7 +318,7 @@ public class SecUserServiceBean implements ISecUserService {
 	 * @return  WorkFunction.id or OL (если не существует)
 	 */
 	private Long getIfWorkFunctionExists(Long aWorkerId, Long avWfId) {
-		List<Object> list = theManager.createNativeQuery("select wf.id" +
+		List<Object> list = manager.createNativeQuery("select wf.id" +
 				" from SecUser su" +
 				" left join WorkFunction wf on su.id=wf.secUser_id" +
 				" left join Worker w on wf.worker_id=w.id" +
@@ -338,7 +338,7 @@ public class SecUserServiceBean implements ISecUserService {
 	 * @return  SecUser or null (если не существует)
 	 */
 	private SecUser getIfSecUserExists(Long aPatientId) {
-		List<Object> list = theManager.createNativeQuery("select su.id from SecUser su" +
+		List<Object> list = manager.createNativeQuery("select su.id from SecUser su" +
 				" left join WorkFunction swf on su.id=swf.secUser_id" +
 				" left join Worker sw on swf.worker_id=sw.id" +
 				" left join Worker w on sw.person_id=w.person_id" +
@@ -350,7 +350,7 @@ public class SecUserServiceBean implements ISecUserService {
 				.setMaxResults(1)
 				.getResultList();
 		return !list.isEmpty()?
-				(SecUser)theManager.find(SecUser.class,Long.valueOf(list.get(0).toString()))
+				(SecUser)manager.find(SecUser.class,Long.valueOf(list.get(0).toString()))
 				: null;
 	}
 
@@ -361,7 +361,7 @@ public class SecUserServiceBean implements ISecUserService {
 	 * @return  true если существует
 	 */
 	private Boolean getIfAnotherPwfWithSecUserExists(Long suId) {
-		List<Object> list = theManager.createQuery("from PersonalWorkFunction where" +
+		List<Object> list = manager.createQuery("from PersonalWorkFunction where" +
 				" secuser_id=:suId")
 				.setParameter("suId", suId)
 				.getResultList();
@@ -384,7 +384,7 @@ public class SecUserServiceBean implements ISecUserService {
 		w.setCreateDate(dd);
 		w.setCreateTime(tt);
 		w.setCreateUsername(username);
-		theManager.persist(w);
+		manager.persist(w);
 		return w;
 	}
 
@@ -409,7 +409,7 @@ public class SecUserServiceBean implements ISecUserService {
 		pwf.setCreateUsername(username);
 		if (patient!=null && !getIfAnotherPwfWithSecUserExists(secUser.getId())) //проверка, если не проставлена связь в другой раб функции
 			pwf.setSecUser(secUser); //проставить связь с юзером
-		theManager.persist(pwf);
+		manager.persist(pwf);
 		return pwf;
 	}
 
@@ -431,7 +431,7 @@ public class SecUserServiceBean implements ISecUserService {
 		secUser.setEditUsername(aUsernameChange);
 		secUser.setEditTime(tt);
 		secUser.setIsHash(true);
-		theManager.persist(secUser);
+		manager.persist(secUser);
 		exportUsersProperties();
 	}
 
@@ -449,7 +449,7 @@ public class SecUserServiceBean implements ISecUserService {
 	 * @return Сообщение
 	 */
 	private String addWorkFunctionToUser(SecUser secUser, MisLpu misLpu, VocWorkFunction vocWorkFunction, String newPsw, Long userCopyId, Patient patient, java.sql.Date dd,java.sql.Time tt) throws IOException {
-        String username = theContext.getCallerPrincipal().getName();
+        String username = context.getCallerPrincipal().getName();
 		String msgResult = "";
 		if (misLpu!=null && vocWorkFunction!=null) {
             if (secUser != null) {
@@ -474,7 +474,7 @@ public class SecUserServiceBean implements ISecUserService {
                 msgResult += "Неверные параметры!<br>";
         }
 		//копирование ролей
-		SecUser oldUser = theManager.find(SecUser.class,userCopyId);
+		SecUser oldUser = manager.find(SecUser.class,userCopyId);
 		if (oldUser!=null) {
 			msgResult += copyRolesFromUser(secUser, oldUser);
 			exportRolesProperties();
@@ -506,7 +506,7 @@ public class SecUserServiceBean implements ISecUserService {
 			if (!newRoles.contains(sr))
 				newRoles.add(sr);
 		}
-		theManager.persist(newUser);
+		manager.persist(newUser);
 		return "Роли скопированы<br>";
 	}
 
@@ -516,7 +516,7 @@ public class SecUserServiceBean implements ISecUserService {
      * @return true - если свободен
      */
 	private Boolean freeUserName(String username) {
-        List<Object> list = theManager.createQuery("from SecUser where" +
+        List<Object> list = manager.createQuery("from SecUser where" +
                 " login=:username")
                 .setParameter("username", username)
                 .getResultList();
@@ -539,11 +539,11 @@ public class SecUserServiceBean implements ISecUserService {
 		secUser.setComment(patient.getFio() + " " + misLpu.getName());
 		secUser.setCreateDate(dd);
 		secUser.setCreateTime(tt);
-		secUser.setCreateUsername(theContext.getCallerPrincipal().getName());
-		theManager.persist(secUser);
-		theManager.flush();
-		theManager.clear();
-		theManager.refresh(secUser);
+		secUser.setCreateUsername(context.getCallerPrincipal().getName());
+		manager.persist(secUser);
+		manager.flush();
+		manager.clear();
+		manager.refresh(secUser);
 		return secUser;
 	}
 
@@ -558,14 +558,14 @@ public class SecUserServiceBean implements ISecUserService {
 	 * @return Сообщение
 	 */
 	public String addUserToHospShort(Long aPatientId, Long aLpuId, Long avWfId, String newPsw, Long userCopyId, String username, Long aUserId)  throws IOException {
-		Patient patient = theManager.find(Patient.class, aPatientId);
-		MisLpu misLpu = theManager.find(MisLpu.class, aLpuId);
-		VocWorkFunction vocWorkFunction = theManager.find(VocWorkFunction.class, avWfId);
+		Patient patient = manager.find(Patient.class, aPatientId);
+		MisLpu misLpu = manager.find(MisLpu.class, aLpuId);
+		VocWorkFunction vocWorkFunction = manager.find(VocWorkFunction.class, avWfId);
 		java.util.Date date = new java.util.Date();
 		java.sql.Date dd = new java.sql.Date(date.getTime());
 		java.sql.Time tt = new java.sql.Time(date.getTime());
 		if (aUserId!=null) {
-            SecUser secUser = theManager.find(SecUser.class, aUserId);
+            SecUser secUser = manager.find(SecUser.class, aUserId);
             return secUser!=null?
                     addWorkFunctionToUser(secUser, misLpu, vocWorkFunction, newPsw, userCopyId, patient,dd,tt) :
                     "Произошла ошибка, попробуйте снова.";
@@ -582,6 +582,6 @@ public class SecUserServiceBean implements ISecUserService {
 	        return "Этот логин уже существует в системе! ЗАНЯТ КЕМ-ТО ДРУГИМ. Придумайте НОВЫЙ.";
 	}
 
-    @PersistenceContext private EntityManager theManager ;
-    @Resource SessionContext theContext ;
+    @PersistenceContext private EntityManager manager ;
+    @Resource SessionContext context ;
 }

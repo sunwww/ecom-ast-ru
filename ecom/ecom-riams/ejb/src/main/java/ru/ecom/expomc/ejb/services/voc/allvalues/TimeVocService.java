@@ -50,8 +50,8 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
             for (Element persistenceUnit : persistenceUnits) {
                 List<Element> classes = persistenceUnit.getChildren("class");
                 for (Element classElement : classes) {
-                    Class clazz = theClassLoaderHelper.loadClass(classElement.getTextTrim());
-                    if (aEntityName.equals(theEntityHelper.getEntityName(clazz))) {
+                    Class clazz = classLoaderHelper.loadClass(classElement.getTextTrim());
+                    if (aEntityName.equals(entityHelper.getEntityName(clazz))) {
                         ret = clazz;
                         break;
                     }
@@ -71,7 +71,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
         setQueriedFields(getArray(timeElement,"queried",getNameFields()));
         setQueryConvertType(getText(timeElement,"queryConvertType","NONE"));
         try {
-            theEntityClass = findEntityClassByName(getEntityName()) ;
+            entityClass = findEntityClassByName(getEntityName()) ;
         } catch (Exception e) {
             throw new IllegalStateException(e) ;
         }
@@ -127,48 +127,48 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
 
 
     /** Поля для названия */
-    public String[] getNameFields() { return theNameFields ; }
-    public void setNameFields(String[] aNameFields) { theNameFields = aNameFields ; }
+    public String[] getNameFields() { return nameFields ; }
+    public void setNameFields(String[] aNameFields) { nameFields = aNameFields ; }
 
     /** Поля для названия */
-    private String[] theNameFields ;
+    private String[] nameFields ;
     /** Поля для поиска */
-    public String[] getQueriedFields() { return theQueriedFields ; }
-    public void setQueriedFields(String[] aQueriedFields) { theQueriedFields = aQueriedFields ; }
+    public String[] getQueriedFields() { return queriedFields ; }
+    public void setQueriedFields(String[] aQueriedFields) { queriedFields = aQueriedFields ; }
 
     /** Поля для поиска */
-    private String[] theQueriedFields ;
+    private String[] queriedFields ;
     /** Код */
-    public String getCodeField() { return theCodeField ; }
-    public void setCodeField(String aCodeField) { theCodeField = aCodeField ; }
+    public String getCodeField() { return codeField ; }
+    public void setCodeField(String aCodeField) { codeField = aCodeField ; }
 
     /** Код */
-    private String theCodeField ="code" ;
+    private String codeField ="code" ;
     /** Тип конвертации запроса */
-    public QueryConvertType getQueryConvertType() { return theQueryConvertType ; }
-    public void setQueryConvertType(QueryConvertType aQueryConvertType) { theQueryConvertType = aQueryConvertType ; }
+    public QueryConvertType getQueryConvertType() { return queryConvertType ; }
+    public void setQueryConvertType(QueryConvertType aQueryConvertType) { queryConvertType = aQueryConvertType ; }
 
     /** Тип конвертации запроса */
-    private QueryConvertType theQueryConvertType = QueryConvertType.NONE ;
+    private QueryConvertType queryConvertType = QueryConvertType.NONE ;
 //    /** Поле с названием */
-//    public String getNameField() { return theNameField ; }
-//    public void setNameField(String aNameField) { theNameField = aNameField ; }
+//    public String getNameField() { return nameField ; }
+//    public void setNameField(String aNameField) { nameField = aNameField ; }
 //
 //    /** Поле с названием */
-//    private String theNameField ;
+//    private String nameField ;
 
     /** Entity */
-    public String getEntityName() { return theEntityName ; }
-    public void setEntityName(String aEntityName) { theEntityName = aEntityName ; }
+    public String getEntityName() { return entityName ; }
+    public void setEntityName(String aEntityName) { entityName = aEntityName ; }
 
     /** Entity */
-    private String theEntityName ;
+    private String entityName ;
 
     private long findActualImport(VocContext aContext) {
         List<ImportDocument> list = aContext.getEntityManager().createQuery("from ImportDocument where entityClassName = :clazz order by id")
-                .setParameter("clazz", theEntityClass.getName())
+                .setParameter("clazz", entityClass.getName())
                 .getResultList() ;
-        if(list.isEmpty()) throw new IllegalStateException("Нет документа с типом "+theEntityClass) ;
+        if(list.isEmpty()) throw new IllegalStateException("Нет документа с типом "+entityClass) ;
         ImportDocument doc = list.iterator().next() ;
         Collection<ImportTime> times = doc.getTimes() ;
         if(times.isEmpty()) throw new IllegalArgumentException("Нет импортированных данных для документа "+doc.getComment()) ;
@@ -179,7 +179,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
         return ret ;
     }
     private long getIdByCode(String aCode, VocContext aContext) {
-        List list = aContext.getEntityManager().createQuery("from "+theEntityName+" where time = :time and "+theCodeField+" = :code")
+        List list = aContext.getEntityManager().createQuery("from "+entityName+" where time = :time and "+codeField+" = :code")
                 .setParameter("time", findActualImport(aContext))
                 .setParameter("code", aCode)
                 .getResultList() ;
@@ -200,14 +200,14 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
 
     public String getNameById(String aId, String aVocName, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
         if(StringUtil.isNullOrEmpty(aId)) return "" ;
-        // todo изменить на theManager.find(...)
-        List list = aContext.getEntityManager().createQuery("from "+theEntityName+" where id= :id")
+        // todo изменить на manager.find(...)
+        List list = aContext.getEntityManager().createQuery("from "+entityName+" where id= :id")
                 .setParameter("id", getIdByCode(aId, aContext)).getResultList();
         String name ;
         if(list!=null  && !list.isEmpty()) {
             Object firstObject = list.iterator().next() ;
             try {
-                name = getNameFromEntity(firstObject) ; //PropertyUtil.getPropertyValue(firstObject, theNameField) ;
+                name = getNameFromEntity(firstObject) ; //PropertyUtil.getPropertyValue(firstObject, nameField) ;
             } catch (Exception e) {
                 throw new VocServiceException("Ошибка получения имени по индексу "+aId);
             }
@@ -220,7 +220,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
     private String getNameFromEntity(Object aEntity) throws IllegalAccessException, InvocationTargetException {
         StringBuilder sb = new StringBuilder();
         boolean firstPassed = false ;
-        for (String field : theNameFields) {
+        for (String field : nameFields) {
             if(firstPassed) {
                 sb.append(" ") ;
             } else {
@@ -236,16 +236,16 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
         if(StringUtil.isNullOrEmpty(aQuery)) {
             return findVocValueNext(aVocName, null, aCount, aAdditional, aContext);
         } else {
-            switch(theQueryConvertType) {
+            switch(queryConvertType) {
                 case LOWER_CASE: aQuery = aQuery.toLowerCase() ; break ;
                 case UPPER_CASE: aQuery = aQuery.toUpperCase() ; break ;
             }
 
             StringBuilder sb = new StringBuilder();
-            sb.append("from ").append(theEntityName) ;
+            sb.append("from ").append(entityName) ;
             sb.append(" where time = :time and ( ") ;
             boolean firstPassed = false ;
-            for (String field : theQueriedFields) {
+            for (String field : queriedFields) {
                 if(firstPassed) sb.append(" or ") ; else firstPassed = true ;
                 sb.append(field).append( "  like :query") ;
             }
@@ -253,7 +253,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
 
             LOG.info(sb) ;
 
-            // ("from "+theEntityName+" where time = :time and "+theNameField+" like :query order by id")
+            // ("from "+entityName+" where time = :time and "+theNameField+" like :query order by id")
 
             Query query  = aContext.getEntityManager().createQuery
                     (sb.toString())
@@ -268,8 +268,8 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
 
     private VocValue createVocValue(Object aEntity) {
         try {
-            String id = PropertyUtil.getPropertyValue(aEntity, theCodeField).toString() ;
-            String name = getNameFromEntity(aEntity) ; //PropertyUtil.getPropertyValue(aEntity, theNameField).toString() ;
+            String id = PropertyUtil.getPropertyValue(aEntity, codeField).toString() ;
+            String name = getNameFromEntity(aEntity) ; //PropertyUtil.getPropertyValue(aEntity, nameField).toString() ;
             return new VocValue(id, name) ;
         } catch (Exception e) {
             throw new RuntimeException("Ошибка создания VocValue",e);
@@ -278,7 +278,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
 
     public Collection<VocValue> findVocValuePrevious(String aVocName, String aId, int aCount, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
         StringBuilder sb = new StringBuilder();
-        sb.append("from ").append(theEntityName) ;
+        sb.append("from ").append(entityName) ;
         sb.append(" where time = :time ") ;
         if(!StringUtil.isNullOrEmpty(aId)) {
             sb.append("and id <= ").append(getIdByCode(aId, aContext)) ;
@@ -294,7 +294,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
         }
         if(last!=null) {
             try {
-                String id = PropertyUtil.getPropertyValue(last, theCodeField).toString() ;
+                String id = PropertyUtil.getPropertyValue(last, codeField).toString() ;
                 return findVocValueNext(aVocName, id, aCount, aAdditional, aContext) ;
             } catch (Exception e) {
                 throw new VocServiceException("Ошибка получения идентификатора",e);
@@ -308,7 +308,7 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
 
     public Collection<VocValue> findVocValueNext(String aVocName, String aId, int aCount, VocAdditional aAdditional, VocContext aContext) {
         StringBuilder sb = new StringBuilder();
-        sb.append("from ").append(theEntityName) ;
+        sb.append("from ").append(entityName) ;
         sb.append(" where time = :time ") ;
         if(!StringUtil.isNullOrEmpty(aId)) {
             sb.append("and id >= ").append(getIdByCode(aId, aContext)) ;
@@ -332,12 +332,12 @@ public class TimeVocService implements IVocContextService, IVocServiceManagement
     }
 
     public void destroy() {
-        theEntityClass = null ;
-        theClassLoaderHelper = null ;
-        theEntityHelper = null ;
+        entityClass = null ;
+        classLoaderHelper = null ;
+        entityHelper = null ;
     }
 
-    private ClassLoaderHelper theClassLoaderHelper = ClassLoaderHelper.getInstance();
-    private Class theEntityClass ;
-    private EntityHelper theEntityHelper = EntityHelper.getInstance();
+    private ClassLoaderHelper classLoaderHelper = ClassLoaderHelper.getInstance();
+    private Class entityClass ;
+    private EntityHelper entityHelper = EntityHelper.getInstance();
 }

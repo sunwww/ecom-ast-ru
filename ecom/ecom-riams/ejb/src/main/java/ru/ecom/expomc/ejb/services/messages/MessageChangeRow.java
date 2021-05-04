@@ -6,27 +6,27 @@ import java.io.Serializable;
  */
 public class MessageChangeRow implements Serializable  {
     /** Идентификатор сообщения */
-    public long getMessageId() { return theMessageId ; }
-    public void setMessageId(long aMessageId) { theMessageId = aMessageId ; }
+    public long getMessageId() { return messageId ; }
+    public void setMessageId(long aMessageId) { messageId = aMessageId ; }
 
     /** Идентификатор сообщения */
-    private long theMessageId ;
+    private long messageId ;
     /** Свойство */
-    public String getProperty() { return theProperty ; }
-    public void setProperty(String aProperty) { theProperty = aProperty ; }
+    public String getProperty() { return property ; }
+    public void setProperty(String aProperty) { property = aProperty ; }
 
     /** Старое значение */
-    public String getOldValue() { return theOldValue ; }
-    public void setOldValue(String aOldValue) { theOldValue = aOldValue ; }
+    public String getOldValue() { return oldValue ; }
+    public void setOldValue(String aOldValue) { oldValue = aOldValue ; }
 
     /** Новое значение */
-    public String getNewValue() { return theNewValue ; }
-    public void setNewValue(String aNewValue) { theNewValue = aNewValue ; }
+    public String getNewValue() { return newValue ; }
+    public void setNewValue(String aNewValue) { newValue = aNewValue ; }
 
     /** Новое значение */
-    private String theNewValue ;
+    private String newValue ;
     /** Старое значение */
-    private String theOldValue ;
+    private String oldValue ;
     /** Свойство */
-    private String theProperty ;
+    private String property ;
 }

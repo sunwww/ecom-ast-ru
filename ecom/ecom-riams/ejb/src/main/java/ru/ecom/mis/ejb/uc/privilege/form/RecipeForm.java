@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.uc.privilege.form;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -14,240 +15,172 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityForm
 @EntityFormPersistance(clazz= Recipe.class)
 @WebTrail(comment = "Рецепт", nameProperties= "info", view="entityParentView-mis_recipe.do")
-//@Parent(property="patient", parentForm=PatientForm.class)
 @Subclasses(value = { PrivilegeRecipeForm.class })
 @EntityFormSecurityPrefix("/Policy/Mis/Person/Privilege/Recipe")
+@Setter
 public class RecipeForm extends IdEntityForm {
 	
 	/** Лекарство */
 	@Comment("Лекарство")
 	@Persist @Required
 	public Long getDrugClassify() {
-		return theDrugClassify;
+		return drugClassify;
 	}
 
 	/** ЛПУ, которое выписало рецепт */
 	@Comment("ЛПУ, которое выписало рецепт")
 	@Persist
 	public Long getLpu() {
-		return theLpu;
-	}
-
-	public void setLpu(Long aLpu) {
-		theLpu = aLpu;
+		return lpu;
 	}
 
 	/** Врач */
 	@Comment("Врач")
 	@Required @Persist
 	public Long getDoctor() {
-		return theDoctor;
-	}
-
-	public void setDoctor(Long aDoctor) {
-		theDoctor = aDoctor;
+		return doctor;
 	}
 
 	/** Номер рецепта */
 	@Comment("Номер рецепта")
 	@Required @Persist
 	public String getRecipeNumber() {
-		return theRecipeNumber;
-	}
-
-	public void setRecipeNumber(String aRecipeNumber) {
-		theRecipeNumber = aRecipeNumber;
+		return recipeNumber;
 	}
 
 	/** Дата выписки */
 	@Comment("Дата выписки")
 	@Required @Persist
 	public String getRecipeDate() {
-		return theRecipeDate;
-	}
-
-	public void setRecipeDate(String aRecipeDate) {
-		theRecipeDate = aRecipeDate;
+		return recipeDate;
 	}
 
 	/** Тип льготы */
 	@Comment("Тип льготы")
 	@Persist
 	public Long getPrivilegeCategory() {
-		return thePrivilegeCategory;
+		return privilegeCategory;
 	}
 
-	public void setPrivilegeCategory(Long aPrivilegeCategory) {
-		thePrivilegeCategory = aPrivilegeCategory;
-	}
-	
 	/** МКБ10 */
 	@Comment("МКБ10")
 	@Persist
 	public Long getIdc10() {
-		return theIdc10;
-	}
-
-	public void setIdc10(Long aIdc10) {
-		theIdc10 = aIdc10;
+		return idc10;
 	}
 
 	/** Процент оплаты */
 	@Comment("Процент оплаты")
 	@Persist
 	public Long getPayPercent() {
-		return thePayPercent;
-	}
-
-	public void setPayPercent(Long aPaymentPercent) {
-		thePayPercent = aPaymentPercent;
+		return payPercent;
 	}
 
 	/** Решение КЭК */
 	@Comment("Решение КЭК")
 	@Persist
 	public boolean getKekDesicion() {
-		return theKekDesicion;
-	}
-
-	public void setKekDesicion(boolean aKekDesicion) {
-		theKekDesicion = aKekDesicion;
+		return kekDesicion;
 	}
 
 	/** Лекарственная форма */
 	@Comment("Лекарственная форма")
 	@Required @Persist
 	public Long getDrugForm() {
-		return theDrugForm;
-	}
-
-	public void setDrugForm(Long aDrugForm) {
-		theDrugForm = aDrugForm;
+		return drugForm;
 	}
 
 	/** СНИЛС по рецепту */
 	@Comment("СНИЛС по рецепту")
 	@Persist
 	public String getRecSnils() {
-		return theRecSnils;
-	}
-
-	public void setRecSnils(String aRecSnils) {
-		theRecSnils = aRecSnils;
+		return recSnils;
 	}
 
 	/** Фамилия по рецепту */
 	@Comment("Фамилия по рецепту")
 	@Persist
 	public String getRecLastname() {
-		return theRecLastname;
-	}
-
-	public void setRecLastname(String aRecLastname) {
-		theRecLastname = aRecLastname;
+		return recLastname;
 	}
 
 	/** Имя по рецепту */
 	@Comment("Имя по рецепту")
 	@Persist
 	public String getRecFirstname() {
-		return theRecFirstname;
-	}
-
-	public void setRecFirstname(String aRecFirstname) {
-		theRecFirstname = aRecFirstname;
+		return recFirstname;
 	}
 
 	/** Отчество по рецепту */
 	@Comment("Отчество по рецепту")
 	@Persist
 	public String getRecMiddlename() {
-		return theRecMiddlename;
-	}
-
-	public void setRecMiddlename(String aRecMiddlename) {
-		theRecMiddlename = aRecMiddlename;
+		return recMiddlename;
 	}
 
 	/** Источник финансирования по рецепту */
 	@Comment("Источник финансирования по рецепту")
 	@Required @Persist
 	public String getRecFinSource() {
-		return theRecFinSource;
-	}
-
-	public void setRecFinSource(String aRecFinSource) {
-		theRecFinSource = aRecFinSource;
+		return recFinSource;
 	}
 
 	/** Торговое наименование лекарственного средства по рецепту */
 	@Comment("Торговое наименование лекарственного средства по рецепту")
 	@Required @Persist
 	public String getRegDrugTradeName() {
-		return theRegDrugTradeName;
-	}
-
-	public void setRegDrugTradeName(String aRegDrugTradeName) {
-		theRegDrugTradeName = aRegDrugTradeName;
+		return regDrugTradeName;
 	}
 
 	/** Дозировка лекарственного средства */
 	@Comment("Дозировка лекарственного средства")
 	@Required @Persist
 	public String getRegDrugDoze() {
-		return theRegDrugDoze;
-	}
-
-	public void setRegDrugDoze(String aRegDrugDoze) {
-		theRegDrugDoze = aRegDrugDoze;
+		return regDrugDoze;
 	}
 
 	/** Количество ЛС по рецепту */
 	@Comment("Количество ЛС по рецепту")
 	@Required @Persist
 	public String getRegDrugQuantity() {
-		return theRegDrugQuantity;
-	}
-
-	public void setRegDrugQuantity(String aRegDrugQuantity) {
-		theRegDrugQuantity = aRegDrugQuantity;
+		return regDrugQuantity;
 	}
 
 	/** Количество ЛС по рецепту */
-	private String theRegDrugQuantity;
+	private String regDrugQuantity;
 	/** Дозировка лекарственного средства */
-	private String theRegDrugDoze;
+	private String regDrugDoze;
 	/** Торговое наименование лекарственного средства по рецепту */
-	private String theRegDrugTradeName;	
+	private String regDrugTradeName;	
 	/** Источник финансирования по рецепту */
-	private String theRecFinSource;
+	private String recFinSource;
 	/** Отчество по рецепту */
-	private String theRecMiddlename;
+	private String recMiddlename;
 	/** Имя по рецепту */
-	private String theRecFirstname;
+	private String recFirstname;
 	/** Фамилия по рецепту */
-	private String theRecLastname;
+	private String recLastname;
 	/** СНИЛС по рецепту */
-	private String theRecSnils;
+	private String recSnils;
 	/** Лекарственная форма */
-	private Long theDrugForm;
+	private Long drugForm;
 	/** Решение КЭК */
-	private boolean theKekDesicion;
+	private boolean kekDesicion;
 	/** Процент оплаты */
-	private Long thePayPercent;
+	private Long payPercent;
 	
 	/** МКБ10 */
-	private Long theIdc10;
+	private Long idc10;
 	/** Тип льготы */
-	private Long thePrivilegeCategory;
+	private Long privilegeCategory;
 	/** Дата выписки */
-	private String theRecipeDate;
+	private String recipeDate;
 	/** Номер рецепта */
-	private String theRecipeNumber;
+	private String recipeNumber;
 	/** Врач */
-	private Long theDoctor;
+	private Long doctor;
 	/** ЛПУ, которое выписало рецепт */
-	private Long theLpu;
+	private Long lpu;
 	/** Лекарство */
-	private Long theDrugClassify;
+	private Long drugClassify;
 }

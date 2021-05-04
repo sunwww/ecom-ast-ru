@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.patient;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.*;
@@ -23,14 +24,14 @@ import javax.persistence.Id;
 @Comment("Протокол ЕДКЦ")
 @EntityForm
 @EntityFormPersistance(clazz = ru.ecom.poly.ejb.domain.protocol.Protocol.class)
+@Setter
 public class EdkcProtocolForm extends IdEntityForm {
     /** Лист наблюдения */
     @Comment("Лист наблюдения")
     @Persist
-    public Long getObsSheet() {return theObsSheet;}
-    public void setObsSheet(Long aObsSheet) {theObsSheet = aObsSheet;}
+    public Long getObsSheet() {return obsSheet;}
     /** Лист наблюдения */
-    private Long theObsSheet;
+    private Long obsSheet;
 
     /** Дата регистрации */
     @Persist @Required
@@ -38,140 +39,119 @@ public class EdkcProtocolForm extends IdEntityForm {
     @DateString
     @DoDateString
     @MaxDateCurrent
-    public String getDateRegistration() {    return theDateRegistration ;}
-    public void setDateRegistration(String aDateRegistration ) {  theDateRegistration = aDateRegistration ; }
+    public String getDateRegistration() {    return dateRegistration ;}
     /** Дата регистрации */
-    private String theDateRegistration ;
+    private String dateRegistration ;
 
     /** Дата */
     @Persist @DateString @DoDateString
     @Comment("Дата")
-    public String getDate() {    return theDate ;}
-    public void setDate(String aDate ) {  theDate = aDate ; }
+    public String getDate() {    return date ;}
     /** Дата */
-    private String theDate ;
+    private String date ;
 
     /** Запись */
     @Persist @Required
     @Comment("Запись")
-    public String getRecord() {    return theRecord ;}
-    public void setRecord(String aRecord ) {  theRecord = aRecord ; }
+    public String getRecord() {    return record ;}
     /** Запись */
-    private String theRecord ;
+    private String record ;
 
     /** Специалист */
     @Comment("Специалист")
     @Persist
-    public Long getSpecialist() {return theSpecialist;}
-    public void setSpecialist(Long aSpecialist) {theSpecialist = aSpecialist;}
+    public Long getSpecialist() {return specialist;}
     /** Специалист */
-    private Long theSpecialist;
+    private Long specialist;
 
     /** Пользователь */
     @Comment("Пользователь")
     @Persist
-    public String getUsername() {return theUsername;}
-    public void setUsername(String aUsername) {theUsername = aUsername;}
+    public String getUsername() {return username;}
     /** Пользователь */
-    private String theUsername;
+    private String username;
 
     /** Время регистрации */
     @Comment("Время регистрации")
     @Persist @Required
     @TimeString
     @DoTimeString
-    public String getTimeRegistration() {return theTimeRegistration;}
-    public void setTimeRegistration(String aTimeRegistration) {theTimeRegistration = aTimeRegistration;}
+    public String getTimeRegistration() {return timeRegistration;}
     /** Время регистрации */
-    private String theTimeRegistration;
+    private String timeRegistration;
 
     /** Время создания */
     @Comment("Время создания")
     @Persist @TimeString @DoTimeString
-    public String getTime() {return theTime;}
-    public void setTime(String aTime) {theTime = aTime;}
+    public String getTime() {return time;}
     /** Время создания */
-    private String theTime;
+    private String time;
 
     /** Дата редактирования*/
     @Persist @DateString @DoDateString
     @Comment("Дата редактирования")
-    public String getEditDate() {    return theEditDate ;}
-    public void setEditDate(String aEditDate ) {  theEditDate = aEditDate ; }
+    public String getEditDate() {    return editDate ;}
     /** Дата редактирования */
-    private String  theEditDate;
+    private String  editDate;
 
     /** Время редактирования */
     @Comment("Время редактирования")
     @Persist
     @TimeString @DoTimeString
     public String getEditTime() {
-        return theEditTime;
-    }
-    public void setEditTime(String  aEditTime) {
-        theEditTime = aEditTime;
+        return editTime;
     }
     /** Время редактирования */
-    private String  theEditTime;
+    private String  editTime;
 
     /** Пользователь последний, изменявший запись */
     @Comment("Пользователь последний, изменявший запись")
     @Persist
     public String getEditUsername() {
-        return theEditUsername;
-    }
-
-    public void setEditUsername(String aEditUsername) {
-        theEditUsername = aEditUsername;
+        return editUsername;
     }
 
     /** Пользователь последний, изменявший запись */
-    private String theEditUsername;
+    private String editUsername;
 
     /** Шаблон, на основе которого создано заключение */
     @Comment("Шаблон, на основе которого создано заключение")
     @Persist
-    public Long getTemplateProtocol() {return theTemplateProtocol;}
-    public void setTemplateProtocol(Long aTemplateProtocol) {theTemplateProtocol = aTemplateProtocol;}
+    public Long getTemplateProtocol() {return templateProtocol;}
     /** Шаблон, на основе которого создано заключение */
-    private Long theTemplateProtocol;
+    private Long templateProtocol;
 
     /** Параметры шаблона */
     @Comment("Параметры шаблона")
-    public String getParams() {return theParams;}
-    public void setParams(String aParams) {theParams = aParams;}
+    public String getParams() {return params;}
     /** Параметры шаблона */
-    private String theParams;
+    private String params;
 
     /** Тип протокола */
     @Comment("Тип протокола")
     @Persist
-    public Long getType() {return theType;}
-    public void setType(Long aType) {theType = aType;}
+    public Long getType() {return type;}
     /** Тип протокола */
-    private Long theType;
+    private Long type;
 
     /** ИД */
     @Id
     @Comment("ИД")
-    public long getId() {    return theId ;}
-    public void setId(long aId ) {  theId = aId ; }
-    private long theId ;
+    public long getId() {    return id ;}
+    private long id ;
 
     /** Дата печати */
     @Comment("Дата печати")
     @Persist @DateString @DoDateString
-    public String getPrintDate() {return thePrintDate;}
-    public void setPrintDate(String aPrintDate) {thePrintDate = aPrintDate;}
+    public String getPrintDate() {return printDate;}
 
     /** Время печати */
     @Comment("Время печати")
     @Persist @DoTimeString @TimeString
-    public String getPrintTime() {return thePrintTime;}
-    public void setPrintTime(String aPrintTime) {thePrintTime = aPrintTime;}
+    public String getPrintTime() {return printTime;}
 
     /** Время печати */
-    private String thePrintTime;
+    private String printTime;
     /** Дата печати */
-    private String thePrintDate;
+    private String printDate;
 }

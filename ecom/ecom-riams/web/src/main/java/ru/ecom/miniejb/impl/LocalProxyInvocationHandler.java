@@ -21,7 +21,6 @@ import java.util.HashMap;
 public class LocalProxyInvocationHandler implements InvocationHandler {
 
     	private static final Logger LOG = Logger.getLogger(LocalProxyInvocationHandler.class);
-    private static final boolean CAN_TRACE = LOG.isDebugEnabled();
 
 
     public LocalProxyInvocationHandler(Class aServiceClass, EjbHash aInterfaces) {
@@ -30,7 +29,6 @@ public class LocalProxyInvocationHandler implements InvocationHandler {
     }
 
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-//        if (CAN_TRACE) LOG.trace("invoking " + method);
         Method m = theMethodsHash.get(method);
         if (m == null) {
             m = theServiceClass.getMethod(method.getName(), method.getParameterTypes());
@@ -60,11 +58,8 @@ public class LocalProxyInvocationHandler implements InvocationHandler {
 
     private void injectService(Object aService, Class aClass) throws IllegalAccessException, NamingException {
         if (aClass == null || aClass.equals(Object.class)) return;
-//        LOG.info("aClass = " + aClass);
-//        LOG.info("aService = " + aService);
 
         for (Field field : aClass.getDeclaredFields()) {
-            if (CAN_TRACE) LOG.info(" field = " + field);
             if (field.isAnnotationPresent(Resource.class) && field.getType().equals(SessionContext.class)) {
                 field.setAccessible(true);
                 field.set(aService, ThreadLocalContextManager.getSessionContext());

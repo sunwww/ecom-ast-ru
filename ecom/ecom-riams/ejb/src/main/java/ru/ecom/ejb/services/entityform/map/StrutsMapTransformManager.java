@@ -36,14 +36,14 @@ public class StrutsMapTransformManager {
 		put(boolean.class, "java/lang/Boolean");
 		put(BigDecimal.class, "java/lang/String");
 		
-		theHash.put(java.sql.Date.class
+		hash.put(java.sql.Date.class
 				, new StrutsMapTransform("java/lang/String", "java/lang/String"
 						, new String[]{"Lru/nuzmsh/forms/validator/validators/DateString;"
 						, "Lru/nuzmsh/forms/validator/transforms/DoDateString;"
 				}));
 
 		
-		theHash.put(java.sql.Time.class
+		hash.put(java.sql.Time.class
 				, new StrutsMapTransform("java/lang/String", "java/lang/String"
 						, new String[]{"Lru/nuzmsh/forms/validator/validators/TimeString;"
 						, "Lru/nuzmsh/forms/validator/transforms/DoTimeString;"
@@ -51,7 +51,7 @@ public class StrutsMapTransformManager {
 	}
 	
 	private void put(Class aClass, String aClassname) {
-		theHash.put(aClass, new StrutsMapTransform(aClassname));
+		hash.put(aClass, new StrutsMapTransform(aClassname));
 	}
 	
 	public static StrutsMapTransformManager getInstance() {
@@ -64,7 +64,7 @@ public class StrutsMapTransformManager {
 	public StrutsMapTransform getTransform(Method aMethod) {
 		// FIXME убрать множественный выход
 		Class type = aMethod.getReturnType() ;
-		StrutsMapTransform ret = theHash.get(type) ;
+		StrutsMapTransform ret = hash.get(type) ;
 		
 		// FIXME ввод даты и времени в одном поле Timestamp. Пока только дата
 		if(type.equals(Timestamp.class)) {
@@ -94,5 +94,5 @@ public class StrutsMapTransformManager {
 	}
 	
 
-	private final HashMap<Class, StrutsMapTransform> theHash = new HashMap<>() ;
+	private final HashMap<Class, StrutsMapTransform> hash = new HashMap<>() ;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.mis.ejb.domain.birth.BirthNosologyCard;
 import ru.ecom.mis.ejb.form.medcase.hospital.HospitalMedCaseForm;
@@ -18,80 +19,72 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Comment("Карта нозологий в акушерстве")
 @Parent(property="medCase", parentForm= HospitalMedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Pregnancy/BirthNosologyCard")
+@Setter
 public class BirthNosologyCardForm extends IdEntityForm {
     /** Дата создания */
     @Comment("Дата создания")
     @DateString
     @DoDateString
     @Persist
-    public String getCreateDate() {return theCreateDate;}
-    public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+    public String getCreateDate() {return createDate;}
     /** Дата создания */
-    private String theCreateDate;
+    private String createDate;
 
     /** Дата редактирования */
     @Comment("Дата редактирования")
     @DateString @DoDateString @Persist
-    public String getEditDate() {return theEditDate;}
-    public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+    public String getEditDate() {return editDate;}
     /** Дата редактирования */
-    private String theEditDate;
+    private String editDate;
 
     /** Время создания */
     @Comment("Время создания")
     @TimeString
     @DoTimeString
     @Persist
-    public String getCreateTime() {return theCreateTime;}
-    public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+    public String getCreateTime() {return createTime;}
     /** Время создания */
-    private String theCreateTime;
+    private String createTime;
     
     /** Время редактрования */
     @Comment("Время редактирования")
     @TimeString @DoTimeString @Persist
-    public String getEditTime() {return theEditTime;}
-    public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+    public String getEditTime() {return editTime;}
     /** Время редактрования */
-    private String theEditTime;
+    private String editTime;
     
     /** Пользователь, который создал запись */
     @Comment("Пользователь, который создал запись")
     @Persist
-    public String getCreateUsername() {return theCreateUsername;}
-    public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+    public String getCreateUsername() {return createUsername;}
     /** Пользователь, который создал запись */
-    private String theCreateUsername;
+    private String createUsername;
     
     /** Пользователь, который последний редактировал запись */
     @Comment("Пользователь, который последний редактировал запись")
     @Persist
-    public String getEditUsername() {return theEditUsername;}
-    public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+    public String getEditUsername() {return editUsername;}
     /** Пользователь, который последний редактировал запись */
-    private String theEditUsername;
+    private String editUsername;
 
     /** СМО */
     @Comment("СМО")
     @Persist
-    public Long getMedCase() {return theMedCase;}
-    public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+    public Long getMedCase() {return medCase;}
     /** СМО */
-    private Long theMedCase;
+    private Long medCase;
 
     /** Пользователь */
     @Comment("Пользователь")
     @Persist
-    public Long getCreator() {return theCreator;}
-    public void setCreator(Long aCreator) {theCreator = aCreator;}
+    public Long getCreator() {return creator;}
     /** Пользователь */
-    private Long theCreator;
+    private Long creator;
 
     /** Пользователь, который последний отредактировал */
     @Comment("Пользователь, который последний отредактировал")
     @Persist
-    public Long getEditor() {return theEditor;}
-    public void setEditor(Long aEditor) {theEditor = aEditor;}
+    public Long getEditor() {return editor;}
     /** Пользователь, который последний отредактировал */
-    private Long theEditor;
+    private Long editor;
 }

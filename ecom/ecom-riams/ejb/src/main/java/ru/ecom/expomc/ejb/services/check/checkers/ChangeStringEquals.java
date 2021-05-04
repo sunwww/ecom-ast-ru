@@ -1,33 +1,27 @@
 package ru.ecom.expomc.ejb.services.check.checkers;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 /**
  * Замена по значению
  */
 @Comment("Замена по значению")
+@Getter
+@Setter
 public class ChangeStringEquals extends AbstractChangeStringProperty {
 
     public String transform(String aValue) {
-        if(aValue.equals(theEqualValue)) {
-            aValue = theChangeTo ;
+        if(aValue.equals(equalValue)) {
+            aValue = changeTo ;
         }
         return aValue ;
     }
 
-    /** То заменить на */
-    @Comment("То заменить на")
-    public String getChangeTo() { return theChangeTo ; }
-    public void setChangeTo(String aChangeTo) { theChangeTo = aChangeTo ; }
-
     /** Если значение равно */
-    @Comment("Если значение равно")
-    public String getEqualValue() { return theEqualValue ; }
-    public void setEqualValue(String aEqualValue) { theEqualValue = aEqualValue ; }
-
-    /** Если значение равно */
-    private String theEqualValue ;
+    private String equalValue ;
     /** То заменить на */
-     private String theChangeTo ;
+     private String changeTo ;
 
 }

@@ -1,5 +1,6 @@
 package ru.ecom.expomc.ejb.services.form.impdoc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expomc.ejb.domain.impdoc.ImportTime;
@@ -18,84 +19,71 @@ import javax.persistence.Id;
 @Parent(property = "document", parentForm= ImportDocumentForm.class)
 @WebTrail(comment="Импортированные данные", nameProperties={"comment","importDate","actualDateFrom", "actualDateTo"}, view="entityParentEdit-exp_importtime.do")
 @EntityFormSecurityPrefix("/Policy/Exp/Time")
+@Setter
 public class ImportTimeForm extends IdEntityForm {
 
 	
     /** Идентификатор */
     @Id
-    public long getId() { return theId ; }
-    public void setId(long aId) { theId = aId ; }
+    public long getId() { return id ; }
 
     /** Комментарий */
     @Comment("Комментарий")
     @Persist
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
+    public String getComment() { return comment ; }
 
     /** Дата импорта */
     @DateString
     @Persist
-    public String getImportDate() { return theImportDate ; }
-    public void setImportDate(String aImportDate) { theImportDate = aImportDate ; }
+    public String getImportDate() { return importDate ; }
 
     /** Дата актуальности с */
     @DateString
     @Persist
-    public String getActualDateFrom() { return theActualDateFrom ; }
-    public void setActualDateFrom(String aActualDateFrom) { theActualDateFrom = aActualDateFrom ; }
+    public String getActualDateFrom() { return actualDateFrom ; }
 
     /** Дата актуальности по */
     @DateString
     @Persist
-    public String getActualDateTo() { return theActualDateTo ; }
-    public void setActualDateTo(String aActualDateTo) { theActualDateTo = aActualDateTo ; }
+    public String getActualDateTo() { return actualDateTo ; }
 
     /** Документ */
     @Persist
-    public long getDocument() { return theImportDocument ; }
-    public void setDocument(long aImportDocument) { theImportDocument = aImportDocument ; }
+    public long getDocument() { return importDocument ; }
 
     /** Файл */
 	@Comment("Файл")
 	@Persist
 	public String getOriginalFilename() {
-		return theOriginalFilename;
+		return originalFilename;
 	}
 
-	public void setOriginalFilename(String aOriginalFilename) {
-		theOriginalFilename = aOriginalFilename;
-	}
-	
 	/** Размер в байтах */
 	@Comment("Размер в байтах")
 	@Persist
 	public long getSizeInBytes() {
-		return theSizeInBytes;
-	}
-
-	public void setSizeInBytes(long aSizeInBytes) {
-		theSizeInBytes = aSizeInBytes;
+		return sizeInBytes;
 	}
 
 	/** Размер в байтах */
-	private long theSizeInBytes;
+	private long sizeInBytes;
 
 	/** Файл */
-	private String theOriginalFilename;
+	private String originalFilename;
     /** Документ */
-    private long theImportDocument ;
+    private long importDocument ;
     /** Дата актуальности по */
-    private String theActualDateTo ;
+    private String actualDateTo ;
     /** Дата актуальности с */
-    private String theActualDateFrom ;
+    private String actualDateFrom ;
     /** Дата импорта */
-    private String theImportDate ;
+    private String importDate ;
     /** Клас для сохранения */
-    private String theEntityClassName ;
+    private String entityClassName ;
     /** Комментарий */
-    private String theComment ;
+    private String comment ;
     /** Ключ импорта */
-    private String theKeyName ;
+    private String keyName ;
     /** Идентификатор */
-    private long theId ;
+    private long id ;
 }

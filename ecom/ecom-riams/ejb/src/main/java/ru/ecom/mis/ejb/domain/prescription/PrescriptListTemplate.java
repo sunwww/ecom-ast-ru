@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.prescription;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.diary.ejb.domain.category.TemplateCategory;
 import ru.ecom.jaas.ejb.domain.SecGroup;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,21 +18,18 @@ import java.util.List;
 
 @Comment("Шаблон листа назначений")
 @Entity
+@Getter
+@Setter
 public class PrescriptListTemplate extends AbstractPrescriptionList {
 	/** Категории классификатора */
 	@Comment("Категории классификатора")
 	@ManyToMany
-	public List<TemplateCategory> getCategories() {return theCategories;}
-	public void setCategories(List<TemplateCategory> aCategories) {theCategories = aCategories;}
+	public List<TemplateCategory> getCategories() {return categories;}
+	private List<TemplateCategory> categories;
 
-	/** Категории классификатора */
-	private List<TemplateCategory> theCategories;
 	/** Группы пользователей */
 	@Comment("Группы пользователей")
 	@ManyToMany
-	public List<SecGroup> getSecGroups() {return theSecGroups;}
-	public void setSecGroups(List<SecGroup> aSecGroups) {theSecGroups = aSecGroups;}
-
-	/** Группы пользователей */
-	private List<SecGroup> theSecGroups;
+	public List<SecGroup> getSecGroups() {return secGroups;}
+	private List<SecGroup> secGroups;
 }

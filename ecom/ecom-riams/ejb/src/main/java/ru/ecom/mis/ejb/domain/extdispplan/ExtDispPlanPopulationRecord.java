@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.extdispplan;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.ecom.mis.ejb.domain.patient.Patient;
@@ -14,55 +16,43 @@ import java.text.SimpleDateFormat;
 
 @Entity
 @UnDeletable
+@Getter
+@Setter
 public class ExtDispPlanPopulationRecord extends BaseEntity {
 
     /** План диспансеризации */
     @Comment("План диспансеризации")
     @OneToOne
-    public ExtDispPlanPopulation getPlan() {return thePlan;}
-    public void setPlan(ExtDispPlanPopulation aPlan) {thePlan = aPlan;}
+    public ExtDispPlanPopulation getPlan() {return plan;}
     /** План диспансеризации */
-    private ExtDispPlanPopulation thePlan ;
+    private ExtDispPlanPopulation plan ;
 
     /** Дата планируемой диспансеризации */
-    @Comment("Дата планируемой диспансеризации")
-    public Date getPlanDispDate() {return thePlanDispDate;}
-    public void setPlanDispDate(Date aPlanDispDate) {thePlanDispDate = aPlanDispDate;}
-    /** Дата планируемой диспансеризации */
-    private Date thePlanDispDate ;
+    private Date planDispDate ;
 
     /** Пациент */
     @Comment("Пациент")
     @OneToOne
-    public Patient getPatient() {return thePatient;}
-    public void setPatient(Patient aPatient) {thePatient = aPatient;}
+    public Patient getPatient() {return patient;}
     /** Пациент */
-    private Patient thePatient ;
+    private Patient patient ;
 
     /** Удалено */
-    @Comment("Удалено")
-    public Boolean getIsDeleted() {return theIsDeleted;}
-    public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
-    /** Удалено */
-    private Boolean theIsDeleted ;
+    private Boolean isDeleted ;
 
     /** Профосмотр пройден */
-    @Comment("Профосмотр пройден")
-    public Boolean getIsExtDispMade() {return theIsExtDispMade;}
-    public void setIsExtDispMade(Boolean aIsExtDispMade) {theIsExtDispMade = aIsExtDispMade;}
-    /** Профосмотр пройден */
-    private Boolean theIsExtDispMade ;
+    private Boolean isExtDispMade ;
 
     @PrePersist
     void prePersist() {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
         SimpleDateFormat format2 = new SimpleDateFormat("MMdd");
         try {
-            thePlanDispDate = new java.sql.Date(format.parse(thePlan.getYear()+""+format2.format(thePatient.getBirthday())).getTime());
+            planDispDate = new java.sql.Date(format.parse(plan.getYear()+""+format2.format(patient.getBirthday())).getTime());
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        theIsExtDispMade=false;theIsDeleted=false;
+        isExtDispMade=false;isDeleted=false;
         //TODO дата планируемой ДД = дата рождения пациента + год плана ДД
     }
 

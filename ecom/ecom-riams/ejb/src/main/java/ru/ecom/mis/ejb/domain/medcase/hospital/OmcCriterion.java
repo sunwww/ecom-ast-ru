@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase.hospital;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expert2.domain.voc.VocClassificationCriterion;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
@@ -10,20 +12,18 @@ import javax.persistence.OneToOne;
 
 @Entity
 /**Классификационные критерии по случаю*/
+@Getter
+@Setter
 public class OmcCriterion extends BaseEntity {
     /** Случай лечения */
     @Comment("Случай лечения")
     @OneToOne
-    public MedCase getMedCase() {return theMedCase;}
-    public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
-    /** Случай лечения */
-    private MedCase theMedCase ;
+    public MedCase getMedCase() {return medCase;}
+    private MedCase medCase ;
 
     /** Критерий */
     @Comment("Критерий")
     @OneToOne
-    public VocClassificationCriterion getCriterion() {return theCriterion;}
-    public void setCriterion(VocClassificationCriterion aCriterion) {theCriterion = aCriterion;}
-    /** Критерий */
-    private VocClassificationCriterion theCriterion ;
+    public VocClassificationCriterion getCriterion() {return criterion;}
+    private VocClassificationCriterion criterion ;
 }

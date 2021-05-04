@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.extdisp;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -30,274 +32,156 @@ import java.util.List;
 	@AIndex(properties="finishDate")
     }) 
 @EntityListeners(DeleteListener.class)
+@Getter
+@Setter
 public class ExtDispCard extends BaseEntity{
 	
 	/** Источник финансирования */
 	@Comment("Источник финансирования")
 	@OneToOne
-	public VocServiceStream  getServiceStream() {return theServiceStream;}
-	public void setServiceStream(VocServiceStream  aServiceStream) {theServiceStream = aServiceStream;}
+	public VocServiceStream  getServiceStream() {return serviceStream;}
 	/** Источник финансирования */
-	private VocServiceStream  theServiceStream;
+	private VocServiceStream  serviceStream;
 
 	/** Не подавать на оплату по ОМС */
-	@Comment("Не подавать на оплату по ОМС")
-	public Boolean getIsNoOmc() {return theIsNoOmc;}
-	public void setIsNoOmc(Boolean aIsNoOmc) {theIsNoOmc = aIsNoOmc;}
-	/** Не подавать на оплату по ОМС */
-	private Boolean theIsNoOmc;
+	private Boolean isNoOmc;
 	
 	/** Дата экспорта в федеральную систему */
-	@Comment("Дата экспорта в федеральную систему")
-	public Date getExportDate() {return theExportDate;}
-	public void setExportDate(Date aExportDate) {theExportDate = aExportDate;}
-	/** Дата экспорта в федеральную систему */
-	private Date theExportDate;
+	private Date exportDate;
 
 	/** Пациент */
 	@Comment("Пациент")
 	@OneToOne
-	public Patient getPatient() {return thePatient;}
-	public void setPatient(Patient aPatient) {thePatient = aPatient;}
+	public Patient getPatient() {return patient;}
 	/** Пациент */
-	private Patient thePatient;
+	private Patient patient;
 	
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@OneToOne
-	public MisLpu getLpu() {return theLpu;}
-	public void setLpu(MisLpu aLpu) {theLpu = aLpu;}
+	public MisLpu getLpu() {return lpu;}
 	/** ЛПУ */
-	private MisLpu theLpu;
+	private MisLpu lpu;
 	
 	@OneToMany(mappedBy="card", cascade=CascadeType.ALL)
-	public List<ExtDispService> getServices() {return theServices;}
-	public void setServices(List<ExtDispService> aServices) {theServices = aServices;}
+	public List<ExtDispService> getServices() {return services;}
 	/** Услуги */
-	private List<ExtDispService> theServices;
+	private List<ExtDispService> services;
 	
 	/** Госпитализирован */
-	@Comment("Госпитализирован")
-	public Boolean getHospitalized() {return theHospitalized;}
-	public void setHospitalized(Boolean aHospitalized) {theHospitalized = aHospitalized;}
-	/** Госпитализирован */
-	private Boolean theHospitalized;
+	private Boolean hospitalized;
 	
 	/** Социальная группа */
 	@Comment("Социальная группа")
 	@OneToOne
-	public VocExtDispSocialGroup getSocialGroup() {return theSocialGroup;}
-	public void setSocialGroup(VocExtDispSocialGroup aSocialGroup) {theSocialGroup = aSocialGroup;}
+	public VocExtDispSocialGroup getSocialGroup() {return socialGroup;}
 	/** Социальная группа */
-	private VocExtDispSocialGroup theSocialGroup;
+	private VocExtDispSocialGroup socialGroup;
 	
 	/** Тип дополнительной диспансеризации */
 	@Comment("Тип дополнительной диспансеризации")
 	@OneToOne
-	public VocExtDisp getDispType() {return theDispType;}
-	public void setDispType(VocExtDisp aDispType) {theDispType = aDispType;}
+	public VocExtDisp getDispType() {return dispType;}
 	/** Тип дополнительной диспансеризации */
-	private VocExtDisp theDispType;
+	private VocExtDisp dispType;
 	
 	/** На выезде */
-	@Comment("На выезде")	
-	public Boolean getOnDeparture() {return theOnDeparture;}
-	public void setOnDeparture(Boolean aOnDeparture) {theOnDeparture = aOnDeparture;}
-	/** На выезде */
-	private Boolean theOnDeparture;
+	private Boolean onDeparture;
 	
 	/** Дата начала */
-	@Comment("Дата начала")
-	public Date getStartDate() {return theStartDate;}
-	public void setStartDate(Date aStartDate) {theStartDate = aStartDate;}
-	/** Дата начала */
-	private Date theStartDate;
+	private Date startDate;
 	
 	/** Дата окончания */
-	@Comment("Дата окончания")
-	public Date getFinishDate() {return theFinishDate;}
-	public void setFinishDate(Date aFinishDate) {theFinishDate = aFinishDate;}
-	/** Дата окончания */
-	private Date theFinishDate;
+	private Date finishDate;
 	
 	/** Группа здоровья дополнительной диспансеризации */
 	@Comment("Группа здоровья дополнительной диспансеризации")
 	@OneToOne
-	public VocExtDispHealthGroup getHealthGroup() {return theHealthGroup;}
-	public void setHealthGroup(VocExtDispHealthGroup aHealthGroup) {theHealthGroup = aHealthGroup;}
+	public VocExtDispHealthGroup getHealthGroup() {return healthGroup;}
 	/** Группа здоровья дополнительной диспансеризации */
-	private VocExtDispHealthGroup theHealthGroup;
+	private VocExtDispHealthGroup healthGroup;
 	
 	/** Взят на диспансерное наблюдение */
-	@Comment("Взят на диспансерное наблюдение")
-	public Boolean getIsObservation() {return theIsObservation;}
-	public void setIsObservation(Boolean aIsObservation) {theIsObservation = aIsObservation;}
-	/** Взят на диспансерное наблюдение */
-	private Boolean theIsObservation;
+	private Boolean isObservation;
 	
 	/** Назначено лечение */
-	@Comment("Назначено лечение")
-	public Boolean getIsTreatment() {return theIsTreatment;}
-	public void setIsTreatment(Boolean aIsTreatment) {theIsTreatment = aIsTreatment;}
-	/** Назначено лечение */
-	private Boolean theIsTreatment;
+	private Boolean isTreatment;
 	
 	/** Назначена дополнительное диагностическое исследование */
-	@Comment("Назначена дополнительное диагностическое исследование")
-	public Boolean getIsDiagnostics() {return theIsDiagnostics;}
-	public void setIsDiagnostics(Boolean aIsDiagnostics) {theIsDiagnostics = aIsDiagnostics;}
-	/** Назначена дополнительное диагностическое исследование */
-	private Boolean theIsDiagnostics;
+	private Boolean isDiagnostics;
 	
 	/** Дано направление  для  получения  специализированной,  в  том  числе ВМП */
-	@Comment("Дано направление  для  получения  специализированной,  в  том  числе ВМП")
-	public Boolean getIsSpecializedCare() {return theIsSpecializedCare;}
-	public void setIsSpecializedCare(Boolean aIsSpecializedCare) {theIsSpecializedCare = aIsSpecializedCare;}
-	/** Дано направление  для  получения  специализированной,  в  том  числе ВМП */
-	private Boolean theIsSpecializedCare;
+	private Boolean isSpecializedCare;
 	
 	/** Дано направление на санаторно-курортное лечение */
-	@Comment("Дано направление на санаторно-курортное лечение")
-	public Boolean getIsSanatorium() {return theIsSanatorium;}
-	public void setIsSanatorium(Boolean aIsSanatorium) {theIsSanatorium = aIsSanatorium;}
-	/** Дано направление на санаторно-курортное лечение */
-	private Boolean theIsSanatorium;
+	private Boolean isSanatorium;
 	
 	@OneToMany(mappedBy="card", cascade=CascadeType.ALL)
-	public List<ExtDispRisk> getRisks() {return theRisks;}
-	public void setRisks(List<ExtDispRisk> aRisks) {theRisks = aRisks;}
+	public List<ExtDispRisk> getRisks() {return risks;}
 	/** Риски здоровью */
-	private List<ExtDispRisk> theRisks;
+	private List<ExtDispRisk> risks;
 	
 	/** Принадлежность к коренным малочисленным народам Севера, Сибири и Дальнего Востока РФ */
-	@Comment("Принадлежность к коренным малочисленным народам Севера, Сибири и Дальнего Востока РФ")
-	public Boolean getIsSmallNation() {return theIsSmallNation;}
-	public void setIsSmallNation(Boolean aIsSmallNation) {theIsSmallNation = aIsSmallNation;}
-	/** Принадлежность к коренным малочисленным народам Севера, Сибири и Дальнего Востока РФ */
-	private Boolean theIsSmallNation;
+	private Boolean isSmallNation;
 	
 	/** МКБ основного диагноза */
 	@Comment("МКБ основного диагноза")
 	@OneToOne
-	public VocIdc10 getIdcMain() {return theIdcMain;}
-	public void setIdcMain(VocIdc10 aIdcMain) {theIdcMain = aIdcMain;}
+	public VocIdc10 getIdcMain() {return idcMain;}
 	/** МКБ основного диагноза */
-	private VocIdc10 theIdcMain;
+	private VocIdc10 idcMain;
 	
 	/** Направлен на след. этап */
-	@Comment("Направлен на след. этап")
-	public Boolean getIsServiceIndication() {return theIsServiceIndication;}
-	public void setIsServiceIndication(Boolean aIsServiceIndication) {theIsServiceIndication = aIsServiceIndication;}
-
-	/** Направлен на след. этап */
-	private Boolean theIsServiceIndication;
+	private Boolean isServiceIndication;
 
 	/** Возрастная категория */
 	@Comment("Возрастная категория")
 	@OneToOne
-	public VocExtDispAgeGroup getAgeGroup() {return theAgeGroup;}
-	public void setAgeGroup(VocExtDispAgeGroup aAgeGroup) {theAgeGroup = aAgeGroup;}
-
+	public VocExtDispAgeGroup getAgeGroup() {return ageGroup;}
 	/** Возрастная категория */
-	private VocExtDispAgeGroup theAgeGroup;
+	private VocExtDispAgeGroup ageGroup;
 	
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@OneToOne
-	public WorkFunction getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(WorkFunction aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public WorkFunction getWorkFunction() {return workFunction;}
 
 	/** Представитель */
 	@Comment("Представитель")
 	@OneToOne
-	public Kinsman getKinsman() {return theKinsman;}
-	public void setKinsman(Kinsman aKinsman) {theKinsman = aKinsman;}
+	public Kinsman getKinsman() {return kinsman;}
 
 	/** Представитель */
-	private Kinsman theKinsman;
+	private Kinsman kinsman;
 	/** Рабочая функция */
-	private WorkFunction theWorkFunction;
+	private WorkFunction workFunction;
 	
 	/** К оплате не принято */
-	@Comment("К оплате не принято")
-	public Boolean getNotPaid() {return theNotPaid;}
-	public void setNotPaid(Boolean aNotPaid) {theNotPaid = aNotPaid;}
-
-	/** К оплате не принято */
-	private Boolean theNotPaid;
-
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-	
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	/** Время редактрования */
-	@Comment("Время редактрования")
-	public Time getEditTime() {return theEditTime;}
-	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-	/** Пользователь, который создал запись */
-	@Comment("Пользователь, который создал запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	/** Пользователь, который последний редактировал запись */
-	@Comment("Пользователь, который последний редактировал запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-
-	/** Дата редактирования услуги */
-	@Comment("Дата редактирования услуги")
-	public Date getEditDateRender() {return theEditDateRender;}
-	public void setEditDateRender(Date aEditDateRender) {theEditDateRender = aEditDateRender;}
-
-	/** Время редактирование услуги */
-	@Comment("Время редактирование услуги")
-	public Time getEditTimeRender() {return theEditTimeRender;}
-	public void setEditTimeRender(Time aEditTimeRender) {theEditTimeRender = aEditTimeRender;}
+	private Boolean notPaid;
 
 	/** Пользователь редактировавший услуги */
-	@Comment("Пользователь редактировавший услуги")
-	public String getEditUsernameRender() {return theEditUsernameRender;}
-	public void setEditUsernameRender(String aEditUsernameRender) {theEditUsernameRender = aEditUsernameRender;}
-
-	/** Пользователь редактировавший услуги */
-	private String theEditUsernameRender;
+	private String editUsernameRender;
 	/** Время редактирование услуги */
-	private Time theEditTimeRender;
+	private Time editTimeRender;
 	/** Дата редактирования услуги */
-	private Date theEditDateRender;
+	private Date editDateRender;
 	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private Time theEditTime;
+	private Time editTime;
 	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 
 	
 	/** Основной диагноз установлен впервые */
-	@Comment("Основной диагноз установлен впервые")
-	public Boolean getIsDiagnosisSetFirstTime(){return theIsDiagnosisSetFirstTime;}
-	public void setIsDiagnosisSetFirstTime(Boolean aIsDiagnosisSetFirstTime){theIsDiagnosisSetFirstTime = aIsDiagnosisSetFirstTime;}
-	private Boolean theIsDiagnosisSetFirstTime ;
+	private Boolean isDiagnosisSetFirstTime ;
 
 	/** Дата следующего визита */
-	@Comment("Дата следующего визита")
-	public Date getNextDispDate() {return theNextDispDate;}
-	public void setNextDispDate(Date aNextDispDate) {theNextDispDate = aNextDispDate;}
-	/** Дата следующего визита */
-	private Date theNextDispDate ;
+	private Date nextDispDate ;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.prescription;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -26,531 +27,445 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Subclasses({DrugPrescriptionForm.class, DietPrescriptionForm.class
 	, ServicePrescriptionForm.class, ModePrescriptionForm.class})
 @EntityFormSecurityPrefix("/Policy/Mis/Prescription")
+@Setter
 public class PrescriptionForm extends IdEntityForm {
 
 	/** Тип случая СМО */
 	@Comment("Тип случая СМО")
-	public String getMedcaseType() {return theMedcaseType;}
-	public void setMedcaseType(String aMedcaseType) {theMedcaseType = aMedcaseType;}
+	public String getMedcaseType() {return medcaseType;}
 	/** Тип случая СМО */
-	private String theMedcaseType ;
+	private String medcaseType ;
 
 	/** ИД случая СМО */
 	@Comment("ИД случая СМО")
-	public Long getMedcaseId() {return theMedcaseId;}
-	public void setMedcaseId(Long aMedcaseId) {theMedcaseId = aMedcaseId;}
+	public Long getMedcaseId() {return medcaseId;}
 	/** ИД случая СМО */
-	private Long theMedcaseId ;
+	private Long medcaseId ;
 
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@Persist
-	public Long getServiceStream() {return theServiceStream;}
-	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
-	private Long theServiceStream ;
+	public Long getServiceStream() {return serviceStream;}
+	private Long serviceStream ;
 
 	/** Лист назначений */
 	@Comment("Лист назначений")
 	@Persist
-	public Long getPrescriptionList() {return thePrescriptionList;}
-	public void setPrescriptionList(Long aPrescriptionList) {thePrescriptionList = aPrescriptionList;}
+	public Long getPrescriptionList() {return prescriptionList;}
 
 	/** Регистратор */
 	@Comment("Регистратор")
 	@Persist
-	public Long getRegistrator() {return theRegistrator;}
-	public void setRegistrator(Long aRegistrator) {theRegistrator = aRegistrator;}
-	
+	public Long getRegistrator() {return registrator;}
+
 	/** Плановая дата начала */
 	@Comment("Плановая дата начала")
 	@Persist @Required
 	@DateString @DoDateString
-	public String getPlanStartDate() {return thePlanStartDate;}
-	public void setPlanStartDate(String aPlanStartDate) {thePlanStartDate = aPlanStartDate;}
-	
+	public String getPlanStartDate() {return planStartDate;}
+
 	/** Плановое время начала */
 	@Comment("Плановое время начала")
 	@Persist @TimeString @DoTimeString @Required
-	public String getPlanStartTime() {return thePlanStartTime;}
-	public void setPlanStartTime(String aPlanStartTime) {thePlanStartTime = aPlanStartTime;}
+	public String getPlanStartTime() {return planStartTime;}
 
 	/** Плановая дата окончания */
 	@Comment("Плановая дата окончания")
 	@Persist @DateString @DoDateString
-	public String getPlanEndDate() {return thePlanEndDate;}
-	public void setPlanEndDate(String aPlanEndDate) {thePlanEndDate = aPlanEndDate;}
+	public String getPlanEndDate() {return planEndDate;}
 
 	/** Плановое время окончания */
 	@Comment("Плановое время окончания")
 	@Persist @TimeString @DoTimeString
-	public String getPlanEndTime() {return thePlanEndTime;}
-	public void setPlanEndTime(String aPlanEndTime) {thePlanEndTime = aPlanEndTime;}
+	public String getPlanEndTime() {return planEndTime;}
 
 	/** Дата отмены */
 	@Comment("Дата отмены")
 	@Persist @DateString @DoDateString
-	public String getCancelDate() {return theCancelDate;}
-	public void setCancelDate(String aCancelDate) {theCancelDate = aCancelDate;}
+	public String getCancelDate() {return cancelDate;}
 
 	/** Время отмены */
 	@Comment("Время отмены")
 	@Persist @TimeString @DoTimeString
-	public String getCancelTime() {return theCancelTime;}
-	public void setCancelTime(String aCancelTime) {theCancelTime = aCancelTime;}
+	public String getCancelTime() {return cancelTime;}
 
 	/** Причина отмены */
 	@Comment("Причина отмены")
 	@Persist
-	public Long getCancelReason() {return theCancelReason;}
-	public void setCancelReason(Long aCancelReason) {theCancelReason = aCancelReason;}
+	public Long getCancelReason() {return cancelReason;}
 
 	/** Отменивший */
 	@Comment("Отменивший")
 	@Persist
-	public Long getCancelSpecial() {return theCancelSpecial;}
-	public void setCancelSpecial(Long aCancelWorker) {theCancelSpecial = aCancelWorker;}
+	public Long getCancelSpecial() {return cancelSpecial;}
 
 	/** Отменивший (text) */
 	@Comment("Отменивший (text)")
 	@Persist
-	public String getCancelWorkerInfo() {return theCancelWorkerInfo;}
-	public void setCancelWorkerInfo (String aCancelWorkerInfo) {}
+	public String getCancelWorkerInfo() {return cancelWorkerInfo;}
 
 	/** Назначивший */
 	@Comment("Назначивший")
 	@Persist
-	public Long getPrescriptSpecial() {return thePrescriptSpecial;}
-	public void setPrescriptSpecial(Long aPrescriptor) {thePrescriptSpecial = aPrescriptor;	}
+	public Long getPrescriptSpecial() {return prescriptSpecial;}
 
 	/** Назначивший (text) */
 	@Comment("Назначивший (text)")
 	@Persist
-	public String getPrescriptorInfo() {return thePrescriptorInfo;}
-	public void setPrescriptorInfo(String aPrescriptorInfo) {}
-	
+	public String getPrescriptorInfo() {return prescriptorInfo;}
+
 	/** Комментарии */
 	@Comment("Комментарии")
 	@Persist
-	public String getComments() {return theComments;}
-	public void setComments(String aComments) {theComments = aComments;}
+	public String getComments() {return comments;}
 
 	/** Описание */
 	@Comment("Описание")
 	@Persist
 	public String getDescription() {return "";}
-	public void setDescription(String aDescription) {}
-	
+
 	/** Состояние исполнения */
 	@Comment("Состояние исполнения")
 	@Persist
-	public Long getFulfilmentState() {return theFulfilmentState;}
-	public void setFulfilmentState(Long aFulfilmentState) {theFulfilmentState = aFulfilmentState;}
-	 
+	public Long getFulfilmentState() {return fulfilmentState;}
+
 	/** Регистратор (text) */
 	@Comment("Регистратор (text)")
 	@Persist
-	public String getRegistratorInfo() {return theRegistratorInfo;}
-	public void setRegistratorInfo(String aRegistratorInfo) {}
+	public String getRegistratorInfo() {return registratorInfo;}
 
 	/** Описание назначения */
 	@Comment("Описание назначения")
 	@Persist
-	public String getDescriptionInfo() {return theDescriptionInfo;}
-	public void setDescriptionInfo(String aDescriptionInfo) {theDescriptionInfo = aDescriptionInfo;}
-	
+	public String getDescriptionInfo() {return descriptionInfo;}
+
 	/** Дата и время назначения */
 	@Comment("Дата и время назначения")
 	@Persist
-	public String getPrescriptTimeStamp() {return thePrescriptTimeStamp;}
-	public void setPrescriptTimeStamp(String aPrescriptTimeStamp) {thePrescriptTimeStamp = aPrescriptTimeStamp;}
-	
+	public String getPrescriptTimeStamp() {return prescriptTimeStamp;}
+
 	/** Дата и время отмены назначения */
 	@Comment("Дата и время отмены назначения")
-	public String getPrescriptCancelTimeStamp() {return thePrescriptCancelTimeStamp;}
-	public void setPrescriptCancelTimeStamp(String aPrescriptCancelTimeStamp) {thePrescriptCancelTimeStamp = aPrescriptCancelTimeStamp;}
+	public String getPrescriptCancelTimeStamp() {return prescriptCancelTimeStamp;}
 
 	/** Подпись */
 	@Comment("Подпись")
 	@Persist
-	public String getSignature() {return theSignature;}
-	public void setSignature(String aSignature) {theSignature = aSignature;}
+	public String getSignature() {return signature;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@DateString @DoDateString @Persist
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
+
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@DateString @DoDateString @Persist
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
-	
+	public String getEditDate() {return editDate;}
+
 	/** Время создания */
 	@Comment("Время создания")
 	@TimeString @DoTimeString @Persist
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;}
 	/** Время редактрования */
 	@Comment("Время редактрования")
 	@TimeString @DoTimeString @Persist
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+	public String getEditTime() {return editTime;}
 	/** Пользователь, который создал запись */
 	@Comment("Пользователь, который создал запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 	/** Пользователь, который последний редактировал запись */
 	@Comment("Пользователь, который последний редактировал запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-	
+	public String getEditUsername() {return editUsername;}
+
 	/** Лабораторные исследования */
 	@Comment("Лабораторные исследования")
 	public String getLabServicies() {
-		return theLabServicies;
+		return labServicies;
 	}
 
-	public void setLabServicies(String aLabServicies) {
-		theLabServicies = aLabServicies;
-	}
-	
 	/** Лабораторные исследования */
-	private String theLabServicies;
+	private String labServicies;
 	
 	/** Дата по лаб. исследованию */
 	@Comment("Дата по лаб. исследованию")
 	@DateString @DoDateString
-	public String getLabDate() {return theLabDate;}
-	public void setLabDate(String aLabDate) {theLabDate = aLabDate;}
+	public String getLabDate() {return labDate;}
 
 	/** Дата по лаб. исследованию */
-	private String theLabDate;
+	private String labDate;
 	
 	/** Список услуг по лаборатории */
 	@Comment("Список услуг по лаборатории")
-	public String getLabList() {return theLabList;}
-	public void setLabList(String aLabList) {theLabList = aLabList;}
+	public String getLabList() {return labList;}
 
 	/** Список услуг по лаборатории */
-	private String theLabList;
+	private String labList;
 	
 	/** Функциональные исследования */
 	@Comment("Функциональные исследования")
 	public String getFuncServicies() {
-		return theFuncServicies;
-	}
-
-	public void setFuncServicies(String aFuncServicies) {
-		theFuncServicies = aFuncServicies;
+		return funcServicies;
 	}
 	/** Кабинет назначения */
 	@Comment("Кабинет назначения")
 	@Persist
-	public Long getPrescriptCabinet() {return thePrescriptCabinet;}
-	public void setPrescriptCabinet(Long aPrescriptCabinet) {
-		thePrescriptCabinet = aPrescriptCabinet;
-	}
+	public Long getPrescriptCabinet() {return prescriptCabinet;}
 
 	/** Кабинет назначения */
-	private Long thePrescriptCabinet;
+	private Long prescriptCabinet;
 	/** Функциональные исследования */
-	private String theFuncServicies;
+	private String funcServicies;
 	
 	/** Дата функционального исследования */
 	@Comment("Дата функционального исследования")
 	@DateString @DoDateString
 	public String getFuncDate() {
-		return theFuncDate;
-	}
-
-	public void setFuncDate(String aFuncDate) {
-		theFuncDate = aFuncDate;
+		return funcDate;
 	}
 
 	/** Дата функционального исследования */
-	private String theFuncDate;
+	private String funcDate;
 	
 	/** Кабинет для лабораторного исследования */
 	@Comment("Кабинет для лабораторного исследования")
 	public String getLabCabinet() {
-		return theLabCabinet;
-	}
-
-	public void setLabCabinet(String aLabCabinet) {
-		theLabCabinet = aLabCabinet;
+		return labCabinet;
 	}
 
 	/** Кабинет для лабораторного исследования */
-	private String theLabCabinet;
+	private String labCabinet;
 	
 	/** Кабинет для функ. исследования */
 	@Comment("Кабинет для функ. исследования")
 	public String getFuncCabinet() {
-		return theFuncCabinet;
-	}
-
-	public void setFuncCabinet(String aFuncCabinet) {
-		theFuncCabinet = aFuncCabinet;
+		return funcCabinet;
 	}
 
 	/** Кабинет для функ. исследования */
-	private String theFuncCabinet;
+	private String funcCabinet;
 	
 	/** Список функциональных исследований */
 	@Comment("Список функциональных исследований")
 	public String getFuncList() {
-		return theFuncList;
-	}
-
-	public void setFuncList(String aFuncList) {
-		theFuncList = aFuncList;
+		return funcList;
 	}
 	/** Список функциональных исследований */
-	private String theFuncList;
+	private String funcList;
 	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private String theEditTime;
+	private String editTime;
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	/** Подпись */
-	private String theSignature;
+	private String signature;
 	/** Дата и время отмены назначения */
-	private String thePrescriptCancelTimeStamp;
+	private String prescriptCancelTimeStamp;
 	/** Дата и время назначения */
-	private String thePrescriptTimeStamp;
+	private String prescriptTimeStamp;
 	/** Лист назначений */
-	private Long thePrescriptionList;
+	private Long prescriptionList;
 	/** Регистратор */
-	private Long theRegistrator;
+	private Long registrator;
 	/** Плановая дата начала */
-	private String thePlanStartDate;
+	private String planStartDate;
 	/** Плановое время начала */
-	private String thePlanStartTime;
+	private String planStartTime;
 	/** Плановая дата окончания */
-	private String thePlanEndDate;
+	private String planEndDate;
 	/** Плановое время окончания */
-	private String thePlanEndTime;
+	private String planEndTime;
 	/** Дата отмены */
-	private String theCancelDate;
+	private String cancelDate;
 	/** Время отмены */
-	private String theCancelTime;
+	private String cancelTime;
 	/** Причина отмены */
-	private Long theCancelReason;
+	private Long cancelReason;
 	/** Отменивший */
-	private Long theCancelSpecial;
+	private Long cancelSpecial;
 	/** Отменивший (text) */
-	private String theCancelWorkerInfo;
+	private String cancelWorkerInfo;
 	/** Назначивший */
-	private Long thePrescriptSpecial;
+	private Long prescriptSpecial;
 	/** Назначивший (text) */
-	private String thePrescriptorInfo;
+	private String prescriptorInfo;
 	/** Комментарии */
-	private String theComments;
+	private String comments;
 	/** Состояние исполнения */
-	private Long theFulfilmentState;
+	private Long fulfilmentState;
 	/** Регистратор (text) */
-	private String theRegistratorInfo;
+	private String registratorInfo;
 	/** Описание назначения */
-	private String theDescriptionInfo;
+	private String descriptionInfo;
 
 	/** Тип назначения */
 	@Comment("Тип назначения")
 	@Persist 
-	public Long getPrescriptType() {return thePrescriptType;}
-	public void setPrescriptType(Long aPrescriptType) {thePrescriptType = aPrescriptType;}
-	private Long thePrescriptType;
+	public Long getPrescriptType() {return prescriptType;}
+	private Long prescriptType;
 	
 	/** Метка назначения */
 	@Comment("Метка назначения")
-	public String getLabelPrescript() {return theLabelPrescript;}
-	public void setLabelPrescript(String aLabelPrescript) {theLabelPrescript = aLabelPrescript;}
-	private String theLabelPrescript;
+	public String getLabelPrescript() {return labelPrescript;}
+	private String labelPrescript;
 	
 	/** Дата забора */
 	@Comment("Дата забора")
 	@Persist @DateString @DoDateString
-	public String getIntakeDate() {return theIntakeDate;}
-	public void setIntakeDate(String aIntakeDate) {theIntakeDate = aIntakeDate;}
-    private String theIntakeDate;
+	public String getIntakeDate() {return intakeDate;}
+    private String intakeDate;
 
 	/** Время забора */
 	@Comment("Время забора")
 	@Persist @DoTimeString @TimeString 
-	public String getIntakeTime() {return theIntakeTime;}
-	public void setIntakeTime(String aIntakeTime) {theIntakeTime = aIntakeTime;}
-    private String theIntakeTime;
+	public String getIntakeTime() {return intakeTime;}
+    private String intakeTime;
 
 	/** Пользователь, осуществившей забор */
 	@Comment("Пользователь, осуществившей забор")
-	public String getIntakeUsername() {return theIntakeUsername;}
-	public void setIntakeUsername(String aIntakeUsername) {theIntakeUsername = aIntakeUsername;}
-    private String theIntakeUsername;
+	public String getIntakeUsername() {return intakeUsername;}
+    private String intakeUsername;
 
 	/** Идентификатор материала */
 	@Comment("Идентификатор материала")
-	public String getMaterialId() {return theMaterialId;}
-	public void setMaterialId(String aMaterialId) {theMaterialId = aMaterialId;}
-	private String theMaterialId;
+	public String getMaterialId() {return materialId;}
+	private String materialId;
 
 	/** Номер пробирки ПЦР*/
 	@Comment("Номер пробирки ПЦР")
-	public String getMaterialPCRId() {return theMaterialPCRId;}
-	public void setMaterialPCRId(String aMaterialPCRId) {theMaterialPCRId = aMaterialPCRId;}
-	private String theMaterialPCRId;
+	public String getMaterialPCRId() {return materialPCRId;}
+	private String materialPCRId;
 
 	/** Причина отмены текст */
 	@Comment("Причина отмены текст")
 	@Persist
-	public String getCancelReasonText() {return theCancelReasonText;}
-	public void setCancelReasonText(String aCancelReasonText) {theCancelReasonText = aCancelReasonText;}
-    private String theCancelReasonText;
+	public String getCancelReasonText() {return cancelReasonText;}
+    private String cancelReasonText;
 
 	/** Пользователь отменивший */
 	@Comment("Пользователь отменивший")
 	@Persist
-	public String getCancelUsername() {return theCancelUsername;}
-	public void setCancelUsername(String aCancelUsername) {theCancelUsername = aCancelUsername;}
-	private String theCancelUsername;
+	public String getCancelUsername() {return cancelUsername;}
+	private String cancelUsername;
 
 	/** Дата передачи в лабораторию */
 	@Comment("Дата передачи в лабораторию")
 	@Persist @DoDateString @DateString
-	public String getTransferDate() {return theTransferDate;}
-	public void setTransferDate(String aTransferDate) {theTransferDate = aTransferDate;}
-    private String theTransferDate;
+	public String getTransferDate() {return transferDate;}
+    private String transferDate;
 
 	/** Время передачи */
 	@Comment("Время передачи")
 	@Persist @DoTimeString @TimeString
-	public String getTransferTime() {return theTransferTime;}
-	public void setTransferTime(String aTransferTime) {theTransferTime = aTransferTime;}
-    private String theTransferTime;
+	public String getTransferTime() {return transferTime;}
+    private String transferTime;
 
 	/** Пользователь, принявший биоматериал */
 	@Comment("Пользователь, принявший биоматериал")
 	@Persist
-	public String getTransferUsername() {return theTransferUsername;}
-	public void setTransferUsername(String aTransferUsername) {theTransferUsername = aTransferUsername;}
-	private String theTransferUsername;
+	public String getTransferUsername() {return transferUsername;}
+	private String transferUsername;
 
 	/** Время из wct */
 	@Comment("Время из wct")
 	@Persist
-	public Long getCalendarTime() {return theCalendarTime;}
-	public void setCalendarTime(Long aCalendarTime) {theCalendarTime = aCalendarTime;}
-	private Long theCalendarTime;
+	public Long getCalendarTime() {return calendarTime;}
+	private Long calendarTime;
 
 	/** Отделение (забора) */
 	@Comment("Отделение (забора)")
 	@Persist
-	public Long getDepartment() {return theDepartment;}
-	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
-	private Long theDepartment;
+	public Long getDepartment() {return department;}
+	private Long department;
 
 	/** Отделение для забора крови */
 	@Comment("Отделение для забора крови")
-	public Long getLabDepartment() {return theLabDepartment;}
-	public void setLabDepartment(Long aLabDepartment) {theLabDepartment = aLabDepartment;}
-	private Long theLabDepartment;
+	public Long getLabDepartment() {return labDepartment;}
+	private Long labDepartment;
 	
 	/** Хирургическая операция */
 	@Comment("Хирургическая операция")
 	@Persist
-	public Long getSurgicalOperation() {return theSurgicalOperation;}
-	public void setSurgicalOperation(Long aSurgicalOperation) {theSurgicalOperation = aSurgicalOperation;}
-	private Long theSurgicalOperation;
+	public Long getSurgicalOperation() {return surgicalOperation;}
+	private Long surgicalOperation;
 	
 	/** ИД пациента */
 	@Comment("ИД пациента")
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
-	private Long thePatient ;
+	public Long getPatient() {return patient;}
+	private Long patient ;
 
 	/** Разрешены только оплаченные услуги по потоку обслуживания */
 	@Comment("Разрешены только оплаченные услуги по потоку обслуживания")
-	public Boolean getAllowOnlyPaid() {return theAllowOnlyPaid;}
-	public void setAllowOnlyPaid(Boolean aAllowOnlyPaid) {theAllowOnlyPaid = aAllowOnlyPaid;}
-	private Boolean theAllowOnlyPaid ;
+	public Boolean getAllowOnlyPaid() {return allowOnlyPaid;}
+	private Boolean allowOnlyPaid ;
 
 	/** Раб. функция, осущ. забор */
 	@Comment("Раб. функция, осущ. забор")
 	@Persist
-	public Long getIntakeSpecial() {return theIntakeSpecial;}
-	public void setIntakeSpecial(Long aIntakeSpecial) {theIntakeSpecial = aIntakeSpecial;}
-	private Long theIntakeSpecial;
+	public Long getIntakeSpecial() {return intakeSpecial;}
+	private Long intakeSpecial;
 
 	/** Дата установки патологии */
 	@Comment("Дата установки патологии")
 	@Persist @DateString @DoDateString
-	public String getSetPatologyDate() {return theSetPatologyDate;}
-	public void setSetPatologyDate(String aSetPatologyDate) {theSetPatologyDate = aSetPatologyDate;}
-	private String theSetPatologyDate;
+	public String getSetPatologyDate() {return setPatologyDate;}
+	private String setPatologyDate;
 
 	/** Время установки патологии */
 	@Comment("Время установки патологии")
 	@Persist @TimeString @DoTimeString
-	public String getSetPatologyTime() {return theSetPatologyTime;}
-	public void setSetPatologyTime(String aSetPatologyTime) {theSetPatologyTime = aSetPatologyTime;}
-	private String theSetPatologyTime;
+	public String getSetPatologyTime() {return setPatologyTime;}
+	private String setPatologyTime;
 
 	/** Пользователь, установивший патологию*/
 	@Comment("Пользователь, установивший патологию")
 	@Persist
-	public String getSetPatologyUsername() {return theSetPatologyUsername;}
-	public void setSetPatologyUsername(String aSetPatologyUsername) {theSetPatologyUsername = aSetPatologyUsername;}
-	private String theSetPatologyUsername;
+	public String getSetPatologyUsername() {return setPatologyUsername;}
+	private String setPatologyUsername;
 
 	/** Проставил патологию специалист */
 	@Comment("Проставил патологию специалист")
 	@Persist
-	public Long getSetPatologySpecial() {return theSetPatologySpecial;}
-	public void setSetPatologySpecial(Long aSetPatologySpecial) {theSetPatologySpecial = aSetPatologySpecial;}
-	private Long theSetPatologySpecial;
+	public Long getSetPatologySpecial() {return setPatologySpecial;}
+	private Long setPatologySpecial;
 
 	/** ИД гарантийного письма */
 	@Comment("ИД гарантийного письма")
-	public Long getGuaranteeId() {return theGuaranteeId;}
-	public void setGuaranteeId(Long aGuaranteeId) {theGuaranteeId = aGuaranteeId;}
-	private Long theGuaranteeId ;
+	public Long getGuaranteeId() {return guaranteeId;}
+	private Long guaranteeId ;
 
 	/** Примечание для лаборатории*/
 	@Comment("Примечание для лаборатории")
 	@Persist
-	public String getNoteForLab() {return theNoteForLab;}
-	public void setNoteForLab(String aNoteForLab) {theNoteForLab = aNoteForLab;}
+	public String getNoteForLab() {return noteForLab;}
 	/** Примечание для лаборатории*/
-	private String theNoteForLab;
+	private String noteForLab;
 
 	/** Примечание1*/
 	@Comment("Примечание1")
-	public String getNoteForLab1() {return theNoteForLab1;}
-	public void setNoteForLab1(String aNoteForLab1) {theNoteForLab1 = aNoteForLab1;}
+	public String getNoteForLab1() {return noteForLab1;}
 	/** Примечание1*/
-	private String theNoteForLab1;
+	private String noteForLab1;
 
 	/** Примечание2*/
 	@Comment("Примечание2")
-	public String getNoteForLab2() {return theNoteForLab2;}
-	public void setNoteForLab2(String aNoteForLab2) {theNoteForLab2 = aNoteForLab2;}
+	public String getNoteForLab2() {return noteForLab2;}
 	/** Примечание2*/
-	private String theNoteForLab2;
+	private String noteForLab2;
 
 	/** Примечание3*/
 	@Comment("Примечание3")
-	public String getNoteForLab3() {return theNoteForLab3;}
-	public void setNoteForLab3(String aNoteForLab3) {theNoteForLab3 = aNoteForLab3;}
+	public String getNoteForLab3() {return noteForLab3;}
 	/** Примечание3*/
-	private String theNoteForLab3;
+	private String noteForLab3;
 }
 

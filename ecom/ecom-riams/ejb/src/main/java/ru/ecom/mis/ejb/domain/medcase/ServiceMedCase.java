@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -13,46 +15,27 @@ import javax.persistence.Transient;
  */
 @Comment("Услуга как случай медицинского обслуживания")
 @Entity
+@Getter
+@Setter
 public class ServiceMedCase extends ShortMedCase {
 	/** Номер направления */
-	@Comment("Номер направления")
-	public String getOrderNumber() {return theOrderNumber;}
-	public void setOrderNumber(String aOrderNumber) {theOrderNumber = aOrderNumber;}
-	/** Номер направления */
-	private String theOrderNumber;
+	private String orderNumber;
 
 	/** Мед. услуга */
 	@Comment("Мед. услуга")
 	@OneToOne
 	public MedService getMedService() {
-		return theMedService;
+		return medService;
 	}
-
-	public void setMedService(MedService aMedService) {
-		theMedService = aMedService;
-	}
-
 	/** Мед. услуга */
-	private MedService theMedService;
+	private MedService medService;
 	
 	/** Количество мед. услуг */
-	@Comment("Количество мед. услуг")
-	public Integer getMedServiceAmount() {
-		return theMedServiceAmount;
-	}
-
-	public void setMedServiceAmount(Integer aMedServiceAmount) {
-		theMedServiceAmount = aMedServiceAmount;
-	}
-
-	
-
-	/** Количество мед. услуг */
-	private Integer theMedServiceAmount;
+	private Integer medServiceAmount;
 	
 	@Transient
 	public String getMedServiceInfo() {
-		return theMedService!=null? theMedService.getName() :"";
+		return medService!=null? medService.getName() :"";
 	}
 	
 	@Transient
@@ -78,12 +61,8 @@ public class ServiceMedCase extends ShortMedCase {
 	/** Комментарий по услуге */
 	@Comment("Комментарий по услуге")
 	public String getServiceComment() {
-		return theServiceComment;
+		return serviceComment;
 	}
-	public void setServiceComment(String aServiceComment) {
-		theServiceComment = aServiceComment;
-	}
-
 	/** Комментарий по услуге */
-	private String theServiceComment;
+	private String serviceComment;
 }

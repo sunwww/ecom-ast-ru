@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.patient;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -23,6 +24,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(MedPolicyPreCreate.class)
 )
+@Setter
 public class MedPolicyOmcForm extends MedPolicyForm {
 
     /** Серия */
@@ -33,40 +35,34 @@ public class MedPolicyOmcForm extends MedPolicyForm {
 
     /** Организация */
     @Persist
-    public Long getOrg() { return theOrg ; }
-    public void setOrg(Long aOrg) { theOrg = aOrg ; }
+    public Long getOrg() { return org ; }
 
     /** Прикрепленное ЛПУ */
 	@Comment("Прикрепленное ЛПУ")
 	@Persist
 	public Long getAttachedLpu() {
-		return theAttachedLpu;
-	}
-	public void setAttachedLpu(Long aAttachedLpu) {
-		theAttachedLpu = aAttachedLpu;
+		return attachedLpu;
 	}
 
 	/** Тип полиса */
 	@Comment("Тип полиса")
 	@Persist @Required 
-	public Long getType() {return theType;}
-	public void setType(Long aType) {theType = aType;}
+	public Long getType() {return type;}
 
 	/** Тип полиса */
-	private Long theType;
+	private Long type;
 	/** Страховая компания */
     @Comment("Страховая компания")
     @Persist @Required
-    public Long getCompany() { return theCompany ; }
-    public void setCompany(Long aCompany) { theCompany = aCompany ; }
+    public Long getCompany() { return company ; }
     /** Страховая компания */
-    private Long theCompany ;
+    private Long company ;
 	/** Прикрепленное ЛПУ */
 	@Deprecated
-	private Long theAttachedLpu;
+	private Long attachedLpu;
     /** Организация */
     @Deprecated
-    private Long theOrg ;
+    private Long org ;
     
 
 }

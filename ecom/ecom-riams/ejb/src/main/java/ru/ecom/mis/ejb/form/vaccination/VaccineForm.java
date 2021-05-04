@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.vaccination;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
@@ -22,6 +23,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormPersistance(clazz=Vaccine.class)
 @WebTrail(comment = "Вакцина", nameProperties= "name", view="entityView-vac_vaccine.do")
 @EntityFormSecurityPrefix("/Policy/Mis/Vaccination/Vaccine")
+@Setter
 public class VaccineForm extends IdEntityForm{
 	/**
 	 * Название
@@ -30,20 +32,14 @@ public class VaccineForm extends IdEntityForm{
 	@Required
 	@Persist
 	public String getName() {
-		return theName;
+		return name;
 	}
+
 
 	/**
 	 * Название
 	 */
-	public void setName(String a_Property) {
-		theName = a_Property;
-	}
-
-	/**
-	 * Название
-	 */
-	private String theName;
+	private String name;
 
 	/**
 	 * Аббревиатура
@@ -52,74 +48,48 @@ public class VaccineForm extends IdEntityForm{
 	@Required
 	@Persist
 	public String getAbbrevation() {
-		return theAbbrevation;
+		return abbrevation;
 	}
 
-	/**
-	 * Аббревиатура
-	 */
-	public void setAbbrevation(String a_Property) {
-		theAbbrevation = a_Property;
-	}
-
-	
 	/** Список общих реакций */
 	@Comment("Список общих реакций")
 	@PersistManyToManyOneProperty(collectionGenericType=VocVaccinationCommonReaction.class)
 	public String getCommonReactionList() {
-		return theCommonReactionList;
-	}
-
-	public void setCommonReactionList(String aCommonReactionList) {
-		theCommonReactionList = aCommonReactionList;
+		return commonReactionList;
 	}
 
 	/** Список местных реакций */
 	@Comment("Список местных реакций")
 	@PersistManyToManyOneProperty(collectionGenericType=VocVaccinationLocalReaction.class)
 	public String getLocalReactionList() {
-		return theLocalReactionList;
-	}
-
-	public void setLocalReactionList(String aLocalReactionList) {
-		theLocalReactionList = aLocalReactionList;
+		return localReactionList;
 	}
 
 	/** Список методов вакцинации */
 	@Comment("Список методов вакцинации")
 	@PersistManyToManyOneProperty(collectionGenericType=VocVaccinationMethod.class)
 	public String getMethodList() {
-		return theMethodList;
+		return methodList;
 	}
 
 	/** Список вакцинируемых нозологий */
 	@Comment("Список вакцинируемых нозологий")
 	@PersistManyToManyOneProperty(collectionGenericType=VaccinationNosology.class)
 	public String getNosologyList() {
-		return theNosologyList;
-	}
-
-	public void setNosologyList(String aNosologyList) {
-		theNosologyList = aNosologyList;
+		return nosologyList;
 	}
 
 	/** Список вакцинируемых нозологий */
-	private String theNosologyList;
-	public void setMethodList(String aMethodList) {
-		theMethodList = aMethodList;
-	}
+	private String nosologyList;
 
 	/** Список методов вакцинации */
-	private String theMethodList;
+	private String methodList;
 	/** Список местных реакций */
-	private String theLocalReactionList;
+	private String localReactionList;
 	/** Список общих реакций */
-	private String theCommonReactionList;
+	private String commonReactionList;
 	/**
 	 * Аббревиатура
 	 */
-	private String theAbbrevation;
-
-	
-
+	private String abbrevation;
 }

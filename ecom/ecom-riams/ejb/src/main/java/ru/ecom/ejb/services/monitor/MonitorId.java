@@ -8,12 +8,12 @@ import java.io.Serializable;
 public class MonitorId implements Serializable {
 
 	public MonitorId(long aMonitorId) {
-		theMonitorId = aMonitorId ;
+		monitorId = aMonitorId ;
 	}
 	
 	public long getMonitorId() {
-		return theMonitorId ;
+		return monitorId ;
 	}
 	
-	private final long theMonitorId ;
+	private final long monitorId ;
 }

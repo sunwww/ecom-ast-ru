@@ -24,16 +24,16 @@ public class AddressServiceBean implements IAddressService, ILocalAddressService
 
     @SuppressWarnings("unchecked")
 	public Address findAddressByKladr(String aKladrCode) {
-        List<Address> list = theEntityManager.createQuery("from Address where kladr = :kladr").setParameter("kladr",aKladrCode).getResultList();
+        List<Address> list = entityManager.createQuery("from Address where kladr = :kladr").setParameter("kladr",aKladrCode).getResultList();
         return list!=null && !list.isEmpty() ? list.iterator().next() : null ;
     }
     public String getRayon(Long aAddressId, String aHouse) {
-    	Address adr = theEntityManager.find(Address.class, aAddressId);
-    	String rayon =theAstrkhanReginHelper.getOmcRayonNameKey(adr, aHouse, theEntityManager) ;
+    	Address adr = entityManager.find(Address.class, aAddressId);
+    	String rayon = astrakhanRegionHelper.getOmcRayonNameKey(adr, aHouse, entityManager) ;
     	if (rayon!=null) {
 	    	String sql ="select id,code||' '||name from VocRayon where code=:code";
 	    	
-	    	List<Object[]> list = theEntityManager.createNativeQuery(sql).setParameter("code",rayon).setMaxResults(1).getResultList() ;
+	    	List<Object[]> list = entityManager.createNativeQuery(sql).setParameter("code",rayon).setMaxResults(1).getResultList() ;
 	    	if (!list.isEmpty()) {
 	    		Object[] obj = list.get(0) ;
 	    		return obj[0]+"#"+obj[1] ;
@@ -43,8 +43,8 @@ public class AddressServiceBean implements IAddressService, ILocalAddressService
     }
     
     public String getZipcode(Long aAddress5, Long aAddress6) {
-    	Address adr6 = theEntityManager.find(Address.class, aAddress6) ;
-    	Address adr5 = theEntityManager.find(Address.class, aAddress6) ;
+    	Address adr6 = entityManager.find(Address.class, aAddress6) ;
+    	Address adr5 = entityManager.find(Address.class, aAddress6) ;
     	String zipcode ;
     	zipcode = adr6!=null ? adr6.getPostIndex() : "" ;
     	if (zipcode==null || zipcode.equals("")) zipcode = adr5!=null ? adr5.getPostIndex() : "" ;
@@ -59,9 +59,9 @@ public class AddressServiceBean implements IAddressService, ILocalAddressService
         	, String aHouseNumber
         	, String aHouseBuilding, String aFlatNumber, String aZipCode) {
     	StringBuilder ret = new StringBuilder() ;
-    	OmcKodTer territory = theEntityManager.find(OmcKodTer.class, aTerritory) ;
-    	OmcQnp typeSettlement = theEntityManager.find(OmcQnp.class, aTypeSettlement) ;
-    	OmcStreetT street = theEntityManager.find(OmcStreetT.class, aTypeStreet) ;
+    	OmcKodTer territory = entityManager.find(OmcKodTer.class, aTerritory) ;
+    	OmcQnp typeSettlement = entityManager.find(OmcQnp.class, aTypeSettlement) ;
+    	OmcStreetT street = entityManager.find(OmcStreetT.class, aTypeStreet) ;
     	if (aZipCode!=null && !aZipCode.equals("")) ret.append("Индекс ").append(aZipCode).append(", ") ;
     	if (territory!=null) {
     		//ret.append(" код тер.регистр. ") ;
@@ -89,9 +89,9 @@ public class AddressServiceBean implements IAddressService, ILocalAddressService
     public String getAddressString(long aAddressPk, String aHouse, String aCorpus, String aFlat,String aZipCode) {
 
     	String sql = "select a.fullname,a.name,at1.shortName,a.parent_addressid,a.addressid from Address2 a left join AddressType at1 on at1.id=a.type_id  where a.addressid=" ;
-    	List<Object[]> list = theEntityManager.createNativeQuery(sql+aAddressPk) 
+    	List<Object[]> list = entityManager.createNativeQuery(sql+aAddressPk) 
     			.setMaxResults(1).getResultList() ;
-        //String rayon = theAstrkhanReginHelper.getOmcRayonName(address, aHouse, theEntityManager) ; 
+        //String rayon = astrkhanReginHelper.getOmcRayonName(address, aHouse, entityManager) ; 
         StringBuilder sb = new StringBuilder();
         if (!list.isEmpty()) {
         	Object[] obj = list.get(0) ;
@@ -116,13 +116,13 @@ public class AddressServiceBean implements IAddressService, ILocalAddressService
     public Address getAddressForLevel(long aDomain, Address aAddress) {
     	if(aAddress==null) return null ;
     	Long id = getIdForLevel(aDomain, aAddress.getId());
-    	return id!=null ? theEntityManager.find(Address.class, id) : null ;
+    	return id!=null ? entityManager.find(Address.class, id) : null ;
     }
 
     public Long getIdForLevel(long aDomain, Long aAddressId) {
         Long ret = null ;
         if(aAddressId!=null) {
-            Address a = theEntityManager.find(Address.class, aAddressId) ;
+            Address a = entityManager.find(Address.class, aAddressId) ;
             while(a!=null) {
                 if(a.getDomen()==aDomain) {
                     ret = a.getId() ;
@@ -145,6 +145,6 @@ public class AddressServiceBean implements IAddressService, ILocalAddressService
         }
     }
 
-    private static final AstrkhanReginHelper theAstrkhanReginHelper = new AstrkhanReginHelper();
-    @PersistenceContext EntityManager theEntityManager ;
+    private static final AstrakhanRegionHelper astrakhanRegionHelper = new AstrakhanRegionHelper();
+    @PersistenceContext EntityManager entityManager ;
 }

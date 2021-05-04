@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -33,145 +34,127 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(ServiceMedCasePreCreateInterceptor.class)
 )
+@Setter
 public class ServiceMedCaseForm extends TicketMedCaseForm {
 	/** Мед. услуга */
 	@Comment("Мед. услуга")
 	@Persist @Required
-	public Long getMedService() {return theMedService;}
-	public void setMedService(Long aMedService) {theMedService = aMedService;}
-	
+	public Long getMedService() {return medService;}
+
 	/** Количество мед. услуг */
 	@Comment("Количество мед. услуг")
 	@Persist @Required @DoIntegerString @IntegerString
-	public Integer getMedServiceAmount() {return theMedServiceAmount;}
-	public void setMedServiceAmount(Integer aMedServiceAmount) {theMedServiceAmount = aMedServiceAmount;}
+	public Integer getMedServiceAmount() {return medServiceAmount;}
 
 	/** Штамп времени исполнения */
 	@Comment("Время исполнения")
 	@Persist @TimeString @DoTimeString @Required
-	public String getTimeExecute() {return theTimeExecute;	}
-	public void setTimeExecute(String aNewProperty) {theTimeExecute = aNewProperty;}
+	public String getTimeExecute() {return timeExecute;	}
 
 	/** Дата выполнения */
 	@Comment("Дата выполнения")
 	@Persist @DateString @DoDateString @Required @MaxDateCurrent
-	public String getDateStart() {return theDateStart;}
-	public void setDateStart(String aDateStart) {theDateStart = aDateStart;}
-	
+	public String getDateStart() {return dateStart;}
+
 	/**
 	 * Рабочая функция исполнения
 	 */
 	@Comment("Рабочая функция исполнения")
 	@Persist @Required
-	public Long getWorkFunctionExecute() {return theWorkFunctionExecute;	}
-	public void setWorkFunctionExecute(Long aNewProperty) {	theWorkFunctionExecute = aNewProperty;}
-	
+	public Long getWorkFunctionExecute() {return workFunctionExecute;	}
+
 
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@Persist 
-	public Long getServiceStream() {return theServiceStream;}
-	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+	public Long getServiceStream() {return serviceStream;}
 
 	/** Информация о мед.услуге */
 	@Comment("Информация о мед.услуге")
 	@Persist
-	public String getMedServiceInfo() {return theMedServiceInfo;}
-	public void setMedServiceInfo(String aMedServiceInfo) {theMedServiceInfo = aMedServiceInfo;}
+	public String getMedServiceInfo() {return medServiceInfo;}
 
 	/** Категория */
 	@Comment("Категория")
 	@Persist
-	public Long getCategoryMedService() {return theCategoryMedService;}
-	public void setCategoryMedService(Long aCategory) {theCategoryMedService = aCategory;}
+	public Long getCategoryMedService() {return categoryMedService;}
 
 	/** Категория информация */
 	@Comment("Категория информация")
 	@Persist
-	public String getCategoryMedServiceInfo() {return theCategoryMedServiceInfo;}
-	public void setCategoryMedServiceInfo(String aCategoryInfo) {theCategoryMedServiceInfo = aCategoryInfo;}
+	public String getCategoryMedServiceInfo() {return categoryMedServiceInfo;}
 
 	/** Протокол */
 	@Comment("Протокол")
-	public String getRecord() {return theRecord;}
-	public void setRecord(String aRecord) {theRecord = aRecord;}
+	public String getRecord() {return record;}
 
 	/** Протокол */
-	private String theRecord;
+	private String record;
 	/** Категория информация */
-	private String theCategoryMedServiceInfo;
+	private String categoryMedServiceInfo;
 	/** Категория */
-	private Long theCategoryMedService;
+	private Long categoryMedService;
 	/** Информация о мед.услуге */
-	private String theMedServiceInfo;
+	private String medServiceInfo;
 	/** Поток обслуживания */
-	private Long theServiceStream;
+	private Long serviceStream;
 	/** Рабочая функция исполнения */
-	private Long theWorkFunctionExecute;
+	private Long workFunctionExecute;
 	/** Дата выполнения */
-	private String theDateStart;
+	private String dateStart;
 	/** Время исполнения */
-	private String theTimeExecute;
+	private String timeExecute;
 	/** Количество мед. услуг */
-	private Integer theMedServiceAmount;
+	private Integer medServiceAmount;
 	/** Мед. услуга */
-	private Long theMedService;
+	private Long medService;
 	/** Заключительный диагноз по МКБ-10 */
 	@Comment("Заключительный диагноз по МКБ-10")
 	@Mkb 
-	public Long getConcludingMkb() {return theConcludingMkb;}
-	public void setConcludingMkb(Long aConcludingMkb) {theConcludingMkb = aConcludingMkb;}
+	public Long getConcludingMkb() {return concludingMkb;}
 	/** Заключительный диагноз */
 	@Comment("Заключительный диагноз")
-	public String getConcludingDiagnos() {return theConcludingDiagnos;}
-	public void setConcludingDiagnos(String aConcludingDiagnos) {theConcludingDiagnos = aConcludingDiagnos;}
+	public String getConcludingDiagnos() {return concludingDiagnos;}
 
 	/** Острота диагноза заключительного */
 	@Comment("Острота диагноза клинического")
-	public Long getConcludingActuity() {return theConcludingActuity;}
-	public void setConcludingActuity(Long aClinicalActuity) {theConcludingActuity = aClinicalActuity;}
+	public Long getConcludingActuity() {return concludingActuity;}
 	/** Острота диагноза заключительного */
-	private Long theConcludingActuity;
+	private Long concludingActuity;
 	/** Заключительный диагноз */
-	private String theConcludingDiagnos;
+	private String concludingDiagnos;
 	/** Заключительный диагноз по МКБ-10 */
-	private Long theConcludingMkb;
+	private Long concludingMkb;
 	
 	/** Результат визита */
 	@Comment("Результат визита")
 	@Persist
-	public Long getVisitResult() {return theVisitResult;	}
-	public void setVisitResult(Long aResult) {theVisitResult = aResult;}
+	public Long getVisitResult() {return visitResult;	}
 
 	/** Цель визита */
 	@Comment("Цель визита")
 	@Persist
-	public Long getVisitReason() {return theVisitReason;	}
-	public void setVisitReason(Long aReason) {theVisitReason = aReason;	}
+	public Long getVisitReason() {return visitReason;	}
 	/** Тип рабочего места обслуживания */
 	@Comment("Тип рабочего места обслуживания")
 	@Persist
-	public Long getWorkPlaceType() {return theWorkPlaceType;}
-	public void setWorkPlaceType(Long aWorkPlaceType) {theWorkPlaceType = aWorkPlaceType;	}
-	
+	public Long getWorkPlaceType() {return workPlaceType;}
+
     /** Тип рабочего места обслуживания */
-	private Long theWorkPlaceType;	
+	private Long workPlaceType;	
 	/** Цель визита */
-	private Long theVisitReason;
+	private Long visitReason;
 	/** Результат визита */
-	private Long theVisitResult;
+	private Long visitResult;
 
 
 	/** Комментарий по услуге */
 	@Comment("Комментарий по услуге")
 	@Persist
 	public String getServiceComment() {
-		return theServiceComment;
-	}
-	public void setServiceComment(String aServiceComment) {
-		theServiceComment = aServiceComment;
+		return serviceComment;
 	}
 
 	/** Комментарий по услуге */
-	private String theServiceComment;
+	private String serviceComment;
 }

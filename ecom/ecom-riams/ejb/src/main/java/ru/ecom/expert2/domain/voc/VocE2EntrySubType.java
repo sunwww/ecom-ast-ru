@@ -1,5 +1,7 @@
 package ru.ecom.expert2.domain.voc;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV006;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV010;
@@ -12,17 +14,16 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 @Entity
+@Getter
+@Setter
 public class VocE2EntrySubType extends VocBaseEntity {
     /**
      * Код для определения тарифа
      */
     @Comment("Код для определения тарифа")
     @OneToOne
-    public VocE2BaseTariffType getTariffCode() {return theTariffCode;}
-    public void setTariffCode(VocE2BaseTariffType aTariffCode) {
-        theTariffCode = aTariffCode;
-    }
-    private VocE2BaseTariffType theTariffCode;
+    public VocE2BaseTariffType getTariffCode() {return tariffCode;}
+    private VocE2BaseTariffType tariffCode;
 
     /**
      * Условия оказания мед. помощи для подачи
@@ -30,149 +31,76 @@ public class VocE2EntrySubType extends VocBaseEntity {
     @Comment("Условия оказания мед. помощи для подачи")
     @OneToOne
     public VocE2FondV006 getUslOk() {
-        return theUslOk;
-    }
-
-    public void setUslOk(VocE2FondV006 aUslOk) {
-        theUslOk = aUslOk;
+        return uslOk;
     }
 
     /**
      * Условия оказания мед. помощи для подачи
      */
-    private VocE2FondV006 theUslOk;
+    private VocE2FondV006 uslOk;
+
 
     /**
      * В архиве
      */
-    @Comment("В архиве")
-    public Boolean getIsArchival() {
-        return theIsArchival;
-    }
-
-    public void setIsArchival(Boolean aIsArchival) {
-        theIsArchival = aIsArchival;
-    }
-
-    /**
-     * В архиве
-     */
-    private Boolean theIsArchival;
+    private Boolean isArchival;
 
     /**
      * Посещение в консультативной поликлинике
      */
-    @Comment("Посещение в консультативной поликлинике")
-    public Boolean getIsConsultation() {
-        return theIsConsultation;
-    }
+    private Boolean isConsultation;
 
-    public void setIsConsultation(Boolean aIsConsultation) {
-        theIsConsultation = aIsConsultation;
-    }
-
-    /**
-     * Посещение в консультативной поликлинике
-     */
-    private Boolean theIsConsultation;
-
-    /**
-     * Вид случая
-     */
     @Comment("Вид случая")
     @OneToOne
     public VocE2VidSluch getVidSluch() {
-        return theVidSluch;
-    }
-
-    public void setVidSluch(VocE2VidSluch aVidSluch) {
-        theVidSluch = aVidSluch;
+        return vidSluch;
     }
 
     /**
      * Вид случая
      */
-    private VocE2VidSluch theVidSluch;
+    private VocE2VidSluch vidSluch;
 
-    /**
-     * Цель посещения
-     */
     @Comment("Цель посещения")
     @OneToOne
     public VocE2FondV025 getVisitPurpose() {
-        return theVisitPurpose;
-    }
-
-    public void setVisitPurpose(VocE2FondV025 aVisitPurpose) {
-        theVisitPurpose = aVisitPurpose;
+        return visitPurpose;
     }
 
     /**
      * Цель посещения
      */
-    private VocE2FondV025 theVisitPurpose;
+    private VocE2FondV025 visitPurpose;
 
-    /**
-     * Вид доп. диспансеризации
-     */
     @Comment("Вид доп. диспансеризации")
     @OneToOne
     public VocE2FondV016 getExtDispType() {
-        return theExtDispType;
+        return extDispType;
     }
 
-    public void setExtDispType(VocE2FondV016 aExtDispType) {
-        theExtDispType = aExtDispType;
-    }
 
     /**
      * Вид доп. диспансеризации
      */
-    private VocE2FondV016 theExtDispType;
+    private VocE2FondV016 extDispType;
 
-    /**
-     * Способ оплаты
-     */
     @Comment("Способ оплаты")
     @OneToOne
     public VocE2FondV010 getIdsp() {
-        return theIdsp;
+        return idsp;
     }
 
-    public void setIdsp(VocE2FondV010 aIdsp) {
-        theIdsp = aIdsp;
-    }
 
     /**
      * Способ оплаты
      */
-    private VocE2FondV010 theIdsp;
+    private VocE2FondV010 idsp;
 
-    /**
-     * Тип файла
-     */
-    @Comment("Тип файла")
-    public String getFileType() {
-        return theFileType;
-    }
-    public void setFileType(String aFileType) {
-        theFileType = aFileType;
-    }
-    private String theFileType;
+    private String fileType;
 
-    /**
-     * Назначение платежа в счете
-     */
-    @Comment("Назначение платежа в счете")
-    public String getBillProperty() {
-        return theBillProperty;
-    }
-    public void setBillProperty(String aBillProperty) {
-        theBillProperty = aBillProperty;
-    }
-    private String theBillProperty;
+    private String billProperty;
 
     @Transient
-    public String getTariffCodeString() {return theTariffCode == null ? null : theTariffCode.getCode();}
+    public String getTariffCodeString() {return tariffCode == null ? null : tariffCode.getCode();}
 
 }

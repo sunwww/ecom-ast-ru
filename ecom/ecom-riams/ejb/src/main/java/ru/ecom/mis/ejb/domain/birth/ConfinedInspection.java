@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.birth;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.birth.voc.VocInspectionCondition;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -15,64 +17,35 @@ import javax.persistence.Transient;
 
 @Comment("Осмотр родильницы")
 @Entity
+@Getter
+@Setter
 public class ConfinedInspection extends Inspection {
 	
 	/** Общее состояние */
 	@Comment("Общее состояние")
 	@OneToOne
-	public VocInspectionCondition getCondition() {return theCondition;}
-	public void setCondition(VocInspectionCondition aCondition) {theCondition = aCondition;}
+	public VocInspectionCondition getCondition() {return condition;}
 
-	/** Состояние молочных желез */
-	@Comment("Состояние молочных желез")
-	public String getMammariesCondition() {return theMammariesCondition;}
-	public void setMammariesCondition(String aMammariesCondition) {theMammariesCondition = aMammariesCondition;}
-
-	/** Высота матки */
-	@Comment("Высота матки")
-	public Integer getUterusHeight() {return theUterusHeight;}
-	public void setUterusHeight(Integer aUterusHeight) {theUterusHeight = aUterusHeight;}
-
-	/** Лохии */
-	@Comment("Лохии")
-	public String getLochia() {return theLochia;}
-	public void setLochia(String aLochia) {theLochia = aLochia;}
-
-	/** Функции мочевого пузыря */
-	@Comment("Функции мочевого пузыря")
-	public String getUrinaryBladderFunctions() {return theUrinaryBladderFunctions;}
-	public void setUrinaryBladderFunctions(String aUrinaryBladderFunctions) {theUrinaryBladderFunctions = aUrinaryBladderFunctions;}
-
-	/** Функции кишечника */
-	@Comment("Функции кишечника")
-	public String getIntestinesFunctions() {return theIntestinesFunctions;}
-	public void setIntestinesFunctions(String aIntestinesFunctions) {theIntestinesFunctions = aIntestinesFunctions;}
-
-	/** Назначения */
-	@Comment("Назначения")
-	public String getPrescriptions() {return thePrescriptions;}
-	public void setPrescriptions(String aPrescriptions) {thePrescriptions = aPrescriptions;}
-	
 	@Transient
 	public String getInformation() {
-		return "Общее состояние: " + theCondition;
+		return "Общее состояние: " + condition;
 	}
 	@Transient
 	public String getTypeInformation() {
 		return  "Осмотр родившей";
 	}	
 	/** Общее состояние */
-	private VocInspectionCondition theCondition;
+	private VocInspectionCondition condition;
 	/** Состояние молочных желез */
-	private String theMammariesCondition;
+	private String mammariesCondition;
 	/** Высота матки */
-	private Integer theUterusHeight;
+	private Integer uterusHeight;
 	/** Лохии */
-	private String theLochia;
+	private String lochia;
 	/** Функции мочевого пузыря */
-	private String theUrinaryBladderFunctions;
+	private String urinaryBladderFunctions;
 	/** Функции кишечника */
-	private String theIntestinesFunctions;
+	private String intestinesFunctions;
 	/** Назначения */
-	private String thePrescriptions;
+	private String prescriptions;
 }

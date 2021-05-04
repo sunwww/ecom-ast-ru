@@ -12,37 +12,37 @@ public class SyncContext {
 
 
     public SyncContext(long aMonitorId, ImportTime aImportTime, EntityManager aManager) {
-        theMonitorId = aMonitorId;
-        theImportTime = aImportTime;
-        theEntityManager = aManager;
+        monitorId = aMonitorId;
+        importTime = aImportTime;
+        entityManager = aManager;
     }
 
     /** Транзакции */
-//    public UserTransaction getTransactionManager() { return theTransactionManager ; }
-//    public void setTransactionManager(UserTransaction aTransactionManager) { theTransactionManager = aTransactionManager ; }
+//    public UserTransaction getTransactionManager() { return transactionManager ; }
+//    public void setTransactionManager(UserTransaction aTransactionManager) { transactionManager = aTransactionManager ; }
 
     /** Транзакции */
-//    private UserTransaction theTransactionManager ;
+//    private UserTransaction transactionManager ;
     /**  */
-    public EntityManager getEntityManager() { return theEntityManager ; }
+    public EntityManager getEntityManager() { return entityManager ; }
 
     /**  */
-    private final EntityManager theEntityManager ;
+    private final EntityManager entityManager ;
     /** Монитор */
-    public ILocalMonitorService getMonitorService() { return theMonitorService ; }
-    public void setMonitorService(ILocalMonitorService aMonitorService) { theMonitorService = aMonitorService ; }
+    public ILocalMonitorService getMonitorService() { return monitorService ; }
+    public void setMonitorService(ILocalMonitorService aMonitorService) { monitorService = aMonitorService ; }
 
     /** Монитор */
-    private ILocalMonitorService theMonitorService ;
+    private ILocalMonitorService monitorService ;
     /** Монитор */
-    public long getMonitorId() { return theMonitorId ; }
+    public long getMonitorId() { return monitorId ; }
 
     /** Импорт */
-    public ImportTime getImportTime() { return theImportTime ; }
+    public ImportTime getImportTime() { return importTime ; }
 
     /** Импорт */
-    private final ImportTime theImportTime ;
+    private final ImportTime importTime ;
 
     /** Монитор */
-    private final long theMonitorId ;
+    private final long monitorId ;
 }

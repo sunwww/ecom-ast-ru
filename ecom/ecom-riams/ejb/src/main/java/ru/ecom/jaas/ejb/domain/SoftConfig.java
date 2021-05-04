@@ -1,5 +1,7 @@
 package ru.ecom.jaas.ejb.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -17,33 +19,17 @@ import javax.persistence.Table;
 	    @AIndex(unique = true, properties= {"key"})
 })
 @Table(schema="SQLUser")
+@Setter
+@Getter
 public class SoftConfig extends BaseEntity {
-	/** Ключ */
-	@Comment("Ключ")
-	public String getKey() {return theKey;}
-	public void setKey(String aKey) {theKey = aKey;}
-
-	/** Значение */
-	@Comment("Значение")
-	public String getKeyValue() {return theKeyValue;}
-	public void setKeyValue(String aValue) {theKeyValue = aValue;}
 
 	/** Описание */
-	@Comment("Описание")
-	public String getDescription() {return theDescription;}
-	public void setDescription(String aDescription) {theDescription = aDescription;}
-
-	/** Описание */
-	private String theDescription;
+	private String description;
 	/** Значение */
-	private String theKeyValue;
+	private String keyValue;
 	/** Ключ */
-	private String theKey;
+	private String key;
 
 	/** Невидимость в системе */
-	@Comment("Невидимость в системе")
-	public Boolean getInVisible() {return theInVisible;}
-	public void setInVisible(Boolean aInVisible) {theInVisible = aInVisible;}
-	/** Невидимость в системе */
-	private Boolean theInVisible;
+	private Boolean inVisible;
 }

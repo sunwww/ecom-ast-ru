@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.CriminalPhoneMessage;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
@@ -23,224 +24,181 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Сообщение в полицию", nameProperties= "id", view="entityParentView-stac_criminalMessages.do")
 @Parent(property="medCase", parentForm= MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Stac/Ssl/PhoneMessage/CriminalMessage")
+@Setter
 public class CriminalPhoneMessageForm extends PhoneMessageForm {
 
 	/**Getter of the property <tt>theDate</tt>*/
 	@Comment("Дата регистрации")
 	@Persist @DoDateString @DateString
 	@Required
-	public String getPhoneDate() {return thePhoneDate;}
-	/** Setter of the property <tt>theDate</tt>*/
-	public void setPhoneDate(String aDate) {thePhoneDate = aDate;	}
-
+	public String getPhoneDate() {return phoneDate;}
 
 	/** Getter of the property <tt>theTime</tt>*/
 	@Comment("Время регистрации")
 	@Persist @DoTimeString @TimeString
 	@Required
-	public String getPhoneTime() {return thePhoneTime;}
-	/** Setter of the property <tt>theTime</tt> */
-	public void setPhoneTime(String aTime) {thePhoneTime = aTime;}
+	public String getPhoneTime() {return phoneTime;}
 
 	@Comment("Фамилия принявшего")
 	/** Getter of the property <tt>theRecieverFio</tt> */
 	@Persist
-	public String getRecieverFio() {return theRecieverFio;}
-	/** Setter of the property <tt>theRecieverFio</tt>*/
-	public void setRecieverFio(String aRecieverFio) {theRecieverFio = aRecieverFio;}
-	
+	public String getRecieverFio() {return recieverFio;}
+
 	/** Getter of the property <tt>theRecieverPost</tt>*/
 	@Comment("Должность принявшего сообщение")
 	@Persist @DoUpperCase
-	public String getRecieverPost() {return theRecieverPost;}
-	/** Setter of the property <tt>theRecieverPost</tt> */
-	public void setRecieverPost(String aRecieverPost) {theRecieverPost = aRecieverPost;}
-
-
+	public String getRecieverPost() {return recieverPost;}
 
 	/** Телефон */
 	@Comment("Телефон")
 	@Persist @PhoneString
-	public String getPhone() {return thePhone;}
-	public void setPhone(String aPhoneNumber) {thePhone = aPhoneNumber;}
+	public String getPhone() {return phone;}
 
-	
 	/** Getter of the property <tt>theRecieverOrganization</tt>*/
 	@Persist @DoUpperCase
 	@Comment("Принявшая сообщение организация")
-	public String getRecieverOrganization() {return theRecieverOrganization;}
-	public void setRecieverOrganization(String aRecieverOrganization) {theRecieverOrganization = aRecieverOrganization;}
+	public String getRecieverOrganization() {return recieverOrganization;}
 
 	@Comment("Текст сообщения")
 	@Persist @DoUpperCase
-	public String getText() {return theText;}
-	public void setText(String theText) {this.theText = theText;}
+	public String getText() {return text;}
 
 	@Comment("Передавший сообщение специалист")
 	@Persist
-	public Long getWorker() {return theWorker;}
-	public void setWorker(Long aWorker) {theWorker = aWorker;}
+	public Long getWorker() {return worker;}
 
 	/** Тип сообщения */
 	@Comment("Тип сообщения")
 	@Persist @Required
-	public Long getPhoneMessageType() {return thePhoneMessageType;}
-	/** Тип сообщения */
-	public void setPhoneMessageType(Long aNewProperty) {thePhoneMessageType = aNewProperty;	}
-
+	public Long getPhoneMessageType() {return phoneMessageType;}
 
 	/** Номер сообщения */
 	@Comment("Номер сообщения")
 	@Persist 
-	public String getNumber() {return theNumber;}
-	/** Номер сообщения */
-	public void setNumber(String aNewProperty) {theNumber = aNewProperty;}
-
+	public String getNumber() {return number;}
 
 	/** Случай медицинского обслуживания */
 	@Comment("Случай медицинского обслуживания")
 	@Persist
-	public Long getMedCase() {return theMedCase;}
-	/** Случай медицинского обслуживания */
-	public void setMedCase(Long aNewProperty) {theMedCase = aNewProperty;}
-	
+	public Long getMedCase() {return medCase;}
 
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@Persist @Required
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
-
+	public Long getWorkFunction() {return workFunction;}
 
 	/** Рабочая функция */
-	private Long theWorkFunction;
+	private Long workFunction;
 
 	/** Тип сообщения */
-	private Long thePhoneMessageType;
+	private Long phoneMessageType;
 	/** Номер сообщения */
-	private String theNumber;
+	private String number;
 	/** Случай медицинского обслуживания */
-	private Long theMedCase;
+	private Long medCase;
 	/** Дата регистрации*/
-	private String thePhoneDate;
+	private String phoneDate;
 	/** Время регистрации	 */
-	private String thePhoneTime;
+	private String phoneTime;
 	/** Фамилия принявшего */
-	private String theRecieverFio;
+	private String recieverFio;
 	/** Должность принявшего сообщение*/
-	private String theRecieverPost;
+	private String recieverPost;
 	/** Принявшая сообщение организация */
-	private String theRecieverOrganization;
+	private String recieverOrganization;
 	/** Текст сообщения */
-	private String theText;
+	private String text;
 	/** Передавший сообщение специалист */
-	private Long theWorker;
+	private Long worker;
 	/** Телефон */
-	private String thePhone;
+	private String phone;
 
 	/** Когда произошло событие */
 	@Comment("Дата, когда произошло событие")
 	@Persist @DoDateString @DateString @Required
-	public String getWhenDateEventOccurred() {return theWhenDateEventOccurred;}
-	public void setWhenDateEventOccurred(String aWhenEventOccurred) {theWhenDateEventOccurred = aWhenEventOccurred;}
-	
+	public String getWhenDateEventOccurred() {return whenDateEventOccurred;}
+
 	/** Место где произошло событие */
 	@Comment("Место где произошло событие")
 	@Persist @DoUpperCase @Required
-	public String getPlace() {return thePlace;	}
-	public void setPlace(String aPlace) {thePlace = aPlace;}
+	public String getPlace() {return place;	}
 
 	/** Пояснение обстоятельств */
 	@Comment("Пояснение обстоятельств")
 	@Persist @DoUpperCase
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
-	
+	public String getComment() {return comment;}
+
 	/** Исход */
 	@Comment("Исход")
 	@Persist @Required
-	public Long getOutcome() {return theOutcome;}
-	public void setOutcome(Long aOutcome) {theOutcome = aOutcome;}
+	public Long getOutcome() {return outcome;}
 
 	/** Исход */
-	private Long theOutcome;
+	private Long outcome;
 	/** Пояснение обстоятельств */
-	private String theComment;
+	private String comment;
 	/** Место где произошло событие */
-	private String thePlace;
+	private String place;
 	/** Когда произошло событие */
-	private String theWhenDateEventOccurred;
+	private String whenDateEventOccurred;
 	
 	/** Фамилия принявшего сообщение */
 	@Comment("Фамилия принявшего сообщение")
 	@Persist
-	public Long getRecieverEmploye() {return theRecieverEmploye;}
-	public void setRecieverEmploye(Long aRecieverEmploye) {theRecieverEmploye = aRecieverEmploye;}
+	public Long getRecieverEmploye() {return recieverEmploye;}
 
 	/** Фамилия принявшего сообщение */
-	private Long theRecieverEmploye;
+	private Long recieverEmploye;
 	/** Организация */
 	@Comment("Организация")
 	@Persist
-	public Long getOrganization() {return theOrganization;}
-	public void setOrganization(Long aOrganization) {theOrganization = aOrganization;}
+	public Long getOrganization() {return organization;}
 
 	/** Организация */
-	private Long theOrganization;
+	private Long organization;
 	/** Время, когда произошло событие */
 	@Comment("Время, когда произошло событие")
 	@Persist @DoTimeString @TimeString @Required
-	public String getWhenTimeEventOccurred() {return theWhenTimeEventOccurred;}
-	public void setWhenTimeEventOccurred(String aWhenTimeEventOccurred) {theWhenTimeEventOccurred = aWhenTimeEventOccurred;}
+	public String getWhenTimeEventOccurred() {return whenTimeEventOccurred;}
 
 	/** Время, когда произошло событие */
-	private String theWhenTimeEventOccurred;
+	private String whenTimeEventOccurred;
 
 	/** Подтип сообщения*/
 	@Comment("Подтип сообщения")
 	@Persist @Required
-	public Long getPhoneMessageSubType() {return thePhoneMessageSubType;}
+	public Long getPhoneMessageSubType() {return phoneMessageSubType;}
 	/** Подтип сообщения*/
-	public void setPhoneMessageSubType(Long a_Property) {
-		thePhoneMessageSubType = a_Property;
-	}
-
-
-	/** Подтип сообщения*/
-	private Long thePhoneMessageSubType;
+	private Long phoneMessageSubType;
 	/** Диагноз */
 	@Comment("Диагноз")
 	@Persist
-	public String getDiagnosis() {return theDiagnosis;}
-	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;	}
+	public String getDiagnosis() {return diagnosis;}
 
 	/** Диагноз */
-	private String theDiagnosis;
+	private String diagnosis;
 
 	/** Район */
 	@Comment("Район")
 	@Persist
 	@Required
-	public Long getRayon() {return theRayon;}
-	public void setRayon(Long aRayon) {theRayon = aRayon;}
+	public Long getRayon() {return rayon;}
 
 	/** Код МКБ */
 	@Comment("Код МКБ")
 	@Persist
-	public Long getIdc10() {return theIdc10;}
-	public void setIdc10(Long aIdc10) {theIdc10 = aIdc10;}
+	public Long getIdc10() {return idc10;}
 
 	/** Тяжесть состояния */
 	@Comment("Тяжесть состояния")
 	@Persist
-	public Long getState() {return theState;}
-	public void setState(Long aState) {theState = aState;}
+	public Long getState() {return state;}
 
 	/** Тяжесть состояния */
-	private Long theState;
+	private Long state;
 
 	/** Код МКБ */
-	private Long theIdc10;
+	private Long idc10;
 	/** Район */
-	private Long theRayon;
+	private Long rayon;
 }
