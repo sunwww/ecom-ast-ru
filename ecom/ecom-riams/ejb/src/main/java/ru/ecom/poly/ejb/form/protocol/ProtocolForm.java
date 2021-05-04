@@ -1,6 +1,7 @@
 package ru.ecom.poly.ejb.form.protocol;
 
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.*;
@@ -40,138 +41,120 @@ import javax.persistence.Id;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(ProtocolPreCreateInterceptor.class)
 )
+@Setter
 public class ProtocolForm extends IdEntityForm {
     /** Запрет на ручное редактирование */
 	@Comment("Запрет на ручное редактирование")
 	@Persist
-	public Boolean getDisableEdit() {return theDisableEdit;}
-	public void setDisableEdit(Boolean aDisableEdit) {theDisableEdit = aDisableEdit;}
+	public Boolean getDisableEdit() {return disableEdit;}
 	/** Запрет на ручное редактирование */
-	private Boolean theDisableEdit;
+	private Boolean disableEdit;
 	
     /** Общая информация о протоколе */
     @Persist
     @Comment("Общая информация о протоколе")
-    public String getInfo() {    return theInfo ;}
-    public void setInfo(String aInfo ) {  theInfo = aInfo ; }
+    public String getInfo() {    return info ;}
 
     /** Дата регистрации талона */
     @Persist @Required
     @Comment("Дата регистрации талона")
     @DateString @DoDateString @MaxDateCurrent
-    public String getDateRegistration() {    return theDateRegistration ;}
-    public void setDateRegistration(String aDateRegistration ) {  theDateRegistration = aDateRegistration ; }
+    public String getDateRegistration() {    return dateRegistration ;}
 
     /** Талон */
     //@Persist
     @Comment("Талон")
-    public Long getTicket() {    return theTicket ;}
-    public void setTicket(Long aTicket ) {  theTicket = aTicket ; }
+    public Long getTicket() {    return ticket ;}
 
     /** ИД */
     @Id
     @Comment("ИД")
-    public long getId() {    return theId ;}
-    public void setId(long aId ) {  theId = aId ; }
+    public long getId() {    return id ;}
 
     /** Дата */
     @Persist @DateString @DoDateString
     @Comment("Дата") 
-    public String getDate() {    return theDate ;}
-    public void setDate(String aDate ) {  theDate = aDate ; }
+    public String getDate() {    return date ;}
 
     /** Запись */
     @Persist @Required
     @Comment("Запись")
-    public String getRecord() {    return theRecord ;}
-    public void setRecord(String aRecord ) {  theRecord = aRecord ; }
+    public String getRecord() {    return record ;}
 
     /** Ключевые слова */
     @Persist
     @Comment("Ключевые слова")
-    public String getKeyWord() {    return theKeyWord ;}
-    public void setKeyWord(String aKeyWord ) {  theKeyWord = aKeyWord ; }
-
+    public String getKeyWord() {    return keyWord ;}
 
     /** Специалист */
 	@Comment("Специалист")
 	@Persist
-	public Long getSpecialist() {return theSpecialist;}
-	public void setSpecialist(Long aSpecialist) {theSpecialist = aSpecialist;}
+	public Long getSpecialist() {return specialist;}
 
 	/** Специалист информация */
 	@Comment("Специалист информация")
 	@Persist
-	public String getSpecialistInfo() {return theSpecialistInfo;}
-	public void setSpecialistInfo(String aSpecialistInfo) {theSpecialistInfo = aSpecialistInfo;}
+	public String getSpecialistInfo() {return specialistInfo;}
 
 	/** Пользователь */
 	@Comment("Пользователь")
 	@Persist
-	public String getUsername() {return theUsername;}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
-	
+	public String getUsername() {return username;}
+
 	/** Время регистрации */
 	@Comment("Время регистрации")
 	@Persist 
 	@TimeString @DoTimeString
-	public String getTimeRegistration() {return theTimeRegistration;}
-	public void setTimeRegistration(String aTimeRegistration) {theTimeRegistration = aTimeRegistration;}
+	public String getTimeRegistration() {return timeRegistration;}
 
     /** Время создания */
 	@Comment("Время создания")
 	@Persist @TimeString @DoTimeString
-	public String getTime() {return theTime;}
-	public void setTime(String aTime) {theTime = aTime;}
+	public String getTime() {return time;}
 
 	/** Время создания */
-	private String theTime;
+	private String time;
 	/** Время регистрации */
-	private String theTimeRegistration;
+	private String timeRegistration;
 	/** Пользователь */
-	private String theUsername;
+	private String username;
 	/** Специалист информация */
-	private String theSpecialistInfo;
+	private String specialistInfo;
 	/** Специалист */
-	private Long theSpecialist;
-    private String theKeyWord ;
-    private String theRecord ;
-    private String theDate ;
-    private long theId ;
-    private Long theTicket ;
+	private Long specialist;
+    private String keyWord ;
+    private String record ;
+    private String date ;
+    private long id ;
+    private Long ticket ;
 
     /** Дата регистрации талона */
-    private String theDateRegistration ;
+    private String dateRegistration ;
     /** Общая информация о протоколе */
-    private String theInfo ;
+    private String info ;
     /** Информация для журнала */
     
 	@Comment("Информация для журнала")
 	@Persist
-	public String getJournalText() {return theJournalText;}
-	public void setJournalText(String aJournalText) {theJournalText = aJournalText;}
+	public String getJournalText() {return journalText;}
 
 	/** Информация для журнала */
-	private String theJournalText;
+	private String journalText;
 
     /** Время редактирования */
     @Comment("Время редактирования")
     @Persist
     @TimeString @DoTimeString
     public String getEditTime() {
-        return theEditTime;
-    }
-    public void setEditTime(String  aEditTime) {
-        theEditTime = aEditTime;
+        return editTime;
     }
     /** Время редактирования */
-    private String  theEditTime;
+    private String  editTime;
 
     /** Визит */
     @Comment("Визит")
     @Persist
-    public Long getMedCase() {return theMedCase;}
-    public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+    public Long getMedCase() {return medCase;}
     /** Визит */
-    private Long theMedCase;
+    private Long medCase;
 }

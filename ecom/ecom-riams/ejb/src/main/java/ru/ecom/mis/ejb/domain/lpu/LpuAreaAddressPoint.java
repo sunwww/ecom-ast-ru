@@ -5,6 +5,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.address.ejb.domain.address.Address;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -15,59 +17,35 @@ import ru.ecom.ejb.services.index.annotation.AIndexes;
  */
 @Entity
 @AIndexes({
-	@AIndex(unique = false, properties= {"address","houseNumber","houseBuilding"}),
-    @AIndex(unique = false, properties= {"address","houseNumber","houseBuilding","flat"}),
-    @AIndex(unique = false, properties= {"address","houseNumber", "flat"}),
-    @AIndex(unique = false, properties= {"address","houseNumber"}),
-    @AIndex(unique = false, properties= "address")
+	@AIndex(properties= {"address","houseNumber","houseBuilding"}),
+    @AIndex(properties= {"address","houseNumber","houseBuilding","flat"}),
+    @AIndex(properties= {"address","houseNumber", "flat"}),
+    @AIndex(properties= {"address","houseNumber"}),
+    @AIndex(properties= "address")
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class LpuAreaAddressPoint extends BaseEntity {
  
 
     /** Адрес */
     @OneToOne
-    public Address getAddress() { return theAddress ; }
-    public void setAddress(Address aAddress) { theAddress = aAddress ; }
-
-    /** Участок */
-//    @ManyToOne
-//    public LpuArea getLpuArea() { return theLpuArea ; }
-//    public void setLpuArea(LpuArea aLpuArea) { theLpuArea = aLpuArea ; }
+    public Address getAddress() { return address ; }
 
     /** Адрес участка */
     @ManyToOne
-    public LpuAreaAddressText getLpuAreaAddressText() { return theLpuAreaAddressText ; }
-    public void setLpuAreaAddressText(LpuAreaAddressText aLpuAreaAddressText) { theLpuAreaAddressText = aLpuAreaAddressText ; }
+    public LpuAreaAddressText getLpuAreaAddressText() { return lpuAreaAddressText ; }
 
     /** Адрес участка */
-    private LpuAreaAddressText theLpuAreaAddressText ;
-    /** Номер дома */
-    public String getHouseNumber() { return theHouseNumber ; }
-    public void setHouseNumber(String aHouseNumber) { theHouseNumber = aHouseNumber ; }
-
-    /** Корпус */
-    public String getHouseBuilding() { return theHouseBuilding ; }
-    public void setHouseBuilding(String aHouseBuilding) { theHouseBuilding = aHouseBuilding ; }
-
-    /** Квартира */
-	public String getFlat() {
-		return theFlat;
-	}
-
-	public void setFlat(String aFlat) {
-		theFlat = aFlat;
-	}
+    private LpuAreaAddressText lpuAreaAddressText ;
 
 	/** Квартира */
-	private String theFlat;
+	private String flat;
     /** Корпус */
-    private String theHouseBuilding ;
+    private String houseBuilding ;
     /** Номер дома */
-    private String theHouseNumber ;
+    private String houseNumber ;
     /** Адрес */
-    private Address theAddress ;
-
-//    /** Участок */
-//    private LpuArea theLpuArea ;
+    private Address address ;
 }

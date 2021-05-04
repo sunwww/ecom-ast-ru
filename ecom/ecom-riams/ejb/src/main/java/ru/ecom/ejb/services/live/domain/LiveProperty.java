@@ -1,5 +1,7 @@
 package ru.ecom.ejb.services.live.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.util.ColumnConstants;
@@ -12,68 +14,52 @@ import javax.persistence.*;
     @AIndex(name = "property", properties = {"property"})
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class LiveProperty {
 	 /** Идентификатор */
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    public long getId() { return theId ; }
-    public void setId(long aId) { theId = aId ; }
-    
+    public long getId() { return id ; }
+
     /** Сущность */
 	@Comment("Сущность")
 	@ManyToOne
 	public LiveEntity getEntity() {
-		return theEntity;
-	}
-
-	public void setEntity(LiveEntity aEntity) {
-		theEntity = aEntity;
+		return entity;
 	}
 
 	/** Сущность */
-	private LiveEntity theEntity;
-    /** Название свойство */
-	@Comment("Название свойство")
-	public String getProperty() {
-		return theProperty;
-	}
-
-	public void setProperty(String aProperty) {
-		theProperty = aProperty;
-	}
+	private LiveEntity entity;
 
 	/** Значение */
 	@Comment("Значение")
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
 	public String getPropertyValue() {
-		return thePropertyValue;
-	}
-
-	public void setPropertyValue(String aPropertyValue) {
-		thePropertyValue = aPropertyValue;
+		return propertyValue;
 	}
 
 	/** Значение */
-	private String thePropertyValue;
+	private String propertyValue;
 	/** Название свойство */
-	private String theProperty;
+	private String property;
     /** Идентификатор */
-    private long theId ;
+    private long id ;
     
     /** Поиск значения */
 	@Comment("Поиск значения")
 	public String getShortValue() {
-		int len = thePropertyValue!=null ? thePropertyValue.length() : 0;
+		int len = propertyValue!=null ? propertyValue.length() : 0;
 		if (len>255) len=255 ;
-		return theShortValue!=null ? theShortValue : thePropertyValue!=null ? thePropertyValue.substring(0, len) : null;
+		return shortValue!=null ? shortValue : propertyValue!=null ? propertyValue.substring(0, len) : null;
 	}
 
 	public void setShortValue(String aShortValue) {
-		if (thePropertyValue!=null) {
-		theShortValue = getShortValue();
+		if (propertyValue!=null) {
+		shortValue = getShortValue();
 		}
 	}
 
 	/** Поиск значения */
-	private String theShortValue;
+	private String shortValue;
     
 }

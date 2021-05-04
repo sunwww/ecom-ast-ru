@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -23,6 +24,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(MedContractPreCreateInterceptor.class)
 )
+@Setter
 public class MedContractForm extends IdEntityForm{
 
 	private Long privilege;
@@ -31,9 +33,6 @@ public class MedContractForm extends IdEntityForm{
 	public Long getPrivilege() {
 		return privilege;
 	}
-	public void setPrivilege(Long privilege) {
-		this.privilege = privilege;
-	}
 
 	/**
 	 * ЛПУ
@@ -41,45 +40,36 @@ public class MedContractForm extends IdEntityForm{
 	@Comment("ЛПУ")
 	@Persist
 	public Long getLpu() {
-		return theLpu;
-	}
-	public void setLpu(Long aLpu) {
-		theLpu = aLpu;
+		return lpu;
 	}
 	/**
 	 * ЛПУ
 	 */
-	private Long theLpu;
+	private Long lpu;
 	/**
 	 * Заказчик
 	 */
 	@Comment("Заказчик")
 	@Persist
 	public Long getCustomer() {
-		return theCustomer;
-	}
-	public void setCustomer(Long aCustomer) {
-		theCustomer = aCustomer;
+		return customer;
 	}
 	/**
 	 * Заказчик
 	 */
-	private Long theCustomer;
+	private Long customer;
 	/**
 	 * Родитель
 	 */
 	@Comment("Родитель")
 	@Persist
 	public Long getParent() {
-		return theParent;
-	}
-	public void setParent(Long aParent) {
-		theParent = aParent;
+		return parent;
 	}
 	/**
 	 * Родитель
 	 */
-	private Long theParent;
+	private Long parent;
 	/**
 	 * Дата начала действия
 	 */
@@ -87,15 +77,12 @@ public class MedContractForm extends IdEntityForm{
 	@Persist @Required
 	@DateString @DoDateString
 	public String getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(String aDateFrom) {
-		theDateFrom = aDateFrom;
+		return dateFrom;
 	}
 	/**
 	 * Дата начала действия
 	 */
-	private String theDateFrom;
+	private String dateFrom;
 	/**
 	 * Дата окончания действия
 	 */
@@ -103,210 +90,170 @@ public class MedContractForm extends IdEntityForm{
 	@Persist
 	@DateString @DoDateString
 	public String getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(String aDateTo) {
-		theDateTo = aDateTo;
+		return dateTo;
 	}
 	/**
 	 * Дата окончания действия
 	 */
-	private String theDateTo;
+	private String dateTo;
 	/**
 	 * Описание
 	 */
 	@Comment("Описание")
 	@Persist
 	public String getComment() {
-		return theComment;
-	}
-	public void setComment(String aComment) {
-		theComment = aComment;
+		return comment;
 	}
 	/**
 	 * Описание
 	 */
-	private String theComment;
+	private String comment;
 	/**
 	 * Номер договора
 	 */
 	@Comment("Номер договора")
 	@Persist @Required
 	public String getContractNumber() {
-		return theContractNumber;
-	}
-	public void setContractNumber(String aContractNumber) {
-		theContractNumber = aContractNumber;
+		return contractNumber;
 	}
 	/**
 	 * Номер договора
 	 */
-	private String theContractNumber;
+	private String contractNumber;
 	/**
 	 * Обработка правил
 	 */
 	@Comment("Обработка правил")
 	@Persist
 	public Long getRulesProcessing() {
-		return theRulesProcessing;
-	}
-	public void setRulesProcessing(Long aRulesProcessing) {
-		theRulesProcessing = aRulesProcessing;
+		return rulesProcessing;
 	}
 	/**
 	 * Обработка правил
 	 */
-	private Long theRulesProcessing;
+	private Long rulesProcessing;
 	/**
 	 * Прейскурант
 	 */
 	@Comment("Прейскурант")
 	@Persist @Required
 	public Long getPriceList() {
-		return thePriceList;
-	}
-	public void setPriceList(Long aPriceList) {
-		thePriceList = aPriceList;
+		return priceList;
 	}
 	/**
 	 * Прейскурант
 	 */
-	private Long thePriceList;
+	private Long priceList;
 	/** Информация */
 	@Comment("Информация")
 	@Persist
 	public String getInfo() {
-		return theInfo;
+		return info;
 	}
 
-	public void setInfo(String aInfo) {
-		theInfo = aInfo;
-	}
 
 	/** Информация */
-	private String theInfo;
+	private String info;
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DoDateString @DateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	public String getCreateDate() {return createDate;}
 	
 	/** Время создания */
 	@Comment("Время создания")
 	@Persist @DoTimeString @TimeString
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;}
 	
 	/** Пользователь, создавший запись */
 	@Comment("Пользователь, создавший запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 	
 	/** Дата последнего изменения */
 	@Comment("Дата последнего изменения")
 	@Persist @DoDateString @DateString
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+	public String getEditDate() {return editDate;}
 	
 	/** Время, последнего изменения */
 	@Comment("Время, последнего изменения")
 	@Persist @DoTimeString @TimeString
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+	public String getEditTime() {return editTime;}
 	
 	/** Пользователь, последний изменивший запись */
 	@Comment("Пользователь, последний изменивший запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Пользователь, последний изменивший запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Время, последнего изменения */
-	private String theEditTime;
+	private String editTime;
 	/** Дата последнего изменения */
-	private String theEditDate;
+	private String editDate;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	
 	/** Лимит денег */
 	@Comment("Лимит денег")
 	@Persist
-	public String getLimitMoney() {return theLimitMoney;}
-	public void setLimitMoney(String aLimitMoney) {theLimitMoney = aLimitMoney;}
+	public String getLimitMoney() {return limitMoney;}
 
 	/** Лимит денег */
-	private String theLimitMoney;	
+	private String limitMoney;	
 	/** Обязательно гарантийный документ */
 	@Comment("Обязательно гарантийный документ")
 	@Persist
 	public Boolean getIsRequiredGuaratee() {
-		return theIsRequiredGuaratee;
-	}
-
-	public void setIsRequiredGuaratee(Boolean aIsRequiredGuaratee) {
-		theIsRequiredGuaratee = aIsRequiredGuaratee;
+		return isRequiredGuaratee;
 	}
 
 	/** Обязательно гарантийный документ */
-	private Boolean theIsRequiredGuaratee;
+	private Boolean isRequiredGuaratee;
 	
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@Persist 
 	public Long getServiceStream() {
-		return theServiceStream;
-	}
-
-	public void setServiceStream(Long aServiceStream) {
-		theServiceStream = aServiceStream;
+		return serviceStream;
 	}
 
 	/** Поток обслуживания */
-	private Long theServiceStream;
+	private Long serviceStream;
 	
 	/** Метка договора */
 	@Comment("Метка договора")
 	@Persist
-	public Long getContractLabel() {return theContractLabel;}
-	public void setContractLabel(Long aContractLabel) {theContractLabel = aContractLabel;}
+	public Long getContractLabel() {return contractLabel;}
 
 	/** Метка договора */
-	private Long theContractLabel;
+	private Long contractLabel;
 	
 	/** Срок договора */
 	@Comment("Срок договора")
 	@Persist 
-	public Long getContractTerm() {return theContractTerm;}
-	public void setContractTerm(Long aContractTerm) {theContractTerm = aContractTerm;}
+	public Long getContractTerm() {return contractTerm;}
 
 	/** Срок договора */
-	private Long theContractTerm;
+	private Long contractTerm;
 	/** Скидка по умолчанию */
 	@Comment("Скидка по умолчанию")
 	@Persist
-	public String getDiscountDefault() {return theDiscountDefault;}
-	public void setDiscountDefault(String aDiscountDefault) {theDiscountDefault = aDiscountDefault;}
+	public String getDiscountDefault() {return discountDefault;}
 
 	/** Скидка по умолчанию */
-	private String theDiscountDefault;
+	private String discountDefault;
 	
 	/** Оплачен */
 	@Comment("Оплачен")
 	@Persist
 	public Boolean getIsFinished() {
-		return theIsFinished;
-	}
-
-	public void setIsFinished(Boolean aIsFinished) {
-		theIsFinished = aIsFinished;
+		return isFinished;
 	}
 
 	/** Оплачен */
-	private Boolean theIsFinished;
+	private Boolean isFinished;
 }

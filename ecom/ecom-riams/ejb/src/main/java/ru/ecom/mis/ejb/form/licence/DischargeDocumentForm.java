@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.licence;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -24,33 +25,29 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(DocumentPrepareCreateInterceptor.class)
 )
+@Setter
 public class DischargeDocumentForm extends InternalDocumentsForm{
 	/** Диагноз */
 	@Comment("Диагноз")
 	@Persist @Required
-	public String getDiagnosis() {return theDiagnosis;}
-	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
-
-
+	public String getDiagnosis() {return diagnosis;}
 
 	/** Рекомендации */
 	@Comment("Рекомендации")
 	@Persist
-	public String getRecommendations() {return theRecommendations;}
-	public void setRecommendations(String aRecommendations) {theRecommendations = aRecommendations;}
+	public String getRecommendations() {return recommendations;}
 
 	/** Обоснование */
 	@Comment("Обоснование")
 	@Persist @Required
-	public String getHistory() {return theHistory;}
-	public void setHistory(String aHistory) {theHistory = aHistory;}
+	public String getHistory() {return history;}
 
 	/** Обоснование */
-	private String theHistory;
+	private String history;
 	/** Рекомендации */
-	private String theRecommendations;
+	private String recommendations;
 
 	/** Диагноз */
-	private String theDiagnosis;
+	private String diagnosis;
 
 }

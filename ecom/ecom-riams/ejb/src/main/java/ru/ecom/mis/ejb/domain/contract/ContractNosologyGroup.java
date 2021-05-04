@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.contract;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -17,33 +19,21 @@ import java.util.List;
 @Entity
 @Table(schema="SQLUser")
 	@AIndexes({
-		@AIndex(unique= false, properties = {"name"})
+		@AIndex(properties = {"name"})
 	})
+	@Getter
+	@Setter
 public class ContractNosologyGroup extends BaseEntity{
 	@OneToMany(mappedBy="nosologyGroup", cascade=CascadeType.ALL)
 	public List<NosologyInterval> getIntervals() {
-		return theIntervals;
-	}
-	public void setIntervals(List<NosologyInterval> aIntervals) {
-		theIntervals = aIntervals;
+		return intervals;
 	}
 	/**
 	 * Нозологические интервалы
 	 */
-	private List<NosologyInterval> theIntervals;
+	private List<NosologyInterval> intervals;
 	/**
 	 * Название
 	 */
-	@Comment("Название")
-	
-	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
-	}
-	/**
-	 * Название
-	 */
-	private String theName;
+	private String name;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.nuzmsh.commons.formpersistence.annotation.Parent;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.birth.HereditaryScreening;
@@ -23,13 +24,13 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Скрининг на наследственные заболевания ", nameProperties= "id", view="entityParentView-preg_hereditaryScreening.do" ,list = "entityParentList-preg_inspection.do")
 @Parent(property="medCase", parentForm= MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Inspection/HereditaryScreening")
+@Setter
 public class HereditaryScreeningForm extends InspectionForm{
 	
 	/** Описание */
 	@Comment("Описание")
 	@Persist @Required
-	public String getNotes() {return theNotes;}
-	public void setNotes(String aNotes) {theNotes = aNotes;}
+	public String getNotes() {return notes;}
 	/** Описание */
-	private String theNotes;
+	private String notes;
 }

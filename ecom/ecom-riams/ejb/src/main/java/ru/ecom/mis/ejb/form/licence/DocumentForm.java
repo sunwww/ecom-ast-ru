@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.licence;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -25,87 +26,77 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 		,RequitDirectionDocumentForm.class
 		,ExternalDocumentForm.class})
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Document")
+@Setter
 public class DocumentForm extends IdEntityForm{
 
     /** Серия документа */
 	@Persist
-    public String getSeriaDoc() { return theSeriaDoc ; }
-    public void setSeriaDoc(String aSeriaDoc) { theSeriaDoc = aSeriaDoc ; }
+    public String getSeriaDoc() { return seriaDoc ; }
 
     /** Номер документа */
     @Persist
-    public String getNumberDoc() { return theNumberDoc ; }
-    public void setNumberDoc(String aNumberDoc) { theNumberDoc = aNumberDoc ; }
-    
+    public String getNumberDoc() { return numberDoc ; }
+
     /** Дата выдачи */
 	@Comment("Дата выдачи")
 	@Persist @DoDateString @DateString
-	public String getDateIssued() {return theDateIssued;}
-	public void setDateIssued(String aDateIssued) {theDateIssued = aDateIssued;}
+	public String getDateIssued() {return dateIssued;}
 
 	/** Кем выдан */
 	@Comment("Кем выдан")
 	@Persist
-	public String getWhomIssued() {return theWhomIssued;}
-	public void setWhomIssued(String aWhomIssued) {theWhomIssued = aWhomIssued;}
+	public String getWhomIssued() {return whomIssued;}
 
     /** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DoDateString @DateString
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
+
 	/** Пользователь, создавший запись */
 	@Comment("Пользователь, создавший запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	
+	public String getCreateUsername() {return createUsername;}
+
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@Persist @DoDateString @DateString
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
-	
+	public String getEditDate() {return editDate;}
+
 	/** Пользователь, последний редактировавший запись */
 	@Comment("Пользователь, последний редактировавший запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-
+	public String getEditUsername() {return editUsername;}
 
 	/** СМО */
 	@Comment("СМО")
 	@Persist
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+	public Long getMedCase() {return medCase;}
 	/** СМО */
-	private Long theMedCase;
+	private Long medCase;
 	/** Пользователь, последний редактировавший запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	/** Кем выдан */
-	private String theWhomIssued;
+	private String whomIssued;
 	/** Дата выдачи */
-	private String theDateIssued;
+	private String dateIssued;
   
     /** Серия документа */
-    private String theSeriaDoc ;
+    private String seriaDoc ;
     /** Номер документа */
-    private String theNumberDoc ;
+    private String numberDoc ;
 	/** Время создания */
 	@Comment("Время создания")
 	@DoTimeString @TimeString @Persist
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;}
 
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	
 
 }

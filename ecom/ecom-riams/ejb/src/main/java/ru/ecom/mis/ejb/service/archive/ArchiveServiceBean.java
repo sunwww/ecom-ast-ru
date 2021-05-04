@@ -19,12 +19,12 @@ public class ArchiveServiceBean implements IArchiveService{
 		if (sId.length>0) {
 			if (aWorkFunctionId==null) {
 				aWorkFunctionId = Long.valueOf(
-						theManager.createNativeQuery("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login = '"+aUsername+"'").getSingleResult().toString());
+						manager.createNativeQuery("select wf.id from workfunction wf left join secuser su on su.id=wf.secuser_id where su.login = '"+aUsername+"'").getSingleResult().toString());
 			}
 			for (String sl: sId) {
 				Long aStatCardId = Long.valueOf(sl);
 				if (aStatCardId==0) {return null;}
-				StatisticStub ss = theManager.find(StatisticStub.class, aStatCardId);
+				StatisticStub ss = manager.find(StatisticStub.class, aStatCardId);
 				if (ss.getMedCase().getDateFinish()== null) {
 					ret.append("СЛС с номером стат. карты №").append(ss.getCode()).append(" не законцен").append("#");
 				} else if (ss.getArchiveCase()!=null) {
@@ -37,9 +37,9 @@ public class ArchiveServiceBean implements IArchiveService{
 					ac.setCreateTime(new java.sql.Time(new java.util.Date().getTime()));
 					ac.setCreateUsername(aUsername);
 					ac.setWorkFunction(aWorkFunctionId);
-					theManager.persist(ac);
+					manager.persist(ac);
 					ss.setArchiveCase(ac.getId());
-					theManager.persist(ss);
+					manager.persist(ss);
 				
 				}
 			}
@@ -49,5 +49,5 @@ public class ArchiveServiceBean implements IArchiveService{
 		// TODO Auto-generated method stub
 		return ret.length()>0?ret.toString():"";
 	}
-	private @PersistenceContext EntityManager theManager;
+	private @PersistenceContext EntityManager manager;
 }

@@ -1,4 +1,5 @@
 package ru.ecom.mis.ejb.form.contract;
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.PriceList;
@@ -15,6 +16,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Прейскурант")
 @WebTrail(comment = "Прейскурант", nameProperties= "name", list="entityList-contract_priceList.do", view="entityView-contract_priceList.do")
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/PriceList")
+@Setter
 public class PriceListForm extends IdEntityForm{
 
 	/**
@@ -23,15 +25,12 @@ public class PriceListForm extends IdEntityForm{
 	@Comment("Название")
 	@Persist @Required
 	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
+		return name;
 	}
 	/**
 	 * Название
 	 */
-	private String theName;
+	private String name;
 	/**
 	 * Дата начала действия
 	 */
@@ -39,15 +38,12 @@ public class PriceListForm extends IdEntityForm{
 	@Persist @Required
 	@DateString @DoDateString
 	public String getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(String aDateFrom) {
-		theDateFrom = aDateFrom;
+		return dateFrom;
 	}
 	/**
 	 * Дата начала действия
 	 */
-	private String theDateFrom;
+	private String dateFrom;
 	/**
 	 * Дата окончания действия
 	 */
@@ -55,21 +51,17 @@ public class PriceListForm extends IdEntityForm{
 	@Persist
 	@DateString @DoDateString
 	public String getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(String aDateTo) {
-		theDateTo = aDateTo;
+		return dateTo;
 	}
 	/**
 	 * Дата окончания действия
 	 */
-	private String theDateTo;
+	private String dateTo;
 
 	/** Используется по умолчанию */
 	@Comment("Используется по умолчанию")
 	@Persist
-	public Boolean getIsDefault() {return theIsDefault;}
-	public void setIsDefault(Boolean aIsDefault) {theIsDefault = aIsDefault;}
+	public Boolean getIsDefault() {return isDefault;}
 	/** Используется по умолчанию */
-	private Boolean theIsDefault;
+	private Boolean isDefault;
 }

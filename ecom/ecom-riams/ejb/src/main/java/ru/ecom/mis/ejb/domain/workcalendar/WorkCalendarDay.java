@@ -11,6 +11,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -26,133 +28,94 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Дни рабочего календаря")
 @Entity
 @AIndexes({
-	@AIndex(unique = false, properties = {"calendarDate"})
-	,@AIndex(unique = false, properties = {"workCalendar"})
-	//,@AIndex(unique = false, properties = {"calendarDate","workFunction"})
+	@AIndex(properties = {"calendarDate"})
+	,@AIndex(properties = {"workCalendar"})
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class WorkCalendarDay extends BaseEntity{
 	/** Удаленная запись */
-	@Comment("Удаленная запись")
-	public Boolean getIsDeleted() {return theIsDeleted;}
-	public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
-	/** Удаленная запись */
-	private Boolean theIsDeleted ;
+	private Boolean isDeleted ;
 
 	/** Рабочий календарь */
 	@Comment("Рабочий календарь")
 	@ManyToOne
 	public WorkCalendar getWorkCalendar() {
-		return theWorkCalendar;
-	}
-
-	public void setWorkCalendar(WorkCalendar aWorkCalendar) {
-		theWorkCalendar = aWorkCalendar;
+		return workCalendar;
 	}
 
 	/** Рабочий календарь */
-	private WorkCalendar theWorkCalendar;
+	private WorkCalendar workCalendar;
 	
 	/** Выходной */
-	@Comment("Выходной")
-	public Boolean getHoliday() {
-		return theHoliday;
-	}
-
-	public void setHoliday(Boolean aHoliday) {
-		theHoliday = aHoliday;
-	}
-
-	/** Выходной */
-	private Boolean theHoliday;
+	private Boolean holiday;
 	
 	/** Календарная дата */
-	@Comment("Календарная дата")
-	public Date getCalendarDate() {
-		return theCalendarDate;
-	}
-
-	public void setCalendarDate(Date aCalendarDate) {
-		theCalendarDate = aCalendarDate;
-	}
-
-	/** Календарная дата */
-	private Date theCalendarDate;
+	private Date calendarDate;
 	
 	/** День недели */
 	@Comment("День недели")
 	@Transient
 	@OneToOne
 	public VocWeekDay getWeekDay() {
-		return theWeekDay;
-	}
-
-	public void setWeekDay(VocWeekDay aWeekDay) {
-		theWeekDay = aWeekDay;
+		return weekDay;
 	}
 
 	/** День недели */
-	private VocWeekDay theWeekDay;
+	private VocWeekDay weekDay;
 	
 	/** Номер недели в месяце */
 	@Comment("Номер недели в месяце")
 	@Transient
 	public Integer getWeekNumberInMonth() {
-		return theWeekNumberInMonth;
+		return weekNumberInMonth;
 	}
 
 	public void setWeekNumberInMonth(Integer aWeekNumberInMonth) {
-		theWeekNumberInMonth = aWeekNumberInMonth;
+		weekNumberInMonth = aWeekNumberInMonth;
 	}
 
 	/** Номер недели в месяце */
-	private Integer theWeekNumberInMonth;
+	private Integer weekNumberInMonth;
 	
 	/** Номер недели в году */
 	@Comment("Номер недели в году")
 	@Transient
 	public Integer getWeekNumberInYear() {
-		return theWeekNumberInYear;
+		return weekNumberInYear;
 	}
 
 	public void setWeekNumberInYear(Integer aWeekNumberInYear) {
-		theWeekNumberInYear = aWeekNumberInYear;
+		weekNumberInYear = aWeekNumberInYear;
 	}
 
 	/** Номер недели в году */
-	private Integer theWeekNumberInYear;
+	private Integer weekNumberInYear;
 	
 	/** Вместо дня */
 	@Comment("Вместо дня")
 	@OneToOne
 	public WorkCalendarDay getInsteadOfDay() {
-		return theInsteadOfDay;
-	}
-
-	public void setInsteadOfDay(WorkCalendarDay aInsteadOfDay) {
-		theInsteadOfDay = aInsteadOfDay;
+		return insteadOfDay;
 	}
 
 	/** Вместо дня */
-	private WorkCalendarDay theInsteadOfDay;
+	private WorkCalendarDay insteadOfDay;
 	
 	/** Рабочие времена */
 	@Comment("Рабочие времена")
 	@OneToMany(mappedBy="workCalendarDay", cascade=CascadeType.ALL)
 	public List<WorkCalendarTime> getWorkCalendarTimes() {
-		return theWorkCalendarTimes;
-	}
-
-	public void setWorkCalendarTimes(List<WorkCalendarTime> aWorkCalendarTimes) {
-		theWorkCalendarTimes = aWorkCalendarTimes;
+		return workCalendarTimes;
 	}
 
 	/** Рабочие времена */
-	private List<WorkCalendarTime> theWorkCalendarTimes;
+	private List<WorkCalendarTime> workCalendarTimes;
 	
-	@Transient @OneToOne
+	@Transient
 	public WorkFunction getWorkFunction() {
-		return theWorkCalendar!=null? theWorkCalendar.getWorkFunction():null ;
+		return workCalendar!=null? workCalendar.getWorkFunction():null ;
 	}
 	
 	

@@ -48,12 +48,12 @@ public class ParameterServiceBean implements IParameterService{
 	public String checkOrCreateCode(String aCode, String aId) {
 		String retCode ;
 		if (aCode==null||aCode.equals("")) { //Генерируем код автоматически
-			List<Object> ll = theManager.createNativeQuery("select max(id) from parameter").getResultList() ;
+			List<Object> ll = manager.createNativeQuery("select max(id) from parameter").getResultList() ;
 			Long maxId = ConvertSql.parseLong(!ll.isEmpty()?ll.get(0):Long.valueOf(0));
 			if (maxId==null) maxId=0L ;
 			maxId++;
 			while (true) {
-				List<Object> l = theManager.createNativeQuery("select id from parameter where code='code_"+maxId+"'").getResultList();
+				List<Object> l = manager.createNativeQuery("select id from parameter where code='code_"+maxId+"'").getResultList();
 				if (l.isEmpty()) {
 					retCode = "code_"+maxId;
 					break;
@@ -62,7 +62,7 @@ public class ParameterServiceBean implements IParameterService{
 				}
 			}
 		} else { //Проверяем указанный код на уникальность
-			Long id = Long.valueOf(theManager.createNativeQuery("select count(*) from parameter where code='"+aCode+"'" +(aId!=null&&!aId.equals("")?" and id!="+aId:"") ).getSingleResult().toString());
+			Long id = Long.valueOf(manager.createNativeQuery("select count(*) from parameter where code='"+aCode+"'" +(aId!=null&&!aId.equals("")?" and id!="+aId:"") ).getSingleResult().toString());
 			if (id>0) {
 				retCode=new Random().nextInt()+aCode;
 			} else {
@@ -74,11 +74,11 @@ public class ParameterServiceBean implements IParameterService{
 	}
 	
 	public Long createProtocolDrForCreateParam(Long aSmoId, Long aTemplate) {
-		MedCase smo = theManager.find(MedCase.class, aSmoId) ;
+		MedCase smo = manager.find(MedCase.class, aSmoId) ;
 		RoughDraft draft = new RoughDraft() ;
 		draft.setMedCase(smo) ;
-		theManager.persist(draft) ;
-		List<ParameterByForm> listParam = theManager.createNativeQuery("from ParameterByForm where template_id="+aTemplate).getResultList() ;
+		manager.persist(draft) ;
+		List<ParameterByForm> listParam = manager.createNativeQuery("from ParameterByForm where template_id="+aTemplate).getResultList() ;
 		//TODO ошибка доделать
 		//if (listParam.isEmpty()) {}
 		for (ParameterByForm pf:listParam) {
@@ -86,20 +86,20 @@ public class ParameterServiceBean implements IParameterService{
 			pfnew.setParameter(pf.getParameter()) ;
 			pfnew.setPosition(pf.getPosition()) ;
 			pfnew.setDocProtocol(draft) ;
-			theManager.persist(pfnew) ;
+			manager.persist(pfnew) ;
 		}
 		
 		return draft.getId() ;
 	}
 	public List<ParameterType> loadParameterType()  {
 		List<ParameterType> list = new LinkedList<>()  ;
-			loadFile(theFileDiaryParameter ,list);
+			loadFile(fileDiaryParameter ,list);
 		return list ;
 	}
 	
 	public ParameterPage loadParameter(ParameterForm aParameterForm, Long aId, ActionErrors aErrors) {
 		try {
-			return loadParameterFromFile(theFileDiaryParameter,aId, aParameterForm, aErrors);
+			return loadParameterFromFile(fileDiaryParameter,aId, aParameterForm, aErrors);
 		}catch (Exception e) {
 		}
 
@@ -112,9 +112,7 @@ public class ParameterServiceBean implements IParameterService{
 	
 	public String getActionByDocument(Long aId,
 			String aDocument) throws IOException {
-	//	LOG.info(new StringBuilder().append("Loading ").append(theFileDocumentParameter).append(" ...").toString());
-		try (InputStream in =getInputStream(theFileDocumentParameter)) {
-		//	LOG.info(new StringBuilder().append("		file=").append(in).toString());
+		try (InputStream in =getInputStream(fileDocumentParameter)) {
 			Document doc = new SAXBuilder().build(in);
 			Element parConfigElement = doc.getRootElement();
 			for (Object o : parConfigElement.getChildren()) {
@@ -283,18 +281,18 @@ public class ParameterServiceBean implements IParameterService{
 	    }
 	
 	private InputStream getInputStream(String aResourceString) throws FileNotFoundException {
-    	return theEcomConfig.getInputStream(aResourceString, "",true);
+    	return ecomConfig.getInputStream(aResourceString, "",true);
     }
 	private Boolean toBoolean(String aString) {
 		return !StringUtil.isNullOrEmpty(aString) && (aString.equals("1") || aString.equalsIgnoreCase("true"));
 	}
 	
-	EjbEcomConfig theEcomConfig = EjbEcomConfig.getInstance(); 
+	EjbEcomConfig ecomConfig = EjbEcomConfig.getInstance(); 
 	private static final Logger LOG = Logger.getLogger(ParameterServiceBean.class) ;
-	String theFileDiaryParameter = "/META-INF/diary/parameter-config.xml" ;
-	String theFileDocumentParameter = "/META-INF/diary/document-polic-config.xml" ;
-	@EJB ILocalEntityFormService theEntityFormService ;
-    @PersistenceContext EntityManager theManager ;
-    @Resource SessionContext theContext ;
+	String fileDiaryParameter = "/META-INF/diary/parameter-config.xml" ;
+	String fileDocumentParameter = "/META-INF/diary/document-polic-config.xml" ;
+	@EJB ILocalEntityFormService entityFormService ;
+    @PersistenceContext EntityManager manager ;
+    @Resource SessionContext context ;
 
 }

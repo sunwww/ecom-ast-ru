@@ -8,6 +8,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.vaccination.voc.VocVaccinationEstopType;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -20,41 +22,24 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Медотвод")
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VaccinationEstop extends BaseEntity{
 
 	/** Вакцинация */
 	@Comment("Вакцинация")
 	@OneToOne
 	public Vaccination getVaccination() {
-		return theVaccination;
-	}
-
-	public void setVaccination(Vaccination aVaccination) {
-		theVaccination = aVaccination;
+		return vaccination;
 	}
 
 	/** Вакцинация */
-	private Vaccination theVaccination;
+	private Vaccination vaccination;
 	
 	/**
 	 * Дата медотвода
 	 */
-	@Comment("Дата медотвода")
-	public Date getEstopDate() {
-		return theEstopDate;
-	}
-
-	/**
-	 * Дата медотвода
-	 */
-	public void setEstopDate(Date a_Property) {
-		theEstopDate = a_Property;
-	}
-
-	/**
-	 * Дата медотвода
-	 */
-	private Date theEstopDate;
+	private Date estopDate;
 	
 	/**
 	 * Тип медотвода
@@ -62,60 +47,23 @@ public class VaccinationEstop extends BaseEntity{
 	@Comment("Тип медотвода")
 	@OneToOne
 	public VocVaccinationEstopType getEstopType() {
-		return theEstopType;
+		return estopType;
 	}
 
 	/**
 	 * Тип медотвода
 	 */
-	public void setEstopType(VocVaccinationEstopType a_Property) {
-		theEstopType = a_Property;
-	}
-
-	/**
-	 * Тип медотвода
-	 */
-	private VocVaccinationEstopType theEstopType;
+	private VocVaccinationEstopType estopType;
 
 	/**
 	 * Комментарий
 	 */
-	@Comment("Комментарий")
-	public String getComments() {
-		return theComments;
-	}
-
-	/**
-	 * Комментарий
-	 */
-	public void setComments(String a_Property) {
-		theComments = a_Property;
-	}
-
-	/**
-	 * Комментарий
-	 */
-	private String theComments;
+	private String comments;
 
 	/**
 	 * Дата окончания медотвода
 	 */
-	@Comment("Дата окончания медотвода")
-	public Date getDateFinish() {
-		return theDateFinish;
-	}
-
-	/**
-	 * Дата окончания медотвода
-	 */
-	public void setDateFinish(Date a_Property) {
-		theDateFinish = a_Property;
-	}
-
-	/**
-	 * Дата окончания медотвода
-	 */
-	private Date theDateFinish;
+	private Date dateFinish;
 
 	/**
 	 * Список нозологий
@@ -123,40 +71,18 @@ public class VaccinationEstop extends BaseEntity{
 	@Comment("Список нозологий")
 	@OneToMany
 	public List<VaccinationNosology> getNosologyList() {
-		return theNosologyList;
+		return nosologyList;
 	}
 
 	/**
 	 * Список нозологий
 	 */
-	public void setNosologyList(List<VaccinationNosology> a_Property) {
-		theNosologyList = a_Property;
-	}
-
-	/**
-	 * Список нозологий
-	 */
-	private List<VaccinationNosology> theNosologyList;
+	private List<VaccinationNosology> nosologyList;
 
 	/**
 	 * Недействительность
 	 */
-	@Comment("Недействительность")
-	public Boolean getNoActuality() {
-		return theNoActuality;
-	}
-
-	/**
-	 * Недействительность
-	 */
-	public void setNoActuality(Boolean a_Property) {
-		theNoActuality = a_Property;
-	}
-
-	/**
-	 * Недействительность
-	 */
-	private Boolean theNoActuality;
+	private Boolean noActuality;
 
 	
 

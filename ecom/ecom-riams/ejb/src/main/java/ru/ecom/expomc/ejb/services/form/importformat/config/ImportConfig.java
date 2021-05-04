@@ -28,7 +28,7 @@ Sample XML
 
 
 public class ImportConfig {
-    private Document theDocument;
+    private Document document;
 
     private static final Logger LOG = Logger.getLogger(ImportConfig.class) ;
 
@@ -40,16 +40,16 @@ public class ImportConfig {
             configString = "<?xml version='1.0' encoding='UTF-8' ?>\n" +
                     configString;
         }
-        theDocument = saxBuilder.build(new StringReader(configString));
+        document = saxBuilder.build(new StringReader(configString));
     }
 
     public List<ImportEntity> getEntities() {
         List<ImportEntity> ret = new ArrayList<>();
         List<Element> entities;
         try {
-            LOG.info("ImportDoc:"+theDocument+":");
+            LOG.info("ImportDoc:"+document+":");
             //theDocument.getRootElement().get
-            entities = XPath.selectNodes(theDocument, "*/entity");
+            entities = XPath.selectNodes(document, "*/entity");
             for (Element entity : entities) {
                 LOG.info("entity:"+entity+":");
                 ImportEntity importEntity = new ImportEntity(entity);

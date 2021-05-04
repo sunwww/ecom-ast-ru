@@ -1,5 +1,7 @@
 package ru.ecom.document.ejb.form.certificate;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.document.ejb.domain.certificate.Certificate;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
@@ -26,102 +28,91 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Parent(property="patient", parentForm=PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Certificate")
 @Subclasses( { ConfinementCertificateForm.class, DeathCertificateForm.class })
+@Setter
 public class CertificateForm extends IdEntityForm {
 
 	/** Серия документа */
 	@Comment("Серия документа")
 	@Persist
-	public String getSeries() {return theSeries;}
-	public void setSeries(String aSeries) {theSeries = aSeries;}
-	
+	public String getSeries() {return series;}
+
 	/** Номер документа */
 	@Comment("Номер документа")
 	@Persist @Required
-	public Integer getNumber() {return theNumber;}
-	public void setNumber(Integer aNumber) {theNumber = aNumber;}
-	
+	public Integer getNumber() {return number;}
+
 	/** Дата выдачи документа */
 	@Comment("Дата выдачи документа")
 	@Persist @DateString @DoDateString
-	public String getDateIssue() {return theDateIssue;}
-	public void setDateIssue(String aDateIssue) {theDateIssue = aDateIssue;}
+	public String getDateIssue() {return dateIssue;}
 
 	/** Серия предварительного свидетельства */
 	@Comment("Серия предварительного свидетельства")
 	@Persist
-	public String getSeriesPreCertificate() {return theSeriesPreCertificate;}
-	public void setSeriesPreCertificate(String aSeriesPreCertificate) {theSeriesPreCertificate = aSeriesPreCertificate;}
+	public String getSeriesPreCertificate() {return seriesPreCertificate;}
 
 	
 	/** Номер предварительного свидетельства */
 	@Comment("Номер предварительного свидетельства")
 	@Persist
-	public String getNumberPreCertificate() {return theNumberPreCertificate;}
-	public void setNumberPreCertificate(String aNumberPreCertificate) {theNumberPreCertificate = aNumberPreCertificate;}
+	public String getNumberPreCertificate() {return numberPreCertificate;}
 
 	
 	/** Информация о сертификате */
 	@Comment("Информация о сертификате")
 	@Persist
-	public String getInformation() {return theInformation;}
-	public void setInformation(String aInformation) {theInformation = aInformation;}
+	public String getInformation() {return information;}
 
 	/** Серия документа */
-	private String theSeries;
+	private String series;
 	/** Номер документа */
-	private Integer theNumber;
+	private Integer number;
 	/** Дата выдачи документа */
-	private String theDateIssue;
+	private String dateIssue;
 	/** Серия предварительного свидетельства */
-	private String theSeriesPreCertificate;
+	private String seriesPreCertificate;
 	/** Номер предварительного свидетельства */
-	private String theNumberPreCertificate;
+	private String numberPreCertificate;
 	/** Информация о сертификате */
-	private String theInformation;
+	private String information;
 	
 	/** Дата создания */
 	@Comment("Дата создания")
 	@DateString @DoDateString @Persist
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
+
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@DateString @DoDateString @Persist
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
-	
+	public String getEditDate() {return editDate;}
+
 	/** Время создания */
 	@Comment("Время создания")
 	@TimeString @DoTimeString @Persist
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;}
 	/** Время редактрования */
 	@Comment("Время редактрования")
 	@TimeString @DoTimeString @Persist
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+	public String getEditTime() {return editTime;}
 	/** Пользователь, который создал запись */
 	@Comment("Пользователь, который создал запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 	/** Пользователь, который последний редактировал запись */
 	@Comment("Пользователь, который последний редактировал запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private String theEditTime;
+	private String editTime;
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 }

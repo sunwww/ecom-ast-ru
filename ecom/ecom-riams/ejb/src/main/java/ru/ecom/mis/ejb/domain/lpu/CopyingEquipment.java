@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -12,87 +14,43 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Table(schema="SQLUser")
 @AIndexes({
     @AIndex(properties="parent")
-    }) 
+    })
+@Getter
+@Setter
 public class CopyingEquipment extends BaseEntity {
-	/** IP адрес */
-	@Comment("IP адрес")
-	public String getIpaddress() {return theIpaddress;}
-	public void setIpaddress(String aIpaddress) {theIpaddress = aIpaddress;}
-	
-	/** Модель */
-	@Comment("Модель")
-	public String getModel() {return theModel;}
-	public void setModel(String aModel) {theModel = aModel;}
-	
-	/** Серийный номер */
-	@Comment("Серийный номер")
-	public String getSerialNumber() {return theSerialNumber;}
-	public void setSerialNumber(String aSerialNumber) {theSerialNumber = aSerialNumber;}
-	
-	/** Учетный номер */
-	@Comment("Учетный номер")
-	public String getAccountNumber() {return theAccountNumber;}
-	public void setAccountNumber(String aAccountNumber) {theAccountNumber = aAccountNumber;}
-	
+
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@OneToOne
-	public MisLpu getLpu() {return theLpu;}
-	public void setLpu(MisLpu aLpu) {theLpu = aLpu;}
-	/**
-	 * Комментарии
-	 */
-	@Comment("Комментарии")
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
+	public MisLpu getLpu() {return lpu;}
 	/** Комментарии */
-	private String theComment;
+	private String comment;
 	/** Название */
-	@Comment("Название")
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
-	/** Название */
-	private String theName;
+	private String name;
 	/** ЛПУ */
-	private MisLpu theLpu;
+	private MisLpu lpu;
 	/** Модель */
-	private String theModel;
+	private String model;
 	/** Серийный номер */
-	private String theSerialNumber;
+	private String serialNumber;
 	/** Учетный номер */
-	private String theAccountNumber;
+	private String accountNumber;
 	/** IP адрес */
-	private String theIpaddress;
+	private String ipaddress;
 	/** Печать в txt файл */
-	@Comment("Печать в txt файл")
-	public Boolean getIsTxtFile() {return theIsTxtFile;}
-	public void setIsTxtFile(Boolean aIsTxtFile) {theIsTxtFile = aIsTxtFile;}
-
-	/** Печать в txt файл */
-	private Boolean theIsTxtFile;
-	
-	/** Команда */
-	@Comment("Команда")
-	public String getCommandPrintTxt() {return theCommandPrintTxt;}
-	public void setCommandPrintTxt(String aCommandPrintTxt) {theCommandPrintTxt = aCommandPrintTxt;}
+	private Boolean isTxtFile;
 
 	/** Команда */
-	private String theCommandPrintTxt;
-	
-	/** Маска файла */
-	@Comment("Маска файла")
-	public String getMaskFiles() {return theMaskFiles;}
-	public void setMaskFiles(String aMaskFiles) {theMaskFiles = aMaskFiles;}
+	private String commandPrintTxt;
 
 	/** Маска файла */
-	private String theMaskFiles;
+	private String maskFiles;
 	
 	/** Основной принтер */
 	@Comment("Основной принтер")
 	@OneToOne
-	public CopyingEquipment getParent() {return theParent;}
-	public void setParent(CopyingEquipment aParent) {theParent = aParent;}
+	public CopyingEquipment getParent() {return parent;}
 
 	/** Основной принтер */
-	private CopyingEquipment theParent;
+	private CopyingEquipment parent;
 }

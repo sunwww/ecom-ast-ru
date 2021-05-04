@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.psychiatry;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -22,6 +23,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(CareCardPreCreateInterceptor.class)
 )
+@Setter
 public class PsychiatricCareCardForm extends IdEntityForm {
 	 /**
 	  * Дата взятия на учет
@@ -29,75 +31,60 @@ public class PsychiatricCareCardForm extends IdEntityForm {
 	 @Comment("Дата взятия на учет")
 	 @Persist @DateString @DoDateString 
 	 public String getStartDate() {
-	  return theStartDate;
-	 }
-	 public void setStartDate(String aStartDate) {
-	  theStartDate = aStartDate;
+	  return startDate;
 	 }
 	 /**
 	  * Дата взятия на учет
 	  */
-	 private String theStartDate;
+	 private String startDate;
 	 /**
 	  * Дата окончания учета
 	  */
 	 @Comment("Дата окончания учета")
 	 @Persist @DateString @DoDateString
 	 public String getFinishDate() {
-	  return theFinishDate;
-	 }
-	 public void setFinishDate(String aFinishDate) {
-	  theFinishDate = aFinishDate;
+	  return finishDate;
 	 }
 	 /**
 	  * Дата окончания учета
 	  */
-	 private String theFinishDate;
+	 private String finishDate;
 	 /**
 	  * Впервые в жизни заболевший
 	  */
 	 @Comment("Впервые в жизни заболевший")
 	 @Persist
 	 public Boolean getFirstTimeDiseased() {
-	  return theFirstTimeDiseased;
-	 }
-	 public void setFirstTimeDiseased(Boolean aFirstTimeDiseased) {
-	  theFirstTimeDiseased = aFirstTimeDiseased;
+	  return firstTimeDiseased;
 	 }
 	 /**
 	  * Впервые в жизни заболевший
 	  */
-	 private Boolean theFirstTimeDiseased;
+	 private Boolean firstTimeDiseased;
 	 /**
 	  * Причина прекращения наблюдения
 	  */
 	 @Comment("Причина прекращения наблюдения")
 	 @Persist
 	 public Long getStrikeOffReason() {
-	  return theStrikeOffReason;
-	 }
-	 public void setStrikeOffReason(Long aStrikeOffReason) {
-	  theStrikeOffReason = aStrikeOffReason;
+	  return strikeOffReason;
 	 }
 	 /**
 	  * Причина прекращения наблюдения
 	  */
-	 private Long theStrikeOffReason;
+	 private Long strikeOffReason;
 	 /**
 	  * Примечания
 	  */
 	 @Comment("Примечания")
 	 @Persist
 	 public String getNotes() {
-	  return theNotes;
-	 }
-	 public void setNotes(String aNotes) {
-	  theNotes = aNotes;
+	  return notes;
 	 }
 	 /**
 	  * Примечания
 	  */
-	 private String theNotes;
+	 private String notes;
 	 
 	 /**
 	  * Номер диспансерной карты
@@ -105,205 +92,154 @@ public class PsychiatricCareCardForm extends IdEntityForm {
 	 @Comment("Номер диспансерной карты")
 	 @Persist @Required
 	 public String getCardNumber() {
-	  return theCardNumber;
-	 }
-	 public void setCardNumber(String aCardNumber) {
-	  theCardNumber = aCardNumber;
+	  return cardNumber;
 	 }
 	 /**
 	  * Номер диспансерной карты
 	  */
-	 private String theCardNumber;
-
-
-
-
-
-
+	 private String cardNumber;
 	 /**
 	  * Дата начала заболевания
 	  */
 	 @Comment("Дата начала заболевания")
 	 @Persist @DateString @DoDateString 
 	 public String getIllnessStartDate() {
-	  return theIllnessStartDate;
-	 }
-	 public void setIllnessStartDate(String aIllnessStartDate) {
-	  theIllnessStartDate = aIllnessStartDate;
+	  return illnessStartDate;
 	 }
 	 /**
 	  * Дата начала заболевания
 	  */
-	 private String theIllnessStartDate;
+	 private String illnessStartDate;
 	 /**
 	  * Дата первого обращения к психиатру
 	  */
 	 @Comment("Дата первого обращения к психиатру")
 	 @Persist @DateString @DoDateString @Required
 	 public String getFirstPsychiatricVisitDate() {
-	  return theFirstPsychiatricVisitDate;
-	 }
-	 public void setFirstPsychiatricVisitDate(String aFirstPsychiatricVisitDate) {
-	  theFirstPsychiatricVisitDate = aFirstPsychiatricVisitDate;
+	  return firstPsychiatricVisitDate;
 	 }
 	 /**
 	  * Дата первого обращения к психиатру
 	  */
-	 private String theFirstPsychiatricVisitDate;
+	 private String firstPsychiatricVisitDate;
 	 /**
 	  * Дата последнего недобровольного освидетельствования
 	  */
 	 @Comment("Дата последнего недобровольного освидетельствования")
 	 @Persist @DateString @DoDateString
 	 public String getLastInvoluntaryExamDate() {
-	  return theLastInvoluntaryExamDate;
-	 }
-	 public void setLastInvoluntaryExamDate(String aLastInvoluntaryExamDate) {
-	  theLastInvoluntaryExamDate = aLastInvoluntaryExamDate;
+	  return lastInvoluntaryExamDate;
 	 }
 	 /**
 	  * Дата последнего недобровольного освидетельствования
 	  */
-	 private String theLastInvoluntaryExamDate;
+	 private String lastInvoluntaryExamDate;
 	 /**
 	  * Судимость до обращения к психиатру
 	  */
 	 @Comment("Судимость до обращения к психиатру")
 	 @Persist
 	 public Boolean getConvictionsBeforeCare() {
-	  return theConvictionsBeforeCare;
-	 }
-	 public void setConvictionsBeforeCare(Boolean aConvictionsBeforeCare) {
-	  theConvictionsBeforeCare = aConvictionsBeforeCare;
+	  return convictionsBeforeCare;
 	 }
 	 /**
 	  * Судимость до обращения к психиатру
 	  */
-	 private Boolean theConvictionsBeforeCare;
+	 private Boolean convictionsBeforeCare;
 	 /**
 	  * Описание прочей причины прекращения наблюдения
 	  */
 	 @Comment("Описание прочей причины прекращения наблюдения")
 	 @Persist
 	 public String getStrikeOffOtherReasonNotes() {
-	  return theStrikeOffOtherReasonNotes;
-	 }
-	 public void setStrikeOffOtherReasonNotes(String aStrikeOffOtherReasonNotes) {
-	  theStrikeOffOtherReasonNotes = aStrikeOffOtherReasonNotes;
+	  return strikeOffOtherReasonNotes;
 	 }
 	 /**
 	  * Описание прочей причины прекращения наблюдения
 	  */
-	 private String theStrikeOffOtherReasonNotes;
+	 private String strikeOffOtherReasonNotes;
 	 /**
 	  * Дата смерти
 	  */
 	 @Comment("Дата смерти")
 	 @Persist @DateString @DoDateString
 	 public String getDeathDate() {
-	  return theDeathDate;
-	 }
-	 public void setDeathDate(String aDeathDate) {
-	  theDeathDate = aDeathDate;
+	  return deathDate;
 	 }
 	 /**
 	  * Дата смерти
 	  */
-	 private String theDeathDate;
+	 private String deathDate;
 	 /**
 	  * Причина смерти
 	  */
 	 @Comment("Причина смерти")
 	 @Persist
 	 public Long getDeathReason() {
-	  return theDeathReason;
-	 }
-	 public void setDeathReason(Long aDeathReason) {
-	  theDeathReason = aDeathReason;
+	  return deathReason;
 	 }
 	 /**
 	  * Причина смерти
 	  */
-	 private Long theDeathReason;
+	 private Long deathReason;
 	 /**
 	  * Причина наблюдения
 	  */
 	 @Comment("Причина наблюдения")
 	 @Persist 
 	 public Long getObservationReason() {
-	  return theObservationReason;
-	 }
-	 public void setObservationReason(Long aObservationReason) {
-	  theObservationReason = aObservationReason;
+	  return observationReason;
 	 }
 	 /**
 	  * Причина наблюдения
 	  */
-	 private Long theObservationReason;
+	 private Long observationReason;
 	 /**
 	  * Пациент
 	  */
 	 @Comment("Пациент")
 	 @Persist @Required
 	 public Long getPatient() {
-	  return thePatient;
-	 }
-	 public void setPatient(Long aPatient) {
-	  thePatient = aPatient;
+	  return patient;
 	 }
 	 /**
 	  * Пациент
 	  */
-	 private Long thePatient;
+	 private Long patient;
 	 /**
 	  * Дата заведения карты *
 	  */
 	 @DoDateString @DateString @Persist
-	 public String getDateRegistration() {return theDateRegistration;}
-	 public void setDateRegistration(String aDateRegistration) {theDateRegistration = aDateRegistration;    }
+	 public String getDateRegistration() {return dateRegistration;}
 
 	 /**
 	  * Регистратор *
 	  */
 	 @Persist
-	 public String getRegistrator() {return theRegistrator;}
-	 public void setRegistrator(String aRegistrator) {theRegistrator = aRegistrator;}
+	 public String getRegistrator() {return registrator;}
 
 	 /**
 	  * Регистратор *
 	  */
-	 private String theRegistrator;
+	 private String registrator;
 	 /** Дата заведения карты */
-	 private String theDateRegistration;
+	 private String dateRegistration;
 	/**
 	 * Новое свойство
 	 */
 	@Comment("Обновлять даты")
 	public Boolean getUpdateDates() {
-		return theUpdateDates;
+		return updateDates;
 	}
-	/**
-	 * Новое свойство
-	 */
-	public void setUpdateDates(Boolean a_Property) {
-		theUpdateDates = a_Property;
-	}
-	/**
-	 * Новое свойство
-	 */
-	private Boolean theUpdateDates;
+	private Boolean updateDates;
 	
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@Persist @Required
 	public Long getLpu() {
-		return theLpu;
-	}
-
-	public void setLpu(Long aLpu) {
-		theLpu = aLpu;
+		return lpu;
 	}
 
 	/** ЛПУ */
-	private Long theLpu;
+	private Long lpu;
 }

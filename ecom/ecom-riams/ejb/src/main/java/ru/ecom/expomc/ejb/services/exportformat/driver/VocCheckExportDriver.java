@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
  */
 public class VocCheckExportDriver extends VocExportDriver {
 
-    public VocCheckExportDriver(EntityManager theManager, String params) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        super(theManager,"AllowedChecksAllValues");
+    public VocCheckExportDriver(EntityManager manager, String params) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        super(manager,"AllowedChecksAllValues");
     }
 
     public void saveVocValue(StringBuffer s, VocValue vocValue) {

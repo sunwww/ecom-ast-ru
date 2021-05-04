@@ -21,7 +21,7 @@ public class Format extends AbstractImportFormat {
     /** Поля  */
     @OneToMany(cascade = ALL, mappedBy = "format" )
     @OrderBy("serialNumber")
-    public Collection<Field> getFields() { return theFields ; }
-    public void setFields(Collection<Field> aFields) { theFields = aFields ; }
-    private Collection<Field> theFields ;
+    public Collection<Field> getFields() { return fields ; }
+    public void setFields(Collection<Field> aFields) { fields = aFields ; }
+    private Collection<Field> fields ;
 }

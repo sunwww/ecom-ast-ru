@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.extdisp;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispCard;
@@ -22,176 +23,154 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 /*@AViewInterceptors(
         @AEntityFormInterceptor(ExtDispCardViewInterceptor.class)
 )*/
+@Setter
 public class ExtDispComCardForm extends IdEntityForm{
 	
 	/** Источник финансирования */
 	@Comment("Источник финансирования")
 	@Persist
-	public Long  getServiceStream() {return theServiceStream;}
-	public void setServiceStream(Long  aServiceStream) {theServiceStream = aServiceStream;}
+	public Long  getServiceStream() {return serviceStream;}
 	/** Источник финансирования */
-	private Long  theServiceStream;
+	private Long  serviceStream;
 	
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
+	public Long getPatient() {return patient;}
 	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@Persist @Required
-	public Long getLpu() {return theLpu;}
-	public void setLpu(Long aLpu) {theLpu = aLpu;}
+	public Long getLpu() {return lpu;}
 	/** ЛПУ  */
-	private Long theLpu;
-	
-	
-	
+	private Long lpu;
+
 	/** Социальная группа */
 	@Comment("Социальная группа")
 	
-	public Long getSocialGroup() {return theSocialGroup;}
-	public void setSocialGroup(Long aSocialGroup) {theSocialGroup = aSocialGroup;}
+	public Long getSocialGroup() {return socialGroup;}
 	/** Социальная группа */
-	private Long theSocialGroup;
+	private Long socialGroup;
 	
 	/** Тип дополнительной диспансеризации */
 	@Comment("Тип дополнительной диспансеризации")
 	@Persist @Required
-	public Long getDispType() {return theDispType;}
-	public void setDispType(Long aDispType) {theDispType = aDispType;}
+	public Long getDispType() {return dispType;}
 	/** Тип дополнительной диспансеризации */
-	private Long theDispType;
+	private Long dispType;
 	
 	/** Дата начала */
 	@Comment("Дата начала")
 	@Persist @Required
 	@DateString @DoDateString
-	public String getStartDate() {return theStartDate;}
-	public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
+	public String getStartDate() {return startDate;}
 	/** Дата начала */
-	private String theStartDate;
+	private String startDate;
 	
 	/** Дата окончания */
 	@Comment("Дата окончания")
 	@Persist @Required
 	@DateString @DoDateString
-	public String getFinishDate() {return theFinishDate;}
-	public void setFinishDate(String aFinishDate) {theFinishDate = aFinishDate;}
+	public String getFinishDate() {return finishDate;}
 	/** Дата окончания */
-	private String theFinishDate;
+	private String finishDate;
 	
 	/** Группа здоровья дополнительной диспансеризации */
 	@Comment("Группа здоровья дополнительной диспансеризации")
 	
-	public Long getHealthGroup() {return theHealthGroup;}
-	public void setHealthGroup(Long aHealthGroup) {theHealthGroup = aHealthGroup;}
+	public Long getHealthGroup() {return healthGroup;}
 	/** Группа здоровья дополнительной диспансеризации */
-	private Long theHealthGroup;
+	private Long healthGroup;
 	
 	/** МКБ основного диагноза */
 	@Comment("МКБ основного диагноза")
 	@Persist
-	public Long getIdcMain() {return theIdcMain;}
-	public void setIdcMain(Long aIdcMain) {theIdcMain = aIdcMain;}
+	public Long getIdcMain() {return idcMain;}
 	/** МКБ основного диагноза */
-	private Long theIdcMain;
+	private Long idcMain;
 	
 	
 	/** Возрастная категория */
 	@Comment("Возрастная категория")
 	@Persist
-	public Long getAgeGroup() {return theAgeGroup;}
-	public void setAgeGroup(Long aAgeGroup) {theAgeGroup = aAgeGroup;}
+	public Long getAgeGroup() {return ageGroup;}
 
 	/** Возрастная категория */
-	private Long theAgeGroup;
+	private Long ageGroup;
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@Persist @Required
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public Long getWorkFunction() {return workFunction;}
 	/** Рабочая функция */
-	private Long theWorkFunction;
+	private Long workFunction;
 	
 	/** Возраст вычисляемый */
 	@Comment("Возраст вычисляемый")
-	public String getAge() {return theAge;}
-	public void setAge(String aAge) {theAge = aAge;}
+	public String getAge() {return age;}
 
 	/** Возраст вычисляемый */
-	private String theAge;
+	private String age;
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@DateString @DoDateString @Persist
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
+
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@DateString @DoDateString @Persist
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
-	
+	public String getEditDate() {return editDate;}
+
 	/** Время создания */
 	@Comment("Время создания")
 	@TimeString @DoTimeString @Persist
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;}
 	/** Время редактрования */
 	@Comment("Время редактрования")
 	@TimeString @DoTimeString @Persist
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+	public String getEditTime() {return editTime;}
 	/** Пользователь, который создал запись */
 	@Comment("Пользователь, который создал запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 	/** Пользователь, который последний редактировал запись */
 	@Comment("Пользователь, который последний редактировал запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Дата редактирования услуги */
 	@Comment("Дата редактирования услуги")
 	@Persist @DateString @DoDateString
-	public String getEditDateRender() {return theEditDateRender;}
-	public void setEditDateRender(String aEditDateRender) {theEditDateRender = aEditDateRender;}
+	public String getEditDateRender() {return editDateRender;}
 
 	/** Время редактирование услуги */
 	@Comment("Время редактирование услуги")
 	@Persist @TimeString @DoTimeString
-	public String getEditTimeRender() {return theEditTimeRender;}
-	public void setEditTimeRender(String aEditTimeRender) {theEditTimeRender = aEditTimeRender;}
+	public String getEditTimeRender() {return editTimeRender;}
 
 	/** Пользователь редактировавший услуги */
 	@Comment("Пользователь редактировавший услуги")
 	@Persist
-	public String getEditUsernameRender() {return theEditUsernameRender;}
-	public void setEditUsernameRender(String aEditUsernameRender) {theEditUsernameRender = aEditUsernameRender;}
+	public String getEditUsernameRender() {return editUsernameRender;}
 
 	/** Пользователь редактировавший услуги */
-	private String theEditUsernameRender;
+	private String editUsernameRender;
 	/** Время редактирование услуги */
-	private String theEditTimeRender;
+	private String editTimeRender;
 	/** Дата редактирования услуги */
-	private String theEditDateRender;
+	private String editDateRender;
 	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private String theEditTime;
+	private String editTime;
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 }

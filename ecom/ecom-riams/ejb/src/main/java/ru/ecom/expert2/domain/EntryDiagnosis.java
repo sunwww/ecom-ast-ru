@@ -1,5 +1,7 @@
 package ru.ecom.expert2.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -20,74 +22,72 @@ import javax.persistence.OneToOne;
 @AIndexes({
         @AIndex(properties = {"entry"})
 })
+@Getter
+@Setter
 public class EntryDiagnosis extends BaseEntity {
 
     /** Запись */
     @Comment("Запись")
     @ManyToOne
-    public E2Entry getEntry() {return theEntry;}
-    public void setEntry(E2Entry aEntry) {theEntry = aEntry;}
-    /** Запись */
-    private E2Entry theEntry ;
+    public E2Entry getEntry() {return entry;}
+    private E2Entry entry;
 
     /** Диагноз */
     @Comment("Диагноз")
     @OneToOne
-    public VocIdc10 getMkb() {return theMkb;}
-    public void setMkb(VocIdc10 aMkb) {theMkb = aMkb;}
-    /** Диагноз */
-    private VocIdc10 theMkb ;
+    public VocIdc10 getMkb() {return mkb;}
+    private VocIdc10 mkb;
+
     /** Тип регистрации */
     @Comment("Тип регистрации")
     @OneToOne
-    public VocDiagnosisRegistrationType getRegistrationType() {return theRegistrationType;}
-    public void setRegistrationType(VocDiagnosisRegistrationType aRegistrationType) {theRegistrationType = aRegistrationType;}
-    /** Тип регистрации */
-    private VocDiagnosisRegistrationType theRegistrationType ;
+    public VocDiagnosisRegistrationType getRegistrationType() {return registrationType;}
+    private VocDiagnosisRegistrationType registrationType;
 
     /** Приоритет */
     @Comment("Приоритет")
     @OneToOne
-    public VocPriorityDiagnosis getPriority() {return thePriority;}
-    public void setPriority(VocPriorityDiagnosis aPriority) {thePriority = aPriority;}
-    /** Приоритет */
-    private VocPriorityDiagnosis thePriority ;
+    public VocPriorityDiagnosis getPriority() {return priority;}
+    private VocPriorityDiagnosis priority;
 
     /** Доп. код МКБ */
     @Comment("Доп. код МКБ")
-    public String getDopMkb() {return theDopMkb;}
-    public void setDopMkb(String aDopMkb) {theDopMkb = aDopMkb;}
-    /** Доп. код МКБ */
-    private String theDopMkb ;
+    public String getDopMkb() {return dopMkb;}
+    private String dopMkb;
 
     /** Справочник характеров заболевания */
     @Comment("Справочник характеров заболевания")
     @OneToOne
-    public VocE2FondV027 getVocIllnessPrimary() {return theVocIllnessPrimary;}
-    public void setVocIllnessPrimary(VocE2FondV027 aVocIllnessPrimary) {theVocIllnessPrimary = aVocIllnessPrimary;}
-    /** Справочник характеров заболевания */
-    private VocE2FondV027 theVocIllnessPrimary ;
+    public VocE2FondV027 getVocIllnessPrimary() {return vocIllnessPrimary;}
+    private VocE2FondV027 vocIllnessPrimary;
 
     /** Характер заболевания */
-    @Comment("Характер заболевания")
-    public String getIllnessPrimary() {return theIllnessPrimary;}
-    public void setIllnessPrimary(String aIllnessPrimary) {theIllnessPrimary = aIllnessPrimary;}
-    /** Характер заболевания */
-    private String theIllnessPrimary ;
+    private String illnessPrimary;
 
 
     public EntryDiagnosis(E2Entry aEntry, VocIdc10 aMkb, VocDiagnosisRegistrationType aRegType, VocPriorityDiagnosis aPriority, String aDopMkb
             , String aIllnessPrimary) {
-        theEntry=aEntry; theMkb=aMkb;theRegistrationType=aRegType;thePriority=aPriority;theDopMkb=aDopMkb;theIllnessPrimary=aIllnessPrimary;
+        entry =aEntry; mkb =aMkb;
+        registrationType =aRegType;
+        priority =aPriority;
+        dopMkb =aDopMkb;
+        illnessPrimary =aIllnessPrimary;
     }
     public EntryDiagnosis(E2Entry aEntry, VocIdc10 aMkb, VocDiagnosisRegistrationType aRegType, VocPriorityDiagnosis aPriority, String aDopMkb
             , VocE2FondV027 aIllnessPrimary) {
-        theEntry=aEntry; theMkb=aMkb;theRegistrationType=aRegType;thePriority=aPriority;theDopMkb=aDopMkb;theVocIllnessPrimary=aIllnessPrimary;
+        entry =aEntry; mkb =aMkb;
+        registrationType =aRegType;
+        priority =aPriority;
+        dopMkb =aDopMkb;
+        vocIllnessPrimary =aIllnessPrimary;
     }
     public EntryDiagnosis (E2Entry aEntry, EntryDiagnosis aEntryDiagnosis) {
-        theEntry=aEntry; theMkb=aEntryDiagnosis.getMkb();theRegistrationType=aEntryDiagnosis.getRegistrationType();
-        thePriority=aEntryDiagnosis.getPriority();theDopMkb=aEntryDiagnosis.getDopMkb();theIllnessPrimary=aEntryDiagnosis.getIllnessPrimary();
-        theVocIllnessPrimary = aEntryDiagnosis.getVocIllnessPrimary();
+        entry =aEntry; mkb =aEntryDiagnosis.getMkb();
+        registrationType =aEntryDiagnosis.getRegistrationType();
+        priority =aEntryDiagnosis.getPriority();
+        dopMkb =aEntryDiagnosis.getDopMkb();
+        illnessPrimary =aEntryDiagnosis.getIllnessPrimary();
+        vocIllnessPrimary = aEntryDiagnosis.getVocIllnessPrimary();
     }
     public EntryDiagnosis() {}
 }

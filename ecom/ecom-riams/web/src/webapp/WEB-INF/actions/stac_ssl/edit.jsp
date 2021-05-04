@@ -179,7 +179,7 @@
                 <msh:row>
                     <msh:textField property="height" label="Рост (см)"  fieldColSpan="3" horizontalFill="false" />
                     <msh:textField property="weight" label="Вес (кг)" fieldColSpan="3" horizontalFill="false" />
-                    <msh:textField property="theIMT" label="ИМТ" fieldColSpan="3" horizontalFill="false" />
+                    <msh:textField property="imt" label="ИМТ" fieldColSpan="3" horizontalFill="false" />
                 </msh:row>
                 <msh:row />
                 <msh:row>

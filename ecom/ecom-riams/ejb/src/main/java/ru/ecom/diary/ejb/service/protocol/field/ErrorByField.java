@@ -3,9 +3,13 @@ package ru.ecom.diary.ejb.service.protocol.field;
 import java.util.Iterator;
 
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMessage;
 
+@Setter
+@Getter
 public class ErrorByField {
 	public ErrorByField(ActionErrors aErrors,String aProperty) {
 		setErrors(aErrors);
@@ -17,8 +21,8 @@ public class ErrorByField {
 		StringBuilder ulError = new StringBuilder() ;
 		 boolean hasErrors = false;
 		 ulError.append("<ul class=\"fieldErrors\">") ;
-        if (theErrors != null && !theErrors.isEmpty()) {
-            Iterator iterator = theErrors.get(theProperty);
+        if (errors != null && !errors.isEmpty()) {
+            Iterator iterator = errors.get(property);
             while (iterator.hasNext()) {
             	hasErrors = true ;
                 ActionMessage msg = (ActionMessage) iterator.next();
@@ -28,16 +32,10 @@ public class ErrorByField {
         ulError.append("</ul>");
         return hasErrors? ulError:null ;
 	}
-	/** ActionError */
-	public ActionErrors getErrors() {return theErrors;}
-	public void setErrors(ActionErrors aErrors) {theErrors = aErrors;}
-	/** Свойство */
-	public String getProperty() {return theProperty;}
-	public void setProperty(String aProperty) {theProperty = aProperty;}
 
 	/** Свойство */
-	private String theProperty;
+	private String property;
 	/** ActionError */
-	private ActionErrors theErrors;
+	private ActionErrors errors;
 
 }

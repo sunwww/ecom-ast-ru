@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractMedCase;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,90 +17,81 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Привязка СМО к контракту", nameProperties= "id", list="entityParentList-contract_medCase.do", view="entityParentView-contract_medCase.do")
 @Parent(property="medCase", parentForm=MedContractForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ContractMedCase")
+@Setter
 public class ContractMedCaseForm {
 	/** Основной СМО */
 	@Comment("Основной СМО")
 	@Persist
-	public Long getMainMedCase() {return theMainMedCase;}
-	public void setMainMedCase(Long aMainMedCase) {theMainMedCase = aMainMedCase;}
+	public Long getMainMedCase() {return mainMedCase;}
 
 	/** Основной СМО */
-	private Long theMainMedCase;
+	private Long mainMedCase;
 	/** СМО */
 	@Comment("СМО")
 	@Persist
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+	public Long getMedCase() {return medCase;}
 	
 	/** Гарантийный документ */
 	@Comment("Гарантийный документ")
 	@Persist
-	public Long getGuarantee() {return theGuarantee;}
-	public void setGuarantee(Long aGuarantee) {theGuarantee = aGuarantee;}
+	public Long getGuarantee() {return guarantee;}
 
 	/** Договор */
 	@Comment("Договор")
 	@Persist
-	public Long getContract() {return theContract;}
-	public void setContract(Long aContract) {theContract = aContract;}
+	public Long getContract() {return contract;}
 
 	/** Счет */
 	@Comment("Счет")
 	@Persist
-	public Long getAccount() {return theAccount;}
-	public void setAccount(Long aAccount) {theAccount = aAccount;}
+	public Long getAccount() {return account;}
 
 	/** Счет */
-	private Long theAccount;
+	private Long account;
 	/** Договор */
-	private Long theContract;
+	private Long contract;
 	/** Гарантийный документ */
-	private Long theGuarantee;
+	private Long guarantee;
 	/** СМО */
-	private Long theMedCase;
+	private Long medCase;
 	
 	/** Операция */
 	@Comment("Операция")
 	@Persist
-	public Long getSurgicalOperation() {return theSurgicalOperation;}
-	public void setSurgicalOperation(Long aSurgicalOperation) {theSurgicalOperation = aSurgicalOperation;}
+	public Long getSurgicalOperation() {return surgicalOperation;}
 
 	/** Операция */
-	private Long theSurgicalOperation;
+	private Long surgicalOperation;
 	
 	/** Анестезия */
 	@Comment("Анестезия")
 	@Persist
-	public Long getAnesthesia() {return theAnesthesia;}
-	public void setAnesthesia(Long aAnesthesia) {theAnesthesia = aAnesthesia;}
+	public Long getAnesthesia() {return anesthesia;}
 
 	/** Анестезия */
-	private Long theAnesthesia;
+	private Long anesthesia;
 	
 	/** Услуга по прейскуранту */
 	@Comment("Услуга по прейскуранту")
 	@Persist
-	public Long getPricePosition() {return thePricePosition;}
-	public void setPricePosition(Long aPricePosition) {thePricePosition = aPricePosition;}
+	public Long getPricePosition() {return pricePosition;}
 
 	/** Услуга по прейскуранту */
-	private Long thePricePosition;
+	private Long pricePosition;
 	
 	/** Услуга внутренния */
 	@Comment("Услуга внутренния")
 	@Persist
-	public Long getMedService() {return theMedService;}
-	public void setMedService(Long aMedService) {theMedService = aMedService;}
+	public Long getMedService() {return medService;}
 
 	/** Услуга внутренния */
-	private Long theMedService;
+	private Long medService;
 	
 	/** PriceMedService */
 	@Comment("PriceMedService")
 	@Persist
-	public Long getPriceMedService() {return thePriceMedService;}
-	public void setPriceMedService(Long aPriceMedService) {thePriceMedService = aPriceMedService;}
+	public Long getPriceMedService() {return priceMedService;}
 
 	/** PriceMedService */
-	private Long thePriceMedService;
+	private Long priceMedService;
 }

@@ -1,5 +1,8 @@
 package ru.ecom.address.ejb.service;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  *
  */
@@ -7,9 +10,9 @@ public class AddressPointCheck {
 
     public AddressPointCheck(String aNumber, String aBuilding, String aFlat) {
     	if(aNumber==null) throw new IllegalArgumentException("Нет номера дома") ;
-        theHouseNumber = aNumber ;
-        theHouseBuilding = aBuilding ;
-        theFlat = aFlat ;
+        houseNumber = aNumber ;
+        houseBuilding = aBuilding ;
+        flat = aFlat ;
     }
 	
     public AddressPointCheck(String aNumber, String aBuilding) {
@@ -22,33 +25,33 @@ public class AddressPointCheck {
 
     
     /** Номер дома */
-    public String getNumber() { return theHouseNumber ; }
+    public String getNumber() { return houseNumber ; }
 
     /** Корпус */
-    public String getBuilding() { return theHouseBuilding ; }
+    public String getBuilding() { return houseBuilding ; }
 
     /** Квартира */
 	public String getFlat() {
-		return theFlat;
+		return flat;
 	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder() ;
 		sb.append("д. ") ;
-		sb.append(theHouseNumber) ;
-		if(theHouseBuilding!=null) {
-			sb.append(" корпус ").append(theHouseBuilding) ;
+		sb.append(houseNumber) ;
+		if(houseBuilding!=null) {
+			sb.append(" корпус ").append(houseBuilding) ;
 		}
-		if(theFlat!=null) {
-			sb.append(" кв. ").append(theFlat);
+		if(flat!=null) {
+			sb.append(" кв. ").append(flat);
 		}
 		return sb.toString();
 	}
 
 	/** Квартира */
-	private final String theFlat;
+	private final String flat;
     /** Корпус */
-    private final String theHouseBuilding ;
+    private final String houseBuilding ;
     /** Номер дома */
-    private final String theHouseNumber ;
+    private final String houseNumber ;
 }

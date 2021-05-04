@@ -1,5 +1,7 @@
 package ru.ecom.diary.ejb.domain.protocol.parameter;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.diary.ejb.domain.Diary;
 import ru.ecom.diary.ejb.domain.protocol.parameter.user.UserValue;
 import ru.ecom.ejb.domain.simple.BaseEntity;
@@ -23,77 +25,50 @@ import java.math.BigDecimal;
 		@AIndex(properties = { "docProtocol" }) 
 		
 })
+@Getter
+@Setter
 public class FormInputProtocol extends BaseEntity{
 
 	/** Карта оценки */
-	@Comment("Карта оценки")
-	public Long getAssessmentCard() {return theAssessmentCard;}
-	public void setAssessmentCard(Long aAssessmentCard) {theAssessmentCard = aAssessmentCard;}
-	/** Карта оценки */
-	private Long theAssessmentCard;
+	private Long assessmentCard;
 	
 	/** Параметр */
 	@Comment("Параметр")
 	@OneToOne
-	public Parameter getParameter() {return theParameter;}
-	public void setParameter(Parameter aParameter) {theParameter = aParameter;}
+	public Parameter getParameter() {return parameter;}
 	/** Параметр */
-	private Parameter theParameter;
-		
-	/** Позиция на форме */
-	@Comment("Позиция на форме")
-	public Long getPosition() {return thePosition;}
-	public void setPosition(Long aPosition) {thePosition = aPosition;}
+	private Parameter parameter;
 
-	
 	/** Позиция на форме */
-	private Long thePosition;
+	private Long position;
 	
 	/** Протокол */
 	@Comment("Протокол")
 	@OneToOne
-	public Diary getDocProtocol() {return theDocProtocol;}
-	public void setDocProtocol(Diary aDocProtocol) {theDocProtocol = aDocProtocol;}
+	public Diary getDocProtocol() {return docProtocol;}
 
 	/** Протокол */
-	private Diary theDocProtocol;
+	private Diary docProtocol;
 	
 	/** Значение */
 	@Comment("Значение")
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
-	public String getValueText() {return theValueText;}
-	public void setValueText(String aValueText) {theValueText = aValueText;}
+	public String getValueText() {return valueText;}
 
 	/** Значение */
-	private String theValueText;
+	private String valueText;
 	
 	/** Long */
 	@Comment("Long")
 	@OneToOne
-	public UserValue getValueVoc() {return theValueVoc;}
-	public void setValueVoc(UserValue aValueVoc) {theValueVoc = aValueVoc;}
+	public UserValue getValueVoc() {return valueVoc;}
 
 	/** Long */
-	private UserValue theValueVoc;
-	
-	/** l */
-	@Comment("l")
-	public BigDecimal getValueBD() {return theValueBD;}
-	public void setValueBD(BigDecimal aValueBD) {theValueBD = aValueBD;}
+	private UserValue valueVoc;
 
 	/** l */
-	private BigDecimal theValueBD;
-	
-	/** Список значений для множественного выбора */
-	@Comment("Список значений для множественного выбора")
-	public String getListValues() {
-		return theListValues;
-	}
-
-	public void setListValues(String aListValues) {
-		theListValues = aListValues;
-	}
+	private BigDecimal valueBD;
 
 	/** Список значений для множественного выбора */
-	private String theListValues;
+	private String listValues;
 }

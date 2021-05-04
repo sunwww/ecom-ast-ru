@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
@@ -24,24 +25,23 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @ACreateInterceptors(
         @AEntityFormInterceptor(ProtocolSaveInterceptor.class)
 )
+@Setter
 public class RoughDraftForm extends VisitProtocolForm {
     /** Дата регистрации талона */
     @Persist 
     @Comment("Дата регистрации талона")
     @DateString @DoDateString 
-    public String getDateRegistration() {    return theDateRegistration ;}
-    public void setDateRegistration(String aDateRegistration ) {  theDateRegistration = aDateRegistration ; }
-    
+    public String getDateRegistration() {    return dateRegistration ;}
+
 	/** Время регистрации */
 	@Comment("Время регистрации")
 	@Persist 
 	@TimeString @DoTimeString
-	public String getTimeRegistration() {return theTimeRegistration;}
-	public void setTimeRegistration(String aTimeRegistration) {theTimeRegistration = aTimeRegistration;}
-	
+	public String getTimeRegistration() {return timeRegistration;}
+
 	/** Время регистрации */
-	private String theTimeRegistration;	
+	private String timeRegistration;	
     /** Дата регистрации талона */
-    private String theDateRegistration ;
+    private String dateRegistration ;
 
 }

@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -19,284 +21,59 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Продукт питания")
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VocFoodStuff extends VocBaseEntity{
-	
-//	/** Название */
-//	@Comment("Название")
-//	public String getFoodStuffName() {
-//		return theFoodStuffName;
-//	}
-//
-//	public void setFoodStuffName(String aFoodStuffName) {
-//		theFoodStuffName = aFoodStuffName;
-//	}
-//
-//	/** Название */
-//	private String theFoodStuffName;
-	
-	/** Железо */
-	@Comment("Железо")
-	public BigDecimal getFerrum() {
-		return theFerrum;
-	}
-
-	public void setFerrum(BigDecimal aFerrum) {
-		theFerrum = aFerrum;
-	}
 
 	/** Железо */
-	private BigDecimal theFerrum;
+	private BigDecimal ferrum;
 	/** Фосфор */
-	@Comment("Фосфор")
-	public BigDecimal getPhosphorus() {
-		return thePhosphorus;
-	}
-
-	public void setPhosphorus(BigDecimal aPhosphorus) {
-		thePhosphorus = aPhosphorus;
-	}
-
-	/** Фосфор */
-	private BigDecimal thePhosphorus;
+	private BigDecimal phosphorus;
 	/** Магний */
-	@Comment("Магний")
-	public BigDecimal getMagnesium() {
-		return theMagnesium;
-	}
-
-	public void setMagnesium(BigDecimal aMagnesium) {
-		theMagnesium = aMagnesium;
-	}
-
-	/** Магний */
-	private BigDecimal theMagnesium;
+	private BigDecimal magnesium;
 	/** Кальций */
-	@Comment("Кальций")
-	public BigDecimal getCalcium() {
-		return theCalcium;
-	}
-
-	public void setCalcium(BigDecimal aCalcium) {
-		theCalcium = aCalcium;
-	}
-
-	/** Кальций */
-	private BigDecimal theCalcium;
+	private BigDecimal calcium;
 	/** Калий */
-	@Comment("Калий")
-	public BigDecimal getPotassium() {
-		return thePotassium;
-	}
-
-	public void setPotassium(BigDecimal aPotassium) {
-		thePotassium = aPotassium;
-	}
-
-	/** Калий */
-	private BigDecimal thePotassium;
+	private BigDecimal potassium;
 	/** Натрий */
-	@Comment("Натрий")
-	public BigDecimal getNatrium() {
-		return theNatrium;
-	}
-
-	public void setNatrium(BigDecimal aNatrium) {
-		theNatrium = aNatrium;
-	}
-
-	/** Натрий */
-	private BigDecimal theNatrium;
+	private BigDecimal natrium;
 	/** Витамин C */
-	@Comment("Витамин C")
-	public BigDecimal getCevitamicAcid() {
-		return theCevitamicAcid;
-	}
-
-	public void setCevitamicAcid(BigDecimal aCevitamicAcid) {
-		theCevitamicAcid = aCevitamicAcid;
-	}
-
-	/** Витамин C */
-	private BigDecimal theCevitamicAcid;
+	private BigDecimal cevitamicAcid;
 	/** Витамин PP */
-	@Comment("Витамин PP")
-	public BigDecimal getNicotinamid() {
-		return theNicotinamid;
-	}
-
-	public void setNicotinamid(BigDecimal aNicotinamid) {
-		theNicotinamid = aNicotinamid;
-	}
-
-	/** Витамин PP */
-	private BigDecimal theNicotinamid;
+	private BigDecimal nicotinamid;
 	/** Витамин B2 */
-	@Comment("Витамин B2")
-	public BigDecimal getRiboflavin() {
-		return theRiboflavin;
-	}
-
-	public void setRiboflavin(BigDecimal aRiboflavin) {
-		theRiboflavin = aRiboflavin;
-	}
-
-	/** Витамин B2 */
-	private BigDecimal theRiboflavin;
+	private BigDecimal riboflavin;
 	/** Витамин B1 */
-	@Comment("Витамин B1")
-	public BigDecimal getTiamin() {
-		return theTiamin;
-	}
-
-	public void setTiamin(BigDecimal aTiamin) {
-		theTiamin = aTiamin;
-	}
-
-	/** Витамин B1 */
-	private BigDecimal theTiamin;
-	
+	private BigDecimal tiamin;
 	/** Бета-каротин */
-	@Comment("Бета-каротин")
-	public BigDecimal getBetaCarotin() {
-		return theBetaCarotin;
-	}
-
-	public void setBetaCarotin(BigDecimal aBetaCarotin) {
-		theBetaCarotin = aBetaCarotin;
-	}
-
-	/** Бета-каротин */
-	private BigDecimal theBetaCarotin;
-	
+	private BigDecimal betaCarotin;
 	/** Витамин А */
-	@Comment("Витамин А")
-	public BigDecimal getRetinol() {
-		return theRetinol;
-	}
-
-	public void setRetinol(BigDecimal aRetinol) {
-		theRetinol = aRetinol;
-	}
-
-	/** Витамин А */
-	private BigDecimal theRetinol;
-
+	private BigDecimal retinol;
 	/** Калорийность */
-	@Comment("Калорийность")
-	public BigDecimal getCalorieContent() {
-		return theCalorieContent;
-	}
-
-	public void setCalorieContent(BigDecimal aCalorieContent) {
-		theCalorieContent = aCalorieContent;
-	}
-
-	/** Калорийность */
-	private BigDecimal theCalorieContent;
-	
+	private BigDecimal calorieContent;
 	/** Углеводы */
-	@Comment("Углеводы")
-	public BigDecimal getCarbohydrates() {
-		return theCarbohydrates;
-	}
-
-	public void setCarbohydrates(BigDecimal aCarbohydrates) {
-		theCarbohydrates = aCarbohydrates;
-	}
-
-	/** Углеводы */
-	private BigDecimal theCarbohydrates;
-	
+	private BigDecimal carbohydrates;
 	/** Жиры */
-	@Comment("Жиры")
-	public BigDecimal getLipids() {
-		return theLipids;
-	}
-
-	public void setLipids(BigDecimal aLipids) {
-		theLipids = aLipids;
-	}
-
-	/** Жиры */
-	private BigDecimal theLipids;
-	
+	private BigDecimal lipids;
 	/** Белки */
-	@Comment("Белки")
-	public BigDecimal getProteins() {
-		return theProteins;
-	}
-
-	public void setProteins(BigDecimal aProteins) {
-		theProteins = aProteins;
-	}
-
-	/** Белки */
-	private BigDecimal theProteins;
+	private BigDecimal proteins;
 	
 	/** Шаблоны */
 	@Comment("Шаблоны")
 	@OneToMany(mappedBy="foodStuff", cascade=CascadeType.ALL)
 	public List<VocFoodStuffTemplate> getTemplates() {
-		return theTemplates;
-	}
-
-	public void setTemplates(List<VocFoodStuffTemplate> aTemplates) {
-		theTemplates = aTemplates;
+		return templates;
 	}
 
 	/** Шаблоны */
-	private List<VocFoodStuffTemplate> theTemplates;
-	
+	private List<VocFoodStuffTemplate> templates;
 	/** Растительные белки */
-	@Comment("Растительные белки")
-	public BigDecimal getPlantProteins() {
-		return thePlantProteins;
-	}
-
-	public void setPlantProteins(BigDecimal aPlantProteins) {
-		thePlantProteins = aPlantProteins;
-	}
-
-	/** Растительные белки */
-	private BigDecimal thePlantProteins;
-	
+	private BigDecimal plantProteins;
 	/** Животные белки */
-	@Comment("Животные белки")
-	public BigDecimal getAnimalProteins() {
-		return theAnimalProteins;
-	}
-
-	public void setAnimalProteins(BigDecimal aAnimalProteins) {
-		theAnimalProteins = aAnimalProteins;
-	}
-
-	/** Животные белки */
-	private BigDecimal theAnimalProteins;
-	
+	private BigDecimal animalProteins;
 	/** Растительные жиры */
-	@Comment("Растительные жиры")
-	public BigDecimal getPlantLipids() {
-		return thePlantLipids;
-	}
-
-	public void setPlantLipids(BigDecimal aPlantLipids) {
-		thePlantLipids = aPlantLipids;
-	}
-
-	/** Растительные жиры */
-	private BigDecimal thePlantLipids;
-	
+	private BigDecimal plantLipids;
 	/** Животные жиры */
-	@Comment("Животные жиры")
-	public BigDecimal getAnimalLipids() {
-		return theAnimalLipids;
-	}
-
-	public void setAnimalLipids(BigDecimal aAnimalLipids) {
-		theAnimalLipids = aAnimalLipids;
-	}
-
-	/** Животные жиры */
-	private BigDecimal theAnimalLipids;
+	private BigDecimal animalLipids;
 
 }

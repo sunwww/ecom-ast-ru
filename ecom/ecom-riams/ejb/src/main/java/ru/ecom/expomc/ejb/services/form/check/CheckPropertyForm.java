@@ -31,41 +31,41 @@ public class CheckPropertyForm extends BaseValidatorForm  implements IEntityForm
 
     /** Идентификатор */
     @Id
-    public Long getId() { return theId ; }
-    public void setId(Long aId) { theId = aId ; }
+    public Long getId() { return id ; }
+    public void setId(Long aId) { id = aId ; }
 
 
     /** Свойство */
     @Persist
     @Required
-    public String getProperty() { return theProperty ; }
-    public void setProperty(String aProperty) { theProperty = aProperty ; }
+    public String getProperty() { return property ; }
+    public void setProperty(String aProperty) { property = aProperty ; }
 
     /** Значение */
     @Persist
     @Required
-    public String getValue() { return theValue ; }
-    public void setValue(String aValue) { theValue = aValue ; }
+    public String getValue() { return value ; }
+    public void setValue(String aValue) { value = aValue ; }
 
     /** Проверка */
     @Persist
-    public long getCheck() { return theCheck ; }
-    public void setCheck(long aCheck) { theCheck = aCheck ; }
+    public long getCheck() { return check ; }
+    public void setCheck(long aCheck) { check = aCheck ; }
 
     /** Справочник  */
-    public String getVocName() { return theVocName ; }
-    public void setVocName(String aVocName) { theVocName = aVocName ; }
+    public String getVocName() { return vocName ; }
+    public void setVocName(String aVocName) { vocName = aVocName ; }
 
     /** Справочник  */
-    private String theVocName ;
+    private String vocName ;
     /** Проверка */
-    private long theCheck ;
+    private long check ;
     /** Значение */
-    private String theValue ;
+    private String value ;
     /** Свойство */
-    private String theProperty ;
+    private String property ;
     /** Идентификатор */
-    private Long theId ;
+    private Long id ;
 	public Integer getSn() {
 		// TODO Auto-generated method stub
 		return null;

@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form.financeplan;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.financeplan.MonthLittleAmountTable;
@@ -14,20 +15,19 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @Comment("Настроечная таблица месяцы-объемы")
 @WebTrail(comment = "Настроечная таблица месяцы-объемы", nameProperties = "amount", view = "entityView-e2_litteAmountMonth.do")
 @EntityFormSecurityPrefix("/Policy/E2")
+@Setter
 public class MonthLittleAmountTableForm extends IdEntityForm {
     /** Месяцы */
     @Comment("Месяцы")
     @Persist
-    public String getMonths() {return theMonths;}
-    public void setMonths(String aMonths) {theMonths = aMonths;}
+    public String getMonths() {return months;}
     /** Месяцы */
-    private String theMonths ;
+    private String months ;
 
     /** Количество */
     @Comment("Количество")
     @Persist
-    public Long getAmount() {return theAmount;}
-    public void setAmount(Long aAmount) {theAmount = aAmount;}
+    public Long getAmount() {return amount;}
     /** Количество */
-    private Long theAmount ;
+    private Long amount ;
 }

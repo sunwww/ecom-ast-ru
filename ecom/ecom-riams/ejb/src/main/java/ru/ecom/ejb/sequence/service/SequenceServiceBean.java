@@ -12,14 +12,14 @@ import javax.persistence.PersistenceContext;
 public class SequenceServiceBean implements ISequenceService {
 
 	public String startUseNextValue(String aTable,String aField) {
-		return SequenceHelper.getInstance().startUseNextValue(aTable,aField, theManager);
+		return SequenceHelper.getInstance().startUseNextValue(aTable,aField, manager);
 	}
 	public String startUseNextValueNoCheck(String aTable,String aField) {
-		return SequenceHelper.getInstance().startUseNextValueNoCheck(aTable,aField, theManager);
+		return SequenceHelper.getInstance().startUseNextValueNoCheck(aTable,aField, manager);
 	}
 	
 	
 	@PersistenceContext
-	private EntityManager theManager ;
+	private EntityManager manager ;
 
 }

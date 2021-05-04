@@ -20,8 +20,7 @@ public class EntityJsListenerServiceBean implements IEntityJsListenerService {
 
 	private static final Logger LOG = Logger
 			.getLogger(EntityJsListenerServiceBean.class);
-	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
-	
+
 	public void postPersist(Object aEntity) {
 		execute(aEntity, "postPersist") ;
 	}
@@ -51,7 +50,7 @@ public class EntityJsListenerServiceBean implements IEntityJsListenerService {
 					Object finded = scope.get(aFunctionName, scope) ;
 					if(finded instanceof Function) {
 						Function f = (Function) scope.get(aFunctionName, scope) ;
-						ListenerContext ctx = new ListenerContext(theManager, theSessionContext) ;
+						ListenerContext ctx = new ListenerContext(manager, sessionContext) ;
 						Object[] args = new Object[] {aEntity, ctx} ;
 						Object ret = f.call(jsContext, scope, scope, args);
 						if(ret instanceof Undefined) {
@@ -60,8 +59,7 @@ public class EntityJsListenerServiceBean implements IEntityJsListenerService {
 						}
 						LOG.info("f = "+ret) ;
 					}
-					if (CAN_DEBUG) LOG.debug("execute: aFunctionName = " + finded);
-					
+
 				} finally {
 					Context.exit() ;
 				}
@@ -75,7 +73,7 @@ public class EntityJsListenerServiceBean implements IEntityJsListenerService {
 		
 	}
 	
-	private @PersistenceContext EntityManager theManager ;
-	private @Resource SessionContext theSessionContext ;
+	private @PersistenceContext EntityManager manager ;
+	private @Resource SessionContext sessionContext ;
 
 }

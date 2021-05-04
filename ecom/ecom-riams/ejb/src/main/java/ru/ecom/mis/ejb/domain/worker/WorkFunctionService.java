@@ -8,6 +8,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -36,142 +38,91 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	,@AIndex(properties={"lpu","bedType"})
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class WorkFunctionService extends BaseEntity{
 	
 	/** Специалист (группа) */
 	@Comment("Специалист (группа)")
 	@OneToOne
-	public WorkFunction getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(WorkFunction aWorkFunction) {theWorkFunction = aWorkFunction;}
-	/** Специалист (группа) */
-	private WorkFunction theWorkFunction;
+	public WorkFunction getWorkFunction() {return workFunction;}
+	private WorkFunction workFunction;
 
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@ManyToOne
 	public VocWorkFunction getVocWorkFunction() {
-		return theVocWorkFunction;
-	}
-
-	public void setVocWorkFunction(VocWorkFunction aVocWorkFunction) {
-		theVocWorkFunction = aVocWorkFunction;
+		return vocWorkFunction;
 	}
 
 	/** Рабочая функция */
-	private VocWorkFunction theVocWorkFunction;
+	private VocWorkFunction vocWorkFunction;
 	
 	/** Мед. услуга */
 	@Comment("Мед. услуга")
 	@ManyToOne
 	public MedService getMedService() {
-		return theMedService;
-	}
-
-	public void setMedService(MedService aMedService) {
-		theMedService = aMedService;
+		return medService;
 	}
 
 	/** Мед. услуга */
-	private MedService theMedService;
+	private MedService medService;
 	
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@OneToOne
-	public MisLpu getLpu() {return theLpu;}
-	public void setLpu(MisLpu aLpu) {theLpu = aLpu;}
+	public MisLpu getLpu() {return lpu;}
 
 	/** ЛПУ */
-	private MisLpu theLpu;
+	private MisLpu lpu;
 	
 	/** Профиль коек */
 	@Comment("Профиль коек")
 	@OneToOne
-	public VocBedType getBedType() {return theBedType;}
-	public void setBedType(VocBedType aBedType) {theBedType = aBedType;}
+	public VocBedType getBedType() {return bedType;}
 
 	/** Профиль коек */
-	private VocBedType theBedType;
+	private VocBedType bedType;
 	
 	/** Тип коек */
 	@Comment("Тип коек")
 	@OneToOne
-	public VocBedSubType getBedSubType() {return theBedSubType;}
-	public void setBedSubType(VocBedSubType aBedSubType) {theBedSubType = aBedSubType;}
-
+	public VocBedSubType getBedSubType() {return bedSubType;}
 	/** Тип коек */
-	private VocBedSubType theBedSubType;
+	private VocBedSubType bedSubType;
 	
 	/** Уровень палат */
 	@Comment("Уровень палат")
 	@OneToOne
-	public VocRoomType getRoomType() {return theRoomType;}
-	public void setRoomType(VocRoomType aRoomType) {theRoomType = aRoomType;}
+	public VocRoomType getRoomType() {return roomType;}
 
 	/** Уровень палат */
-	private VocRoomType theRoomType;
-	
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-	
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	/** Время редактрования */
-	@Comment("Время редактрования")
-	public Time getEditTime() {return theEditTime;}
-	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-	/** Пользователь, который создал запись */
-	@Comment("Пользователь, который создал запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	/** Пользователь, который последний редактировал запись */
-	@Comment("Пользователь, который последний редактировал запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	private VocRoomType roomType;
 
 	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private Time theEditTime;
+	private Time editTime;
 	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	
 	/** Неактивно для назначений */
-	@Comment("Неактивно для назначений")
-	public Boolean getNoActiveByPrescript() {return theNoActiveByPrescript;}
-	public void setNoActiveByPrescript(Boolean aNoActiveByPrescript) {theNoActiveByPrescript = aNoActiveByPrescript;}
-
-	/** Неактивно для назначений */
-	private Boolean theNoActiveByPrescript;
+	private Boolean noActiveByPrescript;
 	
 	/** Список диагнозов */
-	@Comment("Список диагнозов")
-	public String getListIdc10() {return theListIdc10;}
-	public void setListIdc10(String aListIdc10) {theListIdc10 = aListIdc10;}
-
-	/** Список диагнозов */
-	private String theListIdc10;
+	private String listIdc10;
 	
 	/** Запрещенный тип назначений */
 	@Comment("Запрещенный тип назначений")
 	@OneToOne
-	public VocPrescriptType getPrescriptType() {return thePrescriptType;}
-	public void setPrescriptType(VocPrescriptType aPrescriptType) {thePrescriptType = aPrescriptType;}
+	public VocPrescriptType getPrescriptType() {return prescriptType;}
 
 	/** Запрещенный тип назначений */
-	private VocPrescriptType thePrescriptType;
+	private VocPrescriptType prescriptType;
 }

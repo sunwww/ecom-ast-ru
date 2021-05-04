@@ -81,12 +81,12 @@ public class WebQueryServiceBean implements IWebQueryService {
     }
 
     public int executeUpdateNativeSql(String aQuery) {
-        return theManager.createNativeQuery(aQuery).executeUpdate();
+        return manager.createNativeQuery(aQuery).executeUpdate();
     }
 
     public String executeNativeSqlGetJSON(String[] aFieldNames, String aQuery, Integer aMaxResult) {
         List<Object> list;
-        Query query = theManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " "));
+        Query query = manager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " "));
         if (aMaxResult != null && aMaxResult > 0) {
             list = query.setMaxResults(aMaxResult).getResultList();
         } else {
@@ -126,7 +126,7 @@ public class WebQueryServiceBean implements IWebQueryService {
     }
 
     public Collection<WebQueryResult> executeNativeSql(String aQuery, Integer aMaxResult, EntityManager aManager) {
-        if (aManager == null) aManager = theManager;
+        if (aManager == null) aManager = manager;
         return executeQuery(aManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " ")), aMaxResult);
     }
 
@@ -189,17 +189,17 @@ public class WebQueryServiceBean implements IWebQueryService {
 
     public Collection<WebQueryResult> executeHql(String aQuery,
                                                  Integer aMaxResult) {
-        return executeQuery(theManager.createQuery(
+        return executeQuery(manager.createQuery(
                 aQuery.replace("&#xA;", " ").replace("&#x9;", " ")
         ), aMaxResult);
     }
 
     private @PersistenceContext
-    EntityManager theManager;
+    EntityManager manager;
 
     public List<Object[]> executeNativeSqlGetObj(String aQuery,
                                                  Integer aMaxResult) {
-        Query query = theManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " "));
+        Query query = manager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " "));
         List<Object[]> list;
         if (aMaxResult != null) {
             list = query.setMaxResults(aMaxResult).getResultList();

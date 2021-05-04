@@ -7,27 +7,27 @@ import java.io.Serializable;
 public class ChecksTableFormRowOn implements Serializable {
 
     /** Ид. check */
-    public long getCheckId() { return theCheckId ; }
-    public void setCheckId(long aCheckId) { theCheckId = aCheckId ; }
+    public long getCheckId() { return checkId ; }
+    public void setCheckId(long aCheckId) { checkId = aCheckId ; }
 
     /** Ид. check */
-    private long theCheckId ;
+    private long checkId ;
     /** название */
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
+    public String getName() { return name ; }
+    public void setName(String aName) { name = aName ; }
 
     /** название */
-    private String theName ;
+    private String name ;
     /** Ключ  */
-    public String getKey() { return theKey ; }
-    public void setKey(String aKey) { theKey = aKey ; }
+    public String getKey() { return key ; }
+    public void setKey(String aKey) { key = aKey ; }
 
     /** Значение */
-    public boolean getValue() { return theValue ; }
-    public void setValue(boolean aValue) { theValue = aValue ; }
+    public boolean getValue() { return value ; }
+    public void setValue(boolean aValue) { value = aValue ; }
 
     /** Значение */
-    private boolean theValue ;
+    private boolean value ;
     /** Ключ  */
-    private String theKey ;
+    private String key ;
 }

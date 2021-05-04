@@ -2,24 +2,18 @@ package ru.ecom.mis.ejb.domain.expert;
 
 import javax.persistence.Entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Entity
+@Getter
+@Setter
 public class QualityEstimationCritDefect extends BaseEntity {
-	
 	/** Критерий оценки */
-	@Comment("Критерий оценки")
-	public Long getCriterion() {return theCriterion;}
-	public void setCriterion(Long aCriterion) {theCriterion = aCriterion;}
-	/** Критерий оценки */
-	private Long theCriterion;
-	
+	private Long criterion;
 	/** Дефект */
-	@Comment("Дефект")
-	public Long getDefect() {return theDefect;}
-	public void setDefect(Long aDefect) {theDefect = aDefect;}
-	/** Дефект */
-	private Long theDefect;
+	private Long defect;
 
 }

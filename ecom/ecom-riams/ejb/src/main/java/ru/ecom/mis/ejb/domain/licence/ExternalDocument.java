@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.licence;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.util.ColumnConstants;
@@ -18,200 +20,86 @@ import java.sql.Time;
 @Entity
 @Comment("Внешние документы")
 @AIndexes(value = { @AIndex(properties = { "patient" },table="Document") })
+@Getter
+@Setter
 public class ExternalDocument extends Document {
 
 	/** Ссылка на время предварительной записи */
 	@Comment("Ссылка на время предварительной записи")
 	@OneToOne
-	public WorkCalendarTime getCalendarTime() {return theCalendarTime;}
-	public void setCalendarTime(WorkCalendarTime aCalendarTime) {theCalendarTime = aCalendarTime;}
+	public WorkCalendarTime getCalendarTime() {return calendarTime;}
 	/** Ссылка на время предварительной записи */
-	private WorkCalendarTime theCalendarTime ;
-
-	/** Ссылка на файл */
-	@Comment("Ссылка на файл")
-	public String getReferenceTo() {return theReferenceTo;}
-	public void setReferenceTo(String aLinkFile) {	theReferenceTo = aLinkFile;}
+	private WorkCalendarTime calendarTime ;
 
 	/** Тип документа */
 	@Comment("Тип документа")
 	@OneToOne
-	public VocExternalDocumentType getType() {return theType;}
-	public void setType(VocExternalDocumentType aType) {theType = aType;}
-	
+	public VocExternalDocumentType getType() {return type;}
+
 	/** Пациент */
 	@Comment("Пациент")
 	@OneToOne
-	public Patient getPatient() {return thePatient;}
-	public void setPatient(Patient aPatient) {thePatient = aPatient;}
+	public Patient getPatient() {return patient;}
 
 	/** Комментарий */
 	@Comment("Комментарий")
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
+	public String getComment() {return comment;}
 
-	@Comment("Ссылка на сжатый файл")
-	public String getReferenceCompTo() {
-		return theReferenceCompTo;
-	}
-
-	public void setReferenceCompTo(String aReferenceCompTo) {
-		theReferenceCompTo = aReferenceCompTo;
-	}
-	
 	/**
 	 * Фамилия пациента
 	 */
-	@Comment("Фамилия пациента")
-	
-	public String getPatientLastname() {
-		return thePatientLastname;
-	}
-	public void setPatientLastname(String aPatientLastname) {
-		thePatientLastname = aPatientLastname;
-	}
-	/**
-	 * Фамилия пациента
-	 */
-	private String thePatientLastname;
+	private String patientLastname;
 	/**
 	 * Имя пациента
 	 */
-	@Comment("Имя пациента")
-	
-	public String getPatientFirstname() {
-		return thePatientFirstname;
-	}
-	public void setPatientFirstname(String aPatientFirstname) {
-		thePatientFirstname = aPatientFirstname;
-	}
-	/**
-	 * Имя пациента
-	 */
-	private String thePatientFirstname;
+	private String patientFirstname;
 	/**
 	 * Отчество пациента
 	 */
-	@Comment("Отчество пациента")
-	
-	public String getPatientMiddlename() {
-		return thePatientMiddlename;
-	}
-	public void setPatientMiddlename(String aPatientMiddlename) {
-		thePatientMiddlename = aPatientMiddlename;
-	}
-	/**
-	 * Отчество пациента
-	 */
-	private String thePatientMiddlename;
+	private String patientMiddlename;
 	/**
 	 * Дата рождения пациента
 	 */
-	@Comment("Дата рождения пациента")
-	
-	public Date getPatientBirthday() {
-		return thePatientBirthday;
-	}
-	public void setPatientBirthday(Date aPatientBirthday) {
-		thePatientBirthday = aPatientBirthday;
-	}
-	/**
-	 * Дата рождения пациента
-	 */
-	private Date thePatientBirthday;
+	private Date patientBirthday;
 	/**
 	 * Пол пациента
 	 */
 	@Comment("Пол пациента")
 	@OneToOne
 	public VocSex getPatientSex() {
-		return thePatientSex;
-	}
-	public void setPatientSex(VocSex aPatientSex) {
-		thePatientSex = aPatientSex;
+		return patientSex;
 	}
 	/**
 	 * Пол пациента
 	 */
-	private VocSex thePatientSex;
+	private VocSex patientSex;
 	/**
 	 * Направитель
 	 */
-	@Comment("Направитель")
-	
-	public String getOrderer() {
-		return theOrderer;
-	}
-	public void setOrderer(String aOrderer) {
-		theOrderer = aOrderer;
-	}
-	/**
-	 * Направитель
-	 */
-	private String theOrderer;
+	private String orderer;
 	/**
 	 * Дата направления
 	 */
-	@Comment("Дата направления")
-	
-	public Date getOrderDate() {
-		return theOrderDate;
-	}
-	public void setOrderDate(Date aOrderDate) {
-		theOrderDate = aOrderDate;
-	}
-	/**
-	 * Дата направления
-	 */
-	private Date theOrderDate;
+	private Date orderDate;
 	/**
 	 * Время направления
 	 */
-	@Comment("Время направления")
-	
-	public Time getOrderTime() {
-		return theOrderTime;
-	}
-	public void setOrderTime(Time aOrderTime) {
-		theOrderTime = aOrderTime;
-	}
-	/**
-	 * Время направления
-	 */
-	private Time theOrderTime;
+	private Time orderTime;
 	/**
 	 * Направившее ЛПУ (подразделение)
 	 */
-	@Comment("Направившее ЛПУ (подразделение)")
-	
-	public String getOrderLpu() {
-		return theOrderLpu;
-	}
-	public void setOrderLpu(String aOrderLpu) {
-		theOrderLpu = aOrderLpu;
-	}
-	/**
-	 * Направившее ЛПУ (подразделение)
-	 */
-	private String theOrderLpu;
-
+	private String orderLpu;
 	/** Ссылка на сжатый файл */
-	private String theReferenceCompTo;
+	private String referenceCompTo;
 	/** Комментарий */
-	private String theComment;
+	private String comment;
 	/** Пациент */
-	private Patient thePatient;
+	private Patient patient;
 	/** Тип документа */
-	private VocExternalDocumentType theType;
+	private VocExternalDocumentType type;
 	/** Ссылка на файл */
-	private String theReferenceTo;
-	
+	private String referenceTo;
 	/** Код синхронизации */
-	@Comment("Код синхронизации")
-	public String getPatientSync() {return thePatientSync;}
-	public void setPatientSync(String aPatientSync) {thePatientSync = aPatientSync;}
-
-	/** Код синхронизации */
-	private String thePatientSync;
+	private String patientSync;
 }

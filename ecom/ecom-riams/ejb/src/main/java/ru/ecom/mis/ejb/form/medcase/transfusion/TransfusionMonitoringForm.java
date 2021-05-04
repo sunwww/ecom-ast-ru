@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.transfusion;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -21,67 +22,59 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Parent(property="transfusion", parentForm= TransfusionForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Transfusion")
 @Subclasses({BloodTransfusionForm.class, OtherTransfusionForm.class})
+@Setter
 public class TransfusionMonitoringForm extends IdEntityForm {
 	/** Кол-во часов */
 	@Comment("Кол-во часов")
-	public Integer getHourAfterTransfusion() {return theHourAfterTransfusion;}
-	public void setHourAfterTransfusion(Integer aHourAfterTransfusion) {theHourAfterTransfusion = aHourAfterTransfusion;}
+	public Integer getHourAfterTransfusion() {return hourAfterTransfusion;}
 
 	/** Частота пульса */
 	@Comment("Частота пульса")
-	public Integer getPulseRate() {return thePulseRate;}
-	public void setPulseRate(Integer aPulseRate) {thePulseRate = aPulseRate;}
+	public Integer getPulseRate() {return pulseRate;}
 
 	/** Температура */
 	@Comment("Температура")
 	@DoIntegerString @IntegerString
-	public String getTemperature() {return theTemperature;}
-	public void setTemperature(String aTemperature) {theTemperature = aTemperature;}
+	public String getTemperature() {return temperature;}
 
 	/** Артериальное давление (верхнее) */
 	@Comment("Артериальное давление (верхнее)")
-	public Integer getBloodPressureTop() {return theBloodPressureTop;}
-	public void setBloodPressureTop(Integer aBloodPressureTop) {theBloodPressureTop = aBloodPressureTop;}
+	public Integer getBloodPressureTop() {return bloodPressureTop;}
 
 	/** Артериальное давление (нижнее) */
 	@Comment("Артериальное давление (нижнее)")
-	public Integer getBloodPressureLower() {return theBloodPressureLower;}
-	public void setBloodPressureLower(Integer aBloodPressureLower) {theBloodPressureLower = aBloodPressureLower;}
+	public Integer getBloodPressureLower() {return bloodPressureLower;}
 
 	/** Переливание */
 	@Comment("Переливание")
 	@Persist @Required
-	public Long getTransfusion() {return theTransfusion;}
-	public void setTransfusion(Long aTransfusion) {theTransfusion = aTransfusion;}
+	public Long getTransfusion() {return transfusion;}
 
 	/** Переливание */
-	private Long theTransfusion;
+	private Long transfusion;
 	/** Артериальное давление (нижнее) */
-	private Integer theBloodPressureLower;
+	private Integer bloodPressureLower;
 	/** Артериальное давление (верхнее) */
-	private Integer theBloodPressureTop;
+	private Integer bloodPressureTop;
 	/** Температура */
-	private String theTemperature;
+	private String temperature;
 	/** Частота пульса */
-	private Integer thePulseRate;
+	private Integer pulseRate;
 	/** Кол-во часов */
-	private Integer theHourAfterTransfusion;
-
+	private Integer hourAfterTransfusion;
 
 	/** Моча */
 	@Comment("Моча")
 	@Persist
-	public Long getUrineColor() {return theUrineColor;}
-	public void setUrineColor(Long aUrineColor) {theUrineColor = aUrineColor;}
+	public Long getUrineColor() {return urineColor;}
 
 	/** Диурез */
 	@Comment("Диурез")
 	@Persist
-	public Integer getDiuresis() {return theDiuresis;}
-	public void setDiuresis(Integer aDiuresis) {theDiuresis = aDiuresis;}
+	public Integer getDiuresis() {return diuresis;}
 
 	/** Моча */
-	private Long theUrineColor;
+	private Long urineColor;
 	/** Диурез */
-	private Integer theDiuresis;
+	private Integer diuresis;
 }

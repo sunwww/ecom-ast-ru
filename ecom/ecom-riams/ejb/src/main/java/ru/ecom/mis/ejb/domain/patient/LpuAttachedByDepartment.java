@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.patient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -24,25 +26,24 @@ import java.sql.Time;
 	,@AIndex(properties={"company"})
 	,@AIndex(properties={"area"})
 })
+@Getter
+@Setter
 public class LpuAttachedByDepartment extends BaseEntity {
 
 	/** Участок */
 	@Comment("Участок")
 	@OneToOne
-	public LpuArea getArea() {return theArea;}
-	public void setArea(LpuArea aArea) {theArea = aArea;}
+	public LpuArea getArea() {return area;}
 
 	/** Пациент */
 	@Comment("Пациент")
 	@ManyToOne
-	public Patient getPatient() {return thePatient;}
-	public void setPatient(Patient aPatient) {thePatient = aPatient;}
+	public Patient getPatient() {return patient;}
 
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@OneToOne
-	public MisLpu getLpu() {return theLpu;}
-	public void setLpu(MisLpu aLpu) {theLpu = aLpu;}
+	public MisLpu getLpu() {return lpu;}
 
 	@Transient
 	public String getLpuFullname() {
@@ -50,166 +51,68 @@ public class LpuAttachedByDepartment extends BaseEntity {
 	}
 	public void setLpuFullname(String aLpuFullname) {}
 	/** ЛПУ */
-	private MisLpu theLpu;
+	private MisLpu lpu;
 	/** Участок */
-	private LpuArea theArea;
+	private LpuArea area;
 	/** Пациент */
-	private Patient thePatient;
-	/** Прикреплен с */
-	@Comment("Прикреплен с")
-	public Date getDateFrom() {return theDateFrom;}
-	public void setDateFrom(Date aDateFrom) {theDateFrom = aDateFrom;}
-
-	/** Прикреплен с */
-	@Comment("Откреплен с")
-	public Date getDateTo() {return theDateTo;}
-	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;}
-
+	private Patient patient;
 	/** Прикреплен до */
-	private Date theDateTo;
+	private Date dateTo;
 	/** Откреплен с */
-	private Date theDateFrom;
+	private Date dateFrom;
 	
 	/** Тип прикрепления */
 	@Comment("Тип прикрепления")
 	@OneToOne
-	public VocAttachedType getAttachedType() {return theAttachedType;}
-	public void setAttachedType(VocAttachedType aAttachedType) {theAttachedType = aAttachedType;}
+	public VocAttachedType getAttachedType() {return attachedType;}
 
 	/** Тип прикрепления */
-	private VocAttachedType theAttachedType;
-
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-	
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	/** Время редактрования */
-	@Comment("Время редактрования")
-	public Time getEditTime() {return theEditTime;}
-	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-	/** Пользователь, который создал запись */
-	@Comment("Пользователь, который создал запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	/** Пользователь, который последний редактировал запись */
-	@Comment("Пользователь, который последний редактировал запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-
-	/** Дата редактирования услуги */
-	@Comment("Дата редактирования услуги")
-	public Date getEditDateRender() {return theEditDateRender;}
-	public void setEditDateRender(Date aEditDateRender) {theEditDateRender = aEditDateRender;}
-
-	/** Время редактирование услуги */
-	@Comment("Время редактирование услуги")
-	public Time getEditTimeRender() {return theEditTimeRender;}
-	public void setEditTimeRender(Time aEditTimeRender) {theEditTimeRender = aEditTimeRender;}
-
+	private VocAttachedType attachedType;
 	/** Пользователь редактировавший услуги */
-	@Comment("Пользователь редактировавший услуги")
-	public String getEditUsernameRender() {return theEditUsernameRender;}
-	public void setEditUsernameRender(String aEditUsernameRender) {theEditUsernameRender = aEditUsernameRender;}
-
-	/** Пользователь редактировавший услуги */
-	private String theEditUsernameRender;
+	private String editUsernameRender;
 	/** Время редактирование услуги */
-	private Time theEditTimeRender;
+	private Time editTimeRender;
 	/** Дата редактирования услуги */
-	private Date theEditDateRender;
+	private Date editDateRender;
 	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private Time theEditTime;
+	private Time editTime;
 	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 	/** Дата создания */
-	private Date theCreateDate;
-	
-	/** Дата импорта ( стар. Период дефекта ) */
-	@Comment("Дата импорта")
-	public String getDefectPeriod() {return theDefectPeriod;}
-	public void setDefectPeriod(String aDefectPeriod) {theDefectPeriod = aDefectPeriod;}
-
+	private Date createDate;
 	/** Текст дефекта */
-	@Comment("Текст дефекта")
-	public String getDefectText() {return theDefectText;}
-	public void setDefectText(String aDefectText) {theDefectText = aDefectText;}
-
-	/** Текст дефекта */
-	private String theDefectText;
+	private String defectText;
 	/** Дата импорта ( стар. Период дефекта ) */
-	private String theDefectPeriod;
-	
+	private String defectPeriod;
 	/** ЛПУ открепления */
-	@Comment("ЛПУ открепления")
-	public String getLpuTo() {
-		return theLpuTo;
-	}
-
-	public void setLpuTo(String aLpuTo) {
-		theLpuTo = aLpuTo;
-	}
-
-	/** ЛПУ открепления */
-	private String theLpuTo;
+	private String lpuTo;
 	
 	/** Страховая компания */
 	@Comment("Страховая компания")
 	@OneToOne
-	public RegInsuranceCompany getCompany() {return theCompany;}
-	public void setCompany(RegInsuranceCompany aCompany) {theCompany = aCompany;}
+	public RegInsuranceCompany getCompany() {return company;}
 
 	/** Страховая компания */
-	private RegInsuranceCompany theCompany;
-	
-	/** Подача производилась по неактуальному полису */
-	@Comment("Подача производилась по неактуальному полису")
-	public Boolean getNoActualPolicy() {return theNoActualPolicy;}
-	public void setNoActualPolicy(Boolean aNoActualPolicy) {theNoActualPolicy = aNoActualPolicy;}
+	private RegInsuranceCompany company;
 
 	/** Подача производилась по неактуальному полису */
-	private Boolean theNoActualPolicy;
+	private Boolean noActualPolicy;
 
 	/** Прикрепление не актуально */
-	@Comment("Прикрепление не актуально")
-	public Boolean getNoActuality() {return theNoActuality;}
-	public void setNoActuality(Boolean aNoActuality) {theNoActuality = aNoActuality;}
-	/** Прикрепление не актуально */
-	private Boolean theNoActuality;
+	private Boolean noActuality;
 	
 	/** Результаты последней проверки */
-	@Comment("Результаты последней проверки")
-	public String getCheckResult() {return theCheckResult;}
-	public void setCheckResult(String aCheckResult) {theCheckResult = aCheckResult;}
-	/** Результаты последней проверки */
-	private String theCheckResult;
+	private String checkResult;
 	
 	/** Пациент сменил адрес */
-	@Comment("Пациент сменил адрес")
-	public Boolean getNewAddress() {return theNewAddress;}
-	public void setNewAddress(Boolean aNewAddress) {theNewAddress = aNewAddress;}
-	/** Пациент сменил адрес */
-	private Boolean theNewAddress;
+	private Boolean newAddress;
 
 	/** Дата последнего экспорта в ФОМС */
-	@Comment("Дата последнего экспорта в ФОМС")
-	public Date getExportDate() {return theExportDate;}
-	public void setExportDate(Date aExportDate) {theExportDate = aExportDate;}
-	/** Дата последнего экспорта в ФОМС */
-	private Date theExportDate;
+	private Date exportDate;
 }

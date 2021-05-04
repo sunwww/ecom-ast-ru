@@ -1,74 +1,24 @@
 package ru.ecom.mis.ejb.uc.privilege.service;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * @author  azviagin
  */
+@Getter
+@Setter
 public class ColumnMapping {
-
 	/** Размер поля */
-	public int getLength() {
-		return theLength;
-	}
-
-	public void setLength(int aLength) {
-		theLength = aLength;
-	}
-
-	/** Размер поля */
-	private int theLength = 10;
-	/** Функция преобразования */
-	public ICellFunction getCellFunction() {
-		return theCellFunction;
-	}
-
-	public void setCellFunction(ICellFunction aCellFunction) {
-		theCellFunction = aCellFunction;
-	}
-
-	/** Если найдено */
-	public String getMatched() {
-		return theMatched;
-	}
-
-	public void setMatched(String aMatched) {
-		theMatched = aMatched;
-	}
-
-	/** Обязательное поле */
-	public boolean getRequired() {
-		return theRequired;
-	}
-
-	public void setRequired(boolean aRequired) {
-		theRequired = aRequired;
-	}
-
-	/** Колонка */
-	public int getColumn() {
-		return theColumn;
-	}
-
-	public void setColumn(int aColumn) {
-		theColumn = aColumn;
-	}
-
+	private int length = 10;
 	/** Поле */
-	public String getField() {
-		return theField;
-	}
-
-	public void setField(String aField) {
-		theField = aField;
-	}
-
-	/** Поле */
-	private String theField;
+	private String field;
 	/** Колонка */
-	private int theColumn;
+	private int column;
 	/** Обязательное поле */
-	private boolean theRequired;
+	private boolean required;
 	/** Если найдено */
-	private String theMatched;
+	private String matched;
 	
 	public static ColumnMapping createGroupColumn(int aColumn, boolean aRequired, String aFieldName, String aMatched, int aSize) {
 		ColumnMapping m = new ColumnMapping() ;
@@ -117,6 +67,6 @@ public class ColumnMapping {
 	}
 	
 	/** Функция преобразования */
-	private ICellFunction theCellFunction;
+	private ICellFunction cellFunction;
 	
 }

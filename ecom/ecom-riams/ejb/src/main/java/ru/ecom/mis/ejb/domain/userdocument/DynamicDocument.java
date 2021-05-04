@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.userdocument;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.util.ColumnConstants;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
@@ -13,45 +15,35 @@ import java.sql.Date;
 import java.sql.Time;
 
 @Entity
+@Getter
+@Setter
 public class DynamicDocument extends BaseEntity {
     /** Тип документа */
     @Comment("Тип документа")
     @OneToOne
-    public VocDynamicDocument getType() {return theType;}
-    public void setType(VocDynamicDocument aType) {theType = aType;}
-    private VocDynamicDocument theType ;
+    public VocDynamicDocument getType() {return type;}
+    private VocDynamicDocument type ;
 
     /** Содержимое документа */
     @Comment("Содержимое документа")
     @Column(length= ColumnConstants.TEXT_MAXLENGHT)
-    public String getContent() {return theContent;}
-    public void setContent(String aContent) {theContent = aContent;}
-    private String theContent ;
+    public String getContent() {return content;}
+    private String content ;
 
     /** Случай мед. обслуживания */
     @Comment("Случай мед. обслуживания")
     @OneToOne
-    public MedCase getMedCase() {return theMedCase;}
-    public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
-    private MedCase theMedCase ;
+    public MedCase getMedCase() {return medCase;}
+    private MedCase medCase ;
 
     /** Дата создания */
-    @Comment("Дата создания")
-    public Date getCreateDate() {return theCreateDate;}
-    public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-    private Date theCreateDate;
+    private Date createDate;
 
     /** Пользователь, создавший запись */
-    @Comment("Пользователь, создавший запись")
-    public String getCreateUsername() {return theCreateUsername;}
-    public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-    private String theCreateUsername;
+    private String createUsername;
 
     /** Время создания */
-    @Comment("Время создания")
-    public Time getCreateTime() {return theCreateTime;}
-    public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-    private Time theCreateTime ;
+    private Time createTime ;
 
     public DynamicDocument() {
         long date = System.currentTimeMillis();

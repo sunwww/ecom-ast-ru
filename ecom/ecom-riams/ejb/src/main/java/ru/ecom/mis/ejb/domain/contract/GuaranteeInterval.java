@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.contract;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -16,8 +18,10 @@ import javax.persistence.*;
 @Entity
 @Table(schema="SQLUser")
 	@AIndexes({
-		@AIndex(unique= false, properties = {"name"})
+		@AIndex(properties = {"name"})
 	})
+	@Getter
+	@Setter
 public class GuaranteeInterval extends BaseEntity{
 	/**
 	 * Группа гарантийных документов
@@ -25,127 +29,63 @@ public class GuaranteeInterval extends BaseEntity{
 	@Comment("Группа гарантийных документов")
 	@ManyToOne
 	public ContractGuaranteeGroup getGuaranteeGroup() {
-		return theGuaranteeGroup;
-	}
-	public void setGuaranteeGroup(ContractGuaranteeGroup aGuaranteeGroup) {
-		theGuaranteeGroup = aGuaranteeGroup;
+		return guaranteeGroup;
 	}
 	/**
 	 * Группа гарантийных документов
 	 */
-	private ContractGuaranteeGroup theGuaranteeGroup;
+	private ContractGuaranteeGroup guaranteeGroup;
 	/**
 	 * Начиная с номера
 	 */
-	@Comment("Начиная с номера")
-	
-	public String getFromNumber() {
-		return theFromNumber;
-	}
-	public void setFromNumber(String aFromNumber) {
-		theFromNumber = aFromNumber;
-	}
-	/**
-	 * Начиная с номера
-	 */
-	private String theFromNumber;
+	private String fromNumber;
 	/**
 	 * Заканчивая номером
 	 */
-	@Comment("Заканчивая номером")
-	
-	public String getToNumber() {
-		return theToNumber;
-	}
-	public void setToNumber(String aToNumber) {
-		theToNumber = aToNumber;
-	}
-	/**
-	 * Заканчивая номером
-	 */
-	private String theToNumber;
+	private String toNumber;
 	/**
 	 * Маска выбора номеров
 	 */
-	@Comment("Маска выбора номеров")
-	
-	public String getNumberMask() {
-		return theNumberMask;
-	}
-	public void setNumberMask(String aNumberMask) {
-		theNumberMask = aNumberMask;
-	}
-	/**
-	 * Маска выбора номеров
-	 */
-	private String theNumberMask;
+	private String numberMask;
 	/**
 	 * Название
 	 */
-	@Comment("Название")
-	
-	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
-	}
-	/**
-	 * Название
-	 */
-	private String theName;
+	private String name;
 	/**
 	 * Серия
 	 */
-	@Comment("Серия")
-	
-	public String getSeries() {
-		return theSeries;
-	}
-	public void setSeries(String aSeries) {
-		theSeries = aSeries;
-	}
-	/**
-	 * Серия
-	 */
-	private String theSeries;
+	private String series;
 	/**
 	 * Программа обслуживания
 	 */
 	@Comment("Программа обслуживания")
 	@OneToOne
 	public VocServiceProgram getServiceProgram() {
-		return theServiceProgram;
-	}
-	public void setServiceProgram(VocServiceProgram aServiceProgram) {
-		theServiceProgram = aServiceProgram;
+		return serviceProgram;
 	}
 	/**
 	 * Программа обслуживания
 	 */
-	private VocServiceProgram theServiceProgram;
+	private VocServiceProgram serviceProgram;
 	/**
 	 * Статус обслуживаемой персоны
 	 */
 	@Comment("Статус обслуживаемой персоны")
 	@OneToOne
 	public VocServedPersonStatus getServedPersonStatus() {
-		return theServedPersonStatus;
-	}
-	public void setServedPersonStatus(VocServedPersonStatus aServedPersonStatus) {
-		theServedPersonStatus = aServedPersonStatus;
+		return servedPersonStatus;
 	}
 	/**
 	 * Статус обслуживаемой персоны
 	 */
-	private VocServedPersonStatus theServedPersonStatus;
+	private VocServedPersonStatus servedPersonStatus;
 	
 	@Transient
 	public String getServedPersonStatusInfo() {
-		return theServedPersonStatus!=null? theServedPersonStatus.getName():"" ;
+		return servedPersonStatus!=null? servedPersonStatus.getName():"" ;
 	}
 	@Transient
 	public String getServiceProgramInfo() {
-		return theServiceProgram!=null? theServiceProgram.getName() :"" ;
+		return serviceProgram!=null? serviceProgram.getName() :"" ;
 	}
 }

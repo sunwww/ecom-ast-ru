@@ -8,16 +8,16 @@ public class CountRowWriter implements IRowWriter {
 
 	
 	public void clearCount() {
-		theCount = 0 ;
+		count = 0 ;
 	}
 	
 	public void write(List<String> aRow) {
-		theCount++ ;
+		count++ ;
 	}
 	
 	public long getCount() {
-		return theCount ;
+		return count ;
 	}
 	
-	private long theCount ;
+	private long count ;
 }

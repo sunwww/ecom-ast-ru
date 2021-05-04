@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.extdisp;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -19,7 +21,9 @@ import javax.persistence.Table;
 @Table(schema="SQLUser")
 @AIndexes({
 	@AIndex(properties="card")
-    }) 
+    })
+@Getter
+@Setter
 public class ExtDispRisk extends BaseEntity{
 	/**
 	 * Карта дополнительной диспансеризации
@@ -27,28 +31,22 @@ public class ExtDispRisk extends BaseEntity{
 	@Comment("Карта дополнительной диспансеризации")
 	@ManyToOne
 	public ExtDispCard getCard() {
-		return theCard;
-	}
-	public void setCard(ExtDispCard aCard) {
-		theCard = aCard;
+		return card;
 	}
 	/**
 	 * Карта дополнительной диспансеризации
 	 */
-	private ExtDispCard theCard;
+	private ExtDispCard card;
 	/**
 	 * Фактов риска заболевания при проведение дополнительной диспансеризации
 	 */
 	@Comment("Фактов риска заболевания при проведение дополнительной диспансеризации")
 	@OneToOne
 	public VocExtDispRisk getDispRisk() {
-		return theDispRisk;
-	}
-	public void setDispRisk(VocExtDispRisk aDispRisk) {
-		theDispRisk = aDispRisk;
+		return dispRisk;
 	}
 	/**
 	 * Фактов риска заболевания при проведение дополнительной диспансеризации
 	 */
-	private VocExtDispRisk theDispRisk;
+	private VocExtDispRisk dispRisk;
 }

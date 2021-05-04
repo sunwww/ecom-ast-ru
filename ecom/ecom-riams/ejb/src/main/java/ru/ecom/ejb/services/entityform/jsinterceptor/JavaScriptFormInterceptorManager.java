@@ -25,11 +25,10 @@ public class JavaScriptFormInterceptorManager {
 	}
 
 	public void invoke(String aFunctionName, IEntityForm aForm, Object aEntity, Object aId, Class aStrutsFormClass, JavaScriptFormInterceptorContext aContext) {
-		//if(aForm==null) throw new IllegalArgumentException("Нет формы") ;
 		String strutsFormName = aForm!=null ? getStrutsFormName(aForm) : getStrutsFormName(aStrutsFormClass) ;
 		String jsResourceName = "/META-INF/formjs/"+strutsFormName+".js" ;
 		try {
-			InputStream inputStream = theEcomConfig.getInputStream(jsResourceName, EjbEcomConfig.FORM_JS_PREFIX, false) ;
+			InputStream inputStream = ecomConfig.getInputStream(jsResourceName, EjbEcomConfig.FORM_JS_PREFIX, false) ;
 			if(inputStream!=null) {
 				Context jsContext = Context.enter();
 				jsContext.setOptimizationLevel(9);
@@ -53,10 +52,7 @@ public class JavaScriptFormInterceptorManager {
 										+aFunctionName
 										+" [aForm = "+aForm+", aEntity = "+aEntity+", aId = "+aId+"]") ;
 							}
-							Object result = f.call(jsContext, scope, scope, args);
-							if (CAN_DEBUG) LOG.debug("invoke: result = " + result);
-						} else {
-							if (CAN_DEBUG) LOG.debug("Нет функции " + aFunctionName+": "+o);
+							f.call(jsContext, scope, scope, args);
 						}
 				} finally {
 					Context.exit();
@@ -101,6 +97,6 @@ public class JavaScriptFormInterceptorManager {
 	}
 
 
-	EjbEcomConfig theEcomConfig = EjbEcomConfig.getInstance(); 
+	EjbEcomConfig ecomConfig = EjbEcomConfig.getInstance(); 
 	
 }

@@ -1,64 +1,29 @@
 package ru.ecom.ejb.services.live;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.live.domain.LiveTransaction;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-
+@Getter
+@Setter
 public class LiveContext {
 
 	public LiveContext(EntityManagerFactory aFactory, String aUsername) {
-		theManagerFactory = aFactory ;
-		theUsername = aUsername ;
-	}
-	
-	/** Manager */
-	@Comment("Manager")
-	public EntityManager getManager() {
-		return theManager;
-	}
-
-	public void setManager(EntityManager aManager) {
-		theManager = aManager;
+		managerFactory = aFactory ;
+		username = aUsername ;
 	}
 
 	/** Manager */
-	private EntityManager theManager;
+	private EntityManager manager;
 	/** Фабрика соединений */
-	@Comment("Фабрика соединений")
-	public EntityManagerFactory getManagerFactory() {
-		return theManagerFactory;
-	}
 
-//	public void setManagerFactory(EntityManagerFactory aManagerFactory) {
-//		theManagerFactory = aManagerFactory;
-//	}
-
-	/** Пользователь */
-	@Comment("Пользователь")
-	public String getUsername() {
-		return theUsername;
-	}
-
-//	public void setUsername(String aUsername) {
-//		theUsername = aUsername;
-//	}
-	
-
-	public void setTransaction(LiveTransaction aTransaction) {
-		theTransaction = aTransaction;
-	}
-
-	public LiveTransaction getTransaction() {
-		return theTransaction ;
-	}
-	
-	private LiveTransaction theTransaction ;
-	
+	private LiveTransaction transaction ;
 	
 	/** Пользователь */
-	private final String theUsername;
+	private final String username;
 	/** Фабрика соединений */
-	private final EntityManagerFactory theManagerFactory;
+	private final EntityManagerFactory managerFactory;
 }

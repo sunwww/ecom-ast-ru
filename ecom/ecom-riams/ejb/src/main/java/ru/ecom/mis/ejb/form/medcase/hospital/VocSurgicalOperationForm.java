@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
@@ -18,63 +19,55 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormPersistance(clazz = VocOperation.class)
 @Comment("Справочник хир.операций")
 @WebTrail(comment = "Справочник хир.операций", nameProperties= "id", view="entityParentView-voc_operation.do")
-//@Parent(property="medCase", parentForm=MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Voc/VocOperation")
+@Setter
 public class VocSurgicalOperationForm extends IdEntityForm {
     /** Название */
     @Comment("Наименование")
     @Persist @Required
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
-    
+    public String getName() { return name ; }
+
     /** Внешний код */
 	@Comment("Внешний код")
 	@Persist @Required
-	public String getCode() {return theCode;}
-	public void setCode(String aCode) {theCode = aCode;}
+	public String getCode() {return code;}
 
 	/** Дата начала актуальности */
 	@Comment("Дата начала актуальности")
 	@Persist @DateString @DoDateString
-	public String getStartActualDate() {return theStartActualDate;}
-	public void setStartActualDate(String aStartActualDate) {theStartActualDate = aStartActualDate;}
+	public String getStartActualDate() {return startActualDate;}
 
 	/** Дата окончания актуальности */
 	@Comment("Дата окончания актуальности")
 	@Persist @DateString @DoDateString
-	public String getFinishActualDate() {return theFinishActualDate;}
-	public void setFinishActualDate(String aFinishActualDate) {theFinishActualDate = aFinishActualDate;}
+	public String getFinishActualDate() {return finishActualDate;}
 	/** Уровонь сложности */
 	@Comment("Уровонь сложности")
 	@Persist
-	public Long getComplexity() {return theComplexity;}
-	public void setComplexity(Long aComplexity) {theComplexity = aComplexity;}
+	public Long getComplexity() {return complexity;}
 
 	/** Код федеральный */
 	@Comment("Код федеральный")
 	@Persist
-	public String getCodeF() {return theCodeF;}
-	public void setCodeF(String aCodeF) {theCodeF = aCodeF;}
+	public String getCodeF() {return codeF;}
 
 	/** Отделения */
 	@Comment("Отделения")
 	@Persist @PersistManyToManyOneProperty(collectionGenericType=MisLpu.class)
-	public String getDepartments() {return theDepartments;}
-	public void setDepartments(String aDepartments) {theDepartments = aDepartments;}
+	public String getDepartments() {return departments;}
 
-	
 	/** Отделения */
-	private String theDepartments;
+	private String departments;
 	/** Код федеральный */
-	private String theCodeF;
+	private String codeF;
 	/** Уровонь сложности */
-	private Long theComplexity;
+	private Long complexity;
 	/** Дата окончания актуальности */
-	private String theFinishActualDate;
+	private String finishActualDate;
 	/** Дата начала актуальности */
-	private String theStartActualDate;
+	private String startActualDate;
 	/** Внешний код */
-	private String theCode;
+	private String code;
     /** Название */
-    private String theName ;
+    private String name ;
 }

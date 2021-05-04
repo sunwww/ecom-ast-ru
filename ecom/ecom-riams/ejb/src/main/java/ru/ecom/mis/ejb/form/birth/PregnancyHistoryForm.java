@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.birth.PregnancyHistory;
@@ -22,22 +23,21 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "История родов", nameProperties= "id", view="entityParentView-preg_pregHistory.do")
 @Parent(property="medCase", parentForm= MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Pregnancy/History")
+@Setter
 public class PregnancyHistoryForm extends IdEntityForm {
 	/** Беременность */
 	@Comment("Беременность")
 	@Persist 
-	public Long getPregnancy() {return thePregnancy;}
-	public void setPregnancy(Long aPregnancy) {thePregnancy = aPregnancy;}
+	public Long getPregnancy() {return pregnancy;}
 
 	/** СМО */
 	@Comment("СМО")
 	@Persist @Required
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+	public Long getMedCase() {return medCase;}
 
 	
 	/** СМО */
-	private Long theMedCase;
+	private Long medCase;
 	/** Беременность */
-	private Long thePregnancy;
+	private Long pregnancy;
 }

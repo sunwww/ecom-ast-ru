@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.patient;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.patient.ObservationSheet;
@@ -15,72 +16,65 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @EntityFormPersistance(clazz = ObservationSheet.class)
 @Comment("Абстрактный лист наблюдения ЕДКЦ")
 @Parent(property="patient", parentForm=PatientForm.class)
+@Setter
 public class ObservationSheetForm extends IdEntityForm {
     /** Дата установки */
     @Comment("Дата установки")
     @DateString
     @DoDateString
     @Persist
-    public String getStartDate() {return theStartDate;}
-    public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
+    public String getStartDate() {return startDate;}
     /** Дата установки */
-    private String theStartDate ;
+    private String startDate ;
 
     /** Дата снятия */
     @Comment("Дата снятия")
     @DateString
     @DoDateString
     @Persist
-    public String getFinishDate() {return theFinishDate;}
-    public void setFinishDate(String aFinishDate) {theFinishDate = aFinishDate;}
+    public String getFinishDate() {return finishDate;}
     /** Дата снятия */
-    private String theFinishDate ;
+    private String finishDate ;
 
     /** Пользователь, который последний редактировал запись */
     @Comment("Пользователь, который последний редактировал запись")
     @Persist
-    public String getEditUsername() {return theEditUsername;}
-    public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+    public String getEditUsername() {return editUsername;}
     /** Пользователь, который последний редактировал запись */
-    private String theEditUsername;
+    private String editUsername;
 
     /** Пользователь, который создал запись */
     @Comment("Пользователь, который создал запись")
     @Persist
-    public String getCreateUsername() {return theCreateUsername;}
-    public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+    public String getCreateUsername() {return createUsername;}
     /** Пользователь, который создал запись */
-    private String theCreateUsername;
+    private String createUsername;
 
     /** Специалист, открывший ЛН */
     @Comment("Специалист, открывший ЛН")
     @Persist
-    public Long getSpecialistStart() {return theSpecialistStart;}
-    public void setSpecialistStart(Long aSpecialistStart) {theSpecialistStart = aSpecialistStart;}
+    public Long getSpecialistStart() {return specialistStart;}
     /** Специалист, открывший ЛН */
-    private Long theSpecialistStart;
+    private Long specialistStart;
 
     /** Специалист, закрывший ЛН */
     @Comment("Специалист, закрывший ЛН")
     @Persist
-    public Long getSpecialistFin() {return theSpecialistFin;}
-    public void setSpecialistFin(Long aSpecialistFin) {theSpecialistFin = aSpecialistFin;}
+    public Long getSpecialistFin() {return specialistFin;}
     /** Специалист, закрывший ЛН */
-    private Long theSpecialistFin;
+    private Long specialistFin;
 
     /** Результат наблюдения */
     @Comment("Результат наблюдения")
     @Persist
-    public Long getObservResult() {return theObservResult;}
-    public void setObservResult(Long aObservResult) {theObservResult = aObservResult;}
+    public Long getObservResult() {return observResult;}
     /** Результат наблюдения */
-    private Long theObservResult;
+    private Long observResult;
 
     /** Пациент */
     @Comment("Пациент")
     @Persist
-    public Long getPatient() {return thePatient;}
-    public void setPatient(Long aNewProperty) {thePatient = aNewProperty;}
+    public Long getPatient() {return patient;}
     /**Пациент */
-    private Long thePatient;
+    private Long patient;
 }

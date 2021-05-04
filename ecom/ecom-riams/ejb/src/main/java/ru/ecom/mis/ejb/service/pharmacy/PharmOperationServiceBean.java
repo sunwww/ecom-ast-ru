@@ -53,8 +53,8 @@ public class PharmOperationServiceBean implements IPharmOperationService {
                "NextDrugId integer;\n" +
                "workfunct integer;\n" +
                "BEGIN\n" +
-               "select case when canceldate is not null then true else false end from prescription into isclose where id = $1;\n" +
-               "IF isclose=false THEN\n" +
+               "select canceldate is not null then true else false end from prescription into isclose where id = $1;\n" +
+               "IF isclose=false n\n" +
                "select amount,pharmdrug_id from pharmoperation into amountOp,drugId where prescription = $1;\n" +
                "update prescription set canceldate=current_date, canceltime=current_time, cancelusername =$2 where id =$1;\n" +
                "select id,amount,drug_id,pharmstorage_id from pharmdrug into actualId,actualAmount,vocDrugId,StorageId where drug_id =(select drug_id from pharmdrug where id = drugId) and nextstate_id is null;\n" +
@@ -67,13 +67,13 @@ public class PharmOperationServiceBean implements IPharmOperationService {
                "END IF;\n" +
                "END;\n" +
                "' LANGUAGE plpgsql;";
-        theManager.createNativeQuery(sql).executeUpdate();
+        manager.createNativeQuery(sql).executeUpdate();
     }
 
     @EJB
-    ILocalEntityFormService theEntityFormService;
+    ILocalEntityFormService entityFormService;
     @PersistenceContext
-    EntityManager theManager;
+    EntityManager manager;
     @Resource
-    SessionContext theContext;
+    SessionContext context;
 }

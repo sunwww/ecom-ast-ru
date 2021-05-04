@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.uc.privilege.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,31 +18,20 @@ import javax.persistence.OneToOne;
 @Comment("Льготный рецепт")
 @Entity
 @AIndexes(value = { @AIndex(properties = { "privilege" },table="Recipe") })
+@Getter
+@Setter
 public class PrivilegeRecipe extends Recipe{
 
 	/** Льгота */
 	@Comment("Льгота")
 	@OneToOne
 	public Privilege getPrivilege() {
-		return thePrivilege;
+		return privilege;
 	}
 
-	public void setPrivilege(Privilege aPrivilege) {
-		thePrivilege = aPrivilege;
-	}
 	/** Льгота */
-	private Privilege thePrivilege;
+	private Privilege privilege;
 	
 	/** Решение КЭК */
-	@Comment("Решение КЭК")
-	public boolean getKekDesicion() {
-		return theKekDesicion;
-	}
-
-	public void setKekDesicion(boolean aKekDesicion) {
-		theKekDesicion = aKekDesicion;
-	}
-	
-	/** Решение КЭК */
-	private boolean theKekDesicion;
+	private boolean kekDesicion;
 }

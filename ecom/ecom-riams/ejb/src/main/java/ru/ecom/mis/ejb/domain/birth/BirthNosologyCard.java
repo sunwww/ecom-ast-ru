@@ -2,6 +2,8 @@ package ru.ecom.mis.ejb.domain.birth;/**
  * Created by Milamesher on 23.12.2019.
  */
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -25,78 +27,52 @@ import java.util.List;
         @AIndex(properties = { "medCase" })
 }
 )
+@Getter
+@Setter
 public class BirthNosologyCard extends BaseEntity {
     /** Дата создания */
-    @Comment("Дата создания")
-    public Date getCreateDate() {return theCreateDate;}
-    public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}/** Дата создания */
-    private Date theCreateDate;
+    private Date createDate;
 
     /** Время создания */
-    @Comment("Время создания")
-    public Time getCreateTime() {return theCreateTime;}
-    public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-    /** Время создания */
-    private Time theCreateTime;
+    private Time createTime;
 
     /** Пользователь, который создал запись */
-    @Comment("Пользователь, который создал запись")
-    public String getCreateUsername() {return theCreateUsername;}
-    public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-    /** Пользователь, который создал запись */
-    private String theCreateUsername;
+    private String createUsername;
 
     /** Дата редактирования */
-    @Comment("Дата редактирования")
-    public Date getEditDate() {return theEditDate;}
-    public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-    /** Дата редактирования */
-    private Date theEditDate;
+    private Date editDate;
 
     /** Время редактрования */
-    @Comment("Время редактрования")
-    public Time getEditTime() {return theEditTime;}
-    public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-    /** Время редактрования */
-    private Time theEditTime;
+    private Time editTime;
 
     /** Пользователь, который последний редактировал запись */
-    @Comment("Пользователь, который последний редактировал запись")
-    public String getEditUsername() {return theEditUsername;}
-    public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-    /** Пользователь, который последний редактировал запись */
-    private String theEditUsername;
+    private String editUsername;
 
     /** СМО */
     @Comment("СМО")
     @OneToOne
-    public MedCase getMedCase() {return theMedCase;}
-    public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
+    public MedCase getMedCase() {return medCase;}
     /** СМО */
-    private MedCase theMedCase;
+    private MedCase medCase;
 
     /** Пользователь */
     @Comment("Пользователь")
     @OneToOne
-    public WorkFunction getCreator() {return theCreator;}
-    public void setCreator(WorkFunction aCreator) {theCreator = aCreator;}
+    public WorkFunction getCreator() {return creator;}
     /** Пользователь */
-    private WorkFunction theCreator;
+    private WorkFunction creator;
 
     /** Отмеченные нозологии */
-    private List<VocBirthNosology> theNosologies;
+    private List<VocBirthNosology> nosologies;
 
     /** Отмеченные нозологии */
     @Comment("Отмеченные нозологии")
     @ManyToMany
-    public List<VocBirthNosology> getNosologies() {return theNosologies;}
-    public void setNosologies(List<VocBirthNosology> aNosologies) {theNosologies = aNosologies;}
+    public List<VocBirthNosology> getNosologies() {return nosologies;}
 
     /** Пользователь, который последний отредактировал */
     @Comment("Пользователь, который последний отредактировал")
     @OneToOne
-    public WorkFunction getEditor() {return theEditor;}
-    public void setEditor(WorkFunction aEditor) {theEditor = aEditor;}
-    /** Пользователь, который последний отредактировал */
-    private WorkFunction theEditor;
+    public WorkFunction getEditor() {return editor;}
+    private WorkFunction editor;
 }

@@ -19,11 +19,11 @@ public class MapFormManager {
 	}
 	
 	public boolean isClassChanged(String aFormClassName) {
-		return theConfig.get("mapforms.file", null) != null;
+		return config.get("mapforms.file", null) != null;
 	}
 	
 	public MapFormInfo getFormInfo(String aFormClassName) {
-		String resource = theConfig.get("mapforms.file", "/META-INF/mapforms.xml");
+		String resource = config.get("mapforms.file", "/META-INF/mapforms.xml");
 		InputStream in = getClass().getResourceAsStream(resource); // Thread.currentThread().getContextClassLoader()
 		try {
 			if(in==null) {
@@ -39,6 +39,6 @@ public class MapFormManager {
 		}
 	}
 	
-	private final EjbEcomConfig theConfig = EjbEcomConfig.getInstance();
+	private final EjbEcomConfig config = EjbEcomConfig.getInstance();
 	
 }

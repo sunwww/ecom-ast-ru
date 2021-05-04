@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form.financeplan;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.financeplan.HospitalFinancePlan;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -14,47 +15,43 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Comment("Финансовый план в стационаре")
 @WebTrail(comment = "Финансовый план в стационаре", nameProperties = "id", view = "entityView-e2_stacFinancePlan.do")
 @EntityFormSecurityPrefix("/Policy/E2")
+@Setter
 public class HospitalFinancePlanForm extends FinancePlanForm {
 
     /** Отделение */
     @Comment("Отделение")
     @Persist @Required
-    public Long getDepartment() {return theDepartment;}
-    public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+    public Long getDepartment() {return department;}
     /** Отделение */
-    private Long theDepartment ;
+    private Long department ;
 
     /** КСГ */
     @Comment("КСГ")
     @Persist
-    public Long getKsg() {return theKsg;}
-    public void setKsg(Long aKsg) {theKsg = aKsg;}
+    public Long getKsg() {return ksg;}
     /** КСГ */
-    private Long theKsg ;
+    private Long ksg ;
 
     /** Группа КСГ */
     @Comment("Группа КСГ")
     @Persist
-    public Long getKsgGroup() {return theKsgGroup;}
-    public void setKsgGroup(Long aKsgGroup) {theKsgGroup = aKsgGroup;}
+    public Long getKsgGroup() {return ksgGroup;}
     /** Группа КСГ */
-    private Long theKsgGroup ;
+    private Long ksgGroup ;
 
     /** Подтип коек */
     @Comment("Подтип коек")
     @Persist @Required
-    public Long getBedSubType() {return theBedSubType;}
-    public void setBedSubType(Long aBedSubType) {theBedSubType = aBedSubType;}
+    public Long getBedSubType() {return bedSubType;}
     /** Подтип коек */
-    private Long theBedSubType ;
+    private Long bedSubType ;
 
     /** Профиль коек V020 */
     @Comment("Профиль коек V020")
     @Persist
-    public Long getBedProfile() {return theBedProfile;}
-    public void setBedProfile(Long aBedProfile) {theBedProfile = aBedProfile;}
+    public Long getBedProfile() {return bedProfile;}
     /** Профиль коек V020 */
-    private Long theBedProfile ;
+    private Long bedProfile ;
 
 
 }

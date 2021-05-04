@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.contract;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -21,9 +23,11 @@ import java.util.List;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes({
-	@AIndex(unique= false, properties = {"servedPerson"})
-	,@AIndex(unique= false, properties = {"contract"})
+	@AIndex(properties = {"servedPerson"})
+	,@AIndex(properties = {"contract"})
 })
+	@Getter
+	@Setter
 	@EntityListeners(DeleteListener.class)
 @UnDeletable
 public class ContractAccount extends BaseEntity{
@@ -35,188 +39,80 @@ public class ContractAccount extends BaseEntity{
 	public Privilege getPrivilege() {
 		return privilege;
 	}
-	public void setPrivilege(Privilege privilege) {
-		this.privilege = privilege;
-	}
-
 
 	/** Признак удаленной записи */
-	@Comment("Признак удаленной записи")
-	public Boolean getIsDeleted() {return theIsDeleted;}
-	public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
-	/** Признак удаленной записи */
-	private Boolean theIsDeleted ;
+	private Boolean isDeleted ;
 
 	@OneToMany(mappedBy="account", cascade=CascadeType.ALL)
-	public List<ContractAccountOperation> getOperations() {return theOperations;}
-	public void setOperations(List<ContractAccountOperation> aOperations) {theOperations = aOperations;}
+	public List<ContractAccountOperation> getOperations() {return operations;}
 	/**
 	 * Операции по счету
 	 */
-	private List<ContractAccountOperation> theOperations;
-	/**
-	 * Сумма баланса
-	 */
-	@Comment("Сумма баланса")
-	public BigDecimal getBalanceSum() {return theBalanceSum;}
-	public void setBalanceSum(BigDecimal aBalanceSum) {theBalanceSum = aBalanceSum;}
+	private List<ContractAccountOperation> operations;
 	/** Сумма баланса */
-	private BigDecimal theBalanceSum;
+	private BigDecimal balanceSum;
 	
 	/** Резервированная сумма */
-	@Comment("Резервированная сумма")
-	public BigDecimal getReservationSum() {return theReservationSum;}
-	public void setReservationSum(BigDecimal aReservationSum) {theReservationSum = aReservationSum;}
-	/** Резервированная сумма */
-	private BigDecimal theReservationSum;
+	private BigDecimal reservationSum;
 	/** Дата открытия */
-	@Comment("Дата открытия")
-	public Date getDateFrom() {return theDateFrom;}
-	public void setDateFrom(Date aDateFrom) {theDateFrom = aDateFrom;}
-	/** Дата открытия */
-	private Date theDateFrom;
+	private Date dateFrom;
 	/** Дата закрытия */
-	@Comment("Дата закрытия")
-	public Date getDateTo() {return theDateTo;}
-	public void setDateTo(Date aDateTo) {theDateTo = aDateTo;}
-	/** Дата закрытия */
-	private Date theDateTo;
+	private Date dateTo;
 	/** Блокирован */
-	@Comment("Блокирован")
-	public Boolean getBlock() {return theBlock;}
-	public void setBlock(Boolean aBlock) {theBlock = aBlock;}
-	/** Блокирован */
-	private Boolean theBlock;
+	private Boolean block;
 	
 	@Comment("Мед. услуги")
 	@OneToMany(mappedBy="account", cascade=CascadeType.ALL)
-	public List<ContractAccountMedService> getMedService() {return theMedService;}
-	public void setMedService(List<ContractAccountMedService> aMedService) {theMedService = aMedService;}
-	
+	public List<ContractAccountMedService> getMedService() {return medService;}
+
 	/**
 	 * Мед. услуги
 	 */
-	private List<ContractAccountMedService> theMedService;
-	
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	
-	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	
-	/** Пользователь, создавший запись */
-	@Comment("Пользователь, создавший запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	
-	/** Дата последнего изменения */
-	@Comment("Дата последнего изменения")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-	
-	/** Время, последнего изменения */
-	@Comment("Время, последнего изменения")
-	public Time getEditTime() {return theEditTime;}
-	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-	
-	/** Пользователь, последний изменивший запись */
-	@Comment("Пользователь, последний изменивший запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	private List<ContractAccountMedService> medService;
 
 	/** Пользователь, последний изменивший запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Время, последнего изменения */
-	private Time theEditTime;
+	private Time editTime;
 	/** Дата последнего изменения */
-	private Date theEditDate;
+	private Date editDate;
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	
 	@Transient
 	public String getInfo() {
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
-		StringBuilder res=new StringBuilder().append(theDateFrom!=null?format.format(theDateFrom):"нет даты открытия") ;
-		if (theDateFrom!=null) {
-			res.append("-").append(theDateTo!=null?format.format(theDateTo):"нет даты окончания") ;
+		StringBuilder res=new StringBuilder().append(dateFrom!=null?format.format(dateFrom):"нет даты открытия") ;
+		if (dateFrom!=null) {
+			res.append("-").append(dateTo!=null?format.format(dateTo):"нет даты окончания") ;
 		} 
-		if (theBlock!=null && theBlock) res.append("(счет заблокирован");
+		if (block!=null && block) res.append("(счет заблокирован");
 		return res.toString();
 	}
 	
 	/** Мед.договор */
 	@Comment("Мед.договор")
 	@OneToOne
-	public MedContract getContract() {return theContract;}
-	public void setContract(MedContract aContract) {theContract = aContract;}
+	public MedContract getContract() {return contract;}
 
 	/** Мед.договор */
-	private MedContract theContract;
+	private MedContract contract;
 	
 	/** Скидка по умолчанию */
-	@Comment("Скидка по умолчанию")
-	public BigDecimal getDiscountDefault() {return theDiscountDefault;}
-	public void setDiscountDefault(BigDecimal aDiscountDefault) {theDiscountDefault = aDiscountDefault;}
-
-	/** Скидка по умолчанию */
-	private BigDecimal theDiscountDefault;
+	private BigDecimal discountDefault;
 	
 	/** Номер счета */
-	@Comment("Номер счета")
-	public String getAccountNumber() {
-		return theAccountNumber;
-	}
-
-	public void setAccountNumber(String aAccountNumber) {
-		theAccountNumber = aAccountNumber;
-	}
-
-	/** Номер счета */
-	private String theAccountNumber;
+	private String accountNumber;
 	
 	/** Оплачен */
-	@Comment("Оплачен")
-	public Boolean getIsFinished() {
-		return theIsFinished;
-	}
-
-	public void setIsFinished(Boolean aIsFinished) {
-		theIsFinished = aIsFinished;
-	}
-
-	/** Оплачен */
-	private Boolean theIsFinished;
-	
-	/** Период с */
-	@Comment("Период с")
-	public Date getPeriodFrom() {
-		return thePeriodFrom;
-	}
-
-	public void setPeriodFrom(Date aPeriodFrom) {
-		thePeriodFrom = aPeriodFrom;
-	}
+	private Boolean isFinished;
 	
 	/** Период по */
-	@Comment("Период по")
-	public Date getPeriodTo() {
-		return thePeriodTo;
-	}
-
-	public void setPeriodTo(Date aPeriodTo) {
-		thePeriodTo = aPeriodTo;
-	}
-
-	/** Период по */
-	private Date thePeriodTo;
+	private Date periodTo;
 	/** Период с */
-	private Date thePeriodFrom;
+	private Date periodFrom;
 }

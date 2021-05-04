@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.disability;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -26,290 +27,254 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(DocumentByPatientPreCreate.class)
 )
+@Setter
 public class DisabilityDocumentByPatientForm extends DisabilityDocumentForm {
 
-	private Boolean isELN;
+	private Boolean eln;
 	@Comment("Электронный")
 	@Persist
-	public Boolean getELN() {
-		return isELN;
-	}
-	public void setELN(Boolean ELN) {
-		isELN = ELN;
+	public Boolean getEln() {
+		return eln;
 	}
 
 	/** Дата начала нетрудоспособности */
 	@Comment("Дата начала нетрудоспособности")
 	@Persist @DateString @DoDateString @Required
-	public String getDateFrom() {return theDateFrom;}
-	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
-	
+	public String getDateFrom() {return dateFrom;}
+
 	/** Дата окончания нетрудоспособности */
 	@Comment("Дата окончания нетрудоспособности")
 	@Persist @DateString @DoDateString 
-	public String getDateTo() {return theDateTo;}
-	public void setDateTo(String aDateTo) {theDateTo = aDateTo;	}
-	
+	public String getDateTo() {return dateTo;}
+
 	/** Режим нетрудоспособности */
 	@Comment("Режим нетрудоспособности") 
-	public Long getRegime() {return theRegime;}
-	public void setRegime(Long aRegime) {theRegime = aRegime;}
-	
+	public Long getRegime() {return regime;}
+
 	/** Пациент*/
 	@Comment("Пациент")
 	@Persist @Required
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aCreateMedCase) {thePatient = aCreateMedCase;}
+	public Long getPatient() {return patient;}
 
 	/** Специалист */
 	@Comment("Специалист")
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public Long getWorkFunction() {return workFunction;}
 
 	/** Информация о записи */
 	@Comment("Информация о записи")
 	@Persist
-	public String getInfo() {return theInfo;}
-	public void setInfo(String aInfo) {theInfo = aInfo;}
+	public String getInfo() {return info;}
 
 
 	/** Медико-социальная экспертная комиссия */
 	@Comment("Медико-социальная экспертная комиссия")
 	@Persist
-	public Long getMedSocCommission() {return theMedSocCommission;}
-	public void setMedSocCommission(Long aMedSocCommission) {theMedSocCommission = aMedSocCommission;}
+	public Long getMedSocCommission() {return medSocCommission;}
 
 	/** Случай нетрудоспособности */
 	@Comment("Случай нетрудоспособности")
 	@Persist
-	public Long getDisabilityCase() {return theDisabilityCase;}
-	public void setDisabilityCase(Long aDisabilityCase) {theDisabilityCase = aDisabilityCase;}
+	public Long getDisabilityCase() {return disabilityCase;}
 
 	/** Серия */
 	@Comment("Серия")
 	@Persist
-	public String getSeries() {return theSeries;}
-	public void setSeries (String aCloseSeries) {theSeries = aCloseSeries;}
-	
+	public String getSeries() {return series;}
+
 	/** Номер */
 	@Comment("Номер")
 	@Persist 
-	public String getNumber() {return theNumber;}
-	public void setNumber(String aNumber) {theNumber = aNumber;}
-	
+	public String getNumber() {return number;}
+
 	/** Причина нетрудоспособности */
 	@Comment("Причина нетрудоспособности")
 	@Persist @Required
-	public Long getDisabilityReason() {return theDisabilityReason;}
-	public void setDisabilityReason(Long aDisabilityReason) {theDisabilityReason = aDisabilityReason;}
+	public Long getDisabilityReason() {return disabilityReason;}
 
 	/** Причина закрытия */
 	@Comment("Причина закрытия")
 	@Persist
-	public Long getCloseReason() {return theCloseReason;}
-	public void setCloseReason(Long aCloseReason) {theCloseReason = aCloseReason;}
+	public Long getCloseReason() {return closeReason;}
 
 	/** Тип документа нетрудоспособности */
 	@Comment("Тип документа нетрудоспособности")
 	@Persist @Required
-	public Long getDocumentType() {return theDocumentType;}
-	public void setDocumentType(Long aDocumentType) {theDocumentType = aDocumentType;}
+	public Long getDocumentType() {return documentType;}
 
 	/** Режим нетрудоспособности */
 	@Comment("Режим нетрудоспособности")
 	@Persist
-	public Long getDisabilityRegime() {return theDisabilityRegime;}
-	public void setDisabilityRegime(Long aDisabilityRegime) {theDisabilityRegime = aDisabilityRegime;}
+	public Long getDisabilityRegime() {return disabilityRegime;}
 
 	/** Первичность */
 	@Comment("Первичность")
 	@Persist @Required
-	public Long getPrimarity() {return thePrimarity;}
-	public void setPrimarity(Long aPrimarity) {thePrimarity = aPrimarity;}
+	public Long getPrimarity() {return primarity;}
 
 	/** Дата выдачи */
 	@Comment("Дата выдачи")
 	@DateString @DoDateString @Persist @Required
-	public String getIssueDate() {return theIssueDate;}
-	public void setIssueDate(String aIssueDate) {theIssueDate = aIssueDate;}
+	public String getIssueDate() {return issueDate;}
 
 	/** Серия документа нетрудоспособности по основному месту работы */
 	@Comment("Серия документа нетрудоспособности по основному месту работы")
 	@Persist
-	public String getMainWorkDocumentSeries() {return theMainWorkDocumentSeries;}
-	public void setMainWorkDocumentSeries(String aSeries) {theMainWorkDocumentSeries = aSeries;}
+	public String getMainWorkDocumentSeries() {return mainWorkDocumentSeries;}
 	/** Серия документа нетрудоспособности по основному месту работы */
-	private String theMainWorkDocumentSeries;
+	private String mainWorkDocumentSeries;
 	
 	/** Номер документа нетрудоспособности по основному месту работы */
 	@Comment("Номер документа нетрудоспособности по основному месту работы")
 	@Persist
-	public String getMainWorkDocumentNumber() {return theMainWorkDocumentNumber;}
-	public void setMainWorkDocumentNumber(String aMainWorkDisabilityDocument) {theMainWorkDocumentNumber = aMainWorkDisabilityDocument;}
+	public String getMainWorkDocumentNumber() {return mainWorkDocumentNumber;}
 
 	/** Предполагаемая дата родов */
 	@Comment("Предполагаемая дата родов")
 	@DateString @DoDateString @Persist
-	public String getSupposeBirthDate() {return theSupposeBirthDate;}
-	public void setSupposeBirthDate(String aSupposeBirthDate) {theSupposeBirthDate = aSupposeBirthDate;}
+	public String getSupposeBirthDate() {return supposeBirthDate;}
 
 	/** Больной по уходу */
 	@Comment("Больной по уходу")
 	@Persist
-	public Long getNursedPatient() {return theNursedPatient;}
-	public void setNursedPatient(Long aNursingPatientAge) {theNursedPatient = aNursingPatientAge;}
-	
+	public Long getNursedPatient() {return nursedPatient;}
+
 	/** Дата начала санаторного лечения */
 	@Comment("Дата начала санаторного лечения")
 	@DateString @DoDateString @Persist
-	public String getSanatoriumDateFrom() {return theSanatoriumDateFrom;}
-	public void setSanatoriumDateFrom(String aSanatoriumDateFrom) {theSanatoriumDateFrom = aSanatoriumDateFrom;}
+	public String getSanatoriumDateFrom() {return sanatoriumDateFrom;}
 
 	/** Дата окончания санаторного лечения */
 	@Comment("Дата окончания санаторного лечения")
 	@DateString @DoDateString @Persist
-	public String getSanatoriumDateTo() {return theSanatoriumDateTo;}
-	public void setSanatoriumDateTo(String aSanatoriumDateTo) {theSanatoriumDateTo = aSanatoriumDateTo;}
+	public String getSanatoriumDateTo() {return sanatoriumDateTo;}
 
 	/** Номер санаторной путевки */
 	@Comment("Номер санаторной путевки")
 	@Persist
-	public String getSanatoriumTicketNumber() {return theSanatoriumTicketNumber;}
-	public void setSanatoriumTicketNumber(String aSanatoriumTicketNumber) {theSanatoriumTicketNumber = aSanatoriumTicketNumber;}
+	public String getSanatoriumTicketNumber() {return sanatoriumTicketNumber;}
 
 	/** Место нахождения санатория */
 	@Comment("Место нахождения санатория")
 	@Persist
-	public String getSanatoriumPlace() {return theSanatoriumPlace;}
-	public void setSanatoriumPlace(String aSanatoriumPlace) {theSanatoriumPlace = aSanatoriumPlace;}
-	
+	public String getSanatoriumPlace() {return sanatoriumPlace;}
+
 	/** МКБ10*/
 	@Comment("МКБ10")
 	@Persist 
-	public Long getIdc10() {return theIdc10;}
-	public void setIdc10(Long aNewProperty) {theIdc10 = aNewProperty;	}
-	
+	public Long getIdc10() {return idc10;}
+
 	/** Справочник видов совмещения работ */
 	@Comment("Справочник видов совмещения работ")
 	@Persist 
-	public Long getWorkComboType() {return theWorkComboType;}
-	public void setWorkComboType(Long aCombo) {theWorkComboType = aCombo;}
+	public Long getWorkComboType() {return workComboType;}
 
 	/** Диагноз текст */
 	@Comment("Диагноз текст")
 	@Persist 
-	public String getDiagnosis() {return theDiagnosis;}
-	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;	}
+	public String getDiagnosis() {return diagnosis;}
 
 
 	/** Лечебно-профилактическое учреждение */
 	@Comment("Лечебно-профилактическое учреждение")
 	@Persist
-	public Long getAnotherLpu() {return theAnotherLpu;}
-	public void setAnotherLpu(Long aAnotherLpu) {theAnotherLpu = aAnotherLpu;}
+	public Long getAnotherLpu() {return anotherLpu;}
 
 	/** Предыдущий документ */
 	@Comment("Предыдущий документ")
 	@Persist
-	public Long getPrevDocument() {return thePrevDocument;}
-	public void setPrevDocument(Long aPrevDocument) {thePrevDocument = aPrevDocument;}
+	public Long getPrevDocument() {return prevDocument;}
 
 	/** Доп. рабочая функция */
 	@Comment("Доп. рабочая функция")
-	public Long getWorkFunctionAdd() {return theWorkFunctionAdd;}
-	public void setWorkFunctionAdd(Long aWorkFunctionAdd) {theWorkFunctionAdd = aWorkFunctionAdd;}
+	public Long getWorkFunctionAdd() {return workFunctionAdd;}
 
 	/** Доп. рабочая функция */
-	private Long theWorkFunctionAdd;
+	private Long workFunctionAdd;
 	/** Предыдущий документ */
-	private Long thePrevDocument;
+	private Long prevDocument;
 	/** Лечебно-профилактическое учреждение */
-	private Long theAnotherLpu;
+	private Long anotherLpu;
 	/** Дата окончания */
-	private String theDateTo;
+	private String dateTo;
 	/** Дата начала */
-	private String theDateFrom;
+	private String dateFrom;
 	/** Информация о документе */
-	private String theInfo;
+	private String info;
 	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	/** Диагноз текст */
-	private String theDiagnosis;
+	private String diagnosis;
 	/** Больной по уходу */
-	private Long theNursedPatient;
+	private Long nursedPatient;
 	/** Дата начала санаторного лечения */
-	private String theSanatoriumDateFrom;
+	private String sanatoriumDateFrom;
 	/** Дата окончания санаторного лечения */
-	private String theSanatoriumDateTo;
+	private String sanatoriumDateTo;
 	/** Место нахождения санатория */
-	private String theSanatoriumPlace;
+	private String sanatoriumPlace;
 	/** МКБ10 */
-	private Long theIdc10;
+	private Long idc10;
 	/** Справочник видов совмещения работ */
-	private Long theWorkComboType;
+	private Long workComboType;
 	/** Номер санаторной путевки */
-	private String theSanatoriumTicketNumber;
+	private String sanatoriumTicketNumber;
 	/** Медико-социальная экспертная комиссия */
-	private Long theMedSocCommission;
+	private Long medSocCommission;
 	/** Случай нетрудоспособности */
-	private Long theDisabilityCase;
+	private Long disabilityCase;
 	/** Серия */
-	private String theSeries; 
+	private String series; 
 	/** Номер */
-	private String theNumber;
+	private String number;
 	/** Причина нетрудоспособности */
-	private Long theDisabilityReason;
+	private Long disabilityReason;
 	/** Причина закрытия */
-	private Long theCloseReason;
+	private Long closeReason;
 	/** Тип документа нетрудоспособности */
-	private Long theDocumentType;
+	private Long documentType;
 	/** Режим нетрудоспособности */
-	private Long theDisabilityRegime;
+	private Long disabilityRegime;
 	/** Первичность */
-	private Long thePrimarity;
+	private Long primarity;
 	/** Дата выдачи */
-	private String theIssueDate;
+	private String issueDate;
 	/** Номер документа нетрудоспособности по основному месту работы */
-	private String theMainWorkDocumentNumber;
+	private String mainWorkDocumentNumber;
 	/** Предполагаемая дата родов */
-	private String theSupposeBirthDate;
+	private String supposeBirthDate;
 	/** Специалист */
-	private Long theWorkFunction;
+	private Long workFunction;
 	/** Режим нетрудоспособности */
-	private Long theRegime;
+	private Long regime;
 
 	
 	/** Поставлена на учет в ранние сроки беременности (до 12 недель) */
 	@Comment("Поставлена на учет в ранние сроки беременности (до 12 недель)")
-	public Boolean getEarlyPregnancyRegistration() {return theEarlyPregnancyRegistration;}
-	public void setEarlyPregnancyRegistration(Boolean aEarlyPregnancyRegistration) {theEarlyPregnancyRegistration = aEarlyPregnancyRegistration;}
+	public Boolean getEarlyPregnancyRegistration() {return earlyPregnancyRegistration;}
 	/**
 	 * Поставлена на учет в ранние сроки беременности (до 12 недель)
 	 */
-	private Boolean theEarlyPregnancyRegistration;
+	private Boolean earlyPregnancyRegistration;
 
 	/** Лицо по уходу 1*/
 	@Comment("Лицо по уходу 1")
-	public Long getNursingPerson1() {return theNursingPerson1;}
-	public void setNursingPerson1(Long aNursingPerson1) {theNursingPerson1 = aNursingPerson1;}
+	public Long getNursingPerson1() {return nursingPerson1;}
 
 	/** Лицо по уходу 2*/
 	@Comment("Лицо по уходу 2")
-	public Long getNursingPerson2() {return theNursingPerson2;}
-	public void setNursingPerson2(Long aNursingPerson2) {theNursingPerson2 = aNursingPerson2;}
+	public Long getNursingPerson2() {return nursingPerson2;}
 
 	/** Лицо по уходу 2*/
-	private Long theNursingPerson2;
+	private Long nursingPerson2;
 	/** Лицо по уходу 1*/
-	private Long theNursingPerson1;
+	private Long nursingPerson1;
 	/**
 	 * Состоит на учете в службе занятости
 	 */
 	@Comment("Состоит на учете в службе занятости")
-	public Boolean getPlacementService() {return thePlacementService;}
-	public void setPlacementService(Boolean aPlacementService) {thePlacementService = aPlacementService;}
+	public Boolean getPlacementService() {return placementService;}
 	/**
 	 * Состоит на учете в службе занятости
 	 */
-	private Boolean thePlacementService;
+	private Boolean placementService;
 }

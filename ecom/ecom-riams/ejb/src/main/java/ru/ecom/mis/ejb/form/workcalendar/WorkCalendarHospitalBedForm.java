@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -27,238 +28,209 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @ACreateInterceptors(
 		@AEntityFormInterceptor(WorkCalendarHospitalBedSave.class)
 )
+@Setter
 public class WorkCalendarHospitalBedForm extends IdEntityForm {
 
 	/** Внутренний номер направления */
 	@Comment("Внутренний номер направления")
 	@Persist
-	public String getInternalCode() {return theInternalCode;}
-	public void setInternalCode(String aInternalCode) {theInternalCode = aInternalCode;}
+	public String getInternalCode() {return internalCode;}
 	/** Внутренний номер направления */
-	private String theInternalCode ;
+	private String internalCode ;
 
 	/** Отделение */
 	@Comment("Отделение")
 	@Persist @Required
-	public Long getDepartment() {return theDepartment;}
-	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+	public Long getDepartment() {return department;}
 
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist @Required
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
+	public Long getPatient() {return patient;}
 
 	/** Палата */
 	@Comment("Палата")
 	@Persist
-	public Long getHospitalRoom() {return theHospitalRoom;}
-	public void setHospitalRoom(Long aHospitalRoom) {theHospitalRoom = aHospitalRoom;}
+	public Long getHospitalRoom() {return hospitalRoom;}
 
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@Persist @Required
-	public Long getServiceStream() {return theServiceStream;}
-	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+	public Long getServiceStream() {return serviceStream;}
 
 	/** Примечание */
 	@Comment("Примечание")
 	@Persist
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
+	public String getComment() {return comment;}
 
 	/** Предполагается операция */
 	@Comment("Предполагается операция")
 	@Persist
-	public Boolean getIsOperation() {return theIsOperation;}
-	public void setIsOperation(Boolean aIsOperation) {theIsOperation = aIsOperation;}
+	public Boolean getIsOperation() {return isOperation;}
 
 	/** Диагноз */
 	@Comment("Диагноз")
 	@Persist @Required
-	public Long getIdc10() {return theIdc10;}
-	public void setIdc10(Long aIdc10) {theIdc10 = aIdc10;}
+	public Long getIdc10() {return idc10;}
 
 	/** Текст диагноза */
 	@Comment("Текст диагноза")
 	@Persist
-	public String getDiagnosis() {return theDiagnosis;}
-	public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
+	public String getDiagnosis() {return diagnosis;}
 
 	/** Фактическая госпитализация */
 	@Comment("Фактическая госпитализация")
 	@Persist
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+	public Long getMedCase() {return medCase;}
 
 	/** Предполагаемая дата начала госпитализации */
 	@Comment("Предполагаемая дата начала госпитализации")
 	@Persist @DateString @DoDateString @Required
-	public String getDateFrom() {return theDateFrom;}
-	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
+	public String getDateFrom() {return dateFrom;}
 
 	/** Предполагаемая дата окончания госпитализации */
 	@Comment("Предсполагаемая дата окончания госпитализации")
 	@Persist @DateString @DoDateString
-	public String getDateTo() {return theDateTo;}
-	public void setDateTo(String aDateTo) {theDateTo = aDateTo;}
+	public String getDateTo() {return dateTo;}
 
 	/** Предполагаемое количество дней госпитализации */
 	@Comment("Предполагаемое количество дней госпитализации")
 	@Persist
-	public Long getCntDays() {return theCntDays;}
-	public void setCntDays(Long aCntDays) {theCntDays = aCntDays;}
+	public Long getCntDays() {return cntDays;}
 
 	/** ФИО пациента */
 	@Comment("ФИО пациента")
 	@Persist
-	public String getFio() {return theFio;}
-	public void setFio(String aFio) {theFio = aFio;}
+	public String getFio() {return fio;}
 
 	/** Телефон пациента */
 	@Comment("Телефон пациента")
 	@Persist @Required
-	public String getPhone() {return thePhone;}
-	public void setPhone(String aPhone) {thePhone = aPhone;}
+	public String getPhone() {return phone;}
 
 	/** Пол */
 	@Comment("Пол")
 	@Persist
-	public Long getSex() {return theSex;}
-	public void setSex(Long aSex) {theSex = aSex;}
+	public Long getSex() {return sex;}
 
 	/** Койка */
 	@Comment("Койка")
 	@Persist
-	public Long getHospitalBed() {return theHospitalBed;}
-	public void setHospitalBed(Long aHospitalBed) {theHospitalBed = aHospitalBed;}
+	public Long getHospitalBed() {return hospitalBed;}
 
 	/** СМО */
 	@Comment("СМО")
 	@Persist 
-	public Long getVisit() {return theVisit;}
-	public void setVisit(Long aVisit) {theVisit = aVisit;}
+	public Long getVisit() {return visit;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@DateString @DoDateString @Persist
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
+
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@DateString @DoDateString @Persist
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
-	
+	public String getEditDate() {return editDate;}
+
 	/** Время создания */
 	@Comment("Время создания")
 	@TimeString @DoTimeString @Persist
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;}
 	/** Время редактрования */
 	@Comment("Время редактрования")
 	@TimeString @DoTimeString @Persist
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+	public String getEditTime() {return editTime;}
 	/** Пользователь, который создал запись */
 	@Comment("Пользователь, который создал запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 	/** Пользователь, который последний редактировал запись */
 	@Comment("Пользователь, который последний редактировал запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Рабочая функция */
 	@Comment("Рабочая функция")
 	@Persist 
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public Long getWorkFunction() {return workFunction;}
 
 	/** Рабочая функция */
-	private Long theWorkFunction;
+	private Long workFunction;
 	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private String theEditTime;
+	private String editTime;
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	/** СМО */
-	private Long theVisit;	
+	private Long visit;	
 	/** Койка */
-	private Long theHospitalBed;
+	private Long hospitalBed;
 	/** Пол */
-	private Long theSex;
+	private Long sex;
 	/** Телефон пациента */
-	private String thePhone;
+	private String phone;
 	/** ФИО пациента */
-	private String theFio;
+	private String fio;
 	/** Предполагаемое количество дней госпитализации */
-	private Long theCntDays;
+	private Long cntDays;
 	/** Предполагаемая дата окончания госпитализации */
-	private String theDateTo;
+	private String dateTo;
 	/** Предполагаемая дата начала госпитализации */
-	private String theDateFrom;
+	private String dateFrom;
 	/** Фактическая госпитализация */
-	private Long theMedCase;
+	private Long medCase;
 	/** Текст диагноза */
-	private String theDiagnosis;
+	private String diagnosis;
 	/** Диагноз */
-	private Long theIdc10;
+	private Long idc10;
 	/** Предполагается операция */
-	private Boolean theIsOperation;
+	private Boolean isOperation;
 	/** Примечание */
-	private String theComment;
+	private String comment;
 	/** Поток обслуживания */
-	private Long theServiceStream;
+	private Long serviceStream;
 	/** Палата */
-	private Long theHospitalRoom;
+	private Long hospitalRoom;
 	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	/** Отделение */
-	private Long theDepartment;
+	private Long department;
 	
 	/** Профиль коек */
 	@Comment("Профиль коек")
 	@Persist @Required
-	public Long getBedType() {return theBedType;}
-	public void setBedType(Long aBedType) {theBedType = aBedType;}
+	public Long getBedType() {return bedType;}
 
-	
 	/** Тип коек */
 	@Comment("Тип коек")
 	@Persist @Required
-	public Long getBedSubType() {return theBedSubType;}
-	public void setBedSubType(Long aBedSubType) {theBedSubType = aBedSubType;}
+	public Long getBedSubType() {return bedSubType;}
 
 	/** Тип коек */
-	private Long theBedSubType;
+	private Long bedSubType;
 	/** Профиль коек */
-	private Long theBedType;	
+	private Long bedType;	
 	
 	/** Откуда направление */
 	@Comment("Откуда направление")
 	@Persist @Required
-	public Long getOrderLpu() {return theOrderLpu;}
-	public void setOrderLpu(Long aOrderLpu) {theOrderLpu = aOrderLpu;}
+	public Long getOrderLpu() {return orderLpu;}
 	/** Откуда направление */
-	private Long theOrderLpu;
+	private Long orderLpu;
 
 	/** ЛПУ куда направляется */
 	@Comment("ЛПУ куда направляется")
 	@Persist
-	public Long getDirectLpu() {return theDirectLpu;}
-	public void setDirectLpu(Long aDirectLpu) {theDirectLpu = aDirectLpu;}
+	public Long getDirectLpu() {return directLpu;}
 	/** ЛПУ куда направляется */
-	private Long theDirectLpu ;
+	private Long directLpu ;
 
 }

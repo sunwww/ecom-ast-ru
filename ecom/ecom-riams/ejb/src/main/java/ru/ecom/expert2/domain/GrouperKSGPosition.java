@@ -27,69 +27,53 @@ import javax.persistence.OneToOne;
 @Setter
 public class GrouperKSGPosition extends BaseEntity {
 
-    /**
-     * Код позиции группировщика
-     */
-    private String code;
-    private GrouperKSG ksgGrouper;
-    private String mainMKB;
-    private String anotherMKB;
-    private String serviceCode;
-    /**
-     * Возраст
-     */
-    private Integer age;
-    /**
-     * Длительность
-     */
-    private Integer duration;
-    private VocKsg ksgValue;
-    /**
-     * Пол (код
-     */
-    private String sex;
-    /**
-     * Дополнительный признак
-     */
-    private String dopPriznak;
-    /**
-     * Код КСГ (для упрощения импорта)
-     */
-    private String ksgCode;
+    /** Код позиции группировщика */
+    private String code ;
 
     /**
      * Группировщик КСГ
      */
     @Comment("Группировщик КСГ")
     @OneToOne
-    public GrouperKSG getKsgGrouper() {
-        return ksgGrouper;
-    }
+    public GrouperKSG getKsgGrouper() {return ksgGrouper;}
+    private GrouperKSG ksgGrouper ;
 
     /**
      * Код МКБ основной
      */
     @Comment("Код МКБ основной")
-    public String getMainMKB() {
-        return mainMKB;
-    }
+    public String getMainMKB() {return mainMKB;}
+    private String mainMKB ;
 
     /** Код МКБ сопутствующий */
     @Comment("Код МКБ сопутствующий")
-    public String getAnotherMKB() {
-        return anotherMKB;
-    }
+    public String getAnotherMKB() {return anotherMKB;}
+    private String anotherMKB ;
 
     /** Код услуги */
     @Comment("Код услуги")
-    public String getServiceCode() {
-        return serviceCode;
-    }
+    public String getServiceCode() {return serviceCode;}
+    private String serviceCode ;
+
+    /** Возраст */
+    private Integer age ;
+
+    /** Длительность */
+    private Integer duration ;
 
     /** Значение КСГ */
     @Comment("Значение КСГ")
     @OneToOne
     public VocKsg getKsgValue() {return ksgValue;}
+    private VocKsg ksgValue;
+
+    /** Пол (код */
+    private String sex ;
+    /** Дополнительный признак */
+    private String dopPriznak ;
+
+    /** Код КСГ (для упрощения импорта) */
+    private String ksgCode;
 
 
 }

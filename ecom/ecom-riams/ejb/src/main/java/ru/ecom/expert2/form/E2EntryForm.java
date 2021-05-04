@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.E2Entry;
@@ -16,6 +17,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Запись в заполнении", nameProperties = {"id","lastname","historyNumber"}, view = "entityView-e2_entry.do")
 @Parent(property = "listEntry", parentForm = E2EntryListForm.class)
 @EntityFormSecurityPrefix("/Policy/E2")
+@Setter
 public class E2EntryForm extends IdEntityForm {
 
 //----------все поля ниже добавлены на jsp!!!
@@ -29,8 +31,6 @@ public class E2EntryForm extends IdEntityForm {
     private Long bedProfile;
     /** Комментарии эксперта */
     private String comment;
-    /** КДП */
-    private Long kdpVisit;
     /** Родовое отделение */
     private Boolean isChildBirthDepartment;
     /** Специальность врача по фонду */
@@ -241,30 +241,54 @@ public class E2EntryForm extends IdEntityForm {
     private String kinsmanRole;
     /** Фамилия пациента */
     private String lastname;
-    /** Имя пациента */
+    /**
+     * Имя пациента
+     */
     private String firstname;
-    /** Отчество пациента */
+    /**
+     * Отчество пациента
+     */
     private String middlename;
-    /** СНИЛС пациента */
+    /**
+     * СНИЛС пациента
+     */
     private String patientSnils;
-    /** Гражданство пациента */
+    /**
+     * Гражданство пациента
+     */
     private String nationality;
-    /** КЛАДР регистрации пациента (представителя) */
+    /**
+     * КЛАДР регистрации пациента (представителя)
+     */
     private String kladrRegistration;
-    /** КЛАДР проживания пациента (представителя) */
+    /**
+     * КЛАДР проживания пациента (представителя)
+     */
     private String kladrReal;
-    /** Адрес проживания пациента (представителя) */
-    private String dddressRegistration;
-    /** Адрес проживания пациента (представителя) */
+    /**
+     * Адрес проживания пациента (представителя)
+     */
+    private String addressRegistration;
+    /**
+     * Адрес проживания пациента (представителя)
+     */
     private String addressReal;
 
-    /** Тип паспорта (ДУЛ) */
+    /**
+     * Тип паспорта (ДУЛ)
+     */
     private String passportType;
-    /** Серия паспорта */
+    /**
+     * Серия паспорта
+     */
     private String passportSeries;
-    /** Номер паспорта */
+    /**
+     * Номер паспорта
+     */
     private String passportNumber;
-    /** Дата выдачи паспорта */
+    /**
+     * Дата выдачи паспорта
+     */
     private String passportDateIssued;
     /** Кем выдан паспорт */
     private String passportWhomIssued;
@@ -301,861 +325,588 @@ public class E2EntryForm extends IdEntityForm {
     @Comment("Вид медицинской помощи")
     @Persist
     public Long getMedHelpKind() {return medHelpKind;}
-    public void setMedHelpKind(Long aMedHelpKind) {
-        medHelpKind = aMedHelpKind;}
 
     @Comment("Условия оказания мед. помощи")
     @Persist
     public Long getMedHelpUsl() {return medHelpUsl;}
-    public void setMedHelpUsl(Long aMedHelpUsl) {
-        medHelpUsl = aMedHelpUsl;}
 
     @Comment("Базовый тариф")
     @Persist
     public String getBaseTarif() {return baseTarif;}
-    public void setBaseTarif(String aBaseTarif) {
-        baseTarif = aBaseTarif;}
 
     @Comment("Формула расчета цены")
     @Persist
     public String getCostFormulaString() {return costFormulaString;}
-    public void setCostFormulaString(String aCostFormulaString) {
-        costFormulaString = aCostFormulaString;}
 
     @Comment("Позиция группировщика, по которой высчитан КСГ")
     @Persist
     public Long getKsgPosition() {return ksgPosition;}
-    public void setKsgPosition(Long aKsgPosition) {
-        ksgPosition = aKsgPosition;}
 
     @Comment("Отделение не входит в ОМС")
     @Persist
     public Boolean getNoOmcDepartment() {return noOmcDepartment;}
-    public void setNoOmcDepartment(Boolean aNoOmcDepartment) {
-        noOmcDepartment = aNoOmcDepartment;}
 
     @Comment("Итоговый коэффициент")
     @Persist
     public String getTotalCoefficient() {return totalCoefficient;}
-    public void setTotalCoefficient(String aTotalCoefficient) {
-        totalCoefficient = aTotalCoefficient;}
 
     @Comment("Родительский случай")
     @Persist
     public Long getParentEntry() {return parentEntry;}
-    public void setParentEntry(Long aParentEntry) {
-        parentEntry = aParentEntry;}
 
     @Comment("ОКАТО регистрации")
     @Persist
     public String getOkatoReg() {return okatoReg;}
-    public void setOkatoReg(String aOkatoReg) {
-        okatoReg = aOkatoReg;}
 
     @Comment("КСГ")
     @Persist
     public Long getKsg() {return ksg;}
-    public void setKsg(Long  aKsg) {
-        ksg = aKsg;}
 
     @Comment("Список операций")
     @Persist
     public String getOperationList() {return operationList;}
-    public void setOperationList(String aOperationList) {
-        operationList = aOperationList;}
 
     @Comment("Список диагнозов по случаю")
     @Persist
     public String getDiagnosisList() {return diagnosisList;}
-    public void setDiagnosisList(String aDiagnosisList) {
-        diagnosisList = aDiagnosisList;}
 
     @Comment("Идентификатор пациента во внешней системе")
     @Persist
     public Long getExternalPatientId() {return externalPatientId;}
-    public void setExternalPatientId(Long aExternalPatientId) {
-        externalPatientId = aExternalPatientId;}
 
     @Comment("СНИЛС представителя")
     @Persist
     public String getKinsmanSnils() {return kinsmanSnils;}
-    public void setKinsmanSnils(String aKinsmanSnils) {
-        kinsmanSnils = aKinsmanSnils;}
 
     @Comment("Фамилия представителя")
     @Persist
     public String getKinsmanLastname() {return kinsmanLastname;}
-    public void setKinsmanLastname(String aKinsmanLastname) {
-        kinsmanLastname = aKinsmanLastname;}
 
     @Comment("Имя представитель")
     @Persist
     public String getKinsmanFirstname() {return kinsmanFirstname;}
-    public void setKinsmanFirstname(String aKinsmanFirstname) {
-        kinsmanFirstname = aKinsmanFirstname;}
 
     @Comment("Отчество представителя")
     @Persist
     public String getKinsmanMiddlename() {return kinsmanMiddlename;}
-    public void setKinsmanMiddlename(String aKinsmanMiddlename) {
-        kinsmanMiddlename = aKinsmanMiddlename;}
 
     @Comment("Дата рождения представителя")
     @Persist @DateString @DoDateString
     public String getKinsmanBirthDate() {return kinsmanBirthDate;}
-    public void setKinsmanBirthDate(String aKinsmanBirthDate) {
-        kinsmanBirthDate = aKinsmanBirthDate;}
 
     @Comment("Пол представителя")
     @Persist
     public String getKinsmanSex() {return kinsmanSex;}
-    public void setKinsmanSex(String aKinsmanSex) {
-        kinsmanSex = aKinsmanSex;}
 
     @Comment("Тип родственной связи")
     @Persist
     public String getKinsmanRole() {return kinsmanRole;}
-    public void setKinsmanRole(String aKinsmanRole) {
-        kinsmanRole = aKinsmanRole;}
 
     @Comment("Фамилия пациента")
     @Persist
     public String getLastname() {return lastname;}
-    public void setLastname(String aLastname) {
-        lastname = aLastname;}
 
     @Comment("Имя пациента")
     @Persist
     public String getFirstname() {return firstname;}
-    public void setFirstname(String aFirstname) {
-        firstname = aFirstname;}
 
     @Comment("Отчество пациента")
     @Persist
     public String getMiddlename() {return middlename;}
-    public void setMiddlename(String aMiddlename) {
-        middlename = aMiddlename;}
 
     @Comment("СНИЛС пациента")
     @Persist
     public String getPatientSnils() {return patientSnils;}
-    public void setPatientSnils(String aPatientSnils) {
-        patientSnils = aPatientSnils;}
 
     @Comment("Гражданство пациента")
     @Persist
     public String getNationality() {return nationality;}
-    public void setNationality(String aNationality) {
-        nationality = aNationality;}
 
     @Comment("КЛАДР регистрации пациента (представителя)")
     @Persist
-    public String getKladrRegistration() {return kladrRegistration;}
-    public void setKladrRegistration(String aKLADRRegistration) {
-        kladrRegistration = aKLADRRegistration;}
+    public String getKladrRegistration() {
+        return kladrRegistration;
+    }
 
     @Comment("КЛАДР проживания пациента (представителя)")
     @Persist
-    public String getKladrReal() {return kladrReal;}
-    public void setKladrReal(String aKLADRReal) {
-        kladrReal = aKLADRReal;}
+    public String getKladrReal() {
+        return kladrReal;
+    }
 
     @Comment("Адрес проживания пациента (представителя)")
     @Persist
-    public String getAddressRegistration() {return dddressRegistration;}
-    public void setAddressRegistration(String aAddressRegistration) {
-        dddressRegistration = aAddressRegistration;}
+    public String getAddressRegistration() {return addressRegistration;}
 
     @Comment("Адрес проживания пациента (представителя)")
     @Persist
     public String getAddressReal() {return addressReal;}
-    public void setAddressReal(String aAddressReal) {
-        addressReal = aAddressReal;}
 
     @Comment("Тип паспорта (ДУЛ)")
     @Persist
     public String getPassportType() {return passportType;}
-    public void setPassportType(String aPassportType) {
-        passportType = aPassportType;}
 
     @Comment("Серия паспорта")
     @Persist
     public String getPassportSeries() {return passportSeries;}
-    public void setPassportSeries(String aPassportSeries) {
-        passportSeries = aPassportSeries;}
 
     @Comment("Номер паспорта")
     @Persist
     public String getPassportNumber() {return passportNumber;}
-    public void setPassportNumber(String aPassportNumber) {
-        passportNumber = aPassportNumber;}
 
     @Comment("Дата выдачи паспорта")
     @Persist @DateString @DoDateString
     public String getPassportDateIssued() {return passportDateIssued;}
-    public void setPassportDateIssued(String aPassportDateIssued) {
-        passportDateIssued = aPassportDateIssued;}
 
     @Comment("Кем выдан паспорт")
     @Persist
     public String getPassportWhomIssued() {return passportWhomIssued;}
-    public void setPassportWhomIssued(String aPassportWhomIssued) {
-        passportWhomIssued = aPassportWhomIssued;}
 
     @Comment("Дата рождения пациента")
     @Persist @DateString @DoDateString
     public String getBirthDate() {return birthDate;}
-    public void setBirthDate(String aBirthDate) {
-        birthDate = aBirthDate;}
 
     @Comment("Пол пациента")
     @Persist
     public String getSex() {return sex;}
-    public void setSex(String aSex) {
-        sex = aSex;}
 
     @Comment("Социальный статус пациента")
     @Persist
     public String getSocialStatus() {return socialStatus;}
-    public void setSocialStatus(String aSocialStatus) {
-        socialStatus = aSocialStatus;}
 
     @Comment("Каким по счету родился ребенок")
     @Persist
     public Long getBirthOrder() {return birthOrder;}
-    public void setBirthOrder(Long aBirthOrder) {
-        birthOrder = aBirthOrder;}
 
     @Comment("Код ЛПУ")
     @Persist
     public String getLpuCode() {return lpuCode;}
-    public void setLpuCode(String aLpuCode) {
-        lpuCode = aLpuCode;}
 
     @Comment("ВМП - кол-во установленных стентов")
     @Persist
     public Long getVmpStantAmount() {return vmpStantAmount;}
-    public void setVmpStantAmount(Long aVMPStantAmount) {vmpStantAmount = aVMPStantAmount;}
 
     @Comment("Номер талона ВМП")
     @Persist
     public String getVmpTicketNumber() {return vmpTicketNumber;}
-    public void setVmpTicketNumber(String aVMPTicketNumber) {vmpTicketNumber = aVMPTicketNumber;}
 
     @Comment("Талон ВМП - дата выдачи талона")
     @Persist
     public String getVmpTicketDate() {return vmpTicketDate;}
-    public void setVmpTicketDate(String aVMPTicketDate) {
-        vmpTicketDate = aVMPTicketDate;}
 
     @Comment("Талон ВМП - дата плановой госпитализации")
     @Persist @DateString @DoDateString
     public String getVmpPlanHospDate() {return vmpPlanHospDate;}
-    public void setVmpPlanHospDate(String aVMPPlanHospDate) {
-        vmpPlanHospDate = aVMPPlanHospDate;}
 
     @Comment("Вид ВМП")
     @Persist
     public String getVmpKind() {return vmpKind;}
-    public void setVmpKind(String aVMPKind) {
-        vmpKind = aVMPKind;}
 
     @Comment("Метод ВМП")
     @Persist
     public String getVmpMethod() {return vmpMethod;}
-    public void setVmpMethod(String aVMPMethod) {
-        vmpMethod = aVMPMethod;}
 
     @Comment("Поток обслуживания")
     @Persist
     public String getServiceStream() {return serviceStream;}
-    public void setServiceStream(String aServiceStream) {
-        serviceStream = aServiceStream;}
 
     @Comment("Были сообщения в полицию")
     @Persist
     public Boolean getIsCriminalMessage() {return isCriminalMessage;}
-    public void setIsCriminalMessage(Boolean aIsCriminalMessage) {
-        isCriminalMessage = aIsCriminalMessage;}
 
     @Comment("Находился по уходу за родственников")
     @Persist
     public Boolean getHotelServices() {return hotelServices;}
-    public void setHotelServices(Boolean aHotelServices) {
-        hotelServices = aHotelServices;}
 
     @Comment("Тип стационара") //Дневной, круглосуточный
     @Persist
     public String getStacType() {return stacType;}
-    public void setStacType(String aStacType) {
-        stacType = aStacType;}
 
     @Comment("ЛПУ прикрепления")
     @Persist
     public String getAttachedLpu() {return attachedLpu;}
-    public void setAttachedLpu(String aAttachedLpu) {
-        attachedLpu = aAttachedLpu;}
 
     @Comment("Профиль помощи")
     @Persist
     public String getHelpKind() {return helpKind;}
-    public void setHelpKind(String aHelpKind) {
-        helpKind = aHelpKind;}
 
     @Comment("Идентификатор случая во внешней системе")
     @Persist
     public Long getExternalId() {return externalId;}
-    public void setExternalId(Long aExternalId) {
-        externalId = aExternalId;}
 
     @Comment("Идентификатор пред. случая во внешней системе")
     @Persist
     public Long getExternalPrevMedcaseId() {return externalPrevMedcaseId;}
-    public void setExternalPrevMedcaseId(Long aExternalPrevMedcaseId) {
-        externalPrevMedcaseId = aExternalPrevMedcaseId;}
 
     @Comment("Идентификатор госпитализации во внешней системе")
     @Persist
     public Long getExternalParentId() {return externalParentId;}
-    public void setExternalParentId(Long aExternalParentId) {
-        externalParentId = aExternalParentId;}
 
     @Comment("Вид полиса OMC")
     @Persist
     public String getMedPolicyType() {return medPolicyType;}
-    public void setMedPolicyType(String aMedPolicyType) {
-        medPolicyType = aMedPolicyType;}
 
     @Comment("Заполнение")
     @Persist
     public Long getListEntry() {return listEntry;}
-    public void setListEntry(Long aListEntry) {
-        listEntry = aListEntry;}
 
     @Comment("Дата начала случая")
     @Persist @DateString @DoDateString
     public String getStartDate() {return startDate;}
-    public void setStartDate(String aStartDate) {
-        startDate = aStartDate;}
 
     @Comment("Время начала случая")
     @Persist @TimeString @DoTimeString
     public String getStartTime() {return startTime;}
-    public void setStartTime(String aStartTime) {
-        startTime = aStartTime;}
 
     @Comment("Дата окончания случая")
     @Persist @DateString @DoDateString
     public String getFinishDate() {return finishDate;}
-    public void setFinishDate(String aFinishDate) {
-        finishDate = aFinishDate;}
 
     @Comment("Время окончания случая")
     @Persist @TimeString @DoTimeString
     public String getFinishTime() {return finishTime;}
-    public void setFinishTime(String aFinishTime) {
-        finishTime = aFinishTime;}
 
     @Comment("Количество койкодней")
     @Persist
     public Long getBedDays() {return bedDays;}
-    public void setBedDays(Long aBedDays) {
-        bedDays = aBedDays;}
 
     @Comment("Номер истории болезни")
     @Persist
     public String getHistoryNumber() {return historyNumber;}
-    public void setHistoryNumber(String aHistoryNumber) {
-        historyNumber = aHistoryNumber;}
 
     @Comment("Название отделения")
     @Persist
     public String getDepartmentName() {return departmentName;}
-    public void setDepartmentName(String aDepartmentName) {
-        departmentName = aDepartmentName;}
 
     @Comment("Тип отделения")
     @Persist
     public String getDepartmentType() {return departmentType;}
-    public void setDepartmentType(String aDepartmentType) {
-        departmentType = aDepartmentType;}
 
     @Comment("Код отделения")
     @Persist
     public String getDepartmentCode() {return departmentCode;}
-    public void setDepartmentCode(String aDepartmentCode) {
-        departmentCode = aDepartmentCode;}
 
     @Comment("Код отделения длинный")
     @Persist
     public String getDepartmentAddressCode() {return departmentAddressCode;}
-    public void setDepartmentAddressCode(String aDepartmentAddressCode) {
-        departmentAddressCode = aDepartmentAddressCode;}
 
     @Comment("ФИО врача")
     @Persist
     public String getDoctorName() {return doctorName;}
-    public void setDoctorName(String aDoctorName) {
-        doctorName = aDoctorName;}
 
     @Comment("Должность врача")
     @Persist
     public String getDoctorWorkfunction() {return doctorWorkfunction;}
-    public void setDoctorWorkfunction(String aDoctorWorkfunction) {
-        doctorWorkfunction = aDoctorWorkfunction;}
 
     @Comment("СНИЛС врача")
     @Persist
     public String getDoctorSnils() {return doctorSnils;}
-    public void setDoctorSnils(String aDoctorSnils) {
-        doctorSnils = aDoctorSnils;}
 
     @Comment("Экстренность")
     @Persist
     public Boolean getIsEmergency() {return isEmergency;}
-    public void setIsEmergency(Boolean aIsEmergency) {
-        isEmergency = aIsEmergency;}
 
     @Comment("Направившее ЛПУ")
     @Persist
     public String getDirectLpu() {return directLpu;}
-    public void setDirectLpu(String aDirectLpu) {
-        directLpu = aDirectLpu;}
 
     @Comment("Вес новорожденного")
     @Persist
     public Long getNewbornWeight() {return newbornWeight;}
-    public void setNewbornWeight(Long aNewbornWeight) {
-        newbornWeight = aNewbornWeight;}
 
     @Comment("Тип направившего ЛПУ")
     @Persist
     public String getDirectLpuType() {return directLpuType;}
-    public void setDirectLpuType(String aDirectLpuType) {
-        directLpuType = aDirectLpuType;}
 
     @Comment("Номер направление ФОМС")
     @Persist
     public String getTicket263Number() {return ticket263Number;}
-    public void setTicket263Number(String aTicket263Number) {
-        ticket263Number = aTicket263Number;}
 
     @Comment("Результат госпитализации")
     @Persist
     public String getResult() {return result;}
-    public void setResult(String aResult) {
-        result = aResult;}
 
     @Comment("Тип коек") //Круглосуточные, дневные
     @Persist
     public String getBedSubType() {return bedSubType;}
-    public void setBedSubType(String aBedSubType) {
-        bedSubType = aBedSubType;}
 
     @Comment("Дата начала госпитализации")
     @Persist @DateString @DoDateString
     public String getHospitalStartDate() {return hospitalStartDate;}
-    public void setHospitalStartDate(String aHospitalStartDate) {
-        hospitalStartDate = aHospitalStartDate;}
 
     @Comment("Дата окончания госпитализации")
     @Persist @DateString @DoDateString
     public String getHospitalFinishDate() {return hospitalFinishDate;}
-    public void setHospitalFinishDate(String aHospitalFinishDate) {
-        hospitalFinishDate = aHospitalFinishDate;}
 
     @Comment("Услуги")
     @Persist
     public String getServices() {return services;}
-    public void setServices(String aServices) {
-        services = aServices;}
 
     @Comment("Цена случая")
     @Persist
     public String getCost() {return cost;}
-    public void setCost(String aCost) {
-        cost = aCost;}
 
     @Comment("Ручное редактирование цены")
     @Persist
     public Boolean getIsManualKsg() {return isManualKsg;}
-    public void setIsManualKsg(Boolean aIsManualKsg) {
-        isManualKsg = aIsManualKsg;}
 
     @Comment("ИД отделения СЛО")
     @Persist
     public Long getDepartmentId() {return departmentId;}
-    public void setDepartmentId(Long aDepartmentId) {
-        departmentId = aDepartmentId;}
 
     @Comment("Серия полиса")
     @Persist
     public String getMedPolicySeries() {return medPolicySeries;}
-    public void setMedPolicySeries(String aMedPolicySeries) {
-        medPolicySeries = aMedPolicySeries;}
 
     @Comment("Номер полиса")
     @Persist
     public String getMedPolicyNumber() {return medPolicyNumber;}
-    public void setMedPolicyNumber(String aMedPolicyNumber) {
-        medPolicyNumber = aMedPolicyNumber;}
 
     @Comment("Страх. компания (федеральный код)")
     @Persist
     public String getInsuranceCompanyCode() {return insuranceCompanyCode;}
-    public void setInsuranceCompanyCode(String aInsuranceCompanyCode) {
-        insuranceCompanyCode = aInsuranceCompanyCode;}
 
     @Persist
     @Comment("Результат оказания медицинской помощи")
     public Long getFondResult() {return fondResult;}
-    public void setFondResult(Long theFondResult) {this.fondResult = theFondResult;}
 
     @Persist
     @Comment("Исход случая")
     public Long getFondIshod() {return fondIshod;}
-    public void setFondIshod(Long theFondIshod) {this.fondIshod = theFondIshod;}
 
     @Persist
     @Comment("Многоплодная беременность")
     public Boolean getMultiplyBirth() {return multiplyBirth;}
-    public void setMultiplyBirth(Boolean theMultiplyBirth) {this.multiplyBirth = theMultiplyBirth;}
 
     @Persist
     @Comment("Тип записи")
     public String getEntryType() {return entryType;}
-    public void setEntryType(String theEntryType) {this.entryType = theEntryType;}
 
     @Persist
     @Comment("Тип файла") //P, Z, DF, раки
     public String getFileType() {return fileType;}
-    public void setFileType(String aFileType) {
-        fileType = aFileType;}
 
     /** Реабилитационная койка */
     @Comment("Реабилитационная койка")
     @Persist
     public Boolean getIsRehabBed() {return isRehabBed;}
-    public void setIsRehabBed(Boolean aIsRehabBed) {
-        isRehabBed = aIsRehabBed;}
 
     @Persist
     @Comment("Способ оплаты медицинской помощи")
     public Long getIdsp() {return idsp;}
-    public void setIdsp(Long theIDSP) {this.idsp = theIDSP;}
 
     @Persist
     @Comment("Причины неполной оплаты")
     public String getNotFullPaymentReason() {return notFullPaymentReason;}
-    public void setNotFullPaymentReason(String theNotFullPaymentReason) {this.notFullPaymentReason = theNotFullPaymentReason;}
 
     @Comment("Номер счета")
     @Persist
     public String getBillNumber() {return billNumber;}
-    public void setBillNumber(String aBillNumber) {
-        billNumber = aBillNumber;}
 
     @Comment("Дата счета")
     @Persist @DateString @DoDateString
     public String getBillDate() {return billDate;}
-    public void setBillDate(String aBillDate) {
-        billDate = aBillDate;}
 
     @Comment("Не подавать на оплату")
     @Persist
     public Boolean getDoNotSend() {return doNotSend;}
-    public void setDoNotSend(Boolean aDoNotSend) {
-        doNotSend = aDoNotSend;}
 
     @Comment("Основная услуга случая")
     @Persist
     public String getMainService() {return mainService;}
-    public void setMainService(String aMainService) {
-        mainService = aMainService;}
 
     @Comment("Основной МКБ случая")
     @Persist
     public String getMainMkb() {return mainMkb;}
-    public void setMainMkb(String aMainMkb) {
-        mainMkb = aMainMkb;}
 
     @Comment("Профиль оказания мед. помощи")
     @Persist
     public Long getMedHelpProfile() {return medHelpProfile;}
-    public void setMedHelpProfile(Long aMedHelpProfile) {
-        medHelpProfile = aMedHelpProfile;}
 
     @Comment("Случай реанимации")
     @Persist
     public Long getReanimationEntry() {return reanimationEntry;}
-    public void setReanimationEntry(Long aReanimationEntry) {
-        reanimationEntry = aReanimationEntry;}
 
     @Comment("Количество рожденных детей")
     @Persist
     public Long getNewbornAmount() {return newbornAmount;}
-    public void setNewbornAmount(Long aNewbornAmount) {
-        newbornAmount = aNewbornAmount;}
 
     @Comment("Признак исправленной записи")
     @Persist
     public Boolean getPrnov() {return prnov;}
-    public void setPrnov(Boolean aPrnov) {
-        prnov = aPrnov;}
 
     @Comment("Единый номер пациента (представителя)")
     @Persist
     public String getCommonNumber() {return commonNumber;}
-    public void setCommonNumber(String aCommonNumber) {
-        commonNumber = aCommonNumber;}
 
     @Comment("Название страх. компании")
     @Persist
     public String getInsuranceCompanyName() {return insuranceCompanyName;}
-    public void setInsuranceCompanyName(String aInsuranceCompanyName) {
-        insuranceCompanyName = aInsuranceCompanyName;}
 
     @Comment("ОГРН страховой компании")
     @Persist
     public String getInsuranceCompanyOgrn() {return insuranceCompanyOgrn;}
-    public void setInsuranceCompanyOgrn(String aInsuranceCompanyOgrn) {
-        insuranceCompanyOgrn = aInsuranceCompanyOgrn;}
 
     @Comment("Регион нахождения страховой компании")
     @Persist
     public String getInsuranceCompanyTerritory() {return insuranceCompanyTerritory;}
-    public void setInsuranceCompanyTerritory(String aInsuranceCompanyTerritory) {
-        insuranceCompanyTerritory = aInsuranceCompanyTerritory;}
 
     @Comment("Удаленная запись")
     @Persist
     public Boolean getIsDeleted() {return isDeleted;}
-    public void setIsDeleted(Boolean aIsDeleted) {
-        isDeleted = aIsDeleted;}
 
     @Comment("Случай объединен")
     @Persist
     public Boolean getIsUnion() {return isUnion;}
-    public void setIsUnion(Boolean aIsUnion) {
-        isUnion = aIsUnion;}
 
     @Comment("Расчет случая ФОМС")
     @Persist
     public String getFondComment() {return fondComment;}
-    public void setFondComment(String aFondComment) {
-        fondComment = aFondComment;}
 
     @Comment("Признак дефекта")
     @Persist
     public Boolean getIsDefect() {return isDefect;}
-    public void setIsDefect(Boolean aIsDefect) {
-        isDefect = aIsDefect;}
 
     @Comment("Место приема пациента")
     @Persist
     public String getWorkPlace() {return workPlace;}
-    public void setWorkPlace(String aWorkPlace) {
-        workPlace = aWorkPlace;}
 
     @Comment("Доп. критерий КСГ")
     @Persist
     public String getDopKritKSG() {return dopKritKSG;}
-    public void setDopKritKSG(String aDopKritKSG) {
-        dopKritKSG = aDopKritKSG;}
 
     @Comment("Был произведен аборт по медицинским показаниям")
     @Persist
     public Boolean getMedicalAbort() {return medicalAbort;}
-    public void setMedicalAbort(Boolean aMedicalAbort) {
-        medicalAbort = aMedicalAbort;}
 
     @Comment("Признак мобильной поликлиники")
     @Persist
     public Boolean getIsMobilePolyclinic() {return isMobilePolyclinic;}
-    public void setIsMobilePolyclinic(Boolean aIsMobilePolyclinic) {
-        isMobilePolyclinic = aIsMobilePolyclinic;}
 
     @Comment("Подтип записи")
     @Persist
     public Long getSubType() {return subType;}
-    public void setSubType(Long aSubType) {
-        subType = aSubType;}
 
     /** Количество календарных дней */
     @Comment("Количество календарных дней")
     @Persist
     public Long getCalendarDays() {return calendarDays;}
-    public void setCalendarDays(Long aCalendarDays) {
-        calendarDays = aCalendarDays;}
 
     @Comment("Консультативно-диагностическое обращение")
     @Persist
     public Boolean getIsDiagnosticSpo() {return isDiagnosticSpo;}
-    public void setIsDiagnosticSpo(Boolean aIsDiagnosticSpo) {
-        isDiagnosticSpo = aIsDiagnosticSpo;}
     @Comment("Счет")
     @Persist
     public Long getBill() {return bill;}
-    public void setBill(Long aBill) {
-        bill = aBill;}
 
     @Comment("Признак детского возраст")
     @Persist
     public Boolean getIsChild() {return isChild;}
-    public void setIsChild(Boolean aIsChild) {
-        isChild = aIsChild;}
 
     @Comment("Тип доп. диспансеризации")
     @Persist
     public String getExtDispType() {return extDispType;}
-    public void setExtDispType(String aExtDispType) {
-        extDispType = aExtDispType;}
 
     @Comment("Возраст доп. диспансеризации")
     @Persist
     public String getExtDispAge() {return extDispAge;}
-    public void setExtDispAge(String aExtDispAge) {
-        extDispAge = aExtDispAge;}
 
     @Comment("Группа здоровья доп. диспансеризации")
     @Persist
     public String getExtDispHealthGroup() {return extDispHealthGroup;}
-    public void setExtDispHealthGroup(String aExtDispHealthGroup) {
-        extDispHealthGroup = aExtDispHealthGroup;}
 
     @Comment("Социальная группа доп. диспансеризации")
     @Persist
     public String getExtDispSocialGroup() {return extDispSocialGroup;}
-    public void setExtDispSocialGroup(String aExtDispSocialGroup) {
-        extDispSocialGroup = aExtDispSocialGroup;}
 
     @Comment("Назначения доп. диспансеризации")
     @Persist
     public String getExtDispAppointments() {return extDispAppointments;}
-    public void setExtDispAppointments(String aExtDispAppointments) {
-        extDispAppointments = aExtDispAppointments;}
 
     @Comment("Направлен на след. этап ДД")
     @Persist
     public Boolean getExtDispNextStage() {return extDispNextStage;}
-    public void setExtDispNextStage(Boolean aExtDispNextStage) {
-        extDispNextStage = aExtDispNextStage;}
 
     @Comment("Иногородний ")
     @Persist
     public Boolean getIsForeign() {return isForeign;}
-    public void setIsForeign(Boolean aIsForeign) {
-        isForeign = aIsForeign;}
 
     @Comment("Дата направление на лечение")
     @Persist @DateString @DoDateString
     public String getDirectDate() {return directDate;}
-    public void setDirectDate(String aDirectDate) {
-        directDate = aDirectDate;}
 
     @Comment("Вид случая (справочник VID_SLUCH)")
     @Persist
     public Long getVidSluch() {return vidSluch;}
-    public void setVidSluch(Long aVidSluch) {
-        vidSluch = aVidSluch;}
 
     @Comment("Дата планируемой госпитализации")
     @Persist
     @DateString @DoDateString
     public String getPlanHospDate() {return planHospDate;}
-    public void setPlanHospDate(String  aPlanHospDate) {
-        planHospDate = aPlanHospDate;}
 
     @Comment("Цель посещения")
     @Persist
     public Long getVisitPurpose() {return visitPurpose;}
-    public void setVisitPurpose(Long aVisitPurpose) {
-        visitPurpose = aVisitPurpose;}
 
     @Comment("Онкологический случай")
     @Persist
     public Boolean getIsCancer() {return isCancer;}
-    public void setIsCancer(Boolean aIsCancer) {
-        isCancer = aIsCancer;}
 
 
     @Comment("Специальность врача по фонду V021")
     @Persist
     public Long getFondDoctorSpecV021() {return fondDoctorSpecV021;}
-    public void setFondDoctorSpecV021(Long aFondDoctorSpecV021) {
-        fondDoctorSpecV021 = aFondDoctorSpecV021;}
 
     @Comment("Родовое отделение")
     @Persist
     public Boolean getIsChildBirthDepartment() {return isChildBirthDepartment !=null && isChildBirthDepartment ;}
-    public void setIsChildBirthDepartment(Boolean aIsChildBirthDepartment) {
-        isChildBirthDepartment = aIsChildBirthDepartment;}
-
-    @Comment("КДП")
-    @Persist
-    public Long getKdpVisit() {return kdpVisit;}
-    public void setKdpVisit(Long aKdpVisit) {
-        kdpVisit = aKdpVisit;}
 
     @Comment("Комментарии эксперта")
     @Persist
     public String getComment() {return comment;}
-    public void setComment(String aComment) {
-        comment = aComment;}
 
     @Comment("Профиль койки")
     @Persist
     public Long getBedProfile() {return bedProfile;}
-    public void setBedProfile(Long aBedProfile) {
-        bedProfile = aBedProfile;}
 
     @Comment("Рост пациента")
     @Persist
     public Integer getHeight() {return height;}
-    public void setHeight(Integer aHeight) {
-        height = aHeight;}
 
     @Comment("Вес пациента")
     @Persist
     public Integer getWeigth() {return weigth;}
-    public void setWeigth(Integer aWeigth) {
-        weigth = aWeigth;}
 
     /** Список выполненных назначений*/
     @Comment(" выполненных назначений")
     @Persist
-    public String getPrescriptionList() {return thePrescriptionList;}
-    public void setPrescriptionList(String aPrescriptionList) {thePrescriptionList = aPrescriptionList;}
+    public String getPrescriptionList() {return prescriptionList;}
     /** Список  выполненных назначений */
-    private String thePrescriptionList ;
+    private String prescriptionList ;
 
     //Ниже идут Нехранимые поля!!!
 
     /** Добавить услугу к случаю */
     @Comment("Добавить услугу к случаю")
-    public Long getNewMedService() {return theNewMedService;}
-    public void setNewMedService(Long aNewMedService) {theNewMedService = aNewMedService;}
-    private Long theNewMedService ;
+    public Long getNewMedService() {return newMedService;}
+    private Long newMedService ;
 
     /** Особенность случая */
     @Comment("Особенность случая")
-    public Long getNewFactor() {return theNewFactor;}
-    public void setNewFactor(Long aNewFactor) {theNewFactor = aNewFactor;}
-    private Long theNewFactor ;
+    public Long getNewFactor() {return newFactor;}
+    private Long newFactor ;
 
     /** Место рождения */
     @Comment("Место рождения")
     @Persist
-    public String getBirthPlace() {return theBirthPlace;}
-    public void setBirthPlace(String aBirthPlace) {theBirthPlace = aBirthPlace;}
-    private String theBirthPlace ;
+    public String getBirthPlace() {return birthPlace;}
+    private String birthPlace ;
 
     /** Результат диспансеризации */
     @Comment("Результат диспансеризации")
     @Persist
-    public Long getDispResult() {return theDispResult;}
-    public void setDispResult(Long aDispResult) {theDispResult = aDispResult;}
+    public Long getDispResult() {return dispResult;}
     /** результат диспансеризации */
-    private Long theDispResult ;
+    private Long dispResult ;
 
 }

@@ -10,15 +10,15 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 public class ImportSyncKeyList {
-    List<ImportSyncKey> theKeys;
+    List<ImportSyncKey> keys;
 
-    ImportSyncKeyList(ImportEntity entity, EntityManager theManager)  {
-        theKeys = entity.getKeyQueries(theManager);
+    ImportSyncKeyList(ImportEntity entity, EntityManager manager)  {
+        keys = entity.getKeyQueries(manager);
     }
 
     @Deprecated
     ImportSyncKeyList(String entityName, String aProperties, String aSelects, EntityManager aManager)  {
-        theKeys = new ArrayList<ImportSyncKey>();
+        keys = new ArrayList<ImportSyncKey>();
         String[] properties = aProperties.split(";");
         String[] selects = aSelects.split(";");
 
@@ -26,13 +26,13 @@ public class ImportSyncKeyList {
             ImportSyncKey importSyncKey = new ImportSyncKey();
             importSyncKey.setProperty(properties[i]);
             importSyncKey.setSelect(selects[i]);
-            theKeys.add(importSyncKey);
+            keys.add(importSyncKey);
         }
     }
 
     public String findId(Object anElement) {
-        for (int j = 0; j < theKeys.size(); j++) {
-            ImportSyncKey importSyncKey = theKeys.get(j);
+        for (int j = 0; j < keys.size(); j++) {
+            ImportSyncKey importSyncKey = keys.get(j);
             String id = importSyncKey.findIdObject(anElement);
             if (id != null) return id;
         }

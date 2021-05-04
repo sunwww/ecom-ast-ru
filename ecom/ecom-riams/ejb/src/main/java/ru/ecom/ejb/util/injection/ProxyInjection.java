@@ -39,19 +39,19 @@ public class ProxyInjection {
 
     private static class ProxyInvocationHandler implements InvocationHandler {
         public ProxyInvocationHandler(Object aService) {
-            theService = aService;
+            service = aService;
         }
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            Method m = theMethodsHash.get(method) ;
+            Method m = methodsHash.get(method) ;
             if(m==null) {
-                m = theService.getClass().getMethod(method.getName(), method.getParameterTypes()) ;
-                theMethodsHash.put(method, m) ;
+                m = service.getClass().getMethod(method.getName(), method.getParameterTypes()) ;
+                methodsHash.put(method, m) ;
             }
-            return m.invoke(theService, args);
+            return m.invoke(service, args);
         }
 
-        private final HashMap<Method, Method> theMethodsHash = new HashMap<>();
-        private final Object theService ;
+        private final HashMap<Method, Method> methodsHash = new HashMap<>();
+        private final Object service ;
     }
 }

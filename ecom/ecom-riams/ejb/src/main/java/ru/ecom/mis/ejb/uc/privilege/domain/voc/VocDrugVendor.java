@@ -3,6 +3,8 @@ package ru.ecom.mis.ejb.uc.privilege.domain.voc;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -14,12 +16,9 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Справочник производителей лекарственных средств")
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VocDrugVendor extends VocBaseEntity{
 	/** Страна */
-	@Comment("Страна")
-	public String getCountry() {return theCountry;}
-	public void setCountry(String aCountry) {theCountry = aCountry;}
-
-	/** Страна */
-	private String theCountry;
+	private String country;
 }

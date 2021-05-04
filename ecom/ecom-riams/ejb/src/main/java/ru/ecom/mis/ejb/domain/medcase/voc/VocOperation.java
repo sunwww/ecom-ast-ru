@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -17,43 +19,24 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Справочник операций")
 @Table(schema="SQLUser")
 @AIndexes
-({@AIndex(unique = false, properties = {"codeF"})})
+({@AIndex(properties = {"codeF"})})
+@Getter
+@Setter
 public class VocOperation extends VocBaseEntity{
-	/** Дата начала актуальности */
-	@Comment("Дата начала актуальности")
-	public Date getStartActualDate() {return theStartActualDate;}
-	public void setStartActualDate(Date aStartActualDate) {theStartActualDate = aStartActualDate;}
-
-	/** Дата окончания актуальности */
-	@Comment("Дата окончания актуальности")
-	public Date getFinishActualDate() {return theFinishActualDate;}
-	public void setFinishActualDate(Date aFinishActualDate) {theFinishActualDate = aFinishActualDate;}
-
-	/** Уровонь сложности */
-	@Comment("Уровонь сложности")
-	public Long getComplexity() {return theComplexity;}
-	public void setComplexity(Long aComplexity) {theComplexity = aComplexity;}
-
-	/** Код федеральный */
-	@Comment("Код федеральный")
-	public String getCodeF() {return theCodeF;}
-	public void setCodeF(String aCodeF) {theCodeF = aCodeF;}
 
 	/** Отделения */
 	@Comment("Отделения")
 	@ManyToMany
-	public List<MisLpu> getDepartments() {return theDepartments;}
-	public void setDepartments(List<MisLpu> aDepartments) {theDepartments = aDepartments;}
-
+	public List<MisLpu> getDepartments() {return departments;}
 	/** Отделения */
-	private List<MisLpu> theDepartments;
+	private List<MisLpu> departments;
 	/** Код федеральный */
-	private String theCodeF;
+	private String codeF;
 	/** Уровонь сложности */
-	private Long theComplexity;
+	private Long complexity;
 	/** Дата окончания актуальности */
-	private Date theFinishActualDate;
+	private Date finishActualDate;
 	/** Дата начала актуальности */
-	private Date theStartActualDate;
+	private Date startActualDate;
 
 }

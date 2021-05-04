@@ -1,5 +1,7 @@
 package ru.ecom.poly.ejb.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -23,53 +25,31 @@ import java.sql.Date;
 })
 @EntityListeners(DeleteListener.class)
 @Table(schema="SQLUser")
+@Setter
+@Getter
 public class Medcard extends BaseEntity {
-    /**
-     * Номер карты *
-     */
-    public String getNumber() {return theNumber;}
-    public void setNumber(String aNumber) {theNumber = aNumber;}
-
-
-    /**
-     * Дата заведения карты *
-     */
-    public Date getDateRegistration() {return theDateRegistration;}
-    public void setDateRegistration(Date aDateRegistration) {theDateRegistration = aDateRegistration;    }
 
     /**
      * Регистратор *
      */
-    public String getRegistrator() {return theRegistrator;}
-    public void setRegistrator(String aRegistrator) {theRegistrator = aRegistrator;}
-
-    /**
-     * Регистратор *
-     */
-    private String theRegistrator;
-
-
-
+    private String registrator;
 
     /** return Пациент */
     @OneToOne
-    public Patient getPerson() {return thePerson;}
-    public void setPerson(Patient aPerson) {thePerson = aPerson;}
+    public Patient getPerson() {return person;}
 
     /** ЛПУ */
 	@Comment("ЛПУ")
 	@OneToOne
-	public MisLpu getLpu() {return theLpu;}
-	public void setLpu(MisLpu aLpu) {theLpu = aLpu;}
-
+	public MisLpu getLpu() {return lpu;}
 
 	/** ЛПУ */
-	private MisLpu theLpu;
+	private MisLpu lpu;
     /** Пациент */
-    private Patient thePerson;
+    private Patient person;
     /** Номер карты */
-    private String theNumber;
+    private String number;
     /** Дата заведения карты */
-    private Date theDateRegistration;
+    private Date dateRegistration;
 
 }

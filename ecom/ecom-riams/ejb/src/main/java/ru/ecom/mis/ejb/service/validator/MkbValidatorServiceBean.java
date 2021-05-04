@@ -20,7 +20,7 @@ public class MkbValidatorServiceBean  implements IMkbValidatorService{
 			.append(" where id='")
 			.append(aId)
 			.append("'") ;
-		String mkb = (String) theManager.createNativeQuery(sql.toString()).getSingleResult() ;
+		String mkb = (String) manager.createNativeQuery(sql.toString()).getSingleResult() ;
 		sql = new StringBuilder() ;
 	//	if (mkb.startsWith("F")) {
 			if (mkb.startsWith("F06") ||mkb.startsWith("F02")||mkb.startsWith("F10") || mkb.startsWith("F3")) {
@@ -39,12 +39,12 @@ public class MkbValidatorServiceBean  implements IMkbValidatorService{
 			.append(aField)
 			.append(" like '").append(mkb).append(".%' and (noActuality is null or noActuality='0') ");
 		}
-		Object cntUtoch = theManager.createNativeQuery(sql.toString()).getSingleResult() ;
+		Object cntUtoch = manager.createNativeQuery(sql.toString()).getSingleResult() ;
 		return cntUtoch==null || ConvertSql.parseLong(cntUtoch).intValue()==0;
 
 	}
-//	@EJB ILocalEntityFormService theEntityFormService ;
-    @PersistenceContext EntityManager theManager ;
- //   @Resource SessionContext theContext ;
+//	@EJB ILocalEntityFormService entityFormService ;
+    @PersistenceContext EntityManager manager ;
+ //   @Resource SessionContext context ;
 
 }

@@ -5,6 +5,8 @@ import javax.persistence.EntityListeners;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.directory.voc.VocBuilding;
@@ -18,27 +20,26 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 @EntityListeners(DeleteListener.class)
+@Getter
+@Setter
 public class Department extends BaseEntity{
     
     
     /** Отделение */
     @Comment("Отделение")
     @OneToOne
-    public MisLpu getDepartment() {return theDepartment;}
-    public void setDepartment(MisLpu aDepartment) {theDepartment = aDepartment;}
-    private MisLpu theDepartment;
+    public MisLpu getDepartment() {return department;}
+    private MisLpu department;
     
     /** Корпус */
     @Comment("Корпус")
     @OneToOne
-    public VocBuilding getBuilding() {return theBuilding;}
-    public void setBuilding(VocBuilding aBuilding) {theBuilding = aBuilding;}
-    private VocBuilding theBuilding;
+    public VocBuilding getBuilding() {return building;}
+    private VocBuilding building;
     
     /** Этаж */
     @Comment("Этаж")
     @OneToOne
-    public VocBuildingLevel getBuildingLevel() {return theBuildingLevel;}
-    public void setBuildingLevel(VocBuildingLevel aBuildingLevel) {theBuildingLevel = aBuildingLevel;}
-    private VocBuildingLevel theBuildingLevel;
+    public VocBuildingLevel getBuildingLevel() {return buildingLevel;}
+    private VocBuildingLevel buildingLevel;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -31,384 +32,334 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(NewBornPreCreateInterceptor.class)
 )
+@Setter
 public class NewBornForm extends IdEntityForm{
 	
 	/** Умер до начала родовой деятельности */
 	@Comment("Умер до начала родовой деятельности")
 	@Persist
-	public Boolean getDeadBeforeLabors() {return theDeadBeforeLabors;}
-	public void setDeadBeforeLabors(Boolean aDeadBeforeLabors) {theDeadBeforeLabors = aDeadBeforeLabors;}
+	public Boolean getDeadBeforeLabors() {return deadBeforeLabors;}
 	/** Умер до начала родовой деятельности */
-	private Boolean theDeadBeforeLabors;
+	private Boolean deadBeforeLabors;
 	
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist 
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
-	
+	public Long getPatient() {return patient;}
+
 	/** Кто принимал ребенка */
 	@Comment("Кто принимал ребенка")
 	@Persist
-	public Long getChildDeliverer() {return theChildDeliverer;}
-	public void setChildDeliverer(Long aChildDeliverer) {theChildDeliverer = aChildDeliverer;}
-	
+	public Long getChildDeliverer() {return childDeliverer;}
+
 	/** Дата рождения */
 	@Comment("Дата рождения")
 	@Persist @DateString @DoDateString @Required
-	public String getBirthDate() {return theBirthDate;}
-	public void setBirthDate(String aBirthDate) {theBirthDate = aBirthDate;}
-	
+	public String getBirthDate() {return birthDate;}
+
 	/** Время рождения */
 	@Comment("Время рождения")
 	@Persist @TimeString @DoTimeString @Required
-	public String getBirthTime() {return theBirthTime;}
-	public void setBirthTime(String aBirthTime) {theBirthTime = aBirthTime;}
-	
+	public String getBirthTime() {return birthTime;}
+
 	/** Пол */
 	@Comment("Пол")
 	@Persist @Required
-	public Long getSex() {return theSex;}
-	public void setSex(Long aSex) {theSex = aSex;}
-	
+	public Long getSex() {return sex;}
+
 	/** Вес при рождении */
 	@Comment("Вес при рождении")
 	@Persist @Required
-	public String getBirthWeight() {return theBirthWeight;}
-	public void setBirthWeight(String aBirthWeight) {theBirthWeight = aBirthWeight;}
-	
+	public String getBirthWeight() {return birthWeight;}
+
 	/** Рост при рождении */
 	@Comment("Рост при рождении")
 	@Persist @Required
-	public String getBirthHeight() {return theBirthHeight;}
-	public void setBirthHeight(String aBirthHeight) {theBirthHeight = aBirthHeight;}
-	
+	public String getBirthHeight() {return birthHeight;}
+
 	/** Окружность головы */
 	@Comment("Окружность головы")
 	@Persist @Required
-	public String getHeadCircle() {return theHeadCircle;}
-	public void setHeadCircle(String aHeadCircle) {theHeadCircle = aHeadCircle;}
-	
+	public String getHeadCircle() {return headCircle;}
+
 	/** Окружность плеч */
 	@Comment("Окружность плеч")
 	@Persist
-	public String getShouldersCircle() {return theShouldersCircle;}
-	public void setShouldersCircle(String aShouldersCircle) {theShouldersCircle = aShouldersCircle;}
-	
+	public String getShouldersCircle() {return shouldersCircle;}
+
 	/** Состояние при рождении */
 	@Comment("Состояние при рождении")
 	@Persist
-	public String getBirthState() {return theBirthState;}
-	public void setBirthState(String aBirthState) {theBirthState = aBirthState;}
-	
+	public String getBirthState() {return birthState;}
+
 	/** Длина пуповины */
 	@Comment("Длина пуповины")
 	@Persist
-	public String getCordLength() {return theCordLength;}
-	public void setCordLength(String aCordLength) {theCordLength = aCordLength;}
-	
+	public String getCordLength() {return cordLength;}
+
 	/** Прикрепление пуповины */
 	@Comment("Прикрепление пуповины")
 	@Persist
-	public Long getCordAttaching() {return theCordAttaching;}
-	public void setCordAttaching(Long aCordAttaching) {theCordAttaching = aCordAttaching;}
-	
+	public Long getCordAttaching() {return cordAttaching;}
+
 	/** Зрелость */
 	@Comment("Зрелость")
 	@Persist @Required
-	public Long getMaturity() {return theMaturity;}
-	public void setMaturity(Long aMaturity) {theMaturity = aMaturity;}
-	
+	public Long getMaturity() {return maturity;}
+
 	/** Родился живым */
 	@Comment("Родился живым")
 	@Persist @Required
-	public Long getLiveBorn() {return theLiveBorn;}
-	public void setLiveBorn(Long aLiveBorn) {theLiveBorn = aLiveBorn;}
-	
+	public Long getLiveBorn() {return liveBorn;}
+
 	/** Вредное влияние матери: наследственность, заболевания, вредные привычки */
 	@Comment("Вредное влияние матери: наследственность, вредные привычки")
 	@Persist 
-	public String getMothersHarmfulEffect() {return theMothersHarmfulEffect;}
-	public void setMothersHarmfulEffect(String aMothersHarmfulEffect) {theMothersHarmfulEffect = aMothersHarmfulEffect;}
-	
+	public String getMothersHarmfulEffect() {return mothersHarmfulEffect;}
+
 	/** Вредное влияние отца: наследственность, заболевания, вредные привычки */
 	@Comment("Вредное влияние отца: наследственность, заболевания, вредные привычки")
 	@Persist 
-	public String getFathersHarmfulEffect() {return theFathersHarmfulEffect;}
-	public void setFathersHarmfulEffect(String aFathersHarmfulEffect) {theFathersHarmfulEffect = aFathersHarmfulEffect;}
-	
+	public String getFathersHarmfulEffect() {return fathersHarmfulEffect;}
+
 	/** Пороки развития */
 	@Comment("Пороки развития")
 	@Persist 
-	public String getMalformations() {return theMalformations;}
-	public void setMalformations(String aMalformations) {theMalformations = aMalformations;}
-	
+	public String getMalformations() {return malformations;}
+
 	/** Проходимость пищевода */
 	@Comment("Проходимость пищевода")
 	@Persist
-	public String getOesophagusPermeability() {return theOesophagusPermeability;}
-	public void setOesophagusPermeability(String aOesophagusPermeability) {theOesophagusPermeability = aOesophagusPermeability;}
-	
+	public String getOesophagusPermeability() {return oesophagusPermeability;}
+
 	/** Наличие ануса */
 	@Comment("Наличие ануса")
 	@Persist
-	public String getAnus() {return theAnus;}
-	public void setAnus(String aAnus) {theAnus = aAnus;}
-	
+	public String getAnus() {return anus;}
+
 	/** Большой поперечный размер (см)*/
 	@Comment("Большой поперечный размер (см)")
 	@Persist
-	public String getLongTransversalSize() {return theLongTransversalSize;}
-	public void setLongTransversalSize(String aLongTransversalSize) {theLongTransversalSize = aLongTransversalSize;}
-	
+	public String getLongTransversalSize() {return longTransversalSize;}
+
 	/** Малый поперечный размер (см)*/
 	@Comment("Малый поперечный размер (см)")
 	@Persist
-	public String getShortTransversalSize() {return theShortTransversalSize;}
-	public void setShortTransversalSize(String aShortTransversalSize) {theShortTransversalSize = aShortTransversalSize;}
-	
+	public String getShortTransversalSize() {return shortTransversalSize;}
+
 	/** Большой косой размер (см) */
 	@Comment("Большой косой размер (см)")
 	@Persist
-	public String getLongSkewSize() {return theLongSkewSize;}
-	public void setLongSkewSize(String aLongSkewSize) {theLongSkewSize = aLongSkewSize;}
-	
+	public String getLongSkewSize() {return longSkewSize;}
+
 	/** Размер большой косой окружности (см)*/
 	@Comment("Размер большой косой окружности (см)")
 	@Persist
-	public String getLongSkewCircleSize() {return theLongSkewCircleSize;}
-	public void setLongSkewCircleSize(String aLongSkewCircleSize) {theLongSkewCircleSize = aLongSkewCircleSize;}
-	
+	public String getLongSkewCircleSize() {return longSkewCircleSize;}
+
 	/** Размер малой косой окружности (см) */
 	@Comment("Размер малой косой окружности (см)")
 	@Persist
-	public String getShortSkewCircleSize() {return theShortSkewCircleSize;}
-	public void setShortSkewCircleSize(String aShortSkewCircleSize) {theShortSkewCircleSize = aShortSkewCircleSize;}
-	
+	public String getShortSkewCircleSize() {return shortSkewCircleSize;}
+
 	/** Малый косой размер */
 	@Comment("Малый косой размер")
 	@Persist
-	public String getShortSkewSize() {return theShortSkewSize;}
-	public void setShortSkewSize(String aShortSkewSize) {theShortSkewSize = aShortSkewSize;}
-	
+	public String getShortSkewSize() {return shortSkewSize;}
+
 	/** Размер прямой окружности (см) */
 	@Comment("Размер прямой окружности (см)")
 	@Persist
-	public String getDirectCircleSize() {return theDirectCircleSize;}
-	public void setDirectCircleSize(String aDirectCircleSize) {theDirectCircleSize = aDirectCircleSize;}
-	
+	public String getDirectCircleSize() {return directCircleSize;}
+
 	/** Прямой размер (см) */
 	@Comment("Прямой размер (см)")
 	@Persist
-	public String getDirectSize() {return theDirectSize;}
-	public void setDirectSize(String aDirectSize) {theDirectSize = aDirectSize;}
-	
+	public String getDirectSize() {return directSize;}
+
 	/** Вид вставки */
 	@Comment("Вид вставки")
 	@Persist
-	public String getSetView() {return theSetView;}
-	public void setSetView(String aSetView) {theSetView = aSetView;}
-	
+	public String getSetView() {return setView;}
+
 	/** Вставленная часть тела */
 	@Comment("Вставленная часть тела")
 	@Persist
-	public String getSetPart() {return theSetPart;}
-	public void setSetPart(String aSetPart) {theSetPart = aSetPart;}
-	
+	public String getSetPart() {return setPart;}
+
 	/** Объем кровопотери (мл) */
 	@Comment("Объем кровопотери (мл)")
 	@Persist
-	public String getHemorrhageVolume() {return theHemorrhageVolume;}
-	public void setHemorrhageVolume(String aHemorrhageVolume) {theHemorrhageVolume = aHemorrhageVolume;}
-	
+	public String getHemorrhageVolume() {return hemorrhageVolume;}
+
 	/** СМО */
 	@Comment("СМО")
 	@Persist
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+	public Long getMedCase() {return medCase;}
 
 	/** Роды */
 	@Comment("Роды")
 	@Persist
-	public Long getChildBirth() {return theChildBirth;}
-	public void setChildBirth(Long aChildBirth) {theChildBirth = aChildBirth;}
-
-	
-
+	public Long getChildBirth() {return childBirth;}
 
 	/** Пользователь */
 	@Comment("Пользователь")
 	@Persist
-	public String getUsername() {return theUsername;}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
+	public String getUsername() {return username;}
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@DateString @DoDateString @Persist
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	public String getCreateDate() {return createDate;}
 
 	/** Время создания */
 	@Comment("Время создания")
 	@TimeString @DoTimeString @Persist
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;}
 
 	/** Ребенок */
 	@Comment("Ребенок")
 	@Persist @Required
-	public Long getChild() {return theChild;}
-	public void setChild(Long aChild) {theChild = aChild;}
+	public Long getChild() {return child;}
 
 	/** Ребенок */
-	private Long theChild;
+	private Long child;
 	
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	/** Пользователь */
-	private String theUsername;
+	private String username;
 
 	/** Роды */
-	private Long theChildBirth;
+	private Long childBirth;
 	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	/** Кто принимал ребенка */
-	private Long theChildDeliverer;
+	private Long childDeliverer;
 	/** Дата рождения */
-	private String theBirthDate;
+	private String birthDate;
 	/** Время рождения */
-	private String theBirthTime;
+	private String birthTime;
 	/** Пол */
-	private Long theSex;
+	private Long sex;
 	/** Вес при рождении */
-	private String theBirthWeight;
+	private String birthWeight;
 	/** Рост при рождении */
-	private String theBirthHeight;
+	private String birthHeight;
 	/** Окружность головы */
-	private String theHeadCircle;
+	private String headCircle;
 	/** Окружность плеч */
-	private String theShouldersCircle;
+	private String shouldersCircle;
 	/** Состояние при рождении */
-	private String theBirthState;
+	private String birthState;
 	
 	/** Длина пуповины */
-	private String theCordLength;
+	private String cordLength;
 	/** Прикрепление пуповины */
-	private Long theCordAttaching;
+	private Long cordAttaching;
 	/** Зрелость */
-	private Long theMaturity;
+	private Long maturity;
 	/** Родился живым */
-	private Long theLiveBorn;
+	private Long liveBorn;
 	/** Вредное влияние матери: наследственность, заболевания, вредные привычки */
-	private String theMothersHarmfulEffect;
+	private String mothersHarmfulEffect;
 	/** Вредное влияние отца: наследственность, заболевания, вредные привычки */
-	private String theFathersHarmfulEffect;
+	private String fathersHarmfulEffect;
 	/** Пороки развития */
-	private String theMalformations;
+	private String malformations;
 	/** Проходимость пищевода */
-	private String theOesophagusPermeability;
+	private String oesophagusPermeability;
 	/** Наличие ануса */
-	private String theAnus;
+	private String anus;
 	/** Большой поперечный размер (см)*/
-	private String theLongTransversalSize;
+	private String longTransversalSize;
 	/** Малый поперечный размер (см)*/
-	private String theShortTransversalSize;
+	private String shortTransversalSize;
 	/** Большой косой размер (см) */
-	private String theLongSkewSize;
+	private String longSkewSize;
 	/** Размер большой косой окружности (см)*/
-	private String theLongSkewCircleSize;
+	private String longSkewCircleSize;
 	/** Размер малой косой окружности (см) */
-	private String theShortSkewCircleSize;
+	private String shortSkewCircleSize;
 	/** Малый косой размер */
-	private String theShortSkewSize;
+	private String shortSkewSize;
 	/** Размер прямой окружности (см) */
-	private String theDirectCircleSize;
+	private String directCircleSize;
 	/** Прямой размер (см) */
-	private String theDirectSize;
+	private String directSize;
 	/** Вид вставки */
-	private String theSetView;
+	private String setView;
 	/** Вставленная часть тела */
-	private String theSetPart;
+	private String setPart;
 	/** Объем кровопотери (мл) */
-	private String theHemorrhageVolume;
+	private String hemorrhageVolume;
 	/** СМО */
-	private Long theMedCase;
+	private Long medCase;
 	
 	/** №истории болезни */
 	@Comment("№истории болезни")
-	public String getStatisticStub() {return theStatisticStub;}
-	public void setStatisticStub(String aStatisticStub) {theStatisticStub = aStatisticStub;}
+	public String getStatisticStub() {return statisticStub;}
 
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
-	public Long getServiceStream() {return theServiceStream;}
-	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+	public Long getServiceStream() {return serviceStream;}
 
 	/** Экстренное поступление */
 	@Comment("Экстренное поступление")
-	public Boolean getEmergency() {return theEmergency;}
-	public void setEmergency(Boolean aEmergency) {theEmergency = aEmergency;}
-
-	
+	public Boolean getEmergency() {return emergency;}
 	/** Экстренное поступление */
-	private Boolean theEmergency;
+	private Boolean emergency;
 	/** Поток обслуживания */
-	private Long theServiceStream;
+	private Long serviceStream;
 	/** №истории болезни */
-	private String theStatisticStub;
+	private String statisticStub;
 	
 	/** Оценка по Апгар */
 	@Comment("Оценка по Апгар")
 	@Persist
-	public Long getApgarMark() {return theApgarMark;}
-	public void setApgarMark(Long aApgarMark) {theApgarMark = aApgarMark;}
+	public Long getApgarMark() {return apgarMark;}
 
 	
 	/** Оценка по Апгар */
-	private Long theApgarMark;
+	private Long apgarMark;
 	
 	/** Какой частью тела родился (головкой, ягодицами, ножками) */
 	@Comment("Какой частью тела родился (головкой, ягодицами, ножками)")
 	@Persist @Required
-	public Long getPartBodyBorn() {return thePartBodyBorn;}
-	public void setPartBodyBorn(Long aPartBodyBorn) {thePartBodyBorn = aPartBodyBorn;}
+	public Long getPartBodyBorn() {return partBodyBorn;}
 
 	/** Какой частью тела родился (головкой, ягодицами, ножками) */
-	private Long thePartBodyBorn;
+	private Long partBodyBorn;
 	
 	/** Обвитие */
 	@Comment("Обвитие")
 	@Persist @Required
-	public Long getEntanglement() {return theEntanglement;}
-	public void setEntanglement(Long aEntanglement) {theEntanglement = aEntanglement;}
+	public Long getEntanglement() {return entanglement;}
 
 	/** Кратность обвития */
 	@Comment("Кратность обвития")
 	@Persist
-	public Long getEntanglementMultiplicity() {return theEntanglementMultiplicity;}
-	public void setEntanglementMultiplicity(Long aEntanglementMultiplicity) {theEntanglementMultiplicity = aEntanglementMultiplicity;}
+	public Long getEntanglementMultiplicity() {return entanglementMultiplicity;}
 
 	/** Где обвитие произошло */
 	@Comment("Где обвитие произошло")
 	@Persist
-	public Long getWhereEntanglement() {return theWhereEntanglement;}
-	public void setWhereEntanglement(Long aWhereEntanglement) {theWhereEntanglement = aWhereEntanglement;}
+	public Long getWhereEntanglement() {return whereEntanglement;}
 
 	/** Где обвитие произошло */
-	private Long theWhereEntanglement;
+	private Long whereEntanglement;
 	/** Кратность обвития */
-	private Long theEntanglementMultiplicity;
+	private Long entanglementMultiplicity;
 	/** Обвитие */
-	private Long theEntanglement;
+	private Long entanglement;
 	
 	/** Отделение */
 	@Comment("Отделение")
 	@Persist
-	public Long getDepartment() {return theDepartment;}
-	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+	public Long getDepartment() {return department;}
 
 	/** Отделение */
-	private Long theDepartment;
+	private Long department;
 }

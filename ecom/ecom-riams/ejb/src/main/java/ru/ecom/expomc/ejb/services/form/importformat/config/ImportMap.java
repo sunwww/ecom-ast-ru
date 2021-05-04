@@ -1,5 +1,7 @@
 package ru.ecom.expomc.ejb.services.form.importformat.config;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.log4j.Logger;
 import org.jdom.Attribute;
 import org.jdom.Element;
@@ -16,27 +18,29 @@ import java.util.regex.Pattern;
 /**
  * @author ikouzmin 09.03.2007 15:03:58
  */
+@Setter
+@Getter
 public class ImportMap extends ImportKey {
     private static final Logger LOG = Logger.getLogger(ImportMap.class);
 
 
     public void load(Element element, EntityManager aManager) throws InvalidFkException, ClassNotFoundException, MissingAttributeException {
         super.load(element, aManager);
-        theComment = element.getAttributeValue("comment");
+        comment = element.getAttributeValue("comment");
         Attribute fkAttribute = element.getAttribute("fk");
-        theSyncKey = null;
+        syncKey = null;
         // обновление, если не пустое
         if(!StringUtil.isNullOrEmpty(element.getAttributeValue("updateIfEmpty"))) {
-        	theUpdateIfEmpty = Boolean.valueOf(element.getAttributeValue("updateIfEmpty"));
+        	updateIfEmpty = Boolean.valueOf(element.getAttributeValue("updateIfEmpty"));
         }
         if (fkAttribute != null) {
             Matcher matcher = Pattern.compile("^([^:]*):(.*)$").matcher(fkAttribute.getValue());
             if (matcher.matches()) {
-                theSyncKey = new ImportSyncKey();
-                theSyncKey.setImportLogger(getImportLogger());
-                theSyncKey.setProperty(matcher.group(2));
-                theSyncKey.setSelect(getSelect());
-                theSyncKey.createQuery(aManager, matcher.group(1));
+                syncKey = new ImportSyncKey();
+                syncKey.setImportLogger(getImportLogger());
+                syncKey.setProperty(matcher.group(2));
+                syncKey.setSelect(getSelect());
+                syncKey.createQuery(aManager, matcher.group(1));
             } else {
                 LOG.error("Invalid fk attribute value");
                 throw new InvalidFkException("Invalid fk attribute value");
@@ -47,29 +51,18 @@ public class ImportMap extends ImportKey {
     /**
      * Комментарий
      */
-    public String getComment() {
-        return theComment;
-    }
+    private String comment;
 
-    public void setComment(String aComment) {
-        theComment = aComment;
-    }
-
-    /**
-     * Комментарий
-     */
-    private String theComment;
-
-    private ImportSyncKey theSyncKey;
+    private ImportSyncKey syncKey;
 
     public Object getValue(Element o, EntityManager aManager) {
         String value = "";
         try {
-            if (theSyncKey != null) {
+            if (syncKey != null) {
                 inclev();
-                String id = theSyncKey.findId(o);
+                String id = syncKey.findId(o);
                 declev();
-                return theSyncKey.openId(aManager,id);
+                return syncKey.openId(aManager,id);
             } else {
                 Object element = XPath.selectSingleNode(o, getSelect());
                 value = ImportSyncKey.getElementValue(element);
@@ -81,34 +74,22 @@ public class ImportMap extends ImportKey {
 
     public Object getValue(HashMap<String, Object> mapValues, EntityManager aManager) {
         String value;
-        if (theSyncKey != null) {
+        if (syncKey != null) {
             inclev();
-            String id = theSyncKey.findId(mapValues);
+            String id = syncKey.findId(mapValues);
             declev();
-            return theSyncKey.openId(aManager,id);
+            return syncKey.openId(aManager,id);
         } else {
             String selectValue = getSelect();
-            //LOG.info("SV:"+selectValue);
             if (selectValue==null) return "";
             if (mapValues==null) return "";
             Object oj = mapValues.get(selectValue);
-            //LOG.info("OJ:"+oj);
             if (oj==null) return "";
             value = oj.toString();
         }
         return value;
     }
-    
-    /** Обновлять только если пустое */
-	@Comment("Обновлять только если пустое")
-	public boolean getUpdateIfEmpty() {
-		return theUpdateIfEmpty;
-	}
-
-	public void setUpdateIfEmpty(boolean aUpdateIfEmpty) {
-		theUpdateIfEmpty = aUpdateIfEmpty;
-	}
 
 	/** Обновлять только если пустое */
-	private boolean theUpdateIfEmpty = true ;
+	private boolean updateIfEmpty = true ;
 }

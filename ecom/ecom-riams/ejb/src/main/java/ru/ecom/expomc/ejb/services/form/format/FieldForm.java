@@ -1,5 +1,6 @@
 package ru.ecom.expomc.ejb.services.form.format;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.util.FormAfterLoadInterceptor;
@@ -20,127 +21,109 @@ import javax.persistence.Id;
 @FormAfterLoadInterceptor(FieldAfterLoadInterceptor.class)
 @WebTrail(comment = "Поле", nameProperties={"name","comment"}, view="entityParentEdit-exp_field.do")
 @EntityFormSecurityPrefix("/Policy/Exp/Field")
+@Setter
 public class FieldForm extends IdEntityForm {
 
     /** Идентификатор */
     @Id
-    public long getId() { return theId ; }
-    public void setId(long aId) { theId = aId ; }
+    public long getId() { return id ; }
 
     /** Название поля */
     @Persist
     @Required
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
+    public String getName() { return name ; }
 
     /** Комментарий */
     @Persist
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
+    public String getComment() { return comment ; }
 
     /** DBF: тип поля */
     @Persist
     @Required
-    public int getDbfType() { return theDbfType ; }
-    public void setDbfType(int aDbfType) { theDbfType = aDbfType ; }
+    public int getDbfType() { return dbfType ; }
 
     /** DBF: размер поля */
     @Persist
-    public int getDbfSize() { return theDbfSize ; }
-    public void setDbfSize(int aDbfSize) { theDbfSize = aDbfSize ; }
+    public int getDbfSize() { return dbfSize ; }
 
     /** DBF: количество знаков после запятой */
     @Persist
-    public int getDbfDecimal() { return theDbfDecimal ; }
-    public void setDbfDecimal(int aDbfDecimal) { theDbfDecimal = aDbfDecimal ; }
+    public int getDbfDecimal() { return dbfDecimal ; }
 
     /** Формат */
     @Persist
-    public long getFormat() { return theFormat ; }
-    public void setFormat(long aFormat) { theFormat = aFormat ; }
+    public long getFormat() { return format ; }
 
     /** Поле для сохранения */
     @Persist
-    public String getProperty() { return theProperty ; }
-    public void setProperty(String aProperty) { theProperty = aProperty ; }
+    public String getProperty() { return property ; }
 
     /** Порядковый номер */
     @Persist
     @Required
-    public int getSerialNumber() { return theSerialNumber ; }
-    public void setSerialNumber(int aSerialNumber) { theSerialNumber = aSerialNumber ; }
+    public int getSerialNumber() { return serialNumber ; }
 
     /** Обязательное поле */
     @Persist
-    public boolean getRequired() { return theRequired ; }
-    public void setRequired(boolean aRequired) { theRequired = aRequired ; }
+    public boolean getRequired() { return required ; }
 
     /** Подробное описание */
     @Persist
-    public String getDescription() { return theDescription ; }
-    public void setDescription(String aDescription) { theDescription = aDescription ; }
+    public String getDescription() { return description ; }
 
     /** Cвязанный документ */
     @Persist
-    public Long getLinkedDocument() { return theLinkedDocument ; }
-    public void setLinkedDocument(Long aLinkedDocument) { theLinkedDocument = aLinkedDocument ; }
+    public Long getLinkedDocument() { return linkedDocument ; }
 
     /** Поле с кодом у связанного документа */
     @Persist
-    public String getLinkedDocumentCodeField() { return theLinkedDocumentCodeField ; }
-    public void setLinkedDocumentCodeField(String aLinkedDocumentCodeField) { theLinkedDocumentCodeField = aLinkedDocumentCodeField ; }
+    public String getLinkedDocumentCodeField() { return linkedDocumentCodeField ; }
 
     /** Идентификатор документа для связанных свойств */
-    public long getDocument() { return theDocument ; }
-    public void setDocument(long aDocument) { theDocument = aDocument ; }
+    public long getDocument() { return document ; }
 
     /** Описание DBF */
-    public String getDbfInfo() { return theDbfInfo ; }
-    public void setDbfInfo(String aDbfInfo) { theDbfInfo = aDbfInfo ; }
+    public String getDbfInfo() { return dbfInfo ; }
 
     /** Значение по-умолчанию */
 	@Comment("Значение по-умолчанию")
 	@Persist
 	public String getDefaultValue() {
-		return theDefaultValue;
-	}
-
-	public void setDefaultValue(String aDefaultValue) {
-		theDefaultValue = aDefaultValue;
+		return defaultValue;
 	}
 
 	/** Значение по-умолчанию */
-	private String theDefaultValue;
+	private String defaultValue;
     /** Описание DBF */
-    private String theDbfInfo ;
+    private String dbfInfo ;
 
     /** Идентификатор документа для связанных свойств */
-    private long theDocument ;
+    private long document ;
     /** Поле с кодом у связанного документа */
-    private String theLinkedDocumentCodeField ;
+    private String linkedDocumentCodeField ;
     /** Cвязанный документ */
-    private Long theLinkedDocument ;
+    private Long linkedDocument ;
     /** Подробное описание */
-    private String theDescription ;
+    private String description ;
     /** Обязательное поле */
-    private boolean theRequired ;
+    private boolean required ;
     /** Порядковый номер */
-    private int theSerialNumber ;
+    private int serialNumber ;
     /** Поле для сохранения */
-    private String theProperty ;
+    private String property ;
     /** Формат */
-    private long theFormat ;
+    private long format ;
     /** DBF: количество знаков после запятой */
-    private int theDbfDecimal ;
+    private int dbfDecimal ;
     /** DBF: размер поля */
-    private int theDbfSize ;
+    private int dbfSize ;
     /** DBF: тип поля */
-    private int theDbfType ;
+    private int dbfType ;
     /** Комментарий */
-    private String theComment ;
+    private String comment ;
     /** Название поля */
-    private String theName ;
+    private String name ;
     /** Идентификатор */
-    private long theId ;
+    private long id ;
 
 }

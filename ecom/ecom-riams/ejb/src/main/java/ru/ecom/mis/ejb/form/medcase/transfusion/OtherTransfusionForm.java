@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.transfusion;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.OtherTransfusion;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
@@ -17,13 +18,12 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Переливание кровезамещающих растворов", nameProperties= "id", view="entityParentView-trans_other.do",list = "entityParentList-trans_transfusion.do")
 @Parent(property="medCase", parentForm= MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Transfusion/Other")
+@Setter
 public class OtherTransfusionForm extends TransfusionForm {
 	/** Другая трансфузионная жидкость */
 	@Comment("Другая трансфузионная жидкость")
 	@Persist @Required
-	public Long getOtherPreparation() {return theOtherPreparation;}
-	public void setOtherPreparation(Long aOtherPreparation) {theOtherPreparation = aOtherPreparation;}
-
+	public Long getOtherPreparation() {return otherPreparation;}
 	/** Другая трансфузионная жидкость */
-	private Long theOtherPreparation;
+	private Long otherPreparation;
 }

@@ -9,6 +9,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.live.DeleteListener;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
@@ -20,41 +22,34 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 @EntityListeners(DeleteListener.class)
+@Getter
+@Setter
 public class Entry extends BaseEntity{
             
            /** Персона */
         @Comment("Персона")
         @OneToOne
-        public WorkFunction getPerson() {return thePerson;}
-        public void setPerson(WorkFunction aPerson) {thePerson = aPerson;}
-        private WorkFunction thePerson;
+        public WorkFunction getPerson() {return person;}
+        private WorkFunction person;
         
         /** Отделение */
         @Comment("Отделение")
         @OneToOne
-        public Department getDepartment() {return theDepartment;}
-        public void setDepartment(Department aDepartment) {theDepartment = aDepartment;}
-        private Department theDepartment;
+        public Department getDepartment() {return department;}
+        private Department department;
         
         /** Внутренний номер */
-	@Comment("Внутренний номер")
-	public String getInsideNumber() {return theInsideNumber;}
-	public void setInsideNumber(String aInsideNumber) {theInsideNumber = aInsideNumber;}
-	private String theInsideNumber;
+	private String insideNumber;
 	
         /** Комментарий */
-        @Comment("Комментарий")
-        public String getComment() {return theComment;}
-        public void setComment(String aComment) {theComment = aComment;}
-        private String theComment;
+        private String comment;
         
        
         /** номера */
 	@Comment("Номера")
 	@OneToMany(mappedBy="entry", cascade=CascadeType.ALL)
-	public List<TelephoneNumber> getTelephoneNumbers() {return theTelephoneNumbers;}
-	public void setTelephoneNumbers(List<TelephoneNumber> aTelephoneNumbers) {theTelephoneNumbers = aTelephoneNumbers;}
-	private List<TelephoneNumber> theTelephoneNumbers;
+	public List<TelephoneNumber> getTelephoneNumbers() {return telephoneNumbers;}
+	private List<TelephoneNumber> telephoneNumbers;
 	
 	
 

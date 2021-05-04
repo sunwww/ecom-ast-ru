@@ -1,5 +1,7 @@
 package ru.ecom.ejb.services.live.domain.journal;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -17,130 +19,60 @@ import java.sql.Time;
 		,@AIndex(properties = { "className" })
 	}
 )
+@Getter
+@Setter
 public class ChangeJournal  {
 	 /** Идентификатор */
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    public long getId() { return theId ; }
-    public void setId(long aId) { theId = aId ; }
+    public long getId() { return id ; }
     /** Идентификатор */
-    private long theId ;
-	/** Дата  */
-	@Comment("Дата удаления")
-	public Date getChangeDate() {
-		return theChangeDate;
-	}
-
-	public void setChangeDate(Date aDeleteDate) {
-		theChangeDate = aDeleteDate;
-	}
+    private long id ;
 
 	/** Дата  */
-	private Date theChangeDate;
-	
-	/** Время  */
-	@Comment("Время удаления")
-	public Time getChangeTime() {
-		return theChangeTime;
-	}
-
-	public void setChangeTime(Time aDeleteTime) {
-		theChangeTime = aDeleteTime;
-	}
+	private Date changeDate;
 
 	/** Время  */
-	private Time theChangeTime;
+	private Time changeTime;
 	
-	/** Логин  */
-	@Comment("Логин удалившего")
-	public String getLoginName() {
-		return theLoginName;
-	}
-
-	public void setLoginName(String aLoginName) {
-		theLoginName = aLoginName;
-	}
-
 	/** Логин удалившего */
-	private String theLoginName;
+	private String loginName;
 	
 	/** Имя класса хранения */
-	@Comment("Имя класса хранения")
-	public String getClassName() {
-		return theClassName;
-	}
-
-	public void setClassName(String aClassName) {
-		theClassName = aClassName;
-	}
-
-	/** Имя класса хранения */
-	private String theClassName;
+	private String className;
 	
 	/** ИД объект хранения */
-	@Comment("ИД объект хранения")
-	public String getObjectId() {
-		return theObjectId;
-	}
-
-	public void setObjectId(String aObjectId) {
-		theObjectId = aObjectId;
-	}
-
-	/** ИД объект хранения */
-	private String theObjectId;
+	private String objectId;
 	
 	/** Комментарий */
 	@Comment("Комментарий")
 	@Column(length=255)
 	public String getComment() {
-		return theComment;
-	}
-
-	public void setComment(String aComment) {
-		theComment = aComment;
+		return comment;
 	}
 
 	/** Комментарий */
-	private String theComment;
+	private String comment;
 	
 	/** Сериализация данных */
 	@Comment("Сериализация данных")
 	@Column(length=80000)
 	public String getSerializationBefore() {
-		return theSerializationBefore;
-	}
-
-	public void setSerializationBefore(String aSerialization) {
-		theSerializationBefore = aSerialization;
+		return serializationBefore;
 	}
 
 	/** Сериализация данных */
-	private String theSerializationBefore;
-	
-	/** Удалено */
-	@Comment("Удалено")
-	public Long getStatus() {
-		return theStatus;
-	}
-
-	public void setStatus(Long aStatus) {
-		theStatus = aStatus;
-	}
+	private String serializationBefore;
 
 	/** Удалено */
-	private Long theStatus;
+	private Long status;
 	
 	/** Сериализация данных после */
 	@Comment("Сериализация данных после")
 	@Column(length=80000)
 	public String getSerializationAfter() {
-		return theSerializationAfter;
-	}
-
-	public void setSerializationAfter(String aSerializationAfter) {
-		theSerializationAfter = aSerializationAfter;
+		return serializationAfter;
 	}
 
 	/** Сериализация данных после */
-	private String theSerializationAfter;
+	private String serializationAfter;
 }

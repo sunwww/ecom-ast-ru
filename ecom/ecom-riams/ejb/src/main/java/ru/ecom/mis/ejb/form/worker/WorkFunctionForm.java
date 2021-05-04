@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.worker;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -28,6 +29,7 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @Parent(property = "lpuRegister", parentForm = MisLpuForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/WorkFunction")
 @Subclasses({PersonalWorkFunctionForm.class, GroupWorkFunctionForm.class, OperatingRoomForm.class})
+@Setter
 public class WorkFunctionForm extends IdEntityForm {
 
     /**
@@ -38,17 +40,13 @@ public class WorkFunctionForm extends IdEntityForm {
     @DateString
     @DoDateString
     public String getStartDate() {
-        return theStartDate;
-    }
-
-    public void setStartDate(String aStartDate) {
-        theStartDate = aStartDate;
+        return startDate;
     }
 
     /**
      * Дата начала работы
      */
-    private String theStartDate;
+    private String startDate;
 
     /**
      * Дата окончания работы
@@ -58,17 +56,13 @@ public class WorkFunctionForm extends IdEntityForm {
     @DateString
     @DoDateString
     public String getFinishDate() {
-        return theFinishDate;
-    }
-
-    public void setFinishDate(String aFinishDate) {
-        theFinishDate = aFinishDate;
+        return finishDate;
     }
 
     /**
      * Дата окончания работы
      */
-    private String theFinishDate;
+    private String finishDate;
 
     /**
      * Наименование
@@ -76,11 +70,7 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Наименование")
     @Persist
     public String getName() {
-        return theName;
-    }
-
-    public void setName(String aName) {
-        theName = aName;
+        return name;
     }
 
 
@@ -90,11 +80,7 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Информация о рабочей фукции")
     @Persist
     public String getWorkFunctionInfo() {
-        return theWorkFunctionInfo;
-    }
-
-    public void setWorkFunctionInfo(String aWorkFunctionInfo) {
-        theWorkFunctionInfo = aWorkFunctionInfo;
+        return workFunctionInfo;
     }
 
     /**
@@ -104,13 +90,8 @@ public class WorkFunctionForm extends IdEntityForm {
     @Persist
     @Required
     public Long getWorkFunction() {
-        return theWorkFunction;
+        return workFunction;
     }
-
-    public void setWorkFunction(Long aWorkFunction) {
-        theWorkFunction = aWorkFunction;
-    }
-
 
     /**
      * ЛПУ
@@ -118,11 +99,7 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("ЛПУ")
     @Persist
     public Long getLpuRegister() {
-        return theLpuRegister;
-    }
-
-    public void setLpuRegister(Long aLpu) {
-        theLpuRegister = aLpu;
+        return lpuRegister;
     }
 
     /**
@@ -131,11 +108,7 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Информация")
     @Persist
     public String getInfo() {
-        return theInfo;
-    }
-
-    public void setInfo(String aInfo) {
-        theInfo = aInfo;
+        return info;
     }
 
     /**
@@ -144,11 +117,7 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Поместить в архив?")
     @Persist
     public Boolean getArchival() {
-        return theArchival;
-    }
-
-    public void setArchival(Boolean aArchival) {
-        theArchival = aArchival;
+        return archival;
     }
 
 
@@ -158,11 +127,7 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Код специалиста")
     @Persist
     public String getCode() {
-        return theCode;
-    }
-
-    public void setCode(String aCode) {
-        theCode = aCode;
+        return code;
     }
 
     /**
@@ -171,11 +136,7 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Хирургическая специальность")
     @Persist
     public Boolean getIsSurgical() {
-        return theIsSurgical;
-    }
-
-    public void setIsSurgical(Boolean aIsSurgical) {
-        theIsSurgical = aIsSurgical;
+        return isSurgical;
     }
 
     /**
@@ -184,11 +145,7 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Администратор")
     @Persist
     public Boolean getIsAdministrator() {
-        return theIsAdministrator;
-    }
-
-    public void setIsAdministrator(Boolean aAdministrator) {
-        theIsAdministrator = aAdministrator;
+        return isAdministrator;
     }
 
     /**
@@ -197,53 +154,49 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Интервал разрешенной регистрации")
     @Persist
     public Integer getRegistrationInterval() {
-        return theRegistrationInterval;
-    }
-
-    public void setRegistrationInterval(Integer aRegistrationInterval) {
-        theRegistrationInterval = aRegistrationInterval;
+        return registrationInterval;
     }
 
     /**
      * Интервал разрешенной регистрации
      */
-    private Integer theRegistrationInterval;
+    private Integer registrationInterval;
     /**
      * Администратор
      */
-    private Boolean theIsAdministrator;
+    private Boolean isAdministrator;
     /**
      * Хирургическая специальность
      */
-    private Boolean theIsSurgical;
+    private Boolean isSurgical;
     /**
      * Код специалиста
      */
-    private String theCode;
+    private String code;
     /**
      * Поместить в архив?
      */
-    private Boolean theArchival;
+    private Boolean archival;
     /**
      * Информация
      */
-    private String theInfo;
+    private String info;
     /**
      * Наименование
      */
-    private String theName;
+    private String name;
     /**
      * Информация о рабочей фукции
      */
-    private String theWorkFunctionInfo;
+    private String workFunctionInfo;
     /**
      * Функция
      */
-    private Long theWorkFunction;
+    private Long workFunction;
     /**
      * ЛПУ
      */
-    private Long theLpuRegister;
+    private Long lpuRegister;
 
     /**
      * Операционная сестра
@@ -251,17 +204,13 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Операционная сестра")
     @Persist
     public Boolean getIsInstrumentNurse() {
-        return theIsInstrumentNurse;
-    }
-
-    public void setIsInstrumentNurse(Boolean aOperationSister) {
-        theIsInstrumentNurse = aOperationSister;
+        return isInstrumentNurse;
     }
 
     /**
      * Операционная сестра
      */
-    private Boolean theIsInstrumentNurse;
+    private Boolean isInstrumentNurse;
 
     /**
      * Комментарий
@@ -269,17 +218,13 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Комментарий")
     @Persist
     public String getComment() {
-        return theComment;
-    }
-
-    public void setComment(String aComment) {
-        theComment = aComment;
+        return comment;
     }
 
     /**
      * Комментарий
      */
-    private String theComment;
+    private String comment;
 
     /**
      * Не показывать удаленным пользователям
@@ -287,11 +232,7 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Не показывать удаленным пользователям")
     @Persist
     public Boolean getIsNoViewRemoteUser() {
-        return theIsNoViewRemoteUser;
-    }
-
-    public void setIsNoViewRemoteUser(Boolean aNoViewRemoteUser) {
-        theIsNoViewRemoteUser = aNoViewRemoteUser;
+        return isNoViewRemoteUser;
     }
 
     /**
@@ -300,21 +241,17 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Принтер по умолчанию")
     @Persist
     public Long getCopyingEquipmentDefault() {
-        return theCopyingEquipmentDefault;
-    }
-
-    public void setCopyingEquipmentDefault(Long aCopyingEquipmentDefault) {
-        theCopyingEquipmentDefault = aCopyingEquipmentDefault;
+        return copyingEquipmentDefault;
     }
 
     /**
      * Принтер по умолчанию
      */
-    private Long theCopyingEquipmentDefault;
+    private Long copyingEquipmentDefault;
     /**
      * Не показывать удаленным пользователям
      */
-    private Boolean theIsNoViewRemoteUser;
+    private Boolean isNoViewRemoteUser;
 
     /**
      * Дата создания
@@ -324,11 +261,7 @@ public class WorkFunctionForm extends IdEntityForm {
     @DoDateString
     @Persist
     public String getCreateDate() {
-        return theCreateDate;
-    }
-
-    public void setCreateDate(String aCreateDate) {
-        theCreateDate = aCreateDate;
+        return createDate;
     }
 
     /**
@@ -339,11 +272,7 @@ public class WorkFunctionForm extends IdEntityForm {
     @DoDateString
     @Persist
     public String getEditDate() {
-        return theEditDate;
-    }
-
-    public void setEditDate(String aEditDate) {
-        theEditDate = aEditDate;
+        return editDate;
     }
 
     /**
@@ -354,11 +283,7 @@ public class WorkFunctionForm extends IdEntityForm {
     @DoTimeString
     @Persist
     public String getCreateTime() {
-        return theCreateTime;
-    }
-
-    public void setCreateTime(String aCreateTime) {
-        theCreateTime = aCreateTime;
+        return createTime;
     }
 
     /**
@@ -369,11 +294,7 @@ public class WorkFunctionForm extends IdEntityForm {
     @DoTimeString
     @Persist
     public String getEditTime() {
-        return theEditTime;
-    }
-
-    public void setEditTime(String aEditTime) {
-        theEditTime = aEditTime;
+        return editTime;
     }
 
     /**
@@ -382,11 +303,7 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Пользователь, который создал запись")
     @Persist
     public String getCreateUsername() {
-        return theCreateUsername;
-    }
-
-    public void setCreateUsername(String aCreateUsername) {
-        theCreateUsername = aCreateUsername;
+        return createUsername;
     }
 
     /**
@@ -395,37 +312,33 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Пользователь, который последний редактировал запись")
     @Persist
     public String getEditUsername() {
-        return theEditUsername;
-    }
-
-    public void setEditUsername(String aEditUsername) {
-        theEditUsername = aEditUsername;
+        return editUsername;
     }
 
     /**
      * Пользователь, который последний редактировал запись
      */
-    private String theEditUsername;
+    private String editUsername;
     /**
      * Пользователь, который создал запись
      */
-    private String theCreateUsername;
+    private String createUsername;
     /**
      * Время редактрования
      */
-    private String theEditTime;
+    private String editTime;
     /**
      * Время создания
      */
-    private String theCreateTime;
+    private String createTime;
     /**
      * Дата редактирования
      */
-    private String theEditDate;
+    private String editDate;
     /**
      * Дата создания
      */
-    private String theCreateDate;
+    private String createDate;
 
     /**
      * Экстренность
@@ -433,17 +346,13 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Экстренность")
     @Persist
     public Boolean getEmergency() {
-        return theEmergency;
-    }
-
-    public void setEmergency(Boolean aEmergency) {
-        theEmergency = aEmergency;
+        return emergency;
     }
 
     /**
      * Экстренность
      */
-    private Boolean theEmergency;
+    private Boolean emergency;
 
     /**
      * Категория специалиста
@@ -451,17 +360,13 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Категория специалиста")
     @Persist
     public Long getCategory() {
-        return theCategory;
-    }
-
-    public void setCategory(Long aCategory) {
-        theCategory = aCategory;
+        return category;
     }
 
     /**
      * Категория специалиста
      */
-    private Long theCategory;
+    private Long category;
 
     /**
      * Импорт
@@ -469,17 +374,13 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Импорт")
     @Persist
     public Boolean getIsImport() {
-        return theIsImport;
-    }
-
-    public void setIsImport(Boolean aIsImport) {
-        theIsImport = aIsImport;
+        return isImport;
     }
 
     /**
      * Импорт
      */
-    private Boolean theIsImport;
+    private Boolean isImport;
 
     /**
      * Запрет на направление к себе
@@ -487,34 +388,26 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Запрет на направление к себе")
     @Persist
     public Boolean getIsNoDirectSelf() {
-        return theIsNoDirectSelf;
-    }
-
-    public void setIsNoDirectSelf(Boolean aIsNoDirectSelf) {
-        theIsNoDirectSelf = aIsNoDirectSelf;
+        return isNoDirectSelf;
     }
 
     /**
      * Запрет на направление к себе
      */
-    private Boolean theIsNoDirectSelf;
+    private Boolean isNoDirectSelf;
 
     /**
      * Ратация
      */
     @Comment("Ратация")
     public Boolean getIsRotation() {
-        return theIsRotation;
-    }
-
-    public void setIsRotation(Boolean aIsRotation) {
-        theIsRotation = aIsRotation;
+        return isRotation;
     }
 
     /**
      * Ратация
      */
-    private Boolean theIsRotation;
+    private Boolean isRotation;
 
     /**
      * Не синхронизировать с ПАРУСом
@@ -522,17 +415,13 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Не синхронизировать с ПАРУСом")
     @Persist
     public Boolean getIsNoP7Sync() {
-        return theIsNoP7Sync;
-    }
-
-    public void setIsNoP7Sync(Boolean aIsNoP7Sync) {
-        theIsNoP7Sync = aIsNoP7Sync;
+        return isNoP7Sync;
     }
 
     /**
      * Не синхронизировать с ПАРУСом
      */
-    private Boolean theIsNoP7Sync;
+    private Boolean isNoP7Sync;
 
     /**
      * Доверенность
@@ -540,17 +429,13 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Доверенность")
     @Persist
     public Long getAttorney() {
-        return theAttorney;
-    }
-
-    public void setAttorney(Long aAttorney) {
-        theAttorney = aAttorney;
+        return attorney;
     }
 
     /**
      * Доверенность
      */
-    private Long theAttorney;
+    private Long attorney;
 
     /**
      * Разрешено записывать на дату без указания времени
@@ -558,17 +443,13 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("Разрешено записывать на дату без указания времени")
     @Persist
     public Boolean getIsDirectionNoTime() {
-        return theIsDirectionNoTime;
-    }
-
-    public void setIsDirectionNoTime(Boolean aIsDirectionNoTime) {
-        theIsDirectionNoTime = aIsDirectionNoTime;
+        return isDirectionNoTime;
     }
 
     /**
      * Разрешено записывать на дату без указания времени
      */
-    private Boolean theIsDirectionNoTime;
+    private Boolean isDirectionNoTime;
 
     /**
      * ККМ по умолчанию
@@ -576,33 +457,25 @@ public class WorkFunctionForm extends IdEntityForm {
     @Comment("ККМ по умолчанию")
     @Persist
     public Long getKkmEquipmentDefault() {
-        return theKkmEquipmentDefault;
-    }
-
-    public void setKkmEquipmentDefault(Long aKkmEquipmentDefault) {
-        theKkmEquipmentDefault = aKkmEquipmentDefault;
+        return kkmEquipmentDefault;
     }
 
     /**
      * ККМ по умолчанию
      */
-    private Long theKkmEquipmentDefault;
+    private Long kkmEquipmentDefault;
 
     /**
      * Кабинет
      */
     @Comment("Кабинет")
     public String getCabinet() {
-        return theCabinet;
-    }
-
-    public void setCabinet(String aCabinet) {
-        theCabinet = aCabinet;
+        return cabinet;
     }
 
     /**
      * Кабинет
      */
-    private String theCabinet;
+    private String cabinet;
 }
 

@@ -74,38 +74,61 @@ public class EntryMedService extends BaseEntity {
      */
     @Comment("Запись")
     @ManyToOne
-    public E2Entry getEntry() {
-        return entry;
-    }
+    public E2Entry getEntry() {return entry;}
+    private E2Entry entry ;
 
     /**
      * Мед. услуга
      */
     @Comment("Мед. услуга")
     @OneToOne
-    public VocMedService getMedService() {
-        return medService;
+    public VocMedService getMedService() {return medService;}
+    private VocMedService medService ;
+
+    public EntryMedService(E2Entry aEntry, VocMedService aMedService) {
+        entry=aEntry;
+        medService=aMedService;
+    }
+    public EntryMedService(E2Entry aEntry, EntryMedService aMedService) {
+        entry=aEntry;
+        medService=aMedService.getMedService();
+        serviceDate =aMedService.getServiceDate();
+        doctorSpeciality=aMedService.getDoctorSpeciality();
+        mkb=aMedService.getMkb();
+        cost = aMedService.getCost();
     }
 
-    public EntryMedService() {
-    }
+    /** СНИЛС специалиста, выполневшего услугу */
+    private String doctorSnils;
+
+    /** Дата оказания мед. услуги */
+    private Date serviceDate;
 
     /**
      * Специальность врача
      */
     @Comment("Специальность врача")
     @OneToOne
-    public VocE2FondV021 getDoctorSpeciality() {
-        return doctorSpeciality;
-    }
+    public VocE2FondV021 getDoctorSpeciality() {return theDoctorSpeciality;}
+    private VocE2FondV021 theDoctorSpeciality ;
 
     /**
      * Диагноз, выявленный при оказании услуги
      */
     @Comment("Диагноз, выявленный при оказании услуги")
     @OneToOne
-    public VocIdc10 getMkb() {
-        return mkb;
-    }
+    public VocIdc10 getMkb() {return theMkb;}
+    private VocIdc10 theMkb ;
+
+    /** Цена */
+    private BigDecimal theCost ;
+
+    public EntryMedService(){}
+
+    /** Коммент */
+    private String theComment ;
+
+    /** Цена */
+    private BigDecimal theUet ;
 
 }

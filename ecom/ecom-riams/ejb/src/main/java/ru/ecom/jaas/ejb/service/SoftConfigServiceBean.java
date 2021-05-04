@@ -74,7 +74,7 @@ public class SoftConfigServiceBean implements ISoftConfigService {
 
 	@Override
 	public String getConfigValue(String key) {
-		List<Object[]> l = theManager.createNativeQuery("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key=:key").setParameter("key",key).getResultList();
+		List<Object[]> l = manager.createNativeQuery("select sf.id,sf.keyvalue from SoftConfig sf where  sf.key=:key").setParameter("key",key).getResultList();
 		return l.isEmpty() ? null : l.get(0)[1].toString();
 	}
 
@@ -86,7 +86,7 @@ public class SoftConfigServiceBean implements ISoftConfigService {
 	private SoftConfig findOrCreateSoftConfig(String aKey, Map<String,String> aDefault) {
 		if (aKey!=null && !aKey.equals("")) {
 			SoftConfig config ;
-			List<SoftConfig> list = theManager.createQuery("from SoftConfig sc where sc.key=:key")
+			List<SoftConfig> list = manager.createQuery("from SoftConfig sc where sc.key=:key")
 				.setParameter("key", aKey)
 				.getResultList();
 			if (list.isEmpty()) {
@@ -97,7 +97,7 @@ public class SoftConfigServiceBean implements ISoftConfigService {
 				if (value==null) value="" ;
 				config.setKeyValue(value) ;
 				config.setDescription("auto " +description) ;
-				theManager.persist(config) ;
+				manager.persist(config) ;
 			} else {
 				config= list.get(0) ;
 			}
@@ -112,6 +112,6 @@ public class SoftConfigServiceBean implements ISoftConfigService {
         map.put("data_base_namespace:description","Основной namespace, в котором настроено приложение") ;
         return map ;
     }
-    @PersistenceContext private EntityManager theManager ;
-    @Resource SessionContext theContext ;
+    @PersistenceContext private EntityManager manager ;
+    @Resource SessionContext context ;
 }

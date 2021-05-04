@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -26,115 +27,98 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(CovidMarkPreCreateInterceptor.class)
 )
+@Setter
 public class CovidMarkForm  extends IdEntityForm {
     /** СМО */
     @Comment("СМО")
     @Persist
-    public Long getMedCase() {return theMedCase;}
-    public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
-    private Long theMedCase ;
+    public Long getMedCase() {return medCase;}
+    private Long medCase ;
 
     /** Дата создания */
     @Comment("Дата создания")
     @Persist
     @DateString
     @DoDateString
-    public String getCreateDate() {return theCreateDate;}
-    public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-    private String theCreateDate ;
+    public String getCreateDate() {return createDate;}
+    private String createDate ;
 
     /** Время создания */
     @Comment("Время создания")
     @Persist
     @TimeString
     @DoTimeString
-    public String getCreateTime() {return theCreateTime;}
-    public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
-    private String theCreateTime ;
+    public String getCreateTime() {return createTime;}
+    private String createTime ;
 
     /** Создатель */
     @Comment("Создатель")
     @Persist
-    public String getCreateUsername() {return theCreateUsername;}
-    public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-    private String theCreateUsername ;
+    public String getCreateUsername() {return createUsername;}
+    private String createUsername ;
 
     /** Дата редактирования */
     @Comment("Дата редактирования")
     @Persist @DoDateString @DateString
-    public String getEditDate() {return theEditDate;}
-    public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+    public String getEditDate() {return editDate;}
     /** Дата редактирования */
-    private String theEditDate;
+    private String editDate;
 
     /** Время редактирования */
     @Comment("Время редактирования")
     @Persist @DoTimeString @TimeString
-    public String getEditTime() {return theEditTime;}
-    public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+    public String getEditTime() {return editTime;}
     /** Время редактирования */
-    private String theEditTime;
+    private String editTime;
     
     /** Пользователь последний, изменявший запись */
     @Comment("Пользователь последний, изменявший запись")
     @Persist
     public String getEditUsername() {
-        return theEditUsername;
-    }
-    public void setEditUsername(String aEditUsername) {
-        theEditUsername = aEditUsername;
+        return editUsername;
     }
     /** Пользователь последний, изменявший запись */
-    private String theEditUsername;
+    private String editUsername;
 
     /** Изменение в лёгких в оценке ковида */
     @Comment("Изменение в лёгких в оценке ковида")
     @Persist
-    public Long getChangeLungs() {return theChangeLungs;}
-    public void setChangeLungs(Long aChangeLungs) {theChangeLungs = aChangeLungs;}
-    private Long theChangeLungs ;
+    public Long getChangeLungs() {return changeLungs;}
+    private Long changeLungs ;
 
     /** Частота дыхательных движений в оценке ковида */
     @Comment("Частота дыхательных движений в оценке ковида")
     @Persist
-    public Long getChdd() {return theChdd;}
-    public void setChdd(Long aChdd) {theChdd = aChdd;}
-    private Long theChdd ;
+    public Long getChdd() {return chdd;}
+    private Long chdd ;
 
     /** Пульсоксиметрия в оценке ковида */
     @Comment("Пульсоксиметрия в оценке ковида")
     @Persist
-    public Long getPuls() {return thePuls;}
-    public void setPuls(Long aPuls) {thePuls = aPuls;}
-    private Long thePuls ;
+    public Long getPuls() {return puls;}
+    private Long puls ;
 
     /** Температура тела в оценке ковида */
     @Comment("Температура тела в оценке ковида")
     @Persist
-    public Long getTemp() {return theTemp;}
-    public void setTemp(Long aTemp) {theTemp = aTemp;}
-    private Long theTemp ;
+    public Long getTemp() {return temp;}
+    private Long temp ;
 
     /** Тяжесть заболевания в оценке ковида */
     @Comment("Тяжесть заболевания в оценке ковида")
     @Persist
-    public Long getSost() {return theSost;}
-    public void setSost(Long aSost) {theSost = aSost;}
-    private Long theSost ;
+    public Long getSost() {return sost;}
+    private Long sost ;
 
     /** Нарушение сознания (3) */
     @Comment("Нарушение сознания (3)")
     @Persist
-    public Boolean getIsBadSozn() {return theIsBadSozn;}
-    public void setIsBadSozn(Boolean aIsBadSozn) {theIsBadSozn = aIsBadSozn;}
-    private Boolean theIsBadSozn ;
+    public Boolean getIsBadSozn() {return isBadSozn;}
+    private Boolean isBadSozn ;
 
     /** Строка с признаками тяжёлого состояния */
     public String getBadSostString() {
         return badSostString;
-    }
-    public void setBadSostString(String badSostString) {
-        this.badSostString = badSostString;
     }
     private String badSostString ;
 }

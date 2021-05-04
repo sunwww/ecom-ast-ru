@@ -11,7 +11,7 @@ import javax.persistence.EntityManager;
 public class DriverManager {
 
 
-    public static IExportFomatDriver getDriver(String driverString, EntityManager theManager, boolean aNative, String query) throws Exception {
+    public static IExportFomatDriver getDriver(String driverString, EntityManager manager, boolean aNative, String query) throws Exception {
 
         String[] driverParams = (driverString+"::~").split(":");
         String driverName = driverParams[0];
@@ -19,13 +19,13 @@ public class DriverManager {
         if (driverName.equals("")) driverName = "hibernate";
         
         if (driverName.equals("hibernate")) {
-            return new DefaultExportDriver(theManager,false,query,driverConfig);
+            return new DefaultExportDriver(manager,false,query,driverConfig);
         } else if (driverName.equals("sql")) {
-            return new DefaultExportDriver(theManager,true,query,driverConfig);
+            return new DefaultExportDriver(manager,true,query,driverConfig);
         } else if (driverName.equals("voc")) {
-            return new VocExportDriver(theManager,query);
+            return new VocExportDriver(manager,query);
         } else if (driverName.equals("voc-check")) {
-            return new VocCheckExportDriver(theManager,query);
+            return new VocCheckExportDriver(manager,query);
         }
 
         throw new Exception("Driver not found");

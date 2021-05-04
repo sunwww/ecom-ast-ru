@@ -9,6 +9,8 @@ import javax.persistence.EntityListeners;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.diary.ejb.domain.voc.VocDefectDiary;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -21,92 +23,52 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @EntityListeners(DeleteListener.class)
 @Table(schema="SQLUser")
 @AIndexes(value = { @AIndex(properties = { "diary" }) })
+@Setter
+@Getter
 public class DiaryMessage extends BaseEntity {
 	/** Дневник */
 	@Comment("Дневник")
 	@OneToOne
-	public Diary getDiary() {return theDiary;}
-	public void setDiary(Diary aDiary) {theDiary = aDiary;}
+	public Diary getDiary() {return diary;}
 
-	/** Комментарий */
-	@Comment("Комментарий")
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
 
 	/** Справочник дефектов */
 	@Comment("Справочник дефектов")
 	@OneToOne
 	public VocDefectDiary getDefect() {
-		return theDefect;
+		return defect;
 	}
 
-	public void setDefect(VocDefectDiary aDefect) {
-		theDefect = aDefect;
-	}
     /** Запись дневника (протокола) */
     @Comment("Запись дневника")
     @Column(length=ColumnConstants.TEXT_MAXLENGHT)
-    public String getRecord() { return theRecord ; }
-    public void setRecord(String aRecord) { theRecord = aRecord ; }
+    public String getRecord() { return record ; }
 
 	/** Справочник дефектов */
-	private VocDefectDiary theDefect;
+	private VocDefectDiary defect;
 	/** Комментарий */
-	private String theComment;
-	private String theRecord;
+	private String comment;
+	private String record;
 	/** Дневник */
-	private Diary theDiary;
+	private Diary diary;
 	
-	/** Пользователь */
-	@Comment("Пользователь")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
 
 	/** Отредактирован врачом */
-	@Comment("Отредактирован врачом")
-	public Boolean getIsDoctorCheck() {return theIsDoctorCheck;}
-	public void setIsDoctorCheck(Boolean aIsDoctorCheck) {theIsDoctorCheck = aIsDoctorCheck;}
-
-	/** Отредактирован врачом */
-	private Boolean theIsDoctorCheck;
+	private Boolean isDoctorCheck;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	/** Пользователь */
-	private String theCreateUsername;
+	private String createUsername;
 	
 	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-
-	/** Время создания */
-	private Time theCreateTime;
+	private Time createTime;
 	
 	/** Время действия */
-	@Comment("Время действия")
-	public Time getValidityTime() {return theValidityTime;}
-	public void setValidityTime(Time aValidityTime) {theValidityTime = aValidityTime;}
-
-	/** Время действия */
-	private Time theValidityTime;
+	private Time validityTime;
 	
 	/** Срок действия */
-	@Comment("Срок действия")
-	public Date getValidityDate() {return theValidityDate;}
-	public void setValidityDate(Date aValidityDate) {theValidityDate = aValidityDate;}
-	/** Срок действия */
-	private Date theValidityDate;
+	private Date validityDate;
 	
 	/** Врачебная комиссия */
-	@Comment("Врачебная комиссия")
-	public Boolean getIsVk() {return theIsVk;}
-	public void setIsVk(Boolean aIsVk) {theIsVk = aIsVk;}
-
-	/** Врачебная комиссия */
-	private Boolean theIsVk;
+	private Boolean isVk;
 }

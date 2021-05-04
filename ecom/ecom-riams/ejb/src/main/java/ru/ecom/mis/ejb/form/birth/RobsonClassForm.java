@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -26,75 +27,67 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(RobsonClassPreCreateInterceptor.class)
 )
+@Setter
 public class RobsonClassForm extends IdEntityForm {
     /** СМО */
     @Comment("СМО")
     @Persist
-    public Long getMedCase() {return theMedCase;}
-    public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+    public Long getMedCase() {return medCase;}
     /** Классификация */
     @Comment("Классификация")
     @Persist
-    public Long getRobsonType() {return theRobsonType;}
-    public void setRobsonType(Long aRobsonType) {theRobsonType = aRobsonType;}
+    public Long getRobsonType() {return robsonType;}
     /** Дата создания */
     @Comment("Дата создания")
     @DateString
     @DoDateString
     @Persist
-    public String getCreateDate() {return theCreateDate;}
-    public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+    public String getCreateDate() {return createDate;}
     /** Дата редактирования */
     @Comment("Дата редактирования")
     @DateString
     @DoDateString
     @Persist
-    public String getEditDate() {return theEditDate;}
-    public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+    public String getEditDate() {return editDate;}
     /** Время создания */
     @Comment("Время создания")
     @TimeString
     @DoTimeString
     @Persist
-    public String getCreateTime() {return theCreateTime;}
-    public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+    public String getCreateTime() {return createTime;}
     /** Время редактрования */
     @Comment("Время редактирования")
     @TimeString @DoTimeString @Persist
-    public String getEditTime() {return theEditTime;}
-    public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+    public String getEditTime() {return editTime;}
     /** Пользователь, который создал запись */
     @Comment("Пользователь, который создал запись")
     @Persist
-    public String getCreateUsername() {return theCreateUsername;}
-    public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+    public String getCreateUsername() {return createUsername;}
     /** Пользователь, который последний редактировал запись */
     @Comment("Пользователь, который последний редактировал запись")
     @Persist
-    public String getEditUsername() {return theEditUsername;}
-    public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+    public String getEditUsername() {return editUsername;}
     /** Подгруппа классификации */
     @Comment("Подгруппа классификации")
     @Persist
-    public Long getRobsonSub() {return theRobsonSub;}
-    public void setRobsonSub(Long aRobsonSub) {theRobsonSub = aRobsonSub;}
+    public Long getRobsonSub() {return robsonSub;}
 
     /** СМО */
-    private Long theMedCase;
+    private Long medCase;
     /** Классификация */
-    private Long theRobsonType;
+    private Long robsonType;
     /** Пользователь, который последний редактировал запись */
-    private String theEditUsername;
+    private String editUsername;
     /** Пользователь, который создал запись */
-    private String theCreateUsername;
+    private String createUsername;
     /** Время редактрования */
-    private String theEditTime;
+    private String editTime;
     /** Время создания */
-    private String theCreateTime;
+    private String createTime;
     /** Дата редактирования */
-    private String theEditDate;
+    private String editDate;
     /** Дата создания */
-    private String theCreateDate;
+    private String createDate;
     /** Подгруппа классификации */
-    private Long theRobsonSub;
+    private Long robsonSub;
 }

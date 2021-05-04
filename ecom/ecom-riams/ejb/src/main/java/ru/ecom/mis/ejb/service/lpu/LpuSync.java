@@ -19,21 +19,21 @@ public class LpuSync implements ISync {
         String clause = " where time = "+aContext.getImportTime().getId();
         String queryString = " from OmcLpu" + clause;
         String countQueryString = "select count(*) from OmcLpu " + clause;
-        theEntityManager = aContext.getEntityManager();
-        long results = (Long) theEntityManager.createQuery(countQueryString).getSingleResult();
+        entityManager = aContext.getEntityManager();
+        long results = (Long) entityManager.createQuery(countQueryString).getSingleResult();
 
         IMonitor monitor = aContext.getMonitorService().startMonitor(aContext.getMonitorId(), "Синхронизация ", results);
     	
-    //	List<OmcLpu> omcLpus = theEntityManager.createQuery("from OmcLpu "+clause).getResultList() ;
+    //	List<OmcLpu> omcLpus = entityManager.createQuery("from OmcLpu "+clause).getResultList() ;
     	int i =0;
     	
-        Iterator<OmcLpu> iterator = QueryIteratorUtil.iterate(OmcLpu.class, theEntityManager.createQuery(queryString));
+        Iterator<OmcLpu> iterator = QueryIteratorUtil.iterate(OmcLpu.class, entityManager.createQuery(queryString));
         while (iterator.hasNext()) {
         	
             OmcLpu omcLpu = iterator.next();
             String code = omcLpu.getCode();
             if (i % 10 == 0 && monitor.isCancelled()) break;
-            MisLpu lpu = QueryResultUtil.getFirst(MisLpu.class, theEntityManager.createQuery("from MisLpu where omcCode= :code and parent_id is null")
+            MisLpu lpu = QueryResultUtil.getFirst(MisLpu.class, entityManager.createQuery("from MisLpu where omcCode= :code and parent_id is null")
     				.setParameter("code", code));
             if (lpu == null) {
                 lpu = new MisLpu();
@@ -49,7 +49,7 @@ public class LpuSync implements ISync {
 			lpu.setPhone(omcLpu.getPhone());
 			lpu.setCodef(omcLpu.getCodef()) ;
 			
-            theEntityManager.persist(lpu);
+            entityManager.persist(lpu);
 
             if (++i % 30 == 0) {
                 monitor.advice(30);
@@ -61,14 +61,14 @@ public class LpuSync implements ISync {
 //                tx.commit();
 //                tx.begin();
             }
-            theEntityManager.flush();
-            theEntityManager.clear();
+            entityManager.flush();
+            entityManager.clear();
         }
 
         monitor.finish(aContext.getImportTime().getId() + "");
-        theEntityManager = null;
+        entityManager = null;
 
     }
     
-    private EntityManager theEntityManager;
+    private EntityManager entityManager;
 }

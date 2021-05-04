@@ -11,6 +11,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -31,19 +33,19 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@AIndex(unique = false, properties= {"patient"})
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class DisabilityCase extends BaseEntity{
 	
 	/** Пациент */
 	@Comment("Пациент")
 	@ManyToOne
-	public Patient getPatient() {return thePatient;}
-	public void setPatient(Patient aPatient) {thePatient = aPatient;}
-	
+	public Patient getPatient() {return patient;}
+
 	/** СМО */
 	@Comment("СМО")
 	@ManyToOne
-	public MedCase getMedCase() {return theMedCase;}
-	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
+	public MedCase getMedCase() {return medCase;}
 
 	
 	/** Дата начала */
@@ -76,116 +78,66 @@ public class DisabilityCase extends BaseEntity{
 	@Comment("Документы нетрудоспособности")
 	@OneToMany(mappedBy="disabilityCase", cascade=CascadeType.ALL)
 	// @OrderBy("dateFrom") // FIXME нужно свойство dateFrom в DisabilityDocument
-	public List<DisabilityDocument> getDisabilityDocuments() {return theDisabilityDocuments;}
-	public void setDisabilityDocuments(List<DisabilityDocument> aDisabilityDocuments) {theDisabilityDocuments = aDisabilityDocuments;}
-	
+	public List<DisabilityDocument> getDisabilityDocuments() {return disabilityDocuments;}
+
 	/** Дочерние случаи нетрудоспособности */
 	@Comment("Дочерние случаи нетрудоспособности")
 	@OneToMany(mappedBy="parentDisabiblityCase", cascade=CascadeType.ALL)
-	public List<DisabilityCase> getChildDisabiblityCases() {return theChildDisabiblityCases;}
-	public void setChildDisabiblityCases(List<DisabilityCase> aChildDisabiblityCases) {theChildDisabiblityCases = aChildDisabiblityCases;}
-	
+	public List<DisabilityCase> getChildDisabiblityCases() {return childDisabiblityCases;}
+
 	/** Родительский случай нетрудоспособности */
 	@Comment("Родительский случай нетрудоспособности")
 	@ManyToOne
-	public DisabilityCase getParentDisabiblityCase() {return theParentDisabiblityCase;}
-	public void setParentDisabiblityCase(DisabilityCase aParentDisabiblityCase) {theParentDisabiblityCase = aParentDisabiblityCase;}
+	public DisabilityCase getParentDisabiblityCase() {return parentDisabiblityCase;}
 
 	/** Лицо по уходу 1*/
 	@Comment("Лицо по уходу 1")
 	@OneToOne
-	public Kinsman getNursingPerson1() {return theNursingPerson1;}
-	public void setNursingPerson1(Kinsman aNursingPerson1) {theNursingPerson1 = aNursingPerson1;}
+	public Kinsman getNursingPerson1() {return nursingPerson1;}
 
 	/** Лицо по уходу 2*/
 	@Comment("Лицо по уходу 2")
 	@OneToOne
-	public Kinsman getNursingPerson2() {return theNursingPerson2;}
-	public void setNursingPerson2(Kinsman aNursingPerson2) {theNursingPerson2 = aNursingPerson2;}
-	
+	public Kinsman getNursingPerson2() {return nursingPerson2;}
 
 	/**
 	 * Поставлена на учет в ранние сроки беременности (до 12 недель)
 	 */
 	@Comment("Поставлена на учет в ранние сроки беременности (до 12 недель)")
-	public Boolean getEarlyPregnancyRegistration() {return theEarlyPregnancyRegistration;}
-	public void setEarlyPregnancyRegistration(Boolean aEarlyPregnancyRegistration) {theEarlyPregnancyRegistration = aEarlyPregnancyRegistration;}
-	
+	public Boolean getEarlyPregnancyRegistration() {return earlyPregnancyRegistration;}
+
 	/** Состоит на учете в службе занятости */
-	@Comment("Состоит на учете в службе занятости")
-	public Boolean getPlacementService() {return thePlacementService;}
-	public void setPlacementService(Boolean aPlacementService) {thePlacementService = aPlacementService;}
-	/** Состоит на учете в службе занятости*/
-	private Boolean thePlacementService;
+	private Boolean placementService;
 
 	/** Поставлена на учет в ранние сроки беременности (до 12 недель) */
-	private Boolean theEarlyPregnancyRegistration;
+	private Boolean earlyPregnancyRegistration;
 	/** Лицо по уходу 2*/
-	private Kinsman theNursingPerson2;
+	private Kinsman nursingPerson2;
 	/** Лицо по уходу 1*/
-	private Kinsman theNursingPerson1;
+	private Kinsman nursingPerson1;
 	/** Пациент */
-	private Patient thePatient;
+	private Patient patient;
 	/** СМО */
-	private MedCase theMedCase;
+	private MedCase medCase;
 	/** Документы нетрудоспособности */
-	private List<DisabilityDocument> theDisabilityDocuments;
+	private List<DisabilityDocument> disabilityDocuments;
 	/** Дочерние случаи нетрудоспособности */
-	private List<DisabilityCase> theChildDisabiblityCases;
+	private List<DisabilityCase> childDisabiblityCases;
 	/** Родительский случай нетрудоспособности */
-	private DisabilityCase theParentDisabiblityCase;
-	/** Пользователь, создавший документ */
-	@Comment("Пользователь, создавший документ")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aUsernameCreate) {theCreateUsername = aUsernameCreate;}
-
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aDateCreate) {theCreateDate = aDateCreate;}
-
-	/** Пользователь, редактировавший документ */
-	@Comment("Пользователь, редактировавший документ")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aUsernameEdit) {theEditUsername = aUsernameEdit;}
+	private DisabilityCase parentDisabiblityCase;
 
 	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aDateEdit) {theEditDate = aDateEdit;}
-
-	/** Дата редактирования */
-	private Date theEditDate;
+	private Date editDate;
 	/** Пользователь, редактировавший документ */
-	private String theEditUsername;
+	private String editUsername;
 	/** Дата создания */
-	private Date theCreateDate;
+	private Date createDate;
 	/** Пользователь, создавший документ */
-	private String theCreateUsername;
+	private String createUsername;
 	
 	/** Возраст пациента */
-	@Comment("Возраст пациента")
-	public Long getAgePatient() {
-		return theAgePatient;
-	}
-
-	public void setAgePatient(Long aAgePatient) {
-		theAgePatient = aAgePatient;
-	}
-
-	/** Возраст пациента */
-	private Long theAgePatient;
+	private Long agePatient;
 	
 	/** Длительность */
-	@Comment("Длительность")
-	public Long getDurationCase() {
-		return theDurationCase;
-	}
-
-	public void setDurationCase(Long aDurationCase) {
-		theDurationCase = aDurationCase;
-	}
-
-	/** Длительность */
-	private Long theDurationCase;
+	private Long durationCase;
 }

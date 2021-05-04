@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.Expert2Config;
@@ -17,36 +18,33 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @Comment("Справочник настроек экспертизы")
 @WebTrail(comment = "Справочник настроек экспертизы", nameProperties = "id", view = "entityView-e2_config.do")
 @EntityFormSecurityPrefix("/Policy/E2")
+@Setter
 public class Expert2ConfigForm extends IdEntityForm {
 
     /** Значение параметра */
     @Comment("Значение параметра")
     @Persist
-    public String getValue() {return theValue;}
-    public void setValue(String aValue) {theValue = aValue;}
+    public String getValue() {return value;}
     /** Значение параметра */
-    private String theValue ;
+    private String value ;
 
     @Comment("Удалено")
     @Persist
-    public Boolean getIsDeleted() {return theIsDeleted;}
-    public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
+    public Boolean getIsDeleted() {return isDeleted;}
     /** Удалено */
-    private Boolean theIsDeleted ;
+    private Boolean isDeleted ;
 
     /** Название */
     @Comment("Название")
     @Persist
-    public String getName() {return theName;}
-    public void setName(String aName) {theName = aName;}
+    public String getName() {return name;}
     /** Название */
-    private String theName ;
+    private String name ;
 
     /** Код */
     @Comment("Код")
     @Persist
-    public String getCode() {return theCode;}
-    public void setCode(String aCode) {theCode = aCode;}
+    public String getCode() {return code;}
     /** Код */
-    private String theCode ;
+    private String code ;
 }

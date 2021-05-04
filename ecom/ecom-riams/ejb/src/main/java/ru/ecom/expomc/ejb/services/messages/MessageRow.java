@@ -8,28 +8,28 @@ import java.io.Serializable;
 public class MessageRow implements Serializable {
 
     /** Идентфикатор сообщения */
-    public long getId() { return theId ; }
-    public void setId(long aId) { theId = aId ; }
+    public long getId() { return id ; }
+    public void setId(long aId) { id = aId ; }
 
     /** Идентфикатор сообщения */
-    private long theId ;
+    private long id ;
     /** Название проверки */
-    public String getName() { return theName ; }
-    public void setName(String aName) { theName = aName ; }
+    public String getName() { return name ; }
+    public void setName(String aName) { name = aName ; }
 
     /** Комментарий */
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
+    public String getComment() { return comment ; }
+    public void setComment(String aComment) { comment = aComment ; }
 
     /** Название типа сообщения */
-    public String getCheckTypeName() { return theCheckTypeName ; }
-    public void setCheckTypeName(String aCheckTypeName) { theCheckTypeName = aCheckTypeName ; }
+    public String getCheckTypeName() { return checkTypeName ; }
+    public void setCheckTypeName(String aCheckTypeName) { checkTypeName = aCheckTypeName ; }
 
     /** Название типа сообщения */
-    private String theCheckTypeName ;
+    private String checkTypeName ;
     
     /** Комментарий */
-    private String theComment ;
+    private String comment ;
     /** Название проверки */
-    private String theName ;
+    private String name ;
 }

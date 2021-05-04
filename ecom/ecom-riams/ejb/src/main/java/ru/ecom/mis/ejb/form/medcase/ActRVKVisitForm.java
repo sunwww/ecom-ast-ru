@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.*;
@@ -25,154 +26,137 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @ACreateInterceptors(
         @AEntityFormInterceptor(ActRVKCreateInterceptor.class)
 )
+@Setter
 public class ActRVKVisitForm extends IdEntityForm {
     /** Дата начала акта */
     @Comment("Дата начала акта")
     @DateString @DoDateString
     @Persist @Required
-    public String getDateStart() {return theDateStart;	}
-    public void setDateStart(String aDateStart) {theDateStart = aDateStart;}
+    public String getDateStart() {return dateStart;	}
     /** Дата начала акта */
-    private String theDateStart;
+    private String dateStart;
 
     /** Дата окончания акта */
     @Comment("Дата окончания акта")
     @DateString @DoDateString
     @Persist
-    public String getDateFinish() {return theDateFinish;	}
-    public void setDateFinish(String aDateFinish) {theDateFinish = aDateFinish;}
+    public String getDateFinish() {return dateFinish;	}
     /** Дата окончания акта */
-    private String theDateFinish;
+    private String dateFinish;
 
     /** Примечание */
     @Comment("Примечание")
     @Persist
-    public String getComment() {return theComment;}
-    public void setComment(String aComment) {theComment = aComment;}
+    public String getComment() {return comment;}
     /** Примечание */
-    private String theComment;
+    private String comment;
 
     /** Пациент */
     @Comment("Пациент")
     @Persist
-    public Long getPatient() {	return thePatient;	}
-    public void setPatient(Long aPatient) {thePatient = aPatient;	}
+    public Long getPatient() {	return patient;	}
     /** Пациент */
-    private Long thePatient;
+    private Long patient;
 
     /** Код диагноза */
     @Comment("Код диагноза")
     @Persist
-    public Long getIdc10() {return theIdc10;}
-    public void setIdc10(Long aIdc10) {theIdc10 = aIdc10;}
+    public Long getIdc10() {return idc10;}
     /** Код диагноза */
-    private Long theIdc10;
+    private Long idc10;
 
     /** Диагноз */
     @Comment("Диагноз")
     @Persist
-    public String getDiagnosis() {return theDiagnosis;}
-    public void setDiagnosis(String aDiagnosis) {theDiagnosis = aDiagnosis;}
+    public String getDiagnosis() {return diagnosis;}
     /** Диагноз */
-    private String theDiagnosis;
+    private String diagnosis;
 
     /** Parent госпитализация/визит */
     @Comment("Parent госпитализация/визит")
     @Persist
-    public Long getMedCase() {return theMedCase;}
-    public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+    public Long getMedCase() {return medCase;}
     /** Parent госпитализация/визит */
-    private Long theMedCase;
+    private Long medCase;
 
     /** Отделение */
     @Comment("Отделение")
     @Persist
-    public Long getDepartment() {return theDepartment;	}
-    public void setDepartment(Long aDepartment) {theDepartment = aDepartment;	}
+    public Long getDepartment() {return department;	}
     /** Отделение */
-    private Long theDepartment;
+    private Long department;
 
     /** Номер акта */
     @Comment("Номер акта")
     @Persist
-    public String getNumAct() {return theNumAct;}
-    public void setNumAct(String aNumAct) {theNumAct = aNumAct;}
+    public String getNumAct() {return numAct;}
     /** Номер акта */
-    private String theNumAct;
+    private String numAct;
 
     /** Дата создания */
     @Comment("Дата создания")
     @DateString @DoDateString
     @Persist
-    public String getCreateDate() {return theCreateDate;}
-    public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+    public String getCreateDate() {return createDate;}
     /** Дата создания */
-    private String theCreateDate;
+    private String createDate;
 
     /** Дата редактирования */
     @Comment("Дата редактирования")
     @DateString @DoDateString
     @Persist
-    public String getEditDate() {return theEditDate;}
-    public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+    public String getEditDate() {return editDate;}
     /** Дата редактирования */
-    private String theEditDate;
+    private String editDate;
 
     /** Время создания */
     @Comment("Время создания")
     @TimeString @DoTimeString
     @Persist
-    public String getCreateTime() {return theCreateTime;}
-    public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+    public String getCreateTime() {return createTime;}
     /** Время создания */
-    private String theCreateTime;
+    private String createTime;
 
     /** Время редактрования */
     @Comment("Время редактирования")
     @TimeString
     @DoTimeString @Persist
-    public String getEditTime() {return theEditTime;}
-    public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+    public String getEditTime() {return editTime;}
     /** Время редактрования */
-    private String theEditTime;
+    private String editTime;
 
     /** Пользователь, который создал запись */
     @Comment("Пользователь, который создал запись")
     @Persist
-    public String getCreateUsername() {return theCreateUsername;}
-    public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+    public String getCreateUsername() {return createUsername;}
     /** Пользователь, который создал запись */
-    private String theCreateUsername;
+    private String createUsername;
 
     /** Пользователь, который последний редактировал запись */
     @Comment("Пользователь, который последний редактировал запись")
     @Persist
-    public String getEditUsername() {return theEditUsername;}
-    public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+    public String getEditUsername() {return editUsername;}
     /** Пользователь, который последний редактировал запись */
-    private String theEditUsername;
+    private String editUsername;
 
     /** Рабочая функция открывшего */
     @Comment("Рабочая функция открывшего")
     @Persist
-    public Long getWorkFunctionStart() {return theWorkFunctionStart;}
-    public void setWorkFunctionStart(Long aWorkFunctionStart) {theWorkFunctionStart = aWorkFunctionStart;}
+    public Long getWorkFunctionStart() {return workFunctionStart;}
     /** Рабочая функция открывшего */
-    private Long theWorkFunctionStart;
+    private Long workFunctionStart;
 
     /** Рабочая функция закрывшего */
     @Comment("Рабочая функция закрывшего")
     @Persist
-    public Long getWorkFunctionFinish() {return theWorkFunctionFinish;}
-    public void setWorkFunctionFinish(Long aWorkFunctionFinish) {theWorkFunctionFinish = aWorkFunctionFinish;}
+    public Long getWorkFunctionFinish() {return workFunctionFinish;}
     /** Рабочая функция закрывшего */
-    private Long theWorkFunctionFinish;
+    private Long workFunctionFinish;
 
     /** Название раб. функции открывшего акт*/
     @Comment("Название раб. функции открывшего акт")
     @Persist
-    public Long getSpecName() {return theSpecName;}
-    public void setSpecName(Long aSpecName) {theSpecName = aSpecName;}
+    public Long getSpecName() {return specName;}
     /** Название раб. функции открывшего акт*/
-    private Long theSpecName;
+    private Long specName;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.ContractMedPolicy;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -17,6 +18,7 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @WebTrail(comment = "Медицинский полис по договору", nameProperties= "id", list="entityParentList-contract_contractMedPolicy.do", view="entityParentView-contract_contractMedPolicy.do")
 @Parent(property="contract", parentForm=MedContractForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/MedContract/ContractGuarantee/ContractMedPolicy")
+@Setter
 public class ContractMedPolicyForm extends ContractGuaranteeForm {
 	/**
 	 * Медицинский полис
@@ -24,60 +26,48 @@ public class ContractMedPolicyForm extends ContractGuaranteeForm {
 	@Comment("Медицинский полис")
 	@Persist
 	public Long getMedPolicy() {
-		return theMedPolicy;
-	}
-	public void setMedPolicy(Long aMedPolicy) {
-		theMedPolicy = aMedPolicy;
+		return medPolicy;
 	}
 	/**
 	 * Медицинский полис
 	 */
-	private Long theMedPolicy;
+	private Long medPolicy;
 	/**
 	 * Фамилия
 	 */
 	@Comment("Фамилия")
 	@Persist
 	public String getLastname() {
-		return theLastname;
-	}
-	public void setLastname(String aLastname) {
-		theLastname = aLastname;
+		return lastname;
 	}
 	/**
 	 * Фамилия
 	 */
-	private String theLastname;
+	private String lastname;
 	/**
 	 * Имя
 	 */
 	@Comment("Имя")
 	@Persist
 	public String getFirstname() {
-		return theFirstname;
-	}
-	public void setFirstname(String aFirstname) {
-		theFirstname = aFirstname;
+		return firstname;
 	}
 	/**
 	 * Имя
 	 */
-	private String theFirstname;
+	private String firstname;
 	/**
 	 * Отчество
 	 */
 	@Comment("Отчество")
 	@Persist
 	public String getMiddlename() {
-		return theMiddlename;
-	}
-	public void setMiddlename(String aMiddlename) {
-		theMiddlename = aMiddlename;
+		return middlename;
 	}
 	/**
 	 * Отчество
 	 */
-	private String theMiddlename;
+	private String middlename;
 	/**
 	 * День рождения
 	 */
@@ -85,45 +75,36 @@ public class ContractMedPolicyForm extends ContractGuaranteeForm {
 	@Persist
 	@DateString @DoDateString
 	public String getBirthday() {
-		return theBirthday;
-	}
-	public void setBirthday(String aBirthday) {
-		theBirthday = aBirthday;
+		return birthday;
 	}
 	/**
 	 * День рождения
 	 */
-	private String theBirthday;
+	private String birthday;
 	/**
 	 * Серия
 	 */
 	@Comment("Серия")
 	@Persist
 	public String getSeries() {
-		return theSeries;
-	}
-	public void setSeries(String aSeries) {
-		theSeries = aSeries;
+		return series;
 	}
 	/**
 	 * Серия
 	 */
-	private String theSeries;
+	private String series;
 	/**
 	 * Номер
 	 */
 	@Comment("Номер")
 	@Persist
 	public String getNumber() {
-		return theNumber;
-	}
-	public void setNumber(String aNumber) {
-		theNumber = aNumber;
+		return number;
 	}
 	/**
 	 * Номер
 	 */
-	private String theNumber;
+	private String number;
 	/**
 	 * Дата начала действия
 	 */
@@ -131,15 +112,12 @@ public class ContractMedPolicyForm extends ContractGuaranteeForm {
 	@Persist
 	@DateString @DoDateString
 	public String getDateFrom() {
-		return theDateFrom;
-	}
-	public void setDateFrom(String aDateFrom) {
-		theDateFrom = aDateFrom;
+		return dateFrom;
 	}
 	/**
 	 * Дата начала действия
 	 */
-	private String theDateFrom;
+	private String dateFrom;
 	/**
 	 * Дата окончания действия
 	 */
@@ -147,15 +125,12 @@ public class ContractMedPolicyForm extends ContractGuaranteeForm {
 	@Persist
 	@DateString @DoDateString
 	public String getDateTo() {
-		return theDateTo;
-	}
-	public void setDateTo(String aDateTo) {
-		theDateTo = aDateTo;
+		return dateTo;
 	}
 	/**
 	 * Дата окончания действия
 	 */
-	private String theDateTo;
+	private String dateTo;
 	/**
 	 * Дата объявления недействительности
 	 */
@@ -163,58 +138,46 @@ public class ContractMedPolicyForm extends ContractGuaranteeForm {
 	@Persist
 	@DateString @DoDateString
 	public String getNullityDate() {
-		return theNullityDate;
-	}
-	public void setNullityDate(String aNullityDate) {
-		theNullityDate = aNullityDate;
+		return nullityDate;
 	}
 	/**
 	 * Дата объявления недействительности
 	 */
-	private String theNullityDate;
+	private String nullityDate;
 	/**
 	 * Программа обслуживания
 	 */
 	@Comment("Программа обслуживания")
 	@Persist
 	public Long getServiceProgram() {
-		return theServiceProgram;
-	}
-	public void setServiceProgram(Long aServiceProgram) {
-		theServiceProgram = aServiceProgram;
+		return serviceProgram;
 	}
 	/**
 	 * Программа обслуживания
 	 */
-	private Long theServiceProgram;
+	private Long serviceProgram;
 	/**
 	 * Статус обслуживаемой персоны
 	 */
 	@Comment("Статус обслуживаемой персоны")
 	@Persist
 	public Long getServedPersonStatus() {
-		return theServedPersonStatus;
-	}
-	public void setServedPersonStatus(Long aServedPersonStatus) {
-		theServedPersonStatus = aServedPersonStatus;
+		return servedPersonStatus;
 	}
 	/**
 	 * Статус обслуживаемой персоны
 	 */
-	private Long theServedPersonStatus;
+	private Long servedPersonStatus;
 	/**
 	 * Территория
 	 */
 	@Comment("Территория")
 	@Persist
 	public Long getTerritory() {
-		return theTerritory;
-	}
-	public void setTerritory(Long aTerritory) {
-		theTerritory = aTerritory;
+		return territory;
 	}
 	/**
 	 * Территория
 	 */
-	private Long theTerritory;
+	private Long territory;
 }

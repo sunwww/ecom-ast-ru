@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.lpu;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -17,9 +19,11 @@ import java.util.List;
 @Table(schema="SQLUser")
 @AIndexes(
 	{
-		@AIndex(unique= false, properties = {"lpu"})
+		@AIndex(properties = {"lpu"})
 	}
 )
+@Getter
+@Setter
 public class LpuArea extends BaseEntity {
 
 	/**
@@ -28,80 +32,58 @@ public class LpuArea extends BaseEntity {
 	 */
 	@Transient
 	public boolean isPediatric() {
-		return theType!=null && theType.isPediatric();
+		return type!=null && type.isPediatric();
 	}
     /** Тип участка */
     @OneToOne
-    public VocAreaType getType() { return theType ; }
-    public void setType(VocAreaType aType) { theType = aType ; }
+    public VocAreaType getType() { return type ; }
 
     /** Тип участка */
-    private VocAreaType theType ;
-    /** Номер участка */
-    public String getNumber() { return theNumber ; }
-    public void setNumber(String aNumber) { theNumber = aNumber ; }
-
+    private VocAreaType type ;
 
     /** Название учaстка */
     @Transient
     public String getName() {
-        return theNumber + " " + getTypeName();
+        return number + " " + getTypeName();
     }
     public void setName(String aName) { }
 
-
-    public String getComment() { return theComment ; }
-    public void setComment(String aComment) { theComment = aComment ; }
-
     /** ЛПУ */
     @ManyToOne
-    public MisLpu getLpu() { return theMisLpu ; }
-    public void setLpu(MisLpu aMisLpu) { theMisLpu = aMisLpu ; }
+    public MisLpu getLpu() { return lpu; }
 
     /** Адреса */
     @OneToMany(mappedBy = "area", cascade= CascadeType.ALL)
-    public List<LpuAreaAddressText> getAddresses() { return theAddresses ; }
-    public void setAddresses(List<LpuAreaAddressText> aAddresses) { theAddresses = aAddresses ; }
+    public List<LpuAreaAddressText> getAddresses() { return addresses ; }
 
     /** Название типа участка */
     @Transient
     public String getTypeName() {
-        return theType!=null ? theType.getName() : "" ;
+        return type!=null ? type.getName() : "" ;
     }
     
     public void setTypeName(String aTypeName) { }
 
     /** Адреса */
-    private List<LpuAreaAddressText> theAddresses ;
+    private List<LpuAreaAddressText> addresses ;
     /** ЛПУ */
-    private MisLpu theMisLpu ;
+    private MisLpu lpu;
     /** Комментарий */
-    private String theComment ;
+    private String comment ;
     /** Номер участка */
-    private String theNumber ;
+    private String number ;
     
     /** Участковый */
 	@Comment("Участковый")
 	@OneToOne
-	public WorkFunction getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(WorkFunction aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public WorkFunction getWorkFunction() {return workFunction;}
 
 	/** Участковый */
-	private WorkFunction theWorkFunction;
+	private WorkFunction workFunction;
 	
 	/** Код подразделения */
-	@Comment("Код подразделения")
-	public String getCodeDepartment() {return theCodeDepartment;}
-	public void setCodeDepartment(String aCodeDepartment) {theCodeDepartment = aCodeDepartment;}
-
-	/** Код подразделения */
-	private String theCodeDepartment;
+	private String codeDepartment;
 	
 	/** Отображать в пациенте */
-	@Comment("Отображать в пациенте")
-	public Boolean getIsViewInfoPatient() {return theIsViewInfoPatient;}
-	public void setIsViewInfoPatient(Boolean aIsViewInfoPatient) {theIsViewInfoPatient = aIsViewInfoPatient;}
-
-	/** Отображать в пациенте */
-	private Boolean theIsViewInfoPatient;
+	private Boolean isViewInfoPatient;
 }

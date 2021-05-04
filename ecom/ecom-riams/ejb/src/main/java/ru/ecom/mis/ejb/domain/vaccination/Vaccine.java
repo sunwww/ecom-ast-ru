@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.vaccination.voc.VaccineVocLocalReaction;
 import ru.ecom.mis.ejb.domain.vaccination.voc.VaccineVocMethod;
@@ -21,47 +23,20 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Вакцина")
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class Vaccine extends BaseEntity {
 
 	/**
 	 * Название
 	 */
-	@Comment("Название")
-	public String getName() {
-		return theName;
-	}
+	private String name;
 
-	/**
-	 * Название
-	 */
-	public void setName(String a_Property) {
-		theName = a_Property;
-	}
-
-	/**
-	 * Название
-	 */
-	private String theName;
 
 	/**
 	 * Аббревиатура
 	 */
-	@Comment("Аббревиатура")
-	public String getAbbrevation() {
-		return theAbbrevation;
-	}
-
-	/**
-	 * Аббревиатура
-	 */
-	public void setAbbrevation(String a_Property) {
-		theAbbrevation = a_Property;
-	}
-
-	/**
-	 * Аббревиатура
-	 */
-	private String theAbbrevation;
+	private String abbrevation;
 
 	/**
 	 * Список вакцинируемых нозологий
@@ -69,20 +44,13 @@ public class Vaccine extends BaseEntity {
 	@Comment("Список вакцинируемых нозологий")
 	@OneToMany(mappedBy="vaccine", cascade=CascadeType.ALL)
 	public List<VaccineVocNosology> getNosologyList() {
-		return theNosologyList;
+		return nosologyList;
 	}
 
 	/**
 	 * Список вакцинируемых нозологий
 	 */
-	public void setNosologyList(List<VaccineVocNosology> a_Property) {
-		theNosologyList = a_Property;
-	}
-
-	/**
-	 * Список вакцинируемых нозологий
-	 */
-	private List<VaccineVocNosology> theNosologyList;
+	private List<VaccineVocNosology> nosologyList;
 
 	/**
 	 * Список методов вакцинации
@@ -90,20 +58,13 @@ public class Vaccine extends BaseEntity {
 	@Comment("Список методов вакцинации")
 	@OneToMany(mappedBy="vaccine", cascade=CascadeType.ALL)
 	public List<VaccineVocMethod> getMethodList() {
-		return theMethodList;
+		return methodList;
 	}
 
 	/**
 	 * Список методов вакцинации
 	 */
-	public void setMethodList(List<VaccineVocMethod> a_Property) {
-		theMethodList = a_Property;
-	}
-
-	/**
-	 * Список методов вакцинации
-	 */
-	private List<VaccineVocMethod> theMethodList;
+	private List<VaccineVocMethod> methodList;
 
 	/**
 	 * Список общих реакций
@@ -111,20 +72,13 @@ public class Vaccine extends BaseEntity {
 	@Comment("Список общих реакций")
 	@OneToMany(mappedBy="vaccine", cascade=CascadeType.ALL)
 	public List<VaccineVocCommonReaction> getCommonReactionList() {
-		return theCommonReactionList;
+		return commonReactionList;
 	}
 
 	/**
 	 * Список общих реакций
 	 */
-	public void setCommonReactionList(List<VaccineVocCommonReaction> a_Property) {
-		theCommonReactionList = a_Property;
-	}
-
-	/**
-	 * Список общих реакций
-	 */
-	private List<VaccineVocCommonReaction> theCommonReactionList;
+	private List<VaccineVocCommonReaction> commonReactionList;
 
 	/**
 	 * Список местных реакций
@@ -133,20 +87,13 @@ public class Vaccine extends BaseEntity {
 	@Comment("Список местных реакций")
 	@OneToMany(mappedBy="vaccine", cascade=CascadeType.ALL)
 	public List<VaccineVocLocalReaction> getLocalReactionList() {
-		return theLocalReactionList;
+		return localReactionList;
 	}
 
 	/**
 	 * Список местных реакций
 	 */
-	public void setLocalReactionList(List<VaccineVocLocalReaction> a_Property) {
-		theLocalReactionList = a_Property;
-	}
-
-	/**
-	 * Список местных реакций
-	 */
-	private List<VaccineVocLocalReaction> theLocalReactionList;
+	private List<VaccineVocLocalReaction> localReactionList;
 
 	
 

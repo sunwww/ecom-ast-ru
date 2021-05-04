@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -19,6 +20,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @Parent(property="timePattern", parentForm=WorkCalendarTimePatternForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/WorkCalendar/Pattern/Day/Time/Reserve")
 @Subclasses(value = { WorkCalendarServicePatternForm.class, WorkCalendarStreamPatternForm.class })
+@Setter
 public class WorkCalendarReservePatternForm extends IdEntityForm{
 	/**
 	 * Шаблон времени
@@ -26,13 +28,10 @@ public class WorkCalendarReservePatternForm extends IdEntityForm{
 	@Comment("Шаблон времени")
 	@Persist
 	public Long getTimePattern() {
-		return theTimePattern;
-	}
-	public void setTimePattern(Long aTimePattern) {
-		theTimePattern = aTimePattern;
+		return timePattern;
 	}
 	/**
 	 * Шаблон времени
 	 */
-	private Long theTimePattern;
+	private Long timePattern;
 }

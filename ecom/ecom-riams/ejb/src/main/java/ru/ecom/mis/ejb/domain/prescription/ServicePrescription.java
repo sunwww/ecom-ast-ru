@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.prescription;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.medcase.MedService;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocAnesthesia;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocBloodGroup;
@@ -19,6 +21,8 @@ import javax.persistence.Transient;
 
 @Comment("Назначение на услугу")
 @Entity
+@Getter
+@Setter
 public class ServicePrescription extends Prescription {
 
     /**
@@ -27,14 +31,9 @@ public class ServicePrescription extends Prescription {
     @Comment("Вид наркоза")
     @OneToOne
     public VocAnesthesia getAnesthesiaType() {
-        return theAnesthesiaType;
+        return anesthesiaType;
     }
-
-    public void setAnesthesiaType(VocAnesthesia aAnesthesiaType) {
-        theAnesthesiaType = aAnesthesiaType;
-    }
-
-    private VocAnesthesia theAnesthesiaType;
+    private VocAnesthesia anesthesiaType;
 
     /**
      * Поток обслуживания
@@ -48,19 +47,7 @@ public class ServicePrescription extends Prescription {
     /**
      * Номер штрих-кода
      */
-    @Comment("Номер штрих-кода")
-    public String getBarcodeNumber() {
-        return theBarcodeNumber;
-    }
-
-    public void setBarcodeNumber(String aBarcodeNumber) {
-        theBarcodeNumber = aBarcodeNumber;
-    }
-
-    /**
-     * Номер штрих-кода
-     */
-    private String theBarcodeNumber;
+    private String barcodeNumber;
 
     /**
      * Медицинская услуга
@@ -68,17 +55,13 @@ public class ServicePrescription extends Prescription {
     @Comment("Медицинская услуга")
     @OneToOne
     public MedService getMedService() {
-        return theMedService;
-    }
-
-    public void setMedService(MedService aMedService) {
-        theMedService = aMedService;
+        return medService;
     }
 
     /**
      * Медицинская услуга
      */
-    private MedService theMedService;
+    private MedService medService;
 
     /**
      * Описание назначения
@@ -100,14 +83,9 @@ public class ServicePrescription extends Prescription {
     @Comment("Группа крови пациента")
     @OneToOne
     public VocBloodGroup getBloodGroup() {
-        return theBloodGroup;
+        return bloodGroup;
     }
-
-    public void setBloodGroup(VocBloodGroup aBloodGroup) {
-        theBloodGroup = aBloodGroup;
-    }
-
-    private VocBloodGroup theBloodGroup;
+    private VocBloodGroup bloodGroup;
 
     /**
      * Резус-фактор пациента
@@ -115,13 +93,8 @@ public class ServicePrescription extends Prescription {
     @Comment("Резус-фактор пациента")
     @OneToOne
     public VocRhesusFactor getRhesusFactor() {
-        return theRhesusFactor;
+        return rhesusFactor;
     }
-
-    public void setRhesusFactor(VocRhesusFactor aRhesusFactor) {
-        theRhesusFactor = aRhesusFactor;
-    }
-
-    private VocRhesusFactor theRhesusFactor;
+    private VocRhesusFactor rhesusFactor;
 
 }

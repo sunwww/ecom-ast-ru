@@ -1,5 +1,6 @@
 package ru.ecom.poly.ejb.form;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -30,45 +31,39 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(PrepareCreateMedcardInterceptor.class)
 )
+@Setter
 public class MedcardForm extends IdEntityForm {
 
     /** @return Пациент **/
     @Comment("Пациент")
     @Persist
-    public Long getPerson() { return thePerson; }
-    public void setPerson(Long aPerson) { thePerson = aPerson; }
-    
+    public Long getPerson() { return person; }
+
     @Comment("Номер карты")
     @Required @DoUpperCase @DoTrimString @Persist
-    public String getNumber() {return theNumber;}
-    public void setNumber(String aNumber) {theNumber = aNumber;}
+    public String getNumber() {return number;}
 
     @Comment("Дата заведения карты")
     @Persist @DateString @DoDateString
-    public String getDateRegistration() {return theDateRegistration;}
-    public void setDateRegistration(String aDateRegistration) {theDateRegistration = aDateRegistration;}
+    public String getDateRegistration() {return dateRegistration;}
 
     @Comment("Регистратор")
     @Persist
-    public String getRegistrator() {return theRegistrator;}
-    public void setRegistrator(String aRegistrator) {theRegistrator = aRegistrator;}
+    public String getRegistrator() {return registrator;}
 
     /** Лечебно-профилактическое учреждение */
 	@Comment("Лечебно-профилактическое учреждение")
 	@Persist
-	public Long getLpu() {return theLpu;}
-	public void setLpu(Long aLpu) {theLpu = aLpu;}
+	public Long getLpu() {return lpu;}
 
 	/** Лечебно-профилактическое учреждение */
-	private Long theLpu;
+	private Long lpu;
     /** Пациент **/
-    private Long thePerson;
+    private Long person;
     /** Номер карты*/
-    private String theNumber;
+    private String number;
     /** Дата заведения карты */
-    private String theDateRegistration;
+    private String dateRegistration;
     /** Регистратор */
-    private String theRegistrator;
-
-
+    private String registrator;
 }

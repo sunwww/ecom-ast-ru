@@ -13,6 +13,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -28,60 +30,38 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@AIndex(properties={"parent"})
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class TemplateCategory extends BaseEntity {
 	/** Родитель */
 	@Comment("Родитель")
 	@ManyToOne
-	public TemplateCategory getParent() {return theParent;	}
-	public void setParent(TemplateCategory aParent) {theParent = aParent;}
+	public TemplateCategory getParent() {return parent;	}
 
 	/** Подкатегории */
 	@Comment("Подкатегории")
 	@OneToMany(mappedBy="parent", cascade = ALL )
-	public List<TemplateCategory> getChild() {return theChild;}
-	public void setChild(List<TemplateCategory> aChild) {theChild = aChild;}
-
-	/** Название категории */
-	@Comment("Название категории")
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
-
-	/** Комментарии */
-	@Comment("Комментарии")
-	public String getComments() {return theComments;}
-	public void setComments(String aComments) {theComments = aComments;}
-
-	/** Пользователь */
-	@Comment("Пользователь")
-	public String getUsername() {return theUsername;}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
-
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getDateCreate() {return theDateCreate;}
-	public void setDateCreate(Date aDateCreate) {theDateCreate = aDateCreate;}
+	public List<TemplateCategory> getChild() {return child;}
 
 	/** Шаблоны листов назначений */
 	@Comment("Шаблоны листов назначений")
 	@ManyToMany(mappedBy="categories")
-	public List<PrescriptListTemplate> getPrescriptLists() {return thePrescriptLists;}
-	public void setPrescriptLists(List<PrescriptListTemplate> aPrescriptLists) {thePrescriptLists = aPrescriptLists;}
+	public List<PrescriptListTemplate> getPrescriptLists() {return prescriptLists;}
 
 	/** Шаблоны протоколов */
 	@Comment("Шаблоны протоколов")
 	@ManyToMany(mappedBy="categories")
-	public List<TemplateProtocol> getProtocols() {return theProtocols;	}
-	public void setProtocols(List<TemplateProtocol> aProtocols) {theProtocols = aProtocols;}
+	public List<TemplateProtocol> getProtocols() {return protocols;	}
 
 	@Transient @Comment("Полное имя категории")
 	public String getFullname() {
 		StringBuilder ret = new StringBuilder() ;
 		
-		if (theParent!=null) {
-			ret.append(getInfoParent(theParent,"")) ;
+		if (parent!=null) {
+			ret.append(getInfoParent(parent,"")) ;
 			//ret.append("->");
 		}
-		ret.append(theName) ;
+		ret.append(name) ;
 		return ret.toString() ;
 	}
 	private String getInfoParent(TemplateCategory aCateg, String aAppend) {
@@ -91,19 +71,19 @@ public class TemplateCategory extends BaseEntity {
 		return ret.toString() ;
 	}
 	/** Шаблоны протоколов */
-	private List<TemplateProtocol> theProtocols;
+	private List<TemplateProtocol> protocols;
 	/** Шаблоны листов назначений */
-	private List<PrescriptListTemplate> thePrescriptLists;
+	private List<PrescriptListTemplate> prescriptLists;
 	/** Дата создания */
-	private Date theDateCreate;
+	private Date dateCreate;
 	/** Пользователь */
-	private String theUsername;
+	private String username;
 	/** Комментарии */
-	private String theComments;
+	private String comments;
 	/** Название категории */
-	private String theName;
+	private String name;
 	/** Подкатегории */
-	private List<TemplateCategory> theChild;
+	private List<TemplateCategory> child;
 	/** Родитель */
-	private TemplateCategory theParent;
+	private TemplateCategory parent;
 }

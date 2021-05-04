@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -19,44 +21,26 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes(value = { @AIndex(properties = { "domain","name" }) })
+@Getter
+@Setter
 public class UserValue extends BaseEntity{
-	
 	/** Использовать значение по умолчанию */
-	@Comment("Использовать значение по умолчанию")
-	public Boolean getUseByDefault() {return theUseByDefault;}
-	public void setUseByDefault(Boolean aUseByDefault) {theUseByDefault = aUseByDefault;}
-	/** Использовать значение по умолчанию */
-	private Boolean theUseByDefault;
-
-	/** Значение */
-	@Comment("Значение")
-	public String getName() {return theName;}
-	public void setName(String aValue) {theName = aValue;}
+	private Boolean useByDefault;
 
 	/** Пользовательский справочник */
 	@Comment("Пользовательский справочник")
 	@ManyToOne
-	public UserDomain getDomain() {return theDomain;}
-	public void setDomain(UserDomain aDomain) {theDomain = aDomain;	}
+	public UserDomain getDomain() {return domain;}
 
 	/** Пользовательский справочник */
-	private UserDomain theDomain;
+	private UserDomain domain;
 	/** Значение */
-	private String theName;
+	private String name;
 	
 	/** Кол-во баллов */
-	@Comment("Кол-во баллов")
-	public BigDecimal getCntBall() {return theCntBall;}
-	public void setCntBall(BigDecimal aCntBall) {theCntBall = aCntBall;}
+	private BigDecimal cntBall;
 
-	/** Кол-во баллов */
-	private BigDecimal theCntBall;
-	
 	/** Сообщение при выборе значения */
-	@Comment("Сообщение при выборе значения")
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
-	/** Сообщение при выборе значения */
-	private String theComment;
+	private String comment;
 
 }

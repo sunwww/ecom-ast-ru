@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -34,652 +35,569 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(ChildBirthPreCreateInterceptor.class)
 )
+@Setter
 public class ChildBirthForm extends IdEntityForm {
 	
 	/** Вес */
 	@Comment("Вес")
 	@Persist 
-	public String getWeight() {return theWeight;}
-	public void setWeight(String aBirthWeight) {theWeight = aBirthWeight;}
-	
+	public String getWeight() {return weight;}
+
 	/** Рост */
 	@Comment("Рост")
 	@Persist 
-	public String getHeight() {return theHeight;}
-	public void setHeight(String aHeight) {theHeight = aHeight;}
-	
+	public String getHeight() {return height;}
+
 	/** Вес */
-	private String theWeight;
+	private String weight;
 	/** Рост */
-	private String theHeight;
+	private String height;
 
 	/** Время начала потуг */
 	@Comment("Время начала потуг")
 	@Persist 
 	@TimeString @DoTimeString
-	public String getTravailStartTime() {return theTravailStartTime;}
-	public void setTravailStartTime(String aTravailStartTime) {theTravailStartTime = aTravailStartTime;}
-	
+	public String getTravailStartTime() {return travailStartTime;}
+
 	/** Дата начала потуг */
 	@Comment("Дата начала потуг")
 	@Persist 
 	@DateString @DoDateString
-	public String getTravailStartDate() {return theTravailStartDate;}
-	public void setTravailStartDate(String aTravailStartDate) {theTravailStartDate = aTravailStartDate;}
+	public String getTravailStartDate() {return travailStartDate;}
 
 	/** Качество верхних вод */
 	@Comment("Качество верхних вод")
 	@Persist
-	public String getUpperWatersQuality() {return theUpperWatersQuality;}
-	public void setUpperWatersQuality(String aUpperWatersQuality) {theUpperWatersQuality = aUpperWatersQuality;}
-	
+	public String getUpperWatersQuality() {return upperWatersQuality;}
+
 	/** Качество нижних вод */
 	@Comment("Качество нижних вод")
 	@Persist
-	public String getDownWatersQuality() {return theDownWatersQuality;}
-	public void setDownWatersQuality(String aDownWatersQuality) {theDownWatersQuality = aDownWatersQuality;}
+	public String getDownWatersQuality() {return downWatersQuality;}
 
 	/** Количество верхних вод (мл) */
 	@Comment("Количество верхних вод (мл)")
 	@Persist
-	public Integer getUpperWatersAmount() {return theUpperWatersAmount;}
-	public void setUpperWatersAmount(Integer aUpperWatersAmount) {theUpperWatersAmount = aUpperWatersAmount;}
+	public Integer getUpperWatersAmount() {return upperWatersAmount;}
 
 	/** Количество нижних вод (мл) */
 	@Comment("Количество нижних вод (мл)")
 	@Persist
-	public Integer getDownWatersAmount() {return theDownWatersAmount;}
-	public void setDownWatersAmount(Integer aDownWatersAmount) {theDownWatersAmount = aDownWatersAmount;}
-	
+	public Integer getDownWatersAmount() {return downWatersAmount;}
+
 	/** Преждевременность отхождения вод */
 	@Comment("Преждевременность отхождения вод")
 	@Persist
 	@Required
-	public Long getWatersPrematurity() {return theWatersPrematurity;}
-	public void setWatersPrematurity(Long aWatersPrematurity) {theWatersPrematurity = aWatersPrematurity;}
+	public Long getWatersPrematurity() {return watersPrematurity;}
 
 	/** Время отхождения вод */
 	@Comment("Время отхождения вод")
 	@Persist 
 	@TimeString @DoTimeString
-	public String getWatersTime() {return theWatersTime;}
-	public void setWatersTime(String aWatersTime) {theWatersTime = aWatersTime;}
+	public String getWatersTime() {return watersTime;}
 
 	/** Дата отхождения вод */
 	@Comment("Дата отхождения вод")
 	@Persist 
 	@DateString @DoDateString
-	public String getWatersDate() {return theWatersDate;}
-	public void setWatersDate(String aWatersDate) {theWatersDate = aWatersDate;}
+	public String getWatersDate() {return watersDate;}
 
 	/** Время начала схваток */
 	@Comment("Время начала схваток")
 	@Persist
 	@TimeString @DoTimeString
 	@Required
-	public String getPangsStartTime() {return thePangsStartTime;}
-	public void setPangsStartTime(String aPangsStartTime) {thePangsStartTime = aPangsStartTime;}
-	
+	public String getPangsStartTime() {return pangsStartTime;}
+
 	/** Дата начала схваток */
 	@Comment("Дата начала схваток")
 	@Persist
 	@DateString @DoDateString
 	@Required
-	public String getPangsStartDate() {return thePangsStartDate;}
-	public void setPangsStartDate(String aPangsStartDate) {thePangsStartDate = aPangsStartDate;}
-	
+	public String getPangsStartDate() {return pangsStartDate;}
+
 	/** Отделение плаценты */
 	@Comment("Отделение плаценты")
 	@Persist
-	public Long getPlacentaSeparation() {return thePlacentaSeparation;}
-	public void setPlacentaSeparation(Long aPlacentaSeparation) {thePlacentaSeparation = aPlacentaSeparation;}
-	
+	public Long getPlacentaSeparation() {return placentaSeparation;}
+
 	/** Размеры плаценты */
 	@Comment("Размеры плаценты")
 	@Persist
-	public String getPlacentaSize() {return thePlacentaSize;}
-	public void setPlacentaSize(String aPlacentaSize) {thePlacentaSize = aPlacentaSize;}
-	
+	public String getPlacentaSize() {return placentaSize;}
+
 	/** Целостность плаценты */
 	@Comment("Целостность плаценты")
 	@Persist
-	public Long getPlacentaIntegrity() {return thePlacentaIntegrity;}
-	public void setPlacentaIntegrity(Long aPlacentaIntegrity) {thePlacentaIntegrity = aPlacentaIntegrity;}
-	
+	public Long getPlacentaIntegrity() {return placentaIntegrity;}
+
 	/** Особенности плаценты */
 	@Comment("Особенности плаценты")
 	@Persist
-	public String getPlacentaFeatures() {return thePlacentaFeatures;}
-	public void setPlacentaFeatures(String aPlacentaFeatures) {thePlacentaFeatures = aPlacentaFeatures;}
-	
+	public String getPlacentaFeatures() {return placentaFeatures;}
+
 	/** Масса плаценты (гр) */
 	@Comment("Масса плаценты (гр)")
 	@Persist
-	public Integer getPlacentaWeight() {return thePlacentaWeight;}
-	public void setPlacentaWeight(Integer aPlacentaWeight) {thePlacentaWeight = aPlacentaWeight;}
-	
+	public Integer getPlacentaWeight() {return placentaWeight;}
+
 	/** Целостность оболочек */
 	@Comment("Целостность оболочек")
 	@Persist
-	public Long getMembranesIntegrity() {return theMembranesIntegrity;}
-	public void setMembranesIntegrity(Long aMembranesIntegrity) {theMembranesIntegrity = aMembranesIntegrity;}
-	
+	public Long getMembranesIntegrity() {return membranesIntegrity;}
+
 	/** Место разрыва оболочек */
 	@Comment("Место разрыва оболочек")
 	@Persist
-	public Long getMembranesBreakPlace() {return theMembranesBreakPlace;}
-	public void setMembranesBreakPlace(Long aMembranesBreakPlace) {theMembranesBreakPlace = aMembranesBreakPlace;}
-	
+	public Long getMembranesBreakPlace() {return membranesBreakPlace;}
+
 	/** Объем кровопотери (мл) */
 	@Comment("Объем кровопотери (мл)")
 	@Persist
-	public Integer getHemorrhageVolume() {return theHemorrhageVolume;}
-	public void setHemorrhageVolume(Integer aHemorrhageVolume) {theHemorrhageVolume = aHemorrhageVolume;}
-	
+	public Integer getHemorrhageVolume() {return hemorrhageVolume;}
+
 	/** Продолжительность 1 периода (час) */
 	@Comment("Продолжительность 1 периода (час)")
 	@Persist
-	public String getPeriod1Duration() {return thePeriod1Duration;}
-	public void setPeriod1Duration(String aPeriod1Duration) {thePeriod1Duration = aPeriod1Duration;}
-	
+	public String getPeriod1Duration() {return period1Duration;}
+
 	/** Продолжительность 2 периода (час) */
 	@Comment("Продолжительность 2 периода (час)")
 	@Persist
-	public String getPeriod2Duration() {return thePeriod2Duration;}
-	public void setPeriod2Duration(String aPeriod2Duration) {thePeriod2Duration = aPeriod2Duration;}
-	
+	public String getPeriod2Duration() {return period2Duration;}
+
 	/** Продолжительность 3 периода (час) */
 	@Comment("Продолжительность 3 периода (час)")
 	@Persist
-	public String getPeriod3Duration() {return thePeriod3Duration;}
-	public void setPeriod3Duration(String aPeriod3Duration) {thePeriod3Duration = aPeriod3Duration;}
-	
+	public String getPeriod3Duration() {return period3Duration;}
+
 	/** Дата окончания родов */
 	@Comment("Дата окончания родов")
 	@Persist 
 	@DateString @DoDateString @Required
-	public String getBirthFinishDate() {return theBirthFinishDate;}
-	public void setBirthFinishDate(String aBirthFinishDate) {theBirthFinishDate = aBirthFinishDate;}
-	
+	public String getBirthFinishDate() {return birthFinishDate;}
+
 	/** Время окончания родов */
 	@Comment("Время окончания родов")
 	@Persist 
 	@TimeString @DoTimeString @Required
-	public String getBirthFinishTime() {return theBirthFinishTime;}
-	public void setBirthFinishTime(String aBirthFinishTime) {theBirthFinishTime = aBirthFinishTime;}
-	
+	public String getBirthFinishTime() {return birthFinishTime;}
+
 	/** Кто исследовал плаценту */
 	@Comment("Кто исследовал плаценту")
 	@Persist
-	public Long getPlacentaInspector() {return thePlacentaInspector;}
-	public void setPlacentaInspector(Long aPlacentaInspector) {thePlacentaInspector = aPlacentaInspector;}
-	
+	public Long getPlacentaInspector() {return placentaInspector;}
+
 	/** Состояние матери при выписке */
 	@Comment("Состояние матери при выписке")
 	@Persist
-	public String getDischangeMotherCondition() {return theDischangeMotherCondition;}
-	public void setDischangeMotherCondition(String aDischangeMotherCondition) {theDischangeMotherCondition = aDischangeMotherCondition;}
-	
+	public String getDischangeMotherCondition() {return dischangeMotherCondition;}
+
 	/** Неправильный постнатальный период */
 	@Comment("Неправильный постнатальный период")
 	@Persist
-	public Boolean getWrongPostNatalPeriod() {return theWrongPostNatalPeriod;}
-	public void setWrongPostNatalPeriod(Boolean aWrongPostNatalPeriod) {theWrongPostNatalPeriod = aWrongPostNatalPeriod;}
-	
+	public Boolean getWrongPostNatalPeriod() {return wrongPostNatalPeriod;}
+
 	/** Трещины сосков */
 	@Comment("Трещины сосков")
 	@Persist
-	public Boolean getMammillaChaps() {return theMammillaChaps;}
-	public void setMammillaChaps(Boolean aMammillaChaps) {theMammillaChaps = aMammillaChaps;}
-	
+	public Boolean getMammillaChaps() {return mammillaChaps;}
+
 	/** Отек наружных половых органов */
 	@Comment("Отек наружных половых органов")
 	@Persist
-	public String getVulvaEdema() {return theVulvaEdema;}
-	public void setVulvaEdema(String aVulvaEdema) {theVulvaEdema = aVulvaEdema;}
-	
+	public String getVulvaEdema() {return vulvaEdema;}
+
 	/** Отек промежности */
 	@Comment("Отек промежности")
 	@Persist
-	public String getPerineumEdema() {return thePerineumEdema;}
-	public void setPerineumEdema(String aPerineumEdema) {thePerineumEdema = aPerineumEdema;}
-	
+	public String getPerineumEdema() {return perineumEdema;}
+
 	/** Геморрой */
 	@Comment("Геморрой")
 	@Persist
-	public String getHaemorrhoids() {return theHaemorrhoids;}
-	public void setHaemorrhoids(String aHaemorrhoids) {theHaemorrhoids = aHaemorrhoids;}
-	
+	public String getHaemorrhoids() {return haemorrhoids;}
+
 	/** Послеродовая болезнь */
 	@Comment("Послеродовая болезнь")
 	@Persist
-	public String getPostNatalDisease() {return thePostNatalDisease;}
-	public void setPostNatalDisease(String aPostNatalDisease) {thePostNatalDisease = aPostNatalDisease;}
-	
+	public String getPostNatalDisease() {return postNatalDisease;}
+
 	/** Болезнь, не зависящая от родов */
 	@Comment("Болезнь, не зависящая от родов")
 	@Persist
-	public String getNotPostNatalDisease() {return theNotPostNatalDisease;}
-	public void setNotPostNatalDisease(String aNotPostNatalDisease) {theNotPostNatalDisease = aNotPostNatalDisease;}
-	
+	public String getNotPostNatalDisease() {return notPostNatalDisease;}
+
 	/** Повышение температуры без диагноза */
 	@Comment("Повышение температуры без диагноза")
 	@Persist
-	public Long getFeverWithoutDiagnosis() {return theFeverWithoutDiagnosis;}
-	public void setFeverWithoutDiagnosis(Long aFeverWithoutDiagnosis) {theFeverWithoutDiagnosis = aFeverWithoutDiagnosis;}
-	
+	public Long getFeverWithoutDiagnosis() {return feverWithoutDiagnosis;}
+
 	/** Особенности лечения */
 	@Comment("Особенности лечения")
 	@Persist
-	public String getTreatmentFeatures() {return theTreatmentFeatures;}
-	public void setTreatmentFeatures(String aTreatmentFeatures) {theTreatmentFeatures = aTreatmentFeatures;}
-	
+	public String getTreatmentFeatures() {return treatmentFeatures;}
+
 	/** Направление плаценты на гистологию */
 	@Comment("Направление плаценты на гистологию")
 	@Persist
-	public Boolean getPlacentaHistologyOrder() {return thePlacentaHistologyOrder;}
-	public void setPlacentaHistologyOrder(Boolean aPlacentaHistologyOrder) {thePlacentaHistologyOrder = aPlacentaHistologyOrder;}
-	
+	public Boolean getPlacentaHistologyOrder() {return placentaHistologyOrder;}
+
 	/** СМО */
 	@Comment("СМО")
 	@Persist
-	public Long getMedCase() {return theMedCase;}
-	public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+	public Long getMedCase() {return medCase;}
 
 	/** Гистология плаценты */
 	@Comment("Гистология плаценты")
 	@Persist
-	public Long getHistology() {return theHistology;}
-	public void setHistology(Long aHistology) {theHistology = aHistology;}
+	public Long getHistology() {return histology;}
 
 	/** Гистология плаценты */
-	private Long theHistology;
+	private Long histology;
 	/** СМО */
-	private Long theMedCase;
+	private Long medCase;
 	/** Время начала потуг */
-	private String theTravailStartTime;
+	private String travailStartTime;
 	/** Дата начала потуг */
-	private String theTravailStartDate;
+	private String travailStartDate;
 	/** Качество верхних вод */
-	private String theUpperWatersQuality;
+	private String upperWatersQuality;
 	/** Качество нижних вод */
-	private String theDownWatersQuality;
+	private String downWatersQuality;
 	/** Количество верхних вод (мл) */
-	private Integer theUpperWatersAmount;
+	private Integer upperWatersAmount;
 	/** Количество нижних вод (мл) */
-	private Integer theDownWatersAmount;
+	private Integer downWatersAmount;
 	/** Преждевременность отхождения вод */
-	private Long theWatersPrematurity;
+	private Long watersPrematurity;
 	/** Время отхождения вод */
-	private String theWatersTime;
+	private String watersTime;
 	/** Дата отхождения вод */
-	private String theWatersDate;
+	private String watersDate;
 	/** Время начала схваток */
-	private String thePangsStartTime;
+	private String pangsStartTime;
 	/** Дата начала схваток */
-	private String thePangsStartDate;
+	private String pangsStartDate;
 	/** Отделение плаценты */
-	private Long thePlacentaSeparation;
+	private Long placentaSeparation;
 	/** Размеры плаценты */
-	private String thePlacentaSize;
+	private String placentaSize;
 	/** Целостность плаценты */
-	private Long thePlacentaIntegrity;
+	private Long placentaIntegrity;
 	/** Особенности плаценты */
-	private String thePlacentaFeatures;
+	private String placentaFeatures;
 	/** Масса плаценты (гр) */
-	private Integer thePlacentaWeight;
+	private Integer placentaWeight;
 	/** Целостность оболочек */
-	private Long theMembranesIntegrity;
+	private Long membranesIntegrity;
 	/** Место разрыва оболочек */
-	private Long theMembranesBreakPlace;
+	private Long membranesBreakPlace;
 	/** Объем кровопотери (мл) */
-	private Integer theHemorrhageVolume;
+	private Integer hemorrhageVolume;
 	/** Продолжительность 1 периода (час) */
-	private String thePeriod1Duration;
+	private String period1Duration;
 	/** Продолжительность 2 периода (час) */
-	private String thePeriod2Duration;
+	private String period2Duration;
 	/** Продолжительность 3 периода (час) */
-	private String thePeriod3Duration;
+	private String period3Duration;
 	/** Дата окончания родов */
-	private String theBirthFinishDate;
+	private String birthFinishDate;
 	/** Время окончания родов */
-	private String theBirthFinishTime;
+	private String birthFinishTime;
 	/** Кто исследовал плаценту */
-	private Long thePlacentaInspector;
+	private Long placentaInspector;
 	/** Состояние матери при выписке */
-	private String theDischangeMotherCondition;
+	private String dischangeMotherCondition;
 	/** Неправильный постнатальный период */
-	private Boolean theWrongPostNatalPeriod;
+	private Boolean wrongPostNatalPeriod;
 	/** Трещины сосков */
-	private Boolean theMammillaChaps;
+	private Boolean mammillaChaps;
 	/** Отек наружных половых органов */
-	private String theVulvaEdema;
+	private String vulvaEdema;
 	/** Отек промежности */
-	private String thePerineumEdema;
+	private String perineumEdema;
 	/** Геморрой */
-	private String theHaemorrhoids;
+	private String haemorrhoids;
 	/** Послеродовая болезнь */
-	private String thePostNatalDisease;
+	private String postNatalDisease;
 	/** Болезнь, не зависящая от родов */
-	private String theNotPostNatalDisease;
+	private String notPostNatalDisease;
 	/** Повышение температуры без диагноза */
-	private Long theFeverWithoutDiagnosis;
+	private Long feverWithoutDiagnosis;
 	/** Особенности лечения */
-	private String theTreatmentFeatures;
+	private String treatmentFeatures;
 	/** Направление плаценты на гистологию */
-	private Boolean thePlacentaHistologyOrder;
+	private Boolean placentaHistologyOrder;
 	/** Беременность */
 	@Comment("Беременность")
 	@Persist
-	public Long getPregnancy() {return thePregnancy;}
-	public void setPregnancy(Long aPregnancy) {thePregnancy = aPregnancy;}
+	public Long getPregnancy() {return pregnancy;}
 
 	/** Беременность */
-	private Long thePregnancy;
+	private Long pregnancy;
 	/** Госпитализация */
 	@Comment("Госпитализация")
 	@Persist
-	public Long getSls() {return theSls;}
-	public void setSls(Long aSls) {theSls = aSls;}
+	public Long getSls() {return sls;}
 
 	/** Госпитализация */
-	private Long theSls;
+	private Long sls;
 
 	/** Дата создания */
 	@Comment("Дата создания")
 	@DateString @DoDateString @Persist
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
-	
+	public String getCreateDate() {return createDate;}
+
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@DateString @DoDateString @Persist
-	public String getEditDate() {return theEditDate;}
-	public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
-	
+	public String getEditDate() {return editDate;}
+
 	/** Время создания */
 	@Comment("Время создания")
 	@TimeString @DoTimeString @Persist
-	public String getCreateTime() {return theCreateTime;}
-	public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+	public String getCreateTime() {return createTime;}
 	/** Время редактрования */
 	@Comment("Время редактирования")
 	@TimeString @DoTimeString @Persist
-	public String getEditTime() {return theEditTime;}
-	public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+	public String getEditTime() {return editTime;}
 	/** Пользователь, который создал запись */
 	@Comment("Пользователь, который создал запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 	/** Пользователь, который последний редактировал запись */
 	@Comment("Пользователь, который последний редактировал запись")
 	@Persist
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+	public String getEditUsername() {return editUsername;}
 
 	/** Пользователь, который последний редактировал запись */
-	private String theEditUsername;
+	private String editUsername;
 	/** Пользователь, который создал запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Время редактрования */
-	private String theEditTime;
+	private String editTime;
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	/** pregnancy */
 	@Comment("pregnancy")
 	public PregnancyForm getPregnancyForm() {
-		return thePregnancyForm;
+		return pregnancyForm;
 	}
 
-	public void setPregnancyForm(PregnancyForm aPregnancyForm) {
-		thePregnancyForm = aPregnancyForm;
-	}
 
 	/** pregnancy */
-	private PregnancyForm thePregnancyForm=new PregnancyForm();
+	private PregnancyForm pregnancyForm=new PregnancyForm();
 	
 	/** PregnanInspectionForm */
 	@Comment("PregnanInspectionForm")
 	public PregnanInspectionForm getPregnanInspectionForm() {
-		return thePregnanInspectionForm;
+		return pregnanInspectionForm;
 	}
 
-	public void setPregnanInspectionForm(PregnanInspectionForm aPregnanInspectionForm) {
-		thePregnanInspectionForm = aPregnanInspectionForm;
-	}
 
 	/** PregnanInspectionForm */
-	private PregnanInspectionForm thePregnanInspectionForm = new PregnanInspectionForm();
+	private PregnanInspectionForm pregnanInspectionForm = new PregnanInspectionForm();
 	
 	/** PregnanExchangeCardForm */
 	@Comment("PregnanExchangeCardForm")
 	public PregnanExchangeCardForm getPregnanExchangeCardForm() {
-		return thePregnanExchangeCardForm;
+		return pregnanExchangeCardForm;
 	}
 
-	public void setPregnanExchangeCardForm(PregnanExchangeCardForm aPregnanExchangeCardForm) {
-		thePregnanExchangeCardForm = aPregnanExchangeCardForm;
-	}
 
 	/** PregnanExchangeCardForm */
-	private PregnanExchangeCardForm thePregnanExchangeCardForm = new PregnanExchangeCardForm();
+	private PregnanExchangeCardForm pregnanExchangeCardForm = new PregnanExchangeCardForm();
 	
 	/** Кол-во плодов */
 	@Comment("Кол-во плодов")
 	@Required
-	public Long getNewBornAmount() {return theNewBornAmount;}
-	public void setNewBornAmount(Long aNewBornAmount) {theNewBornAmount = aNewBornAmount;}
+	public Long getNewBornAmount() {return newBornAmount;}
 
 	/** Кол-во плодов */
-	private Long theNewBornAmount;
+	private Long newBornAmount;
 	
 	/** Роды тип (кесарево, самостоятельные) */
 	@Comment("Роды тип (кесарево, самостоятельные)")
 	@Persist @Required
 	public Long getChildBirthType() {
-		return theChildBirthType;
-	}
-
-	public void setChildBirthType(Long aChildBirthType) {
-		theChildBirthType = aChildBirthType;
+		return childBirthType;
 	}
 
 	/** Роды тип (кесарево, самостоятельные) */
-	private Long theChildBirthType;
+	private Long childBirthType;
 	
 	/** Где произошли роды */
 	@Comment("Где произошли роды")
 	@Persist @Required
-	public Long getWhereBirthOccurred() {return theWhereBirthOccurred;}
-	public void setWhereBirthOccurred(Long aWhereBirthOccurred) {theWhereBirthOccurred = aWhereBirthOccurred;}
+	public Long getWhereBirthOccurred() {return whereBirthOccurred;}
 
 	/** Другое место родов */
 	@Comment("Другое место родов")
 	@Persist
-	public String getWhereBirthOccurredOther() {return theWhereBirthOccurredOther;}
-	public void setWhereBirthOccurredOther(String aWhereBirthOccurredOther) {theWhereBirthOccurredOther = aWhereBirthOccurredOther;}
+	public String getWhereBirthOccurredOther() {return whereBirthOccurredOther;}
 
 	/** Другое место родов */
-	private String theWhereBirthOccurredOther;
+	private String whereBirthOccurredOther;
 	/** Где произошли роды */
-	private Long theWhereBirthOccurred;
+	private Long whereBirthOccurred;
 	
 	/** Срок беременности (нед) */
 	@Comment("Срок беременности (нед)")
 	@Persist @Required
-	public String getDurationPregnancy() {return theDurationPregnancy;}
-	public void setDurationPregnancy(String aDurationPregnancy) {theDurationPregnancy = aDurationPregnancy;}
+	public String getDurationPregnancy() {return durationPregnancy;}
 
 	/** Срок беременности (нед) */
-	private String theDurationPregnancy;
+	private String durationPregnancy;
 	/** Послед выделился через (мин) */
 	@Comment("Послед выделился через (мин)")
 	@Persist
-	public Long getPlacentaMinute() {return thePlacentaMinute;}
-	public void setPlacentaMinute(Long aPlacentaMinute) {thePlacentaMinute = aPlacentaMinute;}
+	public Long getPlacentaMinute() {return placentaMinute;}
 
 	/** Послед выделился через (мин) */
-	private Long thePlacentaMinute;
+	private Long placentaMinute;
 	
 	
 
 	/** Ребенка принял */
 	@Comment("Ребенка принял")
 	@Persist
-	public Long getChildTook() {return theChildTook;}
-	public void setChildTook(Long aChildTook) {theChildTook = aChildTook;}
+	public Long getChildTook() {return childTook;}
 
 	/** Ребенка принял */
-	private Long theChildTook;
+	private Long childTook;
 	
 	/** Длина пуповины */
 	@Comment("Длина пуповины")
 	@Persist
 	@Required
-	public String getCordLength() {return theCordLength;}
-	public void setCordLength(String aCordLength) {theCordLength = aCordLength;}
+	public String getCordLength() {return cordLength;}
 
 	/** Длина пуповины */
-	private String theCordLength;
+	private String cordLength;
 	
 	/** Медикаментозное обезболивание */
 	@Comment("Медикаментозное обезболивание")
 	@Persist
-	public Long getAnesthesiaMedication() {return theAnesthesiaMedication;}
-	public void setAnesthesiaMedication(Long aAnesthesiaMedication) {theAnesthesiaMedication = aAnesthesiaMedication;}
+	public Long getAnesthesiaMedication() {return anesthesiaMedication;}
 
 	/** Медикаментозное обезболивание */
-	private Long theAnesthesiaMedication;
+	private Long anesthesiaMedication;
 	
 	/** Эффект от медикаментозного обезболивания */
 	@Comment("Эффект от медикаментозного обезболивания")
 	@Persist
-	public Long getAnesthesiaMedicationEffect() {return theAnesthesiaMedicationEffect;}
-	public void setAnesthesiaMedicationEffect(Long aAnesthesiaMedicationEffect) {theAnesthesiaMedicationEffect = aAnesthesiaMedicationEffect;}
+	public Long getAnesthesiaMedicationEffect() {return anesthesiaMedicationEffect;}
 
 	/** Эффект от медикаментозного обезболивания */
-	private Long theAnesthesiaMedicationEffect;
+	private Long anesthesiaMedicationEffect;
 	
 	/** список новорожденных */
 	@Comment("список новорожденных")
-	public String getNewBornsInfo() {return theNewBornsInfo;}
-	public void setNewBornsInfo(String aNewBornsInfo) {theNewBornsInfo = aNewBornsInfo;}
+	public String getNewBornsInfo() {return newBornsInfo;}
 
 	/** список новорожденных */
-	private String theNewBornsInfo;
+	private String newBornsInfo;
 	
 	/** Дата полного открытия */
 	@Comment("Дата полного открытия")
 	@Persist @DateString @DoDateString 
-	public String getFullOpenDate() {return theFullOpenDate;}
-	public void setFullOpenDate(String aFullOpenDate) {theFullOpenDate = aFullOpenDate;}
+	public String getFullOpenDate() {return fullOpenDate;}
 
 	/** Дата полного открытия */
-	private String theFullOpenDate;
+	private String fullOpenDate;
 	/** Время полного открытия */
 	@Comment("Время полного открытия")
 	@Persist @TimeString @DoTimeString 
-	public String getFullOpenTime() {return theFullOpenTime;}
-	public void setFullOpenTime(String aFullOpenTime) {theFullOpenTime = aFullOpenTime;}
+	public String getFullOpenTime() {return fullOpenTime;}
 
 	/** Время полного открытия */
-	private String theFullOpenTime;
+	private String fullOpenTime;
 	
 	/** Показания */
 	@Comment("Показания")
 	@Persist @Required
-	public Long getEmergency() {return theEmergency;}
-	public void setEmergency(Long aEmergency) {theEmergency = aEmergency;}
+	public Long getEmergency() {return emergency;}
 
 	/** Показания */
-	private Long theEmergency;
+	private Long emergency;
 
 	/** Паритет родов */
 	@Comment("Паритет родов")
 	@Persist @Required
-	public Long getParitet() {return theParitet;}
-	public void setParitet(Long aParitet) {theParitet = aParitet;}
+	public Long getParitet() {return paritet;}
 
 	/** Паритет родов */
-	private Long theParitet;
+	private Long paritet;
 
 	/** ЭКО? */
 	@Comment("ЭКО?")
 	@Persist
-	public Boolean getIsECO() {return theIsECO;}
-	public void setIsECO(Boolean aIsECO) {theIsECO = aIsECO;}
+	public Boolean getIsECO() {return isECO;}
 
 	/** ЭКО? */
-	private Boolean theIsECO;
+	private Boolean isECO;
 
 	/** Состояла на учёте в ЖК? */
 	@Comment("Состояла на учёте в ЖК?")
 	@Persist
-	public Boolean getIsRegisteredWithWomenConsultation() {return theIsRegisteredWithWomenConsultation;}
-	public void setIsRegisteredWithWomenConsultation(Boolean aIsRegisteredWithWomenConsultation) {theIsRegisteredWithWomenConsultation = aIsRegisteredWithWomenConsultation;}
+	public Boolean getIsRegisteredWithWomenConsultation() {return isRegisteredWithWomenConsultation;}
 
 	/** Состояла на учёте в ЖК? */
-	private Boolean theIsRegisteredWithWomenConsultation;
+	private Boolean isRegisteredWithWomenConsultation;
 
 	/** Паритет беременностей*/
 	@Comment("Паритет беременностей")
 	@Persist @Required
-	public Long getParitetPregn() {return theParitetPregn;}
-	public void setParitetPregn(Long aParitetPregn) {theParitetPregn = aParitetPregn;}
+	public Long getParitetPregn() {return paritetPregn;}
 
 	/** Паритет беременностей */
-	private Long theParitetPregn;
+	private Long paritetPregn;
 
 	/** Классификация Робсона */
 	@Comment("Классификация Робсона")
-	public Long getRobsonClass() {return theRobsonClass;}
-	public void setRobsonClass(Long aRobsonClass) {theRobsonClass = aRobsonClass;}
+	public Long getRobsonClass() {return robsonClass;}
 	/** Классификация Робсона */
-	private Long theRobsonClass;
+	private Long robsonClass;
 
 	/** Подгруппа классификации */
 	@Comment("Подгруппа классификации")
-	public Long getRobsonSub() {return theRobsonSub;}
-	public void setRobsonSub(Long aRobsonSub) {theRobsonSub = aRobsonSub;}
+	public Long getRobsonSub() {return robsonSub;}
 	/** Подгруппа классификации */
-	private Long theRobsonSub;
+	private Long robsonSub;
 
 
 	/** Длительность безводного периода (часы)*/
 	@Comment("Длительность безводного периода (часы)")
 	@Persist
-	public Long getWaterlessDurationHour() {return theWaterlessDurationHour;}
-	public void setWaterlessDurationHour(Long aWaterlessDurationHour) {theWaterlessDurationHour = aWaterlessDurationHour;}
+	public Long getWaterlessDurationHour() {return waterlessDurationHour;}
 	/** Длительность безводного периода (часы)*/
-	private Long theWaterlessDurationHour;
+	private Long waterlessDurationHour;
 
 	/** Длительность безводного периода (минуты)*/
 	@Comment("Длительность безводного периода (минуты)")
 	@Persist
-	public Long getWaterlessDurationMin() {return theWaterlessDurationMin;}
-	public void setWaterlessDurationMin(Long aWaterlessDurationMin) {theWaterlessDurationMin = aWaterlessDurationMin;}
+	public Long getWaterlessDurationMin() {return waterlessDurationMin;}
 	/** Длительность безводного периода (минуты)*/
-	private Long theWaterlessDurationMin;
+	private Long waterlessDurationMin;
 
 	/** Диабет (браслет)*/
 	@Comment("Диабет (браслет)")
 	@Persist
-	public Long getDiabetIdentity() {return theDiabetIdentity;}
-	public void setDiabetIdentity(Long aDiabetIdentity) {theDiabetIdentity = aDiabetIdentity;}
+	public Long getDiabetIdentity() {return diabetIdentity;}
 	/** Диабет (браслет)*/
-	private Long theDiabetIdentity;
+	private Long diabetIdentity;
 
 	/** Женская консультация */
 	@Comment("Женская консультация")
 	@Persist
-	public Long getWomenConsult() {return theWomenConsult;}
-	public void setWomenConsult(Long aWomenConsult) {theWomenConsult = aWomenConsult;}
+	public Long getWomenConsult() {return womenConsult;}
 
 	/** Женская консультация */
-	private Long theWomenConsult;
+	private Long womenConsult;
 }

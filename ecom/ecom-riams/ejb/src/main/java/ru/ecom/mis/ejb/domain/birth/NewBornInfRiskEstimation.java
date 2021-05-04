@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.birth;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.birth.voc.*;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -15,83 +17,64 @@ import javax.persistence.Transient;
 
 @Comment("Оценка риска бактериальной инфекции у новорожденных")
 @Entity
+@Getter
+@Setter
 public class NewBornInfRiskEstimation extends Inspection {
 	/** Длительность безводного периода */
 	@Comment("Длительность безводного периода")
 	@OneToOne
 	public VocInfRiskWaterless getWaterlessDuration() {
-		return theWaterlessDuration;
+		return waterlessDuration;
 	}
-	public void setWaterlessDuration(VocInfRiskWaterless aWaterlessDuration) {
-		theWaterlessDuration = aWaterlessDuration;
-	}
-	private VocInfRiskWaterless theWaterlessDuration;
+	private VocInfRiskWaterless waterlessDuration;
 	
 	/** Температура матери в родах */
 	@Comment("Температура матери в родах")
 	@OneToOne
 	public VocInfRiskMotherTemperature getMotherTemperature() {
-		return theMotherTemperature;
+		return motherTemperature;
 	}
-	public void setMotherTemperature(VocInfRiskMotherTemperature aMotherTemperature) {
-		theMotherTemperature = aMotherTemperature;
-	}
-	private VocInfRiskMotherTemperature theMotherTemperature;
+	private VocInfRiskMotherTemperature motherTemperature;
 	
 	/** Характер амниотических вод */
 	@Comment("Характер амниотических вод")
 	@OneToOne
 	public VocInfRiskWaterNature getWaterNature() {
-		return theWaterNature;
+		return waterNature;
 	}
-	public void setWaterNature(VocInfRiskWaterNature aWaterNature) {
-		theWaterNature = aWaterNature;
-	}
-	private VocInfRiskWaterNature theWaterNature;
+	private VocInfRiskWaterNature waterNature;
 	
 	/** Оценка по Апгар */
 	@Comment("Оценка по Апгар")
 	@OneToOne
 	public VocInfRiskApgar getApgar() {
-		return theApgar;
+		return apgar;
 	}
-	public void setApgar(VocInfRiskApgar aApgar) {
-		theApgar = aApgar;
-	}
-	private VocInfRiskApgar theApgar;
+	private VocInfRiskApgar apgar;
 	
 	/** Хронические очаги инфекции или острые инфекции, перенесенные за месяц до родов или выявленные у матери в течение 1-х суток после родов  */
 	@Comment("Хронические очаги инфекции или острые инфекции, перенесенные за месяц до родов или выявленные у матери в течение 1-х суток после родов")
 	@OneToOne
 	public VocInfRiskMotherDiseases getMotherInfectiousDiseases() {
-		return theMotherInfectiousDiseases;
+		return motherInfectiousDiseases;
 	}
-	public void setMotherInfectiousDiseases(VocInfRiskMotherDiseases aMotherInfectiousDiseases) {
-		theMotherInfectiousDiseases = aMotherInfectiousDiseases;
-	}
-	private VocInfRiskMotherDiseases theMotherInfectiousDiseases;
+	private VocInfRiskMotherDiseases motherInfectiousDiseases;
 	
 	/** Масса тела ребенка, гр. */
 	@Comment("Масса тела ребенка, гр.")
 	@OneToOne
 	public VocInfRiskNewBornWeight getNewBornWeight() {
-		return theNewBornWeight;
+		return newBornWeight;
 	}
-	public void setNewBornWeight(VocInfRiskNewBornWeight aNewBornWeight) {
-		theNewBornWeight = aNewBornWeight;
-	}
-	private VocInfRiskNewBornWeight theNewBornWeight;
+	private VocInfRiskNewBornWeight newBornWeight;
 	
 	/** Общая оценка (балл) */
 	@Comment("Общая оценка (балл)")
 	@OneToOne
 	public VocCommonMask getCommonMark() {
-		return theCommonMark;
+		return commonMark;
 	}
-	public void setCommonMark(VocCommonMask aCommonMark) {
-		theCommonMark = aCommonMark;
-	}
-	private VocCommonMask theCommonMark;
+	private VocCommonMask commonMark;
 	
 	@Transient
 	public String getTypeInformation() {
@@ -99,7 +82,7 @@ public class NewBornInfRiskEstimation extends Inspection {
 	}
 	@Transient
 	public String getInformation() {
-		return "Общая оценка (балл): " + (theCommonMark != null ? theCommonMark.getCode() : "") + " " + (theCommonMark != null ? theCommonMark.getName() : "");
+		return "Общая оценка (балл): " + (commonMark != null ? commonMark.getCode() : "") + " " + (commonMark != null ? commonMark.getName() : "");
 	}
 	
 

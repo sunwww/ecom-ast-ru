@@ -6,6 +6,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -23,174 +25,111 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 	@AIndex(properties={"careCard"})
 })
 @Table(schema="SQLUser")
+ @Getter
+ @Setter
 public class PsychiatricExamination extends BaseEntity{
  /**
   * Номер акта
   */
- @Comment("Номер акта")
- public String getActNumber() {
-  return theActNumber;
- }
- public void setActNumber(String aActNumber) {
-  theActNumber = aActNumber;
- }
- /**
-  * Номер акта
-  */
- private String theActNumber;
+ private String actNumber;
  /**
   * Дата экспертизы
   */
- @Comment("Дата экспертизы")
- public Date getExaminationDate() {
-  return theExaminationDate;
- }
- public void setExaminationDate(Date aExaminationDate) {
-  theExaminationDate = aExaminationDate;
- }
- /**
-  * Дата экспертизы
-  */
- private Date theExaminationDate;
+ private Date examinationDate;
  /**
   * Экспертное заключение
   */
- @Comment("Экспертное заключение")
- public String getExpertDecision() {
-  return theExpertDecision;
- }
- public void setExpertDecision(String aExpertDecision) {
-  theExpertDecision = aExpertDecision;
- }
- /**
-  * Экспертное заключение
-  */
- private String theExpertDecision;
+ private String expertDecision;
  /**
   * Докладчик
   */
- @Comment("Докладчик")
- public String getReporter() {
-  return theReporter;
- }
- public void setReporter(String aReporter) {
-  theReporter = aReporter;
- }
- /**
-  * Докладчик
-  */
- private String theReporter;
+ private String reporter;
  /**
   * Описание акта
   */
- @Comment("Описание акта")
- public String getActNotes() {
-  return theActNotes;
- }
- public void setActNotes(String aActNotes) {
-  theActNotes = aActNotes;
- }
- /**
-  * Описание акта
-  */
- private String theActNotes;
+ private String actNotes;
  /**
   * Карта обратившихся за психиатрической помощью
   */
  @Comment("Карта обратившихся за психиатрической помощью")
  @ManyToOne
  public PsychiatricCareCard getCareCard() {
-  return theCareCard;
- }
- public void setCareCard(PsychiatricCareCard aCareCard) {
-  theCareCard = aCareCard;
+  return careCard;
  }
  /**
   * Карта обратившихся за психиатрической помощью
   */
- private PsychiatricCareCard theCareCard;
+ private PsychiatricCareCard careCard;
  /**
   * Вид экспертизы
   */
  @Comment("Вид экспертизы")
  @OneToOne
  public VocPsychExamination getKind() {
-  return theKind;
- }
- public void setKind(VocPsychExamination aKind) {
-  theKind = aKind;
+  return kind;
  }
  /**
   * Вид экспертизы
   */
- private VocPsychExamination theKind;
+ private VocPsychExamination kind;
  /**
   * Вид уголовного дела
   */
  @Comment("Вид уголовного дела")
  @OneToOne
  public VocCriminalCase getCriminalCase() {
-  return theCriminalCase;
- }
- public void setCriminalCase(VocCriminalCase aCriminalCase) {
-  theCriminalCase = aCriminalCase;
+  return criminalCase;
  }
  /**
   * Вид уголовного дела
   */
- private VocCriminalCase theCriminalCase;
+ private VocCriminalCase criminalCase;
  /**
   * Статья уголовного кодекса
   */
  @Comment("Статья уголовного кодекса")
  @OneToOne
  public VocCriminalCodeArticle getCriminalCodeArtical() {
-  return theCriminalCodeArtical;
- }
- public void setCriminalCodeArtical(VocCriminalCodeArticle aCriminalCodeArtical) {
-  theCriminalCodeArtical = aCriminalCodeArtical;
+  return criminalCodeArtical;
  }
  /**
   * Статья уголовного кодекса
   */
- private VocCriminalCodeArticle theCriminalCodeArtical;
+ private VocCriminalCodeArticle criminalCodeArtical;
  /**
   * Вид участия в экспертизе
   */
  @Comment("Вид участия в экспертизе")
  @OneToOne
  public VocPsychExamPaticipation getPaticipation() {
-  return thePaticipation;
- }
- public void setPaticipation(VocPsychExamPaticipation aPaticipation) {
-  thePaticipation = aPaticipation;
+  return paticipation;
  }
  /**
   * Вид участия в экспертизе
   */
- private VocPsychExamPaticipation thePaticipation;
+ private VocPsychExamPaticipation paticipation;
  @Comment("Вид уголовного дела (ИНФО)")
  @Transient
  public String getCriminalCaseInfo() {
-	 return theCriminalCase!=null?theCriminalCase.getName():"" ;
+	 return criminalCase!=null?criminalCase.getName():"" ;
  }
  
  @Comment("Статья уголовного кодекса (ИНФО)")
  @Transient
  public String getCriminalCodeArticalInfo() {
-	 return theCriminalCodeArtical!=null?theCriminalCodeArtical.getName():"" ;
+	 return criminalCodeArtical!=null?criminalCodeArtical.getName():"" ;
  }
  
  @Comment("Вид экспертизы (ИНФО)")
  @Transient
  public String getKindInfo() {
-	 return theKind!=null?theKind.getName():"" ;
+	 return kind!=null?kind.getName():"" ;
  }
  
  @Comment("Вид участия в экспертизе (ИНФО)")
  @Transient
  public String getPaticipationInfo() {
-	 return thePaticipation!=null?thePaticipation.getName():"" ;
+	 return paticipation!=null?paticipation.getName():"" ;
  }
  
 }

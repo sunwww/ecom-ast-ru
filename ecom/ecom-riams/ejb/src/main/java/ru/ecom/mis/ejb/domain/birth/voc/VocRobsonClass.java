@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.birth.voc;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -15,13 +17,12 @@ import java.util.List;
 @Comment("Справочник классификация Робсона")
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VocRobsonClass extends VocBaseEntity {
     /** Соответствие группа-подгруппа */
     @Comment("Соответствие группа-подгруппа")
     @ManyToMany
-    public List<VocSubRobson> getSubs() {return theSubs;}
-    public void setSubs(List<VocSubRobson> aSubs) {theSubs = aSubs;}
-
-    /** Соответствие группа-подгруппа */
-    private List<VocSubRobson> theSubs;
+    public List<VocSubRobson> getSubs() {return subs;}
+    private List<VocSubRobson> subs;
 }

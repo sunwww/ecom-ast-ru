@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.contract;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.MedServiceInterval;
@@ -13,6 +14,7 @@ import ru.nuzmsh.forms.validator.transforms.DoUpperCase;
 @WebTrail(comment = "Интервалы", nameProperties= "id", list="entityParentList-contract_medServiceInterval.do", view="entityParentView-contract_medserviceInterval.do")
 @Parent(property="medServiceGroup", parentForm=ContractMedServiceGroupForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/GroupRules/ContractMedServiceGroup/MedServiceInterval")
+@Setter
 public class MedServiceIntervalForm extends IdEntityForm{
 	/**
 	 * Маска кодов мед. услуг
@@ -20,75 +22,60 @@ public class MedServiceIntervalForm extends IdEntityForm{
 	@Comment("Маска кодов мед. услуг")
 	@Persist @DoUpperCase
 	public String getMedServiceMask() {
-		return theMedServiceMask;
-	}
-	public void setMedServiceMask(String aMedServiceMask) {
-		theMedServiceMask = aMedServiceMask;
+		return medServiceMask;
 	}
 	/**
 	 * Маска кодов мед. услуг
 	 */
-	private String theMedServiceMask;
+	private String medServiceMask;
 	/**
 	 * Начиная с кода
 	 */
 	@Comment("Начиная с кода")
 	@Persist
 	public Long getFromCode() {
-		return theFromCode;
-	}
-	public void setFromCode(Long aFromCode) {
-		theFromCode = aFromCode;
+		return fromCode;
 	}
 	/**
 	 * Начиная с кода
 	 */
-	private Long theFromCode;
+	private Long fromCode;
 	/**
 	 * Заканчивая кодом
 	 */
 	@Comment("Заканчивая кодом")
 	@Persist
 	public Long getToCode() {
-		return theToCode;
-	}
-	public void setToCode(Long aToCode) {
-		theToCode = aToCode;
+		return toCode;
 	}
 	/**
 	 * Заканчивая кодом
 	 */
-	private Long theToCode;
+	private Long toCode;
 	/**
 	 * Группа медицинских услуг
 	 */
 	@Comment("Группа медицинских услуг")
 	@Persist
 	public Long getMedServiceGroup() {
-		return theMedServiceGroup;
-	}
-	public void setMedServiceGroup(Long aMedServiceGroup) {
-		theMedServiceGroup = aMedServiceGroup;
+		return medServiceGroup;
 	}
 	/**
 	 * Группа медицинских услуг
 	 */
-	private Long theMedServiceGroup;
+	private Long medServiceGroup;
 	/**
 	 * Название
 	 */
 	@Comment("Название")
 	@Persist @DoUpperCase
 	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
+		return name;
 	}
 	/**
 	 * Название
 	 */
-	private String theName;
+	private String name;
 
 	/**
 	 * Начиная с кода медицинской услуги
@@ -96,28 +83,22 @@ public class MedServiceIntervalForm extends IdEntityForm{
 	@Comment("Начиная с кода медицинской услуги")
 	@Persist
 	public String getFromMedServiceCode() {
-		return theFromMedServiceCode;
-	}
-	public void setFromMedServiceCode(String aFromMedServiceCode) {
-		theFromMedServiceCode = aFromMedServiceCode;
+		return fromMedServiceCode;
 	}
 	/**
 	 * Начиная с кода медицинской услуги
 	 */
-	private String theFromMedServiceCode;
+	private String fromMedServiceCode;
 	/**
 	 * Заканчивая кодом медицинской услуги
 	 */
 	@Comment("Заканчивая кодом медицинской услуги")
 	@Persist
 	public String getToMedServiceCode() {
-		return theToMedServiceCode;
-	}
-	public void setToMedServiceCode(String aToMedServiceCode) {
-		theToMedServiceCode = aToMedServiceCode;
+		return toMedServiceCode;
 	}
 	/**
 	 * Заканчивая кодом медицинской услуги
 	 */
-	private String theToMedServiceCode;
+	private String toMedServiceCode;
 }

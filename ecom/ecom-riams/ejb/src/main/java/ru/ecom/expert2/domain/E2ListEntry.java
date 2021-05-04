@@ -1,9 +1,10 @@
 package ru.ecom.expert2.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.ecom.expert2.domain.voc.VocListEntryType;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -19,122 +20,70 @@ import java.util.List;
 })
 @Entity
 @UnDeletable
+@Getter
+@Setter
 public class E2ListEntry extends BaseEntity {
     public E2ListEntry(){}
     public E2ListEntry(E2ListEntry aListEntry, String aNewName) {
-        theName=(aNewName!=null?aNewName:"КОПИЯ_"+aListEntry.getName());
-        theStartDate=aListEntry.getStartDate();
-        theFinishDate=aListEntry.getFinishDate();
-        theEntryType=aListEntry.getEntryType();
-        theLpuOmcCode=aListEntry.theLpuOmcCode;
+        name =(aNewName!=null?aNewName:"КОПИЯ_"+aListEntry.getName());
+        startDate =aListEntry.getStartDate();
+        finishDate =aListEntry.getFinishDate();
+        entryType =aListEntry.getEntryType();
+        lpuOmcCode =aListEntry.lpuOmcCode;
 
     }
 
     /** ИД монитора процесса проверки */
-    @Comment("ИД монитора процесса проверки")
-    public Long getMonitorId() {return theMonitorId;}
-    public void setMonitorId(Long aMonitorId) {theMonitorId = aMonitorId;}
-    /** ИД монитора процесса проверки */
-    private Long theMonitorId ;
+    private Long monitorId;
     /** Черновик */
-    @Comment("Черновик")
-    public Boolean getIsDraft() {return theIsDraft;}
-    public void setIsDraft(Boolean aIsDraft) {theIsDraft = aIsDraft;}
-    /** Черновик */
-    private Boolean theIsDraft ;
+    private Boolean isDraft;
 
     /** Закрыто для редакторирования */
-    @Comment("Закрыто для редакторирования")
-    public Boolean getIsClosed() {return theIsClosed;}
-    public void setIsClosed(Boolean aIsClosed) {theIsClosed = aIsClosed;}
-    /** Закрыто для редакторирования */
-    private Boolean theIsClosed =false;
+    private Boolean isClosed =false;
 
     /** Имя заполнения */
-    @Comment("Имя заполнения")
-    public String getName() {return theName;}
-    public void setName(String aName) {theName = aName;}
-    /** Имя заполнения */
-    private String theName ;
+    private String name;
 
     /** Дата начала периода */
-    @Comment("Дата начала периода")
-    public Date getStartDate() {return theStartDate;}
-    public void setStartDate(Date aStartDate) {theStartDate = aStartDate;}
-    /** Дата начала */
-    private Date theStartDate ;
+    private Date startDate;
 
     /** Дата окончания периода */
-    @Comment("Дата окончания периода")
-    public Date getFinishDate() {return theFinishDate;}
-    public void setFinishDate(Date aFinishDate) {theFinishDate = aFinishDate;}
-    /** Дата окончания периода */
-    private Date theFinishDate ;
+    private Date finishDate;
 
     /** Тип заполнения */
-    @Comment("Тип заполнения")
     @OneToOne
-    public VocListEntryType getEntryType() {return theEntryType;}
-    public void setEntryType(VocListEntryType aEntryType) {theEntryType = aEntryType;}
-    /** Тип заполнения */
-    private VocListEntryType theEntryType ;
+    public VocListEntryType getEntryType() {return entryType;}
+    private VocListEntryType entryType;
 
     /** Код ЛПУ, создавшее заполнение */
-    @Comment("Код ЛПУ, создавшее заполнение")
-    public String getLpuOmcCode() {return theLpuOmcCode;}
-    public void setLpuOmcCode(String aLpuOmcCode) {theLpuOmcCode = aLpuOmcCode;}
-    /** Код ЛПУ, создавшее заполнение */
-    private String theLpuOmcCode ;
+    private String lpuOmcCode;
 
     /** Дата создания */
-    @Comment("Дата создания")
-    public Date getCreateDate() {return theCreateDate;}
-    public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-    /** Дата создания */
-    private Date theCreateDate ;
+    private Date createDate;
 
     /** Время создания */
-    @Comment("Время создания")
-    public Time getCreateTime() {return theCreateTime;}
-    public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-    /** Время создания */
-    private Time theCreateTime ;
+    private Time createTime;
 
     @PrePersist
     void onPrePersist() {
         Long currentTime = System.currentTimeMillis();
-        theCreateDate=new java.sql.Date(currentTime);
-        theCreateTime=new java.sql.Time(currentTime);
+        createDate =new java.sql.Date(currentTime);
+        createTime =new java.sql.Time(currentTime);
     }
 
     /** Удаленная запись */
-    @Comment("Удаленная запись")
-    public Boolean getIsDeleted() {return theIsDeleted;}
-    public void setIsDeleted(Boolean aIsDeleted) {theIsDeleted = aIsDeleted;}
-    /** Удаленная запись */
-    private Boolean theIsDeleted = false;
+    private Boolean isDeleted = false;
 
     /** Список записей по заполнению */
-    @Comment("Список записей по заполнению")
     @OneToMany(mappedBy = "listEntry",cascade = CascadeType.REMOVE)
-    public List<E2Entry> getEntryList() {return theEntryList;}
-    public void setEntryList(List<E2Entry> aEntryList) {theEntryList = aEntryList;}
-    /** Список записей по заполнению */
-    private List<E2Entry> theEntryList ;
+    public List<E2Entry> getEntryList() {return entryList;}
+    private List<E2Entry> entryList;
 
     /** Дата последней проверки */
-    @Comment("Дата последней проверки")
-    public Date getCheckDate() {return theCheckDate;}
-    public void setCheckDate(Date aCheckDate) {theCheckDate = aCheckDate;}
-    /** Дата последней проверки */
-    private Date theCheckDate ;
+    private Date checkDate;
 
     /** Время последней проверки */
-    @Comment("Время последней проверки")
-    public Time getCheckTime() {return theCheckTime;}
-    public void setCheckTime(Time aCheckTime) {theCheckTime = aCheckTime;}
-    /** Время последней проверки */
-    private Time theCheckTime ;
+    private Time checkTime;
 
 
 

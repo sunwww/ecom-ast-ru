@@ -19,36 +19,16 @@ import java.util.List;
 public class ActionUtil {
     private static final Logger LOG = Logger.getLogger(ActionUtil.class);
 
-    public static boolean isCacheCurrentLpu(HttpServletRequest aRequest) {// Согласен, немного неправильно, но пока работает
-        try {
-            IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-            String ver = service.executeNativeSql("select version()").iterator().next().get1().toString();
-            if (ver.toLowerCase().contains("postgres")) {
-                return false;
-            }
-        } catch (Exception e) {
-            LOG.error(e);
-        }
-
-        return true;
-    }
-
     public static List<Object[]> getListObjFromNativeQuery(String aSql, HttpServletRequest aRequest) throws NamingException {
-        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        return service.executeNativeSqlGetObj(aSql);
+        return Injection.find(aRequest).getService(IWebQueryService.class).executeNativeSqlGetObj(aSql);
     }
 
     public static WebQueryResult getElementArrayByCode(String aCode, String aAttribList, HttpServletRequest aRequest) {
         Collection<WebQueryResult> col = (Collection<WebQueryResult>) aRequest.getAttribute(aAttribList);
-        WebQueryResult wqr = null;
-        if (!col.isEmpty()) for (WebQueryResult w : col) {
-            String code = "" + w.get1();
-            if (code.contains(aCode)) {
-                wqr = w;
-                break;
-            }
-        }
-        return wqr;
+        return col.stream()
+                .filter(w -> ("" + w.get1()).contains(aCode))
+                .findFirst()
+                .orElse(null);
     }
 
     public static Boolean isUserInRole(String aRole, HttpServletRequest aRequest) throws JspException {
@@ -255,7 +235,7 @@ public class ActionUtil {
     public static String setParameterFilterSql(String aParameter, String aAttributeName, String aFldId, HttpServletRequest aRequest) {
         if (aAttributeName == null) aAttributeName = aParameter;
         String param = aRequest.getParameter(aParameter);
-        String sql ;
+        String sql;
         if ("-1".equals(param)) {
             aRequest.setAttribute(aAttributeName + "SqlId", "'&" + aParameter + "=" + param + "'");
             sql = " and " + aFldId + " is null";
@@ -269,7 +249,7 @@ public class ActionUtil {
         } else {
             aRequest.setAttribute(aAttributeName, "0");
             aRequest.setAttribute(aAttributeName + "SqlId", "''");
-            sql="";
+            sql = "";
         }
 
         return sql;

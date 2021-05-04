@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -25,120 +27,72 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 		@AIndex(properties = { "confinedExchangeCard" }) 
 	}
 )
+@Getter
+@Setter
 public class NewBornInformation extends BaseEntity{
 	
 	/** Обменная карта родильницы */
 	@Comment("Обменная карта родильницы")
 	@ManyToOne
-	public ConfinedExchangeCard getConfinedExchangeCard() {return theConfinedExchangeCard;}
-	public void setConfinedExchangeCard(ConfinedExchangeCard aConfinedExchangeCard) {theConfinedExchangeCard = aConfinedExchangeCard;}
+	public ConfinedExchangeCard getConfinedExchangeCard() {return confinedExchangeCard;}
 
 	@Comment("Состояние при рождении")
 	@Column(length=1000)
-	public String getBirthCondition() {return theBirthCondition;}
-	public void setBirthCondition(String aBirthCondition) {theBirthCondition = aBirthCondition;}
+	public String getBirthCondition() {return birthCondition;}
 
 	/** Состояние при выписке */
 	@Comment("Состояние при выписке")
 	@Column(length=1000)
-	public String getDischargeCondition() {return theDischargeCondition;}
-	public void setDischargeCondition(String aDischargeCondition) {theDischargeCondition = aDischargeCondition;}
-
-	/** Вес при рождении */
-	@Comment("Вес при рождении")
-	public BigDecimal getBirthWeight() {return theBirthWeight;}
-	public void setBirthWeight(BigDecimal aBirthWeight) {theBirthWeight = aBirthWeight;}
-
-	/** Вес при выписке */
-	@Comment("Вес при выписке")
-	public BigDecimal getDischargeWeight() {return theDischargeWeight;}
-	public void setDischargeWeight(BigDecimal aDischargeWeight) {theDischargeWeight = aDischargeWeight;}
-
-	/** Рост при рождении */
-	@Comment("Рост при рождении")
-	public BigDecimal getBirthHeight() {return theBirthHeight;}
-	public void setBirthHeight(BigDecimal aBIrthHeight) {theBirthHeight = aBIrthHeight;}
+	public String getDischargeCondition() {return dischargeCondition;}
 
 	/** Особенности течения родов */
 	@Comment("Особенности течения родов")
 	@Column(length=1000)
-	public String getBirthFeatures() {return theBirthFeatures;}
-	public void setBirthFeatures(String aBirthFeatures) {theBirthFeatures = aBirthFeatures;}
+	public String getBirthFeatures() {return birthFeatures;}
 
 	/** Особенности течения послеродового периода */
 	@Comment("Особенности течения послеродового периода")
 	@Column(length=1000)
-	public String getPostNatalFeatures() {return thePostNatalFeatures;}
-	public void setPostNatalFeatures(String aPostNatalFeatures) {thePostNatalFeatures = aPostNatalFeatures;}
+	public String getPostNatalFeatures() {return postNatalFeatures;}
 
-	/** Противотуберкулезная вакцинация */
-	@Comment("Противотуберкулезная вакцинация")
-	public Boolean getVcgVaccination() {return theVcgVaccination;}
-	public void setVcgVaccination(Boolean aVCGVaccination) {theVcgVaccination = aVCGVaccination;}
-
-	/** Причины отказа в противотуберкулезной вакцинации */
-	@Comment("Причины отказа в противотуберкулезной вакцинации")
-	public String getVcgEstop() {return theVcgEstop;}
-	public void setVcgEstop(String aVCGEstop) {theVcgEstop = aVCGEstop;}
-
-	
 	/** Другие мероприятия */
 	@Comment("Другие мероприятия")
 	@Column(length=1000)
-	public String getOtherActions() {return theOtherActions;}
-	public void setOtherActions(String aOtherActions) {theOtherActions = aOtherActions;
-	}
+	public String getOtherActions() {return otherActions;}
 
 	/** Другие мероприятия */
-	private String theOtherActions;
+	private String otherActions;
 	
 	/** Особые замечания */
 	@Comment("Особые замечания")
 	@Column(length=1000)
-	public String getNotes() {return theNotes;}
-	public void setNotes(String aNotes) {theNotes = aNotes;}
-	
-	/** Дата заполнения */
-	@Comment("Дата заполнения")
-	public Date getFillingDate() {return theFillingDate;}
-	public void setFillingDate(Date aFillingDate) {theFillingDate = aFillingDate;}
+	public String getNotes() {return notes;}
 
 	/** Особые замечания */
-	private String theNotes;
+	private String notes;
 	/** Дата заполнения */
-	private Date theFillingDate;
+	private Date fillingDate;
 	/** Обменная карта родильницы */
-	private ConfinedExchangeCard theConfinedExchangeCard;
+	private ConfinedExchangeCard confinedExchangeCard;
 	/** Состояние при рождении */
-	private String theBirthCondition;
+	private String birthCondition;
 	/** Состояние при выписке */
-	private String theDischargeCondition;
+	private String dischargeCondition;
 	/** Противотуберкулезная вакцинация */
-	private Boolean theVcgVaccination;
+	private Boolean vcgVaccination;
 	/** Рост при рождении */
-	private BigDecimal theBirthHeight;
+	private BigDecimal birthHeight;
 	/** Вес при рождении */
-	private BigDecimal theBirthWeight;
+	private BigDecimal birthWeight;
 	/** Вес при выписке */
-	private BigDecimal theDischargeWeight;
+	private BigDecimal dischargeWeight;
 	/** Особенности течения родов */
-	private String theBirthFeatures;
+	private String birthFeatures;
 	/** Особенности течения послеродового периода */
-	private String thePostNatalFeatures;
+	private String postNatalFeatures;
 	/** Причины отказа в противотуберкулезной вакцинации */
-	private String theVcgEstop;
-	
+	private String vcgEstop;
 	/** Медикамент, которым проведена профилактика гонобленнореи (GonoblennorrheaProphylaxis) */
-	@Comment("Медикамент, которым проведена профилактика гонобленнореи (GonoblennorrheaProphylaxis)")
-	public String getGbpDrug() {
-		return theGbpDrug;
-	}
-
-	public void setGbpDrug(String aGbpDrug) {
-		theGbpDrug = aGbpDrug;
-	}
-
-	/** Медикамент, которым проведена профилактика гонобленнореи (GonoblennorrheaProphylaxis) */
-	private String theGbpDrug;
+	private String gbpDrug;
 
 }

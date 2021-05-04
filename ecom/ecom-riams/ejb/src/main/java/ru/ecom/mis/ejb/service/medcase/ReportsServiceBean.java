@@ -21,36 +21,44 @@ import java.util.List;
 public class ReportsServiceBean implements IReportsService {
 	public String getTitle(String aGroupBy) {
 		String title;
-		if (aGroupBy.equals("2")) {
-			title = "ЛПУ" ;
-		} else if (aGroupBy.equals("3")) {
-			title = "Врач" ;
-		} else if (aGroupBy.equals("4")) {
-			title = "Раб. функция" ;
-		} else if (aGroupBy.equals("5")) {
-			title = "Специальность" ;
-		} else if (aGroupBy.equals("6")) {
-			title = "Поток обслуживания" ;
-		} else if (aGroupBy.equals("7")) {
-			title = "Место обслуживания" ;
-		} else {
-			title = "Дата" ;
+		switch (aGroupBy) {
+			case "2":
+				title = "ЛПУ";
+				break;
+			case "3":
+				title = "Врач";
+				break;
+			case "4":
+				title = "Раб. функция";
+				break;
+			case "5":
+				title = "Специальность";
+				break;
+			case "6":
+				title = "Поток обслуживания";
+				break;
+			case "7":
+				title = "Место обслуживания";
+				break;
+			default:
+				title = "Дата";
+				break;
 		}
 		return title ;
 	}
 	public String getFilter(Boolean aIsTicket, Long aSpecialist
 			, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType) {
 		StringBuilder filter = new StringBuilder() ;
-		String username = theContext.getCallerPrincipal().toString() ;
+		String username = context.getCallerPrincipal().toString() ;
 		boolean isViewAll;
 		if (aIsTicket) {
-			isViewAll=theContext.isCallerInRole("/Policy/Poly/Ticket/ShowInfoAllUsers") ;
+			isViewAll=context.isCallerInRole("/Policy/Poly/Ticket/ShowInfoAllUsers") ;
 		} else {
-			isViewAll=theContext.isCallerInRole("/Policy/Mis/MedCase/Visit/ViewAll") ;
+			isViewAll=context.isCallerInRole("/Policy/Mis/MedCase/Visit/ViewAll") ;
 		}
 		if (!isViewAll) {
-			List<Object[]>listWQR = theManager.createNativeQuery("select w.id,wf.id from Worker w left join WorkFunction wf on wf.worker_id=w.id left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'").setMaxResults(1).getResultList() ;
-			//List<Object[]>listWQR = theManager.createNativeQuery("select w.person_id,wf.id from Worker w left join WorkFunction wf on wf.worker_id=w.id left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'").setMaxResults(1).getResultList() ;
+			List<Object[]>listWQR = manager.createNativeQuery("select w.id,wf.id from Worker w left join WorkFunction wf on wf.worker_id=w.id left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'").setMaxResults(1).getResultList() ;
+			//List<Object[]>listWQR = manager.createNativeQuery("select w.person_id,wf.id from Worker w left join WorkFunction wf on wf.worker_id=w.id left join secuser su on su.id=wf.secuser_id where su.login='"+username+"'").setMaxResults(1).getResultList() ;
 			if (listWQR.isEmpty()) {
 				filter.append(" and w.id='0'") ;
 			} else {
@@ -156,52 +164,60 @@ public class ReportsServiceBean implements IReportsService {
 
 	public String getFilterInfo(boolean aIsTicket, Long aSpecialist
 			, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType) {
-		return getFilterInfo(theManager, aIsTicket, aSpecialist, aWorkFunction, aLpu, aServiceStream,aWorkPlaceType) ;
+		return getFilterInfo(manager, aIsTicket, aSpecialist, aWorkFunction, aLpu, aServiceStream,aWorkPlaceType) ;
 	}
 	public String getTextQueryBegin(boolean aIsTicket, String aGroupBy,String aStartDate, String aFinishDate
 			, Long aSpecialist, Long aWorkFunction, Long aLpu, Long aServiceStream, Long aWorkPlaceType) {
 		StringBuilder sql = new StringBuilder() ;
 		String id;
 		String name;
-		if (aGroupBy.equals("2")) {
-			//LPU
-			id= "lpu.id";
-			name = "lpu.name" ;
-		} else if (aGroupBy.equals("3")) {
-			id = "wf.id" ;
-			name = "vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename" ;
-		} else if (aGroupBy.equals("4")) {
-			id = "wp.id" ;
-			name = "wp.lastname||' '||wp.firstname||' '||wp.middlename" ;
-		} else if (aGroupBy.equals("5")) {
-			//vocWorkFunction
-			id = "vwf.id" ;
-			name = "vwf.name" ;
-		} else if (aGroupBy.equals("6")) {
-			//vocWorkFunction
-			if (aIsTicket) {
-				id = "t.vocPaymentType_id" ;
-			} else {
-				id = "t.serviceStream_id" ;
-			}
-			name = "vss.name" ;
-		} else if (aGroupBy.equals("7")) {
-			//vocWorkFunction
-			if (aIsTicket) {
-				id = "t.vocServicePlace_id" ;
-			} else {
-				id = "t.workPlaceType_id" ;
-			}
-			name = "vwpt.name" ;
-		} else{
-			//date
-			if (aIsTicket) {
-				id = "to_char(t.date,'dd.mm.yyyy')" ;
-				name = "to_char(t.date,'dd.mm.yyyy')" ;
-			} else {
-				id = "to_char(t.dateStart,'dd.mm.yyyy')" ;
-				name = "to_char(t.dateStart,'dd.mm.yyyy')" ;
-			}
+		switch (aGroupBy) {
+			case "2":
+				//LPU
+				id = "lpu.id";
+				name = "lpu.name";
+				break;
+			case "3":
+				id = "wf.id";
+				name = "vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename";
+				break;
+			case "4":
+				id = "wp.id";
+				name = "wp.lastname||' '||wp.firstname||' '||wp.middlename";
+				break;
+			case "5":
+				//vocWorkFunction
+				id = "vwf.id";
+				name = "vwf.name";
+				break;
+			case "6":
+				//vocWorkFunction
+				if (aIsTicket) {
+					id = "t.vocPaymentType_id";
+				} else {
+					id = "t.serviceStream_id";
+				}
+				name = "vss.name";
+				break;
+			case "7":
+				//vocWorkFunction
+				if (aIsTicket) {
+					id = "t.vocServicePlace_id";
+				} else {
+					id = "t.workPlaceType_id";
+				}
+				name = "vwpt.name";
+				break;
+			default:
+				//date
+				if (aIsTicket) {
+					id = "to_char(t.date,'dd.mm.yyyy')";
+					name = "to_char(t.date,'dd.mm.yyyy')";
+				} else {
+					id = "to_char(t.dateStart,'dd.mm.yyyy')";
+					name = "to_char(t.dateStart,'dd.mm.yyyy')";
+				}
+				break;
 		}
 		
 		sql.append("SELECT '").append(aStartDate).append(":")
@@ -216,47 +232,55 @@ public class ReportsServiceBean implements IReportsService {
 		StringBuilder sql = new StringBuilder() ;
 		String group;
 		String order;
-		if (aGroupBy.equals("2")) {
-			//LPU
-			group = "lpu.id,lpu.name" ;
-			order = "lpu.name" ;
-		} else if (aGroupBy.equals("3")) {
-			//doctor
-			group = "wf.id,vwf.name,wp.lastname,wp.firstname,wp.middlename" ;
-			order = "vwf.name,wp.lastname,wp.firstname,wp.middlename" ;
-		} else if (aGroupBy.equals("4")) {
-			//doctor
-			group = "wp.id,wp.lastname,wp.firstname,wp.middlename" ;
-			order = "wp.lastname,wp.firstname,wp.middlename" ;
-		} else if (aGroupBy.equals("5")) {
-			//vocWorkFunction
-			group = "vwf.id,vwf.name" ;
-			order = "vwf.name" ;
-		} else if (aGroupBy.equals("6")) {
-			//vocWorkFunction
-			if (aIsTicket) {
-				group = "t.vocPaymentType_id,vss.name" ;
-			} else {
-				group= "t.serviceStream_id,vss.name" ;
-			}
-			order = "vss.name" ;
-		} else if (aGroupBy.equals("7")) {
-			//vocWorkFunction
-			if (aIsTicket) {
-				group = "t.vocServicePlace_id,vwpt.name" ;
-			} else {
-				group= "t.workPlaceType_id,vwpt.name" ;
-			}
-			order = "vwpt.name" ;
-		} else{
-			//date
-			if (aIsTicket) {
-				group = "t.date" ;
-				order = "t.date" ;
-			} else {
-				group = "t.dateStart" ;
-				order = "t.dateStart" ;
-			}
+		switch (aGroupBy) {
+			case "2":
+				//LPU
+				group = "lpu.id,lpu.name";
+				order = "lpu.name";
+				break;
+			case "3":
+				//doctor
+				group = "wf.id,vwf.name,wp.lastname,wp.firstname,wp.middlename";
+				order = "vwf.name,wp.lastname,wp.firstname,wp.middlename";
+				break;
+			case "4":
+				//doctor
+				group = "wp.id,wp.lastname,wp.firstname,wp.middlename";
+				order = "wp.lastname,wp.firstname,wp.middlename";
+				break;
+			case "5":
+				//vocWorkFunction
+				group = "vwf.id,vwf.name";
+				order = "vwf.name";
+				break;
+			case "6":
+				//vocWorkFunction
+				if (aIsTicket) {
+					group = "t.vocPaymentType_id,vss.name";
+				} else {
+					group = "t.serviceStream_id,vss.name";
+				}
+				order = "vss.name";
+				break;
+			case "7":
+				//vocWorkFunction
+				if (aIsTicket) {
+					group = "t.vocServicePlace_id,vwpt.name";
+				} else {
+					group = "t.workPlaceType_id,vwpt.name";
+				}
+				order = "vwpt.name";
+				break;
+			default:
+				//date
+				if (aIsTicket) {
+					group = "t.date";
+					order = "t.date";
+				} else {
+					group = "t.dateStart";
+					order = "t.dateStart";
+				}
+				break;
 		}
 		if (aIsTicket) {
 			sql.append(" FROM TICKET t ") ;
@@ -310,41 +334,41 @@ public class ReportsServiceBean implements IReportsService {
 		StringBuilder filter = new StringBuilder() ;
 		
 		if (aSpecialist!=null && aSpecialist>0L){
-			WorkFunction wf = theManager.find(WorkFunction.class,aSpecialist) ;
+			WorkFunction wf = manager.find(WorkFunction.class,aSpecialist) ;
 			filter.append(" Специалист: ").append(wf!=null?wf.getWorkFunctionInfo():"") ;
 		}
 		if (aWorkFunction!=null && aWorkFunction>0L){
-			VocWorkFunction vwf = theManager.find(VocWorkFunction.class, aWorkFunction) ;
+			VocWorkFunction vwf = manager.find(VocWorkFunction.class, aWorkFunction) ;
 			filter.append(" Должность: ").append(vwf!=null?vwf.getName():"") ;
 		}
 		if (aLpu!=null && aLpu>0L){
-			MisLpu lpu = theManager.find(MisLpu.class, aLpu) ;
+			MisLpu lpu = manager.find(MisLpu.class, aLpu) ;
 			filter.append(" Подразделение: ").append(lpu!=null?lpu.getName():"") ;
 		}
 		if (aServiceStream!=null && aServiceStream>0L){
-			VocServiceStream vss = theManager.find(VocServiceStream.class, aServiceStream) ;
+			VocServiceStream vss = manager.find(VocServiceStream.class, aServiceStream) ;
 			filter.append(" Поток обслуживания: ").append(vss.getName()) ;
 		}
 		if (aWorkPlaceType!=null && aWorkPlaceType>0L){
-			VocWorkPlaceType vwpt = theManager.find(VocWorkPlaceType.class, aWorkPlaceType) ;
+			VocWorkPlaceType vwpt = manager.find(VocWorkPlaceType.class, aWorkPlaceType) ;
 			filter.append(" Место обслуживания: ").append(vwpt.getName()) ;
 		}
 		if (aOrderLpu!=null && aOrderLpu>0L){
-			MisLpu vwpt = theManager.find(MisLpu.class, aOrderLpu) ;
+			MisLpu vwpt = manager.find(MisLpu.class, aOrderLpu) ;
 			filter.append(" Внешний направитель: ").append(vwpt.getName()) ;
 		}
 		if (aOrderWF!=null && aOrderWF>0L){
-			WorkFunction owf = theManager.find(WorkFunction.class, aOrderWF) ;
+			WorkFunction owf = manager.find(WorkFunction.class, aOrderWF) ;
 			filter.append(" Направитель: ").append(owf.getWorkFunctionInfo()) ;
 		}
 		return filter.toString() ;
 	}
 	public void setManager(EntityManager aManager) {
-		theManager=aManager ;
+		manager=aManager ;
 	}
 	public void setContext(SessionContext aContext) {
-		theContext=aContext ;
+		context=aContext ;
 	}
-	@PersistenceContext EntityManager theManager ;
-	@Resource SessionContext theContext ;
+	@PersistenceContext EntityManager manager ;
+	@Resource SessionContext context ;
 }

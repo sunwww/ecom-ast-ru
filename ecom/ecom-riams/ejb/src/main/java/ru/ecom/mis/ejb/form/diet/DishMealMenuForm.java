@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.diet;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -23,31 +24,29 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @Parent(property="menu", parentForm=MealMenuForm.class)
 @Subclasses(value = { DishMealMenuOrderForm.class, DishMealMenuTemplateForm.class })
 @EntityFormSecurityPrefix("/Policy/Mis/InvalidFood/DishMealMenu")
+@Setter
 public class DishMealMenuForm extends IdEntityForm{
 	
 	/** Блюдо */
 	@Comment("Блюдо")
 	@Persist
-	public Long getDish() {return theDish;	}
-	public void setDish(Long aDish) {theDish = aDish;}
-	
+	public Long getDish() {return dish;	}
+
 	/** Меню */
 	@Comment("Меню")
     @Persist
-	public Long getMenu() {return theMenu;}
-	public void setMenu(Long aMenu) {theMenu = aMenu;}
+	public Long getMenu() {return menu;}
 
 	/** Название блюда */
 	@Comment("Название блюда")
 	@Persist
-	public String getDishName() {return theDishName;}
-	public void setDishName(String aNewProperty) {theDishName = aNewProperty;}
+	public String getDishName() {return dishName;}
 
 	/** Меню */
-	private Long theMenu;
+	private Long menu;
 	/** Название блюда */
-	private String theDishName;
+	private String dishName;
 	/** Блюдо */
-	private Long theDish;
+	private Long dish;
 
 }

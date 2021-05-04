@@ -28,19 +28,19 @@ public class CheckContext implements ICheckContext, ICheckLog {
 	public CheckContext(Format aFormat, Map<String, Object> aValues,
 			Set<String> aAllowedFields, Date aActualDate,
 			EntityManager aManager, Object aEntity) {
-		theValues = aValues;
-		theAllowedFields = aAllowedFields;
-		theFormat = aFormat;
-		theActualDate = aActualDate;
-		theManager = aManager;
-		theEntity = aEntity;
+		values = aValues;
+		allowedFields = aAllowedFields;
+		format = aFormat;
+		actualDate = aActualDate;
+		manager = aManager;
+		entity = aEntity;
 	}
 
 	public Object get(String aFieldName) {
-		if (!theAllowedFields.contains(aFieldName)) {
+		if (!allowedFields.contains(aFieldName)) {
 			throw new IllegalArgumentException("Нет поля " + aFieldName);
 		}
-		return theValues.get(aFieldName);
+		return values.get(aFieldName);
 	}
 
 	public String getString(String aFieldName) {
@@ -56,11 +56,11 @@ public class CheckContext implements ICheckContext, ICheckLog {
 	}
 
 	public Format getFormat() {
-		return theFormat;
+		return format;
 	}
 
 	public Object getEntry() {
-		return theEntity;
+		return entity;
 	}
 
 	public ICheckLog getLog() {
@@ -68,7 +68,7 @@ public class CheckContext implements ICheckContext, ICheckLog {
 	}
 
 	public void set(String aFieldName, String aValue) {
-		theChangedValues.put(aFieldName, aValue);
+		changedValues.put(aFieldName, aValue);
 	}
 
 	public void debug(String aMessage) {
@@ -101,8 +101,6 @@ public class CheckContext implements ICheckContext, ICheckLog {
 		if (aValue == null)
 			return null;
 		try {
-			//String methodName = PropertyUtil
-			//		.getGetterMethodNameForProperty(aProperty);
 			Method method = PropertyUtil.getGetterMethod(aClass, aProperty) ; //aClass.getMethod(methodName);
 			Class type = method.getReturnType();
 			return PropertyUtil.convertValue(aValue.getClass(), type, aValue);
@@ -118,7 +116,7 @@ public class CheckContext implements ICheckContext, ICheckLog {
 			return null;
 		try {
 
-			ImportDocument doc = theManager.find(ImportDocument.class,
+			ImportDocument doc = manager.find(ImportDocument.class,
 					aDocument);
 			ImportTime time = findActualTime(doc);
 
@@ -127,7 +125,7 @@ public class CheckContext implements ICheckContext, ICheckLog {
 			Object convertedValue = convertToPropertyObject(clazz,
 					aDocumentCodeProperty, aValue);
 
-			List list = theManager.createQuery(
+			List list = manager.createQuery(
 					"from " + clazz.getSimpleName()
 							+ " e where time = :time and "
 							+ aDocumentCodeProperty + " = :value")
@@ -153,14 +151,14 @@ public class CheckContext implements ICheckContext, ICheckLog {
 	}
 
 	public Object findActual(Class aClass, String aProperty, Object aValue) {
-		ImportDocument document = (ImportDocument) theManager
+		ImportDocument document = (ImportDocument) manager
 				.createQuery(
 						"from ImportDocument d where entityClassName = :entityClassName")
 				.setParameter("entityClassName", aClass.getName())
 				.getSingleResult();
 
 		ImportTime time = findActualTime(document);
-		return theManager.createQuery(
+		return manager.createQuery(
 				"from " + aClass.getSimpleName() + " where time = :time and "
 						+ aProperty + " = :property").setParameter("time",
 				time.getId()).setParameter("property", aValue)
@@ -169,31 +167,31 @@ public class CheckContext implements ICheckContext, ICheckLog {
 
 	/** Дата актуальности */
 	public Date getActualDate() {
-		return theActualDate;
+		return actualDate;
 	}
 	
 	@Override
 	public String toString() {
 		return getClass().getName() +
-				" actualDate =" + theActualDate +
-				" values =" + theValues +
-				" allowed =" + theAllowedFields +
-				" object =" + theEntity;
+				" actualDate =" + actualDate +
+				" values =" + values +
+				" allowed =" + allowedFields +
+				" object =" + entity;
 	}
 
 	/** Дата актуальности */
-	private final Date theActualDate;
+	private final Date actualDate;
 
-	private final Map<String, Object> theValues;
+	private final Map<String, Object> values;
 
-	private final Set<String> theAllowedFields;
+	private final Set<String> allowedFields;
 
-	private final Format theFormat;
+	private final Format format;
 
-	private final TreeMap<String, Object> theChangedValues = new TreeMap<>();
+	private final TreeMap<String, Object> changedValues = new TreeMap<>();
 
-	private final EntityManager theManager;
+	private final EntityManager manager;
 
-	private final Object theEntity;
+	private final Object entity;
 
 }

@@ -50,8 +50,8 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     public void sync(long aMonitorId, long aTimeId) {
     	IMonitor monitor = null;
     	try {
-    		monitor = theMonitorService.startMonitor(aMonitorId, "Синхронизация персон", getCount(aTimeId));
-    		Query query = theManager.createQuery("from PatientInfoShubinok where time = :time")
+    		monitor = monitorService.startMonitor(aMonitorId, "Синхронизация персон", getCount(aTimeId));
+    		Query query = manager.createQuery("from PatientInfoShubinok where time = :time")
     				.setParameter("time", aTimeId) ;
     		Iterator<PatientInfoShubinok> pats = QueryIteratorUtil.iterate(PatientInfoShubinok.class, query);
     		int i = 0;
@@ -61,14 +61,14 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     				throw new IllegalMonitorStateException("Прервано пользователем");
     			}
     			i++;
-    			Long medPolicyId = theSyncService.findMedPolicyId(pat.getPolicySeries(), pat.getPolicyNumber()) ;
-    			MedPolicyOmc medPolicy = medPolicyId!=null ? theManager.find(MedPolicyOmc.class, medPolicyId) : null ;
+    			Long medPolicyId = syncService.findMedPolicyId(pat.getPolicySeries(), pat.getPolicyNumber()) ;
+    			MedPolicyOmc medPolicy = medPolicyId!=null ? manager.find(MedPolicyOmc.class, medPolicyId) : null ;
     			
     			Patient patient ;
     			if(medPolicy==null) {
-    				Long patientId = theSyncService.findPatientId(pat.getLastnameGood()
+    				Long patientId = syncService.findPatientId(pat.getLastnameGood()
     						, pat.getFirstname(), pat.getMiddlename(), pat.getBirthdate()) ;
-    				patient = patientId!=null ? theManager.find(Patient.class, patientId) : null ;
+    				patient = patientId!=null ? manager.find(Patient.class, patientId) : null ;
     			} else {
     				patient = medPolicy.getPatient() ;
     			}
@@ -99,18 +99,18 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
         fi.setImportTime(new java.sql.Time(currentDateLong));
         fi.setImportTable("PatientAttachedImport");
         fi.setImportNumber(String.valueOf(aTimeId));
-        theManager.persist(fi);
+        manager.persist(fi);
         try {
-            monitor = theMonitorService.startMonitor(aMonitorId, "Синхронизация персон", getCountFond(aTimeId));
+            monitor = monitorService.startMonitor(aMonitorId, "Синхронизация персон", getCountFond(aTimeId));
             long adrAstr = 0 ;
-            List<Object> lAdr = theManager.createNativeQuery("select a.addressid from Address2 a where a.kladr like '30000001%' and domen=4").setMaxResults(2).getResultList() ;
+            List<Object> lAdr = manager.createNativeQuery("select a.addressid from Address2 a where a.kladr like '30000001%' and domen=4").setMaxResults(2).getResultList() ;
     		if (lAdr.size()==1) {
     			adrAstr = ConvertSql.parseLong(lAdr.get(0)) ;
     		}
             int i = 0;
             long id=0 ;
             while (true) {
-            	List<PatientAttachedImport> paiList= (List<PatientAttachedImport>)theManager.createQuery("from PatientAttachedImport where time = :time and id > :id order by id")
+            	List<PatientAttachedImport> paiList= (List<PatientAttachedImport>)manager.createQuery("from PatientAttachedImport where time = :time and id > :id order by id")
                 		.setMaxResults(500)
                         .setParameter("time", aTimeId)
                         .setParameter("id", id).getResultList();
@@ -138,15 +138,15 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 		                }
 		                patImp.setPolicySeriesEdit(aPolicySeries) ;
 		                patImp.setPolicyNumberEdit(aPolicyNumber) ;
-		                Long medPolicyId = theSyncService.findMedPolicyId(aPolicySeries, aPolicyNumber) ;
-		                medPolicy = medPolicyId!=null ? theManager.find(MedPolicyOmc.class, medPolicyId) : null ;
+		                Long medPolicyId = syncService.findMedPolicyId(aPolicySeries, aPolicyNumber) ;
+		                medPolicy = medPolicyId!=null ? manager.find(MedPolicyOmc.class, medPolicyId) : null ;
 	            	}
 	                Long patientId1 = patImp.getPatient();
 	                if(medPolicy==null) {
 	                	if (patientId1==null) {
-		                    Long patientId = theSyncService.findPatientId(patImp.getLastname()
+		                    Long patientId = syncService.findPatientId(patImp.getLastname()
 		                            , patImp.getFirstname(), patImp.getMiddlename(), patImp.getBirthday()) ;
-		                    Patient patient = patientId!=null ? theManager.find(Patient.class, patientId) : null ;
+		                    Patient patient = patientId!=null ? manager.find(Patient.class, patientId) : null ;
 		                    if (patient!=null)patientId1 = patient.getId() ;
 	                	}
 	                } else {
@@ -157,12 +157,12 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 	            	patImp.setRayon(vr) ;
 	            	if (adr==null) {
 	            		String aStreet = patImp.getStreet();
-	            		String adrStr = thePatientService.getAddressByOkato(patImp.getRn(), aStreet);
+	            		String adrStr = patientService.getAddressByOkato(patImp.getRn(), aStreet);
 	            		Long adrId = adrStr!=null?Long.valueOf(adrStr):null;
 	            		if (adrId==null) {
 	            			adrId=getKladrByRayon(patImp.getRegion(), vr!=null?vr.getKladr():"", patImp.getCity(), patImp.getNp(), aStreet, patImp.getIndex(), adrAstr) ;
 	            		}
-	            		if (adrId!=null) adr=theManager.find(Address.class, adrId) ;
+	            		if (adrId!=null) adr=manager.find(Address.class, adrId) ;
 	            	}
 	            	if (adr!=null) { 
 	            		patImp.setAddressRegistration(adr) ; 
@@ -208,7 +208,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 			firRecord.append("Создан новый пациент: ").append(patient.getPatientInfo()).append(".");
     	} else {
     		isNew = false;
-    		patient = theManager.find(Patient.class,aPatientId) ;
+    		patient = manager.find(Patient.class,aPatientId) ;
     		firRecord.append("Пациент ").append(patient.getPatientInfo()).append(" найден в базе. ");
     		aEntity.setIsUpdatePatient(true) ;
     		if (!StringUtil.isNullOrEmpty(patient.getBirthPlace())) {
@@ -244,7 +244,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     	patient.setHouseNumber(aEntity.getHouse());
     	patient.setFlatNumber(aEntity.getApartment());
     	patient.setHouseBuilding(aEntity.getHousing());
-    	theManager.persist(patient);
+    	manager.persist(patient);
     	//Район
     	if (!StringUtil.isNullOrEmpty(aEntity.getSex())) patient.setSex(findEntity(VocSex.class,OMCCODE,aEntity.getSex()));
     	
@@ -271,14 +271,14 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 	    		aMedPolicy.setActualDateTo(aEntity.getPolicyDateTo()) ;
 	    	}
 	    	
-	    	theManager.persist(aMedPolicy);
+	    	manager.persist(aMedPolicy);
     	}
     	aEntity.setPatient(patient.getId()) ;
     	aEntity.setMedPolicy(aMedPolicy) ;
     	
-    	theManager.merge(aEntity);
+    	manager.merge(aEntity);
     	
-    	//theManager.persist(aEntity);
+    	//manager.persist(aEntity);
     	String patientSync = "Ф"+patient.getId() ;
     	if (isNew) {
     		Medcard medcard = new Medcard() ;
@@ -286,17 +286,17 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
     		MisLpu lpu = findEntity(MisLpu.class,"codef",aEntity.getLpu()) ;
     		medcard.setLpu(lpu) ;
     		medcard.setPerson(patient) ;
-    		theManager.persist(medcard);
+    		manager.persist(medcard);
     	}
     	//Обновляем прикрепления
     		if (aEntity.getLpuauto()!=null && !aEntity.getLpuauto().equals("") &&!aEntity.getLpuauto().equals("0")) {
-    			firRecord.append(thePatientService.updateOrCreateAttachment(patient.getId(), aEntity.getInsCompName(), aEntity.getLpu()
+    			firRecord.append(patientService.updateOrCreateAttachment(patient.getId(), aEntity.getInsCompName(), aEntity.getLpu()
         				, aEntity.getLpuauto(), DateFormat.formatToDate(aEntity.getLpuDateFrom()), aEntity.getDoctorSnils(), updateAttachment, true));
         	}
 
 		if (patient.getPatientSync()==null || patient.getPatientSync().equals("")) {
 			patient.setPatientSync(patientSync) ;
-	    	theManager.persist(patient);
+	    	manager.persist(patient);
 		}
 		try {
 
@@ -304,12 +304,12 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 			fir.setImportType(fi);
 			fir.setImportResult(firRecord.toString());
 			fir.setNumberFond(String.valueOf(aEntity.getId()));
-			theManager.persist(fir);	
+			manager.persist(fir);	
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-    	theManager.flush() ;
-    	theManager.clear() ;
+    	manager.flush() ;
+    	manager.clear() ;
 
     }
     private void syncPatient(PatientInfoShubinok aEntry, Patient aPatient, MedPolicyOmc aMedPolicy) {
@@ -321,7 +321,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
         aPatient.setMiddlename(aEntry.getMiddlename());
         aPatient.setBirthday(aEntry.getBirthdate());
         aPatient.setSnils(aEntry.getSnils());
-        aPatient.setAddress(theAddressService.findAddressByKladr(aEntry.getKladr()));
+        aPatient.setAddress(addressService.findAddressByKladr(aEntry.getKladr()));
         aPatient.setHouseNumber(aEntry.getHouseNumber());
         aPatient.setFlatNumber(aEntry.getFlatNumber());
         aPatient.setHouseBuilding(aEntry.getBuildingNumber());
@@ -336,60 +336,60 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
         aMedPolicy.setPolNumber(aEntry.getPolicyNumber());
         aMedPolicy.setCompany(findEntity(RegInsuranceCompany.class, OMCCODE, aEntry.getInsuranceCompanyCode()));
 
-        theManager.persist(aPatient);
-        theManager.persist(aMedPolicy);
-        theManager.flush();
-        theManager.clear() ;
+        manager.persist(aPatient);
+        manager.persist(aMedPolicy);
+        manager.flush();
+        manager.clear() ;
     }
 
     @SuppressWarnings("unchecked")
 	private <T> T findEntity(Class<T> aEntity, String aCodeField, String aValue) {
-        String entityName = theEntityHelper.getEntityName(aEntity);
-        List<T> list = theManager.createQuery(
+        String entityName = entityHelper.getEntityName(aEntity);
+        List<T> list = manager.createQuery(
                 "from "+entityName+" where "+aCodeField+" = :code"
         ).setParameter("code",aValue).getResultList();
         return list!=null && list.size()==1 ? list.iterator().next() : null ;
     }
 
     private Long getCount(long aTimeId) {
-    	return (Long) theManager.createQuery("select count(*) from PatientInfoShubinok where time = :time")
+    	return (Long) manager.createQuery("select count(*) from PatientInfoShubinok where time = :time")
     			.setParameter("time", aTimeId).getSingleResult() ;
     }
     private Long getCountFond(long aTimeId) {
-        return (Long) theManager.createQuery("select count(*) from PatientAttachedImport where time = :time")
+        return (Long) manager.createQuery("select count(*) from PatientAttachedImport where time = :time")
                 .setParameter("time", aTimeId).getSingleResult() ;
     }
 
-    private @EJB IPatientService thePatientService;
-    private @EJB ILocalMonitorService theMonitorService;
-    private @PersistenceContext EntityManager theManager;
-    private @EJB ISyncLpuFondService theSyncService ;
-    private @EJB ILocalAddressService theAddressService ;
-    private EntityHelper theEntityHelper = EntityHelper.getInstance();
+    private @EJB IPatientService patientService;
+    private @EJB ILocalMonitorService monitorService;
+    private @PersistenceContext EntityManager manager;
+    private @EJB ISyncLpuFondService syncService ;
+    private @EJB ILocalAddressService addressService ;
+    private EntityHelper entityHelper = EntityHelper.getInstance();
     private VocRayon findOrCreateRayon(String aRayon, String aRegion) {
     	aRayon = aRayon.toUpperCase() ;
     	StringBuilder ind = new StringBuilder().append(aRayon).append("#").append(aRegion) ;
-    	if (theHashRayon.get(ind.toString())==null) {
+    	if (hashRayon.get(ind.toString())==null) {
     		if (!aRayon.trim().equals("") && (aRayon.contains("ИНОГ") || aRegion != null && aRegion.equals("30"))) {
     			VocRayon vr  = null ;
-    			List<VocRayon> listVr = theManager.createQuery("from VocRayon where upper(name) like '%"+aRayon+"%'").setMaxResults(2).getResultList() ;
+    			List<VocRayon> listVr = manager.createQuery("from VocRayon where upper(name) like '%"+aRayon+"%'").setMaxResults(2).getResultList() ;
     			if (listVr.size()==1) vr=listVr.get(0) ;
-    			theHashRayon.put(ind.toString(), vr);
+    			hashRayon.put(ind.toString(), vr);
     		}
     	} 
-    	return theHashRayon.get(ind.toString());
+    	return hashRayon.get(ind.toString());
     }
     private OmcOksm findOrCreateNationality(String aCode) {
     	if (StringUtil.isNullOrEmpty(aCode)) aCode="RUS" ;
     	aCode = aCode.toUpperCase().trim() ;
-    	return theHashNationality.get(aCode);//,k->findEntity(OmcOksm.class,"alfa2",k))  ;
+    	return hashNationality.get(aCode);//,k->findEntity(OmcOksm.class,"alfa2",k))  ;
     }
 	private VocIdentityCard findOrCreateIdentity(String aCode) {
 		aCode = aCode.toUpperCase() ;
-        if (theHashIdentity.get(aCode) == null && !aCode.equals("")) {
-        	theHashIdentity.put(aCode, findEntity(VocIdentityCard.class,"omcCode",aCode)) ;
+        if (hashIdentity.get(aCode) == null && !aCode.equals("")) {
+        	hashIdentity.put(aCode, findEntity(VocIdentityCard.class,"omcCode",aCode)) ;
         } 
-        return theHashIdentity.get(aCode);
+        return hashIdentity.get(aCode);
     }
 
 	//address
@@ -402,12 +402,12 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
      			||	aNp!=null&&aNp.toUpperCase().contains("АСТРАХАН")
      			) {
      		adr =adrAstr ;
-     		list = theManager.createNativeQuery("select a.addressid from Address2 a where a.parent_addressid='"+adrAstr+"' and UPPER(a.name)=:street").setParameter("street", aStreet.toUpperCase()).setMaxResults(2).getResultList() ;
+     		list = manager.createNativeQuery("select a.addressid from Address2 a where a.parent_addressid='"+adrAstr+"' and UPPER(a.name)=:street").setParameter("street", aStreet.toUpperCase()).setMaxResults(2).getResultList() ;
      		if (list.size()==1) {
      			adr = ConvertSql.parseLong(list.get(0)) ;
      		} else if (list.size()>1 && aIndex!=null && !aIndex.trim().equals("")) {
      			list.clear() ;
-     			list = theManager.createNativeQuery("select a.addressid from Address2 a where a.parent_addressid='"+adrAstr+"' and UPPER(a.name)=:street and postIndex='"+aIndex+"'").setParameter("street", aStreet.toUpperCase()).setMaxResults(2).getResultList() ;
+     			list = manager.createNativeQuery("select a.addressid from Address2 a where a.parent_addressid='"+adrAstr+"' and UPPER(a.name)=:street and postIndex='"+aIndex+"'").setParameter("street", aStreet.toUpperCase()).setMaxResults(2).getResultList() ;
          		if (list.size()==1) {
          			adr = ConvertSql.parseLong(list.get(0)) ;
          		}
@@ -438,7 +438,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 			else if (aCity.startsWith("ПОС ")) aCity = aCity.substring(4) ;
 			aCity=aCity.trim().toUpperCase().replaceAll("-", "").replaceAll(" ", "").replaceAll("№", "N") ;
 			sql.append("select addressid,kladr from Address2 where kladr like '").append(aKladrRayon).append("%' and domen <6 and UPPER(replace(replace(name,'-',''),' ',''))='").append(aCity).append("' " ) ;
-			list = theManager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
+			list = manager.createNativeQuery(sql.toString()).setMaxResults(1).getResultList() ;
 			if (!list.isEmpty()) {
 				adr=ConvertSql.parseLong(list.get(0)[0]) ;
 				aKladrRayon = ""+list.get(0)[1] ;
@@ -450,13 +450,13 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 				sql = new StringBuilder() ;
 				sql.append("select addressid,kladr from Address2 where parent_addressid = '").append(adr).append("' and UPPER(name)='").append(aStreet.toUpperCase()).append("'" ) ;
 				list.clear() ;
-				list = theManager.createNativeQuery(sql.toString()).setMaxResults(2).getResultList() ;
+				list = manager.createNativeQuery(sql.toString()).setMaxResults(2).getResultList() ;
 				if (list.size()==1) {
 					adr=ConvertSql.parseLong(list.get(0)[0]) ;
 				} else if (!list.isEmpty() && aIndex!=null && !aIndex.trim().equals("")) {
 					sql.append(" and postIndex='").append(aIndex).append("'");
 					list.clear() ;
-					list = theManager.createNativeQuery(sql.toString()).setMaxResults(2).getResultList() ;
+					list = manager.createNativeQuery(sql.toString()).setMaxResults(2).getResultList() ;
 					if (list.size()==1) {
 						adr=ConvertSql.parseLong(list.get(0)[0]) ;
 					}
@@ -466,7 +466,7 @@ public class SyncShubinokServiceBean implements ISyncShubinokService {
 		return adr ;
 	}
 
-	private HashMap<String, VocIdentityCard> theHashIdentity = new HashMap<>();
-	private HashMap<String, VocRayon> theHashRayon = new HashMap<>();
-    private HashMap<String, OmcOksm> theHashNationality = new HashMap<>();
+	private HashMap<String, VocIdentityCard> hashIdentity = new HashMap<>();
+	private HashMap<String, VocRayon> hashRayon = new HashMap<>();
+    private HashMap<String, OmcOksm> hashNationality = new HashMap<>();
 }

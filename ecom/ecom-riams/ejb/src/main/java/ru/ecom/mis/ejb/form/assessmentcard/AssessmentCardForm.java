@@ -2,6 +2,7 @@ package ru.ecom.mis.ejb.form.assessmentcard;
 
 import javax.persistence.Column;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
@@ -33,88 +34,79 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @ASaveInterceptors(
 		@AEntityFormInterceptor(AssessmentCardSaveInterceptor.class)
 )
+@Setter
 public class AssessmentCardForm extends IdEntityForm{
 	/** Тип карты оценки */
 	@Comment("Тип карты оценки")
 	@Persist
-	public Long getTemplate() {return theTemplate;}
-	public void setTemplate(Long aTemplate) {theTemplate = aTemplate;}
+	public Long getTemplate() {return template;}
 	/** Тип карты оценки */
-	private Long theTemplate;
+	private Long template;
 	
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
+	public Long getPatient() {return patient;}
 	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	
 	/** Комментарий */
 	@Comment("Комментарий")
 	@Persist
 	@Column(length=ColumnConstants.TEXT_MAXLENGHT)
-	public String getComment() {return theComment;}
-	public void setComment(String aComment) {theComment = aComment;}
+	public String getComment() {return comment;}
 	/** Комментарий */
-	private String theComment;
+	private String comment;
 
 	/** Сумма баллов по карте */
 	@Comment("Сумма баллов по карте")
 	@Persist
-	public Long getBallSum() {return theBallSum;}
-	public void setBallSum(Long aBallSum) {theBallSum = aBallSum;}
+	public Long getBallSum() {return ballSum;}
 	/** Сумма баллов по карте */
-	private Long theBallSum;
+	private Long ballSum;
 	
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist
-	public String getCreateDate() {return theCreateDate;}
-	public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+	public String getCreateDate() {return createDate;}
 
 	/** Пользователь создавший запись */
 	@Comment("Пользователь создавший запись")
 	@Persist
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+	public String getCreateUsername() {return createUsername;}
 
 	/** Пользователь создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	
 	
 	/** Параметры */
 	@Comment("Параметры")
-	public String getParams() {return theParams;}
-	public void setParams(String aParams) {theParams = aParams;}
+	public String getParams() {return params;}
 	/** Параметры */
-	private String theParams;
+	private String params;
 	
 	/** Рабочая функция врача */
 	@Comment("Рабочая функция врача")
 	@Persist
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
+	public Long getWorkFunction() {return workFunction;}
 	/** Рабочая функция врача */
-	private Long theWorkFunction;
+	private Long workFunction;
 	
 	/** Дата приема */
 	@Comment("Дата приема")
 	@Persist 
 	@DateString @DoDateString
-	public String getStartDate() {return theStartDate;}
-	public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
+	public String getStartDate() {return startDate;}
 	/** Дата приема */
-	private String theStartDate;
+	private String startDate;
 
 
 	/** СЛО/визит создания */
 	@Comment("СЛО/визит создания")
 	@Persist
-	public Long getMedcase() {return theMedcase;}
-	public void setMedcase(Long aMedcase) {theMedcase = aMedcase;}
+	public Long getMedcase() {return medcase;}
 	/** СЛО/визит создания */
-	private Long theMedcase;
+	private Long medcase;
 }

@@ -1,4 +1,5 @@
 package ru.ecom.mis.ejb.form.contract;
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.contract.NaturalPerson;
 import ru.ecom.mis.ejb.form.patient.PatientForm;
@@ -10,6 +11,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Физическое лицо ", nameProperties= "id", list="entityList-contract_naturalPerson.do", view="entityView-contract_naturalPerson.do")
 @Parent(property="patient", parentForm=PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Contract/ContractPerson/NaturalPerson")
+@Setter
 public class NaturalPersonForm extends ContractPersonForm{
 	/**
 	 * Пациента
@@ -17,13 +19,10 @@ public class NaturalPersonForm extends ContractPersonForm{
 	@Comment("Пациента")
 	@Persist
 	public Long getPatient() {
-		return thePatient;
-	}
-	public void setPatient(Long aPatient) {
-		thePatient = aPatient;
+		return patient;
 	}
 	/**
 	 * Пациента
 	 */
-	private Long thePatient;
+	private Long patient;
 }

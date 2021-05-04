@@ -22,50 +22,49 @@ import java.math.BigDecimal;
 @Setter
 public class VocKsg extends VocIdCodeName {
 
-	private VocKsgGroup group;
-	/** Год КСГ */
-	private Integer year;
-	/** Сверхдлительный КСГ (45 дней)	*/
-	private Boolean longKsg;
-	/** Является операцией */
-	private Boolean isOperation;
-	/** Оплачивать в полном объеме */
-	private Boolean isFullPayment;
-	/** Коэффициент затрат */
-	private Double kz;
-	/** Профиль помощи */
-	private String profile;
-	private VocBedSubType bedSubType;
-	private Boolean doNotUseCusmo = false;
-	/** Covid-19 КСГ */
-	private Boolean isCovid19;
-	private BigDecimal doctorCost;
-
 	/** Группа КСГ */
 	@Comment("Группа КСГ")
 	@OneToOne
-	public VocKsgGroup getGroup() {
-		return group;
-	}
+	public VocKsgGroup getGroup() {return group;}
+	private VocKsgGroup group;
+
+	/** Год КСГ */
+	private Integer year;
+
+	/** Сверхдлительный КСГ (45 дней)	*/
+	private Boolean longKsg;
+
+	/** Является операцией */
+	private Boolean isOperation;
+
+	/** Оплачивать в полном объеме */
+	private Boolean isFullPayment;
+
+	/** Коэффициент затрат */
+	private Double kz;
+
+	/** Профиль помощи */
+	private String profile;
 
 	/** Тип коек */
 	@Comment("Тип коек")
 	@OneToOne
-	public VocBedSubType getBedSubType() {
-		return bedSubType;
-	}
+	public VocBedSubType getBedSubType() {return bedSubType;}
+	private VocBedSubType bedSubType;
 
 	/** Не учитывать КУСмо */
 	@Comment("Не учитывать КУСмо")
-	public Boolean getDoNotUseCusmo() {
-		return doNotUseCusmo;
-	}
+	public Boolean getDoNotUseCusmo() {return doNotUseCusmo;}
+	private Boolean doNotUseCusmo = false;
+
+	/** Covid-19 КСГ */
+	private Boolean isCovid19;
+
 
 	@Comment("Доля ЗП врача в КСГ")
 	@Column(precision = 7, scale = 4)
-	public BigDecimal getDoctorCost() {
-		return doctorCost;
-	}
+	public BigDecimal getDoctorCost() { return doctorCost;}
+	private BigDecimal doctorCost;
 
 
 }

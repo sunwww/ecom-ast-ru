@@ -16,7 +16,7 @@ import java.util.Map;
 @Local(ILocalMonitorService.class)
 public class MonitorServiceBean implements IRemoteMonitorService, ILocalMonitorService {
     public long createMonitor() {
-        return theHolder.createNextId();
+        return holder.createNextId();
     }
     
     public MonitorId createMonitorId() {
@@ -25,7 +25,7 @@ public class MonitorServiceBean implements IRemoteMonitorService, ILocalMonitorS
 
     public RemoteMonitorStatus getMonitorStatus(long aMonitorId) {
         checkExists(aMonitorId) ;
-        LocalMonitorStatus status = theHolder.getMonitor(aMonitorId);
+        LocalMonitorStatus status = holder.getMonitor(aMonitorId);
         return new RemoteMonitorStatus(
                 status.getName()
                 , status.getText()
@@ -38,42 +38,42 @@ public class MonitorServiceBean implements IRemoteMonitorService, ILocalMonitorS
 
     public void cancel(long aMonitorId) {
         checkExists(aMonitorId);
-        theHolder.getMonitor(aMonitorId).setCancelled(true);
+        holder.getMonitor(aMonitorId).setCancelled(true);
     }
 
     private void checkExists(long aMonitorId) {
-        if(!theHolder.isExists(aMonitorId)) {
+        if(!holder.isExists(aMonitorId)) {
             throw new IllegalArgumentException("Ожидание монитора с идентификатором "+aMonitorId) ;
         }
     }
     
 	public IMonitor acceptMonitor(long aMonitorId, String aMessage) {
-        if(theHolder.isExists(aMonitorId)) {
+        if(holder.isExists(aMonitorId)) {
         	throw new IllegalArgumentException("Монитор с идентификатором "+aMonitorId+" уже существует") ;
         }
 		LocalAcceptedMonitor monitor = new LocalAcceptedMonitor(aMessage) ;
-		theHolder.putMonitor(aMonitorId, monitor) ;
+		holder.putMonitor(aMonitorId, monitor) ;
 		return monitor;
 	}
     
     public IMonitor startMonitor(long aMonitorId, String aMonitorName, double aMaximum) {
         LocalMonitorStatus monitor = new LocalMonitorStatus(aMonitorName, aMaximum);
         monitor.setText("Starting service ...");
-        if(theHolder.isExists(aMonitorId) 
-        		&& !(theHolder.getMonitor(aMonitorId) instanceof LocalAcceptedMonitor)) {
+        if(holder.isExists(aMonitorId) 
+        		&& !(holder.getMonitor(aMonitorId) instanceof LocalAcceptedMonitor)) {
             throw new IllegalArgumentException("Монитор с идентификатором "+aMonitorId+" уже запущен") ;
         }
-        theHolder.putMonitor(aMonitorId, monitor);
+        holder.putMonitor(aMonitorId, monitor);
         return monitor;
     }
 
     public IMonitor getMonitor(long aMonitorId) {
         checkExists(aMonitorId) ;
-        return theHolder.getMonitor(aMonitorId);
+        return holder.getMonitor(aMonitorId);
     }
     public String getAllMonitors () {
         JSONArray ret = new JSONArray();
-        for (Map.Entry<Long, LocalMonitorStatus> entry : theHolder.getAllMonitors().entrySet()) {
+        for (Map.Entry<Long, LocalMonitorStatus> entry : holder.getAllMonitors().entrySet()) {
             LocalMonitorStatus monitorStatus = entry.getValue();
             ret.put(new JSONObject().put("id",entry.getKey()).put("name",monitorStatus.getName()).put("text",monitorStatus.getText())
                 .put("finishText",monitorStatus.isFinished() ? monitorStatus.getFinishParameters() :"")
@@ -82,10 +82,10 @@ public class MonitorServiceBean implements IRemoteMonitorService, ILocalMonitorS
         return ret.toString();
     }
 
-    private final MonitorHolder theHolder = MonitorHolder.getInstance();
+    private final MonitorHolder holder = MonitorHolder.getInstance();
 
 	public long subTask(IMonitor aMonitor, String aName) {
-		return theHolder.createNextId() ;
+		return holder.createNextId() ;
 	}
 
 	public IMonitor acceptMonitor(MonitorId aMonitorId, String aText) {

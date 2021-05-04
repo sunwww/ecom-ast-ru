@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.prescription;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.pharmacy.PharmDrug;
 import ru.ecom.mis.ejb.domain.pharmacy.VocDrug;
 import ru.ecom.mis.ejb.domain.prescription.voc.VocDrugAmountUnit;
@@ -20,108 +22,58 @@ import javax.persistence.Transient;
 
 @Comment("Назначение на лекарства")
 @Entity
+@Getter
+@Setter
 public class DrugPrescription extends Prescription{
 
 	//unused временно не используется.
-	private PharmDrug theDrug;
-	private VocDrugMethod theMethod;
-	private VocFrequencyUnit theFrequencyUnit;
-	private Integer theFrequency;
-	private VocPrescriptOrderType theOrderType;
-	private Integer theOrderTime;
-	private VocDrugAmountUnit theAmountUnit;
-	private Float theAmount;
-	private VocDrug theVocDrug;
+	private PharmDrug drug;
+	private VocDrugMethod method;
+	private VocFrequencyUnit frequencyUnit;
+	private Integer frequency;
+	private VocPrescriptOrderType orderType;
+	private Integer orderTime;
+	private VocDrugAmountUnit amountUnit;
+	private Float amount;
+	private VocDrug vocDrug;
 
 	@Comment("Лекарство")
 	@OneToOne
 	public PharmDrug getDrug() {
-		return theDrug;
-	}
-	public void setDrug(PharmDrug aDrug) {
-		theDrug = aDrug;
+		return drug;
 	}
 
 	@Comment("Метод введения")
 	@OneToOne
 	public VocDrugMethod getMethod() {
-		return theMethod;
-	}
-	public void setMethod(VocDrugMethod aMethod) {
-		theMethod = aMethod;
+		return method;
 	}
 
 	@Comment("Единица частоты использования")
 	@OneToOne
 	public VocFrequencyUnit getFrequencyUnit() {
-		return theFrequencyUnit;
-	}
-	public void setFrequencyUnit(VocFrequencyUnit aFrequencyUnit) {
-		theFrequencyUnit = aFrequencyUnit;
+		return frequencyUnit;
 	}
 
-	@Comment("Частота использования")
-	public Integer getFrequency() {
-		return theFrequency;
-	}
-	public void setFrequency(Integer aFrequency) {
-		theFrequency = aFrequency;
-	}
 
 	@Comment("Тип порядка использования")
 	@OneToOne
 	public VocPrescriptOrderType getOrderType() {
-		return theOrderType;
-	}
-	public void setOrderType(VocPrescriptOrderType aOrderType) {
-		theOrderType = aOrderType;
+		return orderType;
 	}
 
-	@Comment("Время порядка использования")
-	public Integer getOrderTime() {
-		return theOrderTime;
-	}
-	public void setOrderTime(Integer aOrderTime) {
-		theOrderTime = aOrderTime;
-	}
 
 	@Comment("Единица измерения количества")
 	@OneToOne
 	public VocDrugAmountUnit getAmountUnit() {
-		return theAmountUnit;
+		return amountUnit;
 	}
-	public void setAmountUnit(VocDrugAmountUnit aAmountUnit) {
-		theAmountUnit = aAmountUnit;
-	}
-
-	@Comment("Количество")
-	public Float getAmount() {
-		return theAmount;
-	}
-	public void setAmount(Float aAmount) {
-		theAmount = aAmount;
-	}
-
-	///** Краткий справочник лекарств */
-	//@Comment("Краткий справочник лекарств")
-	//@OneToOne
-	//public VocDrugUnlicensedName getDrugName() {
-	//	return theDrugName;
-	//}
-
-	//public void setDrugName(VocDrugUnlicensedName aDrugName) {
-	//	theDrugName = aDrugName;
-	//}
-
-	///** Краткий справочник лекарств */
-	//private VocDrugUnlicensedName theDrugName;
-
 
 	/** Наименование лекарственного препарата */
 	@Comment("Наименование лекарственного препарата")
 	@Transient
 	public String getDrugInfo() {
-		return theDrug!=null? theDrug.getDrug().getName():"";
+		return drug!=null? drug.getDrug().getName():"";
 	}
 
 	/** Описание лекарственного назначения */
@@ -166,6 +118,5 @@ public class DrugPrescription extends Prescription{
 	/** Лекарство */
 	@Comment("Лекарство")
 	@OneToOne
-	public VocDrug getVocDrug() {return theVocDrug;}
-	public void setVocDrug(VocDrug aVocDrug) {theVocDrug = aVocDrug;}
+	public VocDrug getVocDrug() {return vocDrug;}
 }

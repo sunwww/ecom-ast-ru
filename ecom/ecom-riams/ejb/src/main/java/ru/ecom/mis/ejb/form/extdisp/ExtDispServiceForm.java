@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.extdisp;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -20,6 +21,7 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @Parent(property="card", parentForm=ExtDispCardForm.class)
 @Subclasses(value = { ExtDispVisitForm.class, ExtDispExamForm.class })
 @EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card/Service")
+@Setter
 public class ExtDispServiceForm extends IdEntityForm{
 	/**
 	 * Карта дополнительной диспансеризации
@@ -27,15 +29,12 @@ public class ExtDispServiceForm extends IdEntityForm{
 	@Comment("Карта дополнительной диспансеризации")
 	@Persist
 	public Long getCard() {
-		return theCard;
-	}
-	public void setCard(Long aCard) {
-		theCard = aCard;
+		return card;
 	}
 	/**
 	 * Карта дополнительной диспансеризации
 	 */
-	private Long theCard;
+	private Long card;
 	/**
 	 * Дата оказания услуги
 	 */
@@ -43,28 +42,22 @@ public class ExtDispServiceForm extends IdEntityForm{
 	@Persist
 	@DateString @DoDateString
 	public String getServiceDate() {
-		return theServiceDate;
-	}
-	public void setServiceDate(String aServiceDate) {
-		theServiceDate = aServiceDate;
+		return serviceDate;
 	}
 	/**
 	 * Дата оказания услуги
 	 */
-	private String theServiceDate;
+	private String serviceDate;
 	/**
 	 * Тип услуги
 	 */
 	@Comment("Тип услуги")
 	@Persist
 	public Long getServiceType() {
-		return theServiceType;
-	}
-	public void setServiceType(Long aServiceType) {
-		theServiceType = aServiceType;
+		return serviceType;
 	}
 	/**
 	 * Тип услуги
 	 */
-	private Long theServiceType;
+	private Long serviceType;
 }

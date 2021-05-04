@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.lpu;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.lpu.BedFundCapacity;
@@ -17,104 +18,93 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @EntityFormPersistance(clazz = BedFundCapacity.class)
 @WebTrail(comment = "Объемы коечного фонда", nameProperties = "id", view = "entityView-mis_bedFundCapacity.do")
 @EntityFormSecurityPrefix("/Policy/Mis/BedFund")
+@Setter
 
 public class BedFundCapacityForm extends IdEntityForm{	 
 
 		/** Профиль коек */
 		@Comment("Профиль коек")
 		@Persist @Required
-		public Long getBedType() {return theBedType;}
-		public void setBedType(Long aBedType) {theBedType = aBedType;}
+		public Long getBedType() {return bedType;}
 		/** Профиль коек */
-		private Long theBedType;
+		private Long bedType;
 		
 		/** Источник финансирования */
 		@Comment("Источник финансирования")
 		@Persist @Required
-		public Long getFinanceSource() {return theFinanceSource;}
-		public void setFinanceSource(Long aFinanceSource) {theFinanceSource = aFinanceSource;}
+		public Long getFinanceSource() {return financeSource;}
 		/** Источник финансирования */
-		private Long theFinanceSource;
+		private Long financeSource;
 		
 		/** Фактическое количество коек */
 		@Comment("Фактическое количество коек")
 		@Persist
-		public Long getActualBedCount() {return theActualBedCount;}
-		public void setActualBedCount(Long aActualBedCount) {theActualBedCount = aActualBedCount;}
+		public Long getActualBedCount() {return actualBedCount;}
 		/** Фактическое количество коек */
-		private Long theActualBedCount;
+		private Long actualBedCount;
 		
 		/** Дата начала действия */
 		@Comment("Дата начала действия")
 		@Persist @DoDateString @DateString 
 		@Required
-		public String getStartDate() {return theStartDate;}
-		public void setStartDate(String aStartDate) {theStartDate = aStartDate;}
+		public String getStartDate() {return startDate;}
 		/** Дата начала действия */
-		private String theStartDate;
+		private String startDate;
 		
 		/** Дата окончания действия */
 		@Comment("Дата окончания действия")
 		@Persist @DoDateString @DateString
-		public String getFinishDate() {return theFinishDate;}
-		public void setFinishDate(String aFinishDate) {theFinishDate = aFinishDate;}
+		public String getFinishDate() {return finishDate;}
 		/** Дата окончания действия */
-		private String theFinishDate;
+		private String finishDate;
 		
 		/** Средняя длительность лечения */
 		@Comment("Средняя длительность лечения")
 		@Persist
-		public Float getPlanTreatmentDuration() {return thePlanTreatmentDuration;}
-		public void setPlanTreatmentDuration(Float aPlanTreatmentDuration) {thePlanTreatmentDuration = aPlanTreatmentDuration;}
+		public Float getPlanTreatmentDuration() {return planTreatmentDuration;}
 		/** Средняя длительность лечения */
-		private Float thePlanTreatmentDuration;
+		private Float planTreatmentDuration;
 		
 		/** Количество дней работы в году (план) */
 		@Comment("Количество дней работы в году (план)")
 		@Persist
-		public Long getWorkingDays() {return theWorkingDays;}
-		public void setWorkingDays(Long aWorkingDays) {theWorkingDays = aWorkingDays;}
+		public Long getWorkingDays() {return workingDays;}
 		/** Количество дней работы в году (план) */
-		private Long theWorkingDays;
+		private Long workingDays;
 		
 		/** Количество коек по плану*/
 		@Comment("Количество коек по плану")
 		@Persist @Required
-		public Long getPlanBedCount() {return thePlanBedCount;}
-		public void setPlanBedCount(Long aPlanBedCount) {thePlanBedCount = aPlanBedCount;}
+		public Long getPlanBedCount() {return planBedCount;}
 		/** Количество коек по плану*/
-		private Long thePlanBedCount;
+		private Long planBedCount;
 		
 		/** Количество койкодней (план) */
 		@Comment("Количество койкодней (план)")
 		@Persist
-		public Long getCountDays() {return theCountDays;}
-		public void setCountDays(Long aCountDays) {theCountDays = aCountDays;}
+		public Long getCountDays() {return countDays;}
 		/** Количество койкодней (план) */
-		private Long theCountDays;
+		private Long countDays;
 		
 		/** Количество госпитализаций */
 		@Comment("Количество госпитализаций")
 		@Persist
-		public Long getCountHospitals() {return theCountHospitals;}
-		public void setCountHospitals(Long aCountHospitals) {theCountHospitals = aCountHospitals;}
+		public Long getCountHospitals() {return countHospitals;}
 		/** Количество госпитализаций */
-		private Long theCountHospitals;
+		private Long countHospitals;
 		
 		/** Отделение */
 		@Comment("Отделение")
 		@Persist
-		public Long getDepartment() {return theDepartment;}
-		public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
+		public Long getDepartment() {return department;}
 		/** Отделение */
-		private Long theDepartment;
+		private Long department;
 		
 		/** Тип коек */
 		@Comment("Тип коек")
 		@Persist
-		public Long getBedSubType() {return theBedSubType;}
-		public void setBedSubType(Long aBedSubType) {theBedSubType = aBedSubType;}
+		public Long getBedSubType() {return bedSubType;}
 		/** Тип коек */
-		private Long theBedSubType;
+		private Long bedSubType;
 		
 }

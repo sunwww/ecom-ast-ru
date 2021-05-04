@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase.transfusion;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.medcase.Transfusion;
@@ -17,46 +18,40 @@ import javax.persistence.OneToOne;
 @WebTrail(comment = "Реактив", nameProperties= "id", view="entityView-trans_reagent.do",list = "entityParentList-trans_transfusion.do")
 @Parent(property="transfusion", parentForm= TransfusionForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/MedCase/Transfusion")
+@Setter
 public class TransfusionReagentForm extends IdEntityForm {
 	/** Реактив */
 	@Comment("Реактив")
 	@Persist
-	public Long getReagent() {return theReagent;}
-	public void setReagent(Long aReagent) {theReagent = aReagent;}
+	public Long getReagent() {return reagent;}
 
 	/** Серия */
 	@Comment("Серия")
 	@Persist
-	public String getSeries() {return theSeries;}
-	public void setSeries(String aSeries) {theSeries = aSeries;}
+	public String getSeries() {return series;}
 
 	/** Срок годности */
 	@Comment("Срок годности")
 	@Persist @DoDateString @DateString
-	public String getExpirationDate() {return theExpirationDate;}
-	public void setExpirationDate(String aExpirationDate) {theExpirationDate = aExpirationDate;}
+	public String getExpirationDate() {return expirationDate;}
 
 	/** Порядковый номер */
 	@Comment("Порядковый номер")
-	public Integer getNumberReagent() {return theNumberReagent;}
-	public void setNumberReagent(Integer aNumberReagent) {theNumberReagent = aNumberReagent;}
+	public Integer getNumberReagent() {return numberReagent;}
 
 	/** Переливание */
 	@Comment("Переливание")
 	@OneToOne
-	public Transfusion getTransfusion() {return theTransfusion;}
-	public void setTransfusion(Transfusion aTransfusion) {theTransfusion = aTransfusion;}
+	public Transfusion getTransfusion() {return transfusion;}
 
 	/** Переливание */
-	private Transfusion theTransfusion;
+	private Transfusion transfusion;
 	/** Порядковый номер */
-	private Integer theNumberReagent;
+	private Integer numberReagent;
 	/** Срок годности */
-	private String theExpirationDate;
+	private String expirationDate;
 	/** Серия */
-	private String theSeries;
+	private String series;
 	/** Реактив */
-	private Long theReagent;
+	private Long reagent;
 }
-//lastrelease milamesher 30.03.2018 #95
-//no required

@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expomc.ejb.domain.omcvoc.OmcFrm;
@@ -25,40 +27,18 @@ import java.sql.Time;
         @AIndex(properties = "statisticStub", table = "MedCase")
         , @AIndex(properties = "result", table = "MedCase")
 })
+@Getter
+@Setter
 public class HospitalMedCase extends LongMedCase {
 
     /**
-     * Дата перевода
-     */
-    @Comment("Дата перевода")
-    public Date getTransferDate() {
-        return theTransferDate;
-    }
-
-    public void setTransferDate(Date aTransferDate) {
-        theTransferDate = aTransferDate;
-    }
-
-    /**
      * Время перевода
      */
-    @Comment("Время перевода")
-    public Time getTransferTime() {
-        return theTransferTime;
-    }
-
-    public void setTransferTime(Time aTransferTime) {
-        theTransferTime = aTransferTime;
-    }
-
-    /**
-     * Время перевода
-     */
-    private Time theTransferTime;
+    private Time transferTime;
     /**
      * Дата перевода
      */
-    private Date theTransferDate;
+    private Date transferDate;
 
     /**
      * Дефекты догоспитального этапа
@@ -66,49 +46,8 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Дефекты догоспитального этапа")
     @OneToOne
     public VocPreAdmissionDefect getPreAdmissionDefect() {
-        return thePreAdmissionDefect;
+        return preAdmissionDefect;
     }
-
-    public void setPreAdmissionDefect(VocPreAdmissionDefect aPreAdmissionDefect) {
-        thePreAdmissionDefect = aPreAdmissionDefect;
-    }
-
-    /**
-     * Тип доставки
-     */
-    @Comment("Тип доставки")
-    public String getSupplyType() {
-        return theSupplyType;
-    }
-
-    public void setSupplyType(String aSupplyType) {
-        theSupplyType = aSupplyType;
-    }
-
-    /**
-     * Номер направления
-     */
-    @Comment("Номер направления")
-    public String getOrderNumber() {
-        return theOrderNumber;
-    }
-
-    public void setOrderNumber(String aOrderNumber) {
-        theOrderNumber = aOrderNumber;
-    }
-
-    /**
-     * Номер наряда доставки
-     */
-    @Comment("Номер наряда доставки")
-    public String getSupplyOrderNumber() {
-        return theSupplyOrderNumber;
-    }
-
-    public void setSupplyOrderNumber(String aSupplyOrderNumber) {
-        theSupplyOrderNumber = aSupplyOrderNumber;
-    }
-
 
     /**
      * Время заболевания до госпитализации
@@ -116,11 +55,7 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Время заболевания до госпитализации")
     @OneToOne
     public VocPreAdmissionTime getPreAdmissionTime() {
-        return thePreAdmissionTime;
-    }
-
-    public void setPreAdmissionTime(VocPreAdmissionTime aPreAdmissionTime) {
-        thePreAdmissionTime = aPreAdmissionTime;
+        return preAdmissionTime;
     }
 
     /**
@@ -129,11 +64,7 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Исход госпитализации")
     @OneToOne
     public VocHospitalizationOutcome getOutcome() {
-        return theOutcome;
-    }
-
-    public void setOutcome(VocHospitalizationOutcome aOutcome) {
-        theOutcome = aOutcome;
+        return outcome;
     }
 
     /**
@@ -142,11 +73,7 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Результат госпитализации")
     @OneToOne
     public VocHospitalizationResult getResult() {
-        return theResult;
-    }
-
-    public void setResult(VocHospitalizationResult aResult) {
-        theResult = aResult;
+        return result;
     }
 
     /**
@@ -155,11 +82,7 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Кем доставлен")
     @OneToOne
     public OmcFrm getOrderType() {
-        return theOrderType;
-    }
-
-    public void setOrderType(OmcFrm aOrderType) {
-        theOrderType = aOrderType;
+        return orderType;
     }
 
     /**
@@ -168,23 +91,7 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Отказ от госпитализации")
     @OneToOne
     public VocDeniedHospitalizating getDeniedHospitalizating() {
-        return theDeniedHospitalizating;
-    }
-
-    public void setDeniedHospitalizating(VocDeniedHospitalizating aDeniedHospitalizating) {
-        theDeniedHospitalizating = aDeniedHospitalizating;
-    }
-
-    /**
-     * Амбулаторное лечение
-     */
-    @Comment("Амбулаторное лечение")
-    public Boolean getAmbulanceTreatment() {
-        return theAmbulanceTreatment;
-    }
-
-    public void setAmbulanceTreatment(Boolean aAmbulanceTreatment) {
-        theAmbulanceTreatment = aAmbulanceTreatment;
+        return deniedHospitalizating;
     }
 
     /**
@@ -193,23 +100,7 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Стат. карта")
     @OneToOne
     public StatisticStubExist getStatisticStub() {
-        return theStatisticStub;
-    }
-
-    public void setStatisticStub(StatisticStubExist aStatisticStub) {
-        theStatisticStub = aStatisticStub;
-    }
-
-    /**
-     * Сообщение родственникам
-     */
-    @Comment("Сообщение родственникам")
-    public Boolean getRelativeMessage() {
-        return theRelativeMessage;
-    }
-
-    public void setRelativeMessage(Boolean aRelativeMessage) {
-        theRelativeMessage = aRelativeMessage;
+        return statisticStub;
     }
 
     /**
@@ -219,23 +110,7 @@ public class HospitalMedCase extends LongMedCase {
     @OneToOne
     @Deprecated //unused
     public VocBedType getBedType() {
-        return theBedType;
-    }
-
-    public void setBedType(VocBedType aBedType) {
-        theBedType = aBedType;
-    }
-
-    /**
-     * Оказана мед. помощь в приемном отделении
-     */
-    @Comment("Оказана мед. помощь в приемном отделении")
-    public Boolean getMedicalAid() {
-        return theMedicalAid;
-    }
-
-    public void setMedicalAid(Boolean aMedicalAid) {
-        theMedicalAid = aMedicalAid;
+        return bedType;
     }
 
     /**
@@ -244,11 +119,7 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Рабочая функция направителя")
     @OneToOne
     public WorkFunction getOrderWorkFunction() {
-        return theOrderWorkFunction;
-    }
-
-    public void setOrderWorkFunction(WorkFunction aOrderWorkFunction) {
-        theOrderWorkFunction = aOrderWorkFunction;
+        return orderWorkFunction;
     }
 
     /**
@@ -257,11 +128,7 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Провизорность")
     @Deprecated
     public Boolean getProvisional() {
-        return theProvisional;
-    }
-
-    public void setProvisional(Boolean aProvisional) {
-        theProvisional = aProvisional;
+        return provisional;
     }
 
     /**
@@ -270,11 +137,7 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Перевод в другое ЛПУ")
     @OneToOne
     public MisLpu getMoveToAnotherLPU() {
-        return theMoveToAnotherLPU;
-    }
-
-    public void setMoveToAnotherLPU(MisLpu aMoveToAnotherLPU) {
-        theMoveToAnotherLPU = aMoveToAnotherLPU;
+        return moveToAnotherLPU;
     }
 
     /**
@@ -283,11 +146,7 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Тип текущего стационара")
     @OneToOne
     public VocHospType getHospType() {
-        return theHospType;
-    }
-
-    public void setHospType(VocHospType aHospType) {
-        theHospType = aHospType;
+        return hospType;
     }
 
     /**
@@ -296,37 +155,8 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Выписной эпикриз")
     @Column(length = 30000)
     public String getDischargeEpicrisis() {
-        return theDischargeEpicrisis;
+        return dischargeEpicrisis;
     }
-
-    public void setDischargeEpicrisis(String aDischargeEpicrisis) {
-        theDischargeEpicrisis = aDischargeEpicrisis;
-    }
-
-    /**
-     * Сопровождающее лицо
-     */
-    @Comment("Сопровождающее лицо")
-    public String getAttendant() {
-        return theAttendant;
-    }
-
-    public void setAttendant(String aAttendant) {
-        theAttendant = aAttendant;
-    }
-
-    /**
-     * Редкий случай
-     */
-    @Comment("Редкий случай")
-    public Boolean getRareCase() {
-        return theRareCase;
-    }
-
-    public void setRareCase(Boolean aRareCase) {
-        theRareCase = aRareCase;
-    }
-
 
     /**
      * Поступление в данный стационар
@@ -334,11 +164,7 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Поступление в данный стационар")
     @OneToOne
     public VocHospitalization getAdmissionInHospital() {
-        return theAdmissionInHospital;
-    }
-
-    public void setAdmissionInHospital(VocHospitalization aAdmissionInHospital) {
-        theAdmissionInHospital = aAdmissionInHospital;
+        return admissionInHospital;
     }
 
     /**
@@ -347,27 +173,21 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Откуда поступил")
     @OneToOne
     public VocHospitalizationOutcome getWhereAdmission() {
-        return theWhereAdmission;
-    }
-
-    public void setWhereAdmission(VocHospitalizationOutcome aWhereAdmission) {
-        theWhereAdmission = aWhereAdmission;
+        return whereAdmission;
     }
 
     /**
      * Откуда поступил
      */
-    private VocHospitalizationOutcome theWhereAdmission;
+    private VocHospitalizationOutcome whereAdmission;
     /**
      * Поступление в данный стационар
      */
-    private VocHospitalization theAdmissionInHospital;
+    private VocHospitalization admissionInHospital;
     /**
      * Редкий случай
      */
-    private Boolean theRareCase;
-
-    // Вычислямые поля
+    private Boolean rareCase;
 
     /**
      * Случай является отказом от госпитализации?
@@ -384,7 +204,7 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Номер стат.карты")
     @Transient
     public String getStatCardNumber() {
-		return theStatisticStub != null ? theStatisticStub.getCode() :"";
+		return statisticStub != null ? statisticStub.getCode() :"";
     }
 
     /**
@@ -393,12 +213,12 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Номер стат.карты")
     @Transient
     public Long getReasonDischarge() {
-		return theStatisticStub != null && theStatisticStub.getReasonDischarge() != null ? theStatisticStub.getReasonDischarge().getId() : null;
+		return statisticStub != null && statisticStub.getReasonDischarge() != null ? statisticStub.getReasonDischarge().getId() : null;
     }
 
     @Transient
     public Long getResultDischarge() {
-		return theStatisticStub != null && theStatisticStub.getResultDischarge() != null ? theStatisticStub.getResultDischarge().getId() : null;
+		return statisticStub != null && statisticStub.getResultDischarge() != null ? statisticStub.getResultDischarge().getId() : null;
     }
 
     /**
@@ -420,11 +240,7 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Педикулез")
     @OneToOne
     public VocPediculosis getPediculosis() {
-        return thePediculosis;
-    }
-
-    public void setPediculosis(VocPediculosis aPediculosis) {
-        thePediculosis = aPediculosis;
+        return pediculosis;
     }
 
     /**
@@ -433,120 +249,104 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Причина госпитализации в психиатрический стационар")
     @OneToOne
     public VocPsychHospitalReason getPsychReason() {
-        return thePsychReason;
-    }
-
-    public void setPsychReason(VocPsychHospitalReason aPsychReason) {
-        thePsychReason = aPsychReason;
+        return psychReason;
     }
 
 
     /**
      * Дата решения суда
      */
-    @Comment("Дата решения суда")
-    public Date getLawCourtDesicionDate() {
-        return theLawCourtDesicionDate;
-    }
-
-    public void setLawCourtDesicionDate(Date aLawCourtDesicionDate) {
-        theLawCourtDesicionDate = aLawCourtDesicionDate;
-    }
-
-    /**
-     * Дата решения суда
-     */
-    private Date theLawCourtDesicionDate;
+    private Date lawCourtDesicionDate;
     /**
      * Причина госпитализации в психиатрический стационар
      */
-    private VocPsychHospitalReason thePsychReason;
+    private VocPsychHospitalReason psychReason;
     /**
      * Педикулез
      */
-    private VocPediculosis thePediculosis;
+    private VocPediculosis pediculosis;
 
     /**
      * Тип текущего стационара
      */
-    private VocHospType theHospType;
+    private VocHospType hospType;
     /**
      * Перевод в другое ЛПУ
      */
-    private MisLpu theMoveToAnotherLPU;
+    private MisLpu moveToAnotherLPU;
     /**
      * Провизорность
      */
-    private Boolean theProvisional;
+    private Boolean provisional;
     /**
      * Результат госпитализации
      */
-    private VocHospitalizationResult theResult;
+    private VocHospitalizationResult result;
     /**
      * Исход госпитализации
      */
-    private VocHospitalizationOutcome theOutcome;
+    private VocHospitalizationOutcome outcome;
     /**
      * Время заболевания до госпитализации
      */
-    private VocPreAdmissionTime thePreAdmissionTime;
+    private VocPreAdmissionTime preAdmissionTime;
 
     /**
      * Номер наряда доставки
      */
-    private String theSupplyOrderNumber;
+    private String supplyOrderNumber;
     /**
      * Номер направления
      */
-    private String theOrderNumber;
+    private String orderNumber;
     /**
      * Тип доставки
      */
-    private String theSupplyType;
+    private String supplyType;
     /**
      * Дефекты догоспитального этапа
      */
-    private VocPreAdmissionDefect thePreAdmissionDefect;
+    private VocPreAdmissionDefect preAdmissionDefect;
     /**
      * Рабочая функция направителя
      */
-    private WorkFunction theOrderWorkFunction;
+    private WorkFunction orderWorkFunction;
     /**
      * Оказана мед. помощь в приемном отделении
      */
-    private Boolean theMedicalAid;
+    private Boolean medicalAid;
     /**
      * Профиль коек
      */
-    private VocBedType theBedType;
+    private VocBedType bedType;
     /**
      * Сообщение родственникам
      */
-    private Boolean theRelativeMessage;
+    private Boolean relativeMessage;
     /**
      * Стат. карта
      */
-    private StatisticStubExist theStatisticStub;
+    private StatisticStubExist statisticStub;
     /**
      * Амбулаторное лечение
      */
-    private Boolean theAmbulanceTreatment;
+    private Boolean ambulanceTreatment;
     /**
      * Отказ от госпитализации
      */
-    private VocDeniedHospitalizating theDeniedHospitalizating;
+    private VocDeniedHospitalizating deniedHospitalizating;
     /**
      * Кем доставлен
      */
-    private OmcFrm theOrderType;
+    private OmcFrm orderType;
     /**
      * Выписной эпикриз
      */
-    private String theDischargeEpicrisis;
+    private String dischargeEpicrisis;
     /**
      * Сопровождающее лицо
      */
-    private String theAttendant;
+    private String attendant;
 
 
     @Transient
@@ -571,17 +371,13 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Кем направлен")
     @OneToOne
     public MisLpu getOrderLpu() {
-        return theOrderLpu;
-    }
-
-    public void setOrderLpu(MisLpu aOrderLpu) {
-        theOrderLpu = aOrderLpu;
+        return orderLpu;
     }
 
     /**
      * Кем направлен
      */
-    private MisLpu theOrderLpu;
+    private MisLpu orderLpu;
 
     /**
      * Порядок поступления
@@ -589,11 +385,7 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Порядок поступления")
     @OneToOne
     public VocAdmissionOrder getAdmissionOrder() {
-        return theAdmissionOrder;
-    }
-
-    public void setAdmissionOrder(VocAdmissionOrder aAdmissionOrder) {
-        theAdmissionOrder = aAdmissionOrder;
+        return admissionOrder;
     }
 
     /**
@@ -602,21 +394,17 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Решение суда по 35 статье")
     @OneToOne
     public VocJudgment getJudgment35() {
-        return theJudgment35;
-    }
-
-    public void setJudgment35(VocJudgment aJudgment35) {
-        theJudgment35 = aJudgment35;
+        return judgment35;
     }
 
     /**
      * Решение суда по 35 статье
      */
-    private VocJudgment theJudgment35;
+    private VocJudgment judgment35;
     /**
      * Порядок поступления
      */
-    private VocAdmissionOrder theAdmissionOrder;
+    private VocAdmissionOrder admissionOrder;
 
     /**
      * Рост
@@ -625,10 +413,10 @@ public class HospitalMedCase extends LongMedCase {
     @Transient
     public Integer getHeight() {
 
-        if (theStatisticStub == null) {
+        if (statisticStub == null) {
             return 0;
         }
-        return theStatisticStub.getHeight() ;
+        return statisticStub.getHeight() ;
     }
 
     /**
@@ -637,11 +425,11 @@ public class HospitalMedCase extends LongMedCase {
     @Comment("Вес")
     @Transient
     public Integer getWeight() {
-//        return theStatisticStub != null ? theStatisticStub.getWeight() : 0; //WTF?? NPE
-        if (theStatisticStub == null) {
+//        return statisticStub != null ? statisticStub.getWeight() : 0; //WTF?? NPE
+        if (statisticStub == null) {
             return 0;
         }
-        return theStatisticStub.getWeight();
+        return statisticStub.getWeight();
     }
 
     /**
@@ -649,93 +437,41 @@ public class HospitalMedCase extends LongMedCase {
      */
     @Comment("Индекс массы тела")
     @Transient
-    public Double getTheIMT() {
+    public Double getImt() {
 
-        //return theStatisticStub != null ? theStatisticStub.getIMT() : 0;
-        if (theStatisticStub == null) {
+        //return statisticStub != null ? statisticStub.getIMT() : 0;
+        if (statisticStub == null) {
             return 0.0;
         }
-        return theStatisticStub.getIMT();
+        return statisticStub.getImt();
     }
 
     /**
      * Вес
      */
-    private Integer theWeight;
+    private Integer weight;
     /**
      * Рост
      */
-    private Integer theHeight;
-    /**
-     * Индекс массы тела
-     */
-    private Double theIMT;
+    private Integer height;
 
     /**
      * Была ли проведена идентификация пациента
      */
-    @Comment("Была ли проведена идентификация пациента")
-    public Boolean getIsIdentified() {
-        return theIsIdentified;
-    }
-
-    public void setIsIdentified(Boolean aIsIdentified) {
-        theIsIdentified = aIsIdentified;
-    }
-
-    /**
-     * Была ли проведена идентификация пациента
-     */
-    private Boolean theIsIdentified;
+    private Boolean isIdentified;
 
     /**
      * Кто провёл идентификацию
      */
-    @Comment("Кто провёл идентификацию")
-    public String getIdentUsername() {
-        return theIdentUsername;
-    }
-
-    public void setIdentUsername(String aIdentUsername) {
-        theIdentUsername = aIdentUsername;
-    }
-
-    /**
-     * Кто провёл идентификацию
-     */
-    private String theIdentUsername;
+    private String identUsername;
 
     /**
      * Дата идентификации
      */
-    @Comment("Дата идентификации")
-    public Date getIdentDate() {
-        return theIdentDate;
-    }
-
-    public void setIdentDate(Date aIdentDate) {
-        theIdentDate = aIdentDate;
-    }
-
-    /**
-     * Дата идентификации
-     */
-    private Date theIdentDate;
+    private Date identDate;
 
     /**
      * Время идентификации
      */
-    @Comment("Время идентификации")
-    public Time getIdentTime() {
-        return theIdentTime;
-    }
-
-    public void setIdentTime(Time aIdentTime) {
-        theIdentTime = aIdentTime;
-    }
-
-    /**
-     * Время идентификации
-     */
-    private Time theIdentTime;
+    private Time identTime;
 }

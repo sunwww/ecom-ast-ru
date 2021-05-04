@@ -15,15 +15,15 @@ public class QueryConstraintServiceBean implements IQueryConstraintService {
 
 	
 	public String getQueryConstraint(String aKey) {
-	    if(theContext.getCallerPrincipal()==null) throw new IllegalStateException("Principal was not found") ;
-        String user = theContext.getCallerPrincipal().getName();
+	    if(context.getCallerPrincipal()==null) throw new IllegalStateException("Principal was not found") ;
+        String user = context.getCallerPrincipal().getName();
         return "SecLpu.login = '"+user+"'" ;
 	}
 	
 	public	Boolean isConstrainted(String aKey) {
 		Boolean result ;
 		if(aKey.equalsIgnoreCase("patient")) {
-            result = !theContext.isCallerInRole("/Policy/Mis/DisablePatientAttachedCheck") ;
+            result = !context.isCallerInRole("/Policy/Mis/DisablePatientAttachedCheck") ;
         } else if (aKey.equalsIgnoreCase("mislpu")) {
         	result = true;
         	}
@@ -33,5 +33,5 @@ public class QueryConstraintServiceBean implements IQueryConstraintService {
         		else result =  false;
 		return result;
 	}
-	private @Resource SessionContext theContext;
+	private @Resource SessionContext context;
 }

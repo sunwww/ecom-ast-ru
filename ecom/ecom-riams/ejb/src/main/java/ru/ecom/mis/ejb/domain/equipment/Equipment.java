@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.equipment;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.equipment.voc.VocCreater;
 import ru.ecom.mis.ejb.domain.equipment.voc.VocMarka;
@@ -18,87 +20,68 @@ import java.util.List;
 @Entity
 @Comment("Оборудование")
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class Equipment extends BaseEntity {
 
 	/** ЛПУ, в которых используются */
 	@Comment("ЛПУ, в которых используются")
-	@ManyToMany//(mappedBy="otherEquipment")
-	public List<MisLpu> getOtherLpu() {return theOtherLpu;}
-	public void setOtherLpu(List<MisLpu> aOtherLpu) {theOtherLpu = aOtherLpu;}
+	@ManyToMany
+	public List<MisLpu> getOtherLpu() {return otherLpu;}
 	/** ЛПУ, в которых используются */
-	private List<MisLpu> theOtherLpu;
+	private List<MisLpu> otherLpu;
 
 	/** Название */
-	@Comment("Название")
-	@Persist
-	public String getName() {return theName;}
-	public void setName(String aName) {theName = aName;}
-	/** Название */
-	private String theName;
+	private String name;
 	
 	/** Марка оборудования */
     @OneToOne
-    public VocMarka getMarka() { return theMarka ; }
-    public void setMarka(VocMarka aMarka) { theMarka = aMarka ; }
+    public VocMarka getMarka() { return marka ; }
 
     /** Наименование марки оборудования */
     @Transient
-    public String getNameMarka() { return theMarka!=null ? theMarka.getName() : "" ; }
+    public String getNameMarka() { return marka!=null ? marka.getName() : "" ; }
     public void setNameMarka(String aNameMarka) {  }
 
     /** Тип оборудования */
     @OneToOne
-    public VocTypeEquip getTypeEquip() { return theTypeEquip ; }
-    public void setTypeEquip(VocTypeEquip aTypeEquip) { theTypeEquip = aTypeEquip ; }
+    public VocTypeEquip getTypeEquip() { return typeEquip ; }
 
     /** Наименование типа оборудования */
     @Transient
-    public String getNameTypeEquip() { return theTypeEquip!=null ? theTypeEquip.getName() : "" ; }
+    public String getNameTypeEquip() { return typeEquip!=null ? typeEquip.getName() : "" ; }
     public void setNameTypeEquip(String aNameTypeEquip) {  }
 
-    /** Год выпуска */
-    public Integer getCreateYear() { return theCreateYear ; }
-    public void setCreateYear(Integer aCreateYear) { theCreateYear = aCreateYear ; }
-
-    /** Год установки */
-    public Integer getStayYear() { return theStayYear ; }
-    public void setStayYear(Integer aStayYear) { theStayYear = aStayYear ; }
 
     /** Производитель */
     @OneToOne
-    public VocCreater getCreater() { return theCreater ; }
-    public void setCreater(VocCreater aCreater) { theCreater = aCreater ; }
+    public VocCreater getCreater() { return creater ; }
 
     /** Поставщик */
     @OneToOne
-    public VocProvider getProvider() { return theProvider ; }
-    public void setProvider(VocProvider aProvider) { theProvider = aProvider ; }
+    public VocProvider getProvider() { return provider ; }
 
-    /** Примечание */
-    public String getInfo() { return theInfo ; }
-    public void setInfo(String aInfo) { theInfo = aInfo ; }
 
     /** ЛПУ */
     @ManyToOne
-    public MisLpu getLpu() { return theLpu ; }
-    public void setLpu(MisLpu aLpu) { theLpu = aLpu ; }
+    public MisLpu getLpu() { return lpu ; }
 
     /** ЛПУ */
-    private MisLpu theLpu;
+    private MisLpu lpu;
     /** Примечание */
-    private String theInfo;
+    private String info;
     /** Поставщик */
-    private VocProvider theProvider ;
+    private VocProvider provider ;
     /** Производитель */
-    private VocCreater theCreater ;
+    private VocCreater creater ;
     /** Год установки */
     @Deprecated
-    private Integer theStayYear;
+    private Integer stayYear;
     /** Год выпуска */
-    private Integer theCreateYear;
+    private Integer createYear;
     /** Тип оборудования */
-    private VocTypeEquip theTypeEquip;
+    private VocTypeEquip typeEquip;
     /** Марка оборудования */
-    private VocMarka theMarka;
+    private VocMarka marka;
  
 }

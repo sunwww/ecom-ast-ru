@@ -2,6 +2,8 @@ package ru.ecom.mis.ejb.domain.patient.voc;
 
 import javax.persistence.MappedSuperclass;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -11,23 +13,15 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
  */
 @MappedSuperclass
 @AIndexes({
-	@AIndex(unique = false, properties= {"omcCode"})
-    ,   @AIndex(unique = false, properties= {"deprecated"})
+	@AIndex(properties= {"omcCode"})
+    ,   @AIndex(properties= {"deprecated"})
 })
-
+@Getter
+@Setter
 public class VocIdNameOmcCode extends VocIdName {
-    /** Код ОМС */
-    @Comment("Код в ОМС")
-    public String getOmcCode() { return theOmcCode ; }
-    public void setOmcCode(String aOmcCode) { theOmcCode = aOmcCode ; }
 
 	/** Устарел */
-	@Comment("Устарел")
-	public Boolean getDeprecated() {return theDeprecated;}
-	public void setDeprecated(Boolean aDeprecated) {theDeprecated = aDeprecated;}
-
-	/** Устарел */
-	private Boolean theDeprecated;
+	private Boolean deprecated;
     /** Код ОМС */
-    private String theOmcCode ;
+    private String omcCode ;
 }

@@ -11,36 +11,36 @@ public class MyMonitor implements IMonitor {
     private static final Logger LOG = Logger.getLogger(MyMonitor.class) ;
 
 
-    double theInternalValue;
-    double theValue;
-    double theMaxValue;
+    double internalValue;
+    double value;
+    double maxValue;
 
-    IMonitor theMonitor;
-    MyMonitor theParentMonitor;
-    double theInternalMinValue;
-    double theInternalMaxValue;
-    double theInternalRangeValue;
+    IMonitor monitor;
+    MyMonitor parentMonitor;
+    double internalMinValue;
+    double internalMaxValue;
+    double internalRangeValue;
 
 
     public MyMonitor() {
-        theMonitor = null;
-        theParentMonitor = null;
-        theMaxValue = 100;
-        theValue = 0;
+        monitor = null;
+        parentMonitor = null;
+        maxValue = 100;
+        value = 0;
         setRange(0,100);
     }
 
     public double getValue() {
-        return theValue;
+        return value;
     }
     
     public void attachMonitor (IMonitor aMonitor) {
-        theMonitor = aMonitor;
-        setValue(theValue);
+        monitor = aMonitor;
+        setValue(value);
     }
 
     public void setMaxValue(double maxValue) {
-        theMaxValue = maxValue;
+        this.maxValue = maxValue;
     }
 
     public MyMonitor getSubMonitor(double toValue) {
@@ -58,83 +58,78 @@ public class MyMonitor implements IMonitor {
             message = message+": ";
         }
 
-        LOG.info(message+this+" [" + theInternalMinValue+"-"+theInternalMaxValue+"] :"+theInternalValue+"\t--> "+
-                theValue+"/"+theMaxValue);
+        LOG.info(message+this+" [" + internalMinValue+"-"+internalMaxValue+"] :"+internalValue+"\t--> "+
+                value+"/"+maxValue);
     }
     public MyMonitor getSubMonitor(double toValue,double maxValue) {
         MyMonitor subMonitor = new MyMonitor();
-        subMonitor.theMonitor = theMonitor;
-        subMonitor.theParentMonitor=this;
+        subMonitor.monitor = monitor;
+        subMonitor.parentMonitor=this;
         subMonitor.setMaxValue(maxValue);
-        subMonitor.setRange(theInternalValue, getInternalValue(toValue));
+        subMonitor.setRange(internalValue, getInternalValue(toValue));
         dump("mainMonitor");
         subMonitor.dump("subMonitor");
-        theValue = toValue;
+        value = toValue;
         dump("mainMonitorAfter");
         return subMonitor;
     }
 
     public void update() {
         calcInternalValue();
-        setInternalValue(theInternalValue);
+        setInternalValue(internalValue);
     }
 
     private void setInternalValue(double aValue) {
-        if (theParentMonitor==null) {
-            if (aValue > theInternalValue) {
-                theMonitor.advice(aValue- theInternalValue);
-                theInternalValue = aValue;
+        if (parentMonitor==null) {
+            if (aValue > internalValue) {
+                monitor.advice(aValue- internalValue);
+                internalValue = aValue;
             }
         } else {
-            theParentMonitor.setInternalValue(aValue);
+            parentMonitor.setInternalValue(aValue);
         }
     }
     private double getInternalValue(double value) {
-        return theInternalMinValue + value*theInternalRangeValue/theMaxValue;
+        return internalMinValue + value*internalRangeValue/maxValue;
     }
 
     private void calcInternalValue() {
-        theInternalValue = getInternalValue(theValue);
+        internalValue = getInternalValue(value);
     }
 
     private void setRange(double internalMinValue,double internalMaxValue) {
-        theInternalMinValue = internalMinValue;
-        theInternalMaxValue = internalMaxValue;
-        theInternalRangeValue = internalMaxValue - internalMinValue;
-        theInternalValue = getInternalValue(theValue);
+        this.internalMinValue = internalMinValue;
+        this.internalMaxValue = internalMaxValue;
+        internalRangeValue = internalMaxValue - internalMinValue;
+        internalValue = getInternalValue(value);
     }
 
     public void setValue(double aValue) {
-        theValue = aValue;
-        setInternalValue(getInternalValue(theValue));
+        value = aValue;
+        setInternalValue(getInternalValue(value));
         dump("setValue");
     }
 
 
-    private void adviceInternal(double aAdvice) {
-        setInternalValue(theInternalValue +aAdvice);
-    }
-
     public void advice(double aAdvice) {
-        theValue += aAdvice;
+        value += aAdvice;
         update();
-        //dump("advice");
     }
 
     public void setText(String aText) {
-        theMonitor.setText(aText);
+        monitor.setText(aText);
     }
 
     public void finish(String aParameters) {
-        theMonitor.finish(aParameters);
+        monitor.finish(aParameters);
     }
 
     public boolean isCancelled() {
-        return theMonitor.isCancelled();
+        return monitor.isCancelled();
     }
 
     public void error(String aMessage, Exception aException) {
-        theMonitor.error(aMessage, aException);
+        monitor.error(aMessage, aException);
     }
 
 

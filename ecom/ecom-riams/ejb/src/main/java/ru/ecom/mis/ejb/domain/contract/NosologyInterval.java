@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.contract;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -18,9 +20,11 @@ import javax.persistence.Table;
 @Entity
 @Table(schema="SQLUser")
 	@AIndexes({
-		@AIndex(unique= false, properties = {"nosologyGroup"})
+		@AIndex(properties = {"nosologyGroup"})
 
 	})
+	@Getter
+	@Setter
 public class NosologyInterval extends BaseEntity{
 	/**
 	 * Нозологическая группа
@@ -28,45 +32,20 @@ public class NosologyInterval extends BaseEntity{
 	@Comment("Нозологическая группа")
 	@ManyToOne
 	public ContractNosologyGroup getNosologyGroup() {
-		return theNosologyGroup;
-	}
-	public void setNosologyGroup(ContractNosologyGroup aNosologyGroup) {
-		theNosologyGroup = aNosologyGroup;
+		return nosologyGroup;
 	}
 	/**
 	 * Нозологическая группа
 	 */
-	private ContractNosologyGroup theNosologyGroup;
+	private ContractNosologyGroup nosologyGroup;
 	/**
 	 * Начиная с код МКБ10
 	 */
-	@Comment("Начиная с код МКБ10")
-	
-	public String getFromIdc10Code() {
-		return theFromIdc10Code;
-	}
-	public void setFromIdc10Code(String aFromIdc10Code) {
-		theFromIdc10Code = aFromIdc10Code;
-	}
-	/**
-	 * Начиная с код МКБ10
-	 */
-	private String theFromIdc10Code;
+	private String fromIdc10Code;
 	/**
 	 * Заканчивая кодом МКБ10
 	 */
-	@Comment("Заканчивая кодом МКБ10")
-	
-	public String getToIdc10Code() {
-		return theToIdc10Code;
-	}
-	public void setToIdc10Code(String aToIdc10Code) {
-		theToIdc10Code = aToIdc10Code;
-	}
-	/**
-	 * Заканчивая кодом МКБ10
-	 */
-	private String theToIdc10Code;
+	private String toIdc10Code;
 
 	/**
 	 * Начиная с кода
@@ -74,44 +53,27 @@ public class NosologyInterval extends BaseEntity{
 	@Comment("Начиная с кода")
 	@OneToOne
 	public VocIdc10 getFromCode() {
-		return theFromCode;
-	}
-	public void setFromCode(VocIdc10 aFromCode) {
-		theFromCode = aFromCode;
+		return fromCode;
 	}
 	/**
 	 * Начиная с кода
 	 */
-	private VocIdc10 theFromCode;
+	private VocIdc10 fromCode;
 	/**
 	 * Заканчивая кодом
 	 */
 	@Comment("Заканчивая кодом")
 	@OneToOne
 	public VocIdc10 getToCode() {
-		return theToCode;
-	}
-	public void setToCode(VocIdc10 aToCode) {
-		theToCode = aToCode;
+		return toCode;
 	}
 	/**
 	 * Заканчивая кодом
 	 */
-	private VocIdc10 theToCode;
+	private VocIdc10 toCode;
 	
 	/**
 	 * Название
 	 */
-	@Comment("Название")
-	
-	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
-	}
-	/**
-	 * Название
-	 */
-	private String theName;
+	private String name;
 }

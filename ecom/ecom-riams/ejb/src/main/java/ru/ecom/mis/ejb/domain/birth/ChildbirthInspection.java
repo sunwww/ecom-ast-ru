@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.birth;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -13,16 +15,9 @@ import java.math.BigDecimal;
 
 @Comment("Осмотр роженицы")
 @Entity
+@Getter
+@Setter
 public class ChildbirthInspection extends Inspection {
-	
-	/** Открытие шейки матки (см) */
-	@Comment("Открытие шейки матки (см)")
-	public BigDecimal getUterusCervixOpening() {
-		return theUterusCervixOpening;
-	}
-	public void setUterusCervixOpening(BigDecimal aUterusCervixOpening) {
-		theUterusCervixOpening = aUterusCervixOpening;
-	}
-	private BigDecimal theUterusCervixOpening;
+	private BigDecimal uterusCervixOpening;
 
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.expert.voc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationCrit;
@@ -16,101 +17,82 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Вид оценок качества", nameProperties = {"code","name"}, view = "entityParentView-exp_vocCrit.do")
 @EntityFormSecurityPrefix("/Policy/Voc/VocQualityEstimationCrit")
 @Parent(property = "parent", parentForm = VocQualityEstimationCritForm.class)
+@Setter
 public class VocQualityEstimationCritForm extends IdEntityForm {
 		/** Короткое название*/
 		 @Comment("Короткое название")
 		 @Persist @Required
-		 public String getShortName() {return theShortName;}
-		 public void setShortName(String aShortName) {theShortName = aShortName;}
+		 public String getShortName() {return shortName;}
 		 /** Вид оценки качества*/
 		 @Comment("Вид оценки качества")
 		 @Persist @Required
-		 public Long getKind() {return theKind;}
-		 public void setKind(Long aKind) {theKind = aKind;}
+		 public Long getKind() {return kind;}
 		/** Наименование */
 		@Comment("Наименование")
 		@Persist @Required
-		public String getName() {return theName;}
-		public void setName(String aName) {theName = aName;}
-		
+		public String getName() {return name;}
+
 		/** Код */
 		@Comment("Код")
 		@Persist @Required
-		public String getCode() {return theCode;}
-		public void setCode(String aCode) {theCode = aCode;}
+		public String getCode() {return code;}
 
 		 /** Тип критерия */
 		@Comment("Тип критерия")
 		@Persist
-		public Long getType() {return theType;}
-		public void setType(Long aType) {theType = aType;}
+		public Long getType() {return type;}
 
-		
 		/** Родитель */
 		@Comment("Родитель")
 		@Persist
-		public Long getParent() {return theParent;}
-		public void setParent(Long aParent) {theParent = aParent;}
+		public Long getParent() {return parent;}
 
 		/** Коды медицинских услуг */
 		@Comment("Коды медицинских услуг")
 		@Persist
 		public String getMedServiceCodes() {
-			return theMedServiceCodes;
-		}
-		public void setMedServiceCodes(String medServiceCodes) {
-			theMedServiceCodes = medServiceCodes;
+			return medServiceCodes;
 		}
 
 		/** Логический тип критерия? */
 		@Comment("Логический тип критерия?")
 		@Persist
 		public Boolean getIsBoolean() {
-			return theIsBoolean;
-		}
-		public void setIsBoolean(Boolean aIsBoolean) {
-			theIsBoolean = aIsBoolean;
+			return isBoolean;
 		}
 
 		/** Для взрослых? */
 		@Comment("Для взрослых?")
 		@Persist
 		public Boolean getIsGrownup() {
-			return theIsGrownup;
-		}
-		public void setIsGrownup(Boolean aIsGrownup) {
-			theIsGrownup = aIsGrownup;
+			return isGrownup;
 		}
 
 		/** Для детей? */
 		@Comment("Для детей?")
 		@Persist
 		public Boolean getIsChild() {
-			return theIsChild;
+			return isChild;
 		}
-		public void setIsChild(Boolean aIsChild) {
-			theIsChild = aIsChild;
-		}
-
 
 		/** Родитель */
-		private Long theParent;
+		private Long parent;
 		/** Тип критерия */
-		private Long theType;
+		private Long type;
 		/** Короткое название */
-		private String theShortName;
+		private String shortName;
 		/** Код */
-		private String theCode;
+		private String code;
 		/** Наименование */
-		private String theName;
+		private String name;
 		/** Вид оценки качества*/
-		private Long theKind;
+		private Long kind;
 		/** Коды медицинских услуг */
-		private String theMedServiceCodes;
+		private String medServiceCodes;
 		/** Логический тип критерия? */
-		private Boolean theIsBoolean;
+		private Boolean isBoolean;
 		/** Для взрослых? */
-		private Boolean theIsGrownup;
+		private Boolean isGrownup;
 		/** Для детей? */
-		private Boolean theIsChild;
+		private Boolean isChild;
 }

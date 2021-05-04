@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.form.medcase.hospital;
 
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.ACreateInterceptors;
 import ru.ecom.ejb.services.entityform.interceptors.AEntityFormInterceptor;
@@ -45,293 +46,253 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @ACreateInterceptors( {
 	@AEntityFormInterceptor(DepartmentSaveInterceptor.class)
 })
+@Setter
 public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
-	
+	public Long getPatient() {return patient;}
+
 	/** Случай стационарного лечения */
 	@Comment("Случай стационарного лечения")
 	@Persist
-	public Long getParent() {return theParent;	}
-	public void setParent(Long aParent) {theParent = aParent;}
+	public Long getParent() {return parent;	}
 
 	/** Дата поступления */
 	@Comment("Дата поступления")
 	@DateString @DoDateString
 	@Persist @MaxDateCurrent @Required
-	public String getDateStart() {return theDateStart;	}
-	public void setDateStart(String aDateStart) {theDateStart = aDateStart;}
+	public String getDateStart() {return dateStart;	}
 
 	/** Время поступления */
 	@Comment("Время поступления")
 	@TimeString @DoTimeString
 	@Persist @Required
-	public String getEntranceTime() {return theEntranceTime;}
-	public void setEntranceTime(String aEntranceTime) {theEntranceTime = aEntranceTime;}
-
+	public String getEntranceTime() {return entranceTime;}
 
 	/** Отделение перевода */
 	@Comment("Отделение перевода")
 	@Persist
-	public Long getTransferDepartment() {return theTransferDepartment;}
-	public void setTransferDepartment(Long aTransferDepartment) {theTransferDepartment = aTransferDepartment;}
+	public Long getTransferDepartment() {return transferDepartment;}
 
 	/** Отделение */
 	@Comment("Отделение")
 	@Persist @Required
-	public Long getDepartment() {return theDepartment;	}
-	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;	}
+	public Long getDepartment() {return department;	}
 
 	/** Дата выписки */
 	@Comment("Дата выписки")
 	@DateString @DoDateString
 	@Persist @MaxDateCurrent
-	public String getDateFinish() {	return theDateFinish;}
-	public void setDateFinish(String aDateFinish) {theDateFinish = aDateFinish;}
+	public String getDateFinish() {	return dateFinish;}
 
 	/** Время выписки */
 	@Comment("Время выписки")
 	@TimeString @DoTimeString
 	@Persist
-	public String getDischargeTime() {return theDischargeTime;}
-	public void setDischargeTime(String aDischargeTime) {theDischargeTime = aDischargeTime;	}
-	
+	public String getDischargeTime() {return dischargeTime;}
+
 	
 	/** Лечебное учреждение */
 	@Comment("Лечебное учреждение")
 	@Persist
-	public Long getLpu() {return theLpu;}
-	public void setLpu(Long aLpu) {theLpu = aLpu;}
+	public Long getLpu() {return lpu;}
 
 	/** Недействительность */
 	@Comment("Недействительность")
 	@Persist
-	public Boolean getNoActuality() {return theNoActuality;}
-	public void setNoActuality(Boolean aNoActuality) {theNoActuality = aNoActuality;}
+	public Boolean getNoActuality() {return noActuality;}
 
 	/** Количество дней */
 	@Comment("Количество дней")
 	@Persist
-	public String getDaysCount() {return theDaysCount;}
-	public void setDaysCount(String aDaysCount) {theDaysCount = aDaysCount;}
+	public String getDaysCount() {return daysCount;}
 
 	/** Отделение поступления. Инфо */
 	@Comment("Отделение поступления. Инфо")
 	@Persist
-	public String getDepartmentInfo() {return theDepartmentInfo;}
-	public void setDepartmentInfo(String aDepartmentInfo) {theDepartmentInfo = aDepartmentInfo;}
-	
+	public String getDepartmentInfo() {return departmentInfo;}
+
 	/** Отделение перевода. Инфо */
 	@Comment("Отделение перевода. Инфо")
 	@Persist
-	public String getTransferDepartmentInfo() {return theTransferDepartmentInfo;}
-	public void setTransferDepartmentInfo(String aTransferDepartmentInfo) {theTransferDepartmentInfo = aTransferDepartmentInfo;}
+	public String getTransferDepartmentInfo() {return transferDepartmentInfo;}
 
 	/** Куда переведен */
 	@Comment("Куда переведен")
 	@Persist
-	public Long getTargetHospType() {return theTargetHospType;}
-	public void setTargetHospType(Long aTargetHospType) {theTargetHospType = aTargetHospType;	}
+	public Long getTargetHospType() {return targetHospType;}
 
 	
 	/** Тип текущего стационара */
 	@Comment("Тип текущего стационара")
 	@Persist
-	public Long getHospType() {return theHospType;}
-	public void setHospType(Long aHospType) {theHospType = aHospType;}
+	public Long getHospType() {return hospType;}
 
 	/** Откуда поступил */
 	@Comment("Откуда поступил")
 	@Persist
-	public Long getSourceHospType() {return theSourceHospType;	}
-	public void setSourceHospType(Long aSourceHospType) {theSourceHospType = aSourceHospType;}
-
-	
+	public Long getSourceHospType() {return sourceHospType;	}
 
 	/** Рабочая функция лечащего врача */
 	@Comment("Рабочая функция лечащего врача")
 	@Persist @Required
-	public Long getOwnerFunction() {return theOwnerFunction;}
-	public void setOwnerFunction(Long aOwnerFunction) {theOwnerFunction = aOwnerFunction;}
+	public Long getOwnerFunction() {return ownerFunction;}
 
 	/** Предыдущий случай лечения в отделении */
 	@Comment("Предыдущий случай лечения в отделении")
 	@Persist
-	public Long getPrevMedCase() {return thePrevMedCase;}
-	public void setPrevMedCase(Long aPrevMedCase) {thePrevMedCase = aPrevMedCase;}
-	
+	public Long getPrevMedCase() {return prevMedCase;}
+
 	/** Коечный фонд */
 	@Comment("Коечный фонд")
 	@Persist @Required
-	public Long getBedFund() {return theBedFund;	}
-	public void setBedFund(Long aBedFund) {theBedFund = aBedFund;}
+	public Long getBedFund() {return bedFund;	}
 
 	/** № палаты */
 	@Comment("№ палаты")
 	@Persist
-	public Long getRoomNumber() {return theRoomNumber;	}
-	public void setRoomNumber(Long aRoomNumber) {theRoomNumber = aRoomNumber;}
+	public Long getRoomNumber() {return roomNumber;	}
 
 	/** Поток обслуживания */
 	@Comment("Поток обслуживания")
 	@Persist @Required
-	public Long getServiceStream() {return theServiceStream;}
-	public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
-	
+	public Long getServiceStream() {return serviceStream;}
+
 	/** ЛПУ и дата начала (необходима для вычисления профиля коек из фонда) */
 	@Comment("ЛПУ и дата начала (необходима для вычисления профиля коек из фонда)")
-	public String getlpuAndDate() {return thelpuAndDate;}
+	public String getlpuAndDate() {return lpuAndDate;}
 	public void setlpuAndDate(String alpuAndDate) {
-		thelpuAndDate =	new StringBuilder().append(theDepartment)
+		lpuAndDate =	new StringBuilder().append(department)
 			.append(":")
-			.append(theServiceStream)
-			.append(":").append(theDateStart).toString();
+			.append(serviceStream)
+			.append(":").append(dateStart).toString();
 	}
 
 	/** № койки */
 	@Comment("№ койки")
 	@Persist
-	public Long getBedNumber() {return theBedNumber;}
-	public void setBedNumber(Long aBedNumber) {theBedNumber = aBedNumber;}
+	public Long getBedNumber() {return bedNumber;}
 
 	/** Информация о номере стат.карты СЛС */
 	@Comment("Информация о номере стат.карты СЛС")
 	@Persist
-	public String getStatCardBySLS() {return theStatCardBySLS;}
-	public void setStatCardBySLS(String aStatCardBySLS) {theStatCardBySLS = aStatCardBySLS;}
+	public String getStatCardBySLS() {return statCardBySLS;}
 
 	/** Тип палаты */
 	@Comment("Тип палаты")
 	@Persist
-	public Long getRoomType() {return theRoomType;}
-	public void setRoomType(Long aRoomType) {theRoomType = aRoomType;}
+	public Long getRoomType() {return roomType;}
 
 	/** Острота диагноза клинического */
 	@Comment("Острота диагноза клинического")
-	public Long getClinicalActuity() {return theClinicalActuity;}
-	public void setClinicalActuity(Long aClinicalActuity) {theClinicalActuity = aClinicalActuity;}
+	public Long getClinicalActuity() {return clinicalActuity;}
 
 	/** Острота диагноза клинического */
-	private Long theClinicalActuity;
+	private Long clinicalActuity;
 	/** Тип палаты */
-	private Long theRoomType;
+	private Long roomType;
 	/** Информация о номере стат.карты СЛС */
-	private String theStatCardBySLS;
+	private String statCardBySLS;
 	/** № койки */
-	private Long theBedNumber;
+	private Long bedNumber;
 	/** Поток обслуживания*/
-	private Long theServiceStream;
+	private Long serviceStream;
 	/** ЛПУ и дата начала (необходима для вычисления профиля коек из фонда) */
-	private String thelpuAndDate;
+	private String lpuAndDate;
 	/** № палаты */
-	private Long theRoomNumber;
+	private Long roomNumber;
 	/** Коечный фонд */
-	private Long theBedFund;
+	private Long bedFund;
 	/** Предыдущий случай лечения в отделении */
-	private Long thePrevMedCase;	/** Рабочая функция лечащего врача */
-	private Long theOwnerFunction;
+	private Long prevMedCase;	/** Рабочая функция лечащего врача */
+	private Long ownerFunction;
 	/** Откуда поступил */
-	private Long theSourceHospType;
+	private Long sourceHospType;
 	/** Тип текущего стационара */
-	private Long theHospType;
+	private Long hospType;
 	
 	/** Куда переведен */
-	private Long theTargetHospType; 
+	private Long targetHospType; 
 	/** Отделение перевода. Инфо */
-	private String theTransferDepartmentInfo;
+	private String transferDepartmentInfo;
 	/** Отделение поступления. Инфо */
-	private String theDepartmentInfo;
+	private String departmentInfo;
 	/** Количество дней */
-	private String theDaysCount;
+	private String daysCount;
 	/** Недействительность */
-	private Boolean theNoActuality;
+	private Boolean noActuality;
 	/** Лечебное учреждение */
-	private Long theLpu;
+	private Long lpu;
 	/** Время выписки */
-	private String theDischargeTime;
+	private String dischargeTime;
 	/** Дата выписки */
-	private String theDateFinish;
+	private String dateFinish;
 
 	/** Отделение */
-	private Long theDepartment;
+	private Long department;
 	/** Отделение перевода */
-	private Long theTransferDepartment;
+	private Long transferDepartment;
 	/** Время поступления */
-	private String theEntranceTime;
+	private String entranceTime;
 	/** Дата поступления */
-	private String theDateStart;
+	private String dateStart;
 	/** Случай стационарного лечения */
-	private Long theParent;
+	private Long parent;
 	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	/** Стандарт */
 	@Comment("Стандарт")
 	@Persist
 	public Long getOmcStandart() {
-		return theOmcStandart;
-	}
-
-	public void setOmcStandart(Long aOmcStandart) {
-		theOmcStandart = aOmcStandart;
+		return omcStandart;
 	}
 
 	/** Стандарт */
-	private Long theOmcStandart;
+	private Long omcStandart;
 	/** Омс стандарт, установленный экспертом */
 	@Comment("Омс стандарт, установленный экспертом")
 	@Persist
 	public Long getOmcStandartExpert() {
-		return theOmcStandartExpert;
-	}
-
-	public void setOmcStandartExpert(Long aOmcStandartExpert) {
-		theOmcStandartExpert = aOmcStandartExpert;
+		return omcStandartExpert;
 	}
 
 	/** Омс стандарт, установленный экспертом */
-	private Long theOmcStandartExpert;
+	private Long omcStandartExpert;
 	
 	/** Вид ВМП */
 	@Comment("Вид ВМП")
 	@Persist
-	public Long getKindHighCare() {return theKindHighCare;}
-	public void setKindHighCare(Long aKindHighCare) {theKindHighCare = aKindHighCare;}
+	public Long getKindHighCare() {return kindHighCare;}
 
 	/** Метод ВМП */
 	@Comment("Метод ВМП")
 	@Persist
-	public Long getMethodHighCare() {return theMethodHighCare;}
-	public void setMethodHighCare(Long aMethodHighCare) {theMethodHighCare = aMethodHighCare;}
+	public Long getMethodHighCare() {return methodHighCare;}
 
 	/** Метод ВМП */
-	private Long theMethodHighCare;
+	private Long methodHighCare;
 	/** Вид ВМП */
-	private Long theKindHighCare;
+	private Long kindHighCare;
 
 	/** Доп.код мкб */
 	@Comment("Доп.код мкб")
-	public String getMkbAdc() {return theMkbAdc;}
-	public void setMkbAdc(String aMkbAdc) {theMkbAdc = aMkbAdc;}
+	public String getMkbAdc() {return mkbAdc;}
 
 	/** Доп.код мкб */
-	private String theMkbAdc;
+	private String mkbAdc;
 	
 	/** Диета */
 	@Comment("Диета")
-	public Long getDiet() {return theDiet;}
-	public void setDiet(Long aDiet) {theDiet = aDiet;}
+	public Long getDiet() {return diet;}
 	/** Диета */
-	private Long theDiet;
+	private Long diet;
 	
 	/** Режим */
 	@Comment("Режим")
-	public Long getMode() {return theMode;}
-	public void setMode(Long aMode) {theMode = aMode;}
+	public Long getMode() {return mode;}
 	/** Режим */
-	private Long theMode;
+	private Long mode;
 
 }

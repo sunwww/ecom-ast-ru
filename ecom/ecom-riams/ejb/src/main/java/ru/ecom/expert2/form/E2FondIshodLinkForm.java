@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.E2FondIshodLink;
@@ -16,31 +17,29 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Справочник настроек экспертизы", nameProperties = "id", view = "entityParentView-e2_v012Link.do")
 @EntityFormSecurityPrefix("/Policy/E2")
 @Parent(property = "ishod", parentForm = VocE2FondV012Form.class)
+@Setter
 public class E2FondIshodLinkForm extends IdEntityForm {
 
      /** Исход обращения */
      @Comment("Результат обращения")
      @Persist
-     public Long getIshod() {return theIshod;}
-     public void setIshod(Long aIshod) {theIshod = aIshod;}
+     public Long getIshod() {return ishod;}
      /** Результат обращения */
-    private Long theIshod ;
+    private Long ishod ;
 
  /** Результат госпитализации */
     @Comment("Результат госпитализации")
     @Persist
-    public String getMedosHospResult() {return theMedosHospResult;}
-    public void setMedosHospResult(String aMedosHospResult) {theMedosHospResult = aMedosHospResult;}
+    public String getMedosHospResult() {return medosHospResult;}
     /** Результат госпитализации */
-    private String theMedosHospResult ;
+    private String medosHospResult ;
 
    /** Тип коек*/
    @Comment("Тип коек")
    @Persist
-   public String getBedSubType() {return theBedSubType;}
-   public void setBedSubType(String aBedSubType) {theBedSubType = aBedSubType;}
+   public String getBedSubType() {return bedSubType;}
    /** Тип коек */
-   private String theBedSubType ;
+   private String bedSubType ;
 
 
 

@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.vaccination.Vaccine;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -17,34 +19,28 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Метод введения вакцины")
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VaccineVocMethod extends BaseEntity{
 	
 	/** Метод вакцинации */
 	@Comment("Метод вакцинации")
 	@ManyToOne
 	public VocVaccinationMethod getMethod() {
-		return theMethod;
-	}
-
-	public void setMethod(VocVaccinationMethod aMethod) {
-		theMethod = aMethod;
+		return method;
 	}
 
 	/** Метод вакцинации */
-	private VocVaccinationMethod theMethod;
+	private VocVaccinationMethod method;
 	
 	/** Вакцина */
 	@Comment("Вакцина")
 	@ManyToOne
 	public Vaccine getVaccine() {
-		return theVaccine;
-	}
-
-	public void setVaccine(Vaccine aVaccine) {
-		theVaccine = aVaccine;
+		return vaccine;
 	}
 
 	/** Вакцина */
-	private Vaccine theVaccine;
+	private Vaccine vaccine;
 
 }

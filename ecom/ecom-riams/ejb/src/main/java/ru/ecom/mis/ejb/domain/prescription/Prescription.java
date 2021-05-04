@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.prescription;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import ru.ecom.ejb.domain.simple.BaseEntity;
@@ -40,13 +42,15 @@ import java.util.List;
 					,@AIndex(properties = { "medCase" })
 })
 @EntityListeners(DeleteListener.class)
+@Getter
+@Setter
 public abstract class Prescription extends BaseEntity{
 
 	@PrePersist
 	void onPrePersist() {
 		long currentTime = System.currentTimeMillis();
-		theCreateDate=new java.sql.Date(currentTime);
-		theCreateTime=new java.sql.Time(currentTime);
+		createDate=new java.sql.Date(currentTime);
+		createTime=new java.sql.Time(currentTime);
 	}
 
 	/** Поток обслуживания */
@@ -59,14 +63,12 @@ public abstract class Prescription extends BaseEntity{
 	@Comment("Лист назначений")
 	@ManyToOne
 	@Fetch(FetchMode.JOIN)
-	public AbstractPrescriptionList getPrescriptionList() {return thePrescriptionList;}
-	public void setPrescriptionList(AbstractPrescriptionList aPrescriptionList) {thePrescriptionList = aPrescriptionList;}
-	
+	public AbstractPrescriptionList getPrescriptionList() {return prescriptionList;}
+
 	/** Выполнения */
 	@Comment("Выполнения")
 	@OneToMany(fetch = FetchType.EAGER, mappedBy="prescription", cascade=CascadeType.ALL)
-	public List<PrescriptionFulfilment> getFulfilments() {return theFulfilments;}
-	public void setFulfilments(List<PrescriptionFulfilment> aFulfilments) {theFulfilments = aFulfilments;}
+	public List<PrescriptionFulfilment> getFulfilments() {return fulfilments;}
 
 	@Transient
 	//Берем информацию о первом выполнении
@@ -78,84 +80,42 @@ public abstract class Prescription extends BaseEntity{
 		return "";
 	}
 	
-	/** Дата и время регистрации */
-	@Comment("Дата и время регистрации")
-	public Timestamp getRegistrationTimeStamp() {return theRegistrationTimeStamp;}
-	public void setRegistrationTimeStamp(Timestamp aRegistrationTimeStamp) {theRegistrationTimeStamp = aRegistrationTimeStamp;}
-
 	/** Регистратор */
 	@Comment("Регистратор")
 	@OneToOne
-	public Worker getRegistrator() {return theRegistrator;}
-	public void setRegistrator(Worker aRegistrator) {theRegistrator = aRegistrator;}
-	
-	/** Плановая дата начала */
-	@Comment("Плановая дата начала")
-	public Date getPlanStartDate() {return thePlanStartDate;}
-	public void setPlanStartDate(Date aPlanStartDate) {thePlanStartDate = aPlanStartDate;}
-	
-	/** Плановое время начала */
-	@Comment("Плановое время начала")
-	public Time getPlanStartTime() {return thePlanStartTime;}
-	public void setPlanStartTime(Time aPlanStartTime) {thePlanStartTime = aPlanStartTime;}
-	
-	/** Плановая дата окончания */
-	@Comment("Плановая дата окончания")
-	public Date getPlanEndDate() {return thePlanEndDate;}
-	public void setPlanEndDate(Date aPlanEndDate) {thePlanEndDate = aPlanEndDate;}
-	
-	/** Плановое время окончания */
-	@Comment("Плановое время окончания")
-	public Time getPlanEndTime() {return thePlanEndTime;}
-	public void setPlanEndTime(Time aPlanEndTime) {thePlanEndTime = aPlanEndTime;}
-	
-	/** Дата отмены */
-	@Comment("Дата отмены")
-	public Date getCancelDate() {return theCancelDate;}
-	public void setCancelDate(Date aCancelDate) {theCancelDate = aCancelDate;}
-	
-	/** Время отмены */
-	@Comment("Время отмены")
-	public Time getCancelTime() {return theCancelTime;}
-	public void setCancelTime(Time aCancelTime) {theCancelTime = aCancelTime;}
-	
+	public Worker getRegistrator() {return registrator;}
+
+
 	/** Причина отмены */
 	@Comment("Причина отмены")
 	@OneToOne
-	public VocPrescriptCancelReason getCancelReason() {return theCancelReason;}
-	public void setCancelReason(VocPrescriptCancelReason aCancelReason) {theCancelReason = aCancelReason;}
+	public VocPrescriptCancelReason getCancelReason() {return cancelReason;}
 
-	/** Комментарии */
-	@Comment("Комментарии")
-	public String getComments() {return theComments;}
-	public void setComments(String aComments) {theComments = aComments;}
-	
 	/** Описание */
 	@Comment("Описание")
 	@Transient
 	public String getDescription() {return "";}
 	public void setDescription(String aDescription) {}
-	
+
 	/** Состояние исполнения */
 	@Comment("Состояние исполнения")
 	@OneToOne
-	public VocPrescriptFulfilState getFulfilmentState() {return theFulfilmentState;}
-	public void setFulfilmentState(VocPrescriptFulfilState aFulfilmentState) {theFulfilmentState = aFulfilmentState;}
-	
+	public VocPrescriptFulfilState getFulfilmentState() {return fulfilmentState;}
+
 	/** Отменивший(text) */
 	@Comment("Отменивший (text)")
 	@Transient
-	public String getCancelWorkerInfo() {return theCancelSpecial!=null ? theCancelSpecial.getWorkFunctionInfo(): "";}
+	public String getCancelWorkerInfo() {return cancelSpecial!=null ? cancelSpecial.getWorkFunctionInfo(): "";}
 
    /** Назначивший (text)*/
    @Comment("Назначивший (text)")
    @Transient
-   public String getPrescriptorInfo() { return thePrescriptSpecial!=null ? thePrescriptSpecial.getWorkFunctionInfo() : ""; }
+   public String getPrescriptorInfo() { return prescriptSpecial!=null ? prescriptSpecial.getWorkFunctionInfo() : ""; }
  
    /** Регистратор (text) */
 	@Comment("Регистратор (text)")
 	@Transient
-	public String getRegistratorInfo() {return theRegistrator!=null? theRegistrator.getWorkerInfo() : "";}
+	public String getRegistratorInfo() {return registrator!=null? registrator.getWorkerInfo() : "";}
 
 	/** Описание назначений */
 	@Comment("Описание назначений")
@@ -196,246 +156,161 @@ public abstract class Prescription extends BaseEntity{
 	
 	/** Роспись */
 	@Comment("Роспись")
-	public String getSignature() {return theSignature;}
-	public void setSignature(String aSignature) {theSignature = aSignature;}
-	
+	public String getSignature() {return signature;}
+
 	/** Назначил специалист */
 	@Comment("Назначил специалист")
 	@OneToOne
-	public WorkFunction getPrescriptSpecial() {return thePrescriptSpecial;}
-	public void setPrescriptSpecial(WorkFunction aPrescriptSpecial) {thePrescriptSpecial = aPrescriptSpecial;}
+	public WorkFunction getPrescriptSpecial() {return prescriptSpecial;}
 
 	/** Отменил специалист */
 	@Comment("Отменил специалист")
 	@OneToOne
-	public WorkFunction getCancelSpecial() {return theCancelSpecial;}
-	public void setCancelSpecial(WorkFunction aCancelSpecial) {theCancelSpecial = aCancelSpecial;}
+	public WorkFunction getCancelSpecial() {return cancelSpecial;}
 	/** Кабинет назначения */
 	@Comment("Кабинет назначения")
 	@OneToOne
 	public WorkFunction getPrescriptCabinet() {
-		return thePrescriptCabinet;
-	}
-
-	public void setPrescriptCabinet(WorkFunction aPrescriptCabinet) {
-		thePrescriptCabinet = aPrescriptCabinet;
+		return prescriptCabinet;
 	}
 
 	/** Кабинет назначения */
-	private WorkFunction thePrescriptCabinet;
+	private WorkFunction prescriptCabinet;
 	/** Отменил специалист */
-	private WorkFunction theCancelSpecial;
+	private WorkFunction cancelSpecial;
 	/** Назначил специалист */
-	private WorkFunction thePrescriptSpecial;
+	private WorkFunction prescriptSpecial;
 	/** Роспись */
-	private String theSignature;	
+	private String signature;	
 	/** Лист назначений */
-	private AbstractPrescriptionList thePrescriptionList;
+	private AbstractPrescriptionList prescriptionList;
 	/** Выполнения */
-	private List<PrescriptionFulfilment> theFulfilments;
+	private List<PrescriptionFulfilment> fulfilments;
 	/** Дата и время регистрации */
-	private Timestamp theRegistrationTimeStamp;
+	private Timestamp registrationTimeStamp;
 	/** Регистратор */
-	private Worker theRegistrator;
+	private Worker registrator;
 	/** Плановая дата начала */
-	private Date thePlanStartDate;
+	private Date planStartDate;
 	/** Плановое время начала */
-	private Time thePlanStartTime;
+	private Time planStartTime;
 	/** Плановая дата окончания */
-	private Date thePlanEndDate;
+	private Date planEndDate;
 	/** Плановое время окончания */
-	private Time thePlanEndTime;
+	private Time planEndTime;
 	/** Дата отмены */
-	private Date theCancelDate;
+	private Date cancelDate;
 	/** Время отмены */
-	private Time theCancelTime;
+	private Time cancelTime;
 	/** Причина отмены */
-	private VocPrescriptCancelReason theCancelReason;
+	private VocPrescriptCancelReason cancelReason;
 	/** Комментарии */
-	private String theComments;
+	private String comments;
 	/** Состояние исполнения */
-	private VocPrescriptFulfilState theFulfilmentState;
+	private VocPrescriptFulfilState fulfilmentState;
 	
 	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getCreateDate() {return theCreateDate;}
-	public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-	private Date theCreateDate;
+	private Date createDate;
 	
 	/** Дата редактирования */
-	@Comment("Дата редактирования")
-	public Date getEditDate() {return theEditDate;}
-	public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-	private Date theEditDate;
+	private Date editDate;
 	
 	/** Время создания */
-	@Comment("Время создания")
-	public Time getCreateTime() {return theCreateTime;}
-	public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-	private Time theCreateTime;
+	private Time createTime;
 
 	/** Время редактрования */
-	@Comment("Время редактрования")
-	public Time getEditTime() {return theEditTime;}
-	public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-	private Time theEditTime;
+	private Time editTime;
 
 	/** Пользователь, который создал запись */
-	@Comment("Пользователь, который создал запись")
-	public String getCreateUsername() {return theCreateUsername;}
-	public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-	private String theCreateUsername;
+	private String createUsername;
 
 	/** Пользователь, который последний редактировал запись */
-	@Comment("Пользователь, который последний редактировал запись")
-	public String getEditUsername() {return theEditUsername;}
-	public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
-	private String theEditUsername;
+	private String editUsername;
 
 	/** Тип назначения */
 	@Comment("Тип назначения")
 	@OneToOne
-	public VocPrescriptType getPrescriptType() {return thePrescriptType;}
-	public void setPrescriptType(VocPrescriptType aPrescriptType) {thePrescriptType = aPrescriptType;}
-	private VocPrescriptType thePrescriptType;
+	public VocPrescriptType getPrescriptType() {return prescriptType;}
+	private VocPrescriptType prescriptType;
 
 	/** Дата забора */
-	@Comment("Дата забора")
-	public Date getIntakeDate() {return theIntakeDate;}
-	public void setIntakeDate(Date aIntakeDate) {theIntakeDate = aIntakeDate;}
-	private Date theIntakeDate;
+	private Date intakeDate;
 
 	/** Время забора */
-	@Comment("Время забора")
-	public Time getIntakeTime() {return theIntakeTime;}
-	public void setIntakeTime(Time aIntakeTime) {theIntakeTime = aIntakeTime;}
-	private Time theIntakeTime;
+	private Time intakeTime;
 
 	/** Пользователь, осуществившей забор */
-	@Comment("Пользователь, осуществившей забор")
-	public String getIntakeUsername() {return theIntakeUsername;}
-	public void setIntakeUsername(String aIntakeUsername) {theIntakeUsername = aIntakeUsername;}
-	private String theIntakeUsername;
+	private String intakeUsername;
 
 	/** Идентификатор материала */
-	@Comment("Идентификатор материала")
-	public String getMaterialId() {return theMaterialId;}
-	public void setMaterialId(String aMaterialId) {theMaterialId = aMaterialId;}
-	private String theMaterialId;
+	private String materialId;
 
 	/** Номер пробирки ПЦР*/
-	@Comment("Номер пробирки ПЦР")
-	public String getMaterialPCRId() {return theMaterialPCRId;}
-	public void setMaterialPCRId(String aMaterialPCRId) {theMaterialPCRId = aMaterialPCRId;}
-	private String theMaterialPCRId;
+	private String materialPCRId;
 	
-	/** Причина отмены текст */
-	@Comment("Причина отмены текст")
-	public String getCancelReasonText() {return theCancelReasonText;}
-	public void setCancelReasonText(String aCancelReasonText) {theCancelReasonText = aCancelReasonText;}
-
 	/** Пользователь отменивший */
-	@Comment("Пользователь отменивший")
-	public String getCancelUsername() {return theCancelUsername;}
-	public void setCancelUsername(String aCancelUsername) {theCancelUsername = aCancelUsername;}
-
-	/** Пользователь отменивший */
-	private String theCancelUsername;
+	private String cancelUsername;
 	/** Причина отмены текст */
-	private String theCancelReasonText;
+	private String cancelReasonText;
 
 	/** Дата передачи в лабораторию */
-	@Comment("Дата передачи в лабораторию")
-	public Date getTransferDate() {return theTransferDate;}
-	public void setTransferDate(Date aTransferDate) {theTransferDate = aTransferDate;}
-	private Date theTransferDate;
+	private Date transferDate;
 
 	/** Время передачи */
-	@Comment("Время передачи")
-	public Time getTransferTime() {return theTransferTime;}
-	public void setTransferTime(Time aTransferTime) {theTransferTime = aTransferTime;}
-	private Time theTransferTime;
+	private Time transferTime;
 
 	/** Пользователь, принявший биоматериал */
-	@Comment("Пользователь, принявший биоматериал")
-	public String getTransferUsername() {return theTransferUsername;}
-	public void setTransferUsername(String aTransferUsername) {theTransferUsername = aTransferUsername;}
-	private String theTransferUsername;
+	private String transferUsername;
 	
 	/** Раб. функция, принявшего биоматериал */
 	@Comment("Раб. функция, принявшего биоматериал")
 	@OneToOne
-	public WorkFunction getTransferSpecial() {return theTransferSpecial;}
-	public void setTransferSpecial(WorkFunction aTransferSpecial) {theTransferSpecial = aTransferSpecial;}
-	private WorkFunction theTransferSpecial;
+	public WorkFunction getTransferSpecial() {return transferSpecial;}
+	private WorkFunction transferSpecial;
 
 	/** Раб. функция, осущ. забор */
 	@Comment("Раб. функция, осущ. забор")
 	@OneToOne
-	public WorkFunction getIntakeSpecial() {return theIntakeSpecial;}
-	public void setIntakeSpecial(WorkFunction aIntakeSpecial) {theIntakeSpecial = aIntakeSpecial;}
-	private WorkFunction theIntakeSpecial;
+	public WorkFunction getIntakeSpecial() {return intakeSpecial;}
+	private WorkFunction intakeSpecial;
 
 	/** Время из wct */
 	@Comment("Время из wct")
 	@OneToOne
-	public WorkCalendarTime getCalendarTime() {return theCalendarTime;}
-	public void setCalendarTime(WorkCalendarTime aCalendarTime) {theCalendarTime = aCalendarTime;}
-	private WorkCalendarTime theCalendarTime;
+	public WorkCalendarTime getCalendarTime() {return calendarTime;}
+	private WorkCalendarTime calendarTime;
 	
 	/** Отделение (забора) */
 	@Comment("Отделение (забора)")
 	@OneToOne
-	public MisLpu getDepartment() {return theDepartment;}
-	public void setDepartment(MisLpu aDepartment) {theDepartment = aDepartment;}
-	private MisLpu theDepartment;
+	public MisLpu getDepartment() {return department;}
+	private MisLpu department;
 	
 	/** СМО */
 	@Comment("СМО")
 	@OneToOne
-	public MedCase getMedCase() {return theMedCase;}
-	public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
-	private MedCase theMedCase;
+	public MedCase getMedCase() {return medCase;}
+	private MedCase medCase;
 
 	/** Хирургическая операция */
-	@Comment("Хирургическая операция")
-	public Long getSurgicalOperation() {return theSurgicalOperation;}
-	public void setSurgicalOperation(Long aSurgicalOperation) {theSurgicalOperation = aSurgicalOperation;}
-	private Long theSurgicalOperation;
+	private Long surgicalOperation;
 
 	/** Дата установки патологии*/
-	@Comment("Дата установки патологии")
-	public Date getSetPatologyDate() {return theSetPatologyDate;}
-	public void setSetPatologyDate(Date aSetPatologyDate) {theSetPatologyDate = aSetPatologyDate;}
-	/** Дата установки патологии */
-	private Date theSetPatologyDate;
+	private Date setPatologyDate;
 
 	/** Время установки патологии */
-	@Comment("Время установки патологии")
-	public Time getSetPatologyTime() {return theSetPatologyTime;}
-	public void setSetPatologyTime(Time aSetPatologyTime) {theSetPatologyTime = aSetPatologyTime;}
-	/** Время установки патологии */
-	private Time theSetPatologyTime;
+	private Time setPatologyTime;
 
 	/** Пользователь, установивший патологию*/
-	@Comment("Пользователь, установивший патологию")
-	public String getSetPatologyUsername() {return theSetPatologyUsername;}
-	public void setSetPatologyUsername(String aSetPatologyUsername) {theSetPatologyUsername = aSetPatologyUsername;}
-	/** Пользователь, установивший патологию*/
-	private String theSetPatologyUsername;
+	private String setPatologyUsername;
 
 	/** Проставил патологию специалист */
 	@Comment("Проставил патологию специалист")
 	@OneToOne
-	public WorkFunction getSetPatologySpecial() {return theSetPatologySpecial;}
-	public void setSetPatologySpecial(WorkFunction aSetPatologySpecial) {theSetPatologySpecial = aSetPatologySpecial;}
+	public WorkFunction getSetPatologySpecial() {return setPatologySpecial;}
 	/** Проставил патологию специалист */
-	private WorkFunction theSetPatologySpecial;
+	private WorkFunction setPatologySpecial;
 
 	/** Примечание для лаборатории*/
-	@Comment("Примечание для лаборатории")
-	public String getNoteForLab() {return theNoteForLab;}
-	public void setNoteForLab(String aNoteForLab) {theNoteForLab = aNoteForLab;}
-	/** Примечание для лаборатории*/
-	private String theNoteForLab;
+	private String noteForLab;
 }

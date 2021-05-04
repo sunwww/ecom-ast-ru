@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.mis.ejb.domain.patient.voc.VocIdName;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 /**
@@ -17,20 +19,17 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Entity
 @Comment("Вакцинный материал")
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class VocVaccinationMethod extends VocIdName {
 	
 	/** Вакцина */
 	@Comment("Вакцина")
 	@OneToMany(mappedBy="method", cascade=CascadeType.ALL)
 	public List<VaccineVocMethod> getVaccine() {
-		return theVaccine;
+		return vaccine;
 	}
-
-	public void setVaccine(List<VaccineVocMethod> aVaccine) {
-		theVaccine = aVaccine;
-	}
-
 	/** Вакцина */
-	private List<VaccineVocMethod> theVaccine;
+	private List<VaccineVocMethod> vaccine;
 
 }

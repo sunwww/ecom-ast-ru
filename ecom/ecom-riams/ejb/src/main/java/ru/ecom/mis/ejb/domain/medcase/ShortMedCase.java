@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
@@ -33,7 +35,9 @@ import java.sql.Time;
 @AIndexes({
 	@AIndex(properties="datePlan", table="MedCase"),
     @AIndex(properties="workFunctionExecute", table="MedCase")
-    }) 
+    })
+@Getter
+@Setter
 public class ShortMedCase extends MedCase{
 	
 	/**
@@ -42,20 +46,14 @@ public class ShortMedCase extends MedCase{
 	@Comment("Планируемая дата исполнения")
 	@OneToOne
 	public WorkCalendarDay getDatePlan() {
-		return theDatePlan;
+		return datePlan;
 	}
+
 
 	/**
 	 * Планируемая дата исполнения
 	 */
-	public void setDatePlan(WorkCalendarDay aNewProperty) {
-		theDatePlan = aNewProperty;
-	}
-
-	/**
-	 * Планируемая дата исполнения
-	 */
-	private WorkCalendarDay theDatePlan;
+	private WorkCalendarDay datePlan;
 	
 	/**
 	 * Планируемая рабочая функция исполнения
@@ -63,20 +61,14 @@ public class ShortMedCase extends MedCase{
 	@Comment("Планируемая рабочая функция исполнения")
 	@OneToOne
 	public WorkFunction getWorkFunctionPlan() {
-		return theWorkFunctionPlan;
+		return workFunctionPlan;
 	}
+
 
 	/**
 	 * Планируемая рабочая функция исполнения
 	 */
-	public void setWorkFunctionPlan(WorkFunction aNewProperty) {
-		theWorkFunctionPlan = aNewProperty;
-	}
-
-	/**
-	 * Планируемая рабочая функция исполнения
-	 */
-	private WorkFunction theWorkFunctionPlan;
+	private WorkFunction workFunctionPlan;
 
 	/**
 	 * Рабочая функция исполнения
@@ -84,20 +76,13 @@ public class ShortMedCase extends MedCase{
 	@Comment("Рабочая функция исполнения")
 	@OneToOne
 	public WorkFunction getWorkFunctionExecute() {
-		return theWorkFunctionExecute;
+		return workFunctionExecute;
 	}
 
 	/**
 	 * Рабочая функция исполнения
 	 */
-	public void setWorkFunctionExecute(WorkFunction aNewProperty) {
-		theWorkFunctionExecute = aNewProperty;
-	}
-
-	/**
-	 * Рабочая функция исполнения
-	 */
-	private WorkFunction theWorkFunctionExecute;
+	private WorkFunction workFunctionExecute;
 	
 	
 	/**
@@ -106,161 +91,99 @@ public class ShortMedCase extends MedCase{
 	@Comment("Планируемое время исполнения")
 	@OneToOne
 	public WorkCalendarTime getTimePlan() {
-		return theTimePlan;
+		return timePlan;
 	}
 
 	/**
 	 * Планируемое время исполнения
 	 */
-	public void setTimePlan(WorkCalendarTime aNewProperty) {
-		theTimePlan = aNewProperty;
-	}
-
-	/**
-	 * Планируемое время исполнения
-	 */
-	private WorkCalendarTime theTimePlan;
+	private WorkCalendarTime timePlan;
 	
 	/**
-	 * Штамп времени исполнения
-	 */
-	@Comment("Время исполнения")
-	public Time getTimeExecute() {
-		return theTimeExecute;
-	}
-
-	/**
 	 * Время исполнения
 	 */
-	public void setTimeExecute(Time aNewProperty) {
-		theTimeExecute = aNewProperty;
-	}
-	/**
-	 * Время исполнения
-	 */
-	private Time theTimeExecute;
+	private Time timeExecute;
 	
 	
 	//Информация по рабочей функции исполнителя
 	@Transient
 	public String getWorkFunctionExecuteInfo() {
-		return theWorkFunctionExecute!=null ? theWorkFunctionExecute.getWorkFunctionInfo():"" ;
+		return workFunctionExecute!=null ? workFunctionExecute.getWorkFunctionInfo():"" ;
 	}
 		
 
 	/** Внешний направитель (ЛПУ) */
 	@Comment("Внешний направитель (ЛПУ)")
 	@OneToOne
-	public MisLpu getOrderLpu() {return theOrderLpu;}
-	public void setOrderLpu(MisLpu aOrderLpu) {theOrderLpu = aOrderLpu;}
-	
-	/**Диагнозы */
-	//@Comment("Диагнозы")
-	//@OneToMany(mappedBy="medCase", cascade=CascadeType.ALL)
-	//public List<Diagnosis> getDiagnosis() {return theDiagnosis;}
-	//public void setDiagnosis(List<Diagnosis> aNewProperty) {theDiagnosis = aNewProperty;}
-	
+	public MisLpu getOrderLpu() {return orderLpu;}
 
 	/** Результат визита */
 	@Comment("Результат визита")
 	@OneToOne
-	public VocVisitResult getVisitResult() {return theVisitResult;}
-	public void setVisitResult(VocVisitResult aResult) {theVisitResult = aResult;}
-	
+	public VocVisitResult getVisitResult() {return visitResult;}
+
 	/** Цель визита */
 	@Comment("Цель визита")
 	@OneToOne
-	public VocReason getVisitReason() {return theVisitReason;}
-	public void setVisitReason(VocReason aReason) {theVisitReason = aReason;}
-	
+	public VocReason getVisitReason() {return visitReason;}
+
 	/** Тип рабочего места обслуживания */
 	@Comment("Тип рабочего места обслуживания")
 	@OneToOne
-	public VocWorkPlaceType getWorkPlaceType() {return theWorkPlaceType;}
-	public void setWorkPlaceType(VocWorkPlaceType aWorkPlaceType) {theWorkPlaceType = aWorkPlaceType;}
-	
+	public VocWorkPlaceType getWorkPlaceType() {return workPlaceType;}
+
 	/** Рабочая функция направителя */
 	@Comment("Рабочая функция направителя")
 	@OneToOne
-	public WorkFunction getOrderWorkFunction() {return theOrderWorkFunction;}
-	public void setOrderWorkFunction(WorkFunction aNewProperty) {
-		theOrderWorkFunction = aNewProperty;}
-	
+	public WorkFunction getOrderWorkFunction() {return orderWorkFunction;}
+
 	 /**Диспансерный учет  */
     @OneToOne
-    public VocDispanseryRegistration getDispRegistration() { return theDispRegistration;}
-    public void setDispRegistration(VocDispanseryRegistration aVocDispanseryRegistration) { theDispRegistration = aVocDispanseryRegistration; }
-   
-	
+    public VocDispanseryRegistration getDispRegistration() { return dispRegistration;}
+
 	/** Внешний направитель (ЛПУ) */
-	private MisLpu theOrderLpu;
-	///**Диагнозы*/
-	//private List<Diagnosis> theDiagnosis;
+	private MisLpu orderLpu;
 	/** Результат визита */
-	private VocVisitResult theVisitResult;
+	private VocVisitResult visitResult;
 	/** Цель визита */
-	private VocReason theVisitReason;
+	private VocReason visitReason;
 	/** Тип рабочего места обслуживания */
-	private VocWorkPlaceType theWorkPlaceType;
+	private VocWorkPlaceType workPlaceType;
 	/** Рабочая функция направителя */
-	private WorkFunction theOrderWorkFunction;
+	private WorkFunction orderWorkFunction;
 	/**Диспансерный учет  */
-	private VocDispanseryRegistration theDispRegistration;
+	private VocDispanseryRegistration dispRegistration;
 
-	// [start] Вычисляемые свойства
-	
-	
-	/** Следующая дата приема */
-	@Comment("Следующая дата приема")
-	public Date getNextVisitDate() {return theNextVisitDate;}
-	public void setNextVisitDate(Date aNextVisitDate) {theNextVisitDate = aNextVisitDate;}
 
 	/** Следующая дата приема */
-	private Date theNextVisitDate;
+	private Date nextVisitDate;
 
 	/** Бригада скорой помощи */
 	@Comment("Бригада скорой помощи")
 	@OneToOne
-	public VocAmbulance getAmbulance() {return theAmbulance;}
-	public void setAmbulance(VocAmbulance aAmbulance) {theAmbulance = aAmbulance;}
+	public VocAmbulance getAmbulance() {return ambulance;}
 
 	/** Исход визита */
 	@Comment("Исход визита")
 	@OneToOne
-	public VocVisitOutcome getVisitOutcome() {return theVisitOutcome;}
-	public void setVisitOutcome(VocVisitOutcome aVisitOutcome) {theVisitOutcome = aVisitOutcome;}
+	public VocVisitOutcome getVisitOutcome() {return visitOutcome;}
 
 	/** Исход визита */
-	private VocVisitOutcome theVisitOutcome;
+	private VocVisitOutcome visitOutcome;
 	/** Бригада скорой помощи */
-	private VocAmbulance theAmbulance;
-	/** Количество выписанных льготных рецептов */
-	@Comment("Количество выписанных льготных рецептов")
-	public Integer getPrivilegeRecipeAmount() {return thePrivilegeRecipeAmount;}
-	public void setPrivilegeRecipeAmount(Integer aPrivilegeRecipeAmount) {thePrivilegeRecipeAmount = aPrivilegeRecipeAmount;}
+	private VocAmbulance ambulance;
     /** Количество выписанных льготных рецептов */
-	private Integer thePrivilegeRecipeAmount;
+	private Integer privilegeRecipeAmount;
 
 	/**  Медицинская карта */
     @OneToOne
-    public Medcard getMedcard() {return theMedcard;}
-    public void setMedcard(Medcard aMedcard) {theMedcard = aMedcard;}
+    public Medcard getMedcard() {return medcard;}
     /** Медицинская карта */
-    private Medcard theMedcard;
+    private Medcard medcard;
     
-    /** Разговор с родственником */
-	@Comment("Разговор с родственником")
-	public Boolean getIsTalk() {return theIsTalk;}
-	public void setIsTalk(Boolean aIsTalk) {theIsTalk = aIsTalk;}
-
 	/** Направление на госпитализацию */
-	@Comment("Направление на госпитализацию")
-	public Boolean getIsDirectHospital() {return theIsDirectHospital;}
-	public void setIsDirectHospital(Boolean aIsDirectHospital) {theIsDirectHospital = aIsDirectHospital;}
-
-	/** Направление на госпитализацию */
-	private Boolean theIsDirectHospital;
+	private Boolean isDirectHospital;
 	/** Разговор с родственником */
-	private Boolean theIsTalk;
+	private Boolean isTalk;
 
 }

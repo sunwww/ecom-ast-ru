@@ -14,7 +14,7 @@ import ru.nuzmsh.util.StringUtil;
  */
 public abstract class AbstractCheckStringProperty implements ICheck {
     public CheckResult check(ICheckContext aContext) throws CheckException {
-        String str = aContext.getString(theProperty);
+        String str = aContext.getString(property);
 
         CheckResult result = new CheckResult();
         if(!StringUtil.isNullOrEmpty(str)) {
@@ -34,9 +34,9 @@ public abstract class AbstractCheckStringProperty implements ICheck {
 
     /** Свойство */
     @Comment("Свойство")
-    public String getProperty() { return theProperty ; }
-    public void setProperty(String aProperty) { theProperty = aProperty ; }
+    public String getProperty() { return property ; }
+    public void setProperty(String aProperty) { property = aProperty ; }
 
     /** Свойство */
-    private String theProperty ;
+    private String property ;
 }

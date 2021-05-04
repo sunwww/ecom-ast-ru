@@ -63,16 +63,12 @@ public class AddressPointServiceBean implements IAddressPointService {
 
     private final WebQueryResult res = new WebQueryResult();
     private final Collection<WebQueryResult> errList = new ArrayList<>();
-    private final AddressPointCheckHelper thePointCheckHelper = new AddressPointCheckHelper();
+    private final AddressPointCheckHelper pointCheckHelper = new AddressPointCheckHelper();
     private @EJB
     IAddressService addressService;
     private @PersistenceContext
     EntityManager entityManager;
 
-    /* public static void main(String[] args) {
-        AddressPointServiceBean bean = new AddressPointServiceBean();
-        bean.createCsv("d:/java/", "123", bean.makeTest(), "301234");
-    }*/
 
     @Override
     public WebQueryResult exportExtDispPlanAll(String ageString, String filenamePrefix
@@ -588,7 +584,7 @@ public class AddressPointServiceBean implements IAddressPointService {
                 manager.clear();
             }
         } else {
-            List<AddressPointCheck> checks = thePointCheckHelper.parsePoints(aLpuAreaAddressText.getAddressString());
+            List<AddressPointCheck> checks = pointCheckHelper.parsePoints(aLpuAreaAddressText.getAddressString());
             // нет домов, прикрепляем по всех улице
             if (checks.isEmpty()) {
                 LpuAreaAddressPoint point = new LpuAreaAddressPoint();

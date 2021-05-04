@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.diet;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.diet.MealMenuTemplate;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -23,55 +24,48 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @WebTrail(comment = "Шаблон меню-раскладки ", nameProperties= "description", view="entityView-diet_mealMenuTemplate.do")
 @Parent(property="diet", parentForm=DietForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/InvalidFood/MealMenuTemplate")
+@Setter
 
 public class MealMenuTemplateForm extends MealMenuForm{
 
 	/** Дата окончания действия */
 	@Comment("Дата окончания действия")
 	@Persist @DoDateString @DateString
-	public String getDateTo() {return theDateTo;}
-	public void setDateTo(String aNewProperty) {theDateTo = aNewProperty;}
+	public String getDateTo() {return dateTo;}
 
 	/** День недели */
 	@Comment("День недели")
 	@Persist
-	public Long getWeekDay() {return theWeekDay;}
-	public void setWeekDay(Long aWeekDay) {theWeekDay = aWeekDay;}
+	public Long getWeekDay() {return weekDay;}
 
 	/** Название дня недели */
 	@Comment("Название дня недели")
 	@Persist
-	public String getWeekDayName() {return theWeekDayName;}
-	public void setWeekDayName(String aWeekDayName) {theWeekDayName = aWeekDayName;	}
+	public String getWeekDayName() {return weekDayName;}
 
 	/** Шаблон основного меню */
 	@Comment("Шаблон основного меню")
 	@Persist
 	public Long getParentMenu() {
-		return theParentMenu;
-	}
-
-	public void setParentMenu(Long aParentMenu) {
-		theParentMenu = aParentMenu;
+		return parentMenu;
 	}
 
 	/** Описание */
 	@Comment("Описание")
 	@Persist
-	public String getDescription() {return theDescription;}
-	public void setDescription(String aDescription) {theDescription = aDescription;}
+	public String getDescription() {return description;}
 
 	/** Описание */
-	private String theDescription;
+	private String description;
 	/** Шаблон основного меню */
-	private Long theParentMenu;
+	private Long parentMenu;
 	
 	/** Название дня недели */
-	private String theWeekDayName;
+	private String weekDayName;
 	/** День недели */
-	private Long theWeekDay;
+	private Long weekDay;
 	/** Дата окончания действия */
-	private String theDateTo;
+	private String dateTo;
 	}
 	
 	

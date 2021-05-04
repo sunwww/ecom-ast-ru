@@ -3,6 +3,8 @@ package ru.ecom.mis.ejb.domain.medcase;
  * Created by Milamesher on 04.09.2019.
  */
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -26,46 +28,36 @@ import javax.persistence.Table;
         @AIndex(properties="complexMedService"),
         @AIndex(properties="innerMedService")
 })
+@Getter
+@Setter
 public class MedServiceComplexLink extends BaseEntity {
     /** Комплексная мед. услуга */
     @Comment("Комплексная мед. услуга")
     @OneToOne
-    public MedService getComplexMedService() {return theComplexMedService;}
-    public void setComplexMedService(MedService aComplexMedService) {theComplexMedService = aComplexMedService;}
-    private MedService theComplexMedService;
+    public MedService getComplexMedService() {return complexMedService;}
+    private MedService complexMedService;
 
     /** Мед. услуга в программе комплексной*/
     @Comment("Мед. услуга в программе комплексной")
     @OneToOne
-    public MedService getInnerMedService() {return theInnerMedService;}
-    public void setInnerMedService(MedService aInnerMedService) {theInnerMedService = aInnerMedService;}
-    private MedService theInnerMedService;
+    public MedService getInnerMedService() {return innerMedService;}
+    private MedService innerMedService;
 
     /** Количество */
-    @Comment("Количество")
-    public Integer getCountInnerMedService() {
-        return theCountInnerMedService;
-    }
-    public void setCountInnerMedService(Integer aCountInnerMedService) {theCountInnerMedService = aCountInnerMedService;}
-    private Integer theCountInnerMedService;
+    private Integer countInnerMedService;
 
     /** Специальность врача */
     @Comment("Специальность врача")
     @OneToOne
-    public VocE2FondV021 getSpeciality() {return theSpeciality;}
-    public void setSpeciality(VocE2FondV021 aSpeciality) {theSpeciality = aSpeciality;}
-    private VocE2FondV021 theSpeciality ;
+    public VocE2FondV021 getSpeciality() {return speciality;}
+    private VocE2FondV021 speciality ;
 
     /** Выбрана по умолчанию */
     @Comment("Выбрана по умолчанию")
     @Column(nullable=false, columnDefinition="boolean default false")
-    public Boolean getIsDefault() {return theIsDefault;}
-    public void setIsDefault(Boolean aIsDefault) {theIsDefault = aIsDefault;}
-    private Boolean theIsDefault ;
+    public Boolean getIsDefault() {return isDefault;}
+    private Boolean isDefault ;
 
     /** Вес (для сортировки) */
-    @Comment("Вес")
-    public Integer getWeight() {return theWeight;}
-    public void setWeight(Integer aWeight) {theWeight = aWeight;}
-    private Integer theWeight ;
+    private Integer weight ;
 }

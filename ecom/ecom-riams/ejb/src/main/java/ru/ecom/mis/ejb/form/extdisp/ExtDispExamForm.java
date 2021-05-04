@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.extdisp;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.extdisp.ExtDispExam;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -15,6 +16,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Исследование по дополнительной диспансеризации", nameProperties= "id", list="entityParentList-extdisp_extDispExam.do", view="entityParentView-extdisp_extDispExam.do")
 @Parent(property="card", parentForm=ExtDispCardForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/ExtDisp/Card/Service")
+@Setter
 public class ExtDispExamForm extends ExtDispServiceForm {
 	/**
 	 * Выявлена патология
@@ -22,13 +24,10 @@ public class ExtDispExamForm extends ExtDispServiceForm {
 	@Comment("Выявлена патология")
 	@Persist
 	public Boolean getIsPathology() {
-		return theIsPathology;
-	}
-	public void setIsPathology(Boolean aIsPathology) {
-		theIsPathology = aIsPathology;
+		return isPathology;
 	}
 	/**
 	 * Выявлена патология
 	 */
-	private Boolean theIsPathology;
+	private Boolean isPathology;
 }

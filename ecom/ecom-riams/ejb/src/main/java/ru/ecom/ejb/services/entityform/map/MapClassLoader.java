@@ -23,8 +23,8 @@ public class MapClassLoader extends ClassLoader {
 	}
 	
 	public MapClassLoader(ClassLoader aLoader, boolean aTomcatMode) {
-		theLoader = aLoader ;
-		theTomcatMode = aTomcatMode ;
+		loader = aLoader ;
+		tomcatMode = aTomcatMode ;
 	}
 	
 	
@@ -39,7 +39,7 @@ public class MapClassLoader extends ClassLoader {
 
 	@Override
 	public Class<?> loadClass(String name) throws ClassNotFoundException {
-		//if(!loadUnique) theLoadUniqueName = true ;
+		//if(!loadUnique) loadUniqueName = true ;
 		
 		Class ret ;
 		
@@ -49,7 +49,7 @@ public class MapClassLoader extends ClassLoader {
 		
 		if(name.startsWith("$$")) {
 			Class hashedClass = HASH.get(name);
-			if(!theMapFormManager.isClassChanged(name) && hashedClass!=null) {
+			if(!mapFormManager.isClassChanged(name) && hashedClass!=null) {
 				if (CAN_DEBUG)
 					LOG.debug("loadClass: loaded from hash = " + name); 
 				ret = hashedClass ;
@@ -60,9 +60,9 @@ public class MapClassLoader extends ClassLoader {
 							.getResourceAsStream("/ru/ecom/ejb/services/entityform/MapEntityForm.class") ;
 					ClassReader reader = new ClassReader(in);
 					ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
-					MapFormInfo formInfo = theMapFormManager.getFormInfo(removeUuidFromClassName(name)) ;
+					MapFormInfo formInfo = mapFormManager.getFormInfo(removeUuidFromClassName(name)) ;
 					MapClassVisitor visitor = new MapClassVisitor(writer
-							, formInfo,  classNameForLoader, theTomcatMode);
+							, formInfo,  classNameForLoader, tomcatMode);
 					reader.accept(visitor, ClassReader.SKIP_DEBUG);
 					byte[] buf = writer.toByteArray();
 					ret = defineClass(
@@ -78,7 +78,7 @@ public class MapClassLoader extends ClassLoader {
 				}
 			}
 		} else {
-				ret = theLoader.loadClass(name);
+				ret = loader.loadClass(name);
 		}
 		if (CAN_DEBUG)
 			LOG.debug("loadClass: returned class = " + ret); 
@@ -101,11 +101,11 @@ public class MapClassLoader extends ClassLoader {
 		if (CAN_DEBUG)
 			LOG.debug("getResourceAsStream: name = " + name); 
 
-		return theLoader.getResourceAsStream(name);
+		return loader.getResourceAsStream(name);
 	}
 
 
-	private final MapFormManager theMapFormManager = MapFormManager.getInstance();
-	private final ClassLoader theLoader ;
-	private boolean theTomcatMode ;
+	private final MapFormManager mapFormManager = MapFormManager.getInstance();
+	private final ClassLoader loader ;
+	private final boolean tomcatMode ;
 }

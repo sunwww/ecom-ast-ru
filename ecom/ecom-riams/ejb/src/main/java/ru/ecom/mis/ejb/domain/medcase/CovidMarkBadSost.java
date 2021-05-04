@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.medcase.voc.covidMarcVocs.VocBadSost;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -13,22 +15,19 @@ import javax.persistence.*;
  */
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class CovidMarkBadSost extends BaseEntity {
     @Comment("Форма оценки сознания")
     @ManyToOne(fetch = FetchType.LAZY)
     public CovidMark getCovidMark() {
         return covidMark;
     }
-    public void setCovidMark(CovidMark covidMark) {
-        this.covidMark = covidMark;
-    }
-    /**Форма оценки сознания */
     private CovidMark covidMark;
 
     /** Нарушение сознания в оценке ковида */
     @Comment("Нарушение сознания в оценке ковида")
     @OneToOne
-    public VocBadSost getBadSost() {return theBadSost;}
-    public void setBadSost(VocBadSost aBadSost) {theBadSost = aBadSost;}
-    private VocBadSost theBadSost ;
+    public VocBadSost getBadSost() {return badSost;}
+    private VocBadSost badSost ;
 }

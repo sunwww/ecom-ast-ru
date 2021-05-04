@@ -28,17 +28,17 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
     private enum QueryConvertType {NONE, LOWER_CASE, UPPER_CASE, FIRST_UPPER, FIRST_LAT_UPPER}
 
     public Class getEntityClass() {
-    	return theEntityClass ;
+    	return entityClass ;
     }
     public EntityVocService(String aEntityClass, String[] aNames, String[] aQueriedFields
         , String aParent, String aQueryAppend, String aConvertType) throws ClassNotFoundException {
-//        theEntityClassName = aEntityClass;
-        theNames = aNames;
-        theEntityClass = theClassLoaderHelper.loadClass(aEntityClass);
-        theQueriedFields = aQueriedFields ;
-        theEntityName = theEntityHelper.getEntityName(theEntityClass) ;
-        theParentField = StringUtil.isNullOrEmpty(aParent) ? null : aParent ;
-        theAppendQuery = StringUtil.isNullOrEmpty(aQueryAppend) ? null : aQueryAppend ;
+//        entityClassName = aEntityClass;
+        names = aNames;
+        entityClass = classLoaderHelper.loadClass(aEntityClass);
+        queriedFields = aQueriedFields ;
+        entityName = entityHelper.getEntityName(entityClass) ;
+        parentField = StringUtil.isNullOrEmpty(aParent) ? null : aParent ;
+        appendQuery = StringUtil.isNullOrEmpty(aQueryAppend) ? null : aQueryAppend ;
         setQueryConvertType(aConvertType);
     }
 
@@ -59,36 +59,35 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
     }
 
     /** Тип конвертации запроса */
-    public QueryConvertType getQueryConvertType() { return theQueryConvertType ; }
-    public void setQueryConvertType(QueryConvertType aQueryConvertType) { theQueryConvertType = aQueryConvertType ; }
+    public QueryConvertType getQueryConvertType() { return queryConvertType ; }
+    public void setQueryConvertType(QueryConvertType aQueryConvertType) { queryConvertType = aQueryConvertType ; }
 
     /** Тип конвертации запроса */
-    private QueryConvertType theQueryConvertType = QueryConvertType.NONE ;
+    private QueryConvertType queryConvertType = QueryConvertType.NONE ;
 
-    private final String theEntityName ;
+    private final String entityName ;
     /** Поля для запроса */
-    public String[] getQueriedFields() { return theQueriedFields ; }
+    public String[] getQueriedFields() { return queriedFields ; }
 
     /** Поля для запроса */
-    private final String[] theQueriedFields ;
+    private final String[] queriedFields ;
     /** Свойства с названиями */
-    public String[] getNames() { return theNames ; }
+    public String[] getNames() { return names ; }
 
     /** Свойства с названиями */
-    private final String[] theNames ;
+    private final String[] names ;
 
     /** Название Entity Bean */
-//    private final String theEntityClassName ;
-    private final Class theEntityClass ;
+    private final Class entityClass ;
 
 
     public String getNameById(String aId, String aVocName, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
         if(StringUtil.isNullOrEmpty(aId)) return "" ; //throw new VocServiceException("Нет идентификатора ");
-        Object obj = aContext.getEntityManager().find(theEntityClass, theEntityHelper.convertId(theEntityClass, aId)) ;
+        Object obj = aContext.getEntityManager().find(entityClass, entityHelper.convertId(entityClass, aId)) ;
         try {
             return getNameFromEntity(obj) ;
         } catch (Exception e) {
-            throw new VocServiceException("Ошибка при получении наименования у объекта "+theEntityClass+" "+aId);
+            throw new VocServiceException("Ошибка при получении наименования у объекта "+entityClass+" "+aId);
         }
     }
 
@@ -100,7 +99,7 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
         	try {
         		try {
             		Long id = Long.parseLong(aQuery);
-            		BaseEntity entity =  (BaseEntity) aContext.getEntityManager().find(theEntityClass, id);
+            		BaseEntity entity =  (BaseEntity) aContext.getEntityManager().find(entityClass, id);
             		if(entity!=null) {
             			String firstId = String.valueOf(entity.getId()) ;
             			return findVocValueNext(aVocName, firstId, aCount, aAdditional, aContext) ;
@@ -112,7 +111,7 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
         		LOG.warn("Ошибка при поиске по идентификатору: "+e.getMessage(), e);
         	}
         	String queryDop = null ;
-            switch(theQueryConvertType) {
+            switch(queryConvertType) {
             /*
                 case LOWER_CASE: aQuery = aQuery.toLowerCase() ; break ;
                 case UPPER_CASE: aQuery = aQuery.toUpperCase() ; break ;
@@ -136,23 +135,23 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
             
         	aQuery = aQuery.toUpperCase() ;
             StringBuilder sb = new StringBuilder();
-            sb.append("from ").append(theEntityName) ;
+            sb.append("from ").append(entityName) ;
             sb.append(" where ( ") ;
             boolean firstPassed = false ;
-            for (String field : theQueriedFields) {
+            for (String field : queriedFields) {
                 if(firstPassed) sb.append(" or ") ; else firstPassed = true ;
                 sb.append(" (upper(").append(field).append( ")  like :query) ") ;
                 if (queryDop!=null) sb.append(" or (upper(").append(field).append( ")  like '%").append(queryDop).append("%')") ;
             }
             sb.append(" ) ") ;
            // LOG.debug(sb); ;
-            if(theAppendQuery!=null) {
+            if(appendQuery!=null) {
                 sb.append(" and ") ;
-                sb.append(theAppendQuery) ;
+                sb.append(appendQuery) ;
             }
-            if(theParentField!=null) {
+            if(parentField!=null) {
                 sb.append(" and ") ;
-                sb.append(theParentField).append('=').append(aAdditional.getParentId()) ;
+                sb.append(parentField).append('=').append(aAdditional.getParentId()) ;
             }
             sb.append(" order by id") ;
             if (CAN_DEBUG) LOG.debug("findVocValueByQuery: query = " + sb);
@@ -168,32 +167,32 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
 
     public Collection<VocValue> findVocValuePrevious(String aVocName, String aId, int aCount, VocAdditional aAdditional, VocContext aContext) throws VocServiceException {
         // уще не установлен родитель
-        if(theParentField!=null && StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
+        if(parentField!=null && StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
             return new LinkedList<>() ;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("from ").append(theEntityName) ;
+        sb.append("from ").append(entityName) ;
         Object id = null ;
         boolean whereAppended = false ;
         if(!StringUtil.isNullOrEmpty(aId)) {
             sb.append(" where id <= :id") ;
             whereAppended = true ;
-            id = theEntityHelper.convertId(theEntityClass, aId) ;
+            id = entityHelper.convertId(entityClass, aId) ;
         }
 
-        if(theAppendQuery!=null) {
+        if(appendQuery!=null) {
             if(!StringUtil.isNullOrEmpty(aId)) sb.append(" and ") ;
             else {
                 whereAppended = true ;
                 sb.append(" where ") ;
             }
-            sb.append(theAppendQuery) ;
+            sb.append(appendQuery) ;
         }
         // parentProperty
-        if(theParentField!=null && !StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
+        if(parentField!=null && !StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
             if(whereAppended) sb.append(" and ") ;
             else sb.append(" where ") ;
-            sb.append(theParentField).append('=').append(aAdditional.getParentId()) ;
+            sb.append(parentField).append('=').append(aAdditional.getParentId()) ;
 
         }
         sb.append(" order by id desc") ;
@@ -215,32 +214,32 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
 
     public Collection<VocValue> findVocValueNext(String aVocName, String aId, int aCount, VocAdditional aAdditional, VocContext aContext) {
         // уще не установлен родитель
-        if(theParentField!=null && StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
+        if(parentField!=null && StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
             return new LinkedList<>() ;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("from ").append(theEntityName) ;
+        sb.append("from ").append(entityName) ;
         Object id = null ;
         boolean whereAppended = false ;
         if(!StringUtil.isNullOrEmpty(aId)) {
             sb.append(" where id >= :id") ;
             whereAppended = true ;
-            id = theEntityHelper.convertId(theEntityClass, aId) ;
+            id = entityHelper.convertId(entityClass, aId) ;
         }
 
-        if(theAppendQuery!=null) {
+        if(appendQuery!=null) {
             if(!StringUtil.isNullOrEmpty(aId)) sb.append(" and ") ;
             else {
                 whereAppended = true ;
                 sb.append(" where ") ;
             }
-            sb.append(theAppendQuery) ;
+            sb.append(appendQuery) ;
         }
         // parentProperty
-        if(theParentField!=null && !StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
+        if(parentField!=null && !StringUtil.isNullOrEmpty(aAdditional.getParentId())) {
             if(whereAppended) sb.append(" and ") ;
             else sb.append(" where ") ;
-            sb.append(theParentField).append('=').append(aAdditional.getParentId()) ;
+            sb.append(parentField).append('=').append(aAdditional.getParentId()) ;
         }
         sb.append(" order by id") ;
        // LOG.info(sb) ;
@@ -266,7 +265,7 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
 
     private String getNameFromEntity(Object aEntity) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         StringBuilder sb = new StringBuilder();
-        for (String field : theNames) {
+        for (String field : names) {
             sb.append(PropertyUtil.getPropertyValue(aEntity, field)) ;
             sb.append(" ") ;
         }
@@ -284,9 +283,9 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
     }
 
     public void destroy() {
-        theClassLoaderHelper = null ;
-        theEntityHelper = null ;
-        theMap = null ;
+        classLoaderHelper = null ;
+        entityHelper = null ;
+        map = null ;
     }
 
     public Map<String,String> enrusCreate() {
@@ -321,16 +320,16 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
     	return map ;
     }
     private String getLat(char aChar) {
-    	String ret =theMap.get(String.valueOf(aChar)) ;
+    	String ret =map.get(String.valueOf(aChar)) ;
     	return ret !=null ? ret: String.valueOf(aChar) ;
     }
     
 
-    Map<String, String> theMap = enrusCreate();
-    private ClassLoaderHelper theClassLoaderHelper = ClassLoaderHelper.getInstance();
-    private EntityHelper theEntityHelper = EntityHelper.getInstance();
-    private final String theParentField ;
-    private final String theAppendQuery ;
+    Map<String, String> map = enrusCreate();
+    private ClassLoaderHelper classLoaderHelper = ClassLoaderHelper.getInstance();
+    private EntityHelper entityHelper = EntityHelper.getInstance();
+    private final String parentField ;
+    private final String appendQuery ;
 
 
 }

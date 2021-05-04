@@ -8,6 +8,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -23,59 +25,39 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Медико-социальная экспертная комиссия")
 @Entity
 @AIndexes({
-	@AIndex(unique = false, properties= {"disabilityDocument"})
+	@AIndex(properties= {"disabilityDocument"})
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class MedSocCommission extends BaseEntity{
 	
 	/** Документ нетрудоспособности */
 	@Comment("Документ нетрудоспособности")
 	@OneToOne
-	public DisabilityDocument getDisabilityDocument() {return theDisabilityDocument;}
-	public void setDisabilityDocument(DisabilityDocument aDisabilityDocument) {theDisabilityDocument = aDisabilityDocument;}
+	public DisabilityDocument getDisabilityDocument() {return disabilityDocument;}
 
-	/** Дата направления */
-	@Comment("Дата направления")
-	public Date getAssignmentDate() {return theAssignmentDate;}
-	public void setAssignmentDate(Date aAssignmentDate) {theAssignmentDate = aAssignmentDate;}
-
-	/** Дата регистрации документов */
-	@Comment("Дата регистрации документов")
-	public Date getRegistrationDate() {return theRegistrationDate;}
-	public void setRegistrationDate(Date aRegistrationDate) {theRegistrationDate = aRegistrationDate;}
-	
-	/** Дата освидетельствования */
-	@Comment("Дата освидетельствования")
-	public Date getExaminationDate() {return theExaminationDate;}
-	public void setExaminationDate(Date aExaminationDate) {theExaminationDate = aExaminationDate;}
-
-	/** Комментарии */
-	@Comment("Комментарии")
-	public String getComments() {return theComments;}
-	public void setComments(String aComments) {theComments = aComments;}
 
 	/** Степень ограничения трудоспособности */
 	@Comment("Степень ограничения трудоспособности")
 	@OneToOne
-	public VocDisabilityDegree getDisabilityDergee() {return theDisabilityDergee;}
-	public void setDisabilityDergee(VocDisabilityDegree aDisabilityDergee) {theDisabilityDergee = aDisabilityDergee;}
+	public VocDisabilityDegree getDisabilityDergee() {return disabilityDergee;}
 
 	/** Инвалидность */
 	@Comment("Инвалидность")
 	@OneToOne
-	public VocInvalidity getInvalidity() {return theInvalidity;}
-	public void setInvalidity(VocInvalidity aInvalidity) {theInvalidity = aInvalidity;}
-	
+	public VocInvalidity getInvalidity() {return invalidity;}
+
 	@Comment("Инвалидность инфо")
 	@Transient
 	public String getInvalidityInfo() {
-		return theInvalidity!=null? theInvalidity.getName() :"" ;
+		return invalidity!=null? invalidity.getName() :"" ;
 	}
 	
 	@Comment("Степень ограничения трудоспособности инфо")
 	@Transient	
 	public String getDisabilityDergeeInfo() {
-		return theDisabilityDergee!=null? theDisabilityDergee.getName():"" ;
+		return disabilityDergee!=null? disabilityDergee.getName():"" ;
 	}
 	
 	@Comment("Информация о МСЭК")
@@ -83,30 +65,25 @@ public class MedSocCommission extends BaseEntity{
 	public String getInfo() {
 		final SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy") ;
 		StringBuilder ret = new StringBuilder() ;
-		if (theExaminationDate!=null) ret.append(format.format(theExaminationDate)).append(" ") ;
+		if (examinationDate!=null) ret.append(format.format(examinationDate)).append(" ") ;
 		ret.append(getDisabilityDergeeInfo()) ;
 		return ret.toString() ;
 	}
 	
 	/** Изменена/установлена инвалидность */
-	@Comment("Изменена/установлена инвалидность")
-	public Boolean getInvalidityRegistration() {return theInvalidityRegistration;}
-	public void setInvalidityRegistration(Boolean aInvalidityRegistration) {theInvalidityRegistration = aInvalidityRegistration;}
-
-	/** Изменена/установлена инвалидность */
-	private Boolean theInvalidityRegistration;
+	private Boolean invalidityRegistration;
 	/** Документ нетрудоспособности */
-	private DisabilityDocument theDisabilityDocument;
+	private DisabilityDocument disabilityDocument;
 	/** Дата направления */
-	private Date theAssignmentDate;
+	private Date assignmentDate;
 	/** Дата регистрации документов */
-	private Date theRegistrationDate;
+	private Date registrationDate;
 	/** Дата освидетельствования */
-	private Date theExaminationDate;
+	private Date examinationDate;
 	/** Комментарии */
-	private String theComments;
+	private String comments;
 	/** Степень ограничения трудоспособности */
-	private VocDisabilityDegree theDisabilityDergee;
+	private VocDisabilityDegree disabilityDergee;
 	/** Инвалидность */
-	private VocInvalidity theInvalidity;
+	private VocInvalidity invalidity;
 }

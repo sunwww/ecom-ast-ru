@@ -18,26 +18,26 @@ public class MonitorHolder {
     }
 
     synchronized long createNextId() {
-        theLastId++ ;
-        return theLastId ;
+        lastId++ ;
+        return lastId ;
     }
 
     void putMonitor(long aMonitorId, LocalMonitorStatus aMonitor) {
-        theHash.put(aMonitorId, aMonitor) ;
+        hash.put(aMonitorId, aMonitor) ;
     }
 
     LocalMonitorStatus getMonitor(long aMonitorId) {
-        return theHash.get(aMonitorId);
+        return hash.get(aMonitorId);
     }
 
     boolean isExists(long aMonitorId) {
-        return theHash.get(aMonitorId)!=null ;
+        return hash.get(aMonitorId)!=null ;
     }
 
     HashMap<Long, LocalMonitorStatus> getAllMonitors() {
-        return theHash;
+        return hash;
 
     }
-    private long theLastId = 0 ;
-    private final HashMap<Long, LocalMonitorStatus> theHash = new HashMap<>();
+    private long lastId = 0 ;
+    private final HashMap<Long, LocalMonitorStatus> hash = new HashMap<>();
 }

@@ -5,289 +5,103 @@ import java.sql.Date;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 @Comment("Принудительное лечение")
 @Entity
-/*@AIndexes({
-	@AIndex(properties={"careCard"})
-})*/
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class CompulsoryTreatmentAggregate extends BaseEntity {
 	/** Дата поступления в стационар по прин.лечению */
-	@Comment("Дата поступления в стационар по прин.лечению")
-	public Date getEntranceHospDate(){return theEntranceHospDate;}
-	public void setEntranceHospDate(Date aEntranceHospDate) {theEntranceHospDate = aEntranceHospDate;}
-
-	/** Дата поступления в стационар по прин.лечению */
-	private Date theEntranceHospDate;
-	
-	/** Дата выбытия/перевода из отделения */
-	@Comment("Дата выбытия/перевода из отделения")
-	public Date getDischargeDepDate() {
-		return theDischargeDepDate;
-	}
-
-	public void setDischargeDepDate(Date aDischargeDepDate) {
-		theDischargeDepDate = aDischargeDepDate;
-	}
+	private Date entranceHospDate;
 
 	/** Дата выбытия/перевода из отделения */
-	private Date theDischargeDepDate;
-	/** Дата поступления в отделение */
-	@Comment("Дата поступления в отделение")
-	public Date getEntranceDepDate() {
-		return theEntranceDepDate;
-	}
-
-	public void setEntranceDepDate(Date aEntranceDepDate) {
-		theEntranceDepDate = aEntranceDepDate;
-	}
+	private Date dischargeDepDate;
 
 	/** Дата поступления в отделение */
-	private Date theEntranceDepDate;
+	private Date entranceDepDate;
 	
-	/** Дата выписки в стационар по прин.лечению */
-	@Comment("Дата выписки в стационар по прин.лечению")
-	public Date getDischargeHospDate() {return theDischargeHospDate;}
-	public void setDischargeHospDate(Date aDischargeHospDate) {theDischargeHospDate = aDischargeHospDate;}
 
 	/** Дата выписки в стационар по прин.лечению */
-	private Date theDischargeHospDate;
+	private Date dischargeHospDate;
 	
-	/** Дата рождения */
-	@Comment("Дата рождения")
-	public Date getBirthday() {return theBirthday;}
-	public void setBirthday(Date aBirthday) {theBirthday = aBirthday;}
 
 	/** Дата рождения */
-	private Date theBirthday;
+	private Date birthday;
 	
 	/** Пол */
-	@Comment("Пол")
-	public String getSexCode() {return theSexCode;}
-	public void setSexCode(String aSexCode) {theSexCode = aSexCode;}
-
-	/** Пол */
-	private String theSexCode;
-	
-	/** Диагноз клинический (по отделению) */
-	@Comment("Диагноз клинический (по отделению)")
-	public String getIdcDepartmentCode() {return theIdcDepartmentCode;}
-	public void setIdcDepartmentCode(String aIdcDepartmentCode) {theIdcDepartmentCode = aIdcDepartmentCode;}
+	private String sexCode;
 
 	/** Диагноз выписной */
-	@Comment("Диагноз выписной")
-	public String getIdcDischarge() {return theIdcDischarge;}
-	public void setIdcDischarge(String aIdcDischarge) {theIdcDischarge = aIdcDischarge;}
-
-	/** Диагноз выписной */
-	private String theIdcDischarge;
+	private String idcDischarge;
 	/** Диагноз клинический (по отделению) */
-	private String theIdcDepartmentCode;
+	private String idcDepartmentCode;
 	
 	/** Перевели из отделения */
-	@Comment("Перевели из отделения")
-	public Long getTransferDepartmentFrom() {return theTransferDepartmentFrom;}
-	public void setTransferDepartmentFrom(Long aDepartmentTransferFrom) {theTransferDepartmentFrom = aDepartmentTransferFrom;}
-
-	/** Перевели из отделения */
-	private Long theTransferDepartmentFrom;
+	private Long transferDepartmentFrom;
 	
 	/** Переводной диагноз */
-	@Comment("Переводной диагноз")
-	public String getIdcTransferCode() {return theIdcTransferCode;}
-	public void setIdcTransferCode(String aIdcTransferCode) {theIdcTransferCode = aIdcTransferCode;}
-	
-	/** Переводной диагноз */
-	private String theIdcTransferCode;
-	
-	/** Умер */
-	@Comment("Умер")
-	public boolean getIsDeath() {return theIsDeath;}
-	public void setIsDeath(boolean aIsDeath) {theIsDeath = aIsDeath;}
-
-	
+	private String idcTransferCode;
 
 	/** Умер */
-	private boolean theIsDeath;
-	
-	
-	
-	/** Госпитализация */
-	@Comment("Госпитализация")
-	public Long getSls() {return theSls;}
-	public void setSls(Long aSls) {theSls = aSls;}
-
-	/** СЛО */
-	@Comment("СЛО")
-	public Long getSlo() {return theSlo;}
-	public void setSlo(Long aSlo) {theSlo = aSlo;}
-
+	private boolean isDeath;
 	/** Пациент */
-	@Comment("Пациент")
-	public Long getPatient() {return thePatient;}
-	public void setPatient(Long aPatient) {thePatient = aPatient;}
-
-	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	/** СЛО */
-	private Long theSlo;
+	private Long slo;
 	/** Госпитализация */
-	private Long theSls;
-	
-
-	/** Отделение */
-	@Comment("Отделение")
-	public Long getDepartment() {return theDepartment;}
-	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
-
+	private Long sls;
 	/** Отделение перевода */
-	@Comment("Отделение перевода")
-	public Long getTransferDepartmentIn() {return theTransferDepartmentIn;}
-	public void setTransferDepartmentIn(Long aDepartmentTransfer) {theTransferDepartmentIn = aDepartmentTransfer;}
-
-	
-	/** Отделение перевода */
-	private Long theTransferDepartmentIn;
+	private Long transferDepartmentIn;
 	/** Отделение */
-	private Long theDepartment;
-	
+	private Long department;
 	/** Номер принуд. лечения */
-	@Comment("Номер принуд. лечения")
-	public String getOrderCompTr() {return theOrderCompTr;}
-	public void setOrderCompTr(String aOrderCompTr) {theOrderCompTr = aOrderCompTr;}
-
-	/** Номер принуд. лечения */
-	private String theOrderCompTr;
-	
-	/** Впервые по данному УД */
-	@Comment("Впервые по данному УД")
-	public Boolean getIsFirstByCrimCase() {return theIsFirstByCrimCase;}
-	public void setIsFirstByCrimCase(Boolean aIsFirstByCrimCase) {theIsFirstByCrimCase = aIsFirstByCrimCase;}
+	private String orderCompTr;
 
 	/** Впервые по данному УД */
-	private Boolean theIsFirstByCrimCase;
-	
-	/** В связи с изменением вида ПЛ по данному УД (при поступлению) */
-	@Comment("В связи с изменением вида ПЛ по данному УД (при поступлению)")
-	public Boolean getIsChangeTypeByCrimCase() {return theIsChangeTypeByCrimCase;}
-	public void setIsChangeTypeByCrimCase(Boolean aIsChangeTypeByCrimCase) {theIsChangeTypeByCrimCase = aIsChangeTypeByCrimCase;}
+	private Boolean isFirstByCrimCase;
 
 	/** В связи с изменением вида ПЛ по данному УД (при поступлению) */
-	private Boolean theIsChangeTypeByCrimCase;
-	
+	private Boolean isChangeTypeByCrimCase;
 	
 	/** Переведен на АПНЛ после госпитализации */
-	@Comment("Переведен на АПНЛ после госпитализации")
-	public Boolean getIsAfterAPNL() {return theIsAfterAPNL;}
-	public void setIsAfterAPNL(Boolean aIsAfterAPNL) {theIsAfterAPNL = aIsAfterAPNL;}
-
-	/** Переведен на АПНЛ после госпитализации */
-	private Boolean theIsAfterAPNL;
-	
-	/** Прекращено лечение */
-	@Comment("Прекращено лечение")
-	public Boolean getIsFinishCompTreat() {return theIsFinishCompTreat;}
-	public void setIsFinishCompTreat(Boolean aIsFinishCompTreat) {theIsFinishCompTreat = aIsFinishCompTreat;}
+	private Boolean isAfterAPNL;
 
 	/** Прекращено лечение */
-	private Boolean theIsFinishCompTreat;
-	
-	/** Прекращено в связи с изменением вида принуд. лечения */
-	@Comment("Прекращено в связи с изменением вида принуд. лечения")
-	public Boolean getIsFinishWithChangeType() {return theIsFinishWithChangeType;}
-	public void setIsFinishWithChangeType(Boolean aIsFinishWithChangeType) {theIsFinishWithChangeType = aIsFinishWithChangeType;}
+	private Boolean isFinishCompTreat;
 
 	/** Прекращено в связи с изменением вида принуд. лечения */
-	private Boolean theIsFinishWithChangeType;
+	private Boolean isFinishWithChangeType;
 	
 	/** Переведен с АПНЛ */
-	@Comment("Переведен с АПНЛ")
-	public Boolean getIsBeforeAPNL() {return theIsBeforeAPNL;}
-	public void setIsBeforeAPNL(Boolean aIsBeforeAPNL) {theIsBeforeAPNL = aIsBeforeAPNL;}
-
-	/** Переведен с АПНЛ */
-	private Boolean theIsBeforeAPNL;
-	
-	/** Состоял ли на динамике, когда человек совершил ООД */
-	@Comment("Состоял ли на динамике, когда человек совершил ООД")
-	public Boolean getIsOodDynamic() {return theIsOodDynamic;}
-	public void setIsOodDynamic(Boolean aIsOodDynamic) {theIsOodDynamic = aIsOodDynamic;}
+	private Boolean isBeforeAPNL;
 
 	/** Состоял ли на динамике, когда человек совершил ООД */
-	private Boolean theIsOodDynamic;
+	private Boolean isOodDynamic;
 	
 	/** Ранее находились на принуд. лечение */
-	@Comment("Ранее находились на принуд. лечение")
-	public Boolean getIsPrevComTreat() {return theIsPrevComTreat;}
-	public void setIsPrevComTreat(Boolean aIsPrevComTreat) {theIsPrevComTreat = aIsPrevComTreat;}
-
-	/** Ранее находились на принуд. лечение */
-	private Boolean theIsPrevComTreat;
-	
-	/** Кол-во дней после последнего принуд. лечения */
-	@Comment("Кол-во дней после последнего принуд. лечения")
-	public Long getCntDaysFromPrevCase() {return theCntDaysFromPrevCase;}
-	public void setCntDaysFromPrevCase(Long aCntDaysFromPrevCase) {theCntDaysFromPrevCase = aCntDaysFromPrevCase;}
+	private Boolean isPrevComTreat;
 
 	/** Кол-во дней после последнего принуд. лечения */
-	private Long theCntDaysFromPrevCase;
-	
-	/** Кол-во дней всего принуд. лечения */
-	@Comment("Кол-во дней всего принуд. лечения")
-	public Long getCntDaysCompTreat() {return theCntDaysCompTreat;}
-	public void setCntDaysCompTreat(Long aCntDaysCompTreat) {theCntDaysCompTreat = aCntDaysCompTreat;}
+	private Long cntDaysFromPrevCase;
 
 	/** Кол-во дней всего принуд. лечения */
-	private Long theCntDaysCompTreat;
-	
-	/** Порядковый номер госпитализации */
-	@Comment("Порядковый номер госпитализации")
-	public Long getNumberHosp() {
-		return theNumberHosp;
-	}
-
-	public void setNumberHosp(Long aNumberHosp) {
-		theNumberHosp = aNumberHosp;
-	}
+	private Long cntDaysCompTreat;
 
 	/** Порядковый номер госпитализации */
-	private Long theNumberHosp;
-	/** Диагноз */
-	@Comment("Диагноз при поступлении")
-	public String getIdcEntranceCode() {return theIdcEntranceCode;}
-	public void setIdcEntranceCode(String aIdcCode) {theIdcEntranceCode = aIdcCode;}
+	private Long numberHosp;
 	/** Диагноз при поступлении */
-	private String theIdcEntranceCode ;
-	
-	/** Возраст на начало СЛО */
-	@Comment("Возраст на начало СЛО")
-	public Long getAgeEntranceSlo() {return theAgeEntranceSlo;}
-	public void setAgeEntranceSlo(Long aAgeEntranceSlo) {theAgeEntranceSlo = aAgeEntranceSlo;}
-
-	/** Возраст на конец СЛО */
-	@Comment("Возраст на конец СЛО")
-	public Long getAgeDischargeSlo() {return theAgeDischargeSlo;}
-	public void setAgeDischargeSlo(Long aAgeDischargeSlo) {theAgeDischargeSlo = aAgeDischargeSlo;}
-
-	/** Возраст на начало СЛС */
-	@Comment("Возраст на начало СЛС")
-	public Long getAgeEntranceSls() {return theAgeEntranceSls;}
-	public void setAgeEntranceSls(Long aAgeEntranceSls) {theAgeEntranceSls = aAgeEntranceSls;}
-
+	private String idcEntranceCode ;
 	/** Возраст на конец СЛС */
-	@Comment("Возраст на конец СЛС")
-	public Long getAgeDischargeSls() {return theAgeDischargeSls;}
-	public void setAgeDischargeSls(Long aAgeDischargeSls) {theAgeDischargeSls = aAgeDischargeSls;}
-	
-	/** Возраст на конец СЛС */
-	private Long theAgeDischargeSls;
+	private Long ageDischargeSls;
 	/** Возраст на начало СЛС */
-	private Long theAgeEntranceSls;
+	private Long ageEntranceSls;
 	/** Возраст на конец СЛО */
-	private Long theAgeDischargeSlo;
+	private Long ageDischargeSlo;
 	/** Возраст на начало СЛО */
-	private Long theAgeEntranceSlo;
+	private Long ageEntranceSlo;
 }

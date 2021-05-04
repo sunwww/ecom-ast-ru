@@ -1,6 +1,7 @@
 package ru.ecom.mis.ejb.form.psychiatry;
 
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.psychiatry.SuicideMessage;
@@ -23,323 +24,244 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Суицид", nameProperties= "id",list="entityParentList-psych_suicideMessage.do",listComment="список по пациенту", view="entityParentView-psych_suicideMessage.do")
 @Parent(property="patient", parentForm=PatientForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Psychiatry/CareCard/SuicideMessage")
+@Setter
 public class SuicideMessageForm extends IdEntityForm {
 	/** Дата суицида */
 	@Comment("Дата суицида")
 	@Persist @DoDateString @DateString @Required
-	public String getSuicideDate() {return theSuicideDate;}
-	public void setSuicideDate(String aSuicideDate) {theSuicideDate = aSuicideDate;}
+	public String getSuicideDate() {return suicideDate;}
 
 	/** Дата заполения извещения */
 	@Comment("Дата заполения извещения")
 	@Persist @DoDateString @DateString @Required
-	public String getRegOtherLpuDate() {return theRegOtherLpuDate;}
-	public void setRegOtherLpuDate(String aRegOtherLpuDate) {theRegOtherLpuDate = aRegOtherLpuDate;}
+	public String getRegOtherLpuDate() {return regOtherLpuDate;}
 
 	/** Время заполнения извещения */
 	@Comment("Время заполнения извещения")
 	@Persist @DoTimeString @TimeString
-	public String getRegOtherLpuTime() {return theRegOtherLpuTime;}
-	public void setRegOtherLpuTime(String aRegOtherLpuTime) {theRegOtherLpuTime = aRegOtherLpuTime;}
+	public String getRegOtherLpuTime() {return regOtherLpuTime;}
 
 	/** Дата регистрации */
 	@Comment("Дата регистрации")
 	@Persist @DoDateString @DateString @Required
-	public String getRegDate() {return theRegDate;}
-	public void setRegDate(String aRegDate) {theRegDate = aRegDate;}
+	public String getRegDate() {return regDate;}
 
 	/** Время регистрации */
 	@Comment("Время регистрации")
 	@Persist @DoTimeString @TimeString
-	public String getRegTime() {return theRegTime;}
-	public void setRegTime(String aRegTime) {theRegTime = aRegTime;}
+	public String getRegTime() {return regTime;}
 
 	/** Извещение заполнено в ЛПУ */
 	@Comment("Извещение заполнено в ЛПУ")
 	@Persist @Required
-	public Long getRegOtherLpu() {return theRegOtherLpu;}
-	public void setRegOtherLpu(Long aRegOtherLpu) {theRegOtherLpu = aRegOtherLpu;}
+	public Long getRegOtherLpu() {return regOtherLpu;}
 
 	/** Извещение заполнено в ЛПУ */
-	private Long theRegOtherLpu;
+	private Long regOtherLpu;
 	/** Время регистрации */
-	private String theRegTime;
+	private String regTime;
 	/** Дата регистрации */
-	private String theRegDate;
+	private String regDate;
 	/** Время заполнения извещения */
-	private String theRegOtherLpuTime;
+	private String regOtherLpuTime;
 	/** Дата заполения извещения */
-	private String theRegOtherLpuDate;
+	private String regOtherLpuDate;
 	/** Дата суицида */
-	private String theSuicideDate;
+	private String suicideDate;
 	
 	/** Дата создания */
 	@Comment("Дата создания")
 	@Persist @DoDateString @DateString
 	public String getCreateDate() {
-		return theCreateDate;
-	}
-
-	public void setCreateDate(String aCreateDate) {
-		theCreateDate = aCreateDate;
+		return createDate;
 	}
 
 	/** Дата редактирования */
 	@Comment("Дата редактирования")
 	@Persist @DoDateString @DateString
 	public String getEditDate() {
-		return theEditDate;
-	}
-
-	public void setEditDate(String aEditDate) {
-		theEditDate = aEditDate;
+		return editDate;
 	}
 
 	/** Пользователь, создавший запись */
 	@Comment("Пользователь, создавший запись")
 	@Persist
 	public String getCreateUsername() {
-		return theCreateUsername;
-	}
-
-	public void setCreateUsername(String aCreateUsername) {
-		theCreateUsername = aCreateUsername;
+		return createUsername;
 	}
 
 	/** Пользователь, последний редактировавший запись */
 	@Comment("Пользователь, последний редактировавший запись")
 	@Persist
 	public String getEditUsername() {
-		return theEditUsername;
-	}
-
-	public void setEditUsername(String aEditUsername) {
-		theEditUsername = aEditUsername;
+		return editUsername;
 	}
 
 	/** Время создания */
 	@Comment("Время создания")
 	@Persist @DoTimeString @TimeString
 	public String getCreateTime() {
-		return theCreateTime;
-	}
-
-	public void setCreateTime(String aCreateTime) {
-		theCreateTime = aCreateTime;
+		return createTime;
 	}
 
 	/** Время редактрования */
 	@Comment("Время редактрования")
 	@Persist @DoTimeString @TimeString
 	public String getEditTime() {
-		return theEditTime;
-	}
-
-	public void setEditTime(String aEditTime) {
-		theEditTime = aEditTime;
+		return editTime;
 	}
 
 	/** Время редактрования */
-	private String theEditTime;
+	private String editTime;
 
 	/** Время создания */
-	private String theCreateTime;
+	private String createTime;
 
 	/** Пользователь, последний редактировавший запись */
-	private String theEditUsername;
+	private String editUsername;
 
 	/** Пользователь, создавший запись */
-	private String theCreateUsername;
+	private String createUsername;
 
 	/** Дата редактирования */
-	private String theEditDate;
+	private String editDate;
 
 	/** Дата создания */
-	private String theCreateDate;
+	private String createDate;
 	
 	/** Представитель */
 	@Comment("Представитель")
 	@Persist
 	public String getKinsman() {
-		return theKinsman;
-	}
-
-	public void setKinsman(String aKinsman) {
-		theKinsman = aKinsman;
+		return kinsman;
 	}
 
 	/** Представитель */
-	private String theKinsman;
+	private String kinsman;
 	
 	/** Телефон */
 	@Comment("Телефон")
 	@Persist
 	public String getPhone() {
-		return thePhone;
-	}
-
-	public void setPhone(String aPhone) {
-		thePhone = aPhone;
+		return phone;
 	}
 
 	/** Телефон */
-	private String thePhone;
+	private String phone;
 	
 	/** Пациент */
 	@Comment("Пациент")
 	@Persist @Required
 	public Long getPatient() {
-		return thePatient;
-	}
-
-	public void setPatient(Long aPatient) {
-		thePatient = aPatient;
+		return patient;
 	}
 
 	/** Пациент */
-	private Long thePatient;
+	private Long patient;
 	
 	/** Вид суицида */
 	@Comment("Вид суицида")
 	@Persist @Required
 	public Long getType() {
-		return theType;
-	}
-
-	public void setType(Long aType) {
-		theType = aType;
+		return type;
 	}
 
 	/** Вид суицида */
-	private Long theType;
+	private Long type;
 	
 	/** Другой вид суицида */
 	@Comment("Другой вид суицида")
 	@Persist
 	public String getOtherType() {
-		return theOtherType;
-	}
-
-	public void setOtherType(String aOtherType) {
-		theOtherType = aOtherType;
+		return otherType;
 	}
 
 	/** Другой вид суицида */
-	private String theOtherType;
+	private String otherType;
 	
 	/** Место */
 	@Comment("Место")
 	@Persist @Required
 	public Long getPlace() {
-		return thePlace;
+		return place;
 	}
 
-	public void setPlace(Long aPlace) {
-		thePlace = aPlace;
-	}
-	
 	/** Другое место суицида */
 	@Comment("Другое место суицида")
 	@Persist
 	public String getOtherPlace() {
-		return theOtherPlace;
-	}
-
-	public void setOtherPlace(String aOtherPlace) {
-		theOtherPlace = aOtherPlace;
+		return otherPlace;
 	}
 
 	/** Другое место суицида */
-	private String theOtherPlace;
+	private String otherPlace;
 
 	/** Место */
-	private Long thePlace;
+	private Long place;
 	
 	/** Присутствовали др. люди при суициде */
 	@Comment("Присутствовали др. люди при суициде")
 	@Persist @Required
 	public Long getOtherPeople() {
-		return theOtherPeople;
-	}
-
-	public void setOtherPeople(Long aOtherPeople) {
-		theOtherPeople = aOtherPeople;
+		return otherPeople;
 	}
 
 	/** Присутствовали др. люди при суициде */
-	private Long theOtherPeople;
+	private Long otherPeople;
 	
 	/** Опьянение */
 	@Comment("Опьянение")
 	@Persist @Required
 	public Long getIntoxication() {
-		return theIntoxication;
-	}
-
-	public void setIntoxication(Long aIntoxication) {
-		theIntoxication = aIntoxication;
+		return intoxication;
 	}
 
 	/** Опьянение */
-	private Long theIntoxication;
+	private Long intoxication;
 	
 	/** Направлен */
 	@Comment("Направлен")
 	@Persist
 	public Long getOrderLpu() {
-		return theOrderLpu;
-	}
-
-	public void setOrderLpu(Long aOrderLpu) {
-		theOrderLpu = aOrderLpu;
+		return orderLpu;
 	}
 
 	/** Направлен */
-	private Long theOrderLpu;
+	private Long orderLpu;
 	
 	/** Доставлен */
 	@Comment("Доставлен")
 	@Persist
 	public Long getPostedLpu() {
-		return thePostedLpu;
-	}
-
-	public void setPostedLpu(Long aPostedLpu) {
-		thePostedLpu = aPostedLpu;
+		return postedLpu;
 	}
 
 	/** Доставлен */
-	private Long thePostedLpu;
+	private Long postedLpu;
 	/** Завершен */
 	@Comment("Завершен")
 	@Persist
 	public Boolean getIsFinished() {
-		return theIsFinished;
-	}
-
-	public void setIsFinished(Boolean aIsFinished) {
-		theIsFinished = aIsFinished;
+		return isFinished;
 	}
 
 	/** Завершен */
-	private Boolean theIsFinished;
+	private Boolean isFinished;
 
 	/** Социальный статус */
 	@Comment("Социальный статус")
 	@Persist
-	public Long getSocialStatus() {return theSocialStatus;}
-	public void setSocialStatus(Long aSocialStatus) {theSocialStatus = aSocialStatus;}
+	public Long getSocialStatus() {return socialStatus;}
 
 	/** Социальный статус */
-	private Long theSocialStatus;
+	private Long socialStatus;
 	
 	/** Мед.помощь оказано СМП */
 	@Comment("Мед.помощь оказано СМП")
 	@Persist
-	public Long getHelpSMP() {return theHelpSMP;}
-	public void setHelpSMP(Long aHelpSMP) {theHelpSMP = aHelpSMP;}
+	public Long getHelpSMP() {return helpSMP;}
 
 	/** Мед.помощь оказано СМП */
-	private Long theHelpSMP;
+	private Long helpSMP;
 
 }

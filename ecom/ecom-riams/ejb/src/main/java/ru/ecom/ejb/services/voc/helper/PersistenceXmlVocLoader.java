@@ -13,7 +13,7 @@ public class PersistenceXmlVocLoader {
 
     public void load(Map<String, IVocContextService> aHash) throws ClassNotFoundException {
     	LOG.info("Loading from persistence.xml...") ;
-    	for(Class clazz : theEntityHelper.listAllEntities()) {
+    	for(Class clazz : entityHelper.listAllEntities()) {
     		if(isVoc(clazz)) {
     			EntityVocService voc = new EntityVocService(
     					clazz.getName()
@@ -41,5 +41,5 @@ public class PersistenceXmlVocLoader {
     	return false ;
     }
     
-    private final EntityHelper theEntityHelper = EntityHelper.getInstance() ;
+    private final EntityHelper entityHelper = EntityHelper.getInstance() ;
 }

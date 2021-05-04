@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.expert.voc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.expert.voc.VocQualityEstimationMark;
@@ -20,66 +21,57 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Вид оценок качества", nameProperties = "name", view = "entityParentView-exp_vocMark.do")
 @EntityFormSecurityPrefix("/Policy/Voc/VocQualityEstimationMark")
 @Parent(property = "criterion", parentForm = VocQualityEstimationCritForm.class)
+@Setter
 public class VocQualityEstimationMarkForm extends IdEntityForm{
 		 /** Оценочный балл*/
 		 @Comment("Оценочный балл")
 		 @Persist 
-		 public Double getMark() {return theMark;}
-		 public void setMark(Double aMark) {theMark = aMark;}
-		 
+		 public Double getMark() {return mark;}
+
 		 /** Критерий оценки качества*/
 		 @Comment("Критерий оценки качества")
 		 @Persist @Required
-		 public Long getCriterion() {return theCriterion;}
-		 public void setCriterion(Long aCriterion) {theCriterion = aCriterion;}
-		 
+		 public Long getCriterion() {return criterion;}
+
 		/** Наименование */
 		@Comment("Наименование")
 		@Persist @Required
-		public String getName() {return theName;}
-		public void setName(String aName) {theName = aName;}
-		
+		public String getName() {return name;}
+
 		/** Код */
 		@Comment("Код")
 		@Persist @Required
-		public String getCode() {return theCode;}
-		public void setCode(String aCode) {theCode = aCode;}
+		public String getCode() {return code;}
 
 		 /** Полное название */
 		@Comment("Полное название")
 		@Persist
 		public String getFullname() {
-			return theFullname;
-		}
-
-		public void setFullname(String aFullname) {
-			theFullname = aFullname;
+			return fullname;
 		}
 
 		 /** Не учитывать */
 		@Comment("Не учитывать")
 		@Persist
-		public Boolean getIsIgnore() {return theIsIgnore;}
-		public void setIsIgnore(Boolean aIsIgnore) {theIsIgnore = aIsIgnore;}
+		public Boolean getIsIgnore() {return isIgnore;}
 
 		/** Не учитывать */
-		private Boolean theIsIgnore;
+		private Boolean isIgnore;
 		/** Полное название */
-		private String theFullname;
+		private String fullname;
 		/** Оценочный балл*/
-		 private Double theMark;
+		 private Double mark;
 		/** Код */
-		private String theCode;
+		private String code;
 		/** Наименование */
-		private String theName;
+		private String name;
 		 /** Критерий оценки качества */
-		 private Long theCriterion;
+		 private Long criterion;
 		 
 		 /** Обязательно указывать примечание */
 		 @Comment("Обязательно указывать примечание")
 		 @Persist
-		 public Boolean getIsNeedComment() {return theIsNeedComment;}
-		 public void setIsNeedComment(Boolean aIsNeedComment) {theIsNeedComment = aIsNeedComment;}
+		 public Boolean getIsNeedComment() {return isNeedComment;}
 		 /** Обязательно указывать примечание */
-		 private Boolean theIsNeedComment;
+		 private Boolean isNeedComment;
 }

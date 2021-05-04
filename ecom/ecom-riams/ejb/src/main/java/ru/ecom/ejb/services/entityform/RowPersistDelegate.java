@@ -69,14 +69,9 @@ public class RowPersistDelegate {
 				// поиск row с условием
 				Object row = findRow(rowPersistProperty, rowPersist, aParentEntity, aManager);
 				if(row==null) {
-					// создание новой строки
-					row = createRow(getter, rowPersistProperty, rowPersist, aForm, aManager, aParentEntity) ;
+					row = createRow(rowPersistProperty, rowPersist, aManager, aParentEntity) ;
 					aManager.persist(row);
-				} else {
-					// использование существующей
 				}
-				// установка значения
-				// само значение
 				try {
 					Object value = getter.invoke(aForm) ;
 					PropertyUtil.setPropertyValue(row, rowPersist.defaultProperty(), value);
@@ -87,10 +82,9 @@ public class RowPersistDelegate {
 		}
 	}
 	
-	private Object createRow(Method aMethod, RowPersistProperty aRowPersistProperty
+	private Object createRow(RowPersistProperty aRowPersistProperty
 			, RowPersist aRowPersist
-			, IEntityForm aForm
-			, EntityManager aManager
+			,EntityManager aManager
 			, Object aParentEntity) {
 		try {
 			Object row = aRowPersist.rowEntityClass().newInstance() ;
@@ -118,7 +112,7 @@ public class RowPersistDelegate {
 	
 	
 	private Object findVoc(Class aVocClass, String aProperty, String aValue, EntityManager aManager) {
-		List list = aManager.createQuery("from "+theEntityHelper.getEntityName(aVocClass)
+		List list = aManager.createQuery("from "+entityHelper.getEntityName(aVocClass)
 				+" where "+aProperty+" =:value")
 				.setParameter("value", aValue)
 				.getResultList();
@@ -131,7 +125,7 @@ public class RowPersistDelegate {
 		}
 	}
 
-	private Class getVocClass(Class aClass, String aProperty) throws NoSuchMethodException {
+	private Class getVocClass(Class aClass, String aProperty) {
 		return PropertyUtil.getGetterMethod(aClass, aProperty).getReturnType();
 	}
 
@@ -142,7 +136,7 @@ public class RowPersistDelegate {
 		// построение запроса  для поиска
 		StringBuilder sb = new StringBuilder(50) ;
 		sb.append("from ") ;
-		sb.append(theEntityHelper.getEntityName(aRowPersist.rowEntityClass())) ;
+		sb.append(entityHelper.getEntityName(aRowPersist.rowEntityClass())) ;
 		sb.append(" where ").append(aRowPersist.parentProperty()).append("_id =:parent ");
 		for(RowPersistMatch match : aRowPersistProperty.matches()) {
 			sb.append(" and ").append(match.property()).append(".").append(match.matchProperty()).append(" =:").append(match.property()).append(match.matchProperty());
@@ -174,5 +168,5 @@ public class RowPersistDelegate {
 		}
 	}
 	
-	private final EntityHelper theEntityHelper = EntityHelper.getInstance() ;
+	private final EntityHelper entityHelper = EntityHelper.getInstance() ;
 }

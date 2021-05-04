@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.medcase;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
 import ru.ecom.ejb.services.entityform.interceptors.AParentPrepareCreateInterceptors;
@@ -25,89 +26,78 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(ProtocolPregPreCreateInterceptor.class)
 )
+@Setter
 public class PregProtocolForm extends ProtocolForm {
     /** Шаблон, на основе которого создано заключение */
     @Comment("Шаблон, на основе которого создано заключение")
     @Persist
-    public Long getTemplateProtocol() {return theTemplateProtocol;}
-    public void setTemplateProtocol(Long aTemplateProtocol) {theTemplateProtocol = aTemplateProtocol;}
+    public Long getTemplateProtocol() {return templateProtocol;}
     /** Шаблон, на основе которого создано заключение */
-    private Long theTemplateProtocol;
+    private Long templateProtocol;
 
     /** Параметры шаблона */
     @Comment("Параметры шаблона")
-    public String getParams() {return theParams;}
-    public void setParams(String aParams) {theParams = aParams;}
+    public String getParams() {return params;}
     /** Параметры шаблона */
-    private String theParams;
+    private String params;
 
     /** Визит */
     @Comment("Визит")
     @Persist
-    public Long getMedCase() {return theMedCase;}
-    public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+    public Long getMedCase() {return medCase;}
     /** Визит */
-    private Long theMedCase;
+    private Long medCase;
 
     /** Тип протокола */
     @Comment("Тип протокола")
     @Persist @Required
-    public Long getType() {return theType;}
-    public void setType(Long aType) {theType = aType;}
+    public Long getType() {return type;}
     /** Тип протокола */
-    private Long theType;
+    private Long type;
 
     /** Время регистрации */
     @Comment("Время регистрации")
     @Persist @Required
     @TimeString
     @DoTimeString
-    public String getTimeRegistration() {return theTimeRegistration;}
-    public void setTimeRegistration(String aTimeRegistration) {theTimeRegistration = aTimeRegistration;}
+    public String getTimeRegistration() {return timeRegistration;}
     /** Время регистрации */
-    private String theTimeRegistration;
+    private String timeRegistration;
 
     /** Дата печати */
     @Comment("Дата печати")
     @Persist @DateString
     @DoDateString
-    public String getPrintDate() {return thePrintDate;}
-    public void setPrintDate(String aPrintDate) {thePrintDate = aPrintDate;}
+    public String getPrintDate() {return printDate;}
     /** Дата печати */
-    private String thePrintDate;
+    private String printDate;
 
     /** Время печати */
     @Comment("Время печати")
     @Persist @DoTimeString @TimeString
-    public String getPrintTime() {return thePrintTime;}
-    public void setPrintTime(String aPrintTime) {thePrintTime = aPrintTime;}
+    public String getPrintTime() {return printTime;}
     /** Время печати */
-    private String thePrintTime;
+    private String printTime;
 
     /** Дата редактирования */
     @Comment("Дата редактирования")
     @Persist @DoDateString @DateString
-    public String getEditDate() {return theEditDate;}
-    public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+    public String getEditDate() {return editDate;}
     /** Дата редактирования */
-    private String theEditDate;
+    private String editDate;
 
     /** Пользователь последний, изменявший запись */
     @Comment("Пользователь последний, изменявший запись")
     @Persist
     public String getEditUsername() {
-        return theEditUsername;
-    }
-    public void setEditUsername(String aEditUsername) {
-        theEditUsername = aEditUsername;
+        return editUsername;
     }
     /** Пользователь последний, изменявший запись */
-    private String theEditUsername;
+    private String editUsername;
 
     /** Поток обслуживания случая */
     @Comment("Поток обслуживания случая")
-    public Long getServiceStream() {return theServiceStream;}
-    public void setServiceStream(Long aServiceStream) {theServiceStream = aServiceStream;}
+    public Long getServiceStream() {return serviceStream;}
     /** Поток обслуживания случая */
-    private Long theServiceStream ;
+    private Long serviceStream ;
 }

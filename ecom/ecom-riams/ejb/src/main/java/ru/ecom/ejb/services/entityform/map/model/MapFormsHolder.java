@@ -1,5 +1,7 @@
 package ru.ecom.ejb.services.entityform.map.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -15,48 +17,29 @@ import java.util.Collection;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
+@Getter
+@Setter
 public class MapFormsHolder {
 	
 	public MapFormInfo getFormInfo(String aFormClassname) {
-		return theForms.get(aFormClassname);
+		return forms.get(aFormClassname);
 	}
 	
 	public void putFormInfo(MapFormInfo aInfo) {
-		if(theForms.containsKey(aInfo.getName())) {
+		if(forms.containsKey(aInfo.getName())) {
 			throw new IllegalStateException("Описание формы "+aInfo.getName()+" встречается больше одного раза в файле mapforms.xml") ;
 		}
-		theForms.put(aInfo.getName(), aInfo);
+		forms.put(aInfo.getName(), aInfo);
 	}
 	
 	public void save(OutputStream aOut) throws IOException {
 		throw new IllegalStateException("Еще не поддерживается") ;
-/*		Document doc = new Document() ;
-		
-		Element root = new Element("forms") ;
-		for(MapFormInfo form : theForms.values()) {
-			Element formElm = new Element("form") ;
-			formElm.setAttribute("name", form.getName());
-			formElm.setAttribute("securityPrefix", form.getSecurityPrefix());
-			
-			// persist
-			if(form.getEntityFormPersistance()!=null) {
-				Element persistElm = new Element("persist") ;
-				persistElm.setAttribute("clazz", form.getEntityFormPersistance().getClazz());
-				formElm.addContent(persistElm);
-			}
-			
-			root.addContent(formElm);
-		}
-		doc.setRootElement(root);
-		
-		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
-		OutputStreamWriter out = new OutputStreamWriter(aOut, "utf-8") ;
-		xmlOut.output(doc, out) ; */
+
 	}
 
 	public void load(InputStream aIn) throws UnsupportedEncodingException, JDOMException, IOException {
 		Document doc = new SAXBuilder().build(new InputStreamReader(aIn, "utf-8")) ;
-		theForms.clear();
+		forms.clear();
 		for(Element formElm : (Collection<Element>)doc.getRootElement().getChildren()) {
 			MapFormInfo form = new MapFormInfo() ;
 			form.setName(formElm.getAttributeValue("name"));
@@ -101,10 +84,10 @@ public class MapFormsHolder {
 			list.add(st.nextToken());
 		}
 		String[] ret = new String[list.size()];
-		for(int i=0;i<list.size();i++) {
-			ret[0] = list.get(i);
+		for (String s : list) {
+			ret[0] = s;
 		}
 		return ret ;
 	}
-	private TreeMap<String, MapFormInfo> theForms = new TreeMap<String, MapFormInfo>() ;
+	private TreeMap<String, MapFormInfo> forms = new TreeMap<String, MapFormInfo>() ;
 }

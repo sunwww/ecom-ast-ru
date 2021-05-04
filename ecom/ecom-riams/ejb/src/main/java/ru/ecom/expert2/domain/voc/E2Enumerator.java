@@ -9,5 +9,4 @@ public class E2Enumerator {
     public static final String POLYCLINICTYPE="POLYCLINIC";
     public static final String VMPTYPE="VMP";
     public static final String EXTDISPTYPE="EXTDISP";
-    public static final String POLYCLINICKDOTYPE="POLYCLINICKDO";
 }

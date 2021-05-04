@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -18,70 +20,51 @@ import java.util.List;
 @Entity
 @Table(schema="SQLUser")
 @AIndexes(value = { @AIndex(properties={"workFunction"}) })
+	@Getter
+	@Setter
 public class WorkCalendarDayPattern extends BaseEntity{
 	/**
 	 * Название
 	 */
-	@Comment("Название")
-	
-	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
-	}
-	/**
-	 * Название
-	 */
-	private String theName;
+	private String name;
 	/**
 	 * Рабочая функция
 	 */
 	@Comment("Рабочая функция")
 	@OneToOne
 	public WorkFunction getWorkFunction() {
-		return theWorkFunction;
-	}
-	public void setWorkFunction(WorkFunction aWorkFunction) {
-		theWorkFunction = aWorkFunction;
+		return workFunction;
 	}
 	/**
 	 * Рабочая функция
 	 */
-	private WorkFunction theWorkFunction;
+	private WorkFunction workFunction;
 	@OneToMany(mappedBy="dayPattern", cascade=CascadeType.ALL)
 	public List<WorkCalendarTimePattern> getTimePatterns() {
-		return theTimePatterns;
-	}
-	public void setTimePatterns(List<WorkCalendarTimePattern> aTimePatterns) {
-		theTimePatterns = aTimePatterns;
+		return timePatterns;
 	}
 	/**
 	 * Шаблоны времен
 	 */
-	private List<WorkCalendarTimePattern> theTimePatterns;
+	private List<WorkCalendarTimePattern> timePatterns;
 	/**
 	 * Тип занятости
 	 */
 	@Comment("Тип занятости")
 	@OneToOne
 	public VocWorkBusy getWorkBusy() {
-		return theWorkBusy;
+		return workBusy;
 	}
-	public void setWorkBusy(VocWorkBusy aWorkBusy) {
-		theWorkBusy = aWorkBusy;
-	}
-	
+
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@OneToOne
-	public MisLpu getLpu() {return theLpu;}
-	public void setLpu(MisLpu aLpu) {theLpu = aLpu;}
+	public MisLpu getLpu() {return lpu;}
 
 	/** ЛПУ */
-	private MisLpu theLpu;
+	private MisLpu lpu;
 	/**
 	 * Тип занятости
 	 */
-	private VocWorkBusy theWorkBusy;
+	private VocWorkBusy workBusy;
 }

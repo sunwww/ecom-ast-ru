@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form.voc;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
@@ -20,15 +21,16 @@ import ru.nuzmsh.forms.validator.validators.DateString;
 @Comment("Справочник профилей медицинской помощи")
 @WebTrail(comment = "Справочник профилей медицинской помощи", nameProperties = "id", view = "entityView-e2_vocMedHelpProfile.do")
 @EntityFormSecurityPrefix("/Policy/E2")
+@Setter
 public class VocE2MedHelpProfileForm extends IdEntityForm {
-    private String theStartDate;
-    private String theFinishDate;
-    private Boolean theNoActuality;
-    private String theProfileK;
-    private String theName;
-    private String theCode;
-    private Long theMedSpecV021;
-    private String theDefaultDepartmentCode;
+    private String startDate;
+    private String finishDate;
+    private Boolean noActuality;
+    private String profileK;
+    private String name;
+    private String code;
+    private Long medSpecV021;
+    private String defaultDepartmentCode;
 
     /**
      * Дата начала действия
@@ -38,11 +40,7 @@ public class VocE2MedHelpProfileForm extends IdEntityForm {
     @DateString
     @DoDateString
     public String getStartDate() {
-        return theStartDate;
-    }
-
-    public void setStartDate(String aStartDate) {
-        theStartDate = aStartDate;
+        return startDate;
     }
 
     /**
@@ -53,11 +51,7 @@ public class VocE2MedHelpProfileForm extends IdEntityForm {
     @DateString
     @DoDateString
     public String getFinishDate() {
-        return theFinishDate;
-    }
-
-    public void setFinishDate(String aFinishDate) {
-        theFinishDate = aFinishDate;
+        return finishDate;
     }
 
     /**
@@ -66,11 +60,7 @@ public class VocE2MedHelpProfileForm extends IdEntityForm {
     @Comment("Архивная запись")
     @Persist
     public Boolean getNoActuality() {
-        return theNoActuality;
-    }
-
-    public void setNoActuality(Boolean aNoActuality) {
-        theNoActuality = aNoActuality;
+        return noActuality;
     }
 
     /**
@@ -79,11 +69,7 @@ public class VocE2MedHelpProfileForm extends IdEntityForm {
     @Comment("Профиль ФОМС")
     @Persist
     public String getProfileK() {
-        return theProfileK;
-    }
-
-    public void setProfileK(String aProfileK) {
-        theProfileK = aProfileK;
+        return profileK;
     }
 
     /**
@@ -92,11 +78,7 @@ public class VocE2MedHelpProfileForm extends IdEntityForm {
     @Comment("Название")
     @Persist
     public String getName() {
-        return theName;
-    }
-
-    public void setName(String aName) {
-        theName = aName;
+        return name;
     }
 
     /**
@@ -105,11 +87,7 @@ public class VocE2MedHelpProfileForm extends IdEntityForm {
     @Comment("Код")
     @Persist
     public String getCode() {
-        return theCode;
-    }
-
-    public void setCode(String aCode) {
-        theCode = aCode;
+        return code;
     }
 
     /**
@@ -118,20 +96,12 @@ public class VocE2MedHelpProfileForm extends IdEntityForm {
     @Comment("Мед. специальность V021 по профилю")
     @Persist
     public Long getMedSpecV021() {
-        return theMedSpecV021;
-    }
-
-    public void setMedSpecV021(Long aMedSpecV021) {
-        theMedSpecV021 = aMedSpecV021;
+        return medSpecV021;
     }
 
     @Persist
     @Comment("Код адреса отделения по умолчанию")
     public String getDefaultDepartmentCode() {
-        return theDefaultDepartmentCode;
-    }
-
-    public void setDefaultDepartmentCode(String aDefaultDepartmentCode) {
-        theDefaultDepartmentCode = aDefaultDepartmentCode;
+        return defaultDepartmentCode;
     }
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.birth.NewBornInfRiskEstimation;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
@@ -24,63 +25,57 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @WebTrail(comment = "Оценка риска бактериальной инфекции у новорожденных", nameProperties= "id", view="entityParentView-preg_newBornInfRiskEstimation.do", list = "entityParentList-preg_inspection.do")
 @Parent(property="medCase", parentForm= MedCaseForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Inspection/NewBornInfRiskEstimation")
+@Setter
 public class NewBornInfRiskEstimationForm extends InspectionForm {
 	
 	/** Длительность безводного периода */
 	@Comment("Длительность безводного периода")
 	@Persist @Required
-	public Long getWaterlessDuration() {return theWaterlessDuration;}
-	public void setWaterlessDuration(Long aWaterlessDuration) {theWaterlessDuration = aWaterlessDuration;}
-	
+	public Long getWaterlessDuration() {return waterlessDuration;}
+
 	/** Температура матери в родах */
 	@Comment("Температура матери в родах")
 	@Persist @Required
-	public Long getMotherTemperature() {return theMotherTemperature;}
-	public void setMotherTemperature(Long aMotherTemperature) {theMotherTemperature = aMotherTemperature;}
+	public Long getMotherTemperature() {return motherTemperature;}
 
 	/** Характер амниотических вод */
 	@Comment("Характер амниотических вод")
 	@Persist @Required
-	public Long getWaterNature() {return theWaterNature;}
-	public void setWaterNature(Long aWaterNature) {theWaterNature = aWaterNature;}
-	
+	public Long getWaterNature() {return waterNature;}
+
 	/** Оценка по Апгар */
 	@Comment("Оценка по Апгар")
 	@Persist @Required
-	public Long getApgar() {return theApgar;}
-	public void setApgar(Long aApgar) {theApgar = aApgar;}
-	
+	public Long getApgar() {return apgar;}
+
 	/** Хронические очаги инфекции или острые инфекции, перенесенные за месяц до родов или выявленные у матери в течение 1-х суток после родов  */
 	@Comment("Хронические очаги инфекции или острые инфекции, перенесенные за месяц до родов или выявленные у матери в течение 1-х суток после родов")
 	@Persist @Required
-	public Long getMotherInfectiousDiseases() {return theMotherInfectiousDiseases;}
-	public void setMotherInfectiousDiseases(Long aMotherInfectiousDiseases) {theMotherInfectiousDiseases = aMotherInfectiousDiseases;}
+	public Long getMotherInfectiousDiseases() {return motherInfectiousDiseases;}
 
 	/** Общая оценка (балл) */
 	@Comment("Общая оценка (балл)")
 	@Persist @Required
-	public Long getCommonMark() {return theCommonMark;}
-	public void setCommonMark(Long aCommonMark) {theCommonMark = aCommonMark;}
-	
+	public Long getCommonMark() {return commonMark;}
+
 	/** Масса тела ребенка, гр. */
 	@Comment("Масса тела ребенка, гр.")
 	@Persist @Required
-	public Long getNewBornWeight() {return theNewBornWeight;}
-	public void setNewBornWeight(Long aNewBornWeight) {theNewBornWeight = aNewBornWeight;}
+	public Long getNewBornWeight() {return newBornWeight;}
 
 	/** Масса тела ребенка, гр. */
-	private Long theNewBornWeight;
+	private Long newBornWeight;
 	/** Длительность безводного периода */
-	private Long theWaterlessDuration;
+	private Long waterlessDuration;
 	/** Температура матери в родах */
-	private Long theMotherTemperature;
+	private Long motherTemperature;
 	/** Характер амниотических вод */
-	private Long theWaterNature;
+	private Long waterNature;
 	/** Оценка по Апгар */
-	private Long theApgar;
+	private Long apgar;
 	/** Хронические очаги инфекции или острые инфекции, перенесенные за месяц до родов или выявленные у матери в течение 1-х суток после родов*/
-	private Long theMotherInfectiousDiseases;
+	private Long motherInfectiousDiseases;
 	/** Общая оценка (балл) */
-	private Long theCommonMark;
+	private Long commonMark;
 
 }

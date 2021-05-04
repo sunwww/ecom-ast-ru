@@ -2,6 +2,7 @@ package ru.ecom.mis.ejb.form.directory;
 
 
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.directory.Entry;
@@ -18,46 +19,41 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @WebTrail(comment = "Запись"
 , nameProperties= "id", list="entityParentList-directory_entry.do", view="entityParentView-directory_entry.do")
 @EntityFormSecurityPrefix("/Policy/Mis/Directory/Department")
+@Setter
 public class EntryForm extends IdEntityForm{
 	
     /** Персона */
     @Comment("Персона")
     @Persist
-    public Long getPerson() {return thePerson;}
-    public void setPerson(Long aPerson) {thePerson = aPerson;}
-    private Long thePerson;
+    public Long getPerson() {return person;}
+    private Long person;
     
     /** Отделение */
     @Comment("Отделение")
     @Persist
-    public Long getDepartment() {return theDepartment;}
-    public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
-    private Long theDepartment;
+    public Long getDepartment() {return department;}
+    private Long department;
     
     /** Комментарий */
     @Comment("Комментарий")
     @Persist
-    public String getComment() {return theComment;}
-    public void setComment(String aComment) {theComment = aComment;}
-    private String theComment;
+    public String getComment() {return comment;}
+    private String comment;
     
     /** Внутренний номер */
     @Comment("Внутренний номер")
     @Persist
-    public String getInsideNumber() {return theInsideNumber;}
-    public void setInsideNumber(String aInsideNumber) {theInsideNumber = aInsideNumber;}
-    private String theInsideNumber;
+    public String getInsideNumber() {return insideNumber;}
+    private String insideNumber;
     
     /** Тип Номера */
     @Comment("Тип Номера")
-    public String getTypeNumber() {return theTypeNumber; }
-    public void setTypeNumber(String aTypeNumber) {theTypeNumber = aTypeNumber;}
-    private String theTypeNumber;
+    public String getTypeNumber() {return typeNumber; }
+    private String typeNumber;
     
     /** Номер */
     @Comment("Номер")
-    public String getNumber() {return theNumber;}
-    public void setNumber(String aNumber) {theNumber = aNumber;}
-    private String theNumber;
+    public String getNumber() {return number;}
+    private String number;
     
 }

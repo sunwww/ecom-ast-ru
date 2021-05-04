@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.medcase;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.medcase.voc.covidMarcVocs.*;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -15,94 +17,63 @@ import java.sql.Time;
  */
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class CovidMark  extends BaseEntity {
     /** СМО */
     @Comment("СМО")
     @OneToOne
-    public MedCase getMedCase() {return theMedCase;}
-    public void setMedCase(MedCase aMedCase) {theMedCase = aMedCase;}
-    private MedCase theMedCase ;
+    public MedCase getMedCase() {return medCase;}
+    private MedCase medCase ;
 
     /** Дата создания */
-    @Comment("Дата создания")
-    public Date getCreateDate() {return theCreateDate;}
-    public void setCreateDate(Date aCreateDate) {theCreateDate = aCreateDate;}
-    private Date theCreateDate ;
+    private Date createDate ;
 
     /** Время создания */
-    @Comment("Время создания")
-    public Time getCreateTime() {return theCreateTime;}
-    public void setCreateTime(Time aCreateTime) {theCreateTime = aCreateTime;}
-    private Time theCreateTime ;
+    private Time createTime ;
 
     /** Создатель */
-    @Comment("Создатель")
-    public String getCreateUsername() {return theCreateUsername;}
-    public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
-    private String theCreateUsername ;
+    private String createUsername ;
 
     /** Дата редактирования */
-    @Comment("Дата редактирования")
-    public Date getEditDate() {return theEditDate;}
-    public void setEditDate(Date aEditDate) {theEditDate = aEditDate;}
-    private Date theEditDate ;
+    private Date editDate ;
 
     /** Время редактирования */
-    @Comment("Время редактирования")
-    public Time getEditTime() {return theEditTime;}
-    public void setEditTime(Time aEditTime) {theEditTime = aEditTime;}
-    /** Время редактирования */
-    private Time theEditTime;
+    private Time editTime;
 
     /** Пользователь последний, изменявший запись */
-    @Comment("Пользователь последний, изменявший запись")
-    public String getEditUsername() {
-        return theEditUsername;
-    }
-    public void setEditUsername(String aEditUsername) {
-        theEditUsername = aEditUsername;
-    }
-    /** Пользователь последний, изменявший запись */
-    private String theEditUsername;
+    private String editUsername;
 
     /** Изменение в лёгких в оценке ковида */
     @Comment("Изменение в лёгких в оценке ковида")
     @OneToOne
-    public VocChangeLungs getChangeLungs() {return theChangeLungs;}
-    public void setChangeLungs(VocChangeLungs aChangeLungs) {theChangeLungs = aChangeLungs;}
-    private VocChangeLungs theChangeLungs ;
+    public VocChangeLungs getChangeLungs() {return changeLungs;}
+    private VocChangeLungs changeLungs ;
 
     /** Частота дыхательных движений в оценке ковида */
     @Comment("Частота дыхательных движений в оценке ковида")
     @OneToOne
-    public VocChdd getChdd() {return theChdd;}
-    public void setChdd(VocChdd aChdd) {theChdd = aChdd;}
-    private VocChdd theChdd ;
+    public VocChdd getChdd() {return chdd;}
+    private VocChdd chdd ;
 
     /** Пульсоксиметрия в оценке ковида */
     @Comment("Пульсоксиметрия в оценке ковида")
     @OneToOne
-    public VocPuls getPuls() {return thePuls;}
-    public void setPuls(VocPuls aPuls) {thePuls = aPuls;}
-    private VocPuls thePuls ;
+    public VocPuls getPuls() {return puls;}
+    private VocPuls puls ;
 
     /** Температура тела в оценке ковида */
     @Comment("Температура тела в оценке ковида")
     @OneToOne
-    public VocTemp getTemp() {return theTemp;}
-    public void setTemp(VocTemp aTemp) {theTemp = aTemp;}
-    private VocTemp theTemp ;
+    public VocTemp getTemp() {return temp;}
+    private VocTemp temp ;
 
     /** Нарушение сознания (3) */
-    @Comment("Нарушение сознания (3)")
-    public Boolean getIsBadSozn() {return theIsBadSozn;}
-    public void setIsBadSozn(Boolean aIsBadSozn) {theIsBadSozn = aIsBadSozn;}
-    private Boolean theIsBadSozn ;
+    private Boolean isBadSozn ;
 
     /** Тяжесть заболевания в оценке ковида */
     @Comment("Тяжесть заболевания в оценке ковида")
     @OneToOne
-    public VocSost getSost() {return theSost;}
-    public void setSost(VocSost aSost) {theSost = aSost;}
-    private VocSost theSost ;
+    public VocSost getSost() {return sost;}
+    private VocSost sost ;
 }

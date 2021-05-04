@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.birth;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.interceptors.AParentEntityFormInterceptor;
@@ -27,177 +28,156 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @AParentPrepareCreateInterceptors(
         @AParentEntityFormInterceptor(ScreeningCardiacFirstPreCreateInterceptor.class)
 )
+@Setter
 public class ScreeningCardiacFirstForm  extends IdEntityForm {
     /** СМО */
     @Comment("СМО")
     @Persist
     @Required
-    public Long getMedCase() {return theMedCase;}
-    public void setMedCase(Long aMedCase) {theMedCase = aMedCase;}
+    public Long getMedCase() {return medCase;}
 
     /** Дата создания */
     @Comment("Дата создания")
     @DateString
     @DoDateString
     @Persist
-    public String getCreateDate() {return theCreateDate;}
-    public void setCreateDate(String aCreateDate) {theCreateDate = aCreateDate;}
+    public String getCreateDate() {return createDate;}
     /** Дата редактирования */
     @Comment("Дата редактирования")
     @DateString
     @DoDateString
     @Persist
-    public String getEditDate() {return theEditDate;}
-    public void setEditDate(String aEditDate) {theEditDate = aEditDate;}
+    public String getEditDate() {return editDate;}
     /** Время создания */
     @Comment("Время создания")
     @TimeString
     @DoTimeString
     @Persist
-    public String getCreateTime() {return theCreateTime;}
-    public void setCreateTime(String aCreateTime) {theCreateTime = aCreateTime;}
+    public String getCreateTime() {return createTime;}
     /** Время редактрования */
     @Comment("Время редактирования")
     @TimeString @DoTimeString @Persist
-    public String getEditTime() {return theEditTime;}
-    public void setEditTime(String aEditTime) {theEditTime = aEditTime;}
+    public String getEditTime() {return editTime;}
     /** Пользователь, который создал запись */
     @Comment("Пользователь, который создал запись")
     @Persist
-    public String getCreateUsername() {return theCreateUsername;}
-    public void setCreateUsername(String aCreateUsername) {theCreateUsername = aCreateUsername;}
+    public String getCreateUsername() {return createUsername;}
     /** Пользователь, который последний редактировал запись */
     @Comment("Пользователь, который последний редактировал запись")
     @Persist
-    public String getEditUsername() {return theEditUsername;}
-    public void setEditUsername(String aEditUsername) {theEditUsername = aEditUsername;}
+    public String getEditUsername() {return editUsername;}
     /** Кожные покровы */
     @Comment("Кожные покровы")
     @Persist
     @Required
-    public Long getSkin() {return theSkin;}
-    public void setSkin(Long aSkin) {theSkin = aSkin;}
+    public Long getSkin() {return skin;}
     /** Пульсация артерий правой руки */
     @Comment("Пульсация артерий правой руки")
     @Persist
     @Required
-    public Long getRightHandAP() {return theRightHandAP;}
-    public void setRightHandAP(Long aRightHandAP) {theRightHandAP = aRightHandAP;}
+    public Long getRightHandAP() {return rightHandAP;}
     /** Пульсация артерий ноги */
     @Comment("Пульсация артерий ноги")
     @Persist
     @Required
-    public Long getLegAP() {return theLegAP;}
-    public void setLegAP(Long aLegAP) {theLegAP = aLegAP;}
+    public Long getLegAP() {return legAP;}
     /** Пульсоксиметрия на конечностях одновременная - правая рука */
     @Comment("Пульсоксиметрия на конечностях одновременная - правая рука")
     @Persist
     @Required
-    public Long getRightHandPulse() {return theRightHandPulse;}
-    public void setRightHandPulse(Long aRightHandPulse) {theRightHandPulse = aRightHandPulse;}
+    public Long getRightHandPulse() {return rightHandPulse;}
     /** Пульсоксиметрия на конечностях одновременная - нога */
     @Comment("Пульсоксиметрия на конечностях одновременная - нога")
     @Persist
     @Required
-    public Long getLegPulse() {return theLegPulse;}
-    public void setLegPulse(Long aLegPulse) {theLegPulse = aLegPulse;}
+    public Long getLegPulse() {return legPulse;}
     /** Частота дыхания в мин. */
     @Comment("Частота дыхания в мин.")
     @Persist
     @Required
-    public Long getBreathingRate() {return theBreathingRate;}
-    public void setBreathingRate(Long aBreathingRate) {theBreathingRate = aBreathingRate;}
+    public Long getBreathingRate() {return breathingRate;}
     /** Втяжение межрёберных промежутков */
     @Comment("Втяжение межрёберных промежутков")
     @Persist
-    public Boolean getRetractionIntercostalGaps() {return theRetractionIntercostalGaps;}
-    public void setRetractionIntercostalGaps(Boolean aRetractionIntercostalGaps) {theRetractionIntercostalGaps = aRetractionIntercostalGaps;}
+    public Boolean getRetractionIntercostalGaps() {return retractionIntercostalGaps;}
     /** Движение крыльев носа */
     @Comment("Движение крыльев носа")
     @Persist
-    public Boolean getNoseWingsMovement() {return theNoseWingsMovement;}
-    public void setNoseWingsMovement(Boolean aNoseWingsMovement) {theNoseWingsMovement = aNoseWingsMovement;}
+    public Boolean getNoseWingsMovement() {return noseWingsMovement;}
     /** Шумное дыхание */
     @Comment("Шумное дыхание")
     @Persist
-    public Boolean getNoisyBreathing() {return theNoisyBreathing;}
-    public void setNoisyBreathing(Boolean aNoisyBreathing) {theNoisyBreathing = aNoisyBreathing;}
+    public Boolean getNoisyBreathing() {return noisyBreathing;}
     /** Хрипы */
     @Comment("Хрипы")
     @Persist
-    public Boolean getWheezing() {return theWheezing;}
-    public void setWheezing(Boolean aWheezing) {theWheezing = aWheezing;}
+    public Boolean getWheezing() {return wheezing;}
     /** Частота СД в мин. */
     @Comment("Частота СД в мин.")
     @Persist
     @Required
-    public Long getHeartRate() {return theHeartRate;}
-    public void setHeartRate(Long aHeartRate) {theHeartRate = aHeartRate;}
+    public Long getHeartRate() {return heartRate;}
     /** Характеристика СД */
     @Comment("Характеристика СД")
     @Persist
     @Required
-    public Long getCardiacActivity() {return theCardiacActivity;}
-    public void setCardiacActivity(Long aCardiacActivity) {theCardiacActivity = aCardiacActivity;}
+    public Long getCardiacActivity() {return cardiacActivity;}
     /** Характеристика ЦНС */
     @Comment("Характеристика ЦНС")
     @Persist
     @Required
-    public Long getCNS() {return theCNS;}
-    public void setCNS(Long aCNS) {theCNS = aCNS;}
+    public Long getCNS() {return cNS;}
     /** Наличие шума  */
     @Comment("Наличие шума")
     @Persist
-    public Boolean getNoisePresence() {return theNoisePresence;}
-    public void setNoisePresence(Boolean aNoisePresence) {theNoisePresence = aNoisePresence;}
+    public Boolean getNoisePresence() {return noisePresence;}
     /** Доп. информация  */
     @Comment("Доп. информация")
     @Persist
-    public String getExtraInfo() {return theExtraInfo;}
-    public void setExtraInfo(String aExtraInfo) {theExtraInfo = aExtraInfo;}
+    public String getExtraInfo() {return extraInfo;}
 
     /** СМО */
-    private Long theMedCase;
+    private Long medCase;
     /** Пользователь, который последний редактировал запись */
-    private String theEditUsername;
+    private String editUsername;
     /** Пользователь, который создал запись */
-    private String theCreateUsername;
+    private String createUsername;
     /** Время редактрования */
-    private String theEditTime;
+    private String editTime;
     /** Время создания */
-    private String theCreateTime;
+    private String createTime;
     /** Дата редактирования */
-    private String theEditDate;
+    private String editDate;
     /** Дата создания */
-    private String theCreateDate;
+    private String createDate;
     /** Кожные покровы */
-    private Long theSkin;
+    private Long skin;
     /** Пульсация артерий правой руки */
-    private Long theRightHandAP;
+    private Long rightHandAP;
     /** Пульсация артерий ноги */
-    private Long theLegAP;
+    private Long legAP;
     /** Пульсоксиметрия на конечностях одновременная - правая рука*/
-    private Long theRightHandPulse;
+    private Long rightHandPulse;
     /** Пульсоксиметрия на конечностях одновременная - нога*/
-    private Long theLegPulse;
+    private Long legPulse;
     /** Частота дыхания в мин. */
-    private Long theBreathingRate;
+    private Long breathingRate;
     /** Втяжение межрёберных промежутков */
-    private Boolean theRetractionIntercostalGaps;
+    private Boolean retractionIntercostalGaps;
     /** Движение крыльев носа */
-    private Boolean theNoseWingsMovement;
+    private Boolean noseWingsMovement;
     /** Шумное дыхание */
-    private Boolean theNoisyBreathing;
+    private Boolean noisyBreathing;
     /** Хрипы */
-    private Boolean theWheezing;
+    private Boolean wheezing;
     /** Частота СД в минуту */
-    private Long theHeartRate;
+    private Long heartRate;
     /** Характеристика СД */
-    private Long theCardiacActivity;
+    private Long cardiacActivity;
     /** Наличие шума */
-    private Boolean theNoisePresence;
+    private Boolean noisePresence;
     /** Характеристика ЦНС */
-    private Long theCNS;
+    private Long cNS;
     /** Доп. информация */
-    private String theExtraInfo;
+    private String extraInfo;
 }

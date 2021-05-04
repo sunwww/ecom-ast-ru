@@ -1,5 +1,7 @@
 package ru.ecom.jaas.ejb.domain;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -17,18 +19,19 @@ import javax.persistence.Transient;
     //,@AIndex(properties= {"dateFrom","dateTo","username","object","permission","idObject"},table="Permission")
 })
 @UnDeletable
+@Setter
+@Getter
 public class UserPermission extends Permission {
 	/** Пользователь */
 	@Comment("Пользователь")
 	@OneToOne
-	public SecUser getUsername() {return theUsername;}
-	public void setUsername(SecUser aUsername) {theUsername = aUsername;}
-	private SecUser theUsername;
+	public SecUser getUsername() {return username;}
+	private SecUser username;
 
 	/** Пользователь инфо */
 	@Comment("Пользователь инфо")
 	@Transient
 	public String getUserInfo() {
-		return theUsername!=null?theUsername.getLogin():"";
+		return username!=null?username.getLogin():"";
 	}
 }

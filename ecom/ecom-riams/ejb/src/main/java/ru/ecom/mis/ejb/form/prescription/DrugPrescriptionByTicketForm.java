@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.prescription;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.prescription.DrugPrescriptionByTicket;
 import ru.ecom.poly.ejb.form.protocol.ProtocolForm;
@@ -22,73 +23,61 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @WebTrail(comment = "Назначение лекарства", nameProperties= "id",list="entityParentList-pres_drugPrescription.do", view="entityParentView-pres_drugPrescription.do")
 @Parent(property="diary", parentForm=ProtocolForm.class)
 @EntityFormSecurityPrefix("/Policy/Poly/DrugPrescription")
+@Setter
 public class DrugPrescriptionByTicketForm extends DrugPrescriptionForm {
 
 	/** Плановая дата начала */
 	@Comment("Плановая дата начала")
 	@Persist 
 	@DateString @DoDateString
-	public String getPlanStartDate() {return thePlanStartDate;}
-	public void setPlanStartDate(String aPlanStartDate) {thePlanStartDate = aPlanStartDate;}
+	public String getPlanStartDate() {return planStartDate;}
 
 	/** Плановое время начала */
 	@Comment("Плановое время начала")
 	@Persist @TimeString @DoTimeString 
-	public String getPlanStartTime() {return thePlanStartTime;}
-	public void setPlanStartTime(String aPlanStartTime) {thePlanStartTime = aPlanStartTime;}
+	public String getPlanStartTime() {return planStartTime;}
 
 	/** Метод введения */
 	@Comment("Метод введения")
 	@Persist
-	public Long getMethod() {return theMethod;}
-	public void setMethod(Long aMethod) {theMethod = aMethod;}
-	
+	public Long getMethod() {return method;}
+
 	/** Назначивший */
 	@Comment("Назначивший")
 	@Persist
-	public Long getPrescriptSpecial() {return thePrescriptSpecial;}
-	public void setPrescriptSpecial(Long aPrescriptor) {thePrescriptSpecial = aPrescriptor;	}
+	public Long getPrescriptSpecial() {return prescriptSpecial;}
 
 	/** Протокол */
 	@Comment("Протокол")
 	@Persist 
-	public Long getDiary() {return theDiary;}
-	public void setDiary(Long aDiary) {theDiary = aDiary;}
+	public Long getDiary() {return diary;}
 
 	/** Протокол */
-	private Long theDiary;
+	private Long diary;
 	/** Назначивший */
-	private Long thePrescriptSpecial;
+	private Long prescriptSpecial;
 	/** Метод введения */
-	private Long theMethod;	/** Плановое время начала */
-	private String thePlanStartTime;
+	private Long method;	/** Плановое время начала */
+	private String planStartTime;
 	/** Плановая дата начала */
-	private String thePlanStartDate;
+	private String planStartDate;
 	
 	/** Номер */
 	@Comment("Номер")
 	@Persist
 	public String getNumberPrescript() {
-		return theNumberPrescript;
-	}
-
-	public void setNumberPrescript(String aNumberPrescript) {
-		theNumberPrescript = aNumberPrescript;
+		return numberPrescript;
 	}
 
 	/** Номер */
-	private String theNumberPrescript;
+	private String numberPrescript;
 
 	/** Кол-во строковое */
 	@Comment("Кол-во строковое")
 	@Persist
 	public String getAmountString() {
-		return theAmountString;
-	}
-
-	public void setAmountString(String aAmountString) {
-		theAmountString = aAmountString;
+		return amountString;
 	}
 
 	/** Кол-во строковое */
-	private String theAmountString;}
+	private String amountString;}

@@ -1,5 +1,7 @@
 package ru.ecom.ejb.services.live.domain.journal;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -16,93 +18,26 @@ import java.sql.Time;
     , @AIndex(unique = false, properties= {"idObject"})
 })
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class ViewJournal extends BaseEntity {
-	/** Пользователь */
-	@Comment("Пользователь")
-	public String getUsername() {
-		return theUsername;
-	}
-
-	public void setUsername(String aUsername) {
-		theUsername = aUsername;
-	}
-	
-	/** Id объекта */
-	@Comment("Id объекта")
-	public Long getIdObject() {
-		return theIdObject;
-	}
-
-	public void setIdObject(Long aNAME) {
-		theIdObject = aNAME;
-	}
-	
-	/** Класс объекта */
-	@Comment("Класс объекта")
-	public String getClassObject() {
-		return theClassObject;
-	}
-
-	public void setClassObject(String aClassObject) {
-		theClassObject = aClassObject;
-	}
-	
-	/** Дата просмотра */
-	@Comment("Дата просмотра")
-	public Date getViewDate() {
-		return theViewDate;
-	}
-
-	public void setViewDate(Date aViewDate) {
-		theViewDate = aViewDate;
-	}
-	
-	/** Время просмотра */
-	@Comment("Время просмотра")
-	public Time getViewTime() {
-		return theViewTime;
-	}
-
-	public void setViewTime(Time aViewTime) {
-		theViewTime = aViewTime;
-	}
-	
-	/** Уровень */
-	@Comment("Уровень")
-	public Integer getLevelWebTrail() {
-		return theLevelWebTrail;
-	}
-
-	public void setLevelWebTrail(Integer aLevelWebTrail) {
-		theLevelWebTrail = aLevelWebTrail;
-	}
-	
-	/** Комментарий */
-	@Comment("Комментарий")
-	public String getComment() {
-		return theComment;
-	}
-
-	public void setComment(String aComment) {
-		theComment = aComment;
-	}
 
 	/** Комментарий */
-	private String theComment;
+	private String comment;
 
 	/** Уровень */
-	private Integer theLevelWebTrail;
+	private Integer levelWebTrail;
 	/** Время просмотра */
-	private Time theViewTime;
+	private Time viewTime;
 	/** Дата просмотра */
-	private Date theViewDate;
+	private Date viewDate;
 
 	/** Класс объекта */
-	private String theClassObject;
+	private String classObject;
 
 	/** Id объекта */
-	private Long theIdObject;
+	private Long idObject;
 
 	/** Пользователь */
-	private String theUsername;
+	private String username;
 }

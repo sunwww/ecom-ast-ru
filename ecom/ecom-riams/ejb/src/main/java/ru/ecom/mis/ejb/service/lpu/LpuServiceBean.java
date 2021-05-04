@@ -27,24 +27,24 @@ public class LpuServiceBean implements ILpuService {
 	private static final Logger LOG = Logger.getLogger(LpuServiceBean.class);
 
     public boolean canShowAreas(long aLpuId) {
-        MisLpu lpu = theManager.find(MisLpu.class, aLpuId) ;
+        MisLpu lpu = manager.find(MisLpu.class, aLpuId) ;
         return lpu.getSubdivisions().isEmpty() ;
     }
 
     public boolean canShowSubdivisions(long aLpuId) {
-        MisLpu lpu = theManager.find(MisLpu.class, aLpuId) ;
+        MisLpu lpu = manager.find(MisLpu.class, aLpuId) ;
         return lpu.getAreas().isEmpty() ;
     }
 
     
     @SuppressWarnings("unchecked")
 	public void createMisLpuFromOmcLpu(String aParam) {
-    	List<OmcLpu> omcLpus = theManager.createQuery("from OmcLpu").getResultList() ;
+    	List<OmcLpu> omcLpus = manager.createQuery("from OmcLpu").getResultList() ;
     	int i =0;
     	for(OmcLpu omcLpu : omcLpus) {
     		i++ ;
     		//if(i>4) break ;
-    		MisLpu lpu = QueryResultUtil.getFirst(MisLpu.class, theManager.createQuery("from MisLpu where omcCode= :code and parent_id is null")
+    		MisLpu lpu = QueryResultUtil.getFirst(MisLpu.class, manager.createQuery("from MisLpu where omcCode= :code and parent_id is null")
     				.setParameter("code", omcLpu.getCode()));
     		LOG.info("processing "+omcLpu.getCode()+" ("+i+"/"+omcLpus.size()+")") ;
     		if(lpu==null) {
@@ -58,7 +58,7 @@ public class LpuServiceBean implements ILpuService {
         			lpu.setInn(Long.parseLong(omcLpu.getInn())) ;
     			} catch (Exception e) {
     			}
-    			theManager.persist(lpu) ;
+    			manager.persist(lpu) ;
     			LOG.info(" New LPU created "+lpu) ;
     		}
     		if("user".equals(aParam)) {
@@ -70,7 +70,7 @@ public class LpuServiceBean implements ILpuService {
     private SecUser createOrFindUser(MisLpu lpu) {
     	String login = "lpu"+lpu.getOmcCode() ;
     	SecUser user = QueryResultUtil.getFirst(SecUser.class
-    			 , theManager.createQuery("from SecUser where login=:user")
+    			 , manager.createQuery("from SecUser where login=:user")
     			 .setParameter("user", login )
     			 ) ;
     	if(user==null) {
@@ -78,11 +78,11 @@ public class LpuServiceBean implements ILpuService {
     		user.setLogin(login);
     		user.setFullname(lpu.getName()) ;
     		user.setComment(lpu.getName()) ;
-    		theManager.persist(user) ;
-    		theManager.flush() ;
-    		theManager.clear() ;
-    		theManager.refresh(user);
-    		//theManager.refresh(user);
+    		manager.persist(user) ;
+    		manager.flush() ;
+    		manager.clear() ;
+    		manager.refresh(user);
+    		//manager.refresh(user);
     	}
     	user.setPassword(generatePassword()) ;
 		user.setComment(lpu.getName()+" : Администратор") ;
@@ -104,9 +104,9 @@ public class LpuServiceBean implements ILpuService {
     private SecRole findContceteLpuRole(MisLpu lpu) {
     	String key = "lpu"+lpu.getOmcCode() ;
     	SecRole role = QueryResultUtil.getFirst(SecRole.class
-    			, theManager.createQuery("from SecRole where key=:key")
+    			, manager.createQuery("from SecRole where key=:key")
     			.setParameter("key", key)) ;
-		SecPolicy policy = QueryResultUtil.getFirst(SecPolicy.class, theManager.createQuery("from SecPolicy where key=:key")
+		SecPolicy policy = QueryResultUtil.getFirst(SecPolicy.class, manager.createQuery("from SecPolicy where key=:key")
     			.setParameter("key", lpu.getId()+""));
     	if(role==null) {
     		if(policy==null) {
@@ -128,7 +128,7 @@ public class LpuServiceBean implements ILpuService {
     @SuppressWarnings("unchecked")
 	private SecRole findRoleWithPolicy(SecPolicy aPolicy, MisLpu aLpu ) {
     	LOG.info("findRolwWithPolicy "+aPolicy) ;
-    	List<SecRole> roles = theManager.createQuery("from SecRole").getResultList() ;
+    	List<SecRole> roles = manager.createQuery("from SecRole").getResultList() ;
     	for(SecRole role : roles) {
     		LOG.info("  polis = "+role.getSecPolicies()) ;
     		if(role.getSecPolicies().contains(aPolicy)) {
@@ -138,9 +138,9 @@ public class LpuServiceBean implements ILpuService {
     	SecRole role = new SecRole() ;
     	role.setKey("lpu"+aLpu.getOmcCode()) ;
     	role.setName(aLpu.getName()) ;
-    	theManager.persist(role) ;
-    	theManager.flush() ;
-    	theManager.clear() ;
+    	manager.persist(role) ;
+    	manager.flush() ;
+    	manager.clear() ;
     	LOG.info("role created "+role) ;
     	return role ;
     }
@@ -158,20 +158,20 @@ public class LpuServiceBean implements ILpuService {
 
 
 	private SecRole findAdminLpuRole() {
-		return (SecRole) theManager.createQuery("from SecRole where key='adminLpu'").getSingleResult()		;
+		return (SecRole) manager.createQuery("from SecRole where key='adminLpu'").getSingleResult()		;
 	}
 
 
 
 	@PersistenceContext
-    private EntityManager theManager ;
+    private EntityManager manager ;
 
 	public void createOtherEquipment(long aLpu, long aEquipment) {
-		theManager.createNativeQuery("insert into equipment_mislpu (equipment_id, otherLpu_id) values ( :equipment, :lpu )")
+		manager.createNativeQuery("insert into equipment_mislpu (equipment_id, otherLpu_id) values ( :equipment, :lpu )")
 			.setParameter("lpu", aLpu).setParameter("equipment", aEquipment).executeUpdate();
 	}
 	public void removeOtherEquipment(long aLpu, long aEquipment) {
-		theManager.createNativeQuery("delete from equipment_mislpu where equipment_id=:equipment and otherLpu_id=:lpu")
+		manager.createNativeQuery("delete from equipment_mislpu where equipment_id=:equipment and otherLpu_id=:lpu")
 			.setParameter("lpu", aLpu).setParameter("equipment", aEquipment).executeUpdate();
 	}
 }

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.workcalendar;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.mis.ejb.domain.workcalendar.WorkCalendarServicePattern;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,6 +17,7 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 	, list="entityParentList-cal_servicePattern.do", view="entityParentView-cal_servicePattern.do")
 @Parent(property="timePattern", parentForm=WorkCalendarTimePatternForm.class)
 @EntityFormSecurityPrefix("/Policy/Mis/Worker/WorkCalendar/Pattern/Day/Time/Reserve")
+@Setter
 public class WorkCalendarServicePatternForm extends WorkCalendarReservePatternForm{
 	/**
 	 * Медицинская услуга
@@ -23,28 +25,22 @@ public class WorkCalendarServicePatternForm extends WorkCalendarReservePatternFo
 	@Comment("Медицинская услуга")
 	@Persist
 	public Long getMedService() {
-		return theMedService;
-	}
-	public void setMedService(Long aMedService) {
-		theMedService = aMedService;
+		return medService;
 	}
 	/**
 	 * Медицинская услуга
 	 */
-	private Long theMedService;
+	private Long medService;
 	/**
 	 * Тип резерва
 	 */
 	@Comment("Тип резерва")
 	@Persist
 	public Long getReserveType() {
-		return theReserveType;
-	}
-	public void setReserveType(Long aReserveType) {
-		theReserveType = aReserveType;
+		return reserveType;
 	}
 	/**
 	 * Тип резерва
 	 */
-	private Long theReserveType;
+	private Long reserveType;
 }

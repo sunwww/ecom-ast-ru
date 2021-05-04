@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.birth;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.document.ejb.domain.certificate.Certificate;
 import ru.ecom.document.ejb.domain.certificate.ConfinementCertificate;
 import ru.ecom.ejb.domain.simple.BaseEntity;
@@ -24,88 +26,64 @@ import java.util.List;
 		@AIndex(properties = { "patient" }) 
 	}
 )
+@Getter
+@Setter
 public class Pregnancy extends BaseEntity{
 	
 	/** Пациент */
 	@Comment("Пациент")
 	@OneToOne
-	public Patient getPatient() {return thePatient;}
-	public void setPatient(Patient aPatient) {thePatient = aPatient;}
+	public Patient getPatient() {return patient;}
 
-	
 	/** Обменная карта беременной */
 	@Comment("Обменная карта беременной")
 	@OneToOne
-	public PregnanExchangeCard getPregnanExchangeCard() {return thePregnanExchangeCard;}
-	public void setPregnanExchangeCard(PregnanExchangeCard aPregnanExchangeCard) {thePregnanExchangeCard = aPregnanExchangeCard;}
+	public PregnanExchangeCard getPregnanExchangeCard() {return pregnanExchangeCard;}
 
-	
 	/** Обменная карта родильницы */
 	@Comment("Обменная карта родильницы")
 	@OneToOne
-	public ConfinedExchangeCard getConfinedExchangeCard() {return theConfinedExchangeCard;}
-	public void setConfinedExchangeCard(ConfinedExchangeCard aConfinedExchangeCard) {theConfinedExchangeCard = aConfinedExchangeCard;}
-	
+	public ConfinedExchangeCard getConfinedExchangeCard() {return confinedExchangeCard;}
+
 	@Transient @Comment("Общая информация о беременности")
 	public String getInformation() {
 		StringBuilder ret = new StringBuilder() ;
-		ret.append("Беременность: ").append(theOrderNumber) ;
-		ret.append(" роды: ").append(theChildbirthAmount) ;
-		//if (thePatient!=null) ret.append(" ").append(thePatient.getLastname()).append(" ")
-		//	.append(thePatient.getFirstname()).append(" ").append(thePatient.getMiddlename()) ;
-		if (thePregnanExchangeCard!=null) ret.append(" обменная карта есть") ;
+		ret.append("Беременность: ").append(orderNumber) ;
+		ret.append(" роды: ").append(childbirthAmount) ;
+		if (pregnanExchangeCard!=null) ret.append(" обменная карта есть") ;
 		return ret.toString() ;
 	}
 
-	/** Дата создания */
-	@Comment("Дата создания")
-	public Date getDateCreate() {return theDateCreate;}
-	public void setDateCreate(Date aDateCreate) {theDateCreate = aDateCreate;}
-
-	/** Заведена пользователем */
-	@Comment("Заведена пользователем")
-	public String getUsername() {return theUsername;	}
-	public void setUsername(String aUsername) {theUsername = aUsername;}
-
-	/** Какая по счету беременность */
-	@Comment("Какая по счету беременность")
-	public Integer getOrderNumber() {return theOrderNumber;}
-	public void setOrderNumber(Integer aNAME) {theOrderNumber = aNAME;	}
-	
-	@Comment("Количество родов")
-	public Integer getChildbirthAmount() {return theChildbirthAmount;}
-	public void setChildbirthAmount(Integer aChildbirthAmount) {theChildbirthAmount = aChildbirthAmount;}
 
 	/** Сертификаты */
 	@Comment("Сертификаты")
 	@OneToMany(mappedBy="pregnancy",cascade=CascadeType.ALL)
-	public List<Certificate> getCertificates() {return theCertificates;}
-	public void setCertificates(List<Certificate> aCertificate) {theCertificates = aCertificate;}
+	public List<Certificate> getCertificates() {return certificates;}
 
 	@Transient
 	public ConfinementCertificate getConfinementCertificate() {
-		for (Certificate cert:theCertificates) {
+		for (Certificate cert:certificates) {
 			if (cert instanceof ConfinementCertificate) return (ConfinementCertificate)cert ;
 		}
 		return null ;
 	}
 	@Transient
-	public String getIsExchangeCard() {return thePregnanExchangeCard!=null? "ЕСТЬ": "НЕТ" ;}
+	public String getIsExchangeCard() {return pregnanExchangeCard!=null? "ЕСТЬ": "НЕТ" ;}
 	
 	/** Сертификаты */
-	private List<Certificate> theCertificates;
+	private List<Certificate> certificates;
 	/** Количество родов */
-	private Integer theChildbirthAmount;
+	private Integer childbirthAmount;
 	/** Какая по счету беременность */
-	private Integer theOrderNumber;
+	private Integer orderNumber;
 	/** Заведена пользователем */
-	private String theUsername;
+	private String username;
 	/** Дата создания */
-	private Date theDateCreate;
+	private Date dateCreate;
 	/** Обменная карта родильницы */
-	private ConfinedExchangeCard theConfinedExchangeCard;
+	private ConfinedExchangeCard confinedExchangeCard;
 	/** Обменная карта беременной */
-	private PregnanExchangeCard thePregnanExchangeCard;
+	private PregnanExchangeCard pregnanExchangeCard;
 	/** Пациент */
-	private Patient thePatient;
+	private Patient patient;
 }

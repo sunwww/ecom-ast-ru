@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 
 
 
+
 @Entity
 @SuppressWarnings("serial")
 @DiscriminatorValue("1")
@@ -18,7 +19,8 @@ public class ImportFormat  extends Format {
 
     /** XML - конфигурации импорта */
     @Column(length = 150000)
-    public String getConfig() { return theConfig ; }
-    public void setConfig(String aConfig) { theConfig = aConfig ; }
-    private String theConfig ;
+
+    public String getConfig() { return config ; }
+    public void setConfig(String aConfig) { config = aConfig ; }
+    private String config ;
 }

@@ -1,5 +1,6 @@
 package ru.ecom.expert2.form.financeplan;
 
+import lombok.Setter;
 import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.expert2.domain.financeplan.VmpFinancePlan;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -13,29 +14,27 @@ import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
 @Comment("Финансовый план по ВМП")
 @WebTrail(comment = "Финансовый план по ВМП", nameProperties = "id", view = "entityView-e2_vmpFinancePlan.do")
 @EntityFormSecurityPrefix("/Policy/E2")
+@Setter
 public class VmpFinancePlanForm extends FinancePlanForm {
 
     /** Подтип коек */
     @Comment("Подтип коек")
-    public Long getBedSubType() {return theBedSubType;}
-    public void setBedSubType(Long aBedSubType) {theBedSubType = aBedSubType;}
+    public Long getBedSubType() {return bedSubType;}
     /** Подтип коек */
-    private Long theBedSubType ;
+    private Long bedSubType ;
 
     /** Метод ВМП */
     @Comment("Метод ВМП")
     @Persist
-    public Long getMethod() {return theMethod;}
-    public void setMethod(Long aMethod) {theMethod = aMethod;}
+    public Long getMethod() {return method;}
     /** Метод ВМП */
-    private Long theMethod ;
+    private Long method ;
 
     /** Профиль коек V020 */
     @Comment("Профиль коек V020")
     @Persist
-    public Long getBedProfile() {return theBedProfile;}
-    public void setBedProfile(Long aBedProfile) {theBedProfile = aBedProfile;}
+    public Long getBedProfile() {return bedProfile;}
     /** Профиль коек V020 */
-    private Long theBedProfile ;
+    private Long bedProfile ;
 
 }

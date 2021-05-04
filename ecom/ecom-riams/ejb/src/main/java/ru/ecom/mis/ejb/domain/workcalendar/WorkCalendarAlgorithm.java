@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.workcalendar;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
@@ -16,9 +18,11 @@ import javax.persistence.Transient;
 	@Comment("Алгоритм шаблона рабочего календаря")
 @Entity
 @AIndexes({
-	@AIndex(unique = false, properties = {"pattern"})
+	@AIndex(properties = {"pattern"})
 })
-@Table(schema="SQLUser")	
+@Table(schema="SQLUser")
+	@Getter
+	@Setter
 public class WorkCalendarAlgorithm extends BaseEntity{
 	/**
 	 * Шаблон рабочего календаря
@@ -26,12 +30,9 @@ public class WorkCalendarAlgorithm extends BaseEntity{
 	@Comment("Шаблон рабочего календаря")
 	@ManyToOne
 	public WorkCalendarPattern getPattern() {
-		return thePattern;
+		return pattern;
 	}
-	public void setPattern(WorkCalendarPattern aPattern) {
-		thePattern = aPattern;
-	}
-	
+
 	/** infoClass */
 	@Comment("infoClass")
 	@Transient
@@ -47,5 +48,5 @@ public class WorkCalendarAlgorithm extends BaseEntity{
 	/**
 	 * Шаблон рабочего календаря
 	 */
-	private WorkCalendarPattern thePattern;
+	private WorkCalendarPattern pattern;
 }

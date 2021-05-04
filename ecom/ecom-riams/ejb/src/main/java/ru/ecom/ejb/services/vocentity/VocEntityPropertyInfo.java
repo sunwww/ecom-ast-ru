@@ -1,26 +1,20 @@
 package ru.ecom.ejb.services.vocentity;
 
-import java.io.Serializable;
+import lombok.Getter;
 
+import java.io.Serializable;
+@Getter
 public class VocEntityPropertyInfo implements Serializable{
 
 	public VocEntityPropertyInfo(String aName, String aComment) {
-		theName = aName ;
-		theComment = aComment ;
+		name = aName ;
+		comment = aComment ;
 	}
 	
-	/** Комментарий */
-	public String getComment() {
-		return theComment;
-	}
 
 	/** Комментарий */
-	private final String theComment;
-	/** Название свойства */
-	public String getName() {
-		return theName;
-	}
+	private final String comment;
 
 	/** Название свойства */
-	private final String theName;
+	private final String name;
 }

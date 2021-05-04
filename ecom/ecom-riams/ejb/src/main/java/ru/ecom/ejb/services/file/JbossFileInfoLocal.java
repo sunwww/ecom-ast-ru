@@ -1,5 +1,7 @@
 package ru.ecom.ejb.services.file;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -7,6 +9,7 @@ import java.io.File;
 /**
  * Информация о том где создан файл и его идентификатор
  */
+@Getter
 class JbossFileInfoLocal {
 
     private static final Logger LOG = Logger.getLogger(JbossFileInfoLocal.class) ;
@@ -17,37 +20,32 @@ class JbossFileInfoLocal {
     public JbossFileInfoLocal(long aId
             , String aExportDir, String aUniquePath
     ) {
-        theId = aId ;
-        theExportDir = aExportDir ;
-        theUniquePath = aUniquePath ;
+        id = aId ;
+        exportDir = aExportDir ;
+        uniquePath = aUniquePath ;
     }
 
 
 
     protected File createFile(String aFilename) {
-        if(theFile!=null) throw new IllegalStateException("Файл уже создан") ;
+        if(file!=null) throw new IllegalStateException("Файл уже создан") ;
 
-        String sb = theExportDir + '/' + theUniquePath + '/' + aFilename;
-        theFile = new File(sb) ;
-        if (CAN_DEBUG) LOG.debug("File to write j: " + theFile.getAbsolutePath());
-        new File(theFile.getParent()).mkdirs() ;
+        String sb = exportDir + '/' + uniquePath + '/' + aFilename;
+        file = new File(sb) ;
+        if (CAN_DEBUG) LOG.debug("File to write j: " + file.getAbsolutePath());
+        new File(file.getParent()).mkdirs() ;
 
-        theRelativeFilename = theUniquePath+"/"+aFilename ;
-        return theFile  ;
+        relativeFilename = uniquePath+"/"+aFilename ;
+        return file  ;
     }
 
-    /** Относительный путь */
-    public String getRelativeFilename() { return theRelativeFilename ; }
 
     /** Относительный путь */
-    private String theRelativeFilename ;
+    private String relativeFilename ;
 
     /** Идентификатор */
-    public long getId() { return theId ; }
-
-    /** Идентификатор */
-    private final long theId ;
-    private final String theUniquePath ;
-    private final String theExportDir ;
-    private File theFile = null ;
+    private final long id ;
+    private final String uniquePath ;
+    private final String exportDir ;
+    private File file = null ;
 }

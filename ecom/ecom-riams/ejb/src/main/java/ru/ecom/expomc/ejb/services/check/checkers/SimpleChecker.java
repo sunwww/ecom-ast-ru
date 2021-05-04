@@ -27,17 +27,17 @@ public class SimpleChecker implements ICheck {
     
     /** Пробное свойство */
     @Comment("Пробное свойство")
-    public String getProba() { return theProba ; }
-    public void setProba(String aProba) { theProba = aProba ; }
+    public String getProba() { return proba ; }
+    public void setProba(String aProba) { proba = aProba ; }
 
     /** Вторая проба */
     @Comment("Вторая проба")
-    public String getProba2() { return theProba2 ; }
-    public void setProba2(String aProba2) { theProba2 = aProba2 ; }
+    public String getProba2() { return proba2 ; }
+    public void setProba2(String aProba2) { proba2 = aProba2 ; }
 
     /** Вторая проба */
-    private String theProba2 ;
+    private String proba2 ;
     /** Пробное свойство */
-    private String theProba ;
+    private String proba ;
 
 }

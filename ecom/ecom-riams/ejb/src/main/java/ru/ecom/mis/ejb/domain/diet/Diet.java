@@ -1,5 +1,7 @@
 package ru.ecom.mis.ejb.domain.diet;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -16,290 +18,90 @@ import java.util.List;
 @Comment("Диета")
 @Entity
 @Table(schema="SQLUser")
+@Getter
+@Setter
 public class Diet extends BaseEntity{
 
 	/** Список меню */
 	@Comment("Список меню")
 	@OneToMany(mappedBy="diet", cascade=CascadeType.ALL)
 	public List<MealMenu> getMenus() {
-		return theMenus;
+		return menus;
 	}
-
-	public void setMenus(List<MealMenu> aMenus) {
-		theMenus = aMenus;
-	}
-
 	/** Список меню */
-	private List<MealMenu> theMenus;
+	private List<MealMenu> menus;
 	
 	/** Минимальная энергетическая ценность (ккал) */
-	@Comment("Минимальная энергетическая ценность (ккал)")
-	public Integer getMinCalorieContent() {
-		return theMinCalorieContent;
-	}
-
-	public void setMinCalorieContent(Integer aMinCalorieContent) {
-		theMinCalorieContent = aMinCalorieContent;
-	}
-
-	/** Минимальная энергетическая ценность (ккал) */
-	private Integer theMinCalorieContent;
-	
+	private Integer minCalorieContent;
 	/** Максимальная энергетическая ценность (ккал) */
-	@Comment("Максимальная энергетическая ценность (ккал)")
-	public Integer getMaxCalorieContent() {
-		return theMaxCalorieContent;
-	}
-
-	public void setMaxCalorieContent(Integer aMaxCalorieContent) {
-		theMaxCalorieContent = aMaxCalorieContent;
-	}
-
-	/** Максимальная энергетическая ценность (ккал) */
-	private Integer theMaxCalorieContent;
-	
+	private Integer maxCalorieContent;
 	/** Минимальное количество моно- и дисахаридов */
-	@Comment("Минимальное количество моно- и дисахаридов")
-	public Integer getMinMonoDisaccharides() {
-		return theMinMonoDisaccharides;
-	}
-
-	public void setMinMonoDisaccharides(Integer aMinMonoDisaccharides) {
-		theMinMonoDisaccharides = aMinMonoDisaccharides;
-	}
-
-	/** Минимальное количество моно- и дисахаридов */
-	private Integer theMinMonoDisaccharides;
-	
+	private Integer minMonoDisaccharides;
 	/** Максимальное количество моно- и дисахаридов (г) */
-	@Comment("Максимальное количество моно- и дисахаридов (г)")
-	public Integer getMaxMonoDisaccharides() {
-		return theMaxMonoDisaccharides;
-	}
-
-	public void setMaxMonoDisaccharides(Integer aMaxMonoDisaccharides) {
-		theMaxMonoDisaccharides = aMaxMonoDisaccharides;
-	}
-
-	/** Максимальное количество моно- и дисахаридов (г) */
-	private Integer theMaxMonoDisaccharides;
-	
+	private Integer maxMonoDisaccharides;
 	/** Минимальное количество углеводов (г) */
-	@Comment("Минимальное количество углеводов (г)")
-	public Integer getMinCarbohydrates() {
-		return theMinCarbohydrates;
-	}
-
-	public void setMinCarbohydrates(Integer aMinCarbohydrates) {
-		theMinCarbohydrates = aMinCarbohydrates;
-	}
-
-	/** Минимальное количество углеводов (г) */
-	private Integer theMinCarbohydrates;
-	
+	private Integer minCarbohydrates;
 	/** Максимальное количество углеводов (г)*/
-	@Comment("Максимальное количество углеводов (г)")
-	public Integer getMaxCarbohydrates() {
-		return theMaxCarbohydrates;
-	}
-
-	public void setMaxCarbohydrates(Integer aMaxCarbohydrates) {
-		theMaxCarbohydrates = aMaxCarbohydrates;
-	}
-
-	/** Максимальное количество углеводов (г)*/
-	private Integer theMaxCarbohydrates;
-	
+	private Integer maxCarbohydrates;
 	/** Минимальное количество растительных жиров (г) */
-	@Comment("Минимальное количество растительных жиров (г)")
-	public Integer getMinPlantLipids() {
-		return theMinPlantLipids;
-	}
-
-	public void setMinPlantLipids(Integer aMinPlantLipids) {
-		theMinPlantLipids = aMinPlantLipids;
-	}
-
-	/** Минимальное количество растительных жиров (г) */
-	private Integer theMinPlantLipids;
-	
+	private Integer minPlantLipids;
 	/** Максимальное количество растительных жиров (г)*/
-	@Comment("Максимальное количество растительных жиров (г)")
-	public Integer getMaxPlantLipids() {
-		return theMaxPlantLipids;
-	}
-
-	public void setMaxPlantLipids(Integer aMaxPlatLipids) {
-		theMaxPlantLipids = aMaxPlatLipids;
-	}
-
-	/** Максимальное количество растительных жиров (г)*/
-	private Integer theMaxPlantLipids;
-	
+	private Integer maxPlantLipids;
 	/** Минимальное количество общих жиров (г) */
-	@Comment("Минимальное количество общих жиров (г)")
-	public Integer getMinLipids() {
-		return theMinLipids;
-	}
-
-	public void setMinLipids(Integer aMinLipids) {
-		theMinLipids = aMinLipids;
-	}
-
-	/** Минимальное количество общих жиров (г) */
-	private Integer theMinLipids;
-	
+	private Integer minLipids;
 	/** Максимальное количество общих жиров (г)*/
-	@Comment("Максимальное количество общих жиров (г)")
-	public Integer getMaxLipids() {
-		return theMaxLipids;
-	}
-
-	public void setMaxLipids(Integer aMaxLipids) {
-		theMaxLipids = aMaxLipids;
-	}
-
-	/** Максимальное количество общих жиров (г)*/
-	private Integer theMaxLipids;
-	
+	private Integer maxLipids;
 	/** Минимальное количество животных белков (г) */
-	@Comment("Минимальное количество животных белков (г)")
-	public Integer getminAnimalProteins() {
-		return theminAnimalProteins;
-	}
-
-	public void setminAnimalProteins(Integer aminAnimalProteins) {
-		theminAnimalProteins = aminAnimalProteins;
-	}
-
-	/** Минимальное количество животных белков (г) */
-	private Integer theminAnimalProteins;
-	
+	private Integer minAnimalProteins;
 	/** Максимальное количество животных белков (г) */
-	@Comment("Максимальное количество животных белков (г)")
-	public Integer getmaxAnimalProteins() {
-		return themaxAnimalProteins;
-	}
-
-	public void setmaxAnimalProteins(Integer amaxAnimalProteins) {
-		themaxAnimalProteins = amaxAnimalProteins;
-	}
-
-	/** Максимальное количество животных белков (г) */
-	private Integer themaxAnimalProteins;
-	
+	private Integer maxAnimalProteins;
 	/** Минимальное количество общих белков (г) */
-	@Comment("Минимальное количество общих белков (г)")
-	public Integer getminProteins() {
-		return theminProteins;
-	}
-	public void setminProteins(Integer aminProteins) {
-		theminProteins = aminProteins;
-	}
-	private Integer theminProteins;
-	
+	private Integer minProteins;
 	/** Максимальное количество общих белков (г) */
-	@Comment("Максимальное количество общих белков (г)")
-	public Integer getmaxProteins() {
-		return themaxProteins;
-	}
-	public void setmaxProteins(Integer amaxProteins) {
-		themaxProteins = amaxProteins;
-	}
-	private Integer themaxProteins;
+	private Integer maxProteins;
 	
 	/** ЛПУ */
 	@Comment("ЛПУ")
 	@ManyToOne
 	public MisLpu getLpu() {
-		return theLpu;
+		return lpu;
 	}
-	public void setLpu(MisLpu aLpu) {
-		theLpu = aLpu;
-	}
-	private MisLpu theLpu;
+	private MisLpu lpu;
 
 	/** Описание */
-	@Comment("Описание")
-	
-	public String getDescription() {
-		return theDescription;
-	}
-	
-	public void setDescription(String aDescription) {
-		theDescription = aDescription;
-	}
-	
-	private String theDescription;
+	private String description;
 	
 	/** Показания к применению */
-	@Comment("Показания к применению")
-	public String getPrescription() {
-		return thePrescription;
-	}
-	public void setPrescription(String aPrescription) {
-		thePrescription = aPrescription;
-	}
-	private String thePrescription;
+	private String prescription;
 	
 	/** Блюда */
 	@Comment("Блюда")
 	@ManyToMany
 	public List<Dish> getDishes() {
-		return theDishes;
+		return dishes;
 	}
-	public void setDishes(List<Dish> aDishes) {
-		theDishes = aDishes;
-	}
-	private List<Dish> theDishes;
+	private List<Dish> dishes;
 	
 	/** Подчиненные диеты */
 	@Comment("Подчиненные диеты")
 	@OneToMany(mappedBy="parent", cascade=CascadeType.ALL)
 	public List<Diet> getChildren() {
-		return theChildren;
+		return children;
 	}
-	public void setChildren(List<Diet> aChildren) {
-		theChildren = aChildren;
-	}
-	private List<Diet> theChildren;
+	private List<Diet> children;
 	
 	/** Головная диета */
 	@Comment("Головная диета")
 	@ManyToOne
 	public Diet getParent() {
-		return theParent;
+		return parent;
 	}
-	public void setParent(Diet aParent) {
-		theParent = aParent;
-	}
-	private Diet theParent;
-	
+	private Diet parent;
 	/** Короткое название */
-	@Comment("Короткое название")
-	public String getShortName() {
-		return theShortName;
-	}
-	public void setShortName(String aShortName) {
-		theShortName = aShortName;
-	}
-	private String theShortName;
-	
+	private String shortName;
 	/** Название */
-	@Comment("Название")
-	public String getName() {
-		return theName;
-	}
-	public void setName(String aName) {
-		theName = aName;
-	}
-	private String theName;
-	
+	private String name;
 	/** В архиве */
-	@Comment("В архиве")
-	public Boolean getIsArchival() {return theIsArchival;}
-	public void setIsArchival(Boolean aIsArchival) {theIsArchival = aIsArchival;}
-	/** В архиве */
-	private Boolean theIsArchival;
+	private Boolean isArchival;
 
 }

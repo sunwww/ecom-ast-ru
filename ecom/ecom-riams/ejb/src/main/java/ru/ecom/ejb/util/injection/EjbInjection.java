@@ -14,10 +14,10 @@ public class EjbInjection {
 	}
 	public EjbInjection(String aAppname) {
 		if (aAppname!=null && !aAppname.equals("")) {
-			theAppname=aAppname;
+			appname=aAppname;
 		} else {
-			EjbEcomConfig theConfig = EjbEcomConfig.getInstance();
-			theAppname=theConfig.get("default.appname","riams-app");
+			EjbEcomConfig config = EjbEcomConfig.getInstance();
+			appname=config.get("default.appname","riams-app");
 			
 		}
 	}
@@ -41,9 +41,7 @@ public class EjbInjection {
 			try {
 				// FIXME получение названия приложения
 				
-				//String appName = theConfig.get("default.appname","riams-app");
-				
-				String jndi = theAppname + "/" + name + "Bean/"+aSuffix ;
+				String jndi = appname + "/" + name + "Bean/"+aSuffix ;
 				return ctx.lookup(jndi);
 			} finally {
 				ctx.close();
@@ -70,6 +68,5 @@ public class EjbInjection {
 		return scriptService.invoke(aServiceName, aMethodName, args);
 	}
 	
-	//private final EjbEcomConfig theConfig = EjbEcomConfig.getInstance();
-	private final String theAppname ;
+	private final String appname ;
 }

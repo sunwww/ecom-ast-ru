@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.form.patient;
 
+import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.Subclasses;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -27,149 +28,131 @@ import ru.nuzmsh.forms.validator.validators.Required;
 @Parent(property = "patient", parentForm =PatientForm.class)
 @Subclasses({MedPolicyOmcForm.class, MedPolicyDmcForm.class, MedPolicyOmcForeignForm.class, MedPolicyDmcForeignForm.class})
 @EntityFormSecurityPrefix("/Policy/Mis/MedPolicy")
+@Setter
 public class MedPolicyForm extends IdEntityForm {
 
     /** Новый тип полиса) */
 	@Comment("Новый тип полиса)")
-	public Long getChangePolicyType() {return theChangePolicyType;}
-	public void setChangePolicyType(Long aChangePolicyType) {theChangePolicyType = aChangePolicyType;}
+	public Long getChangePolicyType() {return changePolicyType;}
 	/** Новый тип полиса) */
-	private Long theChangePolicyType;
+	private Long changePolicyType;
 
 	/** Серия */
     @Comment("Серия")
     @Persist @DoUpperCase
-    public String getSeries() { return theSeries ; }
-    public void setSeries(String aSeries) { theSeries = aSeries ; }
+    public String getSeries() { return series ; }
 
     /** Страховая компания */
     @Comment("Страховая компания")
     @Persist
-    public Long getCompany() { return theCompany ; }
-    public void setCompany(Long aCompany) { theCompany = aCompany ; }
+    public Long getCompany() { return company ; }
 
     /** Номер */
     @Comment("Номер")
     @Persist @DoUpperCase
     @Required
-    public String getPolNumber() { return theNumber ; }
-    public void setPolNumber(String aNumber) { theNumber = aNumber ; }
+    public String getPolNumber() { return number ; }
+	public void setPolNumber(String number) {
+    	this.number = number;
+	}
 
     /** Дата действия с */
     @Comment("Дата действия с")
     @Persist
     @Required
     @DateString
-    public String getActualDateFrom() { return theActualDateFrom ; }
-    public void setActualDateFrom(String aActualDateFrom) { theActualDateFrom = aActualDateFrom ; }
+    public String getActualDateFrom() { return actualDateFrom ; }
 
     /** Дата действия по */
     @Comment("Дата действия по")
     @Persist
     @DateString
-    public String getActualDateTo() { return theActualDateTo ; }
-    public void setActualDateTo(String aActualDateTo) { theActualDateTo = aActualDateTo ; }
+    public String getActualDateTo() { return actualDateTo ; }
 
     /** Пациент */
     @Comment("Пациент")
     @Persist
-    public Long getPatient() { return thePatient ; }
-    public void setPatient(Long aPatient) { thePatient = aPatient ; }
+    public Long getPatient() { return patient ; }
 
     /** Текст */
     @Comment("Текст")
     @Persist
-    public String getText() { return theText ; }
-    public void setText(String aText) { theText = aText ; }
+    public String getText() { return text ; }
 
     /** Фамилия */
 	@Comment("Фамилия")
 	@Persist @DoUpperCase
-	public String getLastname() {return theLastname;	}
-	public void setLastname(String aLastname) {theLastname = aLastname;	}
+	public String getLastname() {return lastname;	}
 
 	/** Имя */
 	@Comment("Имя")
 	@Persist @DoUpperCase
-	public String getFirstname() {return theFirstname;	}
-	public void setFirstname(String aFirstname) {theFirstname = aFirstname;	}
+	public String getFirstname() {return firstname;	}
 
 	/** Отчество */
 	@Comment("Отчество")
 	@Persist @DoUpperCase
-	public String getMiddlename() {return theMiddlename;	}
-	public void setMiddlename(String aMiddlename) {theMiddlename = aMiddlename;}
+	public String getMiddlename() {return middlename;	}
 
 	/** Отчество */
-	private String theMiddlename;
+	private String middlename;
 	
 	/** Область нахождения СМО */
 	@Comment("Область нахождения СМО")
 	@Persist
 	public Long getInsuranceCompanyArea() {
-		return theInsuranceCompanyArea;
-	}
-
-	public void setInsuranceCompanyArea(Long aInsuranceCompanyArea) {
-		theInsuranceCompanyArea = aInsuranceCompanyArea;
+		return insuranceCompanyArea;
 	}
 
 	/** Единый номер застрахованного */
 	@Comment("Единый номер застрахованного")
 	@Persist @MinLength(16) @MaxLength(16)
-	public String getCommonNumber() {return theCommonNumber;}
-	public void setCommonNumber(String aCommonNumber) {theCommonNumber = aCommonNumber;}
+	public String getCommonNumber() {return commonNumber;}
 
 	/** Единый номер застрахованного */
-	private String theCommonNumber;
+	private String commonNumber;
 	/** Область нахождения СМО */
-	private Long theInsuranceCompanyArea;
+	private Long insuranceCompanyArea;
 	/** Имя */
-	private String theFirstname;
+	private String firstname;
 	/** Фамилия */
-	private String theLastname;   
+	private String lastname;   
 	/** Текст */
-    private String theText ;
+    private String text ;
     /** Пациент */
-    private Long thePatient ;
+    private Long patient ;
     /** Дата действия по */
-    private String theActualDateTo ;
+    private String actualDateTo ;
     /** Дата действия с */
-    private String theActualDateFrom ;
+    private String actualDateFrom ;
     /** Номер */
-    private String theNumber ;
+    private String number ;
     /** Серия */
-    private String theSeries ;
+    private String series ;
     /** Страховая компания */
-    private Long theCompany ;
+    private Long company ;
 	/** Тип подтверждения по полису */
 	@Comment("Тип подтверждения по полису")
 	@Persist
-	public Long getConfirmationType() {return theConfirmationType;}
-	public void setConfirmationType(Long aConfirmationType) {theConfirmationType = aConfirmationType;}
+	public Long getConfirmationType() {return confirmationType;}
 
 	/** Тип подтверждения по полису */
-	private Long theConfirmationType;
+	private Long confirmationType;
 	
 	/** Дата подтверждения */
 	@Comment("Дата подтверждения")
 	@Persist @DateString @DoDateString
-	public String getConfirmationDate() {return theConfirmationDate;}
-	public void setConfirmationDate(String aConfirmationDate) {theConfirmationDate = aConfirmationDate;}
+	public String getConfirmationDate() {return confirmationDate;}
 	/** Дата подтверждения */
-	private String theConfirmationDate;
+	private String confirmationDate;
 	
 	/** Дата рождения */
 	@Comment("Дата рождения")
 	@Persist @DateString @DoDateString
 	public String getBirthday() {
-		return theBirthday;
-	}
-
-	public void setBirthday(String aBirthday) {
-		theBirthday = aBirthday;
+		return birthday;
 	}
 
 	/** Дата рождения */
-	private String theBirthday;
+	private String birthday;
 }
