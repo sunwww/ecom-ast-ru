@@ -24,22 +24,8 @@ import java.sql.Date;
 @Setter
 public class EntryMedService extends BaseEntity {
 
-    /**
-     * Запись
-     */
     private E2Entry entry;
-    /**
-     * Мед. услуга
-     */
     private VocMedService medService;
-    /**
-     * СНИЛС специалиста, выполневшего услугу
-     */
-    private String doctorSnils;
-    /**
-     * Дата оказания мед. услуги
-     */
-    private Date serviceDate;
     private VocE2FondV021 doctorSpeciality;
     private VocIdc10 mkb;
     /**
@@ -50,6 +36,16 @@ public class EntryMedService extends BaseEntity {
      * Коммент
      */
     private String comment;
+
+    /**
+     * СНИЛС специалиста, выполневшего услугу
+     */
+    private String doctorSnils;
+
+    /**
+     * Дата оказания мед. услуги
+     */
+    private Date serviceDate;
     /**
      * Цена
      */
@@ -69,66 +65,35 @@ public class EntryMedService extends BaseEntity {
         cost = aMedService.getCost();
     }
 
-    /**
-     * Запись
-     */
+    /** Запись */
     @Comment("Запись")
     @ManyToOne
     public E2Entry getEntry() {return entry;}
-    private E2Entry entry ;
 
-    /**
-     * Мед. услуга
-     */
+    /** Мед. услуга */
     @Comment("Мед. услуга")
     @OneToOne
-    public VocMedService getMedService() {return medService;}
-    private VocMedService medService ;
-
-    public EntryMedService(E2Entry aEntry, VocMedService aMedService) {
-        entry=aEntry;
-        medService=aMedService;
-    }
-    public EntryMedService(E2Entry aEntry, EntryMedService aMedService) {
-        entry=aEntry;
-        medService=aMedService.getMedService();
-        serviceDate =aMedService.getServiceDate();
-        doctorSpeciality=aMedService.getDoctorSpeciality();
-        mkb=aMedService.getMkb();
-        cost = aMedService.getCost();
+    public VocMedService getMedService() {
+        return medService;
     }
 
-    /** СНИЛС специалиста, выполневшего услугу */
-    private String doctorSnils;
-
-    /** Дата оказания мед. услуги */
-    private Date serviceDate;
+    public EntryMedService() {
+    }
 
     /**
      * Специальность врача
      */
     @Comment("Специальность врача")
     @OneToOne
-    public VocE2FondV021 getDoctorSpeciality() {return theDoctorSpeciality;}
-    private VocE2FondV021 theDoctorSpeciality ;
+    public VocE2FondV021 getDoctorSpeciality() {
+        return doctorSpeciality;
+    }
 
     /**
      * Диагноз, выявленный при оказании услуги
      */
     @Comment("Диагноз, выявленный при оказании услуги")
     @OneToOne
-    public VocIdc10 getMkb() {return theMkb;}
-    private VocIdc10 theMkb ;
-
-    /** Цена */
-    private BigDecimal theCost ;
-
-    public EntryMedService(){}
-
-    /** Коммент */
-    private String theComment ;
-
-    /** Цена */
-    private BigDecimal theUet ;
+    public VocIdc10 getMkb() {return mkb;}
 
 }
