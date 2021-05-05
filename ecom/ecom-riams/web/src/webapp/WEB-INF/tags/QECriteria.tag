@@ -41,6 +41,8 @@
     var theIs${name}CloseDisDocumentDialogInitialized = false;
     var the${name}CloseDisDocumentDialog = new msh.widget.Dialog($('${name}CloseDisDocumentDialog'));
 
+    var code${name};
+
     // Показать
 
     function show${name}CloseDocument(id) {
@@ -59,6 +61,8 @@
                         var res = JSON.parse(aResult);
                         var table = document.getElementById('table1');
                         table.innerHTML = "<tr><th align=\"center\" width=\"850\">Критерий</th><th align=\"center\" width=\"150\">Выполнен?*</th><th align=\"center\" width=\"150\">Оценка в карте?**</th></tr>";
+                        if (res.length > 0)
+                            code${name} = res[0].code;
                         for (var i = 0; i < res.length; i++) {
                             var tr = document.createElement('tr');
                             var td1 = document.createElement('td');
@@ -76,7 +80,7 @@
                             table.appendChild(tr);
                         }
                         the${name}CloseDisDocumentDialog.show();
-                    } else alert("Для основного клинического диагноза госпитализации не найдено данных по 203 приказу!");
+                    } else alert("Для основного клинического диагноза госпитализации не найдено данных по 203 приказу! также не найдены критерии для карты нового типа!");
                 }
             }
         );
@@ -93,10 +97,14 @@
             callback: function (res2) {
                 if (res2) { //Выписан позднее дней в настройке/Ещё лежит как обычно
                     QualityEstimationService.createDraftEK(
-                        ID, 'PR203', {
+                        ID, code${name}, {
                             callback: function (res) {
-                                if (res != null) window.location = 'entityEdit-expert_qualityEstimationDraft.do?id=' + res + '&type=BranchManager';
-                                else {
+                                if (res != null) {
+                                    if (+res == 0)
+                                        alert("Перед заполнением карты необходимо проставить основной клинический диагноз!");
+                                    else
+                                        window.location = 'entityEdit-expert_qualityEstimationDraft.do?id=' + res + '&type=BranchManager';
+                                } else {
                                     alert("Заведующий отделением уже заполнил эту карту, больше редактировать черновик нельзя!");
                                 }
                             }

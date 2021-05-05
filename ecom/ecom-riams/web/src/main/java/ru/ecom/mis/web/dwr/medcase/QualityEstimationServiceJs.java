@@ -298,7 +298,7 @@ public class QualityEstimationServiceJs {
     public String IsQECardKindBoolean(Long aCardId, HttpServletRequest aRequest) throws Exception {
         StringBuilder res = new StringBuilder();
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        String sql = "select case when vqec.code='PR203' then '1' else case when vqec. code='KMP' then '-1' else '0' end end from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=" + aCardId;
+        String sql = "select case when (vqec.code='PR203' or vqec.code='NOT 203') then '1' else case when vqec. code='KMP' then '-1' else '0' end end from QualityEstimationCard qec left join VocQualityEstimationKind vqec on vqec.id=qec.kind_id where qec.id=" + aCardId;
         Collection<WebQueryResult> list = service.executeNativeSql(sql, 1);
         if (list.size() != 0) {
             WebQueryResult wqr = list.iterator().next();
@@ -325,26 +325,12 @@ public class QualityEstimationServiceJs {
             medcase = Long.parseLong(wqr.get1().toString());
             ArrayList<String> listServicies = getAllServicesByMedCase(medcase, aRequest);
 
-            query = "select distinct vqecrit.code,vqecrit.name,vqecrit.medservicecodes,coalesce(vqem.name,'') as vqename" +
-                    " from vocqualityestimationcrit vqecrit" +
-                    " left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  " +
-                    " left join vocidc10 d on d.id=vqecrit_d.vocidc10_id " +
-                    " left join diagnosis ds on ds.idc10_id=d.id " +
-                    " left join medcase mc on mc.id=ds.medcase_id " +
-                    " left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id  " +
-                    " left join vocprioritydiagnosis prior on prior.id=ds.priority_id " +
-                    " left join patient pat on pat.id=mc.patient_id " +
-                    " left join qualityestimationcard qec on qec.medcase_id=mc.id" +
-                    " left join qualityestimation qe on qe.card_id=qec.id" +
-                    " left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id " +
-                    " and vqem.id= (select max(qecC.mark_id) " +
-                    " from qualityestimationcrit qecC" +
-                    " left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id " +
-                    " left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id" +
-                    " where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager')" +
-                    " where mc.id=" + medCaseId + " and reg.code='4' and prior.code='1'" +
-                    " and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqecrit.ischild=true)";
-            Collection<WebQueryResult> list = service.executeNativeSql(query);
+            String code = "PR203";
+            Collection<WebQueryResult> list = getCriterions203(medCaseId, service);
+            if (list.isEmpty()) {
+                list = getCriterionsNot203(medCaseId, service);
+                code = "NOT 203";
+            }
             if (list.size() > 0) {
                 for (WebQueryResult w : list) {
                     JSONObject o = new JSONObject();
@@ -356,11 +342,66 @@ public class QualityEstimationServiceJs {
                         if (listServicies.indexOf(mcodes[i]) != -1) flag = true;
                     if (flag) o.put("automark", "Да");
                     else o.put("automark", "Нет");
+                    o.put("code", code);
                     res.put(o);
                 }
             }
         }
         return res.toString();
+    }
+
+    /**
+     * Получить критерии для карты 203 приказа запросом из БД
+     *
+     * @param medCaseId СЛО.id
+     * @param service   IWebQueryService
+     * @return Collection<WebQueryResult>
+     */
+    private Collection<WebQueryResult> getCriterions203(Long medCaseId, IWebQueryService service) {
+        String query = "select distinct vqecrit.code,vqecrit.name,vqecrit.medservicecodes,coalesce(vqem.name,'') as vqename" +
+                " from vocqualityestimationcrit vqecrit" +
+                " left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id  " +
+                " left join vocidc10 d on d.id=vqecrit_d.vocidc10_id " +
+                " left join diagnosis ds on ds.idc10_id=d.id " +
+                " left join medcase mc on mc.id=ds.medcase_id " +
+                " left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id  " +
+                " left join vocprioritydiagnosis prior on prior.id=ds.priority_id " +
+                " left join patient pat on pat.id=mc.patient_id " +
+                " left join qualityestimationcard qec on qec.medcase_id=mc.id" +
+                " left join qualityestimation qe on qe.card_id=qec.id" +
+                " left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id" +
+                " and vqem.id= (select max(qecC.mark_id) " +
+                " from qualityestimationcrit qecC" +
+                " left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id " +
+                " left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id" +
+                " where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager')" +
+                " where mc.id=" + medCaseId + " and reg.code='4' and prior.code='1'" +
+                " and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqecrit.ischild=true)";
+        return service.executeNativeSql(query);
+    }
+
+    /**
+     * Получить критерии для карты вместо 203 приказа запросом из БД
+     *
+     * @param medCaseId СЛО.id
+     * @param service   IWebQueryService
+     * @return Collection<WebQueryResult>
+     */
+    private Collection<WebQueryResult> getCriterionsNot203(Long medCaseId, IWebQueryService service) {
+        String query = "select distinct vqecrit.code,vqecrit.name,vqecrit.medservicecodes,coalesce(vqem.name,'') as vqename" +
+                " from vocqualityestimationcrit vqecrit " +
+                " left join medcase mc on mc.id= " + medCaseId +
+                " left join vocqualityestimationkind kind on kind.id=vqecrit.kind_id" +
+                " left join patient pat on pat.id=mc.patient_id" +
+                " left join qualityestimationcard qec on qec.medcase_id=mc.id" +
+                " left join qualityestimation qe on qe.card_id=qec.id" +
+                " left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id  and vqem.id= (select max(qecC.mark_id)" +
+                " from qualityestimationcrit qecC" +
+                " left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id" +
+                " left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id" +
+                " where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager')" +
+                " where kind.code='NOT 203'";
+        return service.executeNativeSql(query);
     }
 
     /**
