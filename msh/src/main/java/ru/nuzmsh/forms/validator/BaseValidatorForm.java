@@ -62,23 +62,8 @@ public class BaseValidatorForm extends ValidatorForm implements Serializable {
     	theDisabledFields.add(aFieldName);
     }
 
-//    /**
-//     * Список закрытых для редактирования полей
-//     * Iterator&lt;String&gt;
-//     */
-//    public Iterator getDisabledFieldsIterator() {
-////        System.out.println(" - getDisabledFieldsIterator()");
-//        for (Iterator<String> iterator = theDisabledFields.iterator(); iterator.hasNext();) {
-//            String s = iterator.next();
-////            System.out.println(" ---- disabled field = " + s);
-//        }
-//        return theDisabledFields.iterator() ;
-//    }
-
     public void reset(ActionMapping actionMapping, HttpServletRequest httpServletRequest) {
         super.reset(actionMapping, httpServletRequest);
-        //theDisabledFields.clear();
-       // System.out.println(" *********** CLEAR *******************" + this);
     }
 
     /** Поле по-умолчанию */
@@ -132,8 +117,8 @@ public class BaseValidatorForm extends ValidatorForm implements Serializable {
     /** Тип сохранения */
     private int theSaveType ;
 
-    private ArrayList<FormMessage> theFormMessages = new ArrayList<FormMessage>();
+    private ArrayList<FormMessage> theFormMessages = new ArrayList<>();
 	/** Конфиденциальные поля */
-	private Set<String> thePrivateFields = new HashSet<String>();
-	private Set<String> theDisabledFields = new HashSet<String>(); 
+	private Set<String> thePrivateFields = new HashSet<>();
+	private Set<String> theDisabledFields = new HashSet<>();
 }
