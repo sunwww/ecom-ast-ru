@@ -13,11 +13,11 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 
 /**
- *  КСГ 
+ * КСГ
  */
 @Entity
 @Comment("КСГ")
-@Table(schema="SQLUser")
+@Table(schema = "SQLUser")
 @Getter
 @Setter
 public class VocKsg extends VocIdCodeName {

@@ -17,7 +17,9 @@ import javax.persistence.OneToOne;
 @Setter
 public class VocE2FondV021 extends VocBaseFederal {
 
-    /** Услуга по умолчанию для поликлиники */
+    /**
+     * Услуга по умолчанию для поликлиники
+     */
     @Comment("Услуга по умолчанию для поликлиники")
     @OneToOne
     public VocMedService getDefaultMedService() {return defaultMedService;}
@@ -29,13 +31,17 @@ public class VocE2FondV021 extends VocBaseFederal {
     public VocMedService getRepeatMedService() {return repeatMedService;}
     private VocMedService repeatMedService;
 
-    /** Профиль мед. помощи для подачи по стационару */
+    /**
+     * Профиль мед. помощи для подачи по стационару
+     */
     @Comment("Профиль мед. помощи для подачи по стационару")
     @OneToOne
     public VocE2MedHelpProfile getStacProfile() {return stacProfile;}
     private VocE2MedHelpProfile stacProfile;
 
-    /** Профиль мед. помощи для подачи по поликлинике */
+    /**
+     * Профиль мед. помощи для подачи по поликлинике
+     */
     @Comment("Профиль мед. помощи для подачи по поликлинике")
     @OneToOne
     public VocE2MedHelpProfile getPolicProfile() {return policProfile;}

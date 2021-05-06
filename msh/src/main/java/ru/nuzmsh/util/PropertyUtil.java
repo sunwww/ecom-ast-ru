@@ -17,38 +17,38 @@ import java.util.Map;
  */
 public class PropertyUtil {
 
-	private static final Logger LOG = Logger.getLogger(PropertyUtil.class);
-	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
+    private static final Logger LOG = Logger.getLogger(PropertyUtil.class);
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
     /**
      * Копировать значение свойства
      *
-     * @param aDestObject     куда копировать
-     * @param aSourceObject   откуда копировать
-     * @param aGetterMethod   метов get*
+     * @param aDestObject   куда копировать
+     * @param aSourceObject откуда копировать
+     * @param aGetterMethod метов get*
      * @throws NoSuchMethodException
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
     public static void copyProperty(Object aDestObject, Object aSourceObject, Method aGetterMethod) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, ParseException {
         Method setterMethod = getSetterMethod(aDestObject.getClass(), aGetterMethod);
-        Class inType = aGetterMethod.getReturnType() ;
-        Class outType = aDestObject.getClass().getMethod(aGetterMethod.getName()).getReturnType() ;
+        Class inType = aGetterMethod.getReturnType();
+        Class outType = aDestObject.getClass().getMethod(aGetterMethod.getName()).getReturnType();
         Object value = aGetterMethod.invoke(aSourceObject);
-        Object convertedValue = convertValue(inType, outType, value) ;
+        Object convertedValue = convertValue(inType, outType, value);
         if (CAN_DEBUG) {
-            LOG.debug("copyProperty():") ;
-            LOG.debug(" getter = "+aGetterMethod);
-            LOG.debug(" setter = "+setterMethod);
+            LOG.debug("copyProperty():");
+            LOG.debug(" getter = " + aGetterMethod);
+            LOG.debug(" setter = " + setterMethod);
             LOG.debug(" value = " + value);
             LOG.debug(" convertedValue = " + convertedValue);
-            if(value!=null) {
-                LOG.debug(" value class = "+value.getClass()) ;
+            if (value != null) {
+                LOG.debug(" value class = " + value.getClass());
             }
-            if(convertedValue!=null) {
-                LOG.debug(" convertedValue class = "+convertedValue.getClass()) ;
+            if (convertedValue != null) {
+                LOG.debug(" convertedValue class = " + convertedValue.getClass());
             }
-            
+
         }
 
         setterMethod.invoke(aDestObject, convertedValue);
@@ -57,6 +57,7 @@ public class PropertyUtil {
 
     /**
      * Поиск метода set* по методу get*
+     *
      * @param aClass        класс, где искать метод
      * @param aGetterMethod метод get*
      * @return метод set*
@@ -64,264 +65,246 @@ public class PropertyUtil {
      */
     public static Method getSetterMethod(Class aClass, Method aGetterMethod) throws NoSuchMethodException {
         String setterMethodName = getSetterMethodName(aGetterMethod.getName());
-        Method getterMethod = aClass.getMethod(aGetterMethod.getName()) ;
+        Method getterMethod = aClass.getMethod(aGetterMethod.getName());
         try {
             return aClass.getMethod(setterMethodName, getterMethod.getReturnType());
         } catch (NoSuchMethodException e) {
-            for (Method method : aClass.getMethods()) {
-                LOG.error("method = " + method);
-            }
+                LOG.error("no setter method with name: " + setterMethodName+" in class: "+aClass.getName()+">>"+getterMethod);
             throw e;
         }
     }
 
     /**
      * Получение название метода set* по названию метода get*
+     *
      * @param aGetterMethodName
      * @return название метода set*
      */
     public static String getSetterMethodName(String aGetterMethodName) {
-    	String ret = GET_SETTER_METHOD_NAME.get(aGetterMethodName);
-    	if(ret==null) {
+        String ret = GET_SETTER_METHOD_NAME.get(aGetterMethodName);
+        if (ret == null) {
             StringBuilder sb = new StringBuilder();
             if (CAN_DEBUG) LOG.debug("aGetterMethodName = " + aGetterMethodName);
-            if(aGetterMethodName.startsWith("is")) {
-                sb.append("set") ;
+            if (aGetterMethodName.startsWith("is")) {
+                sb.append("set");
                 sb.append(aGetterMethodName.substring(2));
             } else {
                 sb.append("s");
                 sb.append(aGetterMethodName.substring(1));
             }
-            ret =  sb.toString();
+            ret = sb.toString();
             GET_SETTER_METHOD_NAME.put(aGetterMethodName, ret);
-    	}
-    	return ret ;
+        }
+        return ret;
     }
 
 
     public static Object convertValue(Class aInClass, Class aOutClass, Object aValue) throws ParseException {
-    	if(CAN_DEBUG) LOG.debug("convertValues()...") ;
+        if (CAN_DEBUG) LOG.debug("convertValues()...");
         if (CAN_DEBUG) LOG.debug("   aInClass = " + aInClass);
         if (CAN_DEBUG) LOG.debug("   aOutClass = " + aOutClass);
         if (CAN_DEBUG) LOG.debug("   aValue = " + aValue);
-//        System.out.println("convertValue "+aInClass+" - "+aOutClass+" - "+aValue);
-//        if(aValue==null) {
-//            return null ;
-//        } else if(aInClass.equals(aOutClass)) {
-//            return aValue ;
-//        } else if (aInClass.equals(java.sql.Date.class) && aOutClass.equals(String.class)) {
-//            return DateFormat.formatToDate((Date) aValue) ;
-//        } else if (aInClass.equals(String.class) && aOutClass.equals(java.sql.Date.class)) {
-//            java.util.Date utilDate = DateFormat.parseDate((String) aValue) ;
-//            return utilDate!=null ? new java.sql.Date(utilDate.getTime()) : null ;
-//        } else if(aInClass.equals(Long.TYPE) && aOutClass.equals(Long.class)) {
-//            return (Long) aValue ;
-//        } else if(aInClass.equals(Long.class) && aOutClass.equals(Long.TYPE)) {
-//            return aValue ;
-//        } else if (aInClass.equals(java.util.Date.class) && aOutClass.equals(String.class)) {
-//            return DateFormat.formatToDate((Date) aValue) ;
-//        }
-//        throw new IllegalArgumentException("Нет преобразования из "+aInClass+" в "+aOutClass+ " для значения "+aValue) ;
-    	if(aValue==null && aOutClass.equals(Integer.TYPE)) {
-    		return 0 ;
-    	} else if(aValue==null && aOutClass.equals(Boolean.class)) {
-        		return false ;
-    	} else if(aValue==null && aOutClass.equals(Boolean.TYPE)) {
-            return false ;
-        } else if(aValue==null && aOutClass.equals(Long.TYPE)) {
-    		return 0L ;
-    	} else if(aValue==null) {
-            return null ;
-        } else if(aInClass.equals(aOutClass)) {
-            return aValue ;
+        if (aValue == null && aOutClass.equals(Integer.TYPE)) {
+            return 0;
+        } else if (aValue == null && aOutClass.equals(Boolean.class)) {
+            return false;
+        } else if (aValue == null && aOutClass.equals(Boolean.TYPE)) {
+            return false;
+        } else if (aValue == null && aOutClass.equals(Long.TYPE)) {
+            return 0L;
+        } else if (aValue == null) {
+            return null;
+        } else if (aInClass.equals(aOutClass)) {
+            return aValue;
         } else if (aInClass.equals(java.sql.Date.class) && aOutClass.equals(String.class)) {
-            return DateFormat.formatToDate((Date) aValue) ;
+            return DateFormat.formatToDate((Date) aValue);
         } else if (aInClass.equals(String.class) && aOutClass.equals(java.sql.Date.class)) {
-            java.util.Date utilDate = DateFormat.parseDate((String) aValue) ;
-            return utilDate!=null ? new java.sql.Date(utilDate.getTime()) : null ;
+            java.util.Date utilDate = DateFormat.parseDate((String) aValue);
+            return utilDate != null ? new java.sql.Date(utilDate.getTime()) : null;
         } else if (aInClass.equals(java.sql.Timestamp.class) && aOutClass.equals(String.class)) {
-        return aValue.toString() ;
+            return aValue.toString();
         } else if (aInClass.equals(String.class) && aOutClass.equals(java.sql.Timestamp.class)) {
-        return Timestamp.valueOf((String) aValue) ;
-        } else if(aInClass.equals(Long.TYPE) && aOutClass.equals(Long.class)) {
-            return aValue ;
-        } else if(aInClass.equals(Long.class) && aOutClass.equals(Long.TYPE)) {
-            return aValue ;
+            return Timestamp.valueOf((String) aValue);
+        } else if (aInClass.equals(Long.TYPE) && aOutClass.equals(Long.class)) {
+            return aValue;
+        } else if (aInClass.equals(Long.class) && aOutClass.equals(Long.TYPE)) {
+            return aValue;
         } else if (aInClass.equals(java.util.Date.class) && aOutClass.equals(String.class)) {
-            return DateFormat.formatToDate((Date) aValue) ;
+            return DateFormat.formatToDate((Date) aValue);
         } else if (aInClass.equals(String.class) && aOutClass.equals(BigDecimal.class)) {
-        	return StringUtil.isNullOrEmpty((String)aValue) ? null : new BigDecimal(((String) aValue).replace(",",".")) ;
+            return StringUtil.isNullOrEmpty((String) aValue) ? null : new BigDecimal(((String) aValue).replace(",", "."));
         } else if (aInClass.equals(BigDecimal.class) && aOutClass.equals(String.class)) {
-        	return aValue.toString() ;
+            return aValue.toString();
         } else if (aInClass.equals(String.class) && aOutClass.equals(Integer.TYPE)) {
-            String str = (String) aValue ;
-            return StringUtil.isNullOrEmpty(str) ? 0 : (int)Double.parseDouble(str) ;
+            String str = (String) aValue;
+            return StringUtil.isNullOrEmpty(str) ? 0 : (int) Double.parseDouble(str);
         } else if (aInClass.equals(String.class) && aOutClass.equals(Long.TYPE)) {
-            String str = (String) aValue ;
-            return StringUtil.isNullOrEmpty(str) ? 0 : Long.parseLong(str) ;
+            String str = (String) aValue;
+            return StringUtil.isNullOrEmpty(str) ? 0 : Long.parseLong(str);
         } else if (aInClass.equals(String.class) && aOutClass.equals(Long.class)) {
-            String str = (String) aValue ;
-            return StringUtil.isNullOrEmpty(str) ? 0 : Long.valueOf(str) ;
+            String str = (String) aValue;
+            return StringUtil.isNullOrEmpty(str) ? 0 : Long.parseLong(str);
         } else if (aInClass.equals(Long.class) && aOutClass.equals(String.class)) {
-            return aValue.toString() ;
+            return aValue.toString();
         } else if (aInClass.equals(Integer.class) && aOutClass.equals(String.class)) {
-            return aValue.toString() ;
+            return aValue.toString();
         } else if (aInClass.equals(String.class) && aOutClass.equals(Integer.class)) {
-        	 String str = (String) aValue ;
-             return StringUtil.isNullOrEmpty(str) ? 0 : Integer.valueOf(str) ;
+            String str = (String) aValue;
+            return StringUtil.isNullOrEmpty(str) ? 0 : Integer.parseInt(str);
         } else if (aInClass.equals(java.util.Date.class) && aOutClass.equals(java.sql.Date.class)) {
-        	java.util.Date date = (Date) aValue ;
-        	return new java.sql.Date(date.getTime()) ;
+            java.util.Date date = (Date) aValue;
+            return new java.sql.Date(date.getTime());
         } else if (aInClass.equals(Long.class) && aOutClass.equals(Integer.TYPE)) {
-        	 Long l = (Long) aValue ;
-        	 return l.intValue() ;
+            Long l = (Long) aValue;
+            return l.intValue();
         } else if (aInClass.equals(Integer.class) && aOutClass.equals(Integer.TYPE)) {
             return aValue;
         } else if (aInClass.equals(String.class) && aOutClass.equals(boolean.class)) {
-	       	 return Boolean.parseBoolean((String)aValue) ;
+            return Boolean.parseBoolean((String) aValue);
         } else if (aInClass.equals(String.class) && aOutClass.equals(Boolean.class)) {
-	       	 return Boolean.valueOf((String)aValue) ;
+            return Boolean.valueOf((String) aValue);
         } else if (aInClass.equals(Boolean.class) && aOutClass.equals(String.class)) {
-	       	 return String.valueOf(aValue) ;
+            return String.valueOf(aValue);
         } else if (aInClass.equals(Boolean.class) && aOutClass.equals(Boolean.TYPE)) {
-	       	 return aValue ;
+            return aValue;
         } else if (aInClass.equals(Boolean.TYPE) && aOutClass.equals(Boolean.class)) {
-	       	 return aValue ;
+            return aValue;
         } else if (aInClass.equals(Integer.TYPE) && aOutClass.equals(Integer.class)) {
-	       	 return aValue ;
+            return aValue;
         } else if (aInClass.equals(boolean.class) && aOutClass.equals(String.class)) {
-	       	 return String.valueOf(aValue) ;
+            return String.valueOf(aValue);
         } else if (aInClass.equals(String.class) && aOutClass.equals(java.sql.Time.class)) {
             return DateFormat.parseSqlTime((String) aValue);
-       } else if (aInClass.equals (java.sql.Time.class) && aOutClass.equals(String.class)) {
+        } else if (aInClass.equals(java.sql.Time.class) && aOutClass.equals(String.class)) {
             return DateFormat.formatToTime((java.sql.Time) aValue);
-       } else if (aOutClass.equals(Object.class)) {
-    	   return aValue ;
-       } else if (aInClass.equals(java.math.BigInteger.class) && aOutClass.equals(String.class)) {
-    	   return String.valueOf(aValue);
-       } else if (aInClass.equals(Integer.class) && aOutClass.equals(Long.class)) {
-    	    return Long.valueOf((Integer) aValue);
+        } else if (aOutClass.equals(Object.class)) {
+            return aValue;
+        } else if (aInClass.equals(java.math.BigInteger.class) && aOutClass.equals(String.class)) {
+            return String.valueOf(aValue);
+        } else if (aInClass.equals(Integer.class) && aOutClass.equals(Long.class)) {
+            return Long.valueOf((Integer) aValue);
         }
-    	throw new IllegalArgumentException("Нет преобразования из "+aInClass+" в "+aOutClass+ " для значения "+aValue) ;
+        throw new IllegalArgumentException("Нет преобразования из " + aInClass + " в " + aOutClass + " для значения " + aValue);
 
     }
+
     /**
      * Получение имени свойства по названию метода set* или get*
+     *
      * @param aMethod метод
      * @return название свойства
-     * 
+     * <p>
      * HASH
      */
     public static String getPropertyName(Method aMethod) {
-    	String propertyName = GET_PROPERTY_NAME_HASH.get(aMethod);
-    	if(propertyName==null) {
-            String methodName = aMethod.getName() ;
-            if(methodName.length()>2 && methodName.startsWith("is")) {
-                propertyName = Character.toLowerCase(methodName.charAt(2))+methodName.substring(3) ;
-                GET_PROPERTY_NAME_HASH.put(aMethod, propertyName) ;
-            } else if(methodName.length()>3 && (methodName.startsWith("get")||methodName.startsWith("set"))) {
-                propertyName = Character.toLowerCase(methodName.charAt(3))+methodName.substring(4);
-                GET_PROPERTY_NAME_HASH.put(aMethod, propertyName) ;
+        String propertyName = GET_PROPERTY_NAME_HASH.get(aMethod);
+        if (propertyName == null) {
+            String methodName = aMethod.getName();
+            if (methodName.length() > 2 && methodName.startsWith("is")) {
+                propertyName = Character.toLowerCase(methodName.charAt(2)) + methodName.substring(3);
+                GET_PROPERTY_NAME_HASH.put(aMethod, propertyName);
+            } else if (methodName.length() > 3 && (methodName.startsWith("get") || methodName.startsWith("set"))) {
+                propertyName = Character.toLowerCase(methodName.charAt(3)) + methodName.substring(4);
+                GET_PROPERTY_NAME_HASH.put(aMethod, propertyName);
             } else {
-                throw new IllegalArgumentException("Метод "+aMethod+" не является методом свойcтва") ;
+                throw new IllegalArgumentException("Метод " + aMethod + " не является методом свойcтва");
             }
-    	}
-    	return propertyName ;
+        }
+        return propertyName;
     }
-    
-    
+
+
     /**
-     *
      * @param aObject
      * @param aPropertyName
      */
     public static Object getPropertyValue(Object aObject, String aPropertyName) throws IllegalAccessException, InvocationTargetException {
-    	if(aObject!=null) {
-	    	if(aObject instanceof Object[]) {
-	    		Object[]  arr = (Object[]) aObject ;
-	    		return String.valueOf(arr[Integer.parseInt(aPropertyName)]) ;
-	    	} else if(aObject instanceof Map ) {
-	    		Map map = (Map) aObject ;
-	    		return map.get(aPropertyName);
-	    	} else {
-	    		int pos = aPropertyName.indexOf('.') ;
-	    		if(pos>=0) {
-	    			String property = aPropertyName.substring(0,pos);
-	    			Object obj = getPropertyValue(aObject, property) ;
-	    			
-	    			return obj!=null ? getPropertyValue(obj, aPropertyName.substring(pos+1)) : null;
-	    		} else {
-		        	return getMethodFormProperty(aObject.getClass(), aPropertyName).invoke(aObject) ;
-	    		}
-	    	}
+        if (aObject != null) {
+            if (aObject instanceof Object[]) {
+                Object[] arr = (Object[]) aObject;
+                return String.valueOf(arr[Integer.parseInt(aPropertyName)]);
+            } else if (aObject instanceof Map) {
+                Map map = (Map) aObject;
+                return map.get(aPropertyName);
+            } else {
+                int pos = aPropertyName.indexOf('.');
+                if (pos >= 0) {
+                    String property = aPropertyName.substring(0, pos);
+                    Object obj = getPropertyValue(aObject, property);
+
+                    return obj != null ? getPropertyValue(obj, aPropertyName.substring(pos + 1)) : null;
+                } else {
+                    return getMethodFormProperty(aObject.getClass(), aPropertyName).invoke(aObject);
+                }
+            }
         } else {
-            throw new IllegalArgumentException("Нет объекта") ;
+            throw new IllegalArgumentException("Нет объекта");
         }
     }
 
     public static Method getMethodFormProperty(Class aClass, String aPropertyName) {
-    	return getGetterMethod(aClass, aPropertyName) ;
+        return getGetterMethod(aClass, aPropertyName);
     }
 
     public static Method getGetterMethod(Class aClass, String aPropertyName) {
-    	try {
-	    	Method m ;
-	    	try {
-	    		m = aClass.getMethod(getGetterMethodNameForProperty(aPropertyName)) ;
-	    	} catch (NoSuchMethodException e) {
-	    		m = aClass.getMethod(getIsMethodNameForProperty(aPropertyName)) ;
-	    	}
-	        return m ;
-    	} catch (Exception e) {
-    		throw new IllegalStateException(e) ;
-    	}
+        try {
+            Method m;
+            try {
+                m = aClass.getMethod(getGetterMethodNameForProperty(aPropertyName));
+            } catch (NoSuchMethodException e) {
+                m = aClass.getMethod(getIsMethodNameForProperty(aPropertyName));
+            }
+            return m;
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public static Method getGetterMethodIgnoreCase(Class aClass, String aPropertyName) throws NoSuchMethodException {
         String getterMethodName = getGetterMethodNameForProperty(aPropertyName).toUpperCase();
-        for (Method method: aClass.getMethods()) {
+        for (Method method : aClass.getMethods()) {
             if (method.getName().equalsIgnoreCase(getterMethodName)) {
                 return method;
             }
         }
-        throw new NoSuchMethodException("property="+aPropertyName);
+        throw new NoSuchMethodException("property=" + aPropertyName);
     }
-    
+
     public static void setPropertyValue(Object aObject, String aProperty, Object aValue) throws NoSuchMethodException, ParseException, IllegalAccessException, InvocationTargetException {
-    	if(aObject==null) throw new IllegalArgumentException("Нет объекта. aObject==null") ;
-    	Class clazz = aObject.getClass() ;
+        if (aObject == null) throw new IllegalArgumentException("Нет объекта. aObject==null");
+        Class clazz = aObject.getClass();
         //String getterMethodName = PropertyUtil.getGetterMethodNameForProperty(aProperty) ;
-        Method getterMethod = PropertyUtil.getGetterMethod(clazz, aProperty) ; //aObject.getClass().getMethod(getterMethodName) ;
+        Method getterMethod = PropertyUtil.getGetterMethod(clazz, aProperty); //aObject.getClass().getMethod(getterMethodName) ;
         Method setterMethod = PropertyUtil.getSetterMethod(clazz, getterMethod);
-        if(aValue==null) {
-            setterMethod.invoke(aObject, aValue) ; // setting null
+        if (aValue == null) {
+            setterMethod.invoke(aObject, aValue); // setting null
         } else {
-            Object convertedValue = convertValue(aValue.getClass(), getterMethod.getReturnType(), aValue) ;
-            setterMethod.invoke(aObject, convertedValue) ;
+            Object convertedValue = convertValue(aValue.getClass(), getterMethod.getReturnType(), aValue);
+            setterMethod.invoke(aObject, convertedValue);
         }
     }
-    
-    
-    
+
+
     private static String getGetterMethodNameForProperty(String aPropertyName) {
-        return "get"+Character.toUpperCase(aPropertyName.charAt(0))+aPropertyName.substring(1);
+        return "get" + Character.toUpperCase(aPropertyName.charAt(0)) + aPropertyName.substring(1);
     }
 
     private static String getIsMethodNameForProperty(String aPropertyName) {
-        return "is"+Character.toUpperCase(aPropertyName.charAt(0))+aPropertyName.substring(1);
+        return "is" + Character.toUpperCase(aPropertyName.charAt(0)) + aPropertyName.substring(1);
 
     }
-    
-    
+
+
     public static void destroy() {
-    	if (CAN_DEBUG) LOG.debug("Clearing GET_PROPERTY_NAME_HASH: " + GET_PROPERTY_NAME_HASH.size()); 
-    	GET_PROPERTY_NAME_HASH.clear() ;
-    	if (CAN_DEBUG) LOG.debug("Clearing GET_SETTER_METHOD_NAME: " + GET_SETTER_METHOD_NAME.size()); 
-    	GET_SETTER_METHOD_NAME.clear() ;
+        if (CAN_DEBUG) LOG.debug("Clearing GET_PROPERTY_NAME_HASH: " + GET_PROPERTY_NAME_HASH.size());
+        GET_PROPERTY_NAME_HASH.clear();
+        if (CAN_DEBUG) LOG.debug("Clearing GET_SETTER_METHOD_NAME: " + GET_SETTER_METHOD_NAME.size());
+        GET_SETTER_METHOD_NAME.clear();
     }
-    // 
-    private static final Map<Method,String> GET_PROPERTY_NAME_HASH = new HashMap<Method,String>() ;
-    
+
+    //
+    private static final Map<Method, String> GET_PROPERTY_NAME_HASH = new HashMap<>();
+
     // getSetterMethodName
-    private static final Map<String, String> GET_SETTER_METHOD_NAME = new HashMap<String, String>() ;
+    private static final Map<String, String> GET_SETTER_METHOD_NAME = new HashMap<>();
 }

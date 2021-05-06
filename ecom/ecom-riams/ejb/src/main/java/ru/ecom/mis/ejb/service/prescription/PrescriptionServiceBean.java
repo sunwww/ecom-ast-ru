@@ -60,6 +60,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static ru.nuzmsh.util.EqualsUtil.isOneOf;
+
 
 @Stateless
 @Remote(IPrescriptionService.class)
@@ -430,7 +432,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
                 String entityName = "Protocol";
                 Long braceleteId = findBraceleteStatusCovidIfExists(medCase.getId(), manager);
                 //если нет браслета-ожидания, можно удалять результаты и создавать браслет
-                ColorIdentityPatient cip = null;
+                ColorIdentityPatient cip;
                 if (braceleteId == 0) {
                     deleteBraceletByEntity(entityName, protocolId, manager);
                     cip = new ColorIdentityPatient();
@@ -479,8 +481,8 @@ public class PrescriptionServiceBean implements IPrescriptionService {
                 manager.persist(cip);
                 if (braceleteId == 0)
                     medCase.addColorsIdentity(cip);
-            } else if ("A26.06.041.002".equals(medServiceCode) || "A26.06.041.999".equals(medServiceCode)
-                    || "A26.06.036.001".equals(medServiceCode) || "A26.06.036.002".equals(medServiceCode)) { //браслет с гепатитом
+            } else if (isOneOf(medServiceCode,"A26.06.041.002"
+                    ,"A26.06.041.999","A26.06.036.001", "A26.06.036.002")) { //браслет с гепатитом
                 boolean isGepatit = false;
                 for (int i = 0; i < params.length(); i++) {
                     JSONObject par = params.getJSONObject(i);
@@ -500,7 +502,6 @@ public class PrescriptionServiceBean implements IPrescriptionService {
                     cip.setCreateUsername(username);
                     cip.setEntityName(entityName);
                     cip.setEntityId(protocolId);
-                    StringBuilder info = new StringBuilder();
                     String vocCode = "LAB_HEPATITIS";
                     VocColorIdentityPatient vcip = (VocColorIdentityPatient) manager.createNamedQuery("VocColorIdentityPatient.getByCode").setParameter("code", vocCode).getSingleResult();
                     cip.setVocColorIdentity(vcip);
@@ -533,12 +534,12 @@ public class PrescriptionServiceBean implements IPrescriptionService {
                 " and mcip.medcase_id=:medCaseId" +
                 " order by cip.id desc")
                 .setParameter("medCaseId", medCaseId).setMaxResults(1).getResultList();
-        return list.isEmpty() ? 0 : Long.valueOf(list.get(0).toString());
+        return list.isEmpty() ? 0 : Long.parseLong(list.get(0).toString());
     }
 
     private void deleteBraceletByEntity(String name, Long code, EntityManager manager) {
         String sql = " ColorIdentityPatient where entityName='" + name + "' and entityId='" + code
-                + "' and finishdate is null or (cast ((finishdate||' '||finishtime) as TIMESTAMP) > current_timestamp)";
+                + "' and (finishdate is null or (cast ((finishdate||' '||finishtime) as TIMESTAMP) > current_timestamp))";
         manager.createNativeQuery("delete from medcase_coloridentitypatient where colorsidentity_id = (select id from " + sql + ")").executeUpdate();
         manager.createNativeQuery("delete from " + sql).executeUpdate();
     }

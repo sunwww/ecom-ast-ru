@@ -366,10 +366,10 @@ public class HospitalMedCaseServiceJs {
     private void check2DaysNormalTempAndClose(Long aMedCase, String takingDate, float highTemp, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         StringBuilder sql = new StringBuilder();
-        sql.append("select count(case when y1.degree<").append(highTemp)
+        sql.append("select sum(case when y1.degree<").append(highTemp)
                 .append(" and y2.degree<").append(highTemp)
                 .append(" then 1 else 0 end) as yC")
-                .append(" ,count(case when befY1.degree<").append(highTemp)
+                .append(" ,sum(case when befY1.degree<").append(highTemp)
                 .append(" and befY2.degree<").append(highTemp)
                 .append(" then 1 else 0 end) as befYC")
                 .append(" from temperaturecurve y1")
@@ -409,9 +409,9 @@ public class HospitalMedCaseServiceJs {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         StringBuilder sql = new StringBuilder();
 
-        sql.append("select count(case when y.degree>=").append(highTemp)
+        sql.append("select sum(case when y.degree>=").append(highTemp)
                 .append(" then 1 else 0 end) as yC")
-                .append(",count(case when befY.degree>=").append(highTemp).append(" then 1 else 0 end) as befYC")
+                .append(",sum(case when befY.degree>=").append(highTemp).append(" then 1 else 0 end) as befYC")
                 .append(" from temperaturecurve y")
                 .append(" left join temperaturecurve befY on befY.medcase_id=y.medcase_id and befY.takingdate=y.takingdate-1")
                 .append(" where y.medcase_id = ").append(aMedCase)

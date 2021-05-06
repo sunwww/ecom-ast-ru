@@ -17,10 +17,10 @@ import javax.persistence.OneToOne;
  */
 @Entity
 @AIndexes({
-        @AIndex(properties= {"kSGGrouper"})
-        , @AIndex(properties= {"mainMKB"})
-        , @AIndex(properties= {"anotherMKB"})
-        , @AIndex(properties= {"serviceCode"})
+        @AIndex(properties = {"kSGGrouper"})
+        , @AIndex(properties = {"mainMKB"})
+        , @AIndex(properties = {"anotherMKB"})
+        , @AIndex(properties = {"serviceCode"})
 
 })
 @Getter
@@ -30,13 +30,17 @@ public class GrouperKSGPosition extends BaseEntity {
     /** Код позиции группировщика */
     private String code ;
 
-    /** Группировщик КСГ */
+    /**
+     * Группировщик КСГ
+     */
     @Comment("Группировщик КСГ")
     @OneToOne
     public GrouperKSG getKsgGrouper() {return ksgGrouper;}
     private GrouperKSG ksgGrouper ;
 
-    /** Код МКБ основной */
+    /**
+     * Код МКБ основной
+     */
     @Comment("Код МКБ основной")
     public String getMainMKB() {return mainMKB;}
     private String mainMKB ;

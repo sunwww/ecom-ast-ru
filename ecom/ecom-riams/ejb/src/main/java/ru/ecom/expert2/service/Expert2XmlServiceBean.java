@@ -191,7 +191,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     /**
      * Создаем тэг с информацией о госпитализации (версия 3.2*)
      */
-    private Element createZSl2020(E2Entry entry, boolean isPoliclinic, int slCnt, int zslIdCase, String lpuRegNumber
+    private Element createZSl2020(E2Entry entry, boolean isPoliclinic, int zslIdCase, String lpuRegNumber
             , boolean a3) {
         String forPom = isTrue(entry.getIsEmergency()) ? (isPoliclinic ? "2" : "1") : "3";
         Element z = new Element("Z_SL");
@@ -221,10 +221,11 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             add(z, "ISHOD", entry.getFondIshod().getCode()); // Исход случая.
         }
         addIfNotNull(z, "OS_SLUCH", Expert2FondUtil.calculateFondOsSluch(entry)); // Особый случай
-        if (!isPoliclinic && !a3
+     /*   if (!isPoliclinic && !a3
                 && (isOneOf(entry.getFondResult().getCode(), "104", "204"))
                 || entry.getMedHelpProfile().getCode().equals("136") && entry.havePrevMedCase())
             add(z, "VB_P", "1"); // Признак внутрибольничного перевода *05.08 1 - только если есть перевод
+       */
         z.addContent(new Element("SL_TEMPLATE")); // Список случаев
         add(z, "IDSP", entry.getIdsp().getCode()); // Способ оплаты медицинской помощи (V010)
         add(z, "SUMV", entry.getCost()); // Сумма, выставленная к оплате
@@ -236,6 +237,13 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
      */
     private void add(Element el, String fieldName, Object value) {
         el.addContent(new Element(fieldName).setText(value != null ? value.toString() : ""));
+    }
+
+    /**
+     * Добавляем в Element значение
+     */
+    private void add(int index, Element el, String fieldName, Object value) {
+        el.addContent(index, new Element(fieldName).setText(value != null ? value.toString() : ""));
     }
 
     /**
@@ -347,9 +355,10 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             String isChild = isTrue(entry.getIsChild()) ? "1" : "0";
 
             String[] slIds = entriesString.split(",");
-            Element zSl = createZSl2020(entry, isPoliclinic, slIds.length, cnt, lpuRegNumber
+            Element zSl = createZSl2020(entry, isPoliclinic, cnt, lpuRegNumber
                     , a3);
             int indSl = zSl.indexOf(zSl.getChild("SL_TEMPLATE"));
+            final int firstIndSl = indSl;
             Date startHospitalDate = null;
             Date finishHospitalDate = null;
             int kdz = 0;
@@ -714,6 +723,10 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             if (zSl.getChild("KD_Z") != null) {
                 zSl.getChild("KD_Z").setText(kdz + "");
             }
+            if (isHosp && entry.havePrevMedCase()) {
+                add(firstIndSl, zSl, "VB_P", "1");
+            }
+
             zSl.removeChild("SL_TEMPLATE");
             zap.addContent(zSl); //Добавляем информацию о случае в запись
             return zap;
@@ -731,9 +744,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     //stom //пока заколхозим
     private String calcCodeMes(E2Entry entry) {
         String mainMkb = entry.getMainMkb();
-        if (isOneOf(mainMkb,"K02.0","K02.1","K02.3")) return "1";
-        if (isOneOf(mainMkb,"K04.0")) return "2";
-        if (isOneOf(mainMkb,"K04.5","K04.6","K04.7")) return "4";
+        if (isOneOf(mainMkb, "K02.0", "K02.1", "K02.3")) return "1";
+        if (isOneOf(mainMkb, "K04.0")) return "2";
+        if (isOneOf(mainMkb, "K04.5", "K04.6", "K04.7")) return "4";
 
         return null;
 

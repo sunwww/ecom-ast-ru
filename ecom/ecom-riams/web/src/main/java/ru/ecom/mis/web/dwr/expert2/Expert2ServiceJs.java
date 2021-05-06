@@ -329,7 +329,7 @@ public class Expert2ServiceJs {
                         String oldDepartmentAddressCode = triple.length > 2 ? triple[2] : null;
                         service.executeUpdateNativeSql("update e2entry e set departmentCode = '" +
                                 newDepartmentAddressCode.substring(0, 8) + "', departmentAddressCode='" + newDepartmentAddressCode + "' where listEntry_id=" +
-                                entryListId + " and medhelpprofile_id=(select max(id) from voce2medhelpprofile where code ='" +
+                                entryListId + " and medhelpprofile_id in (select id from voce2medhelpprofile where code ='" +
                                 profileCode + "')" + (oldDepartmentAddressCode == null ? "" : " and departmentAddressCode='" + oldDepartmentAddressCode + "'"));
                     }
                     return "Всё заменено согласно настройкам: " + con;

@@ -101,7 +101,6 @@ function saveParentCriterion(aList, aEntity, aContext) {
         }
         aContext.manager.persist(qec);
     }
-
 }
 
 function onSave(aForm, aEntity, aContext) {
@@ -110,9 +109,6 @@ function onSave(aForm, aEntity, aContext) {
     aContext.manager.createNativeQuery("delete from QualityEstimationCritDefect qecd where criterion in (select id from QualityEstimationCrit qec where qec.estimation_id='" + id + "')").executeUpdate();
     aContext.manager.createNativeQuery("delete from QualityEstimationCrit where estimation_id='" + id + "'").executeUpdate();
     onCreate(aForm, aEntity, aContext);
-}
-
-function onPreSave(aForm, aEntity, aCtx) {
 }
 
 //Milamesher проверка на выписан ли и не прошло ли больше допустимого времени #150

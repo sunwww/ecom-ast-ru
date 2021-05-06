@@ -99,11 +99,6 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 	@Persist
 	public Long getLpu() {return lpu;}
 
-	/** Недействительность */
-	@Comment("Недействительность")
-	@Persist
-	public Boolean getNoActuality() {return noActuality;}
-
 	/** Количество дней */
 	@Comment("Количество дней")
 	@Persist
@@ -221,8 +216,6 @@ public class DepartmentMedCaseForm extends HospitalMedCaseForm {
 	private String departmentInfo;
 	/** Количество дней */
 	private String daysCount;
-	/** Недействительность */
-	private Boolean noActuality;
 	/** Лечебное учреждение */
 	private Long lpu;
 	/** Время выписки */

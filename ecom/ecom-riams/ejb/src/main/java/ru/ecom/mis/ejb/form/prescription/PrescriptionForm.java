@@ -123,6 +123,7 @@ public class PrescriptionForm extends IdEntityForm {
 	@Comment("Описание")
 	@Persist
 	public String getDescription() {return "";}
+	public void setDescription(String aDescription) {}
 
 	/** Состояние исполнения */
 	@Comment("Состояние исполнения")
