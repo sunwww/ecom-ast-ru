@@ -539,7 +539,7 @@ public class PrescriptionServiceBean implements IPrescriptionService {
 
     private void deleteBraceletByEntity(String name, Long code, EntityManager manager) {
         String sql = " ColorIdentityPatient where entityName='" + name + "' and entityId='" + code
-                + "' and finishdate is null or (cast ((finishdate||' '||finishtime) as TIMESTAMP) > current_timestamp)";
+                + "' and (finishdate is null or (cast ((finishdate||' '||finishtime) as TIMESTAMP) > current_timestamp))";
         manager.createNativeQuery("delete from medcase_coloridentitypatient where colorsidentity_id = (select id from " + sql + ")").executeUpdate();
         manager.createNativeQuery("delete from " + sql).executeUpdate();
     }
