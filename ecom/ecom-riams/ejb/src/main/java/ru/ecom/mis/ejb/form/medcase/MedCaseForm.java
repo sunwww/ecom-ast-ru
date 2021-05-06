@@ -376,7 +376,7 @@ public class MedCaseForm extends IdEntityForm {
     /**
      * Недействительность
      */
-    private Boolean noActuality;
+    private boolean noActuality;
     /**
      * Родительский СМО
      */

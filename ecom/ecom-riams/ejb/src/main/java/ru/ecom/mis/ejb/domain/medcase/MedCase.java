@@ -186,13 +186,8 @@ abstract public class MedCase extends BaseEntity {
 	/**Тип СМО */
 	private VocMedCaseDefect medCaseDefect;
 
-	@Transient
-	public boolean getNoActuality() {
-		return noActuality;
-	}
 	/**Недействительность */
 	private boolean noActuality;
-
 
 	/**ЛПУ - место исполнения */
 	private MisLpu lpu;
