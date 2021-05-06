@@ -33,12 +33,6 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	@Persist 
 	public String getDateStart() {return dateStart;	}
 
-
-	/** Недействительность */
-	@Comment("Недействительность")
-	@Persist
-	public Boolean getNoActuality() {return noActuality;}
-
 	/** Рабочая функция направителя */
 	@Comment("Рабочая функция направителя")
 	public Long getOrderWorkFunction() {return orderWorkFunction;}
@@ -414,8 +408,6 @@ public class HospitalMedCaseForm extends MedCaseForm {
 	private String externalId;
 	/** Экстренность */
 	private Boolean emergency;
-	/** Недействительность */
-	private Boolean noActuality;
 	/** Дата начала */
 	private String dateStart;
 	/** Рабочая функция направителя */

@@ -50,11 +50,6 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	@Persist @MaxDateCurrent @Required
 	public String getDateStart() {return dateStart;	}
 
-	/** Недействительность */
-	@Comment("Недействительность")
-	@Persist
-	public Boolean getNoActuality() {return noActuality;}
-
 	/** Внешний направитель (ЛПУ) */
 	@Comment("Внешний направитель (ЛПУ)")
 	@Persist
@@ -356,8 +351,6 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	/** Внешний направитель (ЛПУ) */
 	private Long orderLpu;
 
-	/** Недействительность */
-	private Boolean noActuality;
 	/** Дата начала */
 	private String dateStart;
 

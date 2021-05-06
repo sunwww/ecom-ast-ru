@@ -65,7 +65,7 @@ public class FieldForm extends IdEntityForm {
 
     /** Обязательное поле */
     @Persist
-    public boolean getRequired() { return required ; }
+    public boolean isRequired() { return required ; }
 
     /** Подробное описание */
     @Persist

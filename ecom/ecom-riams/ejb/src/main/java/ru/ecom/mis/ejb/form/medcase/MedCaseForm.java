@@ -82,7 +82,12 @@ public class MedCaseForm extends IdEntityForm {
      */
     @Comment("Недействительность")
     @Persist
-    public Boolean getNoActuality() {
+    public boolean isNoActuality() {
+        return noActuality;
+    }
+
+
+    public boolean getNoActuality() {
         return noActuality;
     }
 
