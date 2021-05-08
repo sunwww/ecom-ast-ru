@@ -23,16 +23,12 @@ public class RowTag extends AbstractGuidSimpleSupportTag {
         JspWriter out = getJspContext().getOut() ;
         
         JspTag parent = getParent() ;
-        //System.out.println("panel parent = "+parent) ;
         if(parent instanceof PanelTag) {
         	PanelTag panel = (PanelTag) parent ;
         	if(panel.getColsWidthArray()!=null) {
-        		theStack = new Stack<String>() ;
-        		for(String s:panel.getColsWidthArray()) {
-        			theStack.add(s);
-        		}
+        		theStack = new Stack<>() ;
+				theStack.addAll(panel.getColsWidthArray());
     			this.getJspContext().setAttribute("colsWidthStack", theStack) ;
-        		//System.out.println("theStack = "+theStack);
         	}
         }
         if(StringUtil.isNullOrEmpty(theStyleId)) {

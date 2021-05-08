@@ -15,6 +15,7 @@ import ru.nuzmsh.web.struts.forms.customize.IFormCustomizeService;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -22,39 +23,45 @@ import java.util.*;
  */
 public class XmlFormCustomizeService implements IFormCustomizeService {
 
-    private static final Logger LOG = Logger.getLogger(XmlFormCustomizeService.class) ;
+    private static final Logger LOG = Logger.getLogger(XmlFormCustomizeService.class);
 
-    /** Каталог для хранения настроек */
-    public String getConfigDir() { return theConfigDir ; }
-    public void setConfigDir(String aConfigDir) { theConfigDir = aConfigDir ; }
+    /**
+     * Каталог для хранения настроек
+     */
+    public String getConfigDir() {
+        return theConfigDir;
+    }
+
+    public void setConfigDir(String aConfigDir) {
+        theConfigDir = aConfigDir;
+    }
 
     public void start() {
         theHash = new TreeMap<>();
         try {
-            Element root = getRootElement(theConfigDir+"/formsCustomize.xml") ;
-            List<Element> forms = root.getChildren() ;
+            Element root = getRootElement(theConfigDir + "/formsCustomize.xml");
+            List<Element> forms = root.getChildren();
             for (Element formElement : forms) {
-                List<Element> elements = formElement.getChildren() ;
-                String name = getAttributeString(formElement, "name") ;
+                List<Element> elements = formElement.getChildren();
+                String name = getAttributeString(formElement, "name");
                 for (Element element : elements) {
                     FormElementInfo info = new FormElementInfo(getAttributeString(element, "name"));
-                    info.setRequired(getAttributeBoolean(element,"required"));
-                    info.setLabel(getAttributeString(element,"label"));
-                    info.setDefaultValue(getAttributeString(element,"default"));
-                    info.setVisible(getAttributeBoolean(element,"visible"));
-                    saveFormElementInfoNoSave(null, name, info);
+                    info.setRequired(getAttributeBoolean(element, "required"));
+                    info.setLabel(getAttributeString(element, "label"));
+                    info.setDefaultValue(getAttributeString(element, "default"));
+                    info.setVisible(getAttributeBoolean(element, "visible"));
+                    saveFormElementInfoNoSave(name, info);
                 }
             }
         } catch (Exception e) {
-            throw new IllegalStateException("Ошибка получения данных из xml",e) ;
+            throw new IllegalStateException("Ошибка получения данных из xml", e);
         }
     }
 
 
-
     public void reload() {
-        stop() ;
-        start() ;
+        stop();
+        start();
     }
 
     public void stop() {
@@ -62,82 +69,82 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
             map.clear();
         }
         theHash.clear();
-        theHash = null ;
+        theHash = null;
     }
 
     public FormElementInfo findFormElementInfo(ILoginInfo aLoginInfo, String aFormName, String aElementName) {
-        if(aFormName==null) throw new IllegalArgumentException("Нет названия формы") ;
-        if(aElementName==null) throw new IllegalArgumentException("Нет названия элемента") ;
+        if (aFormName == null) throw new IllegalArgumentException("Нет названия формы");
+        if (aElementName == null) throw new IllegalArgumentException("Нет названия элемента");
 
-        TreeMap<String, FormElementInfo> elementsHash = theHash.get(aFormName) ;
-        FormElementInfo info ;
-        if(elementsHash!=null) {
-            info = elementsHash.get(aElementName) ;
+        TreeMap<String, FormElementInfo> elementsHash = theHash.get(aFormName);
+        FormElementInfo info;
+        if (elementsHash != null) {
+            info = elementsHash.get(aElementName);
         } else {
-            info = null ;
+            info = null;
         }
-        return info ;
+        return info;
     }
 
     private Element getRootElement(String aFilename) {
         try {
-            Document doc = new SAXBuilder().build(aFilename) ;
-            return doc.getRootElement() ;
+            Document doc = new SAXBuilder().build(aFilename);
+            return doc.getRootElement();
         } catch (Exception e) {
-            LOG.warn("Ошибка загрузки файла: "+aFilename, e);
-            return new Element("forms") ;
+            LOG.warn("Ошибка загрузки файла: " + aFilename, e);
+            return new Element("forms");
         }
 
     }
 
 
-    private void saveFormElementInfoNoSave(ILoginInfo aLoginInfo, String aFormName, FormElementInfo aInfo) {
-        if(aInfo!=null && !canSave(aInfo)) { // удаляем из базы
-            TreeMap<String, FormElementInfo> elementsHash = theHash.get(aFormName) ;
-            if(elementsHash!=null) {
-                if(elementsHash.get(aInfo.getName())!=null) {
-                    elementsHash.remove(aInfo.getName()) ;
+    private void saveFormElementInfoNoSave(String aFormName, FormElementInfo aInfo) {
+        if (aInfo != null && !canSave(aInfo)) { // удаляем из базы
+            TreeMap<String, FormElementInfo> elementsHash = theHash.get(aFormName);
+            if (elementsHash != null) {
+                if (elementsHash.get(aInfo.getName()) != null) {
+                    elementsHash.remove(aInfo.getName());
                 }
-                if(elementsHash.isEmpty()) {
-                    theHash.remove(aFormName) ;
+                if (elementsHash.isEmpty()) {
+                    theHash.remove(aFormName);
                 }
             }
         } else {
-            TreeMap<String, FormElementInfo> elementsHash = theHash.get(aFormName) ;
-            if(elementsHash==null) {
+            TreeMap<String, FormElementInfo> elementsHash = theHash.get(aFormName);
+            if (elementsHash == null) {
                 elementsHash = new TreeMap<>();
-                theHash.put(aFormName, elementsHash) ;
+                theHash.put(aFormName, elementsHash);
             }
-            elementsHash.put(aInfo!=null ? aInfo.getName() : null, aInfo) ;
+            elementsHash.put(aInfo != null ? aInfo.getName() : null, aInfo);
         }
     }
 
     public void saveFormElementInfo(ILoginInfo aLoginInfo, String aFormName, FormElementInfo aInfo) {
-        saveFormElementInfoNoSave(aLoginInfo, aFormName, aInfo);
+        saveFormElementInfoNoSave(aFormName, aInfo);
         try {
-            saveAll() ;
+            saveAll();
         } catch (IOException e) {
-            LOG.error("Ошибка сохранения данных форм",e);
+            LOG.error("Ошибка сохранения данных форм", e);
         }
     }
 
     private void saveAll() throws IOException {
         XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
-        FileOutputStream tmpOut = new FileOutputStream(theConfigDir+"/formsCustomize.xml") ;
-        try (OutputStreamWriter fileOut = new OutputStreamWriter(tmpOut, "utf-8")){
+        FileOutputStream tmpOut = new FileOutputStream(theConfigDir + "/formsCustomize.xml");
+        try (OutputStreamWriter fileOut = new OutputStreamWriter(tmpOut, StandardCharsets.UTF_8)) {
             Element forms = new Element("forms");
             Document doc = new Document(forms);
             for (Map.Entry<String, TreeMap<String, FormElementInfo>> entrySet : theHash.entrySet()) {
                 TreeMap<String, FormElementInfo> elementsHash = entrySet.getValue();
                 Element form = new Element("form");
-                form.setAttribute("name",entrySet.getKey()) ;
+                form.setAttribute("name", entrySet.getKey());
                 for (FormElementInfo info : elementsHash.values()) {
-                    if(canSave(info)) {
-                        form.addContent(createXmlElementFromElement(info)) ;
+                    if (canSave(info)) {
+                        form.addContent(createXmlElementFromElement(info));
                     }
                 }
-                if(form.getChildren()!=null && !form.getChildren().isEmpty()) {
-                    forms.addContent(form) ;
+                if (form.getChildren() != null && !form.getChildren().isEmpty()) {
+                    forms.addContent(form);
                 }
             }
             xmlOut.output(doc, fileOut);
@@ -146,80 +153,81 @@ public class XmlFormCustomizeService implements IFormCustomizeService {
 
     private Element createXmlElementFromElement(FormElementInfo info) {
         Element elm = new Element("field");
-        if(info.getName()!=null) {
-            elm.setAttribute("name", info.getName()) ;
+        if (info.getName() != null) {
+            elm.setAttribute("name", info.getName());
         }
-        if(info.getLabel()!=null) {
-            elm.setAttribute("label", info.getLabel()) ;
+        if (info.getLabel() != null) {
+            elm.setAttribute("label", info.getLabel());
         }
-        if(info.getDefaultValue()!=null) {
-            elm.setAttribute("default", info.getDefaultValue()) ;
+        if (info.getDefaultValue() != null) {
+            elm.setAttribute("default", info.getDefaultValue());
         }
 
-        if(info.isVisible()!=null) {
-            String isVisible = (info.isVisible()!=null) ? info.isVisible().toString() : "" ;
-            elm.setAttribute("visible", isVisible) ;
+        if (info.isVisible() != null) {
+            String isVisible = (info.isVisible() != null) ? info.isVisible().toString() : "";
+            elm.setAttribute("visible", isVisible);
         }
-        return elm ;
+        return elm;
     }
 
     private boolean canSave(FormElementInfo aInfo) {
-        return !StringUtil.isNullOrEmpty(aInfo.getDefaultValue()) || !StringUtil.isNullOrEmpty(aInfo.getLabel()) ||aInfo.isVisible()!=null ;
+        return !StringUtil.isNullOrEmpty(aInfo.getDefaultValue()) || !StringUtil.isNullOrEmpty(aInfo.getLabel()) || aInfo.isVisible() != null;
     }
 
-    public Collection<FormInfo> listCustomizedForms()  {
+    public Collection<FormInfo> listCustomizedForms() {
         LinkedList<FormInfo> ret = new LinkedList<>();
         for (String key : theHash.keySet()) {
             FormInfo formInfo = new FormInfo();
             formInfo.setName(key);
-            ret.add(formInfo) ;
+            ret.add(formInfo);
         }
-        return ret ;
+        return ret;
     }
 
     public Collection<FormElementInfo> listCustomizedElements(String aFormName) {
-        TreeMap<String,FormElementInfo> elementsHash = theHash.get(aFormName) ;
-        return elementsHash!=null ? elementsHash.values() : null ;
+        TreeMap<String, FormElementInfo> elementsHash = theHash.get(aFormName);
+        return elementsHash != null ? elementsHash.values() : null;
     }
 
     private Boolean getAttributeBoolean(Element aElement, String aAttribute) {
-        String value = aElement.getAttributeValue(aAttribute) ;
-        Boolean ret ;
-        if(value==null) {
-            ret = null ;
+        String value = aElement.getAttributeValue(aAttribute);
+        Boolean ret;
+        if (value == null) {
+            ret = null;
         } else {
             try {
-                ret = Boolean.valueOf(value) ;
+                ret = Boolean.valueOf(value);
             } catch (Exception e) {
-                ret = null ;
+                ret = null;
             }
         }
-        return ret ;
+        return ret;
 
     }
 
     private String getAttributeString(Element aElement, String aAttribute) {
-        String value = aElement.getAttributeValue(aAttribute) ;
-        String ret ;
-        if(value==null) {
-            ret = null ;
+        String value = aElement.getAttributeValue(aAttribute);
+        String ret;
+        if (value == null) {
+            ret = null;
         } else {
             try {
-                ret = value.trim() ;
-                if("".equals(ret)) {
-                    ret = null ;
+                ret = value.trim();
+                if ("".equals(ret)) {
+                    ret = null;
                 }
             } catch (Exception e) {
-                ret = null ;
+                ret = null;
             }
         }
-        return ret ;
+        return ret;
 
     }
 
-    /** Каталог для хранения настроек */
-    private String theConfigDir ;
+    /**
+     * Каталог для хранения настроек
+     */
+    private String theConfigDir;
 
-//    private TreeMap<String,FormElementInfo> theHash ;
-    private TreeMap<String, TreeMap<String, FormElementInfo>> theHash ;
+    private TreeMap<String, TreeMap<String, FormElementInfo>> theHash;
 }

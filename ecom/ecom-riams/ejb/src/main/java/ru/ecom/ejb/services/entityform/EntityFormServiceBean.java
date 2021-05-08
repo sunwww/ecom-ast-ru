@@ -9,13 +9,11 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.LinkedList;
 
 /**
- *  Работа с EntityForm
- *
+ * Работа с EntityForm
  */
 @Stateless
 @Remote(IEntityFormService.class)
@@ -24,28 +22,29 @@ import java.util.LinkedList;
 public class EntityFormServiceBean extends AbstractFormServiceBeanHelper implements IEntityFormService, Serializable, ILocalEntityFormService {
 
     private static final Logger LOG = Logger.getLogger(EntityFormServiceBean.class);
-	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
+    private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
 
 
     @SuppressWarnings("unchecked")
-	public <T extends IEntityForm> T loadForm(Class<T> aFormClass, Object aEntity) throws EntityFormException {
-        checkPermission(aFormClass, "View") ;
+    public <T extends IEntityForm> T loadForm(Class<T> aFormClass, Object aEntity) throws EntityFormException {
+        checkPermission(aFormClass, "View");
         try {
             T form = aFormClass.newInstance();
             copyEntityToForm(aEntity, form);
             return form;
         } catch (Exception e) {
-            throw new EntityFormException("Ошибка копирования",e);
+            throw new EntityFormException("Ошибка копирования", e);
         }
     }
 
 
     /**
      * Подготовка к созданию формы
+     *
      * @return форма
      */
     public <T extends IEntityForm> T prepareToCreate(Class<T> aFormClass) throws EntityFormException {
-        checkPermission(aFormClass, "Create") ;
+        checkPermission(aFormClass, "Create");
         try {
             return aFormClass.newInstance();
         } catch (Exception e) {
@@ -55,38 +54,39 @@ public class EntityFormServiceBean extends AbstractFormServiceBeanHelper impleme
 
     /**
      * Список всех
+     *
      * @return коллекция форм
      */
     @SuppressWarnings("unchecked")
-	public <E extends IEntityForm> Collection<E> listAll(Class<E> type) throws EntityFormException {
-    	if (CAN_DEBUG) LOG.debug("listAll: checkingPersissions() ..."); 
-        checkPermission(type, "View") ;
+    public <E extends IEntityForm> Collection<E> listAll(Class<E> type) throws EntityFormException {
+        if (CAN_DEBUG) LOG.debug("listAll: checkingPersissions() ...");
+        checkPermission(type, "View");
 
         if (CAN_DEBUG) LOG.debug("listAll: executing query ...");
         Class entityClass = findFormPersistance((Class<IEntityForm>) type).clazz();
         StringBuilder sql = new StringBuilder();
         sql.append("from ").append(entityClass.getSimpleName()).append(" c ");
         if (entityClass.isAnnotationPresent(UnDeletable.class)) {
-            UnDeletable a =(UnDeletable) entityClass.getAnnotation(UnDeletable.class);
+            UnDeletable a = (UnDeletable) entityClass.getAnnotation(UnDeletable.class);
             sql.append(" where ").append(a.fieldName()).append(" is null or ").append(a.fieldName()).append(" is false");
         }
-        Collection results = manager.createQuery( sql.toString()+ " order by id")
+        Collection results = manager.createQuery(sql.toString() + " order by id")
                 .setMaxResults(300).getResultList();
-        
-    	if (CAN_DEBUG) LOG.debug("listAll: copying ..."); 
+
+        if (CAN_DEBUG) LOG.debug("listAll: copying ...");
         LinkedList<IEntityForm> ret = new LinkedList<>();
         try {
-        	int ind=1 ;
+            int ind = 1;
             for (Object o : results) {
                 IEntityForm form = type.newInstance();
                 copyEntityToForm(o, form);
                 try {
-                	Object id = PropertyUtil.getPropertyValue(o, "id") ;
-                	form.setSn(ind++) ;
-                	checkDynamicPermission(type, id, "View") ;
+                    Object id = PropertyUtil.getPropertyValue(o, "id");
+                    form.setSn(ind++);
+                    checkDynamicPermission(type, id, "View");
                     ret.add(form);
                 } catch (Exception e) {
-                	// нельзя просматривать
+                    // нельзя просматривать
                 }
             }
         } catch (Exception e) {
@@ -97,14 +97,14 @@ public class EntityFormServiceBean extends AbstractFormServiceBeanHelper impleme
     }
 
 
-	public Collection<IEntityForm> listAll(String aClassname) throws EntityFormException {
+    public Collection<IEntityForm> listAll(String aClassname) throws EntityFormException {
 
-		Collection<IEntityForm> ret = listAll(loadMapForm(aClassname));
-		return convertToMapFormCollection(aClassname, ret) ;
-	}
-	
+        Collection<IEntityForm> ret = listAll(loadMapForm(aClassname));
+        return convertToMapFormCollection(aClassname, ret);
+    }
+
     public IEntityForm prepareToCreate(String aFormClassName) throws EntityFormException {
-    	return convertToMapForm(aFormClassName, prepareToCreate(loadMapForm(aFormClassName)));
+        return convertToMapForm(aFormClassName, prepareToCreate(loadMapForm(aFormClassName)));
     }
 
 

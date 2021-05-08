@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import static ru.nuzmsh.util.BooleanUtils.isTrue;
+
 public class ReportParamUtil {
 	public static String getEmergencySql(String aTypeEmergency, String aFieldSls) {
 		String textSql = "" ;
@@ -37,7 +39,7 @@ public class ReportParamUtil {
 	}
 	public static String getDateTo(Boolean aIsAnd,String aFieldDate, String aFieldTime, String aDate, String aTime) throws ParseException {
 		StringBuilder period = new StringBuilder() ;
-		if (aIsAnd) period.append(" and ") ;
+		if (isTrue(aIsAnd)) period.append(" and ") ;
 		if (aTime!=null) {
 			period.append(" (").append(aFieldDate).append(" < to_date('").append(aDate).append("','dd.mm.yyyy') ") ;
 			period.append(" or ").append(aFieldDate).append(" = to_date('").append(aDate).append("','dd.mm.yyyy') ") ;
@@ -50,7 +52,7 @@ public class ReportParamUtil {
 	}
 	public static String getDateFrom(Boolean aIsAnd,String aFieldDate, String aFieldTime, String aDate, String aTime) throws ParseException {
 		StringBuilder period = new StringBuilder() ;
-		if (aIsAnd) period.append(" and ") ;
+		if (isTrue(aIsAnd)) period.append(" and ") ;
 		if (aTime!=null) {
 			period.append(" (").append(aFieldDate).append(" > to_date('").append(aDate).append("','dd.mm.yyyy') ") ;
 			period.append(" or ").append(aFieldDate).append(" = to_date('").append(aDate).append("','dd.mm.yyyy') ") ;
@@ -61,33 +63,8 @@ public class ReportParamUtil {
 		}
 		return period.toString() ;
 	}
-	public static String getDateFromByDtype(Boolean aIsAnd,String aFieldDate, String aFieldTime, String aDate
-			, String aTime, String aDtype,String aFieldDate2, String aFieldTime2) throws ParseException {
-		StringBuilder period = new StringBuilder() ;
-		if (aIsAnd) period.append(" and ") ;
-		if (aTime!=null) {
-			period.append("(").append(aFieldDate).append(" is null or ").append(aFieldDate).append(">= to_date('").append(aDate).append("','dd.mm.yyyy') )");
-			if (aDtype!=null) period.append(" and ").append(aDtype) ;
-			if (aFieldDate2!=null) period.append(" and (").append(aFieldDate).append("<= to_date('").append(aDate).append("','dd.mm.yyyy') )");
-			period.append(" and (").append(aFieldDate).append(" != to_date('").append(aDate).append("','dd.mm.yyyy') ") ;
-			period.append(" or ").append(aFieldDate).append(" = to_date('").append(aDate).append("','dd.mm.yyyy') ") ;
-			period.append(" and ").append(aFieldTime).append(">= cast('").append(aTime).append("' as time)");
-			period.append(") ") ;
-			if (aFieldDate2!=null) {
-				period.append(" and (").append(aFieldDate2).append(" != to_date('").append(aDate).append("','dd.mm.yyyy') ") ;
-				period.append(" or ").append(aFieldDate2).append(" = to_date('").append(aDate).append("','dd.mm.yyyy') ") ;
-				period.append(" and ").append(aFieldTime2).append("< cast('").append(aTime).append("' as time)");
-				period.append(") ");
-			}
-		}else {
-			period.append(aFieldDate).append(" > to_date('").append(aDate).append("','dd.mm.yyyy') ");
-			if (aDtype!=null) period.append(" and ").append(aDtype) ;
-			period.append(" and ").append(aFieldDate2).append(" <= to_date('").append(aDate).append("','dd.mm.yyyy') ");
-		}
-		return period.toString() ;
-	}
 
-    public static String getPeriodByDate(boolean aIsAnd,boolean aIsAddBetween, String aFieldDate, String aFieldTime, String aDate, String aDateNext, String aTime) {
+	public static String getPeriodByDate(boolean aIsAnd,boolean aIsAddBetween, String aFieldDate, String aFieldTime, String aDate, String aDateNext, String aTime) {
     	StringBuilder period = new StringBuilder() ;
     	if (aIsAnd) period.append(" and ") ;
     	if (aTime==null) {

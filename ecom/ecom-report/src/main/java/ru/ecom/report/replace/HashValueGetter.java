@@ -12,6 +12,6 @@ public class HashValueGetter implements IValueGetter {
 		theHash.put(aKey, aValue) ;
 	}
 	
-	private final HashMap<String, Object> theHash = new HashMap<String, Object>() ; 
+	private final HashMap<String, Object> theHash = new HashMap<>() ;
 
 }

@@ -1,5 +1,7 @@
 package ru.ecom.report.money;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.math.BigDecimal;
 
 /**
@@ -25,44 +27,42 @@ public class MoneyToString {
 //             RubOneUnit="рубль" RubTwoUnit="рубля" RubFiveUnit="рублей" RubSex="M"
 //             KopOneUnit="копейка" KopTwoUnit="копейки" KopFiveUnit="копеек" KopSex="F"
 //        />
-        RubOneUnit = "рубль";
-        RubTwoUnit = "рубля";
-        RubFiveUnit = "рублей";
-        KopOneUnit = "копейка";
-        KopTwoUnit = "копейки";
-        KopFiveUnit = "копеек";
-        RubSex = "M";
-        KopSex = "F";
+        rubOneUnit = "рубль";
+        rubTwoUnit = "рубля";
+        rubFiveUnit = "рублей";
+        kopOneUnit = "копейка";
+        kopTwoUnit = "копейки";
+        kopFiveUnit = "копеек";
+        rubSex = "M";
+        kopSex = "F";
     }
 
     public MoneyToString(String aISOstr) {
         org.w3c.dom.Document xmlDoc = null;
 
-        javax.xml.parsers.DocumentBuilderFactory DocFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+        javax.xml.parsers.DocumentBuilderFactory docFactory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
 
         try {
-            javax.xml.parsers.DocumentBuilder xmlDocBuilder = DocFactory.newDocumentBuilder();
+            javax.xml.parsers.DocumentBuilder xmlDocBuilder = docFactory.newDocumentBuilder();
             xmlDoc = xmlDocBuilder.parse(new java.io.File("currlist.xml"));
         } catch (org.xml.sax.SAXException sxe) {
             Exception x = sxe;
             if (sxe.getException() != null)
                 x = sxe.getException();
             x.printStackTrace();
-        } catch (javax.xml.parsers.ParserConfigurationException pce) {
+        } catch (ParserConfigurationException | IOException pce) {
             pce.printStackTrace();
-        } catch (java.io.IOException ioe) {
-            ioe.printStackTrace();
         }
         org.w3c.dom.Element theISOElement = (org.w3c.dom.Element) (xmlDoc.getElementsByTagName(aISOstr)).item(0);
 
-        RubOneUnit = theISOElement.getAttribute("RubOneUnit");
-        RubTwoUnit = theISOElement.getAttribute("RubTwoUnit");
-        RubFiveUnit = theISOElement.getAttribute("RubFiveUnit");
-        KopOneUnit = theISOElement.getAttribute("KopOneUnit");
-        KopTwoUnit = theISOElement.getAttribute("KopTwoUnit");
-        KopFiveUnit = theISOElement.getAttribute("KopFiveUnit");
-        RubSex = theISOElement.getAttribute("RubSex");
-        KopSex = theISOElement.getAttribute("KopSex");
+        rubOneUnit = theISOElement.getAttribute("RubOneUnit");
+        rubTwoUnit = theISOElement.getAttribute("RubTwoUnit");
+        rubFiveUnit = theISOElement.getAttribute("RubFiveUnit");
+        kopOneUnit = theISOElement.getAttribute("KopOneUnit");
+        kopTwoUnit = theISOElement.getAttribute("KopTwoUnit");
+        kopFiveUnit = theISOElement.getAttribute("KopFiveUnit");
+        rubSex = theISOElement.getAttribute("RubSex");
+        kopSex = theISOElement.getAttribute("KopSex");
     }
 
     public String transform(BigDecimal aMoney) {
@@ -80,24 +80,24 @@ public class MoneyToString {
         if (intPart == 0) money2str.append("Ноль ");
         do {
             theTriad = intPart % 1000;
-            money2str.insert(0, triad2Word(theTriad, triadNum, RubSex));
+            money2str.insert(0, triad2Word(theTriad, triadNum, rubSex));
             if (triadNum == 0) {
                 int range10 = (theTriad % 100) / 10;
                 int range = theTriad % 10;
                 if (range10 == 1) {
-                    money2str = money2str.append(RubFiveUnit);
+                    money2str = money2str.append(rubFiveUnit);
                 } else {
                     switch (range) {
                         case 1:
-                            money2str = money2str.append(RubOneUnit);
+                            money2str = money2str.append(rubOneUnit);
                             break;
                         case 2:
                         case 3:
                         case 4:
-                            money2str = money2str.append(RubTwoUnit);
+                            money2str = money2str.append(rubTwoUnit);
                             break;
                         default:
-                            money2str = money2str.append(RubFiveUnit);
+                            money2str = money2str.append(rubFiveUnit);
                             break;
                     }
                 }
@@ -106,27 +106,27 @@ public class MoneyToString {
             triadNum++;
         } while (theTriad != 0);
 
-        money2str = money2str.append(" ").append(triad2Word(fractPart, 0, KopSex));
+        money2str = money2str.append(" ").append(triad2Word(fractPart, 0, kopSex));
         if (fractPart == 0) {
             money2str.append("ноль ");
         }
         if (fractPart > 10 && fractPart < 20) {
-            money2str = money2str.append(KopFiveUnit);
+            money2str = money2str.append(kopFiveUnit);
         } else {
             if ((fractPart % 10) == 1) {
-                money2str = money2str.append(KopOneUnit);
+                money2str = money2str.append(kopOneUnit);
             } else {
                 switch (fractPart % 10) {
                     case 1:
-                        money2str = money2str.append(KopOneUnit);
+                        money2str = money2str.append(kopOneUnit);
                         break;
                     case 2:
                     case 3:
                     case 4:
-                        money2str = money2str.append(KopTwoUnit);
+                        money2str = money2str.append(kopTwoUnit);
                         break;
                     default:
-                        money2str = money2str.append(KopFiveUnit);
+                        money2str = money2str.append(kopFiveUnit);
                         break;
                 }
             }
@@ -135,8 +135,8 @@ public class MoneyToString {
         return money2str.toString();
     }
 
-    static private String triad2Word(int triad, int triadNum, String Sex) {
-        StringBuffer triadWord = new StringBuffer(28); // девятьсот восемьдесят четыре - 28 достаточно ?
+    private static  String triad2Word(int triad, int triadNum, String sex) {
+        StringBuilder triadWord = new StringBuilder(28); // девятьсот восемьдесят четыре - 28 достаточно ?
 
         if (triad == 0) {
             return triadWord.toString();
@@ -144,8 +144,6 @@ public class MoneyToString {
 
         int range = triad / 100;
         switch (range) {
-            default:
-                break;
             case 1:
                 triadWord = triadWord.append("сто ");
                 break;
@@ -173,12 +171,12 @@ public class MoneyToString {
             case 9:
                 triadWord = triadWord.append("девятьсот ");
                 break;
+            default:
+                break;
         }
 
         range = (triad % 100) / 10;
         switch (range) {
-            default:
-                break;
             case 2:
                 triadWord = triadWord.append("двадцать ");
                 break;
@@ -202,6 +200,8 @@ public class MoneyToString {
                 break;
             case 9:
                 triadWord = triadWord.append("девяносто ");
+                break;
+            default:
                 break;
         }
 
@@ -242,19 +242,18 @@ public class MoneyToString {
             }
         } else {
             switch (range) {
-                default:
-                    break;
+
                 case 1:
                     if (triadNum == 1)
                         triadWord = triadWord.append("одна ");
-                    else if (Sex.equals("M")) triadWord = triadWord.append("один ");
-                    if (Sex.equals("F")) triadWord = triadWord.append("одна ");
+                    else if (sex.equals("M")) triadWord = triadWord.append("один ");
+                    if (sex.equals("F")) triadWord = triadWord.append("одна ");
                     break;
                 case 2:
                     if (triadNum == 1)
                         triadWord = triadWord.append("две ");
-                    else if (Sex.equals("M")) triadWord = triadWord.append("два ");
-                    if (Sex.equals("F")) triadWord = triadWord.append("две ");
+                    else if (sex.equals("M")) triadWord = triadWord.append("два ");
+                    if (sex.equals("F")) triadWord = triadWord.append("две ");
                     break;
                 case 3:
                     triadWord = triadWord.append("три ");
@@ -277,20 +276,17 @@ public class MoneyToString {
                 case 9:
                     triadWord = triadWord.append("девять ");
                     break;
+                default:
+                    break;
             }
         }
 
         switch (triadNum) {
-            default:
-                break;
             case 1:
                 if (range10 == 1)
                     triadWord = triadWord.append("тысяч ");
                 else {
                     switch (range) {
-                        default:
-                            triadWord = triadWord.append("тысяч ");
-                            break;
                         case 1:
                             triadWord = triadWord.append("тысяча ");
                             break;
@@ -298,6 +294,9 @@ public class MoneyToString {
                         case 3:
                         case 4:
                             triadWord = triadWord.append("тысячи ");
+                            break;
+                        default:
+                            triadWord = triadWord.append("тысяч ");
                             break;
                     }
                 }
@@ -307,9 +306,6 @@ public class MoneyToString {
                     triadWord = triadWord.append("миллионов ");
                 else {
                     switch (range) {
-                        default:
-                            triadWord = triadWord.append("миллионов ");
-                            break;
                         case 1:
                             triadWord = triadWord.append("миллион ");
                             break;
@@ -317,6 +313,9 @@ public class MoneyToString {
                         case 3:
                         case 4:
                             triadWord = triadWord.append("миллиона ");
+                            break;
+                        default:
+                            triadWord = triadWord.append("миллионов ");
                             break;
                     }
                 }
@@ -326,9 +325,6 @@ public class MoneyToString {
                     triadWord = triadWord.append("миллиардов ");
                 else {
                     switch (range) {
-                        default:
-                            triadWord = triadWord.append("миллиардов ");
-                            break;
                         case 1:
                             triadWord = triadWord.append("миллиард ");
                             break;
@@ -336,6 +332,9 @@ public class MoneyToString {
                         case 3:
                         case 4:
                             triadWord = triadWord.append("миллиарда ");
+                            break;
+                        default:
+                            triadWord = triadWord.append("миллиардов ");
                             break;
                     }
                 }
@@ -345,9 +344,6 @@ public class MoneyToString {
                     triadWord = triadWord.append("триллионов ");
                 else {
                     switch (range) {
-                        default:
-                            triadWord = triadWord.append("триллионов ");
-                            break;
                         case 1:
                             triadWord = triadWord.append("триллион ");
                             break;
@@ -356,14 +352,19 @@ public class MoneyToString {
                         case 4:
                             triadWord = triadWord.append("триллиона ");
                             break;
+                        default:
+                            triadWord = triadWord.append("триллионов ");
+                            break;
                     }
                 }
+                break;
+            default:
                 break;
         }
         return triadWord.toString();
     }
 
-    private final String RubOneUnit, RubTwoUnit, RubFiveUnit, RubSex,
-            KopOneUnit, KopTwoUnit, KopFiveUnit, KopSex;
+    private final String rubOneUnit, rubTwoUnit, rubFiveUnit, rubSex,
+            kopOneUnit, kopTwoUnit, kopFiveUnit, kopSex;
 
 }

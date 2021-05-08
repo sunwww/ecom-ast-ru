@@ -1,5 +1,7 @@
 package ru.nuzmsh.web.tags;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.struts.action.ActionErrors;
 import ru.nuzmsh.web.tags.helper.JavaScriptContext;
 
@@ -14,6 +16,8 @@ import java.util.Iterator;
  * body-content="empty"
  * description="Setting default forucs"
  */
+@Getter
+@Setter
 public class SetDefaultFocusTag extends TagSupport {
 
     /**
@@ -23,15 +27,9 @@ public class SetDefaultFocusTag extends TagSupport {
      * required="true"
      * rtexprvalue="true"
      */
-    public void setId(String aId) {
-        theId = aId;
-    }
+    private String id;
 
-    public String getId() {
-        return theId;
-    }
-
-    public String findFirstIdError() throws JspException {
+    public String findFirstIdError() {
         String id = null;
         ActionErrors errors = (ActionErrors) pageContext.getRequest().getAttribute("org.apache.struts.action.ERROR");
         if (errors != null && !errors.isEmpty()) {
@@ -43,14 +41,13 @@ public class SetDefaultFocusTag extends TagSupport {
         return id;
     }
 
-
+    @Override
     public int doStartTag() throws JspException {
-//        JspWriter out = pageContext.getOut();
         String id = (String) pageContext.getRequest().getAttribute("firstErrorId");
         if (id == null) id = findFirstIdError();
-        if (id == null) id = theId;
+        if (id == null) id = this.id;
         JavaScriptContext.getContext(pageContext, this).println(
-                        "    <!--\n" +
+                "    <!--\n" +
                         "    window.onload = function() {\n" +
                         "        document.getElementById('" + id + "').focus();\n" +
                         "    }\n" +
@@ -58,9 +55,4 @@ public class SetDefaultFocusTag extends TagSupport {
         );
         return EVAL_BODY_INCLUDE;
     }
-
-    /**
-     * Идентификатор
-     */
-    private String theId;
 }

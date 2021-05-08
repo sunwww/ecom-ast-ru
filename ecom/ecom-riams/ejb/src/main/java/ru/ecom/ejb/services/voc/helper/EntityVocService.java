@@ -111,26 +111,13 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
         		LOG.warn("Ошибка при поиске по идентификатору: "+e.getMessage(), e);
         	}
         	String queryDop = null ;
-            switch(queryConvertType) {
-            /*
-                case LOWER_CASE: aQuery = aQuery.toLowerCase() ; break ;
-                case UPPER_CASE: aQuery = aQuery.toUpperCase() ; break ;
-                case FIRST_UPPER: {
-                	char c = aQuery.charAt(0) ;
-                	aQuery = Character.toUpperCase(c) + (aQuery.length()>1 ? aQuery.substring(1).toLowerCase() : "") ;
-                	break ;
-                }
-                */
-            	
-                case FIRST_LAT_UPPER: {
-                    queryDop = aQuery ;
-                    queryDop = queryDop.toUpperCase() ;
-                	char c1 = queryDop.charAt(0) ;
-                	queryDop = queryDop.replaceFirst("Ю", ".") ;
-                	queryDop = queryDop.replaceFirst(",", ".") ;
-                    aQuery = getLat(c1) + (queryDop.length()>1 ? queryDop.substring(1) : "") ;
-                    break ;
-                }
+            if (queryConvertType == QueryConvertType.FIRST_LAT_UPPER) {
+                queryDop = aQuery;
+                queryDop = queryDop.toUpperCase();
+                char c1 = queryDop.charAt(0);
+                queryDop = queryDop.replaceFirst("Ю", ".");
+                queryDop = queryDop.replaceFirst(",", ".");
+                aQuery = getLat(c1) + (queryDop.length() > 1 ? queryDop.substring(1) : "");
             }
             
         	aQuery = aQuery.toUpperCase() ;
@@ -144,7 +131,6 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
                 if (queryDop!=null) sb.append(" or (upper(").append(field).append( ")  like '%").append(queryDop).append("%')") ;
             }
             sb.append(" ) ") ;
-           // LOG.debug(sb); ;
             if(appendQuery!=null) {
                 sb.append(" and ") ;
                 sb.append(appendQuery) ;
@@ -263,7 +249,7 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
         return values;
     }
 
-    private String getNameFromEntity(Object aEntity) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    private String getNameFromEntity(Object aEntity) throws IllegalAccessException, InvocationTargetException {
         StringBuilder sb = new StringBuilder();
         for (String field : names) {
             sb.append(PropertyUtil.getPropertyValue(aEntity, field)) ;
@@ -289,35 +275,35 @@ public class EntityVocService implements IVocContextService, IVocServiceManageme
     }
 
     public Map<String,String> enrusCreate() {
-    	Map <String,String> map = new HashMap<>();
-    	map.put("Й", "Q" ) ;
-    	map.put("Ц", "W" ) ;
-    	map.put("У","E"  ) ;
-    	map.put( "К", "R" ) ;
-    	map.put("Е", "T"  ) ;
-    	map.put( "Ф","A" ) ;
-    	map.put( "Ы", "S") ;
-    	map.put("В", "D"  ) ;
-    	map.put("А","F" ) ;
-    	map.put("П","G"  ) ;
-    	map.put("Я","Z"  ) ;
-    	map.put("Ч","X"  ) ;
-    	map.put("С","C"  ) ;
-    	map.put( "М", "V" ) ;
-    	map.put("И", "B" ) ;
-    	map.put("Н", "Y"  ) ;
-    	map.put("Г", "U"  ) ;
-    	map.put("Ш", "I"  ) ;
-    	map.put("Щ", "O"  ) ;
-    	map.put("З","P" ) ;
-    	map.put( "Р","H" ) ;
-    	map.put("О", "J"  ) ;
-    	map.put("Л","K"  ) ;
-    	map.put("Д", "L" ) ;
-    	map.put("Т","N" ) ;
-    	map.put( "Ь","M" ) ;
-    	map.put( "Ю","." ) ;
-    	return map ;
+    	Map <String,String> enRusMap = new HashMap<>();
+    	enRusMap.put("Й", "Q" ) ;
+    	enRusMap.put("Ц", "W" ) ;
+    	enRusMap.put("У","E"  ) ;
+    	enRusMap.put( "К", "R" ) ;
+    	enRusMap.put("Е", "T"  ) ;
+    	enRusMap.put( "Ф","A" ) ;
+    	enRusMap.put( "Ы", "S") ;
+    	enRusMap.put("В", "D"  ) ;
+    	enRusMap.put("А","F" ) ;
+    	enRusMap.put("П","G"  ) ;
+    	enRusMap.put("Я","Z"  ) ;
+    	enRusMap.put("Ч","X"  ) ;
+    	enRusMap.put("С","C"  ) ;
+    	enRusMap.put( "М", "V" ) ;
+    	enRusMap.put("И", "B" ) ;
+    	enRusMap.put("Н", "Y"  ) ;
+    	enRusMap.put("Г", "U"  ) ;
+    	enRusMap.put("Ш", "I"  ) ;
+    	enRusMap.put("Щ", "O"  ) ;
+    	enRusMap.put("З","P" ) ;
+    	enRusMap.put( "Р","H" ) ;
+    	enRusMap.put("О", "J"  ) ;
+    	enRusMap.put("Л","K"  ) ;
+    	enRusMap.put("Д", "L" ) ;
+    	enRusMap.put("Т","N" ) ;
+    	enRusMap.put( "Ь","M" ) ;
+    	enRusMap.put( "Ю","." ) ;
+    	return enRusMap ;
     }
     private String getLat(char aChar) {
     	String ret =map.get(String.valueOf(aChar)) ;

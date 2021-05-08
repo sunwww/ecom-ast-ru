@@ -33,7 +33,7 @@ public class VInputNonLatValidator implements IValidator {
     }
 
 
-    private final HashMap<Character,Character> theHash = new HashMap<Character, Character>();
+    private final HashMap<Character,Character> theHash = new HashMap<>();
 
     public VInputNonLatValidator() {
         for(char i='a'; i<='z'; i++) {

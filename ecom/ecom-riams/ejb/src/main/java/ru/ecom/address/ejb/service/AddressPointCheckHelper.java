@@ -181,11 +181,13 @@ public class AddressPointCheckHelper {
                 if(to.equals(from)) throw new IllegalArgumentException("Правая часть диапазона не должна быть равна левой") ;
                 for(int i=from; i<=to; i++) {
 
-                    boolean canAdd = true ;
+                    boolean canAdd;
                     if(aStr.toUpperCase().startsWith("Ч") && i%2==1) {
                         canAdd  = false ;
                     } else if(aStr.toUpperCase().startsWith("Н") && i%2==0) {
                         canAdd = false ;
+                    } else {
+                        canAdd = true;
                     }
                     if(canAdd) ret.add(new AddressPointCheck(String.valueOf(i)));
                 }

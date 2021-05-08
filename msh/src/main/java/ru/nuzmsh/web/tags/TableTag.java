@@ -16,6 +16,8 @@ import java.math.BigDecimal;
 import java.sql.Time;
 import java.util.*;
 
+import static ru.nuzmsh.util.BooleanUtils.isTrue;
+
 /**
  * @jsp.tag
  *            name = "table"
@@ -212,7 +214,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 theCells.add(
                         new Button(tag.getProperty(), tag.getButtonShortName(), tag.getButtonName()
                                 , tag.getButtonFunction()
-                                , tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(),tag.getGuid(), (HttpServletRequest)pageContext.getRequest()
+                                , tag.getCssClass(),tag.getAddParam(), tag.isHideIfEmpty(),tag.getGuid(), (HttpServletRequest)pageContext.getRequest()
                         )
 
                 );
@@ -221,7 +223,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 theCells.add(
                         new Textfield(tag.getProperty(), tag.getTextfieldShortName(), tag.getTextfieldName()
                                 , tag.getTextfieldFunction()
-                                , tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(), (HttpServletRequest)pageContext.getRequest())
+                                , tag.getCssClass(),tag.getAddParam(), tag.isHideIfEmpty(), (HttpServletRequest)pageContext.getRequest())
                 );
             }
         }
@@ -271,7 +273,7 @@ public class TableTag extends AbstractGuidSupportTag {
             if (col == null) {
                 throw new JspException("Нет Collection в request.getAttribute(" + theName + ")");
             } else {
-                if (col.size() == 0) {
+                if (col.isEmpty()) {
                     JspWriter out = pageContext.getOut();
                     try {
                         out.print("<p>");
@@ -408,7 +410,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 if (col == null) {
                     throw new JspException("Нет Collection в request.getAttribute(\"" + theName + "\")");
                 } else {
-                    if (col.size() == 0) {
+                    if (col.isEmpty()) {
                         return EVAL_PAGE;
                     }
                     // шапка таблицы
@@ -493,7 +495,7 @@ public class TableTag extends AbstractGuidSupportTag {
                         lastId = currentId;
 
                         out.print("<tr onclick='' ");
-                        if (theStyleRow!=null && !theStyleRow.equals("")) {out.print(" style=\"");out.print(getValueByProperty(row,theStyleRow));out.print("\"");} ;
+                        if (theStyleRow!=null && !theStyleRow.equals("")) {out.print(" style=\"");out.print(getValueByProperty(row,theStyleRow));out.print("\"");}
                         out.print(" class='") ;
                         out.print(theName) ;
                         out.print(' ') ;
@@ -549,24 +551,20 @@ public class TableTag extends AbstractGuidSupportTag {
                                 Column column = (Column) obj;
                                 Object valueC ;
                                 if (theCellFunction) {
-                                    valueC = column.printCell(out, row, getGoFunctionCellName(currentId, column.theAddParam), currentId,column.theColumnName,column.theWidth,column.theHidden);
+                                    valueC = column.printCell(out, row, getGoFunctionCellName(currentId, column.theAddParam), column.theColumnName,column.theWidth,column.theHidden);
                                 } else {
-                                    valueC = column.printCell(out, row, goFunctionMainName, currentId,null,column.theWidth,column.theHidden);
+                                    valueC = column.printCell(out, row, goFunctionMainName, null,column.theWidth,column.theHidden);
                                 }
-                                if (!isFirstRow) {
-                                    if (valueC!=null) {
-                                        rowSum = column.amountCell(out, rowSum, valueC) ;
+                                if (!isFirstRow && valueC!=null) {
+                                        rowSum = column.amountCell(rowSum, valueC) ;
                                         isSumColumn = true ;
                                     }
-                                }
                             }
                         }
 
 
-                        //System.out.println("--->");
                         out.println("</tr>");
                         if (isFirstRow) {
-                            //rowSum = row ;
                             isFirstRow = false ;
                         }
                     }
@@ -597,7 +595,7 @@ public class TableTag extends AbstractGuidSupportTag {
                             }
                             else if (obj instanceof Column) {
                                 Column column = (Column) obj;
-                                column.printSumCell(out, rowSum, "", "");
+                                column.printSumCell(out, rowSum);
                             }
                         }
                         out.println("</tr>");
@@ -614,7 +612,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 }
 
                 if(!theDisableKeySupport && !IdeTagHelper.getInstance().isInIdeMode(pageContext)) {
-                    String tableName = "theTableArrow" ; //"the"+theName.substring(0,1).toUpperCase()+theName.substring(1)+"TableArrow" ;
+                    String tableName = "theTableArrow" ;
                     JavaScriptContext js = JavaScriptContext.getContext(pageContext, this);
                     js.println(" var "+tableName+" ;") ;
                     js.println(" window.onload = function () {");
@@ -676,13 +674,12 @@ public class TableTag extends AbstractGuidSupportTag {
 
     private final void printNavigation(JspWriter aOut, String aFirstId, String aLastId) throws IOException {
 
-//        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
         String first = "<a href='%1$snext=%2$d'>|&lt;&nbsp;Первый</a>";
         String last = "<a href='%1$snext=-%2$d'>Последний&nbsp;&gt;|</a>";
         String next = "<a href='%1$sid=%2$s&amp;idna=%2$s&amp;next=%3$d'>Вперед&nbsp;&gt;</a>";
         String previous = "<a href='%1$sid=%2$s&amp;idna=%2$s&amp;next=-%3$d'>&lt;&nbsp;Назад</a>";
-        StringBuffer sb = new StringBuffer(theNavigationAction) ;
-        if(theNavigationAction.indexOf(".do")>=0) {
+        StringBuilder sb = new StringBuilder(theNavigationAction) ;
+        if(theNavigationAction.contains(".do")) {
             if(theNavigationAction.indexOf('?')>=0) {
                 sb.append("&amp;") ;
             } else {
@@ -708,7 +705,7 @@ public class TableTag extends AbstractGuidSupportTag {
         }
     }
 
-    private final ITableDecorator getDecoratorObject() {
+    private ITableDecorator getDecoratorObject() {
         if (theDecorator == null) {
             return null;
         } else {
@@ -754,9 +751,7 @@ public class TableTag extends AbstractGuidSupportTag {
             } else {
                 aOut.print("<th>");
             }
-            //IdeTagHelper.getInstance().printMarker(, aJspContext)
             aOut.print("<div id='"+theGuid+"' class='idetag tagnameCol'></div>");
-            //aOut.print(theButtonName);
             aOut.println("</th>");
         }
 
@@ -765,11 +760,8 @@ public class TableTag extends AbstractGuidSupportTag {
             String styleClass = "";
 
             Object value;
-            //Object valueSum = null ;
             try {
-                // value = PropertyUtils.getProperty(aObject, theProperty);
                 value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
-//                System.out.println("value.getClass() = " + value.getClass());
                 if (value instanceof Time) {
                     value = DateFormat.formatToTime((Time) value);
 
@@ -795,10 +787,9 @@ public class TableTag extends AbstractGuidSupportTag {
             }
             aOut.print(" class='") ;
             aOut.print(styleClass);
-            //aOut.print(' ');
             aOut.print(" _"+theProperty);
             aOut.print("'>");
-            if ((theHideIfEmpty && value!=null)||!theHideIfEmpty) {
+            if (!theHideIfEmpty || value != null) {
                 aOut.print("<input type='button' onclick=\"");
                 aOut.print(getGoFunctionName(theButtonFunction,value != null ? value : "",theAddParam)) ;
                 aOut.print("\" value=\""+theButtonShortName+"\"") ;
@@ -860,7 +851,6 @@ public class TableTag extends AbstractGuidSupportTag {
             String styleClass = "";
 
             Object value;
-            //Object valueSum = null ;
             try {
                 value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
                 if (value instanceof Time) {
@@ -870,7 +860,7 @@ public class TableTag extends AbstractGuidSupportTag {
                     value = DateFormat.formatToDate((Date) value);
 
                 } else if (value instanceof Boolean) {
-                    value =  (Boolean) value ?  "1" :  "0" ;
+                    value =  isTrue((Boolean) value) ?  "1" :  "0" ;
                 }
 
             } catch (Exception e) {
@@ -888,10 +878,9 @@ public class TableTag extends AbstractGuidSupportTag {
             }
             aOut.print(" class='") ;
             aOut.print(styleClass);
-            //aOut.print(' ');
             aOut.print(" _"+theProperty);
             aOut.print("'>");
-            if ((theHideIfEmpty && value!=null)||!theHideIfEmpty) {
+            if (!theHideIfEmpty || value != null) {
                 aOut.print("<input type='text' onclick=\"");
                 aOut.print(aGoFunctionName) ;
                 aOut.print(getGoFunctionName(theTextfieldFunction,value != null ? value : "",theAddParam)) ;
@@ -902,7 +891,6 @@ public class TableTag extends AbstractGuidSupportTag {
                     aOut.print("\" ");
                 }
 
-                //aOut.print("'");
                 aOut.print("id=\"text_");
                 aOut.print(aGoFunctionName);
                 aOut.print("\"");
@@ -959,7 +947,6 @@ public class TableTag extends AbstractGuidSupportTag {
             if (theWidth!=null && !theWidth.equals(""))  aOut.print(" width=\""+theWidth+"%\"");
             aOut.print(">");
 
-            //IdeTagHelper.getInstance().printMarker(, aJspContext)
             aOut.print("<div id='"+theGuid+"' class='idetag tagnameCol'></div>");
             aOut.print(theColumnName);
             if (theSortInner) aOut.print("<i class='arrow arrowUp'></i>");
@@ -972,10 +959,6 @@ public class TableTag extends AbstractGuidSupportTag {
 
             aOut.print("<td onclick=\"");
             aOut.print(aGoFunctionName) ;
-            //aOut.print("('") ;
-//            aOut.print(URLEncoder.encode(aId, "utf-8")) ;
-            //aOut.print(aId) ;
-            //aOut.print("')");
             aOut.print("\"");
             if (theWidth!=null && !theWidth.equals(""))
                 aOut.print(" width=\""+theWidth+"%\"");
@@ -987,15 +970,13 @@ public class TableTag extends AbstractGuidSupportTag {
             aOut.println("</td>");
         }
 
-        private Object printCell(JspWriter aOut, Object aObject, String aGoFunctionName, String aId,String aTitle,String aWidth, Boolean aHidden) throws IOException {
+        private Object printCell(JspWriter aOut, Object aObject, String aGoFunctionName, String aTitle, String aWidth, Boolean aHidden) throws IOException {
             String styleClass = "";
 
             Object value;
             Object valueSum = null ;
             try {
-                // value = PropertyUtils.getProperty(aObject, theProperty);
                 value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
-//                System.out.println("value.getClass() = " + value.getClass());
                 if (value instanceof Time) {
                     value = DateFormat.formatToTime((Time) value);
                     styleClass = "time";
@@ -1005,8 +986,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 } else if (value instanceof Number) {
                     styleClass = "number";
                 } else if (value instanceof Boolean) {
-                    Boolean booleanValue = (Boolean) value ;
-                    if(booleanValue) {
+                    if(isTrue((Boolean) value)) {
                         value = "Да" ;
                         styleClass = "boolean";
                     } else {
@@ -1015,12 +995,12 @@ public class TableTag extends AbstractGuidSupportTag {
                     }
                 } else if(value instanceof String) {
                     if (theEscapeSymbols) {
-                        value = value.toString().replace("<br/>", "\r\n");
-                        value = value.toString().replace("<br>", "\r\n");
-                        value = value.toString().replace("<br />", "\r\n");
-                        value = value.toString().replace("<", "&lt;");
-                        value = value.toString().replace(">", "&gt;");
-                        value = value.toString().replace("&lt;div id=\"circle\"&gt;&lt;/div&gt;", "<div id=\"circle\"></div>");
+                        value = value.toString().replace("<br/>", "\r\n")
+                        .replace("<br>", "\r\n")
+                        .replace("<br />", "\r\n")
+                        .replace("<", "&lt;")
+                        .replace(">", "&gt;")
+                       .replace("&lt;div id=\"circle\"&gt;&lt;/div&gt;", "<div id=\"circle\"></div>");
                     }
                     if(DemoModeUtil.isInDemoMode(theServleRequest)) {
                         value = DemoModeUtil.secureValue(value);
@@ -1044,14 +1024,9 @@ public class TableTag extends AbstractGuidSupportTag {
             }
             aOut.print("onclick=\"");
             aOut.print(aGoFunctionName) ;
-            //aOut.print("('") ;
-//            aOut.print(URLEncoder.encode(aId, "utf-8")) ;
-            //aOut.print(aId) ;
-            //aOut.print("')");
             aOut.print("\"");
             aOut.print(" class='") ;
             aOut.print(styleClass);
-            //aOut.print(' ');
             aOut.print(" _"+theProperty);
             aOut.print("'>");
             aOut.print(value != null ? value : "&nbsp;");
@@ -1061,13 +1036,11 @@ public class TableTag extends AbstractGuidSupportTag {
             }
             return valueSum ;
         }
-        private void printSumCell(JspWriter aOut, Object aObject, String aGoFunctionName, String aId) throws IOException {
+        private void printSumCell(JspWriter aOut, Object aObject) throws IOException {
             String styleClass = "";
             Object value;
             try {
-                // value = PropertyUtils.getProperty(aObject, theProperty);
                 value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
-//                System.out.println("value.getClass() = " + value.getClass());
                 if (value instanceof Time) {
                     value = DateFormat.formatToTime((Time) value);
                     styleClass = "time";
@@ -1098,12 +1071,8 @@ public class TableTag extends AbstractGuidSupportTag {
                 styleClass += " " + theCssClass;
             }
             aOut.print("<td ") ;
-            //aOut.print("onclick=\"");
-            //aOut.print(aGoFunctionName) ;
-            //aOut.print("\"");
             aOut.print(" class='sumTd ") ;
             aOut.print(styleClass);
-            //aOut.print(' ');
             aOut.print(" _"+theProperty);
             aOut.print("'>");
             if (theIsCalcAmount) {
@@ -1113,7 +1082,7 @@ public class TableTag extends AbstractGuidSupportTag {
             }
             aOut.println("</td>");
         }
-        private Object amountCell(JspWriter aOut, Object aObject, Object aValue) throws IOException {
+        private Object amountCell(Object aObject, Object aValue) {
             Object value;
             try {
                 BigDecimal val1 = new BigDecimal(aValue!=null?""+aValue:"0") ;
@@ -1124,17 +1093,12 @@ public class TableTag extends AbstractGuidSupportTag {
                 } else {
                     val2 = new BigDecimal(value!=null ? (String)value : "0");
                 }
-                //val2 = val1+val2 ;
                 String val3 = val1.add(val2).toString() ;
-
                 PropertyUtil.setPropertyValue(aObject, theProperty, val3) ;
-            //    value = PropertyUtil.getPropertyValue(aObject, theProperty) ;
-                //System.out.println("val1="+val1+" val2="+val2+" val3="+val3+" valSum="+value) ;
             } catch (Exception e) {
                 e.printStackTrace();
             }
             return aObject ;
-//
         }
 
         private final String theProperty;
@@ -1158,8 +1122,6 @@ public class TableTag extends AbstractGuidSupportTag {
      * Название атррибута в request или в session
      */
     private String theName;
-    //private final ArrayList theColumns = new ArrayList();
-    //private final ArrayList theButtons = new ArrayList();
     private final ArrayList theCells = new ArrayList();
     private boolean theIsEmpty = false;
     /** Сообщение об отсутствии данных */

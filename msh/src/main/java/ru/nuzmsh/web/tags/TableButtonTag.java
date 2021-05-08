@@ -3,6 +3,8 @@ package ru.nuzmsh.web.tags;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.nuzmsh.web.util.IdeTagHelper;
 
 /**
@@ -11,6 +13,8 @@ import ru.nuzmsh.web.util.IdeTagHelper;
  *          body-content="empty"
  *          description="Table Button JSP tag."
  */
+@Getter
+@Setter
 public class TableButtonTag extends AbstractGuidSupportTag {
 
     /**
@@ -19,9 +23,8 @@ public class TableButtonTag extends AbstractGuidSupportTag {
      *                  required="false"
      *                  rtexprvalue="true"
      */
-    public String getCssClass() { return theCssClass ; }
-    public void setCssClass(String aCssClass) { theCssClass = aCssClass ; }
-    
+    private String cssClass = null ;
+
     /** Название колонки
      *
      * @jsp.attribute   description="Название кнопки"
@@ -29,8 +32,7 @@ public class TableButtonTag extends AbstractGuidSupportTag {
      *                  rtexprvalue="true"
      *
      * */
-    public String getButtonName() { return theButtonName ; }
-    public void setButtonName(String aButtonName) { theButtonName = aButtonName ; }
+    private String buttonName;
 
     /** Название колонки
      *
@@ -39,8 +41,7 @@ public class TableButtonTag extends AbstractGuidSupportTag {
      *                  rtexprvalue="true"
      *
      * */
-    public String getButtonShortName() { return theButtonShortName ; }
-    public void setButtonShortName(String aButtonShortName) { theButtonShortName = aButtonShortName ; }
+    private String buttonShortName;
 
     
 
@@ -51,9 +52,9 @@ public class TableButtonTag extends AbstractGuidSupportTag {
      *                  rtexprvalue="true"
      *
      * */
-    public String getProperty() { return theProperty ; }
-    public void setProperty(String aProperty) { theProperty = aProperty ; }
+    private String property;
 
+    @Override
     public int doStartTag() throws JspException {
     	Tag parent = getParent() ;
     	if(parent instanceof TableTag) {
@@ -65,62 +66,32 @@ public class TableButtonTag extends AbstractGuidSupportTag {
         return EVAL_BODY_INCLUDE;
     }
 
-    public int doEndTag() throws JspException {
-
-        return EVAL_PAGE ;
-    }
-    
     
 	/** Дополнительные параметры 
     * @jsp.attribute   description="Дополнительные параметры"
     *                  required="false"
     *                  rtexprvalue="true"
     */
-	public String getAddParam() {return theAddParam;}
-	public void setAddParam(String aAddParam) {theAddParam = aAddParam;}
-
-	/** Дополнительные параметры */
-	private String theAddParam;
+	private String addParam;
 	/** Дополнительные параметры 
     * @jsp.attribute   description="Функция кнопки"
     *                  required="false"
     *                  rtexprvalue="true"
     */
-	public String getButtonFunction() {return theButtonFunction;}
-	public void setButtonFunction(String aButtonFunction) {theButtonFunction = aButtonFunction;}
-
-	/** Дополнительные параметры */
-	private String theButtonFunction;
+	private String buttonFunction;
 	
 	/** Роль *
     * @jsp.attribute   description="Роль"
     *                  required="false"
     *                  rtexprvalue="true"
     */
-	public String getRole() {return theRole;}
-	public void setRole(String aRole) {theRole = aRole;}
+	private String role;
 
-	/** Роль */
-	private String theRole;
-	/** Название колонки */
-	private String theButtonName ;
-    /** Название сокращенное колонки */
-    private String theButtonShortName ;
-    /** Название свойства */
-    private String theProperty ;
-    /** CSS Класс */
-    private String theCssClass = null ;
-    
-    
     /**
      * Не выводить шапку таблицы
      * @jsp.attribute   description = "Не выводить, если нет значения"
      *                     required = "false"
      *                  rtexprvalue = "true"
      */
-	public boolean getHideIfEmpty() {return theHideIfEmpty;}
-	public void setHideIfEmpty(boolean aHideIfEmpty) {theHideIfEmpty = aHideIfEmpty;}
-
-	/** Не выводить шапку таблицы */
-	private boolean theHideIfEmpty = false;
+	private boolean hideIfEmpty = false;
 }

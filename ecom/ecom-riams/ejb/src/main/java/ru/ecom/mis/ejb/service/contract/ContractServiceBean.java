@@ -961,12 +961,12 @@ public class ContractServiceBean implements IContractService {
         addMedServiceAccount(typeService, idService, medServiceCode, patientId, letter, null);
     }
 
-    public void addMedServiceAccount(String typeService, Long idService, String medServiceCode, Long patientId, ContractGuarantee letter, EntityManager manager) {
-        if (manager == null) manager = manager;
-        List<ContractAccountMedService> camsList = idService != null ? manager.createQuery("from ContractAccountMedService where typeService=:typeService and idService=:idService")
+    public void addMedServiceAccount(String typeService, Long idService, String medServiceCode, Long patientId, ContractGuarantee letter, EntityManager entityManager) {
+        if (entityManager == null) entityManager = manager;
+        List<ContractAccountMedService> camsList = idService != null ? entityManager.createQuery("from ContractAccountMedService where typeService=:typeService and idService=:idService")
                 .setParameter("typeService", typeService).setParameter("idService", idService).getResultList() : new ArrayList<>();
         ContractAccountMedService cams = camsList.isEmpty() ? new ContractAccountMedService() : camsList.get(0); //по идее, не должно быть больше одной записи
-        List<BigInteger> priceMedServiceList = manager.createNativeQuery("select pms.id as pms_id" +
+        List<BigInteger> priceMedServiceList = entityManager.createNativeQuery("select pms.id as pms_id" +
                 " from medservice ms" +
                 " LEFT JOIN pricemedservice pms on pms.medservice_id=ms.id " +
                 " LEFT JOIN priceposition pp on pp.id=pms.priceposition_id " +
@@ -975,7 +975,7 @@ public class ContractServiceBean implements IContractService {
         if (priceMedServiceList.isEmpty()) {
             LOG.warn("Услуга должна быть выбрана из платного прейскуранта");
         } else {
-            PriceMedService pms = manager.find(PriceMedService.class, priceMedServiceList.get(0).longValue());
+            PriceMedService pms = entityManager.find(PriceMedService.class, priceMedServiceList.get(0).longValue());
             PricePosition pp = pms.getPricePosition();
             cams.setCost(pp.getCost());
             cams.setCountMedService(1);
@@ -985,7 +985,7 @@ public class ContractServiceBean implements IContractService {
             cams.setServiceIn(pms.getMedService().getId());
             cams.setPatient(patientId != null ? patientId : ((NaturalPerson) letter.getContractPerson()).getPatient().getId());
             cams.setIdService(idService);
-            manager.persist(cams);
+            entityManager.persist(cams);
         }
     }
 

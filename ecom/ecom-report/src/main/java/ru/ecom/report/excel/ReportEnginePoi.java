@@ -44,7 +44,7 @@ public class ReportEnginePoi {
                 if (sheetRow != null) {
                     String str = PoiCellUtil.getString(sheetRow, 0);
                     if (str != null && str.startsWith("$$FOR")) {
-                        int adding = iterateFor(wb, sheet, row, str, aGetter, replaceHelper);
+                        int adding = iterateFor(sheet, row, str, aGetter, replaceHelper);
                         row += adding;
                         addedRowCount += adding;
                     } else {
@@ -82,7 +82,7 @@ public class ReportEnginePoi {
         }
     }
 
-    private int iterateFor(HSSFWorkbook aWorkbook, HSSFSheet aSheet, int aRow, String aStr, IValueGetter aGetter, ReplaceHelper aReplaceHelper) throws SetValueException {
+    private int iterateFor(HSSFSheet aSheet, int aRow, String aStr, IValueGetter aGetter, ReplaceHelper aReplaceHelper) throws SetValueException {
         HSSFRow forRow = aSheet.getRow(aRow);
         HSSFRow valueRow = aSheet.getRow(aRow + 1);
         HSSFRow styleRow = aSheet.getRow(aRow + 2);

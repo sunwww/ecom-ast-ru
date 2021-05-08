@@ -17,29 +17,35 @@ import java.util.StringTokenizer;
 
 /**
  * @jsp.tag name="sideLink"
- *          display-name="sideLink"
- *          body-content="empty"
- *          description="Side Link"
+ * display-name="sideLink"
+ * body-content="empty"
+ * description="Side Link"
  */
 public class SideLinkTag extends AbstractGuidSupportTag {
- 
+
 
     /**
      * Политики безопасности, разделенный ;
-     * @jsp.attribute   description="Политики безопасности, разделенный ;"
-     *                  required="false"
-     *                  rtexprvalue="true"
+     *
+     * @jsp.attribute description="Политики безопасности, разделенный ;"
+     * required="false"
+     * rtexprvalue="true"
      */
-    public String getRoles() { return theRoles ; }
-    public void setRoles(String aRoles) { theRoles = aRoles ; }
+    public String getRoles() {
+        return theRoles;
+    }
+
+    public void setRoles(String aRoles) {
+        theRoles = aRoles;
+    }
 
 
     /**
      * Идентификатор в CSS
      *
      * @jsp.attribute description="Идентификатор в CSS"
-     *                  required="false"
-     *                  rtexprvalue="true"
+     * required="false"
+     * rtexprvalue="true"
      */
     public String getStyleId() {
         if (theStyleId == null) {
@@ -56,9 +62,10 @@ public class SideLinkTag extends AbstractGuidSupportTag {
     /**
      * Клавиша быстрого доступа
      * Например: Ctrl+1 или Alt+F4 или F4
+     *
      * @jsp.attribute description="Клавиша быстрого доступа"
-     *                  required="false"
-     *                  rtexprvalue="true"
+     * required="false"
+     * rtexprvalue="true"
      */
     public String getKey() {
         return theKey != null ? theKey.replace('+', '_').toUpperCase() : null;
@@ -76,34 +83,39 @@ public class SideLinkTag extends AbstractGuidSupportTag {
      * rtexprvalue="true"
      */
     public String getParams() {
-        return theParams!=null ? theParams : "";
+        return theParams != null ? theParams : "";
     }
 
     public void setParams(String aExists) {
         theParams = aExists;
     }
-    
-    /** Это отчет 
-    * @jsp.attribute   description = "Ссылка на отчетную базу"
-     *                     required = "false"
-     *                  rtexprvalue = "true"
-     * */
-	public boolean getIsReport() {
-		return theIsReport;
-	}
 
-	public void setIsReport(boolean aIsReport) {
-		theIsReport = aIsReport;
-	}
+    /**
+     * Это отчет
+     *
+     * @jsp.attribute description = "Ссылка на отчетную базу"
+     * required = "false"
+     * rtexprvalue = "true"
+     */
+    public boolean getIsReport() {
+        return theIsReport;
+    }
 
-	/** Это отчет */
-	private boolean theIsReport;
+    public void setIsReport(boolean aIsReport) {
+        theIsReport = aIsReport;
+    }
+
+    /**
+     * Это отчет
+     */
+    private boolean theIsReport;
 
     /**
      * Действие
+     *
      * @jsp.attribute description=" Действие"
-     *                  required="true"
-     *                  rtexprvalue="true"
+     * required="true"
+     * rtexprvalue="true"
      */
     public String getAction() {
         return theAction;
@@ -117,8 +129,8 @@ public class SideLinkTag extends AbstractGuidSupportTag {
      * название
      *
      * @jsp.attribute description="Название"
-     *                required="true"
-     *                rtexprvalue="true"
+     * required="true"
+     * rtexprvalue="true"
      */
     public String getName() {
         return theName;
@@ -129,19 +141,20 @@ public class SideLinkTag extends AbstractGuidSupportTag {
     }
 
     /**
-     *Подсказка
+     * Подсказка
+     *
      * @jsp.attribute description="Подсказка"
-     *                  required="false"
-     *                  rtexprvalue="true"
+     * required="false"
+     * rtexprvalue="true"
      */
     public String getTitle() {
         StringBuilder sb = new StringBuilder();
-        sb.append(theTitle== null ? getName() : theTitle) ;
-        if(theKey!=null) {
-            sb.append(" ") ;
-            sb.append(theKey) ;
+        sb.append(theTitle == null ? getName() : theTitle);
+        if (theKey != null) {
+            sb.append(" ");
+            sb.append(theKey);
         }
-        return  sb.toString() ;
+        return sb.toString();
     }
 
     public void setTitle(String aTitle) {
@@ -150,42 +163,48 @@ public class SideLinkTag extends AbstractGuidSupportTag {
 
     /**
      * Подтверждение при переходе по ссылке
-     * @jsp.attribute   description = "Подтверждение при переходе по ссылке"
-     *                     required = "false"
-     *                  rtexprvalue = "true"
+     *
+     * @jsp.attribute description = "Подтверждение при переходе по ссылке"
+     * required = "false"
+     * rtexprvalue = "true"
      */
-    public String getConfirm() { return theConfirm ; }
-    public void setConfirm(String aConfirm) { theConfirm = aConfirm ; }
+    public String getConfirm() {
+        return theConfirm;
+    }
 
+    public void setConfirm(String aConfirm) {
+        theConfirm = aConfirm;
+    }
 
+@Override
     public int doStartTag() throws JspException {
-    	printIdeStart("SideLink") ;
-    	
-        if(StringUtil.isNullOrEmpty(theRoles) || RolesHelper.checkRoles(theRoles, pageContext)) {
-        	SideMenuTag.removeMustHidden(pageContext) ;
-        	
+        printIdeStart("SideLink");
+
+        if (StringUtil.isNullOrEmpty(theRoles) || RolesHelper.checkRoles(theRoles, pageContext)) {
+            SideMenuTag.removeMustHidden(pageContext);
+
             StringTokenizer st = new StringTokenizer(getParams(), ", ");
-            String action = getAction().substring(1) ;
-            StringBuilder sb = new StringBuilder() ;
-            boolean isJavascript= false ;
-            String actionJavascript = "" ;
+            String action = getAction().substring(1);
+            StringBuilder sb = new StringBuilder();
+            boolean isJavascript = false;
+            String actionJavascript = "";
             if (!action.contains("javascript")) {
-                String addSb = (String) pageContext.getSession().getAttribute(theIsReport ? "LOGININFO_URL_REPORT_BASE" : "LOGININFO_URL_MAIN_BASE") ;
-                if (!action.contains("http")) sb.append(addSb!=null&&!addSb.equals("null") ? addSb : "") ;
-            	sb.append(action) ;
-                if(action.contains(".do")) {
-	                if(action.indexOf('?')>=0) {
-	                    sb.append("&amp;") ;
-	                } else {
-	                	sb.append("?");
-	                }
-	            } else {
-	                sb.append(".do?") ;
-	            }
+                String addSb = (String) pageContext.getSession().getAttribute(theIsReport ? "LOGININFO_URL_REPORT_BASE" : "LOGININFO_URL_MAIN_BASE");
+                if (!action.contains("http")) sb.append(addSb != null && !addSb.equals("null") ? addSb : "");
+                sb.append(action);
+                if (action.contains(".do")) {
+                    if (action.indexOf('?') >= 0) {
+                        sb.append("&amp;");
+                    } else {
+                        sb.append("?");
+                    }
+                } else {
+                    sb.append(".do?");
+                }
             } else {
-            	isJavascript = true ;
-            	sb.append("javascript:void(0)") ;
-            	actionJavascript = action.substring(11) ;
+                isJavascript = true;
+                sb.append("javascript:void(0)");
+                actionJavascript = action.substring(11);
             }
             boolean canPrint = true;
             while (st.hasMoreTokens()) {
@@ -195,9 +214,9 @@ public class SideLinkTag extends AbstractGuidSupportTag {
                     canPrint = false;
                     break;
                 } else {
-                    if(value.equals("0")) {
-                        canPrint = false ;
-                        break ;
+                    if (value.equals("0")) {
+                        canPrint = false;
+                        break;
                     }
                     sb.append(param);
                     sb.append('=');
@@ -212,63 +231,61 @@ public class SideLinkTag extends AbstractGuidSupportTag {
             }
 
             if (canPrint) {
-            	String name = getName() ;
-            	if (name.toUpperCase().trim().equals("ИЗМЕНИТЬ")||name.toUpperCase().trim().equals("РЕДАКТИРОВАТЬ")) {
-                	name = "<img src='/skin/images/main/edit.png' alt='Изменить запись' title='Изменить запись' height='14' width='14'/> "+name ;
+                String name = getName();
+                if (name.toUpperCase().trim().equals("ИЗМЕНИТЬ") || name.toUpperCase().trim().equals("РЕДАКТИРОВАТЬ")) {
+                    name = "<img src='/skin/images/main/edit.png' alt='Изменить запись' title='Изменить запись' height='14' width='14'/> " + name;
                 } else {
-	                if (name.toUpperCase().trim().equals("УДАЛИТЬ")) {
-	                	name="<img src='/skin/images/main/delete.png' alt='Удалить' title='Удалить' height='14' width='14'/> "+name ;
-	                } 
+                    if (name.toUpperCase().trim().equals("УДАЛИТЬ")) {
+                        name = "<img src='/skin/images/main/delete.png' alt='Удалить' title='Удалить' height='14' width='14'/> " + name;
+                    }
                 }
-                Xa a = theKey!=null ? new Xa(sb.toString(), name+"<sup class='accessKey'>"+theKey+"</sup>")
-                        : new Xa(sb.toString(), getName()) ;
+                Xa a = theKey != null ? new Xa(sb.toString(), name + "<sup class='accessKey'>" + theKey + "</sup>")
+                        : new Xa(sb.toString(), getName());
 
-                if(getStyleId()!=null) {
-                    a.setID(getStyleId()) ;
+                if (getStyleId() != null) {
+                    a.setID(getStyleId());
                 }
-                String title = getTitle() ;
-                
-                
-                a.setTitle(getTitle()) ;
+
+                a.setTitle(getTitle());
                 if (isSelected()) {
                     a.setClass("selected");
                 }
 
                 StringBuilder onClickSb = new StringBuilder();
                 if (isJavascript) {
-                	if(!StringUtil.isNullOrEmpty(theConfirm)) {
+                    if (!StringUtil.isNullOrEmpty(theConfirm)) {
                         onClickSb.append("if (confirm(\"")
-                                .append(theConfirm).append("\")) { ") ;
-                        onClickSb.append(actionJavascript) ;
-                        onClickSb.append("}") ;
+                                .append(theConfirm).append("\")) { ");
+                        onClickSb.append(actionJavascript);
+                        onClickSb.append("}");
                     } else {
-                    	onClickSb.append(actionJavascript) ;
+                        onClickSb.append(actionJavascript);
                     }
-                	
+
                 } else {
-                	onClickSb.append("return ") ;
-                    if(!StringUtil.isNullOrEmpty(theConfirm)) {
+                    onClickSb.append("return ");
+                    if (!StringUtil.isNullOrEmpty(theConfirm)) {
                         onClickSb.append(" confirm(\"")
-                                .append(theConfirm).append("\") && ") ;
+                                .append(theConfirm).append("\") && ");
                     }
-                	onClickSb.append(" msh.util.FormData.getInstance().isChangedForLink() ;") ;
+                    onClickSb.append(" msh.util.FormData.getInstance().isChangedForLink() ;");
                 }
-                
+
                 a.setOnClick(onClickSb.toString());
-                
+
                 Xli li = new Xli(a);
-                
-                if(theKey!=null) {
+
+                if (theKey != null) {
                     printKeyAccessKey();
-                    if("ALT+DEL".equals(theKey.toUpperCase())) {
-                        li.setClass("delete") ;
+                    if ("ALT+DEL".equalsIgnoreCase(theKey)) {
+                        li.setClass("delete");
                     }
                 }
                 try {
                     JspWriter out = pageContext.getOut();
                     out.println(li);
                 } catch (IOException ioe) {
-                    throw new JspException(ioe) ;
+                    throw new JspException(ioe);
                 }
 
             }
@@ -280,7 +297,7 @@ public class SideLinkTag extends AbstractGuidSupportTag {
                 out.print(theRoles);
                 out.println("-->");
             } catch (IOException e) {
-                throw new JspException(e) ;
+                throw new JspException(e);
             }
 
         }
@@ -289,18 +306,18 @@ public class SideLinkTag extends AbstractGuidSupportTag {
     }
 
 
-    
     @Override
-	public int doEndTag() throws JspException {
-    	printIdeEnd();
-		return super.doEndTag();
-	}
-	private void printKeyAccessKey() {
+    public int doEndTag() throws JspException {
+        printIdeEnd();
+        return super.doEndTag();
+    }
+
+    private void printKeyAccessKey() {
         String key = getKey();
         String id = theStyleId == null ? key : theStyleId;
         JavaScriptContext.getContext(pageContext, this)
                 .println(
-                 "     accesskeyutil.registerKey($('" + id + "'), accesskeyutil." + key + ") ;");
+                        "     accesskeyutil.registerKey($('" + id + "'), accesskeyutil." + key + ") ;");
     }
 
     private boolean isSelected() {
@@ -338,12 +355,16 @@ public class SideLinkTag extends AbstractGuidSupportTag {
 
     }
 
-    
-    /** Подтверждение при переходе по ссылке */
-    private String theConfirm  ;
-    /** Подсказка */
+
+    /**
+     * Подтверждение при переходе по ссылке
+     */
+    private String theConfirm;
+    /**
+     * Подсказка
+     */
     private String theTitle;
-    
+
     /**
      * Есть ли такой параметр
      */
@@ -352,14 +373,22 @@ public class SideLinkTag extends AbstractGuidSupportTag {
      * название
      */
     private String theName;
-    /**  Действие */
+    /**
+     * Действие
+     */
     private String theAction;
-    /** Клавиша быстрого доступа */
+    /**
+     * Клавиша быстрого доступа
+     */
     private String theKey;
-    /** Идентификатор в CSS */
+    /**
+     * Идентификатор в CSS
+     */
     private String theStyleId;
 
-    /** Политики безопасности, разделенный ; */
-    private String theRoles ;
+    /**
+     * Политики безопасности, разделенный ;
+     */
+    private String theRoles;
 
 }

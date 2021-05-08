@@ -69,9 +69,8 @@ public class TextAreaTag extends AbstractFieldTag {
             inputField.addElement(getFormattedValue()) ;
             inputField.setName(getProperty());
             inputField.setID(getProperty());
-//            inputField.setValue(getFormattedValue());
             try {
-                StringBuffer cssClassName = new StringBuffer();
+                StringBuilder cssClassName = new StringBuilder();
                 if(isFieldRequired()) {
                     cssClassName.append("required") ;
                 }

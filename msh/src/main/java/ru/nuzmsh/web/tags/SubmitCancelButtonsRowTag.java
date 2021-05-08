@@ -1,17 +1,16 @@
 package ru.nuzmsh.web.tags;
 
-import java.io.IOException;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.taglib.html.Constants;
+import ru.nuzmsh.forms.validator.BaseValidatorForm;
+import ru.nuzmsh.web.util.IdeTagHelper;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.TagSupport;
+import java.io.IOException;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.taglib.html.Constants;
-
-import ru.nuzmsh.forms.validator.BaseValidatorForm;
-import ru.nuzmsh.web.util.IdeTagHelper;
+import static ru.nuzmsh.util.BooleanUtils.isTrue;
 
 /**
  * @jsp.tag name="submitCancelButtonsRow"
@@ -20,21 +19,27 @@ import ru.nuzmsh.web.util.IdeTagHelper;
  * description="submitCancelButtonsRow"
  */
 public class SubmitCancelButtonsRowTag extends AbstractGuidSupportTag {
-	
-	/** Функция сохранения
+
+    /**
+     * Функция сохранения
+     *
      * @jsp.attribute description="Функция сохранения"
      * required="false"
-     * rtexprvalue="true"	 *  */
-	public String getFunctionSubmit() {
-		return theFunctionSubmit;
-	}
+     * rtexprvalue="true"	 *
+     */
+    public String getFunctionSubmit() {
+        return theFunctionSubmit;
+    }
 
-	public void setFunctionSubmit(String aFunctionSubmit) {
-		theFunctionSubmit = aFunctionSubmit;
-	}
+    public void setFunctionSubmit(String aFunctionSubmit) {
+        theFunctionSubmit = aFunctionSubmit;
+    }
 
-	/** Функция сохранения */
-	private String theFunctionSubmit;
+    /**
+     * Функция сохранения
+     */
+    private String theFunctionSubmit;
+
     /**
      * Количество столбцов, занимаемое кнопками
      *
@@ -49,7 +54,7 @@ public class SubmitCancelButtonsRowTag extends AbstractGuidSupportTag {
     public void setColSpan(int aColSpan) {
         theColSpan = aColSpan;
     }
-    
+
     /**
      * На показывать кнопку отмены
      *
@@ -57,34 +62,48 @@ public class SubmitCancelButtonsRowTag extends AbstractGuidSupportTag {
      * required="false"
      * rtexprvalue="true"
      */
-	public boolean getNotDisplayCancel() {
-		return theNotDisplayCancel;
-	}
+    public boolean getNotDisplayCancel() {
+        return theNotDisplayCancel;
+    }
 
-	public void setNotDisplayCancel(boolean aNotDisplayCancel) {
-		theNotDisplayCancel = aNotDisplayCancel;
-	}
+    public void setNotDisplayCancel(boolean aNotDisplayCancel) {
+        theNotDisplayCancel = aNotDisplayCancel;
+    }
 
-	/** Не показывать кпонку отмены */
-	private boolean theNotDisplayCancel = false;
+    /**
+     * Не показывать кпонку отмены
+     */
+    private boolean theNotDisplayCancel = false;
 
     /**
      * Подпись на кнопке СОЗДАТЬ
-     * @jsp.attribute   description="Подпись на кнопке СОЗДАТЬ"
-     *                  required="false"
-     *                  rtexprvalue="true"
+     *
+     * @jsp.attribute description="Подпись на кнопке СОЗДАТЬ"
+     * required="false"
+     * rtexprvalue="true"
      */
-    public String getLabelCreate() { return theLabelCreate ; }
-    public void setLabelCreate(String aLabelCreate) { theLabelCreate = aLabelCreate ; }
+    public String getLabelCreate() {
+        return theLabelCreate;
+    }
+
+    public void setLabelCreate(String aLabelCreate) {
+        theLabelCreate = aLabelCreate;
+    }
 
     /**
      * Подписть на кнопке создать, при ее нажатии
-     * @jsp.attribute   description="Подписть на кнопке создать, при ее нажатии"
-     *                  required="false"
-     *                  rtexprvalue="true"
+     *
+     * @jsp.attribute description="Подписть на кнопке создать, при ее нажатии"
+     * required="false"
+     * rtexprvalue="true"
      */
-    public String getLabelCreating() { return theLabelCreating ; }
-    public void setLabelCreating(String aLabelCreating) { theLabelCreating = aLabelCreating ; }
+    public String getLabelCreating() {
+        return theLabelCreating;
+    }
+
+    public void setLabelCreating(String aLabelCreating) {
+        theLabelCreating = aLabelCreating;
+    }
 
     /**
      * Подпись на кнопке СОХРАНИТЬ
@@ -118,15 +137,24 @@ public class SubmitCancelButtonsRowTag extends AbstractGuidSupportTag {
 
     /**
      * Не disable кнопки
-     * @jsp.attribute   description = "Не disable кнопки"
-     *                     required = "false"
-     *                  rtexprvalue = "true"
+     *
+     * @jsp.attribute description = "Не disable кнопки"
+     * required = "false"
+     * rtexprvalue = "true"
      */
-    public boolean getDoNotDisableButtons() { return theDoNotDisableButtons ; }
-    public void setDoNotDisableButtons(boolean aDoNotDisableButtons) { theDoNotDisableButtons = aDoNotDisableButtons ; }
+    public boolean getDoNotDisableButtons() {
+        return theDoNotDisableButtons;
+    }
 
-    /** Не disable кнопки */
+    public void setDoNotDisableButtons(boolean aDoNotDisableButtons) {
+        theDoNotDisableButtons = aDoNotDisableButtons;
+    }
+
+    /**
+     * Не disable кнопки
+     */
     private boolean theDoNotDisableButtons = false;
+
     /**
      * Подпись на кнопке SUMBIT
      *
@@ -140,9 +168,8 @@ public class SubmitCancelButtonsRowTag extends AbstractGuidSupportTag {
     }
 
     /**
-     * @deprecated используйте setLabelSave()
-     *
      * @param aSumbitLabel
+     * @deprecated используйте setLabelSave()
      */
     public void setSubmitLabel(String aSumbitLabel) {
         setLabelSave(aSumbitLabel);
@@ -165,8 +192,7 @@ public class SubmitCancelButtonsRowTag extends AbstractGuidSupportTag {
 
 
     private ActionForm getForm() {
-        ActionForm form = (ActionForm) pageContext.getAttribute(Constants.BEAN_KEY, PageContext.REQUEST_SCOPE);
-        return form;
+        return (ActionForm) pageContext.getAttribute(Constants.BEAN_KEY, PageContext.REQUEST_SCOPE);
     }
 
     protected boolean isViewOnly() {
@@ -211,43 +237,42 @@ public class SubmitCancelButtonsRowTag extends AbstractGuidSupportTag {
                 out.println("'>");
 
                 IdeTagHelper.getInstance().printMarker(this, pageContext);
-                if(!theNotDisplayCancel) {
-                	out.println("<input id='cancelButton' type='button' onclick='this.disabled=true; window.history.back()' title='Отменить изменения [SHIFT+ESC]'value='Отменить'/>");
+                if (!theNotDisplayCancel) {
+                    out.println("<input id='cancelButton' type='button' onclick='this.disabled=true; window.history.back()' title='Отменить изменения [SHIFT+ESC]'value='Отменить'/>");
                 }
 
                 out.print("<input id='submitButton' class='default' type='button' value='");
-                String label = isTypeCreate() ? getLabelCreate() : getLabelSave() ;
-                out.print(label) ;
+                String label = isTypeCreate() ? getLabelCreate() : getLabelSave();
+                out.print(label);
                 out.print("' onclick=\"this.value='");
-                String labelIng = isTypeCreate() ? getLabelCreating() : getLabelSaving() ;
+                String labelIng = isTypeCreate() ? getLabelCreating() : getLabelSaving();
 
-                out.print(labelIng) ;
+                out.print(labelIng);
                 out.print("'; this.disabled=true; ");
-                if (theFunctionSubmit!=null &&!theFunctionSubmit.equals("")) {
-                	out.print(theFunctionSubmit) ;
+                if (theFunctionSubmit != null && !theFunctionSubmit.equals("")) {
+                    out.print(theFunctionSubmit);
                 } else {
-                	out.print("this.form.submit(); ");
+                    out.print("this.form.submit(); ");
                 }
-                
-                if(!theDoNotDisableButtons) {
+
+                if (!theDoNotDisableButtons) {
                     out.print("  ");
                 }
                 out.print("return true ;\"");
-                out.print(" title=\"") ;
-                out.print(label) ;
-                out.print(" [CTRL+ENTER]") ;
-                out.print("\"") ;
+                out.print(" title=\"");
+                out.print(label);
+                out.print(" [CTRL+ENTER]");
+                out.print("\"");
                 out.print(" />");
 
-                String lastDisplayedField  =  (String) pageContext.getAttribute(AbstractFieldTag.LAST_DISPLAYED_FIELDNAME, PageContext.REQUEST_SCOPE);
-                Boolean lastDisplayedField_isEsc  =  (Boolean) pageContext.getAttribute(AbstractFieldTag.LAST_DISPLAYED_FIELDNAME_IsEsc, PageContext.REQUEST_SCOPE);
-                if(lastDisplayedField!=null) {
-                	if (lastDisplayedField_isEsc) {
-                		AbstractFieldTag.printEscSupport(pageContext, lastDisplayedField, "submitButton", this);
-                	} else {
-                		AbstractFieldTag.printEnterSupport(pageContext, lastDisplayedField, "submitButton", this);
-                	}
-                    
+                String lastDisplayedField = (String) pageContext.getAttribute(AbstractFieldTag.LAST_DISPLAYED_FIELDNAME, PageContext.REQUEST_SCOPE);
+                Boolean lastDisplayedFieldIsEsc = (Boolean) pageContext.getAttribute(AbstractFieldTag.LAST_DISPLAYED_FIELDNAME_IsEsc, PageContext.REQUEST_SCOPE);
+                if (lastDisplayedField != null) {
+                    if (isTrue(lastDisplayedFieldIsEsc)) {
+                        AbstractFieldTag.printEscSupport(pageContext, lastDisplayedField, "submitButton", this);
+                    } else {
+                        AbstractFieldTag.printEnterSupport(pageContext, lastDisplayedField, "submitButton", this);
+                    }
                 }
 
             } catch (IOException ioe) {
@@ -260,27 +285,31 @@ public class SubmitCancelButtonsRowTag extends AbstractGuidSupportTag {
     /**
      * Подпись на кнопке SUMBIT
      */
-    private String theSumbitLabel;
     /**
      * Количество столбцов, занимаемое кнопками
      */
     private int theColSpan;
     /**
      * Подпись на кнопке из attribute
+     *
      * @deprecated используйте setLabelSave()
      */
     private String theSubmitLabelAttribute;
     /**
      * Подписть на кнопке СОХРАНИТЬ, при ее нажатии
      */
-    private String theLabelSaving   = "Сохранение изменений ...";
+    private String theLabelSaving = "Сохранение изменений ...";
     /**
      * Подпись на кнопке СОХРАНИТЬ
      */
-    private String theLabelSave     = "Сохранить изменения     ";
-    /** Подписть на кнопке создать, при ее нажатии */
+    private String theLabelSave = "Сохранить изменения     ";
+    /**
+     * Подписть на кнопке создать, при ее нажатии
+     */
     private String theLabelCreating = "Создание ...";
-    /** Подпись на кнопке СОЗДАТЬ */
+    /**
+     * Подпись на кнопке СОЗДАТЬ
+     */
     private String theLabelCreate = "Создать";
 
 }

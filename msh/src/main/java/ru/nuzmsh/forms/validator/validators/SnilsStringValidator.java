@@ -34,11 +34,11 @@ public class SnilsStringValidator implements IValidator{
 		if (currentSnils.length()!=11) {
 			return false;
 		}
-		int snilsCN = Integer.valueOf(currentSnils.substring(currentSnils.length()-2));
+		int snilsCN = Integer.parseInt(currentSnils.substring(currentSnils.length()-2));
 		int sum = 0;
 		int controlNumber = 0;
 		for (int i=0;i<9;i++) {
-			sum+=Integer.valueOf(currentSnils.substring(i, i+1))*(9-i);
+			sum+=Integer.parseInt(currentSnils.substring(i, i+1))*(9-i);
 		}
 		if (sum>101) {
 			sum=sum%101;

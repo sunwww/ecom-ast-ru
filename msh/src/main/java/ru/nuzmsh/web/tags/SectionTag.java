@@ -92,7 +92,8 @@ public class SectionTag extends AbstractGuidSimpleSupportTag {
     private String shortViewFunctionName(String aAction) {
     	return " onclick='getDefinition(\""+aAction+"\",event); '";
     }
-	
+
+    @Override
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut() ;
         

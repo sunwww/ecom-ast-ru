@@ -40,7 +40,6 @@ public class AddressSync implements ISync {
         long id = 0;
        while (true) {
     	   String sql = "select id from kladr "+clause+" and id >"+id+" order by id";
-      //  Iterator<Kladr> iterator = QueryIteratorUtil.iterate(Kladr.class, entityManager.createQuery(queryString));
         List <Object> kladrs = entityManager.createNativeQuery(sql).setMaxResults(5000).getResultList();
         if (kladrs.isEmpty()) {
         	LOG.info("===Импорт кладров завершен");

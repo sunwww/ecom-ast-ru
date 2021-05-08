@@ -49,10 +49,8 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 	   if(!aFile.exists()) return;
 	    if(aFile.isDirectory()) {
 	      for(File childFile : aFile.listFiles()) deleteDir(childFile);
-	      aFile.delete();
-	    } else {
-	    	aFile.delete();
-	    }		
+		}
+		aFile.delete();
 	}
 
 	public String getEncoding() {
@@ -164,14 +162,14 @@ public class OdtPrintFileDriver implements IPrintFileDriver,IQRPrinter {
 				String params=aLine.substring(index1+1,index2);
 				String[] pars = params.split(",");
 				if (pars.length==3) {
-					String qr_text = convertText(pars[0],aValueGetter, aReplaceHelper);
+					String qrText = convertText(pars[0],aValueGetter, aReplaceHelper);
 					try {
-						int qr_w = Integer.valueOf(pars[1]);
-						int qr_h = Integer.parseInt(pars[2]);
-						if (qr_w != 0 && qr_h != 0 && !qr_text.equals("")) {
-							theQR_text=qr_text;
-							theQR_w=qr_w;
-							theQR_h=qr_h;
+						int qrW = Integer.parseInt(pars[1]);
+						int qrH = Integer.parseInt(pars[2]);
+						if (qrW != 0 && qrH != 0 && !qrText.equals("")) {
+							theQR_text=qrText;
+							theQR_w=qrW;
+							theQR_h=qrH;
 							text=theReplaceString;
 						}
 					}

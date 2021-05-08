@@ -36,5 +36,5 @@ public class SourcesFileFilter implements FileFilter {
     }
 
 
-    private ArrayList<String> theExludeFileTypes = new ArrayList<String>();
+    private final ArrayList<String> theExludeFileTypes = new ArrayList<>();
 }
