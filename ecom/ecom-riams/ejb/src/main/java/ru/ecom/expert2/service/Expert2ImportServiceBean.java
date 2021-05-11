@@ -308,7 +308,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
      * */
     public void importFondMPAnswer(long monitorId, String mpFileName) {
         IMonitor monitor = startMonitor(monitorId, "Импорт дефектов. Файл: " + mpFileName);
-        importFondMPAnswer(monitorId, mpFileName, monitor);
+        importFondMPAnswer(mpFileName, monitor);
         monitor.finish("Закончили импорт дефектов");
     }
 
@@ -316,7 +316,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         return Boolean.TRUE.equals(value);
     }
 
-    private void importFondMPAnswer(long monitorId, String mpFileName, IMonitor monitor) {
+    private void importFondMPAnswer(String mpFileName, IMonitor monitor) {
         try {
             LOG.info("filename = " + mpFileName);
             if (mpFileName.toUpperCase().endsWith(".PAKET")) { //like B300026_200205.paket
@@ -327,7 +327,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     String filename = mpFile.getName();
                     if (filename.toUpperCase().endsWith(".MP")) {
                         monitor.setText("Импорт дефектов. Импортируем файл: " + filename);
-                        importFondMPAnswer(monitorId, unpackedDir.getName() + "/" + filename, monitor);
+                        importFondMPAnswer(unpackedDir.getName() + "/" + filename, monitor);
                     }
                 }
             } else {
@@ -435,7 +435,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                         manager.persist(entry);
                     }
                 }
-                LOG.info("По счету №" + savedBill.getBillNumber() + " сумма = " + totalSum);
+                LOG.info(i+" По счету №" + savedBill.getBillNumber() + " сумма = " + totalSum);
                 monitor.setText("По счету №" + savedBill.getBillNumber() + " сумма = " + totalSum);
                 savedBill.setSum(totalSum);
                 manager.persist(savedBill);
@@ -558,6 +558,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         monitor.setText(monitorText);
         LOG.info(monitorText);
         if (monitor.isCancelled()) {
+            LOG.warn("Проверка прервана пользователем!");
             monitor.setText("Проверка прервана пользователем");
             return true;
         }
