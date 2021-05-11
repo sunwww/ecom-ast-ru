@@ -25,11 +25,11 @@ public class ContractAccountCreationAction extends BaseAction {
         final String dateFrom = aRequest.getParameter("dateFrom") ;
         final String dateTo = aRequest.getParameter("dateTo") ;
         final String medContart = aRequest.getParameter("medContart") ;
-        final boolean isPeresech = aRequest.getParameter("isPeresech")==null||(aRequest.getParameter("isPeresech").toUpperCase().equals("FALSE"))||(aRequest.getParameter("isPeresech").toUpperCase().equals("0"))?false:true ;
-        final boolean isDelete = aRequest.getParameter("isDelete")==null||(aRequest.getParameter("isDelete").toUpperCase().equals("FALSE"))||(aRequest.getParameter("isEmpty").toUpperCase().equals("0"))?false:true ;
-        final boolean isEmpty = aRequest.getParameter("isEmpty")==null||(aRequest.getParameter("isEmpty").toUpperCase().equals("FALSE"))||(aRequest.getParameter("isEmpty").toUpperCase().equals("0"))?false:true ;
-        final boolean isHospit = aRequest.getParameter("isHospital")==null||(aRequest.getParameter("isHospital").toUpperCase().equals("FALSE"))||(aRequest.getParameter("isHospital").toUpperCase().equals("0"))?false:true ;
-        final int isPolyc = aRequest.getParameter("isPolyc")==null||(aRequest.getParameter("isPolyc").toUpperCase().equals("FALSE"))||(aRequest.getParameter("isPolyc").toUpperCase().equals("0"))?0:2;
+        final boolean isPeresech = aRequest.getParameter("isPeresech") != null && (!aRequest.getParameter("isPeresech").equalsIgnoreCase("FALSE")) && (!aRequest.getParameter("isPeresech").equals("0"));
+        final boolean isDelete = aRequest.getParameter("isDelete") != null && (!aRequest.getParameter("isDelete").equalsIgnoreCase("FALSE")) && (!aRequest.getParameter("isEmpty").equals("0"));
+        final boolean isEmpty = aRequest.getParameter("isEmpty") != null && (!aRequest.getParameter("isEmpty").equalsIgnoreCase("FALSE")) && (!aRequest.getParameter("isEmpty").equals("0"));
+        final boolean isHospit = aRequest.getParameter("isHospital") != null && (!aRequest.getParameter("isHospital").equalsIgnoreCase("FALSE")) && (!aRequest.getParameter("isHospital").equals("0"));
+        final int isPolyc = aRequest.getParameter("isPolyc")==null||(aRequest.getParameter("isPolyc").equalsIgnoreCase("FALSE"))||(aRequest.getParameter("isPolyc").equals("0"))?0:2;
        
         
         System.out.println("isEmpty="+isEmpty) ;

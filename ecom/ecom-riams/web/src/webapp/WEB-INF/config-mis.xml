@@ -1025,32 +1025,11 @@
                      path="/WEB-INF/actions/mis_patient/list.jsp"/>
         </action>
 
-        <action path='/mis_lpuUpdateJaasPolicy'
-                type='ru.ecom.mis.web.action.jaas.JaasUpdateDynamicPolicyAction'
-                validate='false' scope="request">
-            <forward name="success" redirect="false"
-                     path="/entityParentView-mis_lpu.do?id="/>
-        </action>
-
         <action path='/mis_lpuCreateLpusFromOmcLpu'
                 type='ru.ecom.mis.web.action.synclpufond.CreateLpusFromOmcLpuAction'
                 validate='false' scope="request">
             <forward name="success" redirect="false"
                      path="/entityParentList-mis_lpu.do?id=-1"/>
-        </action>
-
-        <action path='/mis_lpuAreaUpdateJaasPolicy'
-                type='ru.ecom.mis.web.action.jaas.JaasUpdateDynamicPolicyAction'
-                name='' validate='false' scope="request">
-            <forward name="success" redirect="false"
-                     path="/entityParentView-mis_lpuArea.do?id="/>
-        </action>
-
-        <action path='/mis_lpuListUpdateJaasPolicy'
-                type='ru.ecom.mis.web.action.jaas.JaasUpdateDynamicPolicyAction'
-                name='' validate='false' scope="request">
-            <forward name="success" redirect="false"
-                     path="/entityParentList-mis_lpu.do?id="/>
         </action>
 
         <action path='/mis_bypassAreaExcelExport'
@@ -1062,13 +1041,6 @@
 
         <action path="/print-*" type="ru.ecom.web.print.PrintAction"
                 name="" parameter="{1}" scope="request" validate="false">
-        </action>
-
-        <action path='/mis_lpuFond'
-                type='ru.ecom.mis.web.action.lpufond.LpuFondAction' name=''
-                validate='false' scope="request">
-            <forward name="success" redirect="false"
-                     path="/entityList-mis_lpuFond.do?id="/>
         </action>
 
         <action path='/diet_foodStuffSearch'

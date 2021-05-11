@@ -11,5 +11,5 @@ public interface IJbossGetFileLocalService {
      * Регистрация файла
      * @param aFilename только имя файла. БЕЗ ПУТЕЙ
      */
-    public File createFile(long aId, String aFilename) ;
+    File createFile(long aId, String aFilename) ;
 }

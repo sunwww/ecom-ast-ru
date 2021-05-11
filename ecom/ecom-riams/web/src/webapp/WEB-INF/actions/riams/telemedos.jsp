@@ -60,11 +60,6 @@
 					<li><msh:link action="ecom_hibernateCacheConfig.do">
                             Кэш для persistence.properties
                         </msh:link></li>
-	
-					<li><msh:link roles='/Policy/Jaas/SecPolicy/Create'
-                          action="mis_lpuUpdateJaasPolicy.do">
-                          Перекрепить все население
-                     </msh:link></li>
 					<li>
 						<msh:link action="js-ecom_deleteJournal-listNext.do">Журнал удаленных данных</msh:link>
                     </li>

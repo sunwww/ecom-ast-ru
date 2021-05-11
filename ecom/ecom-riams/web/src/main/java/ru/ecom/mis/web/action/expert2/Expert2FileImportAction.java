@@ -55,14 +55,12 @@ public class Expert2FileImportAction extends BaseAction {
 								try {
 									expert2importService.importElmed(monitorId, fileName);
 								} catch (Exception e) {
-									monitorService.cancel(monitorId);
-									throw new IllegalStateException(e) ;
+									LOG.error("Error import elmed entries: "+e.getMessage(), e);
 								}
 							}
 						}.start() ;
 					} else {
 						LOG.warn("Создания заполнения возможно только для ELMED!");
-						monitorService.cancel(monitorId);
 					}
 					break;
 				case "importFlk":
@@ -80,8 +78,6 @@ public class Expert2FileImportAction extends BaseAction {
 								expert2importService.importFondMPAnswer(monitorId, fileName);
 							} catch (Exception e) {
 								LOG.error("Some exception happened!!"+e.getMessage(), e);
-//								monitorService.cancel(monitorId);
-								throw new IllegalStateException(e) ;
 							}
 						}
 					}.start() ;
