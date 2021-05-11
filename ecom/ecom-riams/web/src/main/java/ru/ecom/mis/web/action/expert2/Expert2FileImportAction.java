@@ -79,7 +79,8 @@ public class Expert2FileImportAction extends BaseAction {
 							try {
 								expert2importService.importFondMPAnswer(monitorId, fileName);
 							} catch (Exception e) {
-								monitorService.cancel(monitorId);
+								LOG.error("Some exception happened!!"+e.getMessage(), e);
+//								monitorService.cancel(monitorId);
 								throw new IllegalStateException(e) ;
 							}
 						}
