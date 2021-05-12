@@ -272,6 +272,71 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 and dep2.id=dep.id and mc.DTYPE='DepartmentMedCase' and dep.name is not null
 and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)) as numeric),2)
 end  as per2
+-----------------------------------------------------------------
+,count (mc.id)-(select count(distinct mc.id) as pr203 from medcase mc
+ left join diagnosis ds on ds.medcase_id=mc.id
+ left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+left join MisLpu dep2 on dep2.id=mc.department_id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
+left join patient pat on pat.id=mc.patient_id
+where qd.vocidc10_id=ds.idc10_id
+and mc.dateFinish >= to_date('11.05.2021','dd.mm.yyyy')
+and mc.dateFinish <= to_date('12.05.2021','dd.mm.yyyy')
+   and reg.code='4' and prior.code='1'
+and dep2.id=dep.id and mc.DTYPE='DepartmentMedCase' and dep.name is not null
+and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
+) as not203
+--------------------------------------------------------------------
+,(select count(distinct mc.id) as noquenot203draft
+  from medcase mc
+ left join MisLpu dep2 on dep2.id=mc.department_id
+ left join Medcase dmc on dmc.parent_id=mc.id
+ left join qualityestimationcard qec on qec.medcase_id=mc.id
+left join qualityestimation qe on qe.card_id=qec.id
+ left join vocqualityestimationkind kind on kind.id=qec .kind_id
+left join vocqualityestimationcrit vqecrit on kind.id=vqecrit.kind_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id  and vqem.id= (select max(qecC.mark_id)
+                 from qualityestimationcrit qecC
+                 left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+                 left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+                 where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager')
+                 where mc.dateFinish >= to_date('11.05.2021','dd.mm.yyyy')
+and mc.dateFinish <= to_date('12.05.2021','dd.mm.yyyy')
+and dep2.id=dep.id and qe.experttype='BranchManager' and kind.code='NOT 203' and mc.DTYPE='DepartmentMedCase'
+and dep.name is not null
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+)
+--------------------------------------------------------------------
+,(select count(distinct mc.id) as noquenot203
+  from medcase mc
+ left join MisLpu dep2 on dep2.id=mc.department_id
+ left join Medcase dmc on dmc.parent_id=mc.id
+ left join qualityestimationcard qec on qec.medcase_id=mc.id
+left join qualityestimation qe on qe.card_id=qec.id
+ left join vocqualityestimationkind kind on kind.id=qec .kind_id
+left join vocqualityestimationcrit vqecrit on kind.id=vqecrit.kind_id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id  and vqem.id= (select max(qecC.mark_id)
+                 from qualityestimationcrit qecC
+                 left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+                 left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+                 where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager')
+                 where mc.dateFinish >= to_date('11.05.2021','dd.mm.yyyy')
+and mc.dateFinish <= to_date('12.05.2021','dd.mm.yyyy')
+and dep2.id=dep.id and qe.experttype='BranchManager' and kind.code='NOT 203' and mc.DTYPE='DepartmentMedCase'
+and dep.name is not null and qe.isdraft<>true
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+)
+--------------------------------------------------------------------
  from medcase mc
  left join MisLpu dep on dep.id=mc.department_id
 left join medcase as hmc on hmc.id=mc.parent_id
@@ -291,16 +356,26 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
             </msh:sectionTitle>
             <msh:sectionContent>
                 <msh:table name="justdeps"
-                           
+
                            action="report203.do" idField="5" cellFunction="true" >
+                    <msh:tableNotEmpty>
+                        <tr>
+                            <th colspan=3></th>
+                            <th colspan=5>по 203 приказу (есть критерии по диагнозу)</th>
+                            <th colspan=5>НЕ по 203 приказу (НЕТ критериев по диагнозу)</th>
+                        </tr>
+                    </msh:tableNotEmpty>
                     <msh:tableColumn columnName="#" property="sn" addParam="&nul=nul" />
                     <msh:tableColumn columnName="Отделение" property="1" addParam="&short=Short&view=treatDoctors&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}" />
-                    <msh:tableColumn columnName="ВСЕГО выписаны" property="2" isCalcAmount="true" addParam="&short=Short&view=dishAll&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}"/>
-                    <msh:tableColumn columnName="Выписаны по 203 приказу" property="3"  isCalcAmount="true" addParam="&short=Short&view=203All&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}"/>
+                    <msh:tableColumn columnName="ВСЕГО вып." property="2" isCalcAmount="true" addParam="&short=Short&view=dishAll&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}"/>
+                    <msh:tableColumn columnName="Вып." property="3"  isCalcAmount="true" addParam="&short=Short&view=203All&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}"/>
                     <msh:tableColumn columnName="Карта врача" property="7"  isCalcAmount="true" addParam="&short=Short&view=203EK&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}&isDraft=&draft=врача"/>
                     <msh:tableColumn columnName="%" property="8" addParam="&nul=nul" />
-                    <msh:tableColumn columnName="Экспертная карта зав." property="4"  isCalcAmount="true" addParam="&short=Short&view=203EK&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}&isDraft= and qe.isdraft<>true&draft=заведующего"/>
+                    <msh:tableColumn columnName="Карта зав." property="4"  isCalcAmount="true" addParam="&short=Short&view=203EK&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}&isDraft= and qe.isdraft<>true&draft=заведующего"/>
                     <msh:tableColumn columnName="%" property="6" addParam="&nul=nul" />
+                    <msh:tableColumn columnName="Вып." property="9"  isCalcAmount="true" addParam="&short=Short&view=not203All&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}"/>
+                    <msh:tableColumn columnName="Карта врача" property="10"  isCalcAmount="true" addParam="&short=Short&view=not203EK&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}&isDraft=&draft=врача"/>
+                    <msh:tableColumn columnName="Карта зав." property="11"  isCalcAmount="true" addParam="&short=Short&view=not203EK&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}&isDraft= and qe.isdraft<>true&draft=заведующего"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -540,11 +615,11 @@ end as per2
                            action="report203.do" idField="5" cellFunction="true" noDataMessage="Нет данных о пациентах, переведённых из АКУШЕРСКОГО ОТДЕЛЕНИЯ ПАТОЛОГИИ БЕРЕМЕННОСТИ в РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ" >
                     <msh:tableColumn columnName="#" property="sn" addParam="&nul=nul" />
                     <msh:tableColumn columnName="Отделение" property="1" addParam="&short=Short&view=treatDoctors2&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}"/>
-                    <msh:tableColumn columnName="ВСЕГО выписаны" property="2" isCalcAmount="true" addParam="&short=Short&view=dishAll2&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"/>
-                    <msh:tableColumn columnName="Выписаны по 203 приказу" property="3"  isCalcAmount="true" addParam="&short=Short&view=203All2&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"/>
-                    <msh:tableColumn columnName="Карта врача" property="6"  isCalcAmount="true" addParam="&short=Short&view=203EK2&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&isDraft=&draft=врача"/>
+                    <msh:tableColumn columnName="ВСЕГО вып." property="2" isCalcAmount="true" addParam="&short=Short&view=dishAll2&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"/>
+                    <msh:tableColumn columnName="По 203" property="3"  isCalcAmount="true" addParam="&short=Short&view=203All2&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}"/>
+                    <msh:tableColumn columnName="Карта вр." property="6"  isCalcAmount="true" addParam="&short=Short&view=203EK2&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&isDraft=&draft=врача"/>
                     <msh:tableColumn columnName="%" property="7" addParam="&nul=nul" />
-                    <msh:tableColumn columnName="Экспертная карта зав." property="4"  isCalcAmount="true" addParam="&short=Short&view=203EK2&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&isDraft= and qe.isdraft<>true&draft=заведующего"/>
+                    <msh:tableColumn columnName="Карта зав." property="4"  isCalcAmount="true" addParam="&short=Short&view=203EK2&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&isDraft= and qe.isdraft<>true&draft=заведующего"/>
                     <msh:tableColumn columnName="%" property="5" addParam="&nul=nul" />
                 </msh:table>
             </msh:sectionContent>
@@ -1055,17 +1130,17 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
                     <msh:tableColumn columnName="#" property="sn" addParam="&nul=nul" />
                     <msh:tableColumn columnName="Отделение" property="1" addParam="&short=Short&view=treatDoctors&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=212&depname=АКУШЕРСКОЕ ОБСЕРВАЦИОННОЕ ОТДЕЛЕНИЕ&qd= and qd.isobserv " />
                     <msh:tableColumn columnName="ВСЕГО выписаны" property="2" isCalcAmount="true" addParam="&short=Short&view=dishAll&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=212&depname=АКУШЕРСКОЕ ОБСЕРВАЦИОННОЕ ОТДЕЛЕНИЕ"/>
-                    <msh:tableColumn columnName="Выписаны по 203 приказу" property="3"  isCalcAmount="true" addParam="&short=Short&view=203All&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=212&depname=АКУШЕРСКОЕ ОБСЕРВАЦИОННОЕ ОТДЕЛЕНИЕ&qd= and qd.isobserv "/>
-                    <msh:tableColumn columnName="Карта врача" property="7"  isCalcAmount="true" addParam="&short=Short&view=203EK&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=212&depname=АКУШЕРСКОЕ ОБСЕРВАЦИОННОЕ ОТДЕЛЕНИЕ&isDraft=&draft=врача&qd= and qd.isobserv "/>
+                    <msh:tableColumn columnName="По 203" property="3"  isCalcAmount="true" addParam="&short=Short&view=203All&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=212&depname=АКУШЕРСКОЕ ОБСЕРВАЦИОННОЕ ОТДЕЛЕНИЕ&qd= and qd.isobserv "/>
+                    <msh:tableColumn columnName="Карта вр." property="7"  isCalcAmount="true" addParam="&short=Short&view=203EK&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=212&depname=АКУШЕРСКОЕ ОБСЕРВАЦИОННОЕ ОТДЕЛЕНИЕ&isDraft=&draft=врача&qd= and qd.isobserv "/>
                     <msh:tableColumn columnName="%" property="8" addParam="&nul=nul" />
-                    <msh:tableColumn columnName="Экспертная карта зав." property="4"  isCalcAmount="true" addParam="&short=Short&view=203EK&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=212&depname=АКУШЕРСКОЕ ОБСЕРВАЦИОННОЕ ОТДЕЛЕНИЕ&isDraft= and qe.isdraft<>true&draft=заведующего&qd= and qd.isobserv"/>
+                    <msh:tableColumn columnName="Карта зав." property="4"  isCalcAmount="true" addParam="&short=Short&view=203EK&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=212&depname=АКУШЕРСКОЕ ОБСЕРВАЦИОННОЕ ОТДЕЛЕНИЕ&isDraft= and qe.isdraft<>true&draft=заведующего&qd= and qd.isobserv"/>
                     <msh:tableColumn columnName="%" property="6" addParam="&nul=nul" />
 
                     <msh:tableColumn columnName="Отделение" property="15" addParam="&short=Short&view=treatDoctorsRod&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=203&depname=РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ&qd= and qd.isobserv is null " />
-                    <msh:tableColumn columnName="Выписаны по 203 приказу" property="9"  isCalcAmount="true" addParam="&short=Short&view=203AllRod&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=212&depname=РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ&qd= and qd.isobserv is null "/>
-                    <msh:tableColumn columnName="Карта врача" property="13"  isCalcAmount="true" addParam="&short=Short&view=203EKRod&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=212&depname=РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ&isDraft=&draft=врача&qd= and qd.isobserv is null "/>
+                    <msh:tableColumn columnName="По 203" property="9"  isCalcAmount="true" addParam="&short=Short&view=203AllRod&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=212&depname=РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ&qd= and qd.isobserv is null "/>
+                    <msh:tableColumn columnName="Карта вр." property="13"  isCalcAmount="true" addParam="&short=Short&view=203EKRod&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=212&depname=РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ&isDraft=&draft=врача&qd= and qd.isobserv is null "/>
                     <msh:tableColumn columnName="%" property="14" addParam="&nul=nul" />
-                    <msh:tableColumn columnName="Экспертная карта зав." property="10"  isCalcAmount="true" addParam="&short=Short&view=203EKRod&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=212&depname=РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ&isDraft= and qe.isdraft<>true&draft=заведующего&qd= and qd.isobserv is null "/>
+                    <msh:tableColumn columnName="Карта зав." property="10"  isCalcAmount="true" addParam="&short=Short&view=203EKRod&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=212&depname=РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ&isDraft= and qe.isdraft<>true&draft=заведующего&qd= and qd.isobserv is null "/>
                     <msh:tableColumn columnName="%" property="12" addParam="&nul=nul" />
                 </msh:table>
             </msh:sectionContent>
@@ -1245,6 +1320,124 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename
         </msh:section>
         <%
                 }
+            if (view.equals("not203All")) {
+                if (dateEnd!=null && !dateEnd.equals(""))
+                    request.setAttribute("dateTo"," по "+dateEnd);
+
+        %>
+        <msh:section>
+            <msh:sectionTitle>
+                <ecom:webQuery  name="not203All" nameFldSql="203All_sql" nativeSql="
+                select mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
+,(select case when(select
+min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
+left join Medcase dmc on dmc.parent_id=mc1.id
+left join Patient pat on pat.id=mc1.patient_id
+left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
+left join qualityestimation qe on qe.card_id=qec.id
+left join vocqualityestimationkind qek on qek.id=qec.kind_id
+
+left join vocqualityestimationcrit vqecrit on vqecrit.kind_id=qek.id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='NOT 203' and qe.isdraft<>true and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+group by pat.id) is not null then 'Да' else '-' end ) as zav
+,(select case when(select
+min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
+left join Medcase dmc on dmc.parent_id=mc1.id
+left join Patient pat on pat.id=mc1.patient_id
+left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
+left join qualityestimation qe on qe.card_id=qec.id
+left join vocqualityestimationkind qek on qek.id=qec.kind_id
+
+left join vocqualityestimationcrit vqecrit on vqecrit.kind_id=qek.id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='NOT 203' and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+group by pat.id) is not null then 'Да' else '-' end ) as doc
+,(select case when(select
+min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
+left join Medcase dmc on dmc.parent_id=mc1.id
+left join Patient pat on pat.id=mc1.patient_id
+left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
+left join qualityestimation qe on qe.card_id=qec.id
+left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='NOT 203' and qe.isdraft<>true group by pat.id) is not null then
+(select
+min('&qecid='||coalesce(qec.id,0))||'&patid='||coalesce(pat.id,0) from medcase mc1
+left join Medcase dmc on dmc.parent_id=mc1.id
+left join Patient pat on pat.id=mc1.patient_id
+left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
+left join qualityestimation qe on qe.card_id=qec.id
+left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where mc1.id=mc.id and qe.experttype='BranchManager' and qek.code='NOT 203' and qe.isdraft<>true group by pat.id) else
+(select
+'&patid='||coalesce(pat.id,0) from medcase mc1
+left join Medcase dmc on dmc.parent_id=mc1.id
+left join Patient pat on pat.id=mc1.patient_id
+left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
+left join qualityestimation qe on qe.card_id=qec.id
+left join vocqualityestimationkind qek on qek.id=qec.kind_id
+where mc1.id=mc.id group by pat.id) end)
+from medcase mc
+left join Mislpu dep on mc.department_id=dep.id
+left join Patient pat on pat.id=mc.patient_id
+left join diagnosis ds on ds.medcase_id=mc.id
+left join vocqualityestimationcrit_diagnosis qd on qd.vocidc10_id=ds.idc10_id
+left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
+where mc.dtype='DepartmentMedCase'
+  and mc.dateFInish between to_date('${dateBegin}','dd.mm.yyyy') and to_date('${dateEnd}','dd.mm.yyyy')
+and dep.id=${param.depId}
+ and dep.name is not null
+and (select count(distinct vqecrit.id)
+from vocqualityestimationcrit vqecrit
+left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqecrit.id
+left join vocidc10 d on d.id=vqecrit_d.vocidc10_id
+left join diagnosis ds on ds.idc10_id=d.id
+left join medcase mcin on mcin.id=ds.medcase_id
+left join vocdiagnosisregistrationtype reg on reg.id=ds.registrationtype_id
+left join vocprioritydiagnosis prior on prior.id=ds.priority_id
+left join patient pat on pat.id=mcin.patient_id
+left join qualityestimationcard qec on qec.medcase_id=mcin.id
+left join qualityestimation qe on qe.card_id=qec.id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
+and vqem.id= (select max(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager')
+where mcin.id= mc.id and reg.code='4' and prior.code='1'
+and (EXTRACT(YEAR from AGE(pat.birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(pat.birthday))<18 and vqecrit.ischild=true))=0
+ ${param.qd}
+ group by mc.id,pat.id
+order by pat.lastname||' '||pat.firstname||' '||pat.middlename
+"/>
+
+                <form action="report203.do" method="post" target="_blank">
+                    Пациенты, выписанные из стационара НЕ по 203 приказу с СЛО в отделении ${param.depname} за период с ${param.dateBegin} ${dateTo}
+                </form>
+            </msh:sectionTitle>
+            <msh:sectionContent>
+                <msh:table name="not203All"
+                           openNewWindow="true"
+                           action="entityView-stac_slo.do" idField="1" >
+                    <msh:tableColumn columnName="#" property="sn" />
+                    <msh:tableColumn columnName="ФИО" property="2" />
+                    <msh:tableColumn columnName="Карта врача есть?" property="4" />
+                    <msh:tableColumn columnName="Экспертная карта зав. есть?" property="3" />
+                </msh:table>
+            </msh:sectionContent>
+        </msh:section>
+        <%
+            }
             if (view.equals("203AllRod")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
@@ -1429,6 +1622,78 @@ order by pat.lastname||' '||pat.firstname||' '||pat.middlename"/>
         </msh:section>
         <%
                 }
+            if (view.equals("not203EK")) {
+                if (dateEnd!=null && !dateEnd.equals(""))
+                    request.setAttribute("dateTo"," по "+dateEnd);
+
+        %>
+        <msh:section>
+            <msh:sectionTitle>
+                <ecom:webQuery  name="not203EK" nameFldSql="not203EK_sql" nativeSql="
+               select distinct mc.id,pat.lastname||' '||pat.firstname||' '||pat.middlename
+ ,( select min(qec.id)
+from medcase mc1
+ left join MisLpu dep on dep.id=mc1.department_id
+ left join Medcase dmc on dmc.parent_id=mc1.id
+ left join Patient pat on pat.id=mc1.patient_id or pat.id=dmc.patient_id
+
+  left join qualityestimationcard qec on qec.medcase_id=mc1.id or qec.medcase_id=dmc.id
+  left join qualityestimation qe on qe.card_id=qec.id
+  left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.kind_id=qek.id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
+where mc1.id=mc.id and mc.dtype='DepartmentMedCase'
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
+ ${department} and dep.id=${param.depId}
+ and qe.experttype='BranchManager' and qek.code='NOT 203' and dep.name is not null
+ ${param.isDraft}
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+  )
+ from medcase mc
+ left join MisLpu dep on dep.id=mc.department_id
+ left join Medcase dmc on dmc.parent_id=mc.id
+ left join Patient pat on pat.id=mc.patient_id or pat.id=dmc.patient_id
+
+  left join qualityestimationcard qec on qec.medcase_id=mc.id or qec.medcase_id=dmc.id
+  left join qualityestimation qe on qe.card_id=qec.id
+  left join vocqualityestimationkind qek on qek.id=qec.kind_id
+  left join vocqualityestimationcrit vqecrit on vqecrit.kind_id=qek.id
+left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id
+  where mc.dtype='DepartmentMedCase'
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
+ ${department} and dep.id=${param.depId}
+ and qe.experttype='BranchManager' and qek.code='NOT 203' and dep.name is not null
+ ${param.isDraft}
+ ${param.qd}
+ and (select min(qecC.mark_id)
+from qualityestimationcrit qecC
+left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
+left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
+where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
+group by mc.id,pat.id,qec.id
+order by pat.lastname||' '||pat.firstname||' '||pat.middlename"/>
+
+                <form action="report203.do" method="post" target="_blank">
+                    Пациенты, выписанные НЕ по 203 приказу с СЛО в отделении ${param.depname} за период с ${param.dateBegin} ${dateTo}, в СЛС которых созданы экспертные карты ${param.draft}
+                </form>
+            </msh:sectionTitle>
+            <msh:sectionContent>
+                <msh:table name="not203EK"
+                           openNewWindow="true"
+                           action="entityParentView-expert_card.do" idField="3">
+                    <msh:tableColumn columnName="#" property="sn"/>
+                    <msh:tableColumn columnName="ФИО" property="2" />
+                </msh:table>
+            </msh:sectionContent>
+        </msh:section>
+        <%
+            }
             if (view.equals("203EKRod")) {
                 if (dateEnd!=null && !dateEnd.equals(""))
                     request.setAttribute("dateTo"," по "+dateEnd);
@@ -1977,11 +2242,11 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
                            action="report203.do" idField="6" >
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="Врач" property="2" addParam="&nul=nul" />
-                    <msh:tableColumn columnName="ВСЕГО выписаны" property="3" isCalcAmount="true" addParam="&short=Short&view=dishAll3&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}"/>
-                    <msh:tableColumn columnName="Выписаны по 203 приказу" property="4"  isCalcAmount="true" addParam="&short=Short&view=203All3&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&qd=${param.qd}"/>
-                    <msh:tableColumn columnName="Карта врача" property="8"  isCalcAmount="true" addParam="&short=Short&view=203EK3&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&isDraft=&draft=врача&qd=${param.qd}"/>
+                    <msh:tableColumn columnName="ВСЕГО вып." property="3" isCalcAmount="true" addParam="&short=Short&view=dishAll3&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}"/>
+                    <msh:tableColumn columnName="По 203" property="4"  isCalcAmount="true" addParam="&short=Short&view=203All3&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&qd=${param.qd}"/>
+                    <msh:tableColumn columnName="Карта вр." property="8"  isCalcAmount="true" addParam="&short=Short&view=203EK3&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&isDraft=&draft=врача&qd=${param.qd}"/>
                     <msh:tableColumn columnName="%" property="9" addParam="&nul=nul" />
-                    <msh:tableColumn columnName="Экспертная карта зав." property="5"  isCalcAmount="true" addParam="&short=Short&view=203EK3&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&isDraft= and qe.isdraft<>true&draft=заведующего&qd=${param.qd}"/>
+                    <msh:tableColumn columnName="Карта зав." property="5"  isCalcAmount="true" addParam="&short=Short&view=203EK3&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&isDraft= and qe.isdraft<>true&draft=заведующего&qd=${param.qd}"/>
                     <msh:tableColumn columnName="%" property="7" addParam="&nul=nul" />
                 </msh:table>
             </msh:sectionContent>
@@ -2120,11 +2385,11 @@ and dep.isobservable=true and depRod.ismaternityward
                            action="report203.do" idField="6" >
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="Врач" property="2" addParam="&nul=nul" />
-                    <msh:tableColumn columnName="ВСЕГО выписаны" property="3" isCalcAmount="true" addParam="&short=Short&view=dishAll3Rod&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&depId=212&depname=РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ&qd= and qd.isobserv is null"/>
-                    <msh:tableColumn columnName="Выписаны по 203 приказу" property="4"  isCalcAmount="true" addParam="&short=Short&view=203All3Rod&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&depId=212&depname=РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ&qd= and qd.isobserv is null"/>
-                    <msh:tableColumn columnName="Карта врача" property="8"  isCalcAmount="true" addParam="&short=Short&view=203EK3Rod&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&isDraft=&draft=врача&depId=212&depname=РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ&qd= and qd.isobserv is null"/>
+                    <msh:tableColumn columnName="ВСЕГО вып." property="3" isCalcAmount="true" addParam="&short=Short&view=dishAll3Rod&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&depId=212&depname=РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ&qd= and qd.isobserv is null"/>
+                    <msh:tableColumn columnName="По 203" property="4"  isCalcAmount="true" addParam="&short=Short&view=203All3Rod&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&depId=212&depname=РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ&qd= and qd.isobserv is null"/>
+                    <msh:tableColumn columnName="Карта вр." property="8"  isCalcAmount="true" addParam="&short=Short&view=203EK3Rod&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&isDraft=&draft=врача&depId=212&depname=РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ&qd= and qd.isobserv is null"/>
                     <msh:tableColumn columnName="%" property="9" addParam="&nul=nul" />
-                    <msh:tableColumn columnName="Экспертная карта зав." property="5"  isCalcAmount="true" addParam="&short=Short&view=203EK3Rod&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&isDraft= and qe.isdraft<>true&draft=заведующего&depId=212&depname=РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ&qd= and qd.isobserv is null"/>
+                    <msh:tableColumn columnName="Карта зав." property="5"  isCalcAmount="true" addParam="&short=Short&view=203EK3Rod&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&isDraft= and qe.isdraft<>true&draft=заведующего&depId=212&depname=РОДОВОЕ (РОДИЛЬНОЕ) ОТДЕЛЕНИЕ&qd= and qd.isobserv is null"/>
                     <msh:tableColumn columnName="%" property="7" addParam="&nul=nul" />
                 </msh:table>
             </msh:sectionContent>
@@ -2822,11 +3087,11 @@ end as per2
                            action="report203.do" idField="7" >
                     <msh:tableColumn columnName="#" property="sn" />
                     <msh:tableColumn columnName="Врач" property="2" addParam="&nul=nul" />
-                    <msh:tableColumn columnName="ВСЕГО выписаны" property="3" isCalcAmount="true" addParam="&short=Short&view=dishAll4&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}"/>
-                    <msh:tableColumn columnName="Выписаны по 203 приказу" property="4"  isCalcAmount="true" addParam="&short=Short&view=203All4&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}"/>
-                    <msh:tableColumn columnName="Карта врача" property="8"  isCalcAmount="true" addParam="&short=Short&view=203EK4&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&isDraft=&draft=врача"/>
+                    <msh:tableColumn columnName="ВСЕГО вып." property="3" isCalcAmount="true" addParam="&short=Short&view=dishAll4&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}"/>
+                    <msh:tableColumn columnName="По 203" property="4"  isCalcAmount="true" addParam="&short=Short&view=203All4&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}"/>
+                    <msh:tableColumn columnName="Карта вр." property="8"  isCalcAmount="true" addParam="&short=Short&view=203EK4&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&isDraft=&draft=врача"/>
                     <msh:tableColumn columnName="%" property="9" addParam="&nul=nul" />
-                    <msh:tableColumn columnName="Экспертная карта зав." property="5"  isCalcAmount="true" addParam="&short=Short&view=203EK4&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&isDraft= and qe.isdraft<>true&draft=заведующего"/>
+                    <msh:tableColumn columnName="Карта зав." property="5"  isCalcAmount="true" addParam="&short=Short&view=203EK4&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&wfId=${wfId}&wfname=${wfname}&isDraft= and qe.isdraft<>true&draft=заведующего"/>
                     <msh:tableColumn columnName="%" property="6" addParam="&nul=nul" />
                 </msh:table>
             </msh:sectionContent>
