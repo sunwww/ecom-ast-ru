@@ -53,7 +53,7 @@
         </path>
 
         <mkdir dir="./target/classes"/>
-        <javac destdir="./target/classes" encoding="utf-8" debug="true" includeantruntime="false">
+        <javac destdir="./target/classes" encoding="utf-8" debug="true">
             <src path="./src/main/java"/>
             <classpath location="lombok/lombok.jar" />
         <!--    <src path="./src/test/java"/> -->
