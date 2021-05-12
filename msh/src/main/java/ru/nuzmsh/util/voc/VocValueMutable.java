@@ -28,7 +28,7 @@ public class VocValueMutable implements Serializable, Comparable {
     }
 
     public int compareTo(Object aObject) {
-        if(aObject!=null && aObject instanceof VocValueMutable && theName!=null) {
+        if(aObject instanceof VocValueMutable && theName != null) {
             VocValueMutable v = (VocValueMutable) aObject ;
             return theName.compareToIgnoreCase(v.theName) ;
         }

@@ -1,57 +1,70 @@
 package ru.ecom.address.ejb.service;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  *
  */
 public class AddressPointCheck {
 
     public AddressPointCheck(String aNumber, String aBuilding, String aFlat) {
-    	if(aNumber==null) throw new IllegalArgumentException("Нет номера дома") ;
-        houseNumber = aNumber ;
-        houseBuilding = aBuilding ;
-        flat = aFlat ;
+        if (aNumber == null) throw new IllegalArgumentException("Нет номера дома");
+        houseNumber = aNumber;
+        houseBuilding = aBuilding;
+        flat = aFlat;
     }
-	
+
     public AddressPointCheck(String aNumber, String aBuilding) {
-    	this(aNumber, aBuilding, null ) ;
+        this(aNumber, aBuilding, null);
     }
 
     public AddressPointCheck(String aNumber) {
-    	this(aNumber, null) ;
+        this(aNumber, null);
     }
 
-    
-    /** Номер дома */
-    public String getNumber() { return houseNumber ; }
 
-    /** Корпус */
-    public String getBuilding() { return houseBuilding ; }
+    /**
+     * Номер дома
+     */
+    public String getNumber() {
+        return houseNumber;
+    }
 
-    /** Квартира */
-	public String getFlat() {
-		return flat;
-	}
+    /**
+     * Корпус
+     */
+    public String getBuilding() {
+        return houseBuilding;
+    }
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder() ;
-		sb.append("д. ") ;
-		sb.append(houseNumber) ;
-		if(houseBuilding!=null) {
-			sb.append(" корпус ").append(houseBuilding) ;
-		}
-		if(flat!=null) {
-			sb.append(" кв. ").append(flat);
-		}
-		return sb.toString();
-	}
+    /**
+     * Квартира
+     */
+    public String getFlat() {
+        return flat;
+    }
 
-	/** Квартира */
-	private final String flat;
-    /** Корпус */
-    private final String houseBuilding ;
-    /** Номер дома */
-    private final String houseNumber ;
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("д. ");
+        sb.append(houseNumber);
+        if (houseBuilding != null) {
+            sb.append(" корпус ").append(houseBuilding);
+        }
+        if (flat != null) {
+            sb.append(" кв. ").append(flat);
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Квартира
+     */
+    private final String flat;
+    /**
+     * Корпус
+     */
+    private final String houseBuilding;
+    /**
+     * Номер дома
+     */
+    private final String houseNumber;
 }

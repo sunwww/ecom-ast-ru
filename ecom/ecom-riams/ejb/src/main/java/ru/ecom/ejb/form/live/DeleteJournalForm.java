@@ -1,6 +1,5 @@
 package ru.ecom.ejb.form.live;
 
-import lombok.Getter;
 import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
@@ -22,74 +21,106 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 @EntityFormSecurityPrefix("/Policy/IdeMode/Hello")
 @Setter
 public class DeleteJournalForm extends IdEntityForm {
-	/** Дата удаления */
-	@Comment("Дата удаления")
-	@DateString @DoDateString @Persist
-	public String getDeleteDate() {
-		return deleteDate;
-	}
+    /**
+     * Дата удаления
+     */
+    @Comment("Дата удаления")
+    @DateString
+    @DoDateString
+    @Persist
+    public String getDeleteDate() {
+        return deleteDate;
+    }
 
-	/** Дата удаления */
-	private String deleteDate;
-	
-	/** Время удаления */
-	@Comment("Время удаления")
-	@TimeString @DoTimeString @Persist
-	public String getDeleteTime() {
-		return deleteTime;
-	}
+    /**
+     * Дата удаления
+     */
+    private String deleteDate;
 
-	/** Время удаления */
-	private String deleteTime;
-	
-	/** Логин удалившего */
-	@Comment("Логин удалившего")
-	 @Persist
-	public String getLoginName() {
-		return loginName;
-	}
+    /**
+     * Время удаления
+     */
+    @Comment("Время удаления")
+    @TimeString
+    @DoTimeString
+    @Persist
+    public String getDeleteTime() {
+        return deleteTime;
+    }
 
-	/** Логин удалившего */
-	private String loginName;
-	
-	/** Имя класса хранения */
-	@Comment("Имя класса хранения")
-	 @Persist
-	public String getClassName() {
-		return className;
-	}
+    /**
+     * Время удаления
+     */
+    private String deleteTime;
 
-	/** Имя класса хранения */
-	private String className;
-	
-	/** ИД объект хранения */
-	@Comment("ИД объект хранения")
-	 @Persist
-	public String getObjectId() {
-		return objectId;
-	}
+    /**
+     * Логин удалившего
+     */
+    @Comment("Логин удалившего")
+    @Persist
+    public String getLoginName() {
+        return loginName;
+    }
 
-	/** ИД объект хранения */
-	private String objectId;
-	
-	/** Комментарий */
-	@Comment("Комментарий")
-	 @Persist
-	public String getComment() {
-		return comment;
-	}
+    /**
+     * Логин удалившего
+     */
+    private String loginName;
 
-	/** Комментарий */
-	private String comment;
-	
-	/** Сериализация данных */
-	@Comment("Сериализация данных")
-	 @Persist
-	public String getSerialization() {
-		return serialization;
-	}
+    /**
+     * Имя класса хранения
+     */
+    @Comment("Имя класса хранения")
+    @Persist
+    public String getClassName() {
+        return className;
+    }
 
-	/** Сериализация данных */
-	private String serialization;
+    /**
+     * Имя класса хранения
+     */
+    private String className;
+
+    /**
+     * ИД объект хранения
+     */
+    @Comment("ИД объект хранения")
+    @Persist
+    public String getObjectId() {
+        return objectId;
+    }
+
+    /**
+     * ИД объект хранения
+     */
+    private String objectId;
+
+    /**
+     * Комментарий
+     */
+    @Comment("Комментарий")
+    @Persist
+    public String getComment() {
+        return comment;
+    }
+
+    /**
+     * Комментарий
+     */
+    private String comment;
+
+    /**
+     * Сериализация данных
+     */
+    @Comment("Сериализация данных")
+    @Persist
+    public String getSerialization() {
+        return serialization;
+    }
+
+    /**
+     * Сериализация данных
+     */
+    private String serialization;
 
 }

@@ -183,10 +183,6 @@ public class RewritingHttpServletRequest implements HttpServletRequest {
 		return theRequest.getContentLength() ;
 	}
 
-	public long getContentLengthLong() {
-		return 0;
-	}
-
 	public String getContentType() {
 		return theRequest.getContentType() ;
 	}

@@ -19,46 +19,42 @@ import ru.nuzmsh.web.util.IdeTagHelper;
  */
 public class RowTag extends AbstractGuidSimpleSupportTag {
 
-    public void doTag() throws JspException, IOException {
-        JspWriter out = getJspContext().getOut() ;
-        
-        JspTag parent = getParent() ;
-        //System.out.println("panel parent = "+parent) ;
-        if(parent instanceof PanelTag) {
-        	PanelTag panel = (PanelTag) parent ;
-        	if(panel.getColsWidthArray()!=null) {
-        		theStack = new Stack<String>() ;
-        		for(String s:panel.getColsWidthArray()) {
-        			theStack.add(s);
-        		}
-    			this.getJspContext().setAttribute("colsWidthStack", theStack) ;
-        		//System.out.println("theStack = "+theStack);
-        	}
-        }
-        if(StringUtil.isNullOrEmpty(theStyleId)) {
-            out.println(" <tr>") ;
-        } else {
-            out.print(" <tr id='") ;
-            out.print(theStyleId) ;
-            out.println("'>");
-        }
-        if(getJspBody()!=null) getJspBody().invoke(out);
-        
-		this.getJspContext().removeAttribute("colsWidthStack") ;
-		
-		// ide mode
-        if(theIdeTagHelper.isInIdeMode(getJspContext())) {
-        	out.println("<td>");
-    		theIdeTagHelper.printMarker("Row", this, getJspContext());
-        	out.println("</td>");
-        }
-        
-        out.println(" </tr>") ;
-    }
-    
-    private final IdeTagHelper theIdeTagHelper = IdeTagHelper.getInstance() ;
+	public void doTag() throws JspException, IOException {
+		JspWriter out = getJspContext().getOut() ;
 
-    /** 
+		JspTag parent = getParent() ;
+		if(parent instanceof PanelTag) {
+			PanelTag panel = (PanelTag) parent ;
+			if(panel.getColsWidthArray()!=null) {
+				theStack = new Stack<String>() ; //не трогать
+				theStack.addAll(panel.getColsWidthArray());
+				this.getJspContext().setAttribute("colsWidthStack", theStack) ;
+			}
+		}
+		if(StringUtil.isNullOrEmpty(theStyleId)) {
+			out.println(" <tr>") ;
+		} else {
+			out.print(" <tr id='") ;
+			out.print(theStyleId) ;
+			out.println("'>");
+		}
+		if(getJspBody()!=null) getJspBody().invoke(out);
+
+		this.getJspContext().removeAttribute("colsWidthStack") ;
+
+		// ide mode
+		if(theIdeTagHelper.isInIdeMode(getJspContext())) {
+			out.println("<td>");
+			theIdeTagHelper.printMarker("Row", this, getJspContext());
+			out.println("</td>");
+		}
+
+		out.println(" </tr>") ;
+	}
+
+	private final IdeTagHelper theIdeTagHelper = IdeTagHelper.getInstance() ;
+
+	/**
 	 * Идентификатор элемента
 	 * @jsp.attribute   description = "Идентификатор элемента"
 	 *                     required = "false"
@@ -74,9 +70,9 @@ public class RowTag extends AbstractGuidSimpleSupportTag {
 
 	/** Идентификатор элемента */
 	private String theStyleId;
-    protected Stack<String> getColsWidthStack() {
-    	return theStack ;
-    }
+	protected Stack<String> getColsWidthStack() {
+		return theStack ;
+	}
 
-    private Stack<String> theStack ;
+	private Stack<String> theStack ;
 }

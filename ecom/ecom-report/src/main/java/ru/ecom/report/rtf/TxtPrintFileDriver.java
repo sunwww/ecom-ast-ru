@@ -5,6 +5,7 @@ import ru.ecom.report.replace.ReplaceHelper;
 import ru.ecom.report.replace.SetValueException;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -142,7 +143,7 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
 	private String changeStringForMatrixPrinter(String outStr) {
 		String res=outStr;
 		String line ;
-		try (LineNumberReader in = new LineNumberReader(new InputStreamReader(new FileInputStream(getTxtMatrixFile()), "UTF-8"))) {
+		try (LineNumberReader in = new LineNumberReader(new InputStreamReader(new FileInputStream(getTxtMatrixFile()), StandardCharsets.UTF_8))) {
 			while ( (line=in.readLine())!=null) {
 				String[] syms = line.split(" ");
 				if (syms.length>0 && !syms[0].equals("")) {
@@ -152,10 +153,8 @@ public class TxtPrintFileDriver implements IPrintFileDriver {
 						res = res.replace(syms[0], "");
 				}
 			}
-		} catch (FileNotFoundException fe) {
+		} catch (IOException fe) {
 			fe.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		res = res.replace("<text:line-break/>","\n");
 		return res;

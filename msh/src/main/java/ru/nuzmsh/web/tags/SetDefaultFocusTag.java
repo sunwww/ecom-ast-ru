@@ -50,7 +50,7 @@ public class SetDefaultFocusTag extends TagSupport {
         if (id == null) id = findFirstIdError();
         if (id == null) id = theId;
         JavaScriptContext.getContext(pageContext, this).println(
-                        "    <!--\n" +
+                "    <!--\n" +
                         "    window.onload = function() {\n" +
                         "        document.getElementById('" + id + "').focus();\n" +
                         "    }\n" +

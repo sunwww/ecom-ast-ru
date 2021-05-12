@@ -15,15 +15,11 @@ import java.util.Map;
  */
 public class RtfPrintServiceHelper {
 
-	private static void log(String aStr) {
-		System.out.println(aStr) ;
-	}
 	public RtfPrintServiceHelper() {
     	theDrivers.add(new OdtPrintFileDriver(".odt")) ;
     	theDrivers.add(new OdtPrintFileDriver(".ods")) ;
     	theDrivers.add(new RtfPrintFileDriver()) ;
     	theDrivers.add(new TxtPrintFileDriver()) ;
-        //theReplaceHelper.setRtfMode(true);
         setRemovedTempFile(true) ;
 	}
 
@@ -34,7 +30,6 @@ public class RtfPrintServiceHelper {
     	theDrivers.add(new OdtPrintFileDriver(".ods")) ;
     	theDrivers.add(new RtfPrintFileDriver()) ;
     	if (!aIsTxtFirst) theDrivers.add(new TxtPrintFileDriver()) ;
-        //theReplaceHelper.setRtfMode(true);
         setRemovedTempFile(true) ;
     }
 

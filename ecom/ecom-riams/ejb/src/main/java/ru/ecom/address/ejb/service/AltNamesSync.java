@@ -15,8 +15,6 @@ public class AltNamesSync implements ISync {
         String countQueryString = "select count(*) from AltNames " + clause;
 
         entityManager = aContext.getEntityManager();
-//        UserTransaction tx = aContext.getTransactionManager();
-//        tx.begin();
         long results = (Long) entityManager.createQuery(countQueryString).getSingleResult();
 
         IMonitor monitor = aContext.getMonitorService().startMonitor(aContext.getMonitorId(), "Синхронизация соответствий КЛАДР", results);

@@ -283,6 +283,6 @@ public class DishFoodStuff extends BaseEntity{
 			}
 		}
 		return ret.setScale(2,BigDecimal.ROUND_HALF_DOWN);
-	};
+	}
 	
 }

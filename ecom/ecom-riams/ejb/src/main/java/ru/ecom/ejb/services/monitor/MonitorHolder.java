@@ -6,7 +6,7 @@ import java.util.HashMap;
  * Мониторы
  */
 public class MonitorHolder {
-    private static MonitorHolder INSTANCE = new MonitorHolder();
+    private static final MonitorHolder INSTANCE = new MonitorHolder();
 
 
     private MonitorHolder() {

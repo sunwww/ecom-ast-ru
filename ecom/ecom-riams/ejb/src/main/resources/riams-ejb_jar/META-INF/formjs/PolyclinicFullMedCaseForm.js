@@ -51,7 +51,7 @@ function saveAdditionData(aForm, aEntity, aCtx) {
                 ticket.setWorkFunctionExecute(aEntity.getOwnerFunction());
                 ticket.setUsername(aEntity.getUsername());
                 ticket.setCreateDate(aEntity.getCreateDate());
-                ticket.setNoActuality(aEntity.getNoActuality());
+                ticket.setNoActuality(aEntity.isNoActuality());
                 ticket.setServiceStream(aEntity.getServiceStream());
                 ticket.setVisitReason(visitReason);
                 ticket.setVisitResult(visitResult);

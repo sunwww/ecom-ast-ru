@@ -9,6 +9,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import static ru.nuzmsh.util.CollectionUtil.isNotEmpty;
+
 
 public class UserMessage {
 
@@ -76,10 +78,10 @@ public class UserMessage {
 
     public static void removeFromSession(ServletRequest aRequest,Long aId) {
     	List<UserMessage> list = findInRequest(aRequest) ;
-        if(list!=null && list.size()>0) {
+        if(isNotEmpty(list)) {
         	for (int i=0;i<list.size();i++) {
         		UserMessage mes = list.get(i) ;
-        		if (aId!=null && mes.getId()!=null && mes.getId().equals(aId)) {
+        		if (mes.getId() != null && mes.getId().equals(aId)) {
         			list.remove(i) ;
         		}
         	}
@@ -107,6 +109,5 @@ public class UserMessage {
     private String theUrl ;
     private String theTitle ;
     private String theInfo ;
-    //private final Exception theException ;
 
 }

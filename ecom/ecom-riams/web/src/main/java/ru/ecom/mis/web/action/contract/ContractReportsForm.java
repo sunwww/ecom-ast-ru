@@ -1,130 +1,55 @@
 package ru.ecom.mis.web.action.contract;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
 
+@Getter
+@Setter
 public class ContractReportsForm extends BaseValidatorForm{
 
 	/** Позиция прейскуранта */
-	public Long getPricePosition() {return thePricePosition;}
-	public void setPricePosition(Long aPricePosition) {thePricePosition = aPricePosition;}
-	/** Позиция прейскуранта */
-	private Long thePricePosition ;
-	
+	private Long pricePosition ;
 	/** Рабочая функция исполнителя */
-	public Long getWorkFunction() {return theWorkFunction;}
-	public void setWorkFunction(Long aWorkFunction) {theWorkFunction = aWorkFunction;}
-	/** Рабочая функция исполнителя */
-	private Long theWorkFunction ;
-	
+	private Long workFunction ;
 	/** Гарантийное письмо (номер */
-	public String getGuaranteeNumber() {return theGuaranteeNumber;}
-	public void setGuaranteeNumber(String aGuaranteeNumber) {theGuaranteeNumber = aGuaranteeNumber;}
-	/** Гарантийное письмо (номер */
-	private String theGuaranteeNumber;
-
+	private String guaranteeNumber;
 	/** dateto */
 	@DateString @DoDateString
-	public String getDateTo() {return theDateTo;}
-	public void setDateTo(String aDateTo) {theDateTo = aDateTo;}
-
-	
+	public String getDateTo() {return dateTo;}
 	/** DateFrom */
 	@DateString @DoDateString
-	public String getDateFrom() {return theDateFrom;}
-	public void setDateFrom(String aDateFrom) {theDateFrom = aDateFrom;}
-
-	/** Оператор */
-	public Long getOperator() {return theOperator;}
-	public void setOperator(Long aOperator) {theOperator = aOperator;}
-
-	/** Прейскурант */
-	public Long getPriceList() {return thePriceList;}
-	public void setPriceList(Long aPriceList) {thePriceList = aPriceList;}
-
-	/** Фильтр по наименованию */
-	public String getFilterByName() {return theFilterByName;}
-	public void setFilterByName(String aFilterByName) {theFilterByName = aFilterByName;}
-
-	/** Фильтр по коду */
-	public String getFilterByCode() {return theFilterByCode;}
-	public void setFilterByCode(String aFilterByCode) {theFilterByCode = aFilterByCode;}
-
-	/** Услуга по прейскуранту */
-	public Long getPriceMedService() {return thePriceMedService;}
-	public void setPriceMedService(Long aPriceMedService) {thePriceMedService = aPriceMedService;}
-
-	/** Гражданство */
-	public Long getNationality() {return theNationality;}
-	public void setNationality(Long aNationality) {theNationality = aNationality;}
-
+	public String getDateFrom() {return dateFrom;}
 	/** Отделение */
-	public Long getDepartment() {return theDepartment;}
-	public void setDepartment(Long aDepartment) {theDepartment = aDepartment;}
-
-	/** Отделение */
-	private Long theDepartment;
+	private Long department;
 	/** Гражданство */
-	private Long theNationality;
+	private Long nationality;
 	/** Услуга по прейскуранту */
-	private Long thePriceMedService;
+	private Long priceMedService;
 	/** Фильтр по коду */
-	private String theFilterByCode;
+	private String filterByCode;
 	/** Фильтр по наименованию */
-	private String theFilterByName;
+	private String filterByName;
 	/** Прейскурант */
-	private Long thePriceList;
+	private Long priceList;
 	/** Оператор */
-	private Long theOperator;
+	private Long operator;
 	/** dateto */
-	private String theDateTo;
+	private String dateTo;
 	/** DateFrom */
-	private String theDateFrom;
-	
+	private String dateFrom;
 	/** Тип позиции */
-	public Long getPositionType() {return thePositionType;}
-	public void setPositionType(Long aPositionType) {thePositionType = aPositionType;}
-
-	/** Тип позиции */
-	private Long thePositionType;
-	
+	private Long positionType;
 	/** Тип отделения */
-	public Long getDepartmentType() {return theDepartmentType;}
-	public void setDepartmentType(Long aDepartmentType) {theDepartmentType = aDepartmentType;}
-
-	/** Тип отделения */
-	private Long theDepartmentType;
+	private Long departmentType;
 	/** Номер контракта */
-	public String getContractNumber() {return theContractNumber;}
-	public void setContractNumber(String aContractNumber) {theContractNumber = aContractNumber;}
-
-	/** Номер контракта */
-	private String theContractNumber;
-	
+	private String contractNumber;
 	/** Тип юрид. персоны */
-	public Long getJuridicalPersonType() {return theJuridicalPersonType;}
-	public void setJuridicalPersonType(Long aJuridicalPersonType) {theJuridicalPersonType = aJuridicalPersonType;}
-
-	/** Тип юрид. персоны */
-	private Long theJuridicalPersonType;
-	
+	private Long juridicalPersonType;
 	/** contractLabel */
-	public Long getContractLabel() {return theContractLabel;}
-	public void setContractLabel(Long aContractLabel) {theContractLabel = aContractLabel;}
-
-	/** contractLabel */
-	private Long theContractLabel;
-	
+	private Long contractLabel;
 	/** Номер счета */
-	public String getAccountNumber() {
-		return theAccountNumber;
-	}
-
-	public void setAccountNumber(String aAccountNumber) {
-		theAccountNumber = aAccountNumber;
-	}
-
-	/** Номер счета */
-	private String theAccountNumber;
+	private String accountNumber;
 }

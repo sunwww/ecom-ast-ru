@@ -1,5 +1,7 @@
 package ru.ecom.mis.web.action.bypassexport;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.struts.upload.FormFile;
 
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -8,178 +10,86 @@ import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
 import ru.nuzmsh.forms.validator.validators.Required;
 
+@Getter
+@Setter
 public class AttachmentByLpuForm extends BaseValidatorForm {
 
 	/** Количество записей */
-	@Comment("Количество записей")
-	public String getCount() {return theCount;}
-	public void setCount(String aCount) {theCount = aCount;}
-	/** Количество записей */
-	private String theCount ;
+	private String count ;
 	/** Фамилия */
-	@Comment("Фамилия")
-	public String getLastname() {return theLastname;}
-	public void setLastname(String aLastname) {theLastname = aLastname;}
-	/** Фамилия */
-	private String theLastname ;
+	private String lastname ;
 
 	/** Идентификатор */
-	@Comment("Идентификатор")
-	public Long getId() {return theId;}
-	public void setId(Long aId) {theId = aId;}
-	/** Идентификатор */
-	private Long theId ;
+	private Long id ;
 	/** Пол */
-	@Comment("Пол")
-	public Long getSex() {return theSex;}
-	public void setSex(Long aSex) {theSex = aSex;}
-	/** Пол */
-	private Long theSex ;
+	private Long sex ;
 	
 	/** Год */
-	@Comment("Год")
-	public Long getYear() {return theYear;}
-	public void setYear(Long aYear) {theYear = aYear;}
-	/** Год */
-	private Long theYear ;
+	private Long year ;
 	
-	/** ЛПУ */
-	@Comment("ЛПУ")
-	public Long getLpu() {return theLpu;}
-	public void setLpu(Long aLpu) {theLpu = aLpu;}
-
 	/** № пакета */
 	@Comment("№ пакета")
 	@Required
-	public String getNumberPackage() {return theNumberPackage;}
-	public void setNumberPackage(String aNumberPackage) {theNumberPackage = aNumberPackage;}
-	
+	public String getNumberPackage() {return numberPackage;}
+
 	/** Тип пакета для плана ДД */
-	@Comment("Тип пакета для плана ДД")
-	public String getPacketType() {return thePacketType;}
-	public void setPacketType(String aPacketType) {thePacketType = aPacketType;}
 	private String thePacketType;
 
 	/** Период */
 	@Comment("Период")
 	@Required @DateString @DoDateString
-	public String getPeriod() {return thePeriod;}
-	public void setPeriod(String aPeriod) {thePeriod = aPeriod;}
+	public String getPeriod() {return period;}
 
 	/** NumberReestr */
 	@Comment("NumberReestr")
 	@Required
-	public String getNumberReestr() {return theNumberReestr;}
-	public void setNumberReestr(String aNumberReestr) {theNumberReestr = aNumberReestr;}
-
-	/** Файл */
-	@Comment("Файл")
-	public String getFilename() {return theFilename;}
-	public void setFilename(String aFilename) {theFilename = aFilename;}
-
-	/** НЕ проверять ЛПУ */
-	@Comment("НЕ проверять ЛПУ")
-	public Boolean getNoCheckLpu() {return theNoCheckLpu;}
-	public void setNoCheckLpu(Boolean aNoCheckLpu) {theNoCheckLpu = aNoCheckLpu;}
+	public String getNumberReestr() {return numberReestr;}
 
 	/** Созданные с даты */
 	@DateString @DoDateString
-	public String getChangedDateFrom() {return theChangedDateFrom;}
-	public void setChangedDateFrom(String aChangedDateFrom) {theChangedDateFrom = aChangedDateFrom;}
+	public String getChangedDateFrom() {return changedDateFrom;}
 	/** НЕ проверять ЛПУ */
-	private Boolean theNoCheckLpu;
-	private String theChangedDateFrom;
+	private Boolean noCheckLpu;
+	private String changedDateFrom;
 	/** Файл */
-	private String theFilename;
+	private String filename;
 	/** NumberReestr */
-	private String theNumberReestr;
+	private String numberReestr;
 	/** Период */
-	private String thePeriod;
+	private String period;
 	/** № пакета */
-	private String theNumberPackage;
+	private String numberPackage;
 	/** ЛПУ */
-	private Long theLpu;
+	private Long lpu;
 	/** Период до */
 	@Comment("Период до")
 	@DateString @DoDateString @Required
-	public String getPeriodTo() {return thePeriodTo;}
-	public void setPeriodTo(String aPeriodTo) {thePeriodTo = aPeriodTo;}
+	public String getPeriodTo() {return periodTo;}
 
 	/** Период до */
-	private String thePeriodTo;
+	private String periodTo;
 	
 	/** Участок */
-	@Comment("Участок")
-	public Long getArea() {return theArea;}
-	public void setArea(Long aArea) {theArea = aArea;}
-
-	/** Участок */
-	private Long theArea;
+	private Long area;
 	
 	/** Страховая компания */
-	@Comment("Страховая компания")
-	public Long getCompany() {return theCompany;}
-	public void setCompany(Long aCompany) {theCompany = aCompany;}
-	/** Страховая компания */
-	private Long theCompany;
+	private Long company;
 	
 	/** FilenameError */
-	@Comment("FilenameError")
-	public String getFilenameError() {
-		return theFilenameError;
-	}
-
-	public void setFilenameError(String aFilenameError) {
-		theFilenameError = aFilenameError;
-	}
-
-	/** FilenameError */
-	private String theFilenameError;
+	private String filenameError;
 
 	/** Файл с прик. населением */
-	@Comment("Файл с прик. населением")
-	public FormFile getAttachmentFile() {return theAttachmentFile;}
-	public void setAttachmentFile(FormFile aAttachmentFile) {theAttachmentFile = aAttachmentFile;}
-	/** Файл с прик. населением */
-	private FormFile theAttachmentFile;
+	private FormFile attachmentFile;
 	
 	/** Формат импорта прик. населения */
-	@Comment("Формат импорта прик. населения")
-	public Long getImportFormat() {return theImportFormat;}
-	public void setImportFormat(Long aImportFormat) {theImportFormat = aImportFormat;}
-	/** Формат импорта прик. населения */
-	private Long theImportFormat;
+	private Long importFormat;
 	
 	/** Номер направления */
-	@Comment("Номер направления")
-	public String getNumberDirect() {
-		return theNumberDirect;
-	}
-
-	public void setNumberDirect(String aNumberDirect) {
-		theNumberDirect = aNumberDirect;
-	}
-
-	/** Номер направления */
-	private String theNumberDirect;
+	private String numberDirect;
 	
 	/** Информация о пациенте */
-	@Comment("Информация о пациенте")
-	public String getPatientInfo() {
-		return thePatientInfo;
-	}
-
-	public void setPatientInfo(String aPatientInfo) {
-		thePatientInfo = aPatientInfo;
-	}
-
-	/** Информация о пациенте */
-	private String thePatientInfo;
+	private String patientInfo;
 
 	/** Года рождения */
-	@Comment("Года рождения")
-	public String getYears() {return theYears;}
-	public void setYears(String aYears) {theYears = aYears;}
-	/** Года рождения */
-	private String theYears ;
+	private String years ;
 }

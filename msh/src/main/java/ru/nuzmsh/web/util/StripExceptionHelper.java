@@ -21,10 +21,8 @@ public class StripExceptionHelper {
         if(message!=null) message = message.replace('\n', ' ') ;
         else message = e.toString() ;
         message = dressOff(message) ;
-        //message = message.trim() ;
-        
+
         // убираем дублирование сообщений
-     //   System.out.println(message +" = "+ theHash);
         if(!theHash.contains(message)) {
             sb.append(message) ;
             theHash.add(message) ;
@@ -47,5 +45,5 @@ public class StripExceptionHelper {
         s = s.replace('"', ' ') ;
         return s ;
     }
-    private final HashSet<String> theHash = new HashSet<String>() ; 
+    private final HashSet<String> theHash = new HashSet<>() ;
 }

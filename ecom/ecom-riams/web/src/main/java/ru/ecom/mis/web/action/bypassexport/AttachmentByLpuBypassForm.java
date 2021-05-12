@@ -1,110 +1,60 @@
 package ru.ecom.mis.web.action.bypassexport;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.struts.upload.FormFile;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import ru.nuzmsh.forms.validator.BaseValidatorForm;
 import ru.nuzmsh.forms.validator.transforms.DoDateString;
 import ru.nuzmsh.forms.validator.validators.DateString;
 
+@Getter
+@Setter
 public class AttachmentByLpuBypassForm extends BaseValidatorForm {
 	/** ЛПУ */
 	@Comment("ЛПУ")
-	public Long getLpu() {return theLpu;}
-	public void setLpu(Long aLpu) {theLpu = aLpu;}
-
-	/** № пакета */
-	@Comment("№ пакета")
-	
-	public String getNumberPackage() {return theNumberPackage;}
-	public void setNumberPackage(String aNumberPackage) {theNumberPackage = aNumberPackage;}
+	public Long getLpu() {return lpu;}
 
 	/** Период */
 	@Comment("Период")
 	@DateString @DoDateString
-	public String getPeriod() {return thePeriod;}
-	public void setPeriod(String aPeriod) {thePeriod = aPeriod;}
-
-	/** NumberReestr */
-	@Comment("NumberReestr")
-	
-	public String getNumberReestr() {return theNumberReestr;}
-	public void setNumberReestr(String aNumberReestr) {theNumberReestr = aNumberReestr;}
-
-	/** Файл */
-	@Comment("Файл")
-	public String getFilename() {return theFilename;}
-	public void setFilename(String aFilename) {theFilename = aFilename;}
-
-	/** НЕ проверять ЛПУ */
-	@Comment("НЕ проверять ЛПУ")
-	public Boolean getNoCheckLpu() {return theNoCheckLpu;}
-	public void setNoCheckLpu(Boolean aNoCheckLpu) {theNoCheckLpu = aNoCheckLpu;}
-
+	public String getPeriod() {return period;}
 	/** Созданные с даты */
 	@DateString @DoDateString
-	public String getChangedDateFrom() {return theChangedDateFrom;}
-	public void setChangedDateFrom(String aChangedDateFrom) {theChangedDateFrom = aChangedDateFrom;}
+	public String getChangedDateFrom() {return changedDateFrom;}
 	/** НЕ проверять ЛПУ */
-	private Boolean theNoCheckLpu;
-	private String theChangedDateFrom;
+	private Boolean noCheckLpu;
+	private String changedDateFrom;
 	/** Файл */
-	private String theFilename;
+	private String filename;
 	/** NumberReestr */
-	private String theNumberReestr;
+	private String numberReestr;
 	/** Период */
-	private String thePeriod;
+	private String period;
 	/** № пакета */
-	private String theNumberPackage;
+	private String numberPackage;
 	/** ЛПУ */
-	private Long theLpu;
+	private Long lpu;
 	/** Период до */
 	@Comment("Период до")
 	@DateString @DoDateString 
-	public String getPeriodTo() {return thePeriodTo;}
-	public void setPeriodTo(String aPeriodTo) {thePeriodTo = aPeriodTo;}
+	public String getPeriodTo() {return periodTo;}
 
 	/** Период до */
-	private String thePeriodTo;
+	private String periodTo;
 	
 	/** Участок */
-	@Comment("Участок")
-	public Long getArea() {return theArea;}
-	public void setArea(Long aArea) {theArea = aArea;}
-
-	/** Участок */
-	private Long theArea;
+	private Long area;
 	
 	/** Страховая компания */
-	@Comment("Страховая компания")
-	public Long getCompany() {return theCompany;}
-	public void setCompany(Long aCompany) {theCompany = aCompany;}
-	/** Страховая компания */
-	private Long theCompany;
+	private Long company;
 	
 	/** FilenameError */
-	@Comment("FilenameError")
-	public String getFilenameError() {
-		return theFilenameError;
-	}
-
-	public void setFilenameError(String aFilenameError) {
-		theFilenameError = aFilenameError;
-	}
-
-	/** FilenameError */
-	private String theFilenameError;
+	private String filenameError;
 
 	/** Файл с прик. населением */
-	@Comment("Файл с прик. населением")
-	public FormFile getAttachmentFile() {return theAttachmentFile;}
-	public void setAttachmentFile(FormFile aAttachmentFile) {theAttachmentFile = aAttachmentFile;}
-	/** Файл с прик. населением */
-	private FormFile theAttachmentFile;
+	private FormFile attachmentFile;
 	
 	/** Формат импорта прик. населения */
-	@Comment("Формат импорта прик. населения")
-	public Long getImportFormat() {return theImportFormat;}
-	public void setImportFormat(Long aImportFormat) {theImportFormat = aImportFormat;}
-	/** Формат импорта прик. населения */
-	private Long theImportFormat;
+	private Long importFormat;
 }

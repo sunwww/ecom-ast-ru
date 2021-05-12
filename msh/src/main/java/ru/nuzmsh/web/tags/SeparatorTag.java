@@ -40,9 +40,9 @@ public class SeparatorTag extends AbstractGuidSimpleSupportTag {
 
         // IDE
         IdeTagHelper.getInstance().printMarker("Separator", this, getJspContext());
-        
+
         out.println("<div class='h3'><h3>"+getLabel()+"</h3></div></td>") ;
-        
+
 //        out.println(
 //                String.format("<td class='separator' colspan='%1$s'>"
 //                        +"<div class='h3'><h3>%2$s</h3></div>"

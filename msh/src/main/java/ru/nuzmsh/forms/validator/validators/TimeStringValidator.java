@@ -18,7 +18,7 @@ public class TimeStringValidator implements IValidator {
 
     public void validate(final Object aValue, final Annotation aAnnotation, HttpServletRequest aRequest) throws ValidateException {
         try {
-            if(aValue!=null && aValue instanceof String) {
+            if(aValue instanceof String) {
                 String str = (String) aValue ;
                 if(!"".equals(str.trim())) {
                     DateFormat.parseTime(str);
