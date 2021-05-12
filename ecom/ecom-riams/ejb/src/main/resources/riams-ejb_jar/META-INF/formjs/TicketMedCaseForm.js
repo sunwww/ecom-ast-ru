@@ -2,8 +2,8 @@ function onPreCreate(aForm, aCtx) {
 
     //Проверка на создание талона позже даты смерти пациента
     var pat = aCtx.manager.createQuery(" from Patient where id = :pat").setParameter("pat", aForm.getPatient()).getResultList().get(0);
-    if (pat.getDeathDate() != null && (aForm.getNoActuality() == null
-        || aForm.getNoActuality().equals(java.lang.Boolean.FALSE))) {
+    if (pat.getDeathDate() != null && (aForm.isNoActuality() == null
+        || aForm.isNoActuality().equals(java.lang.Boolean.FALSE))) {
         var dateStart = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.getDateStart());
         var deathDate = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(pat.getDeathDate(), "yyyy-MM-dd");
         if (dateStart.getTime() > deathDate.getTime()) {
@@ -76,8 +76,8 @@ function onCreate(aForm, aEntity, aContext) {
 /** Перед сохранением */
 function onPreSave(aForm, aEntity, aCtx) {
     var pat = aCtx.manager.createQuery(" from Patient where id = :pat").setParameter("pat", aForm.getPatient()).getResultList().get(0);
-    if (pat.getDeathDate() != null && (aForm.getNoActuality() == null
-        || aForm.getNoActuality().equals(java.lang.Boolean.FALSE))) {
+    if (pat.getDeathDate() != null && (aForm.isNoActuality() == null
+        || aForm.isNoActuality().equals(java.lang.Boolean.FALSE))) {
         var dateStart = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.getDateStart());
         var deathDate = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(pat.getDeathDate(), "yyyy-MM-dd");
         if (dateStart.getTime() > deathDate.getTime()) {
@@ -218,7 +218,7 @@ function saveServices(aForm, aEntity, aCtx) {
                 servMC.setWorkFunctionExecute(aEntity.getWorkFunctionExecute());
                 servMC.setUsername(aEntity.getUsername());
                 servMC.setCreateDate(aEntity.getCreateDate());
-                servMC.setNoActuality(aEntity.getNoActuality());
+                servMC.setNoActuality(aEntity.isNoActuality());
                 servMC.setServiceStream(aEntity.getServiceStream());
                 servMC.setCreateTime(aEntity.getCreateTime());
                 servMC.setParent(aEntity);

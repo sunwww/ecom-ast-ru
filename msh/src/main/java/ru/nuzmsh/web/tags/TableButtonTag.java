@@ -3,8 +3,6 @@ package ru.nuzmsh.web.tags;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
 
-import lombok.Getter;
-import lombok.Setter;
 import ru.nuzmsh.web.util.IdeTagHelper;
 
 /**
@@ -13,8 +11,6 @@ import ru.nuzmsh.web.util.IdeTagHelper;
  *          body-content="empty"
  *          description="Table Button JSP tag."
  */
-@Getter
-@Setter
 public class TableButtonTag extends AbstractGuidSupportTag {
 
     /**
@@ -23,7 +19,8 @@ public class TableButtonTag extends AbstractGuidSupportTag {
      *                  required="false"
      *                  rtexprvalue="true"
      */
-    private String cssClass = null ;
+    public String getCssClass() { return theCssClass ; }
+    public void setCssClass(String aCssClass) { theCssClass = aCssClass ; }
 
     /** Название колонки
      *
@@ -32,7 +29,8 @@ public class TableButtonTag extends AbstractGuidSupportTag {
      *                  rtexprvalue="true"
      *
      * */
-    private String buttonName;
+    public String getButtonName() { return theButtonName ; }
+    public void setButtonName(String aButtonName) { theButtonName = aButtonName ; }
 
     /** Название колонки
      *
@@ -41,9 +39,10 @@ public class TableButtonTag extends AbstractGuidSupportTag {
      *                  rtexprvalue="true"
      *
      * */
-    private String buttonShortName;
+    public String getButtonShortName() { return theButtonShortName ; }
+    public void setButtonShortName(String aButtonShortName) { theButtonShortName = aButtonShortName ; }
 
-    
+
 
     /**
      * Название свойства
@@ -52,40 +51,66 @@ public class TableButtonTag extends AbstractGuidSupportTag {
      *                  rtexprvalue="true"
      *
      * */
-    private String property;
+    public String getProperty() { return theProperty ; }
+    public void setProperty(String aProperty) { theProperty = aProperty ; }
 
-    @Override
     public int doStartTag() throws JspException {
-    	Tag parent = getParent() ;
-    	if(parent instanceof TableTag) {
+        Tag parent = getParent() ;
+        if(parent instanceof TableTag) {
             TableTag tableTag = (TableTag) parent ;
             tableTag.add(this,getRole());
-    	} else {
-    		IdeTagHelper.getInstance().showException(this, new Exception("TableButton должен быть внутри тэга Table"), pageContext);
-    	}
+        } else {
+            IdeTagHelper.getInstance().showException(this, new Exception("TableButton должен быть внутри тэга Table"), pageContext);
+        }
         return EVAL_BODY_INCLUDE;
     }
 
-    
-	/** Дополнительные параметры 
-    * @jsp.attribute   description="Дополнительные параметры"
-    *                  required="false"
-    *                  rtexprvalue="true"
-    */
-	private String addParam;
-	/** Дополнительные параметры 
-    * @jsp.attribute   description="Функция кнопки"
-    *                  required="false"
-    *                  rtexprvalue="true"
-    */
-	private String buttonFunction;
-	
-	/** Роль *
-    * @jsp.attribute   description="Роль"
-    *                  required="false"
-    *                  rtexprvalue="true"
-    */
-	private String role;
+    public int doEndTag() throws JspException {
+
+        return EVAL_PAGE ;
+    }
+
+
+    /** Дополнительные параметры
+     * @jsp.attribute   description="Дополнительные параметры"
+     *                  required="false"
+     *                  rtexprvalue="true"
+     */
+    public String getAddParam() {return theAddParam;}
+    public void setAddParam(String aAddParam) {theAddParam = aAddParam;}
+
+    /** Дополнительные параметры */
+    private String theAddParam;
+    /** Дополнительные параметры
+     * @jsp.attribute   description="Функция кнопки"
+     *                  required="false"
+     *                  rtexprvalue="true"
+     */
+    public String getButtonFunction() {return theButtonFunction;}
+    public void setButtonFunction(String aButtonFunction) {theButtonFunction = aButtonFunction;}
+
+    /** Дополнительные параметры */
+    private String theButtonFunction;
+
+    /** Роль *
+     * @jsp.attribute   description="Роль"
+     *                  required="false"
+     *                  rtexprvalue="true"
+     */
+    public String getRole() {return theRole;}
+    public void setRole(String aRole) {theRole = aRole;}
+
+    /** Роль */
+    private String theRole;
+    /** Название колонки */
+    private String theButtonName ;
+    /** Название сокращенное колонки */
+    private String theButtonShortName ;
+    /** Название свойства */
+    private String theProperty ;
+    /** CSS Класс */
+    private String theCssClass = null ;
+
 
     /**
      * Не выводить шапку таблицы
@@ -93,5 +118,9 @@ public class TableButtonTag extends AbstractGuidSupportTag {
      *                     required = "false"
      *                  rtexprvalue = "true"
      */
-	private boolean hideIfEmpty = false;
+    public boolean getHideIfEmpty() {return theHideIfEmpty;}
+    public void setHideIfEmpty(boolean aHideIfEmpty) {theHideIfEmpty = aHideIfEmpty;}
+
+    /** Не выводить шапку таблицы */
+    private boolean theHideIfEmpty = false;
 }

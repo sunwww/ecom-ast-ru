@@ -10,7 +10,7 @@ function onView(aForm, aVisit, aCtx) {
 function onPreDelete(aEntityId, aContext) {
     var manager = aContext.manager;
     var visit = manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.Visit, new java.lang.Long(aEntityId));
-    if (visit.getNoActuality() != null && visit.getNoActuality() == true) {
+    if (visit.isNoActuality() != null && visit.isNoActuality() == true) {
         //throw "fdsfsd";
         manager.createNativeQuery("delete from Diagnosis where medcase_id=" + aEntityId).executeUpdate();
         manager.createNativeQuery("delete from medcase where parent_id=" + aEntityId).executeUpdate();
@@ -161,7 +161,7 @@ function onPreCreate(aForm, aCtx) {
 }
 
 function onSave(aForm, aVisit, aCtx) {
-    if (true == aVisit.getNoActuality() && aVisit.timePlan != null) {
+    if (true == aVisit.isNoActuality() && aVisit.timePlan != null) {
         aVisit.timePlan.medCase = null;
         return; // ничего не делаем, если не актуальный
     }

@@ -214,7 +214,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 theCells.add(
                         new Button(tag.getProperty(), tag.getButtonShortName(), tag.getButtonName()
                                 , tag.getButtonFunction()
-                                , tag.getCssClass(),tag.getAddParam(), tag.isHideIfEmpty(),tag.getGuid(), (HttpServletRequest)pageContext.getRequest()
+                                , tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(),tag.getGuid(), (HttpServletRequest)pageContext.getRequest()
                         )
 
                 );
@@ -223,7 +223,7 @@ public class TableTag extends AbstractGuidSupportTag {
                 theCells.add(
                         new Textfield(tag.getProperty(), tag.getTextfieldShortName(), tag.getTextfieldName()
                                 , tag.getTextfieldFunction()
-                                , tag.getCssClass(),tag.getAddParam(), tag.isHideIfEmpty(), (HttpServletRequest)pageContext.getRequest())
+                                , tag.getCssClass(),tag.getAddParam(), tag.getHideIfEmpty(), (HttpServletRequest)pageContext.getRequest())
                 );
             }
         }

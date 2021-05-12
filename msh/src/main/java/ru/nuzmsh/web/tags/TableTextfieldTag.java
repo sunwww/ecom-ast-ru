@@ -1,7 +1,5 @@
 package ru.nuzmsh.web.tags;
 
-import lombok.Getter;
-import lombok.Setter;
 import ru.nuzmsh.web.util.IdeTagHelper;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.Tag;
@@ -12,8 +10,6 @@ import javax.servlet.jsp.tagext.Tag;
  *          body-content="empty"
  *          description="Table Textfield JSP tag."
  */
-@Getter
-@Setter
 public class TableTextfieldTag extends AbstractGuidSupportTag {
     /**
      * CSS Класс
@@ -21,7 +17,8 @@ public class TableTextfieldTag extends AbstractGuidSupportTag {
      *                  required="false"
      *                  rtexprvalue="true"
      */
-    private String cssClass = null ;
+    public String getCssClass() { return theCssClass ; }
+    public void setCssClass(String aCssClass) { theCssClass = aCssClass ; }
 
     /** Название колонки
      *
@@ -30,7 +27,8 @@ public class TableTextfieldTag extends AbstractGuidSupportTag {
      *                  rtexprvalue="true"
      *
      * */
-    private String textfieldName;
+    public String getTextfieldName() { return theTextfieldName ; }
+    public void setTextfieldName(String aTextfieldName) { theTextfieldName = aTextfieldName ; }
 
     /** Название колонки
      *
@@ -39,7 +37,10 @@ public class TableTextfieldTag extends AbstractGuidSupportTag {
      *                  rtexprvalue="true"
      *
      * */
-    private String textfieldShortName;
+    public String getTextfieldShortName() { return theTextfieldShortName ; }
+    public void setTextfieldShortName(String aTextfieldShortName) { theTextfieldShortName = aTextfieldShortName ; }
+
+
 
     /**
      * Название свойства
@@ -48,9 +49,9 @@ public class TableTextfieldTag extends AbstractGuidSupportTag {
      *                  rtexprvalue="true"
      *
      * */
-    private String property;
+    public String getProperty() { return theProperty ; }
+    public void setProperty(String aProperty) { theProperty = aProperty ; }
 
-    @Override
     public int doStartTag() throws JspException {
         Tag parent = getParent() ;
         if(parent instanceof TableTag) {
@@ -62,25 +63,52 @@ public class TableTextfieldTag extends AbstractGuidSupportTag {
         return EVAL_BODY_INCLUDE;
     }
 
+    public int doEndTag() throws JspException {
+
+        return EVAL_PAGE ;
+    }
+
+
     /** Дополнительные параметры
      * @jsp.attribute   description="Дополнительные параметры"
      *                  required="false"
      *                  rtexprvalue="true"
      */
-    private String addParam;
+    public String getAddParam() {return theAddParam;}
+    public void setAddParam(String aAddParam) {theAddParam = aAddParam;}
+
+    /** Дополнительные параметры */
+    private String theAddParam;
     /** Дополнительные параметры
      * @jsp.attribute   description="Функция кнопки"
      *                  required="false"
      *                  rtexprvalue="true"
      */
-    private String textfieldFunction;
+    public String getTextfieldFunction() {return theTextfieldFunction;}
+    public void setTextfieldFunction(String aTextfieldFunction) {theTextfieldFunction = aTextfieldFunction;}
+
+    /** Дополнительные параметры */
+    private String theTextfieldFunction;
 
     /** Роль *
      * @jsp.attribute   description="Роль"
      *                  required="false"
      *                  rtexprvalue="true"
      */
-    private String role;
+    public String getRole() {return theRole;}
+    public void setRole(String aRole) {theRole = aRole;}
+
+    /** Роль */
+    private String theRole;
+    /** Название колонки */
+    private String theTextfieldName ;
+    /** Название сокращенное колонки */
+    private String theTextfieldShortName ;
+    /** Название свойства */
+    private String theProperty ;
+    /** CSS Класс */
+    private String theCssClass = null ;
+
 
     /**
      * Не выводить шапку таблицы
@@ -88,5 +116,9 @@ public class TableTextfieldTag extends AbstractGuidSupportTag {
      *                     required = "false"
      *                  rtexprvalue = "true"
      */
-    private boolean hideIfEmpty = false;
+    public boolean getHideIfEmpty() {return theHideIfEmpty;}
+    public void setHideIfEmpty(boolean aHideIfEmpty) {theHideIfEmpty = aHideIfEmpty;}
+
+    /** Не выводить шапку таблицы */
+    private boolean theHideIfEmpty = false;
 }

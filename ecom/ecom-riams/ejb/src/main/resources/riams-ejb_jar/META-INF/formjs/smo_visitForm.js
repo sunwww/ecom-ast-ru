@@ -15,7 +15,7 @@ function onCreate(aForm, aVisit, aCtx) {
 }
 
 function onSave(aForm, aVisit, aCtx) {
-    if (true == aVisit.getNoActuality()) return; // ничего не делаем, если не актуальный
+    if (true == aVisit.isNoActuality()) return; // ничего не делаем, если не актуальный
 
     if (aVisit.dateStart == null) throw "Нет даты визита";
     if (aVisit.timeExecute == null) throw "Нет времени визита";
