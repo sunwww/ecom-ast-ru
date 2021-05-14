@@ -70,22 +70,22 @@ public class SurgicalOperationForm extends IdEntityForm{
 	/** Флаг основной операции */
 	@Comment("Флаг основной операции")
 	@Persist 
-	public Boolean getBase() {return base;	}
+	public boolean isBase() {return base;	}
 
 	/** Флаг использования эндоскопии */
 	@Comment("Флаг использования эндоскопии")
 	@Persist 
-	public Boolean getEndoscopyUse() {return endoscopyUse;	}
+	public boolean isEndoscopyUse() {return endoscopyUse;	}
 
 	/** Флаг использования лазерной аппаратуры */
 	@Comment("Флаг использования лазерной аппаратуры")
 	@Persist 
-	public Boolean getLaserUse() {	return laserUse;	}
+	public boolean isLaserUse() {	return laserUse;	}
 
 	/** Флаг использования криогенной аппаратуры */
 	@Comment("Флан использования криогенной аппаратуры")
 	@Persist 
-	public Boolean getCryogenicUse() {return cryogenicUse;	}
+	public boolean isCryogenicUse() {return cryogenicUse;	}
 
 	/** Случай медицинского обслуживания */
 	@Comment("Случай медицинского обслуживания")
@@ -186,17 +186,17 @@ public class SurgicalOperationForm extends IdEntityForm{
 	 /** Экстренность */
 	@Comment("Экстренность")
 	@Persist
-	public Boolean getEmergency() {
+	public boolean isEmergency() {
 		return emergency;
 	}
 
 	/** Экстренность */
-	private Boolean emergency;
+	private boolean emergency;
 	
 	/** Малая */
 	@Comment("Малая")
 	@Persist
-	public Boolean getMinor() {
+	public boolean isMinor() {
 		return minor;
 	}
 
@@ -244,7 +244,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 	/** Номер в журнале */
 	private String numberInJournal;
 	/** Малая */
-	private Boolean minor;
+	private boolean minor;
 
 	/** Информация о пациенте */
 	private String patientInfo;
@@ -283,13 +283,13 @@ public class SurgicalOperationForm extends IdEntityForm{
 	/** Случай медицинского обслуживания */
 	private Long medCase;
 	/** Флаг использования криогенной аппаратуры */
-	private Boolean cryogenicUse;
+	private boolean cryogenicUse;
 	/** Флаг использования лазерной аппаратуры */
-	private Boolean laserUse;
+	private boolean laserUse;
 	/** Флаг использования эндоскопии */
-	private Boolean endoscopyUse;
+	private boolean endoscopyUse;
 	/** Флаг основной операции */
-	private Boolean base;
+	private boolean base;
 	/** Анестезия */
 	private Long anesthesia;
 	/** Операция */
