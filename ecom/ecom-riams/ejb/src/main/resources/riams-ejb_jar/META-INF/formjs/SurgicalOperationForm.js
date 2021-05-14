@@ -81,7 +81,7 @@ function checkPeriod(aForm, aCtx) {
         throw "Дата операции " + Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(operDate) + " должна быть больше или равна началу СМО "
         + Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(medCase.dateStart);
     }
-    var l = aManager.createNativeQuery("select vlaeo.id from mislpu ml left join VocLpuAccessEnterOperation vlaeo on vlaeo.id=ml.AccessEnterOperation_id where ml.id='"
+    var l = aManager.createNativeQuery("select vlaeo.id from mislpu ml left join VocLpuAccessEnterOperation vlaeo on vlaeo.id=ml.accessEnterOperation_id where ml.id='"
         + aForm.department + "' and (vlaeo.code='NOT_SURGICAL_DEPARTMENT' or vlaeo.code='ALL_DEPARTMENT')").getResultList();
     if (l.size() > 0) throw "Запрет в отделение на регистрацию, что в нем проводилась операция!!!"
 
@@ -96,7 +96,7 @@ function onSave(aForm, aEntity, aCtx) {
 
 function checkParent(aEntity, aCtx) {
     //Находим родителя по дате и времени операции
-    var interceptor = new Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SurgicalOperationCreateInterceptor.setParentByOperation(aEntity, aCtx.manager);
+    Packages.ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SurgicalOperationCreateInterceptor.setParentByOperation(aEntity, aCtx.manager);
 }
 
 function getMedCaseType(aId, aCtx) {
@@ -155,21 +155,19 @@ function saveComplications(aForm, aEntity, aCtx) {
 //Проверка, нужно ли создавать браслет и, если нужно, его создание
 function createBraceletIfNeed(aForm, aSurgOper, aCtx) {
     if (aForm.operationDateTo == '' && aForm.operationTimeTo == '') {  //если не стоят дата-время окончания
-        var list = aCtx.manager.createNativeQuery("select VocColorIdentity_id from medservice where id=" + aForm.medService).getResultList();
-        if (list.size() > 0) {
-            if (list.get(0) != null) { //если есть браслет у услуги
-                var idB = new java.lang.Long(list.get(0));
-                var cip = new Packages.ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient();
-                cip.setVocColorIdentity(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.voc.VocColorIdentityPatient, idB));
-                cip.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
-                cip.setStartDate(aSurgOper.operationDate);
-                cip.setStartTime(aSurgOper.operationTime);
-                cip.setSurgOperation(aSurgOper);
-                aCtx.manager.persist(cip);
+        var list = aCtx.manager.createNativeQuery("select vocColorIdentity_id from medservice where id=" + aForm.medService + " and vocColorIdentity_id is not null").getResultList();
+        if (list.size() > 0) {  //если есть браслет у услуги
+            var idB = new java.lang.Long(list.get(0));
+            var cip = new Packages.ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient();
+            cip.setVocColorIdentity(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.voc.VocColorIdentityPatient, idB));
+            cip.setCreateUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
+            cip.setStartDate(aSurgOper.operationDate);
+            cip.setStartTime(aSurgOper.operationTime);
+            cip.setSurgOperation(aSurgOper);
+            aCtx.manager.persist(cip);
 
-                aSurgOper.medCase.parent.addColorsIdentity(cip);
-                aCtx.manager.persist(aSurgOper.medCase.parent);
-            }
+            aSurgOper.medCase.parent.addColorsIdentity(cip);
+            aCtx.manager.persist(aSurgOper.medCase.parent);
         }
     }
 }
@@ -177,17 +175,15 @@ function createBraceletIfNeed(aForm, aSurgOper, aCtx) {
 //Проверка, нужно ли закрывать браслет (если есть браслет у услуги и проставили дату-время окончания
 function checkBraceleteAndClose(aForm, aEntity, aCtx) {
     var list = aCtx.manager.createNativeQuery("select id from ColorIdentityPatient where surgoperation_id=" + aEntity.id).getResultList();
-    if (list.size() > 0) {
-        if (list.get(0) != null) { //если есть браслет с такой id операции (который может быть уже снят, но дату-время окончания операции могут менять
-            var idB = new java.lang.Long(list.get(0));
-            if (aForm.operationDateTo != '' && aForm.operationTimeTo != '') {  //если стоят дата-время окончания
-                aCtx.manager.createNativeQuery("update ColorIdentityPatient set editusername='" +
-                    aCtx.getSessionContext().getCallerPrincipal().toString() + "',finishdate = '" + aEntity.operationDateTo
-                    + "', finishtime = '" + aEntity.operationTimeTo + "' where id=" + idB).executeUpdate();
-            } else { //если убрали дату-время редактирования, браслет возвращается
-                aCtx.manager.createNativeQuery("update ColorIdentityPatient set editusername='" +
-                    aCtx.getSessionContext().getCallerPrincipal().toString() + "',finishdate = null, finishtime = null where id=" + idB).executeUpdate();
-            }
+    if (list.size() > 0 && list.get(0) != null) {  //если есть браслет с такой id операции (который может быть уже снят, но дату-время окончания операции могут менять
+        var idB = new java.lang.Long(list.get(0));
+        if (aForm.operationDateTo != '' && aForm.operationTimeTo != '') {  //если стоят дата-время окончания
+            aCtx.manager.createNativeQuery("update ColorIdentityPatient set editusername='" +
+                aCtx.getSessionContext().getCallerPrincipal().toString() + "',finishdate = '" + aEntity.operationDateTo
+                + "', finishtime = '" + aEntity.operationTimeTo + "' where id=" + idB).executeUpdate();
+        } else { //если убрали дату-время редактирования, браслет возвращается
+            aCtx.manager.createNativeQuery("update ColorIdentityPatient set editusername='" +
+                aCtx.getSessionContext().getCallerPrincipal().toString() + "',finishdate = null, finishtime = null where id=" + idB).executeUpdate();
         }
     }
 }
