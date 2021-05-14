@@ -186,17 +186,17 @@ public class SurgicalOperationForm extends IdEntityForm{
 	 /** Экстренность */
 	@Comment("Экстренность")
 	@Persist
-	public boolean isEmergency() {
+	public Boolean getEmergency() {
 		return emergency;
 	}
 
 	/** Экстренность */
-	private boolean emergency;
+	private Boolean emergency;
 	
 	/** Малая */
 	@Comment("Малая")
 	@Persist
-	public boolean isMinor() {
+	public Boolean getMinor() {
 		return minor;
 	}
 
@@ -244,7 +244,7 @@ public class SurgicalOperationForm extends IdEntityForm{
 	/** Номер в журнале */
 	private String numberInJournal;
 	/** Малая */
-	private boolean minor;
+	private Boolean minor;
 
 	/** Информация о пациенте */
 	private String patientInfo;
