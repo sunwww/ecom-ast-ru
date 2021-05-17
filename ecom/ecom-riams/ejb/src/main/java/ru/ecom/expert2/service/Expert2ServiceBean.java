@@ -1063,14 +1063,14 @@ public class Expert2ServiceBean implements IExpert2Service {
     private List<EntryMedService> moveMedServiceToMainEntry(E2Entry slaveEntry, E2Entry masterEntry) {
         List<EntryMedService> slaveServices = slaveEntry.getMedServices();
 
-        if (slaveServices != null) {
-            if (!slaveServices.isEmpty()) {
-                for (EntryMedService ems : slaveServices) {
-                    ems.setEntry(masterEntry);
-                    manager.persist(ems);
-                }
+        if (isNotEmpty(slaveServices)) {
+            for (EntryMedService ems : slaveServices) {
+                ems.setEntry(masterEntry);
+                manager.persist(ems);
             }
-            slaveServices.addAll(masterEntry.getMedServices());
+            if (isNotEmpty(masterEntry.getMedServices())) {
+                slaveServices.addAll(masterEntry.getMedServices());
+            }
             masterEntry.setMedServices(slaveServices);
             slaveEntry.setMedServices(new ArrayList<>());
             manager.persist(masterEntry);
