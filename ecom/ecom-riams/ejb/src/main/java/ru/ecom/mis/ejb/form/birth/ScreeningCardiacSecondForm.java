@@ -24,6 +24,7 @@ import ru.nuzmsh.forms.validator.validators.Required;
         @AParentEntityFormInterceptor(ScreeningCardiacFirstPreCreateInterceptor.class)
 )
 @Setter
+
 public class ScreeningCardiacSecondForm extends ScreeningCardiacFirstForm {
     /** Регистрация АД одновременная - правая рука */
     @Comment("Регистрация АД одновременная - правая рука")
@@ -59,8 +60,7 @@ public class ScreeningCardiacSecondForm extends ScreeningCardiacFirstForm {
     @Persist
     public String getConclusion() {return conclusion;}
 
-    /** СМО */
-    private Long medCase;
+
     /** Регистрация АД одновременная - правая рука*/
     private Long rightHandAD;
     /** Регистрация АД одновременная - нога*/
