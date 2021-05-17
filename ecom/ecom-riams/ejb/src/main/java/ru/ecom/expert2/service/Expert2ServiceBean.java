@@ -540,7 +540,6 @@ public class Expert2ServiceBean implements IExpert2Service {
             for (Method setterMethod : methodList) {
                 if (setterMethod.getName().startsWith("set")) {
                     if (setterMethod.getName().equals("setId")
-                            || setterMethod.getName().startsWith("setId")
                             || setterMethod.isAnnotationPresent(OneToMany.class)) {
                         continue;
                     }
@@ -938,31 +937,34 @@ public class Expert2ServiceBean implements IExpert2Service {
     /**
      * Физическое объединение случая
      */
-    private void unionPolyclinic(E2Entry masterMedcase, E2Entry slaveMedcase) {
+    private void unionPolyclinic(E2Entry masterEntry, E2Entry slaveEntry) {
         //  E2Entry mainEntry, secondaryEntry;//mainEntry - latest entry
-        if (masterMedcase.getStartDate().getTime() > slaveMedcase.getStartDate().getTime()) {
-            masterMedcase.setStartDate(slaveMedcase.getStartDate());
-            masterMedcase.setStartTime(slaveMedcase.getStartTime());
+        if (masterEntry.getStartDate().getTime() > slaveEntry.getStartDate().getTime()) {
+            masterEntry.setStartDate(slaveEntry.getStartDate());
+            masterEntry.setStartTime(slaveEntry.getStartTime());
         }
-        if (masterMedcase.getFinishDate().getTime() < slaveMedcase.getFinishDate().getTime()) { //неглавное - последнее СЛО
-            masterMedcase.setFinishDate(slaveMedcase.getFinishDate());
-            masterMedcase.setFinishTime(slaveMedcase.getFinishTime());
-            masterMedcase.setFondResult(slaveMedcase.getFondResult());
-            masterMedcase.setFondIshod(slaveMedcase.getFondIshod());
-            masterMedcase.setDiagnosisList(slaveMedcase.getDiagnosisList());
-            masterMedcase.setMainMkb(slaveMedcase.getMainMkb());
+        if (masterEntry.getFinishDate().getTime() < slaveEntry.getFinishDate().getTime()) { //неглавное - последнее СЛО
+            masterEntry.setFinishDate(slaveEntry.getFinishDate());
+            masterEntry.setFinishTime(slaveEntry.getFinishTime());
+            masterEntry.setFondResult(slaveEntry.getFondResult());
+            masterEntry.setFondIshod(slaveEntry.getFondIshod());
+            masterEntry.setDiagnosisList(slaveEntry.getDiagnosisList());
+            masterEntry.setMainMkb(slaveEntry.getMainMkb());
         }
-        slaveMedcase.setParentEntry(masterMedcase);
-        slaveMedcase.setServiceStream(COMPLEXSERVICESTREAM);
-        masterMedcase.setIsUnion(true);
-        slaveMedcase.setIsUnion(true);
-        List<E2Entry> childList = manager.createQuery(" from E2Entry where parentEntry=:entry").setParameter("entry", slaveMedcase).getResultList();
+        slaveEntry.setParentEntry(masterEntry);
+        slaveEntry.setServiceStream(COMPLEXSERVICESTREAM);
+        masterEntry.setIsUnion(true);
+        slaveEntry.setIsUnion(true);
+        List<E2Entry> childList = manager.createQuery(" from E2Entry where parentEntry=:entry").setParameter("entry", slaveEntry).getResultList();
         for (E2Entry child : childList) {
-            child.setParentEntry(masterMedcase);
+            child.setParentEntry(masterEntry);
             manager.persist(child);
         }
-        manager.persist(masterMedcase);
-        manager.persist(slaveMedcase);
+        if (isTrue(masterEntry.getIsDentalCase())) {
+            moveMedServiceToMainEntry(slaveEntry, masterEntry);
+        }
+        manager.persist(masterEntry);
+        manager.persist(slaveEntry);
     }
 
     /**

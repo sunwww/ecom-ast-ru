@@ -23,6 +23,8 @@ public class E2EntryForm extends IdEntityForm {
 //----------все поля ниже добавлены на jsp!!!
     /** Реабилитационная койка*/
     private Boolean isRehabBed;
+    /** Стоматологический случай*/
+    private Boolean isDentalCase;
     /** Рост пациента */
     private Integer height;
     /** Вес пациента */
@@ -690,6 +692,10 @@ public class E2EntryForm extends IdEntityForm {
     @Comment("Реабилитационная койка")
     @Persist
     public Boolean getIsRehabBed() {return isRehabBed;}
+
+    @Comment("Стоматологический ли случай")
+    @Persist
+    public Boolean getIsDentalCase () {return isDentalCase;}
 
     @Persist
     @Comment("Способ оплаты медицинской помощи")

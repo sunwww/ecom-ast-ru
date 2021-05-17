@@ -282,8 +282,8 @@ left join MisLpu dep2 on dep2.id=mc.department_id
 left join vocqualityestimationcrit vqecrit on qd.vqecrit_id=vqecrit.id
 left join patient pat on pat.id=mc.patient_id
 where qd.vocidc10_id=ds.idc10_id
-and mc.dateFinish >= to_date('11.05.2021','dd.mm.yyyy')
-and mc.dateFinish <= to_date('12.05.2021','dd.mm.yyyy')
+and mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
    and reg.code='4' and prior.code='1'
 and dep2.id=dep.id and mc.DTYPE='DepartmentMedCase' and dep.name is not null
 and (EXTRACT(YEAR from AGE(birthday))>=18 and vqecrit.isgrownup=true or EXTRACT(YEAR from AGE(birthday))<18 and vqecrit.ischild=true)
@@ -302,8 +302,8 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id  and vqe
                  left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
                  left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
                  where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager')
-                 where mc.dateFinish >= to_date('11.05.2021','dd.mm.yyyy')
-and mc.dateFinish <= to_date('12.05.2021','dd.mm.yyyy')
+                 where mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 and dep2.id=dep.id and qe.experttype='BranchManager' and kind.code='NOT 203' and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null
  and (select min(qecC.mark_id)
@@ -326,8 +326,8 @@ left join VocQualityEstimationMark vqem on vqem.criterion_id=vqecrit.id  and vqe
                  left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id
                  left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
                  where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager')
-                 where mc.dateFinish >= to_date('11.05.2021','dd.mm.yyyy')
-and mc.dateFinish <= to_date('12.05.2021','dd.mm.yyyy')
+                 where mc.dateFinish >= to_date('${dateBegin}','dd.mm.yyyy')
+and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
 and dep2.id=dep.id and qe.experttype='BranchManager' and kind.code='NOT 203' and mc.DTYPE='DepartmentMedCase'
 and dep.name is not null and qe.isdraft<>true
  and (select min(qecC.mark_id)
@@ -336,7 +336,7 @@ left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id
 left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id
 where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager') is not null
 )
---------------------------------------------------------------------
+--
  from medcase mc
  left join MisLpu dep on dep.id=mc.department_id
 left join medcase as hmc on hmc.id=mc.parent_id

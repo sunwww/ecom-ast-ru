@@ -121,10 +121,12 @@
                     <msh:textField property="directLpu" size="30"/>
                     <msh:textField property="directLpuType" size="30"/>
                 </msh:row>
-
                 <msh:row>
                     <msh:checkBox property="isEmergency"/>
                     <msh:checkBox property="isChild"/>
+                </msh:row>
+                <msh:row>
+                    <msh:checkBox property="isDentalCase"/>
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete property="workPlace" vocName="vocWorkPlaceTypeCode"/>

@@ -63,6 +63,9 @@ public class EntryMedService extends BaseEntity {
         doctorSpeciality = aMedService.getDoctorSpeciality();
         mkb = aMedService.getMkb();
         cost = aMedService.getCost();
+        doctorSnils= aMedService.getDoctorSnils();
+        uet = aMedService.getUet();
+        comment = aMedService.getComment();
     }
 
     /** Запись */
