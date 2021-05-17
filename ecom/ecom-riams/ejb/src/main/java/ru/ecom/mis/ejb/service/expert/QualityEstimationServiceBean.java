@@ -381,7 +381,7 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
                 .append(" left join qualityestimation qeBM on qeBM.card_id='").append(aCard).append("'  and qecBM.estimation_id=qeBM.id")
                 .append(" left join vocQualityEstimationMark vqem on vqem.id=qecBM.mark_id")
                 .append(" where qecBM.criterion_id=vqec.id and qeBM.expertType='Coeur') as commentcoeur")
-                .append(", (select list(cast(id as varchar)) from vocqualityestimationmark qecBM where criterion_id=vqec.id) as allmarks")
+                .append(", (select list(cast(id as varchar)||':'||name) from vocqualityestimationmark qecBM where criterion_id=vqec.id) as allmarks")
                 .append(" from VocQualityEstimationCrit vqec")
 
                 .append(" left join vocqualityestimationcrit_diagnosis vqecrit_d on vqecrit_d.vqecrit_id=vqec.id");
@@ -503,26 +503,28 @@ public class QualityEstimationServiceBean implements IQualityEstimationService {
                 }
                 if (ifTypeBool || isNot203) {
                     if (valMark == null) valMark = "";
-                    String[] allmarks = row[15].toString().replace(" ", "").split(",");
+                    String[] marksIdNames = row[15].toString().replace(" ", "").split(",");
+                    String[] mark1 = marksIdNames[0].split(":");
+                    String[] mark2 = marksIdNames[1].split(":");
                     String styleYesNo = "style='margin-left:5px; margin-right:30px'";
                     String styleTd = "style='width:110px; height:30px'";
                     String styleRadioInput = "style='transform: scale(1.5)'";
                     //Только оценка заведующего
                     table.append("<td ").append(styleTd).append("><label ").append(styleYesNo)
-                            .append("><input ").append(allmarks[0].equals(valMark.toString()) || color.equals(color1) ? " checked='true'" : "").append(styleRadioInput)
+                            .append("><input ").append(mark1[0].equals(valMark.toString()) || color.equals(color1) ? " checked='true'" : "").append(styleRadioInput)
                             .append(" type='radio' name='criterion").append(cntPart - 1)
-                            .append("' onclick=\"checkCommentNeeded('criterion").append(cntPart - 1).append("',").append(cntPart - 1).append(",").append(allmarks[0]).append(")\"")
-                            .append(" value='").append(allmarks[0]).append("' id='radio").append(cntPart - 1).append("1'>  Да</label>")
-                            .append("<label><input ").append(!(allmarks[0].equals(valMark.toString()) || color.equals(color1)) ? " checked='true'" : "").append(styleRadioInput)
-                            .append(" onclick=\"checkCommentNeeded('criterion").append(cntPart - 1).append("',").append(cntPart - 1).append(",").append(allmarks[1]).append(")\"")
-                            .append(" type='radio' name='criterion").append(cntPart - 1).append("' value='").append(allmarks[1]).append("' id='radio")
-                            .append(cntPart - 1).append("0'>  Нет</label>")
+                            .append("' onclick=\"checkCommentNeeded('criterion").append(cntPart - 1).append("',").append(cntPart - 1).append(",").append(mark1[0]).append(")\"")
+                            .append(" value='").append(mark1[0]).append("' id='radio").append(cntPart - 1).append("1'>").append(mark1[1]).append("</label>")
+                            .append("<label><input ").append(!(mark1[0].equals(valMark.toString()) || color.equals(color1)) ? " checked='true'" : "").append(styleRadioInput)
+                            .append(" onclick=\"checkCommentNeeded('criterion").append(cntPart - 1).append("',").append(cntPart - 1).append(",").append(mark2[0]).append(")\"")
+                            .append(" type='radio' name='criterion").append(cntPart - 1).append("' value='").append(mark2[0]).append("' id='radio")
+                            .append(cntPart - 1).append("0'>").append(mark2[1]).append("</label>")
                             .append("<input type='hidden' id='criterion").append(cntPart - 1).append("P' value='").append(row[0]).append("'>");
                     if (valMark.equals("")) {
                         if (color.equals(color1))
-                            valMark = allmarks[0];
+                            valMark = mark1[0];
                         else
-                            valMark = allmarks[1];
+                            valMark = mark2[0];
                     }
                     table.append("<input type='hidden' id='criterion").append(cntPart - 1).append("' value='").append(valMark).append("'>")
                             .append("</td><td></td><td></td>");
