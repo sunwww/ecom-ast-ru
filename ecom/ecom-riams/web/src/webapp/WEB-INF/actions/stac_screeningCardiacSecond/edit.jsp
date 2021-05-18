@@ -50,7 +50,7 @@
                 </msh:row>
                 <msh:row>
                     <br>
-                    <msh:autoComplete property="CNS" label="Характеристика ЦНС" vocName="vocScreeningCNS"  size="30"/>
+                    <msh:autoComplete property="cns" label="Характеристика ЦНС" vocName="vocScreeningCNS"  size="30"/>
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete property="apicalImpulseLocal" label="Локализация верхушечного толчка" vocName="vocScreeningApicalImpulseLocalization"  size="30"/>
