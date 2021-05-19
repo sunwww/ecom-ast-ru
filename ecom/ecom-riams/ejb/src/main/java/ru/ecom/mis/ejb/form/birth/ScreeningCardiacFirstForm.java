@@ -126,7 +126,7 @@ public class ScreeningCardiacFirstForm  extends IdEntityForm {
     @Comment("Характеристика ЦНС")
     @Persist
     @Required
-    public Long getCNS() {return cNS;}
+    public Long getCns() {return cns;}
     /** Наличие шума  */
     @Comment("Наличие шума")
     @Persist
@@ -177,7 +177,7 @@ public class ScreeningCardiacFirstForm  extends IdEntityForm {
     /** Наличие шума */
     private Boolean noisePresence;
     /** Характеристика ЦНС */
-    private Long cNS;
+    private Long cns;
     /** Доп. информация */
     private String extraInfo;
 }

@@ -195,7 +195,7 @@ function onSave(aForm, aEntity, aCtx) {
         stat.setHeight(h);
         if (w != 0 && h != 0) {
             var imt = (w / (0.0001 * h * h)).toFixed(2);
-            stat.setIMT(+imt);
+            stat.setImt(+imt);
         }
         aCtx.manager.persist(stat);
 
