@@ -403,7 +403,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                         }
 
                         //Добавляем сведения о санкциях
-                        if (zsl.getChild("SANK") != null && isEquals(zsl.getChild("SANK").getChildText("S_CODE"),"1")) {
+                        if (isDefect(zsl)) {
                             List<Element> sanks = zsl.getChildren("SANK");
                             ArrayList<String> sanks1 = new ArrayList<>();
                             for (Element sank : sanks) {
@@ -445,6 +445,10 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             monitor.error(e.getMessage(), e);
             LOG.error(e.getMessage(), e);
         }
+    }
+
+    private boolean isDefect(Element zsl) {
+        return isEquals(zsl.getChildText("OPLATA"), "2");
     }
 
     /**
