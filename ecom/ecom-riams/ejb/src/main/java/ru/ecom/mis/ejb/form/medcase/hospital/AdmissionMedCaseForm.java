@@ -223,6 +223,7 @@ public class AdmissionMedCaseForm extends HospitalMedCaseForm {
 	}
 	/* Индекс массы тела */
 	@Comment("Индекс массы тела")
+	@Persist
 	public Double getImt() {
 		return imt;
 	}
