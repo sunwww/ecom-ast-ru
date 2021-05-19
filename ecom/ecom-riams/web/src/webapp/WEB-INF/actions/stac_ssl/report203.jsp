@@ -482,8 +482,8 @@ and mc.dateFinish <= to_date('${dateEnd}','dd.mm.yyyy')
                     <msh:tableNotEmpty>
                         <tr>
                             <th colspan=3></th>
-                            <th colspan=5>по 203 приказу (есть критерии по диагнозу)</th>
-                            <th colspan=5>НЕ по 203 приказу (НЕТ критериев по диагнозу)</th>
+                            <th colspan=5>группа заболеваний</th>
+                            <th colspan=5>общие критерии</th>
                         </tr>
                     </msh:tableNotEmpty>
                     <msh:tableColumn columnName="#" property="sn" addParam="&nul=nul" />
@@ -915,8 +915,8 @@ end as per2not
                     <msh:tableNotEmpty>
                         <tr>
                             <th colspan=3></th>
-                            <th colspan=5>по 203 приказу (есть критерии по диагнозу)</th>
-                            <th colspan=5>НЕ по 203 приказу (НЕТ критериев по диагнозу)</th>
+                            <th colspan=5>группа заболеваний</th>
+                            <th colspan=5>общие критерии</th>
                         </tr>
                     </msh:tableNotEmpty><msh:tableColumn columnName="#" property="sn" addParam="&nul=nul" />
                     <msh:tableColumn columnName="Отделение" property="1" addParam="&short=Short&view=treatDoctors2&dateBegin=${param.dateBegin}&dateEnd=${param.dateEnd}&department=${param.department}&depId=${depId}"/>
