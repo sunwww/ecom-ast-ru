@@ -82,7 +82,7 @@
       </msh:row><msh:row>
           <msh:textField property="saturationLevel" horizontalFill="true" />
       </msh:row><msh:row>
-          <msh:autoComplete property="CT"  vocName="vocCT" horizontalFill="true"/>
+          <msh:autoComplete property="ct"  vocName="vocCT" horizontalFill="true"/>
       </msh:row><msh:row>
               <msh:textField property="dateCT" horizontalFill="true"/>
           </msh:row><msh:row>
@@ -222,7 +222,7 @@
             var check;
             <msh:ifFormTypeIsCreate formName="smo_covid19Form">
             check = (!$('workPlace').value || !$('mkb').value
-                ||  !$('CT').value || (+$('CT').value>1 && (!$('lpuCT').value || !$('dateCT').value)));
+                ||  !$('ct').value || (+$('ct').value>1 && (!$('lpuCT').value || !$('dateCT').value)));
             </msh:ifFormTypeIsCreate>
 
             <msh:ifFormTypeAreViewOrEdit formName="smo_covid19Form">
@@ -239,7 +239,7 @@
     </script>
       <msh:ifFormTypeIsCreate formName="smo_covid19Form">
           <script type='text/javascript'>
-              $('CTName').className += " required";
+              $('ctName').className += " required";
               PatientService.getOpenHospByPatient($('medCase').value, {
                   callback: function(hosp) {
                       if (hosp!=null) {
@@ -341,7 +341,7 @@
           <script type="text/javascript">
           //Справочник КТ обязателен для заполнения, дата и место - если выбраны соотв. значения
           function setCT() {
-              if (+$('CT').value > 1) {
+              if (+$('ct').value > 1) {
                   $('dateCT').removeAttribute('hidden');
                   $('lpuCT').removeAttribute('hidden');
                   $('dateCT').className = "required";
@@ -356,7 +356,7 @@
               }
           }
 
-          CTAutocomplete.addOnChangeCallback(function() {
+          ctAutocomplete.addOnChangeCallback(function() {
               setCT();
           });
           setCT();
