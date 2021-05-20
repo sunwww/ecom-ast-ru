@@ -11,13 +11,21 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface WebTrail {
-    String comment() ;
-    String[] nameProperties() ;
-    String view() ;
+    String comment();
+
+    String[] nameProperties();
+
+    String view();
+
     String list() default "";
-    String[] listStyle() default {} ;
+
+    String[] listStyle() default {};
+
     String shortView() default "";
+
     String shortList() default "";
-    String listComment() default "Список" ;
-    boolean journal() default false ;
+
+    String listComment() default "Список";
+
+    boolean journal() default false;
 }
