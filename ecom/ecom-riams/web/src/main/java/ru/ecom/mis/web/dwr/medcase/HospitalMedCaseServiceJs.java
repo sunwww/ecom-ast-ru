@@ -294,24 +294,22 @@ public class HospitalMedCaseServiceJs {
     }
 
     private Float parseFloat(String value) throws ParseException {
-        value = value.replace(",",".");
-        if(value == null || value.length()==0)
+        value = value.replace(",", ".");
+        if (value == null || value.length() == 0)
             return null;
         try {
             return Float.valueOf(value);
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new ParseException("Некорректное значение для вещественного числа!", 0);
         }
     }
 
     private Integer parseInt(String value) throws ParseException {
-        if(value == null || value.length()==0)
+        if (value == null || value.length() == 0)
             return null;
         try {
             return Integer.valueOf(value);
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             throw new ParseException("Некорректное значение для целого числа!", 0);
         }
     }
@@ -377,7 +375,7 @@ public class HospitalMedCaseServiceJs {
                 .append(" inner join temperaturecurve befY1 on befY1.medcase_id=y1.medcase_id and befY1.takingdate=y1.takingdate-1")
                 .append(" inner join temperaturecurve befY2 on befY2.medcase_id=y2.medcase_id and befY2.takingdate=y2.takingdate-1")
                 .append(" inner join vocdaytime vy1 on vy1.id=y1.daytime_id and vy1.code='1'")
-                .append(" inner join vocdaytime vy2 on vy2.id=y2.daytime_id and vy2.code='2'" )
+                .append(" inner join vocdaytime vy2 on vy2.id=y2.daytime_id and vy2.code='2'")
                 .append(" inner join vocdaytime vbefY1 on vbefY1.id=befY1.daytime_id and vbefY1.code='1'")
                 .append(" inner join vocdaytime vbefY2 on vbefY2.id=befY2.daytime_id and vbefY2.code='1'")
                 .append(" where y1.medcase_id = ").append(aMedCase)
@@ -1804,17 +1802,48 @@ public class HospitalMedCaseServiceJs {
     }
 
     /**
+     * Проверка на количество предв. госпитализаций в день
+     *
+     * @param aPreId   Long Предв. госп.
+     * @param dateFrom String Дата предв. госп.
+     * @returns maxCnt - макс. кол-во в день, если лимит превышен
+     *                  0 - если нет
+     */
+    private int checkPatientCountPerDay(Long aPreId, String dateFrom, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        String sql = "select count(pre.id)" +
+                " from WorkCalendarHospitalBed pre" +
+                " left join mislpu lpu on lpu.id=pre.department_id" +
+                " where pre.datefrom = to_date('" + dateFrom + "','dd.MM.yyyy')" +
+                " and lpu.id=(select department_id from WorkCalendarHospitalBed where id=" + aPreId + ") and lpu.isophthalmic";
+        Collection<WebQueryResult> l = service.executeNativeSql(sql);
+        if (!l.isEmpty()) {
+            int cnt = Integer.parseInt(l.iterator().next().get1().toString());
+            int maxCnt = Integer.parseInt(getDefaultParameterByConfig("patientCountPreHospPerDay", "20", aRequest).toString());
+            if (cnt >= maxCnt)
+                return maxCnt;
+        }
+        return 0;
+    }
+
+    /**
      * Установить дату предварительной госп на введении инг. анг. #181
      *
      * @param aPreId   Long Предв. госп.
      * @param dateFrom String Дата предв. госп.
      */
     public void setPreHospOphtDate(Long aPreId, String dateFrom, HttpServletRequest aRequest) throws NamingException {
-        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
-        String login = LoginInfo.find(aRequest.getSession(true)).getUsername();
-        service.executeUpdateNativeSql
-                ("update WorkCalendarHospitalBed set dateFrom=to_date('" + dateFrom + "','dd.mm.yyyy'), editdate=current_date,edittime=current_time,editusername='"
-                        + login + "' where id=" + aPreId);
+        int maxCnt = checkPatientCountPerDay(aPreId, dateFrom, aRequest);
+        if (maxCnt == 0) {
+            IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+            String login = LoginInfo.find(aRequest.getSession(true)).getUsername();
+            service.executeUpdateNativeSql
+                    ("update WorkCalendarHospitalBed set dateFrom=to_date('" + dateFrom + "','dd.mm.yyyy'), editdate=current_date,edittime=current_time,editusername='"
+                            + login + "' where id=" + aPreId);
+        }
+        else
+            throw new IllegalArgumentException("На этот день в этом отделении уже создано максимально допустимое количество ("
+                    + maxCnt + ")  предварительных госпитализаций. Выберите другую дату.");
     }
 
     /**
