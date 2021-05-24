@@ -1777,6 +1777,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                     manager.createNativeQuery("update hitechmedicalcase d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
                     manager.createNativeQuery("update robsonclass d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
                     manager.createNativeQuery("update calculationsresult cr set departmentmedcase_id='" + aSlo + "' where cr.departmentmedcase_id='" + obj[1] + "' or departmentmedcase_id=" + obj[2]).executeUpdate();
+                    manager.createNativeQuery("update temperaturecurve d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "' or medcase_id=" + obj[2]).executeUpdate();
                     manager.createNativeQuery("update medcase set dateFinish=(select dateFinish from medcase where id='" + obj[2] + "') "
                             + " ,transferDate=(select transferDate from medcase where id='" + obj[2] + "')"
                             + " ,transferTime=(select transferTime from medcase where id='" + obj[2] + "')"
@@ -1814,6 +1815,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                     manager.createNativeQuery("update ClinicExpertCard d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
                     manager.createNativeQuery("update transfusion d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
                     manager.createNativeQuery("update hitechmedicalcase d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
+                    manager.createNativeQuery("update temperaturecurve d set medcase_id='" + aSlo + "' where d.medCase_id='" + obj[1] + "'").executeUpdate();
                     manager.createNativeQuery("update medcase set dateFinish=(select dateFinish from medcase where id='" + obj[1] + "') "
                             + " ,transferDate=(select transferDate from medcase where id='" + obj[1] + "')"
                             + " ,transferTime=(select transferTime from medcase where id='" + obj[1] + "')"
