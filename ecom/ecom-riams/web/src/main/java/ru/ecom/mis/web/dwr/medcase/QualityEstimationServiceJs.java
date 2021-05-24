@@ -400,7 +400,7 @@ public class QualityEstimationServiceJs {
                 " left join qualityestimation qeC on qeC.card_id=qe.card_id and qecC.estimation_id=qeC.id" +
                 " left join vocqualityestimationmark vqemC on vqemC.id=qecC.mark_id" +
                 " where vqemC.criterion_id=vqecrit.id and qeC.expertType='BranchManager')" +
-                " where kind.code='NOT 203'";
+                " where kind.code='NOT 203' order by vqecrit.code";
         return service.executeNativeSql(query);
     }
 
