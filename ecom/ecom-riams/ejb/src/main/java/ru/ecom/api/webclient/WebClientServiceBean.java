@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Stateless
@@ -40,7 +41,7 @@ public class WebClientServiceBean implements IWebClientService {
             connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             connection.setRequestProperty("Content-Type", "application/json");
             OutputStream writer = connection.getOutputStream();
-            writer.write(data.getBytes("UTF-8"));
+            writer.write(data.getBytes(StandardCharsets.UTF_8));
             writer.flush();
             writer.close();
             StringBuilder response = new StringBuilder();
