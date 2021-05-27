@@ -46,7 +46,7 @@
         </msh:row>
         <msh:row>
           <br>
-          <msh:autoComplete property="CNS" label="Характеристика ЦНС" vocName="vocScreeningCNS"  size="30"/>
+          <msh:autoComplete property="cns" label="Характеристика ЦНС" vocName="vocScreeningCNS"  size="30"/>
         </msh:row>
           <msh:separator label="Характеристика сердечной деятельности:" colSpan="6"/>
         <msh:row>

@@ -25,9 +25,8 @@ import java.util.List;
 public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
     private static final Logger LOG = Logger.getLogger(Expert2AlkonaServiceBean.class);
     private static final String OMC_SERVICE_STREAM = "OBLIGATORYINSURANCE";
-    private static final String ALKONA_URL = "http://127.0.0.1:8082/medcase";
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm");
+    private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:00");
     private @EJB
     IWebClientService clientService;
     private @PersistenceContext
@@ -36,6 +35,7 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
     @Override
     public void exportHospLeaveToAlkona(Long entryListId) {
         LOG.info("start send to alkona");
+        String alkonaUrl = getAlkonaUrl();
         List<E2Entry> entries = manager.createNamedQuery("E2Entry.getAllByListEntryIdAndServiceStream")
                 .setParameter("listEntryId", entryListId).setParameter("serviceStream", OMC_SERVICE_STREAM).getResultList();
         int i = 0;
@@ -44,7 +44,7 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
             try {
                 i++;
                 if (i % 100 == 0) LOG.info("Отправлено в алькону " + i + " записей");
-                LOG.info("id:" + entry.getId() + " Response: " + clientService.makePOSTRequest(toString(mapEntryHospLeave(entry)), ALKONA_URL, "postDischarge", Collections.emptyMap()));
+                LOG.info("id:" + entry.getId() + " Response: " + clientService.makePOSTRequest(toString(mapEntryHospLeave(entry)), alkonaUrl, "postDischarge", Collections.emptyMap()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -52,9 +52,14 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
         LOG.info("Finish. sent entries: " + i);
     }
 
+    private String getAlkonaUrl() {
+        return getExpertConfigValue("ALKONA_URL") + "/medcase";
+    }
+
     @Override
     public void exportHospToAlkona(Long entryListId, Boolean isEmergency) {
         LOG.info("start send to alkona");
+        String alkonaUrl = getAlkonaUrl();
         List<E2Entry> entries = manager.createNamedQuery("E2Entry.getAllByListEntryIdAndServiceStream")
                 .setParameter("listEntryId", entryListId).setParameter("serviceStream", OMC_SERVICE_STREAM).getResultList();
         int i = 0;
@@ -64,7 +69,7 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
                 try {
                     i++;
                     if (i % 100 == 0) LOG.info("Отправлено в алькону " + i + " записей");
-                    LOG.info("id:" + entry.getId() + " Response: " + clientService.makePOSTRequest(toString(mapEntryHosp(entry)), ALKONA_URL, "postHosp", Collections.emptyMap()));
+                    LOG.info("id:" + entry.getId() + " Response: " + clientService.makePOSTRequest(toString(mapEntryHosp(entry)), alkonaUrl, "postHosp", Collections.emptyMap()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -149,8 +154,18 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
 
     public String toString(Object o) {
         Gson gson = new Gson();
-        String str = gson.toJson(o);
-        return str;
+        return gson.toJson(o);
+    }
+
+    /**
+     * Получаем значение из настроек экспертизы по коду
+     */
+    private String getExpertConfigValue(String parameterName) {
+        List<Object> ret = manager.createNativeQuery("select value from Expert2Config where code=:code AND (isDeleted is null or isDeleted='0')").setParameter("code", parameterName).getResultList();
+        if (ret.isEmpty()) {
+            throw new IllegalStateException("Не удалось найти настройку с кодом: " + parameterName);
+        }
+        return ret.get(0).toString();
     }
 
 }

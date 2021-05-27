@@ -1960,6 +1960,9 @@ public class Expert2ServiceBean implements IExpert2Service {
                                 ms.setMkb(getEntityByCode(mkb, VocIdc10.class, false));
                             }
                         }
+                        if (service.has("lpuCode")) {
+                            ms.setLpuCode(service.getString("lpuCode"));
+                        }
                         manager.persist(ms);
                     }
                 }
