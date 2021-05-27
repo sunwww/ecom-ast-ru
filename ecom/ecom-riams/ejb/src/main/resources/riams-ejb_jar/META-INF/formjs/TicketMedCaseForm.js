@@ -126,9 +126,7 @@ function onPreSave(aForm, aEntity, aCtx) {
  */
 function onSave(aForm, aEntity, aCtx) {
     aCtx.manager.persist(aEntity);
-    var date = new java.util.Date();
     saveAdditionData(aForm, aEntity, aCtx);
-
 }
 
 function saveAdditionData(aForm, aEntity, aCtx) {
@@ -178,10 +176,8 @@ function saveAdditionData(aForm, aEntity, aCtx) {
                 throw "e=" + e;
                 e.printStackTrace();
             }
-
         }
     }
-
 
     // Сопутствующий диагноз
     saveArray(aEntity, aCtx.manager, aForm.getConcomitantDiseases()
@@ -211,11 +207,12 @@ function saveServices(aForm, aEntity, aCtx) {
                 var servObj = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.MedService, java.lang.Long.valueOf(serv[0]));
                 servMC.setUet(+serv[1] > 0 ? new java.math.BigDecimal(serv[1]) : null);
                 servMC.setOrderNumber(serv[2]);
-                var am = java.lang.Long.valueOf(serv[3]);
-                servMC.setMedServiceAmount(am != null ? am.intValue() : null);
+                var amount = java.lang.Long.valueOf(serv[3]);
+                var medserviceExecutor = +serv[4]>0 ? aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction, java.lang.Long.valueOf(+serv[4])) : aEntity.getWorkFunctionExecute();
+                servMC.setMedServiceAmount(amount != null ? amount.intValue() : null);
                 servMC.setMedService(servObj);
                 servMC.setPatient(aEntity.getPatient());
-                servMC.setWorkFunctionExecute(aEntity.getWorkFunctionExecute());
+                servMC.setWorkFunctionExecute(medserviceExecutor);
                 servMC.setUsername(aEntity.getUsername());
                 servMC.setCreateDate(aEntity.getCreateDate());
                 servMC.setNoActuality(aEntity.isNoActuality());

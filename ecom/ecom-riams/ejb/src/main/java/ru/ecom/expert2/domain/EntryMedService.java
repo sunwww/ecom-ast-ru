@@ -29,6 +29,10 @@ public class EntryMedService extends BaseEntity {
     private VocE2FondV021 doctorSpeciality;
     private VocIdc10 mkb;
     /**
+     *  Код ЛПУ
+     */
+    private String lpuCode;
+    /**
      * Цена
      */
     private BigDecimal cost;

@@ -22,6 +22,7 @@ import ru.ecom.expomc.ejb.services.exportservice.ExportServiceBean;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.nuzmsh.util.CollectionUtil;
 import ru.nuzmsh.util.PropertyUtil;
+import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.date.AgeUtil;
 
 import javax.annotation.EJB;
@@ -658,7 +659,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         for (EntryMedService service : serviceList) { //простые услуги в пол-ке
                             String serviceCode = service.getMedService().getCode();
                             BigDecimal cost = service.getCost();
-                            sl.addContent(createUsl(a3, "" + (++uslCnt), lpuRegNumber, childProfile.getCode(), serviceCode, isChild, uslDate, uslDate
+                            sl.addContent(createUsl(a3, "" + (++uslCnt), coalesceTrim(service.getLpuCode(), lpuRegNumber), childProfile.getCode(), serviceCode, isChild, uslDate, uslDate
                                     , isNotNull(child.getMainMkb()) ? child.getMainMkb() : sl.getChildText("DS1"), "1", spec.getCode(), child.getDoctorSnils(), cost, child.getDepartmentAddressCode()));
                             if (serviceCode.equals(visitService)) {
                                 isFoundPriemService = true;
@@ -1390,6 +1391,14 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     private <T> T coalesce(T... values) {
         for (T value : values) {
             if (value != null) {
+                return value;
+            }
+        }
+        return null;
+    }
+    private String coalesceTrim(String... values) {
+        for (String value : values) {
+            if (StringUtil.isNotEmpty(value)) {
                 return value;
             }
         }

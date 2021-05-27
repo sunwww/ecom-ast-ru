@@ -240,6 +240,10 @@ public class TicketMedCaseForm extends ShortTicketMedCaseForm {
 		return uetT;
 	}
 	private String uetT;
+
+	@Comment("Исполнитель услуги")
+	public Long getMedserviceExecutor() {return medserviceExecutor;}
+	private Long medserviceExecutor;
 	
 	/** Время получения вызова СМП */
 	@Comment("Время получения вызова СМП")
