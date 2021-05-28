@@ -159,7 +159,7 @@
                     <msh:textField property="uetT" label="УЕТ" size="4"/>
                     <msh:textField property="orderNumber" label="№зуба" size="1"/>
                     <msh:textField property="medServiceAmount" label="Кол-во" size="2"/>
-                    <msh:autoComplete property="medserviceExecutor" vocName="workFunction" size="2"
+                    <msh:autoComplete property="medserviceExecutor" vocName="workFunction" size="50" fieldColSpan="3"
                                       label="Кто выполнил услугу"/>
 
                     <td><input type="button" value="+ услугу" onclick="addService()"/></td>
@@ -198,8 +198,14 @@
                 <ecom:webQuery name="services" nativeSql="select mc.id,ms.name
       		,mc.uet,mc.orderNumber
       		,mc.medServiceAmount
+      		,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename||' ('||lpu.name||')' as f6_doctor
       		from MedCase mc 
       		left join MedService ms on mc.medService_id=ms.id
+      		left join workfunction wf on wf.id=mc.workfunctionexecute_id
+      		left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
+            left join Worker w on w.id=wf.worker_id
+            left join mislpu lpu on lpu.id=w.lpu_id
+            left join Patient wp on wp.id=w.person_id
       		where mc.parent_id='${param.id}' and mc.dtype='ServiceMedCase'
       		"/>
                 <msh:table name="services" action="javascript:void(0)"
@@ -208,6 +214,7 @@
                     <msh:tableColumn columnName="Ует" property="3"/>
                     <msh:tableColumn columnName="№зуба" property="4"/>
                     <msh:tableColumn columnName="Кол-во" property="5"/>
+                    <msh:tableColumn columnName="Исполнитель" property="6"/>
                 </msh:table>
             </msh:section>
 
@@ -410,7 +417,7 @@
                         var arr = $('medServices').value.split("##");
                         for (var i = 0; i < arr.length; i++) {
                             var ar = arr[i].split("@");
-                            addRow("<b>" + ar[4] + "</b> ует: <input type='text' value='" + (ar[1] != 'null' ? ar[1] : "") + "' size='4'> №зуба: <input type='text' value='" + ar[2] + "' size='2'> кол-во: </i><input type='text' value='" + ar[3] + "' size='1'>", ar[0]);
+                            addRow("<b>" + ar[4] + "</b> ует: <input type='text' value='" + (ar[1] != 'null' ? ar[1] : "") + "' size='4'> №зуба: <input type='text' value='" + ar[2] + "' size='2'> кол-во: </i><input type='text' value='" + ar[3] + "' size='1'><input type='hidden' value='" + ar[5] + "'>", ar[0]);
                         }
                     }
                 };
