@@ -62,11 +62,15 @@ public class TicketMedCaseViewInterceptor implements IFormInterceptor {
 
     public static String getMedServiceArray(TicketMedCaseForm aForm, EntityManager aManager) {
 		StringBuilder res = new StringBuilder();
-		List<Object[]> list = aManager.createNativeQuery("select mc.medservice_id,ms.code||' '||ms.name,mc.uet,mc.ordernumber,mc.medserviceamount from MedCase mc left join MedService ms on ms.id=mc.medservice_id where mc.parent_id='" + aForm.getId() + "' and mc.dtype='ServiceMedCase' order by mc.id").getResultList();
+		List<Object[]> list = aManager.createNativeQuery("select mc.medservice_id,ms.code||' '||ms.name,mc.uet,mc.ordernumber,mc.medserviceamount" +
+                ", mc.workfunctionexecute_id " +
+                " from MedCase mc" +
+                " left join MedService ms on ms.id=mc.medservice_id" +
+                " where mc.parent_id=" + aForm.getId() + " and mc.dtype='ServiceMedCase' order by mc.id").getResultList();
         for (Object[] child : list) {
             res.append(child[0]).append("@").append(child[2]).append("@");
             res.append(child[3]).append("@").append(child[4]).append("@");
-            res.append(child[1]).append("##");
+            res.append(child[1]).append("@").append(child[5]).append("##");
         }
 
 
