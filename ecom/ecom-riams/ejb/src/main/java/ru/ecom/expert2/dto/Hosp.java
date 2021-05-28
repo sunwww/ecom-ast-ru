@@ -139,7 +139,7 @@ public class Hosp {
     private String birthDate;
 
     /**
-     * Код профиля медицинской помощи (справочник V002 ФФОМС)
+     * Профиль койки (справочник V020 ФФОМС)
      */
     private String medHelpProfile;
 

@@ -6,6 +6,7 @@ import ru.ecom.api.webclient.IWebClientService;
 import ru.ecom.expert2.domain.E2Entry;
 import ru.ecom.expert2.dto.Hosp;
 import ru.ecom.expert2.dto.HospLeave;
+import ru.nuzmsh.util.format.DateConverter;
 
 import javax.annotation.EJB;
 import javax.ejb.Local;
@@ -15,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.Date;
 import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +28,7 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
     private static final Logger LOG = Logger.getLogger(Expert2AlkonaServiceBean.class);
     private static final String OMC_SERVICE_STREAM = "OBLIGATORYINSURANCE";
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:00");
     private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:00");
     private @EJB
     IWebClientService clientService;
@@ -50,6 +53,18 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
             }
         }
         LOG.info("Finish. sent entries: " + i);
+    }
+
+
+    @Override
+    public String exportHospLeaveEntryToAlkona(Long entryId) {
+        LOG.info("start send to alkona");
+        String alkonaUrl = getAlkonaUrl();
+        E2Entry entry = manager.find(E2Entry.class, entryId);
+        String request = toString(mapEntryHospLeave(entry));
+        String response = clientService.makePOSTRequest(request, alkonaUrl, "postDischarge", Collections.emptyMap());
+        LOG.info("id:" + entry.getId() + "{" + request + "}" + " Response: " + response);
+        return response;
     }
 
     private String getAlkonaUrl() {
@@ -78,6 +93,17 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
         }
     }
 
+    @Override
+    public String exportHospEntryToAlkona(Long entryId) {
+        LOG.info("start send to alkona");
+        String alkonaUrl = getAlkonaUrl();
+        E2Entry entry = manager.find(E2Entry.class, entryId);
+        String entryString = toString(mapEntryHosp(entry));
+        String response = clientService.makePOSTRequest(entryString, alkonaUrl, "postHosp", Collections.emptyMap());
+        LOG.info("id:" + entry.getId() + "{" + entryString + "}" + " Response: " + response);
+        return response;
+    }
+
     //выписка
     private HospLeave mapEntryHospLeave(E2Entry entry) {
         HospLeave leave = new HospLeave();
@@ -86,9 +112,9 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
         leave.setDirectDate(toLocalDate(entry.getDirectDate()));
         leave.setServiceKind(Boolean.TRUE.equals(entry.getIsEmergency()) ? "2" : "1");
         leave.setLpuCode(entry.getLpuCode());
-        leave.setHospStartDate(toLocalDate(entry.getStartDate()));
-        leave.setHospFinishDate(toLocalDate(entry.getFinishDate()));
-        leave.setMedHelpProfile(entry.getMedHelpProfile().getCode());
+        leave.setHospStartDate(toLocalDateTime(entry.getStartDate(), entry.getStartTime()));
+        leave.setHospFinishDate(toLocalDateTime(entry.getFinishDate(), entry.getFinishTime()));
+        leave.setMedHelpProfile(entry.getBedProfile().getCode());
         leave.setDepartmentName(entry.getDepartmentName());
         leave.setStatisticStub(entry.getHistoryNumber());
         leave.setPatientLastname(entry.getLastname());
@@ -118,13 +144,13 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
         hosp.setMedPolicyNumber(entry.getMedPolicyNumber());
         hosp.setInsuranceCompanyCode(entry.getInsuranceCompanyCode());
         hosp.setDiagnosis(entry.getMainMkb());
-        hosp.setRegionOkato("12700");
+        hosp.setRegionOkato("12000");
         hosp.setPatientLastname(entry.getLastname());
         hosp.setPatientFirstname(entry.getFirstname());
         hosp.setPatientMiddlename(entry.getMiddlename());
         hosp.setSex("1".equals(entry.getSex()) ? 1 : 0); //палка - мальчик, дырка - девочка!
         hosp.setBirthDate(toLocalDate(entry.getBirthDate()));
-        hosp.setMedHelpProfile(entry.getMedHelpProfile().getCode());
+        hosp.setMedHelpProfile(entry.getBedProfile().getCode());
         hosp.setHospitalBranch(entry.getDepartmentName());
         hosp.setStatisticStub(entry.getHistoryNumber());
         hosp.setMedTerms(mapMedTerms(entry.getMedHelpUsl().getCode()));
@@ -146,6 +172,14 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
 
     private String toLocalDate(Date date) {
         return date == null ? null : DATE_FORMAT.format(date);
+    }
+
+    private String toLocalDateTime(Date date, Time time) {
+        try {
+            return DATE_TIME_FORMAT.format(DateConverter.createDateTime(date, time));
+        } catch (ParseException e) {
+            return "";
+        }
     }
 
     private String toLocalTime(Time time) {
