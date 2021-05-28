@@ -231,6 +231,15 @@
     			</msh:ifInRole>
     		</td>
     	</msh:row>
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/SetDaysDisabled">
+        <msh:row>
+            <td colspan="4">
+                <input type="text" id="choosenDateInput" value="" disabled >
+                <input type="button" onclick="openDay()" value="Открыть день" >
+                <input type="button" onclick="closeDay()" value="Закрыть день" >
+            </td>
+        </msh:row>
+   </msh:ifInRole>
     </msh:panel>
     </msh:form>
        <div id="dPicker"></div>
@@ -335,8 +344,72 @@ order by wchb.dateFrom,p.lastname,p.firstname,p.middlename
 
     <script type="text/javascript">
         checkFieldUpdate('typeStatus','${param.typeStatus}','1');
-        departmentAutocomplete.addOnChangeCallback(function(){showPreHospCalendar(new Date().getMonth()+1, new Date().getFullYear());});
+        departmentAutocomplete.addOnChangeCallback(function()   {showPreHospCalendar(new Date().getMonth()+1, new Date().getFullYear());});
         departmentAutocomplete
+
+
+        <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/Planning/SetDaysDisabled">
+        var choosenDate='';
+        //открыть день
+        function openDay() {
+            if (choosenDate) {
+                HospitalMedCaseService.checkIsDepOpht($('department').value,{
+                    callback: function(res) {
+                        if (!res)
+                            showToastMessage("Настраивать дни можно только для офтальмологического отделения!",null,true,true,3000);
+                        else {
+                            HospitalMedCaseService.openDayOphtPreHosp(choosenDate,{
+                                callback: function(res) {
+                                    if (res) {
+                                        showToastMessage(res, null, true, true, 3000);
+                                    }
+                                    else {
+                                        showToastMessage("День успешно открыт",null,true,false,3000);
+                                        showPreHospCalendar(new Date().getMonth()+1, new Date().getFullYear());
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else
+                showToastMessage("Сначала выберите день!",null,true,true,3000);
+        }
+
+        //закрыть день
+        function closeDay() {
+            if (choosenDate) {
+                HospitalMedCaseService.checkIsDepOpht($('department').value,{
+                    callback: function(res) {
+                        if (!res)
+                            showToastMessage("Настраивать дни можно только для офтальмологического отделения!",null,true,true,3000);
+                        else {
+                            HospitalMedCaseService.closeDayOphtPreHosp(choosenDate,{
+                                callback: function(res) {
+                                    if (res) {
+                                        showToastMessage(res, null, true, true, 3000);
+                                    }
+                                    else {
+                                        showToastMessage("День успешно закрыт", null, true, false, 3000);
+                                        showPreHospCalendar(new Date().getMonth()+1, new Date().getFullYear());
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else
+                showToastMessage("Сначала выберите день!",null,true,true,3000);
+        }
+
+        //сохранить дату при клике на ячейку
+        function setChoosenDate(date) {
+            choosenDate = date;
+            $('choosenDateInput').value = date;
+        }
+        </msh:ifInRole>
 
         showPreHospCalendar(new Date().getMonth()+1, new Date().getFullYear());
         function showPreHospCalendar(month,year) {
@@ -348,6 +421,7 @@ order by wchb.dateFrom,p.lastname,p.firstname,p.middlename
         }
 
         function showPreHospByDate(el,date) {
+            choosenDate = date;
             jQuery('.selectedVisitDay').each(function(i,el){
                 jQuery(el).attr('class','visitDay');
             });

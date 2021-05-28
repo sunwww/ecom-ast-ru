@@ -8,6 +8,8 @@ function onPreSave(aForm, aEntity, aCtx) {
  * Перед сохранением
  */
 function onSave(aForm, aEntity, aCtx) {
+    if (!chekOphtDayEnabled(aForm, aCtx))
+        throw "Этот день недоступен для предварительной госпитализации в офтальмологическое отделение!";
     checkPatientCountPerDay(aForm, aCtx);
     var date = new java.util.Date();
     aEntity.setEditDate(new java.sql.Date(date.getTime()));
@@ -28,6 +30,8 @@ function onCreate(aForm, aEntity, aCtx) {
 }
 
 function onPreCreate(aForm, aCtx) {
+    if (!chekOphtDayEnabled(aForm, aCtx))
+        throw "Этот день недоступен для предварительной госпитализации в офтальмологическое отделение!";
     /*Проверка - есть ли у пациента направление на это число*/
     checkDouble(aForm.patient, aForm.createDate, 0, aCtx);
     checkPatientCountPerDay(aForm, aCtx);
@@ -37,7 +41,7 @@ function checkDouble(aPatientId, aDateCreate, aId, aCtx) {
     var sql = "select pre.id from WorkCalendarHospitalBed pre where pre.dtype='PlanOphtHospital' and pre.patient_id=" + aPatientId + " and pre.createDate = current_date";
     if (+aId > 0) sql += " and pre.id!=" + aId;
     if (!aCtx.manager.createNativeQuery(sql).getResultList().isEmpty()) {
-        throw "У пациента уже создано направление на введение ингибиторов ангиогенеза в этот день, создание еще одного невозможно!";
+        throw "У пациента уже создано направление на введение ингибитоcheckPatientCountPerDayров ангиогенеза в этот день, создание еще одного невозможно!";
     }
 }
 
@@ -59,4 +63,16 @@ function checkPatientCountPerDay(aForm, aCtx) {
                 throw "На этот день в этом отделении уже создано максимально допустимое количество ("
                 + maxCnt + ")  предварительных госпитализаций. Выберите другую дату.";
     }
+}
+
+//проверка на доступность дня для плановой госпит. (для офт. отд.)
+function chekOphtDayEnabled(aForm, aCtx) {
+    var sql = "select id from mislpu where id=" + aForm.department + " and isophthalmic";
+    var list = aCtx.manager.createNativeQuery(sql).getResultList();
+    if (list.size() > 0) { //офтальмология
+        sql = "select day from datepreopht where day=to_date('" + aForm.dateFrom + "','dd.MM.yyyy')";
+        list = aCtx.manager.createNativeQuery(sql).getResultList();
+        return list.isEmpty();
+    }
+    return true;
 }
