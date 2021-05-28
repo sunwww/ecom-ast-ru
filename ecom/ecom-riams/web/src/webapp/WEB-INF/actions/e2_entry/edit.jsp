@@ -600,6 +600,22 @@ where cancer.entry_id=${param.id}"/>
                     }
 
                 }
+                function exportHospLeaveEntryToAlkona() {
+                        Expert2Service.exportHospLeaveEntryToAlkona(${param.id}, {
+                            callback: function (ret) {
+                                alert("Вот ответ: " + ret);
+                            }
+                        });
+                }
+
+                function exportHospEntryToAlkona() {
+                    Expert2Service.exportHospEntryToAlkona(${param.id}, {
+                        callback: function (ret) {
+                            alert("Вот ответ: " + ret);
+                        }
+                    });
+                }
+
             </script>
         </msh:ifFormTypeAreViewOrEdit>
 
@@ -625,6 +641,10 @@ where cancer.entry_id=${param.id}"/>
                               roles="/Policy/E2"/>
                 <msh:sideLink action="/javascript:makeSosud()" name="Сделать сосудистым случаем" roles="/Policy/E2"/>
                 <msh:sideLink action="/javascript:splitLongCase()" name="Расклеить обращение" roles="/Policy/E2/Admin"/>
+                <msh:sideLink action="/javascript:exportHospEntryToAlkona()" name="Послать случай в Алькону"
+                              roles="/Policy/E2/Admin"/>
+                <msh:sideLink action="/javascript:exportHospLeaveEntryToAlkona()" name="Послать выписку в Алькону"
+                              roles="/Policy/E2/Admin"/>
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
     </tiles:put>

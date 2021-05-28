@@ -32,10 +32,21 @@ public class Expert2ServiceJs {
     public void exportHospLeaveToAlkona(Long entryListId, HttpServletRequest request) throws NamingException {
         Injection.find(request).getService(IExpert2AlkonaService.class).exportHospLeaveToAlkona(entryListId);
     }
+    //Выписку одного случая в Алькону
+    public String exportHospLeaveEntryToAlkona(Long entryId, HttpServletRequest request) throws NamingException {
+        String ret = Injection.find(request).getService(IExpert2AlkonaService.class).exportHospLeaveEntryToAlkona(entryId);
+        LOG.info(ret);
+       return ret;
+    }
 
     //госпитализации по заполнению в алькону
     public void exportHospToAlkona(Long entryListId, Boolean isEmergency, HttpServletRequest request) throws NamingException {
         Injection.find(request).getService(IExpert2AlkonaService.class).exportHospToAlkona(entryListId, isEmergency);
+    }
+
+    //Одну госпитализацию в Алькону
+    public String exportHospEntryToAlkona(Long entryId, HttpServletRequest request) throws NamingException {
+       return Injection.find(request).getService(IExpert2AlkonaService.class).exportHospEntryToAlkona(entryId);
     }
 
     public static String getMedcaseCost(Long medcaseId, HttpServletRequest request) throws NamingException {

@@ -39,13 +39,12 @@ public class WebClientServiceBean implements IWebClientService {
             connection.setDoOutput(true);
             connection.setRequestProperty("Accept", "application/json");
             connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-            connection.setRequestProperty("Content-Type", "application/json");
             OutputStream writer = connection.getOutputStream();
             writer.write(data.getBytes(StandardCharsets.UTF_8));
             writer.flush();
             writer.close();
             StringBuilder response = new StringBuilder();
-            try(BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            try(BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
                 String s;
                 while ((s = in.readLine()) != null) {
                     response.append(s);

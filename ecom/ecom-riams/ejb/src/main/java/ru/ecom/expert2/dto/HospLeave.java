@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import ru.ecom.expert2.config.LocalDateAdapter;
+import ru.ecom.expert2.config.LocalDateTimeAdapter;
 
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -69,18 +70,18 @@ public class HospLeave {
      * Дата начала госпитализации
      */
     @XmlElement(name = "D_DateHosp")
-    @XmlJavaTypeAdapter(value = LocalDateAdapter.class)
+    @XmlJavaTypeAdapter(value = LocalDateTimeAdapter.class)
     private String hospStartDate;
 
     /**
      * Дата окончания госпитализации
      */
     @XmlElement(name = "D_DateLeave")
-    @XmlJavaTypeAdapter(value = LocalDateAdapter.class)
+    @XmlJavaTypeAdapter(value = LocalDateTimeAdapter.class)
     private String hospFinishDate;
 
     /**
-     * ПОхоже, мед профиль V002
+     * Профиль койки V020
      */
     @XmlElement(name = "F_Profile")
     private String medHelpProfile;
