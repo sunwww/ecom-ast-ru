@@ -102,13 +102,14 @@ public class HospitalMedCaseServiceJs {
                 .append("</tr>");
 
         res.append("<tr>");
-        res.append(getFreeDay(0, week, false, 1, aMonth, aYear));
+        boolean isDepOpht = checkIsDepOpht(aDepartment, aRequest).length()>0 && !isOpht; //выбрано ли офтальмологическое отделение (не ангиогенез)
+        res.append(getFreeDay(0, week, false, 1, aMonth, aYear, isDepOpht, aRequest));
         for (int i = 0; i < preHosps.length(); i++) {
             JSONObject preHosp = preHosps.getJSONObject(i);
             int monthDate = preHosp.getInt("monthDate");
             int amount = preHosp.getInt("amount");
             oldday = monthDate;
-            res.append(getFreeDay(day, oldday, true, week, aMonth, aYear));
+            res.append(getFreeDay(day, oldday, true, week, aMonth, aYear, isDepOpht, aRequest));
             week = (week + oldday - day) % 7;
             if (week == 0) week = 7;
             week++;
@@ -116,6 +117,7 @@ public class HospitalMedCaseServiceJs {
                 res.append("</tr><tr>");
             }
             boolean isBusy = amount == 0;
+
             res.append("<td id='tdDay").append(monthDate).append("'");
             res.append("onclick=\"showPreHospByDate(this,'").append(preHosp.getString("calendarDate"));
             res.append("',").append(isOpht).append(")\"");
@@ -126,7 +128,7 @@ public class HospitalMedCaseServiceJs {
             day = oldday + 1;
         }
         int max = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-        res.append(getFreeDay(day, max + 1, true, week, aMonth, aYear));
+        res.append(getFreeDay(day, max + 1, true, week, aMonth, aYear, isDepOpht, aRequest));
         if (oldday > 0) {
             week = (week + max - day) % 7;
             if (week == 0) week = 7;
@@ -135,7 +137,7 @@ public class HospitalMedCaseServiceJs {
             if (week == 0) week = 7;
         }
         week++;
-        res.append(getFreeDay(week, 7, false, 1, aMonth, aYear));
+        res.append(getFreeDay(week, 7, false, 1, aMonth, aYear, isDepOpht, aRequest));
         res.append("</tr>");
 
         res.append("</table></form>");
@@ -188,7 +190,7 @@ public class HospitalMedCaseServiceJs {
         return month;
     }
 
-    private StringBuilder getFreeDay(int aFrom, int aTo, boolean aView, int aWeek, int aMonth, int aYear) {
+    private StringBuilder getFreeDay(int aFrom, int aTo, boolean aView, int aWeek, int aMonth, int aYear, boolean isDepOpht, HttpServletRequest aRequest) throws NamingException {
         StringBuilder res = new StringBuilder();
         for (int i = aFrom; i < aTo; i++) {
             Calendar cal = Calendar.getInstance();
@@ -196,6 +198,9 @@ public class HospitalMedCaseServiceJs {
             cal.set(Calendar.MONTH, aMonth);
             cal.set(Calendar.DATE, i);
             String calendarDate = new SimpleDateFormat("dd.MM.yyyy").format(cal.getTime());
+            //если офтальм. отделение и день закрыт
+            String cssClassName = isDepOpht && !checkDayOphtOpened(calendarDate, aRequest)?
+                    "closedDay" : "freeDay";
             aWeek = aWeek % 7;
             if (aWeek == 0) aWeek = 7;
             aWeek++;
@@ -208,7 +213,7 @@ public class HospitalMedCaseServiceJs {
                 res.append("<td id='tdDay")
                         .append(getMonth(i, false)).append("'")
                         .append(" onclick=\"if (typeof setChoosenDate !== 'undefined') setChoosenDate('").append(calendarDate).append("');\"")
-                        .append("class='freeDay'").append(">").append(i).append("</td>");
+                        .append("class='").append(cssClassName).append("'").append(">").append(i).append("</td>");
             } else {
                 res.append("<td>&nbsp;</td>");
             }
@@ -2050,8 +2055,7 @@ public class HospitalMedCaseServiceJs {
      */
     public String openDayOphtPreHosp(String day, HttpServletRequest request) throws NamingException {
         IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
-        Collection<WebQueryResult> list = service.executeNativeSql("select day from datepreopht where day=to_date('" + day + "','dd.MM.yyyy')");
-        if (list.isEmpty())
+        if (checkDayOphtOpened(day, request))
             return "День уже был открыт (все дни по умолчанию открыты)";
         service.executeUpdateNativeSql("delete from datepreopht where day=to_date('" + day + "','dd.MM.yyyy')");
         return "";
@@ -2065,8 +2069,7 @@ public class HospitalMedCaseServiceJs {
      */
     public String closeDayOphtPreHosp(String day, HttpServletRequest request) throws NamingException {
         IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
-        Collection<WebQueryResult> list = service.executeNativeSql("select day from datepreopht where day=to_date('" + day + "','dd.MM.yyyy')");
-        if (!list.isEmpty())
+        if (!checkDayOphtOpened(day, request))
             return "День уже был закрыт!";
         Collection<WebQueryResult> listPre = service.executeNativeSql("select b.id from workcalendarhospitalbed b" +
                 " left join mislpu dep on dep.id=b.department_id " +
@@ -2075,5 +2078,17 @@ public class HospitalMedCaseServiceJs {
             return "Уже есть предварительная госпитализация на эту дату в офтальмологическое отделение!";
         service.executeUpdateNativeSql("insert into datepreopht(day) values(to_date('" + day + "','dd.MM.yyyy'))");
         return "";
+    }
+
+    /**
+     * Открыт ли день для плановой госпитализации
+     *
+     * @param day  boolean
+     * @return true - день открыт, false - день закрыт
+     */
+    private boolean checkDayOphtOpened(String day, HttpServletRequest request) throws NamingException {
+        IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
+        Collection<WebQueryResult> list = service.executeNativeSql("select day from datepreopht where day=to_date('" + day + "','dd.MM.yyyy')");
+        return list.isEmpty();
     }
 }

@@ -37,6 +37,12 @@
               font-weight: bolder;
               text-align: center;
           }
+          .closedDay{
+              background-color: #CD5C5C;
+              /*font-size: medium;*/
+              font-weight: bolder;
+              text-align: center;
+          }
           .busyDay{
               background-color: #ff3333;
               /*font-size: medium;*/
