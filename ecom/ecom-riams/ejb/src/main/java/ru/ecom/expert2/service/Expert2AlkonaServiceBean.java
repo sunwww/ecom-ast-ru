@@ -6,6 +6,7 @@ import ru.ecom.api.webclient.IWebClientService;
 import ru.ecom.expert2.domain.E2Entry;
 import ru.ecom.expert2.dto.Hosp;
 import ru.ecom.expert2.dto.HospLeave;
+import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateConverter;
 
 import javax.annotation.EJB;
@@ -119,7 +120,9 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
         leave.setStatisticStub(entry.getHistoryNumber());
         leave.setPatientLastname(entry.getLastname());
         leave.setPatientFirstname(entry.getFirstname());
-        leave.setPatientMiddlename(entry.getMiddlename());
+        if (StringUtil.isNotEmpty(entry.getMiddlename())) {
+            leave.setPatientMiddlename(entry.getMiddlename());
+        }
         leave.setMedTerms(mapMedTerms(entry.getMedHelpUsl().getCode()));
 
         return leave;
@@ -147,7 +150,9 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
         hosp.setRegionOkato("12000");
         hosp.setPatientLastname(entry.getLastname());
         hosp.setPatientFirstname(entry.getFirstname());
-        hosp.setPatientMiddlename(entry.getMiddlename());
+        if (StringUtil.isNotEmpty(entry.getMiddlename())) {
+            hosp.setPatientMiddlename(entry.getMiddlename());
+        }
         hosp.setSex("1".equals(entry.getSex()) ? 1 : 0); //палка - мальчик, дырка - девочка!
         hosp.setBirthDate(toLocalDate(entry.getBirthDate()));
         hosp.setMedHelpProfile(entry.getBedProfile().getCode());
