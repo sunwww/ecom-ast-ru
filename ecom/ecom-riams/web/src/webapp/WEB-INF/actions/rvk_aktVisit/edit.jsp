@@ -53,6 +53,9 @@
                     </msh:row>
                     <msh:row>
                         <msh:label property="createUsername" label="пользователь"/>
+                        <msh:ifFormTypeIsView formName="rvk_aktVisitForm">
+                            <td id="specNameName"><b>Должность:</b></td>
+                        </msh:ifFormTypeIsView>
                     </msh:row>
                     <msh:row>
                         <msh:label property="editDate" label="Дата редактирования"/>
@@ -94,6 +97,15 @@
             }
         }
         </msh:ifFormTypeIsNotView>
+        <msh:ifFormTypeIsView formName="rvk_aktVisitForm">
+        window.onload = function () {
+            PatientService.getVocWorkfunctionName($('specName').value, {
+                callback: function (res) {
+                    $('specNameName').innerHTML += res;
+                }
+            });
+        }
+        </msh:ifFormTypeIsView>
         </msh:ifFormTypeAreViewOrEdit>
         <msh:ifFormTypeIsCreate formName="rvk_aktVisitForm">
         window.onload = function () {

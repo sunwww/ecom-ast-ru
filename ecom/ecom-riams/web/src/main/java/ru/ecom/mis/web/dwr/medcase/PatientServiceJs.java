@@ -813,4 +813,16 @@ public class PatientServiceJs {
                 + number + "Date=null, export" + number + "Time=null" +
                 ",export" + number + "Username=null where id=" + cardId);
     }
+
+    /**
+     * Получить должность
+     *
+     * @param vwfId VocWorkfunction.id
+     * @return VocWorkfunction.name
+     */
+    public String getVocWorkfunctionName(Long vwfId, HttpServletRequest request) throws NamingException {
+        IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
+        Collection<WebQueryResult> l = service.executeNativeSql("select name from vocworkfunction where id=" + vwfId);
+        return l.isEmpty() ? "" : l.iterator().next().get1().toString();
+    }
 }
