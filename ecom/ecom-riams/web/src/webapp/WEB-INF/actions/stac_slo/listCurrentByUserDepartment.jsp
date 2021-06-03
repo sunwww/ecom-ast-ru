@@ -57,9 +57,8 @@
 			else (CURRENT_DATE-m.dateStart)
 		  end as cnt2
     ,list(vdrt.name||' '||vpd.name||' '||mkb.code) as diag
-    ,coalesce(vic.name,'')||' сер. '||pat.passportSeries||' №'||pat.passportNumber||' выдан '||to_char(pat.passportDateIssued,'dd.mm.yyyy')||' '||pat.passportWhomIssued as passport
     ,vbt.name as bedType
-    ,pat.passportSeries||' '||pat.passportNumber as passportshort
+    ,sstream.name||' ; '||list(''||mp.polnumber||' '||ri.name) as sstr_and_pol
 ,case when cast(max(cast(vcid.isfornewborn as int)) as boolean) and cast(max(cast(dep.isnewborn as int)) as boolean) then 'background-color:'||max(vcr.code)||'; color:black' else '' end as styleRow
 		  ,cast('-' as varchar(1)) as tempId
     , cast ('[]' as varchar) as jsonAr
@@ -82,11 +81,10 @@ left join Mislpu dep on dep.id=sloAll.department_id
     left join Worker w on w.id=wf.worker_id
     left join Patient wp on wp.id=w.person_id
     left join Patient pat on m.patient_id = pat.id
-    left join Address2 adr on adr.addressid = pat.address_addressid
-    left join Omc_KodTer okt on okt.id=pat.territoryRegistrationNonresident_id
-    left join Omc_Qnp oq on oq.id=pat.TypeSettlementNonresident_id
-    left join Omc_StreetT ost on ost.id=pat.TypeStreetNonresident_id
-    left join VocIdentityCard vic on vic.id=pat.passportType_id
+    left join vocservicestream sstream on sstream.id=m.servicestream_id
+    left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id
+    left join medpolicy mp on mp.id=mcmp.policies_id
+    left join reg_ic ri on ri.id=mp.company_id
 left join medcase_coloridentitypatient mcid on mcid.medcase_id=sls.id
 left join ColorIdentityPatient cid on cid.id=mcid.colorsidentity_id
 left join VocColorIdentityPatient vcid on vcid.id=cid.voccoloridentity_id
@@ -96,13 +94,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
     group by  m.id,m.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday,sc.code,wp.lastname,wp.firstname,wp.middlename,sls.dateStart
     ,bf.addCaseDuration,m.dateFinish,m.dischargeTime
-    ,vic.name,pat.passportSeries,pat.passportNumber,pat.passportDateIssued,pat.passportWhomIssued
-   , pat.address_addressId ,adr.fullname,adr.name
-               , pat.houseNumber , pat.houseBuilding ,pat.flatNumber
-               , pat.territoryRegistrationNonresident_id , okt.name,pat.RegionRegistrationNonresident,oq.name,pat.SettlementNonresident
-	       ,ost.name,pat.StreetNonresident
-              , pat.HouseNonresident , pat.BuildingHousesNonresident,pat.ApartmentNonresident,vbt.name
-       , pat.foreignRegistrationAddress,sls.id
+    ,vbt.name ,sstream.name,sls.id
     order by pat.lastname,pat.firstname,pat.middlename
     "
             />
@@ -117,6 +109,14 @@ left join voccolor vcr on vcr.id=vcid.color_id
 			when bf.addCaseDuration='1' then ((CURRENT_DATE-sls.dateStart)+1)
 			else (CURRENT_DATE-sls.dateStart)
 		  end as cnt1
+		  ,list(vdrt.name||' '||vpd.name||' '||mkb.code) as diag
+		    ,	  case
+			when (CURRENT_DATE-m.dateStart)=0 then 1
+			when bf.addCaseDuration='1' then ((CURRENT_DATE-m.dateStart)+1)
+			else (CURRENT_DATE-m.dateStart)
+		  end as cnt2
+		  ,vbt.name as bedType
+    ,sstream.name||' ; '||list(''||mp.polnumber||' '||ri.name) as sstr_and_pol
 		  ,cast('-' as varchar(1)) as tempId
      , cast ('[]' as varchar) as jsonAr
     from medCase m
@@ -137,6 +137,15 @@ left join voccolor vcr on vcr.id=vcid.color_id
     left join Worker w on w.id=wf.worker_id
     left join Patient wp on wp.id=w.person_id
     left join Patient pat on m.patient_id = pat.id
+    left join Diagnosis diag on diag.medcase_id=m.id
+    left join vocidc10 mkb on mkb.id=diag.idc10_id
+	left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
+	left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
+	left join vocbedtype vbt on vbt.id=bf.bedType_id
+	left join vocservicestream sstream on sstream.id=m.servicestream_id
+    left join medcase_medpolicy mcmp on mcmp.medcase_id=sls.id
+left join medpolicy mp on mp.id=mcmp.policies_id
+left join reg_ic ri on ri.id=mp.company_id
     where m.DTYPE='DepartmentMedCase'
     and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)
     and
@@ -148,6 +157,9 @@ left join voccolor vcr on vcr.id=vcid.color_id
     group by  m.id,m.dateStart,pat.lastname,pat.firstname
     ,pat.middlename,pat.birthday,sc.code,wp.lastname,wp.firstname,wp.middlename,sls.dateStart
     ,bf.addCaseDuration,m.dateFinish,m.dischargeTime,sls.id
+    ,vbt.name,bf.addCaseDuration
+
+    ,sstream.name
     order by pat.lastname,pat.firstname,pat.middlename
     "
             />

@@ -537,7 +537,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                                     for (E2CancerDrug drug : drugList) {
                                         Element lekPr = new Element("LEK_PR");
                                         add(lekPr, "REGNUM", drug.getDrug() != null ? drug.getDrug().getCode() : "_____" + currentEntry.getId());
-                                        add(lekPr, "CODE_SH", "нЕт"); //TODO переделать, если будет схема
+                                        add(lekPr, "CODE_SH", coalesceTrim(entry.getDopKritKSG(), "gem"));
                                         if (CollectionUtil.isEmpty(drug.getDates())) {
                                             manager.persist(new E2EntryError(entry, "NO_DATE_IN_DRUG"));
                                             return null;
