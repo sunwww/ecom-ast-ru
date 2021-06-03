@@ -1060,24 +1060,19 @@ public class Expert2ServiceBean implements IExpert2Service {
     /**
      * переносим информацию об услугах из комплексного случая в главный
      */
-    private List<EntryMedService> moveMedServiceToMainEntry(E2Entry slaveEntry, E2Entry masterEntry) {
+    private void moveMedServiceToMainEntry(E2Entry slaveEntry, E2Entry masterEntry) {
         List<EntryMedService> slaveServices = slaveEntry.getMedServices();
 
         if (isNotEmpty(slaveServices)) {
             for (EntryMedService ems : slaveServices) {
                 ems.setEntry(masterEntry);
-                manager.persist(ems);
             }
             if (isNotEmpty(masterEntry.getMedServices())) {
                 slaveServices.addAll(masterEntry.getMedServices());
             }
             masterEntry.setMedServices(slaveServices);
             slaveEntry.setMedServices(new ArrayList<>());
-            manager.persist(masterEntry);
-            manager.persist(slaveEntry);
-            return slaveServices;
         }
-        return new ArrayList<>();
     }
 
     /**
@@ -1107,7 +1102,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         if (isNotLogicalNull(slaveEntry.getNewbornAmount())) {
             masterEntry.setNewbornAmount(slaveEntry.getNewbornAmount()); //Переносим информация о детях из родового отделения в неродовое
         }
-        masterEntry.setMedServices(moveMedServiceToMainEntry(slaveEntry, masterEntry));
+        moveMedServiceToMainEntry(slaveEntry, masterEntry);
         masterEntry.setIsUnion(true);
         slaveEntry.setIsUnion(true);
         slaveEntry.setParentEntry(masterEntry);
@@ -1431,14 +1426,14 @@ public class Expert2ServiceBean implements IExpert2Service {
                 if (isNotLogicalNull(entry.getVmpKind())) {
                     code = "STAC_VMP";
                     fileType = "T";
-                } else if (entry.getBedSubType().equals("1")) {
+                } else if (isEquals(entry.getBedSubType(), "1")) {
                     code = (isTrue(entry.getIsRehabBed()) ? "REHAB_" : "") + ALLTIMEHOSP;
-                } else if (entry.getBedSubType().equals("2")) {
+                } else if (isEquals(entry.getBedSubType(), "2")) {
                     //departmentType = 7 - Дневной стационар при АПУ
                     //departmentType = 8 - Дневной стационар на дому
                     code = (isTrue(entry.getIsRehabBed()) ? "REHAB_" : "") + ("7".equals(entry.getDepartmentType()) ? "POL"
                             : "8".equals(entry.getDepartmentType()) ? "HOME" : "") + DAYTIMEHOSP;
-                } else if (entry.getBedSubType().equals("3")) { // первично стац на дому делаем правильным
+                } else if (isEquals(entry.getBedSubType(), "3")) { // первично стац на дому делаем правильным
                     entry.setDepartmentType("8");
                     entry.setBedSubType("2");
                     code = "HOMEDAYTIMEHOSP";
