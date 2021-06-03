@@ -144,7 +144,11 @@
             showToastMessage('Если введён логин, то необходимо выбрать отделение и должность!', null, true, true, 5000);
             $('${name}Add').disabled = false;
             return;
-        } else if (!isNaN(lpu) && lpu != 0 && (isNaN(vwf) || vwf == 0)
+        }  else if (login != '' && !jQuery("input[name='${name}rad']")[0].checked && !jQuery("input[name='${name}rad']")[1].checked) {
+            showToastMessage('Если введён логин, то необходимо установить пароль!', null, true, true, 5000);
+            $('${name}Add').disabled = false;
+            return;
+        }else if (!isNaN(lpu) && lpu != 0 && (isNaN(vwf) || vwf == 0)
             || !isNaN(vwf) && vwf != 0 && (isNaN(lpu) || lpu == 0)) {
             showToastMessage('Нельзя выбрать только отделение или только должность!', null, true, true, 5000);
             $('${name}Add').disabled = false;
