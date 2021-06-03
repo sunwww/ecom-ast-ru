@@ -3318,13 +3318,13 @@ public class Expert2ServiceBean implements IExpert2Service {
         boolean isPrerSluch;
         if (isDeadCase || isPatientLike || isOtherLpu || isLpuLike) { //не стандартная выписка
             isPrerSluch = true;
-        } else if (entry.getCalendarDays() < 4) {  //Если плановая выписки и длительность случая менее 4 дней. //28-02-2018 4 целых дня.
+        } else if (entry.getBedDays() < 4) {  //Если плановая выписки и длительность случая менее 4 дней. //28-02-2018 4 целых дня.
             isPrerSluch = ksg == null || isNotTrue(ksg.getIsFullPayment());
         } else {
             isPrerSluch = false;
         }
         if (isPrerSluch && ksg != null) { // если прерванный случай - ставим причину неполной оплаты
-            boolean isShortCase = entry.getCalendarDays() < 4;
+            boolean isShortCase = entry.getBedDays() < 4;
             if (isTrue(ksg.getIsOperation())) { //Если у КСГ признак "операционного"
                 ret = BigDecimal.valueOf(isShortCase ? 0.85 : 0.9);
             } else {
