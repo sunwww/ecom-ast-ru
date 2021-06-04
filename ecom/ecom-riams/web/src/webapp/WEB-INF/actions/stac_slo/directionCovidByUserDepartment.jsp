@@ -23,12 +23,15 @@
     ,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middlename as patfio
     , to_char(pat.birthday,'dd.mm.yyyy') as birthday
     ,to_char(m.dateStart,'dd.mm.yyyy')  as datestart
+    ,sc.code as numHist
     from medCase m
     left join Patient pat on m.patient_id = pat.id
+    left join MedCase as sls on sls.id = m.parent_id
+    left join StatisticStub as sc on sc.medCase_id=sls.id
     where m.DTYPE='DepartmentMedCase' and m.department_id='${department}'
     and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)
     group by pat.id,m.dateStart,pat.lastname,pat.firstname
-    ,pat.middlename,pat.birthday,m.dateFinish,m.dischargeTime
+    ,pat.middlename,pat.birthday,m.dateFinish,m.dischargeTime,sc.code
     order by pat.lastname,pat.firstname,pat.middlename
     "
             />
@@ -51,6 +54,7 @@
                     <msh:tableColumn columnName="Фамилия имя отчество пациента" property="2"/>
                     <msh:tableColumn columnName="Дата рождения" property="3"/>
                     <msh:tableColumn columnName="Дата поступления" property="4"/>
+                    <msh:tableColumn columnName="Номер истории" property="5"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -127,11 +131,11 @@
                 if (table) {
                     for (var ii = 1; ii < table.rows.length; ii++) {
                         var row = table.rows[ii];
-                        var ch = $(row).children[2].children[0];
                         if ($(row).children[2].children[0].checked) {
                             if (params.length > 0) params += "!";
                             params += $(row).children[4].textContent + '--' + $(row).children[6].textContent + '--' + $(row).children[5].textContent
-                                + '--' + ($(row).children[3].children[0].value ? $(row).children[3].children[0].value : "_");
+                                + '--' + $(row).children[7].textContent + '--'
+                                + ($(row).children[3].children[0].value ? $(row).children[3].children[0].value : "_");
                         }
                     }
                 }
