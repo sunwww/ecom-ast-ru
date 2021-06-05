@@ -1065,8 +1065,12 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     err.append("НЕ УКАЗАН СНИЛС ВРАЧА");
                     isError = true;
                 }
+                if (entry.getMedHelpKind() == null) {
+                    err.append("НЕ УКАЗАН ВИД МП");
+                    isError = true;
+                }
                 if (isError) {
-                    E2EntryError error = new E2EntryError(entry, "NO_FOND_FIELDS:" + err.toString());
+                    E2EntryError error = new E2EntryError(entry, "NO_FOND_FIELDS:" + err);
                     manager.persist(error);
                     LOG.error("Запись с ИД " + entry.getId() + " не будет выгружена в xml: " + err);
                     continue;
