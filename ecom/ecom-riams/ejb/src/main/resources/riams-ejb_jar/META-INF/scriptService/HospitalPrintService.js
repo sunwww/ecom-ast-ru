@@ -2705,7 +2705,7 @@ function printDirectionHIV(aCtx, aParams) {
     return map;
 }
 
-//todo - гавно, переделать
+//пойдёт - печать направления на covid
 function printDirectionCovid(aCtx, aParams) {
     var ret = new java.util.ArrayList();
     var info = new java.lang.String(aParams.get("info"));
@@ -2718,10 +2718,8 @@ function printDirectionCovid(aCtx, aParams) {
         par.set2(row[0]);	//фио
         par.set3(row[1]);	//дата начала
         par.set4(row[2]);	//возраст
-        par.set5(row[3]);	//хз
-        par.set6(row[4]);	//хз
-        par.set7(row[5]);	//хз
-        par.set8(row[6]);	//хз
+        par.set5(row[3]);	//номер истории
+        par.set6(row[4]);	//№ пробирки
         ret.add(par);
     }
     map.put("listPat", ret);
