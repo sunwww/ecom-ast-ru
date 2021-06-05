@@ -3535,8 +3535,9 @@ public class Expert2ServiceBean implements IExpert2Service {
      * @return код V008
      */
     private String calculateHelpKindPol(E2Entry entry) {
+        String defaultHelpKindCode = "13";
         if (entry.getDoctorWorkfunction() == null) {
-            return null;
+            return defaultHelpKindCode;
         }
         String code;
         switch (entry.getDoctorWorkfunction()) {
@@ -3549,7 +3550,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 code = "11"; //первичная доврачебная МСП
                 break;
             default:
-                code = "13"; //первичная специализированная МСП
+                code = defaultHelpKindCode; //первичная специализированная МСП
         }
 
         return code;
