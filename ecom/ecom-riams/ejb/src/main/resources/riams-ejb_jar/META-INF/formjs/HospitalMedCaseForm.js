@@ -19,6 +19,7 @@ function onPreDelete(aMedCaseId, aContext) {
             , "карты COVID-19"
             , "оценки степени тяжести"
             , "чек-листы/карты оценки риска"
+            , "классификационные критерии"
         ];
         var err_list = aContext.manager.createNativeQuery("select"
             + " (select count(*) from Diagnosis as d where d.medCase_id=ms.id) as v0"
@@ -38,6 +39,7 @@ function onPreDelete(aMedCaseId, aContext) {
             + ",(select count(*) from Covid19 as c where c.medCase_id=ms.id) as v16"
             + ",(select count(*) from CovidMark as cm where cm.medCase_id=ms.id) as v17"
             + ",(select count(*) from assessmentcard as ac where ac.medCase_id=ms.id) as v18"
+            + ",(select count(*) from omccriterion omc where omc.medCase_id=ms.id) as v19"
             + " from MedCase as ms where ms.DTYPE='HospitalMedCase' and ms.id=:id")
             .setParameter("id", aMedCaseId).getSingleResult();
         var err_mes = "", isErr = false;
