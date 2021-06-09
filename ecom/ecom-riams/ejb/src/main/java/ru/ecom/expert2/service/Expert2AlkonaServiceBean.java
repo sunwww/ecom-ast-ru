@@ -143,7 +143,9 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
         hosp.setHospStartDate(toLocalDate(entry.getStartDate()));
         hosp.setHospStartTime(toLocalTime(entry.getStartTime()));
         hosp.setMedPolicyType(Integer.parseInt(entry.getMedPolicyType()));
-        hosp.setMedPolicySeries(entry.getMedPolicySeries());
+        if (StringUtil.isNotEmpty(entry.getMedPolicySeries())) {
+            hosp.setMedPolicySeries(entry.getMedPolicySeries());
+        }
         hosp.setMedPolicyNumber(entry.getMedPolicyNumber());
         hosp.setInsuranceCompanyCode(entry.getInsuranceCompanyCode());
         hosp.setDiagnosis(entry.getMainMkb());
