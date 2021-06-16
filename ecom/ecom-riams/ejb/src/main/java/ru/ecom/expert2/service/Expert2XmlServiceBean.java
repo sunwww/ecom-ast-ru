@@ -192,9 +192,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     /**
      * Создаем тэг с информацией о госпитализации (версия 3.2*)
      */
-    private Element createZSl2020(E2Entry entry, boolean isPoliclinic, int zslIdCase, String lpuRegNumber
+    private Element createZSl2020(E2Entry entry, boolean isPolyclinic, int zslIdCase, String lpuRegNumber
             , boolean a3) {
-        String forPom = isTrue(entry.getIsEmergency()) ? (isPoliclinic ? "2" : "1") : "3";
+        String forPom = isTrue(entry.getIsEmergency()) ? (isPolyclinic ? "2" : "1") : "3";
         Element z = new Element("Z_SL");
         add(z, "IDCASE", zslIdCase + "");
         add(z, "VID_SLUCH", entry.getVidSluch().getCode());
@@ -202,8 +202,8 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         add(z, "VIDPOM", entry.getMedHelpKind().getCode());
         if (!a3) {
             add(z, "FOR_POM", forPom); //форма помощи V014
-            if (isNotTrue(entry.getIsEmergency())) {
-                addIfNotNull(z, "NPR_MO", coalesce(entry.getDirectLpu(), lpuRegNumber)); //Направившее ЛПУ
+            if (isPolyclinic || isNotTrue(entry.getIsEmergency())) {
+                addIfNotNull(z, "NPR_MO", coalesceTrim(entry.getDirectLpu(), lpuRegNumber)); //Направившее ЛПУ
                 addIfNotNull(z, "NPR_DATE", coalesce(entry.getDirectDate(), entry.getStartDate())); //Дата направления на лечение ***
             }
         }
@@ -214,7 +214,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         add(z, "DATE_Z_1", "_"); //Дата начала случая
         add(z, "DATE_Z_2", "_"); //Дата окончания случая
         if (a3) add(z, "P_OTK", "0");
-        if (!isPoliclinic && !a3) add(z, "KD_Z", entry.getBedDays() + ""); // Продолжительность госпитализации
+        if (!isPolyclinic && !a3) add(z, "KD_Z", entry.getBedDays() + ""); // Продолжительность госпитализации
         if (a3)
             add(z, "RSLT_D", entry.getDispResult() != null ? entry.getDispResult().getCode() : "___"); // Результат диспансеризации
         if (!a3) {
