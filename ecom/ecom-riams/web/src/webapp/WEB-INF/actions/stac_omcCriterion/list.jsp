@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/main${param.short}Layout.jsp" flush="true" >
 
     <tiles:put name="title" type="string">
-        <ecom:titleTrail beginForm="stac_sslForm" mainMenu="Patient" title="Случай смерти" />
+        <ecom:titleTrail beginForm="stac_sslForm" mainMenu="Patient" title="Исход" />
     </tiles:put>
     <tiles:put name="side" type="string" >
         <msh:sideMenu title="Дополнительно">

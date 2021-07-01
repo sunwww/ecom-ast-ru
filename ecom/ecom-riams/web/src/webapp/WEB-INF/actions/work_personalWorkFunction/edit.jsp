@@ -138,6 +138,8 @@
                               roles="/Policy/Mis/Worker/WorkFunction/Delete"/>
                 <msh:sideLink action="/javascript:generationCalendar('.do')" name="Генерировать"
                               roles="/Policy/Mis/Worker/WorkCalendar/View"/>
+                <msh:sideLink action="/javascript:updatePromedCodes('.do')" name="Обновить коды Промеда"
+                              roles="/Policy/Mis/Worker/WorkFunction/UpdatePromedCodes"/>
                 <msh:sideLink action="/javascript:createSecUser('.do')" name="Добавить пользователя"
                               roles="/Policy/Jaas/SecUser/Create" styleId="createSecUser"/>
             </msh:sideMenu>
@@ -162,6 +164,16 @@
                             }
                             , errorHandler: function (aMessage) {
                                 alert(aMessage);
+                            }
+                        });
+                }
+
+                function updatePromedCodes() {
+                    WorkCalendarService.updatePromedCodes(
+                        ${param.id},
+                        {
+                            callback: function (res) {
+                                alert(res);
                             }
                         });
                 }
