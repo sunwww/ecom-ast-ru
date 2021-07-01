@@ -657,12 +657,14 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         }
                         List<EntryMedService> serviceList = child.getMedServices();
                         for (EntryMedService service : serviceList) { //простые услуги в пол-ке
-                            String serviceCode = service.getMedService().getCode();
-                            BigDecimal cost = service.getCost();
-                            sl.addContent(createUsl(a3, "" + (++uslCnt), coalesceTrim(service.getLpuCode(), lpuRegNumber), childProfile.getCode(), serviceCode, isChild, uslDate, uslDate
-                                    , isNotNull(child.getMainMkb()) ? child.getMainMkb() : sl.getChildText("DS1"), "1", spec.getCode(), child.getDoctorSnils(), cost, child.getDepartmentAddressCode()));
-                            if (serviceCode.equals(visitService)) {
-                                isFoundPriemService = true;
+                            if (!service.getMedService().getCode().startsWith("T")) {
+                                String serviceCode = service.getMedService().getCode();
+                                BigDecimal cost = service.getCost();
+                                sl.addContent(createUsl(a3, "" + (++uslCnt), coalesceTrim(service.getLpuCode(), lpuRegNumber), childProfile.getCode(), serviceCode, isChild, uslDate, uslDate
+                                        , isNotNull(child.getMainMkb()) ? child.getMainMkb() : sl.getChildText("DS1"), "1", spec.getCode(), child.getDoctorSnils(), cost, child.getDepartmentAddressCode()));
+                                if (serviceCode.equals(visitService)) {
+                                    isFoundPriemService = true;
+                                }
                             }
                         }
                         isFirst = false;
@@ -1400,6 +1402,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         }
         return null;
     }
+
     private String coalesceTrim(String... values) {
         for (String value : values) {
             if (StringUtil.isNotEmpty(value)) {

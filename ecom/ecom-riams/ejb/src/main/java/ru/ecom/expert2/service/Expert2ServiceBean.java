@@ -240,9 +240,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     try {
                         getterMethod = PropertyUtil.getGetterMethodIgnoreCase(clazz, fields[i]);
                         methodMap.put(key, getterMethod);
-                        if (getterMethod != null) {
-                            methodMap.put("SETTER#" + fields[i], PropertyUtil.getSetterMethod(clazz, getterMethod));
-                        }
+                        methodMap.put("SETTER#" + fields[i], PropertyUtil.getSetterMethod(clazz, getterMethod));
                     } catch (Exception e) {
                         LOG.warn("Не найдено поле с именем " + fields[i]);
                         methodMap.put(key, null);
@@ -3537,6 +3535,9 @@ public class Expert2ServiceBean implements IExpert2Service {
     private String calculateHelpKindPol(E2Entry entry) {
         String defaultHelpKindCode = "13";
         if (entry.getDoctorWorkfunction() == null) {
+            if (isEquals(entry.getFondDoctorSpecV021().getCode(), "76")) { //НМП без
+                return "12";
+            }
             return defaultHelpKindCode;
         }
         String code;
