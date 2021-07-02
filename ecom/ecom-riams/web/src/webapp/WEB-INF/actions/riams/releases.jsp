@@ -47,6 +47,7 @@
 					<li><msh:link action="ecom_release-202104.do">апрель 2021 года </msh:link></li>
 					<li><msh:link action="ecom_release-202105.do">май 2021 года </msh:link></li>
 					<li><msh:link action="ecom_release-202106.do">июнь 2021 года </msh:link></li>
+					<li><msh:link action="ecom_release-202107.do">июль 2021 года </msh:link></li>
 
 					<% if (1==2) { %>
 					<li><msh:link  action="ecom_release-201712.do">
