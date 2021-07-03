@@ -2031,7 +2031,7 @@ public class WorkCalendarServiceJs {
                 String medstaffId = obj.get("medstaffId").getAsString();
                 service.executeUpdateNativeSql("update workfunction set promedcode_lpusection='" + lpuSectionId +
                         "', promedcode_workstaff='" + medstaffId + "' where id=" + wfId);
-                return "Коды обновлены!";
+                return "Коды обновлены! lpuSectionId = " + lpuSectionId + " , medstaffId = " + medstaffId;
             }
         }
         return "Не удалось обновить коды!";
