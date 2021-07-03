@@ -570,7 +570,7 @@ public class SecUserServiceBean implements ISecUserService {
                     addWorkFunctionToUser(secUser, misLpu, vocWorkFunction, newPsw, userCopyId, patient,dd,tt) :
                     "Произошла ошибка, попробуйте снова.";
         }
-	    else if (freeUserName(username)) { //если логин свободен (или пустой логин)
+	    else if (freeUserName(username) || "".equals(username)) { //если логин свободен (или пустой логин)
             SecUser secUser = getIfSecUserExists(aPatientId);
             if (secUser == null && misLpu!=null && patient!=null)
 				secUser=createSecUser(patient, misLpu, username, dd,tt);

@@ -1,5 +1,7 @@
 package ru.ecom.mis.web.dwr.medcase;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.log4j.Logger;
 import org.jdom.IllegalDataException;
 import org.json.JSONArray;
@@ -7,6 +9,7 @@ import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.mis.ejb.service.disability.IDisabilityService;
 import ru.ecom.mis.ejb.service.medcase.IPolyclinicMedCaseService;
 import ru.ecom.mis.ejb.service.worker.IWorkCalendarService;
 import ru.ecom.mis.ejb.service.worker.IWorkerService;
@@ -23,10 +26,9 @@ import java.sql.Date;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+
+import static ru.ecom.api.util.ApiUtil.createGetRequest;
 
 public class WorkCalendarServiceJs {
 
@@ -2000,5 +2002,38 @@ public class WorkCalendarServiceJs {
                 "left join workplace_workfunction wpwf on wpwf.workplace_id=wpl.id\n" +
                 "where wpwf.workfunctions_id=" + wfId);
         return list.isEmpty() ? "" : list.iterator().next().get1().toString();
+    }
+
+    /**
+     * Обновить коды промеда #262
+     *
+     * @param wfId     String WorkFunction.id
+     * @param aRequest HttpServletRequest
+     * @return String Сообщение
+     */
+    public String updatePromedCodes(String wfId, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        Collection<WebQueryResult> list = service.executeNativeSql("select pat.snils from patient pat" +
+                " left join worker w on w.person_id=pat.id" +
+                " left join workfunction wf on wf.worker_id=w.id" +
+                " where wf.id=" + wfId);
+        if (!list.isEmpty() && list.iterator().next().get1() != null) {
+            String snils = list.iterator().next().get1().toString().replace(" ","");
+            if (!"".equals(snils)) {
+                IDisabilityService service1 = Injection.find(aRequest).getService(IDisabilityService.class);
+                String endpoint = service1.getSoftConfigValue("PROMEDATOR", "null");
+                Map<String, String> params = new HashMap<>();
+                params.put("snils", snils);
+                String json = createGetRequest(endpoint, "update/lpuAndWorkStaff", params);
+                JsonParser parser = new JsonParser();
+                JsonObject obj = parser.parse(json).getAsJsonObject();
+                String lpuSectionId = obj.get("lpuSectionId").getAsString();
+                String medstaffId = obj.get("medstaffId").getAsString();
+                service.executeUpdateNativeSql("update workfunction set promedcode_lpusection='" + lpuSectionId +
+                        "', promedcode_workstaff='" + medstaffId + "' where id=" + wfId);
+                return "Коды обновлены! lpuSectionId = " + lpuSectionId + " , medstaffId = " + medstaffId;
+            }
+        }
+        return "Не удалось обновить коды!";
     }
 }

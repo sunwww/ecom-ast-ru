@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.Integer.parseInt;
 import static ru.ecom.expert2.domain.voc.E2Enumerator.ALLTIMEHOSP;
 import static ru.ecom.expert2.domain.voc.E2Enumerator.DAYTIMEHOSP;
 import static ru.nuzmsh.util.BooleanUtils.isNotTrue;
@@ -240,9 +241,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     try {
                         getterMethod = PropertyUtil.getGetterMethodIgnoreCase(clazz, fields[i]);
                         methodMap.put(key, getterMethod);
-                        if (getterMethod != null) {
-                            methodMap.put("SETTER#" + fields[i], PropertyUtil.getSetterMethod(clazz, getterMethod));
-                        }
+                        methodMap.put("SETTER#" + fields[i], PropertyUtil.getSetterMethod(clazz, getterMethod));
                     } catch (Exception e) {
                         LOG.warn("Не найдено поле с именем " + fields[i]);
                         methodMap.put(key, null);
@@ -505,26 +504,29 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
         isBillCreating = true;
         E2Bill bill;
-        String sql = "select id from e2bill where billNumber=:number and billDate=:date ";
-        List<BigInteger> list = manager.createNativeQuery(sql).setParameter("number", billNumber).setParameter("date", billDate).getResultList();
-        if (list.isEmpty()) { //Создаем новый счет. статус - черновик
-            bill = new E2Bill();
-            bill.setBillNumber(billNumber);
-            bill.setBillDate(billDate);
-            bill.setStatus(getActualVocByClassName(VocE2BillStatus.class, null, "code='DRAFT'"));
-        } else if (list.size() > 1) {
-            LOG.error(list.get(0) + "<>" + list.get(1) + " Найдено более 1 счета с номером " + billNumber + " и датой " + billDate + "(" + list.size() + ")");
-            bill = null;
-        } else {
-            bill = manager.find(E2Bill.class, list.get(0).longValue());
-        }
-        if (bill != null) {
-            if (comment != null) {
-                bill.setComment(comment);
+        try {
+            String sql = "select id from e2bill where billNumber=:number and billDate=:date ";
+            List<BigInteger> list = manager.createNativeQuery(sql).setParameter("number", billNumber).setParameter("date", billDate).getResultList();
+            if (list.isEmpty()) { //Создаем новый счет. статус - черновик
+                bill = new E2Bill();
+                bill.setBillNumber(billNumber);
+                bill.setBillDate(billDate);
+                bill.setStatus(getActualVocByClassName(VocE2BillStatus.class, null, "code='DRAFT'"));
+            } else if (list.size() > 1) {
+                LOG.error(list.get(0) + "<>" + list.get(1) + " Найдено более 1 счета с номером " + billNumber + " и датой " + billDate + "(" + list.size() + ")");
+                bill = null;
+            } else {
+                bill = manager.find(E2Bill.class, list.get(0).longValue());
             }
-            manager.persist(bill);
+            if (bill != null) {
+                if (comment != null) {
+                    bill.setComment(comment);
+                }
+                manager.persist(bill);
+            }
+        } finally {
+            isBillCreating = false;
         }
-        isBillCreating = false;
         return bill;
     }
 
@@ -1753,6 +1755,18 @@ public class Expert2ServiceBean implements IExpert2Service {
         return entry.getDiagnosis() != null ? entry.getDiagnosis() : new ArrayList<>();
     }
 
+    //на 02.07.2021 - С* || DS1<D11 || D45<=DS1<=D47
+    private boolean isCancerMkb(String mkb, String priority) {
+        return priority.equals("1") &&
+                (mkb.startsWith("C")
+                        || mkb.startsWith("D") && (parseInt(mkb.substring(1, 3)) < 11 || inRange(parseInt(mkb.substring(1, 3)), 45, 47)));
+    }
+
+    //входит ли номер в промежуток
+    private boolean inRange(int value, int min, int max) {
+        return value >= min && value <= max;
+    }
+
     private void createDiagnosis(E2Entry entry) {
         try {
             String diagnosisList = entry.getDiagnosisList();
@@ -1768,7 +1782,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     mkb = ds.getString("mkb");
                     regType = ds.getString("registrationType");
                     priority = ds.getString("priority");
-                    if (mkb.startsWith("C") && priority.equals("1")) { //Если основной диагноз начинается с С*
+                    if (isCancerMkb(mkb, priority)) {
                         isCancer = true;
                     }
                     for (String cv : covidMkbs) {
@@ -2130,7 +2144,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     }
                     sb.append("'").append(d).append("'");
                     char mkbClass = d.charAt(0);
-                    int mkbNum = Integer.parseInt(d.substring(1, 3));
+                    int mkbNum = parseInt(d.substring(1, 3));
                     if ((mkbClass == 'C' && mkbNum < 97) || (mkbClass == 'D' && (mkbNum < 10 || mkbNum > 44 && mkbNum < 48))) {
                         cancerDiagnosis = d;
                     } else if (mkbClass == 'C') {
@@ -2139,7 +2153,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
                 if (isCancer) {
                     if (cancerDiagnosis != null) { //Костыль по нахождению Д в интервале, TODO переделать на нормальное нахождение диагноза в интервале
-                        int mkbNumCancer = Integer.parseInt(cancerDiagnosis.substring(1, 3));
+                        int mkbNumCancer = parseInt(cancerDiagnosis.substring(1, 3));
                         if (cancerDiagnosis.startsWith("C")) {
                             if (mkbNumCancer < 81) {
                                 cancerDiagnosisSql = " or gkp.mainMkb='C00-C80' or gkp.mainmkb='C.'";
@@ -3537,6 +3551,9 @@ public class Expert2ServiceBean implements IExpert2Service {
     private String calculateHelpKindPol(E2Entry entry) {
         String defaultHelpKindCode = "13";
         if (entry.getDoctorWorkfunction() == null) {
+            if (isEquals(entry.getFondDoctorSpecV021().getCode(), "76")) { //НМП без
+                return "12";
+            }
             return defaultHelpKindCode;
         }
         String code;
