@@ -2149,7 +2149,12 @@ public class Expert2ServiceBean implements IExpert2Service {
                         cancerDiagnosis = d;
                     } else if (mkbClass == 'C') {
                         findCDiagnosis = true;
+                    } else if (mkbClass == 'I') {
+                        cancerDiagnosisSql = " or gkp.mainmkb='I.'";
                     }
+                }
+                if (!cancerDiagnosisSql.equals("")) {
+                    mainDiagnosis.add("I.");
                 }
                 if (isCancer) {
                     if (cancerDiagnosis != null) { //Костыль по нахождению Д в интервале, TODO переделать на нормальное нахождение диагноза в интервале
