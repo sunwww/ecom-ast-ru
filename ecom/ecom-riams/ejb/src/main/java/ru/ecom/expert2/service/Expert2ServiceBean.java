@@ -2222,7 +2222,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             int maxWeight = 0;
             int weight;
             GrouperKSGPosition pos = null;
-            int ksgDuration = getKsgDuration(entry.getCalendarDays());
+            int ksgDuration = getKsgDuration(entry.getBedDays());
             GrouperKSGPosition therapicKsgPosition = null;
             GrouperKSGPosition surgicalKsgPosition = null;
             GrouperKSGPosition cancerKsgPosition = null;
@@ -2332,14 +2332,15 @@ public class Expert2ServiceBean implements IExpert2Service {
      * 3 - 11-20 дней
      * 4 - 21-30 дней
      *
-     * @param calendarDays кол-во календарных дней госпитализации
+     * @param daysCount кол-во дней госпитализации
      * @return Длительность КСГ
      */
-    private int getKsgDuration(Long calendarDays) {
-        return calendarDays < 4 ? 1
-                : calendarDays < 11 ? 2
-                : calendarDays < 21 ? 3
-                : calendarDays < 31 ? 4 : 0;
+    private int getKsgDuration(Long daysCount) {
+        return daysCount < 4 ? 1
+                : daysCount < 11 ? 2
+                : daysCount < 21 ? 3
+                : daysCount < 31 ? 4
+                : 0;
     }
 
     /**
