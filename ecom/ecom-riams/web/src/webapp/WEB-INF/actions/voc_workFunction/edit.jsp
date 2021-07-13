@@ -45,6 +45,9 @@
         <msh:row>
           <msh:checkBox property="isSuitForCovid" label="Можно назначать в инфекционном?"/>
         </msh:row>
+        <msh:row>
+          <msh:checkBox property="isNotSuitForTreatDoctor" label="Не может быть лечащим врачом"/>
+        </msh:row>
         <msh:submitCancelButtonsRow colSpan="2" />
       </msh:panel>
     </msh:form>

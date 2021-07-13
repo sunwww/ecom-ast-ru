@@ -13,85 +13,139 @@ import java.util.List;
 
 /**
  * Рабочая функция
- * @author azviagin
  *
+ * @author azviagin
  */
 @Comment("Рабочая функция")
 @Entity
-@Table(schema="SQLUser")
+@Table(schema = "SQLUser")
 @Getter
 @Setter
-public class VocWorkFunction extends VocBaseEntity{
+public class VocWorkFunction extends VocBaseEntity {
 
-	/** Специальность по справочнику V021 */
-	@Comment("Специальность по справочнику V021")
-	@OneToOne
-	public VocE2FondV021 getFondSpeciality() {return fondSpeciality;}
-	/** Специальность по справочнику V021 */
-	private VocE2FondV021 fondSpeciality ;
-	
-	/** Должности */
-	@Comment("Должности")
-	@ManyToOne
-	public VocPost getVocPost() {
-		return vocPost;
-	}
+    /**
+     * Специальность по справочнику V021
+     */
+    @Comment("Специальность по справочнику V021")
+    @OneToOne
+    public VocE2FondV021 getFondSpeciality() {
+        return fondSpeciality;
+    }
 
-	/** Должности */
-	private VocPost vocPost;
+    /**
+     * Специальность по справочнику V021
+     */
+    private VocE2FondV021 fondSpeciality;
 
-	/** Мед. услуги */
-	@Comment("Мед. услуги")
-	@OneToMany(mappedBy="vocWorkFunction", cascade=CascadeType.ALL)
-	public List<WorkFunctionService> getWorkFunctionServices() {
-		return workFunctionServices;
-	}
+    /**
+     * Должности
+     */
+    @Comment("Должности")
+    @ManyToOne
+    public VocPost getVocPost() {
+        return vocPost;
+    }
 
-	/** Мед. услуги */
-	private List<WorkFunctionService> workFunctionServices;
+    /**
+     * Должности
+     */
+    private VocPost vocPost;
 
-	/** Короткое название */
-	private String shortName;
-	
-	/** Не заполняется диагноз */
-	private Boolean isNoDiagnosis;
-	
-	/** Создавать заголовок в дневнике */
-	@Comment("Создавать заголовок в дневнике")
-	@Column(nullable=false, columnDefinition="boolean default false")
-	public Boolean getIsDiaryTitle() {return isDiaryTitle;}
-	private Boolean isDiaryTitle ;
+    /**
+     * Мед. услуги
+     */
+    @Comment("Мед. услуги")
+    @OneToMany(mappedBy = "vocWorkFunction", cascade = CascadeType.ALL)
+    public List<WorkFunctionService> getWorkFunctionServices() {
+        return workFunctionServices;
+    }
 
-	/** Лучевая диагностика */
-	private Boolean isRadiationDiagnosis;
-	/** Лаборатория */
-	private Boolean isLab;
-	/** Функциональная диагностика */
-	private Boolean isFuncDiag;
-	
-	/** Не включать в 039 форму */
-	private Boolean isNo039;
+    /**
+     * Мед. услуги
+     */
+    private List<WorkFunctionService> workFunctionServices;
 
-	/** Короткое название ФСС*/
-	private String fSSShortName;
+    /**
+     * Короткое название
+     */
+    private String shortName;
 
-	/** Код ФСС */
-	private String fSSCode;
+    /**
+     * Не заполняется диагноз
+     */
+    private Boolean isNoDiagnosis;
 
-	private String promedCode_polic;
-	private String promedCode_stac;
+    /**
+     * Создавать заголовок в дневнике
+     */
+    @Comment("Создавать заголовок в дневнике")
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    public Boolean getIsDiaryTitle() {
+        return isDiaryTitle;
+    }
+
+    private Boolean isDiaryTitle;
+
+    /**
+     * Лучевая диагностика
+     */
+    private Boolean isRadiationDiagnosis;
+    /**
+     * Лаборатория
+     */
+    private Boolean isLab;
+    /**
+     * Функциональная диагностика
+     */
+    private Boolean isFuncDiag;
+
+    /**
+     * Не включать в 039 форму
+     */
+    private Boolean isNo039;
+
+    /**
+     * Короткое название ФСС
+     */
+    private String fSSShortName;
+
+    /**
+     * Код ФСС
+     */
+    private String fSSCode;
+
+    private String promedCode_polic;
+    private String promedCode_stac;
 
 
-	/** Не подавать по ОМС */
-	private Boolean isNoOmc=false ;
+    /**
+     * Не подавать по ОМС
+     */
+    private Boolean isNoOmc = false;
 
-	/** Профиль медицинской помощи */
-	@Comment("Профиль медицинской помощи")
-	@OneToOne
-	public VocE2MedHelpProfile getMedHelpProfile() {return medHelpProfile;}
-	/** Профиль медицинской помощи */
-	private VocE2MedHelpProfile medHelpProfile ;
+    /**
+     * Профиль медицинской помощи
+     */
+    @Comment("Профиль медицинской помощи")
+    @OneToOne
+    public VocE2MedHelpProfile getMedHelpProfile() {
+        return medHelpProfile;
+    }
 
-	/** Можно назначать в инфекционном?? */
-	private Boolean isSuitForCovid;
+    /**
+     * Профиль медицинской помощи
+     */
+    private VocE2MedHelpProfile medHelpProfile;
+
+    /**
+     * Можно назначать в инфекционном?
+     */
+    private Boolean isSuitForCovid;
+
+    /**
+     * Не может быть лечащим врачом
+     */
+    private Boolean isNotSuitForTreatDoctor;
+
+
 }
