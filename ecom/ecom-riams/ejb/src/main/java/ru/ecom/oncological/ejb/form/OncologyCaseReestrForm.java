@@ -106,6 +106,10 @@ public class OncologyCaseReestrForm extends IdEntityForm {
         return isDistantMetastasis;
     }
 
+    public void setDistantMetastasis(Boolean isDistantMetastasis) {
+        this.isDistantMetastasis = isDistantMetastasis;
+    }
+
     @Persist
     public String getSumDose() {
         return sumDose;
@@ -114,6 +118,10 @@ public class OncologyCaseReestrForm extends IdEntityForm {
     @Persist
     public Boolean getSuspicionOncologist() {
         return isSuspicionOncologist;
+    }
+
+    public void setSuspicionOncologist(Boolean suspicionOncologist) {
+        this.isSuspicionOncologist = suspicionOncologist;
     }
 
     @Persist
