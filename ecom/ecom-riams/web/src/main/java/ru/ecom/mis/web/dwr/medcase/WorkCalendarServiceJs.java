@@ -2018,7 +2018,7 @@ public class WorkCalendarServiceJs {
                 " left join workfunction wf on wf.worker_id=w.id" +
                 " where wf.id=" + wfId);
         if (!list.isEmpty() && list.iterator().next().get1() != null) {
-            String snils = list.iterator().next().get1().toString().replace(" ","");
+            String snils = list.iterator().next().get1().toString().replace(" ", "");
             if (!"".equals(snils)) {
                 IDisabilityService service1 = Injection.find(aRequest).getService(IDisabilityService.class);
                 String endpoint = service1.getSoftConfigValue("PROMEDATOR", "null");
@@ -2035,5 +2035,24 @@ public class WorkCalendarServiceJs {
             }
         }
         return "Не удалось обновить коды!";
+    }
+
+    /**
+     * Сделать заведующим отделения #264
+     *
+     * @param wfId     String WorkFunction.id
+     * @param aRequest HttpServletRequest
+     */
+    public void makeZav(String wfId, HttpServletRequest aRequest) throws NamingException {
+        IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
+        service.executeUpdateNativeSql("update workfunction set isadministrator = true where id = " + wfId);
+        service.executeUpdateNativeSql("update workfunction set isadministrator=false" +
+                " where id in (select distinct wf.id from workfunction wf" +
+                " left join worker w on wf.worker_id=w.id" +
+                " left join worker wnow on wnow.lpu_id=(" +
+                " select distinct w.lpu_id from worker w" +
+                " left join workfunction wf on wf.worker_id=w.id" +
+                " where wf.id=" + wfId + " limit 1)" +
+                " where w.lpu_id =wnow.lpu_id and w.id<>wnow.id and wf.id<>" + wfId + ")");
     }
 }

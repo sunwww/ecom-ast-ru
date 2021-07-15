@@ -2315,7 +2315,7 @@
                 parent="  (w.lpu_id=:parent) "
                 names="case when wf.code is null then '' else wf.code||' ' end || vwf.name||' '|| p.lastname||' '||p.firstname||' '||p.middlename "
                 queried=" (cast(wf.id as varchar(10)) like :querId or wf.code like :querId or p.lastname like UPPER(:query)) "
-                queryAppend="wf.DTYPE ='PersonalWorkFunction' and (wf.archival is null or cast(wf.archival as integer)=0)"
+                queryAppend="wf.DTYPE ='PersonalWorkFunction' and (wf.archival is null or cast(wf.archival as integer)=0) and (vwf.isNotSuitForTreatDoctor is null or cast(vwf.isNotSuitForTreatDoctor as integer)=0)"
                 order=''
                 nameId='wf.id'
                 join='left join Worker as w on w.id=wf.worker_id left join Patient as p on p.id=w.person_id inner join VocWorkFunction vwf on vwf.id=wf.workFunction_id '

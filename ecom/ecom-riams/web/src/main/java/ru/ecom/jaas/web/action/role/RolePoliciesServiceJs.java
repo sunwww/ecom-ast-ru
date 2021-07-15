@@ -77,9 +77,9 @@ public class RolePoliciesServiceJs  {
 	 * @param username String Логин
      * @param aUserId Long Пользователь (при добавлении раб функций через Пользователей)
 	 */
-	public String addUserToHospShort(Long aPatientId, Long aLpuId, Long avWfId, String newPsw,  Long userCopy, String username, Long aUserId, HttpServletRequest aRequest) throws NamingException, IOException {
+	public String addUserToHospShort(Long aPatientId, Long aLpuId, Long avWfId, String newPsw,  Long userCopy, String username, Long aUserId, Boolean isAdmin, HttpServletRequest aRequest) throws NamingException, IOException {
 		ISecUserService service = (ISecUserService) Injection.find(aRequest).getService("SecUserService");
-		return service.addUserToHospShort(aPatientId, aLpuId, avWfId, newPsw, userCopy, username, aUserId);
+		return service.addUserToHospShort(aPatientId, aLpuId, avWfId, newPsw, userCopy, username, aUserId, isAdmin);
 	}
 
 	/**

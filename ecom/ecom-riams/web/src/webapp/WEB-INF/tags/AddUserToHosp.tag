@@ -23,6 +23,8 @@
         <u>роли</u>.</h4>
     <h4>(можно просто сбросить пароль/скопировать роли/создать пользователя/создать рабочую функцию/всё вместе)</h4>
     <h4>Экспорт ролей может занять некоторое время</h4>
+    <h4>Настроить завед./начальник можно только в случае создания новой рабочей функции!</h4>
+    <h4>В другом случае нужно настраивать через Рабочие функции или Пользователи</h4>
     <table width="100%" cellspacing="10" cellpadding="10" border="1">
     </table>
     <div>
@@ -46,6 +48,10 @@
                 <msh:row>
                     <msh:comboBox size='300' horizontalFill="true" property='${name}vocWorkFunction'
                                   vocName="vocWorkFunction" label='Рабочая функция:'/>
+                </msh:row>
+                <msh:row>
+                    <br><label><input name="${name}IsAdmin" id="${name}IsAdmin"
+                                      type="checkbox"/>Заведующий/начальник?</label><br>
                 </msh:row>
                 <msh:row>
                     <msh:textField property="${name}Psw" label="Пароль" fieldColSpan="3"/>
@@ -119,12 +125,14 @@
         var psw = $('${name}Psw').value;
         var userCopy = $('${name}userCopy').value;
 
+        var isAdmin = jQuery("#${name}IsAdmin").prop("checked");
+
         if (+'${alreadyUser}') {  //создание
             if (!isNaN(lpu) && !isNaN(vwf) && (lpu != 0 && vwf != 0 || psw != '' || userCopy != '')) {
                 RolePoliciesService.getPatientBySecUser(ID, {
                     callback: function (patientId) {
                         if (patientId) {
-                            RolePoliciesService.addUserToHospShort(patientId, lpu, vwf, psw, userCopy, '', ID, {//пустой логин, т.к. он тут не нужен
+                            RolePoliciesService.addUserToHospShort(patientId, lpu, vwf, psw, userCopy, '', ID, isAdmin, {//пустой логин, т.к. он тут не нужен
                                 callback: function (msg) {
                                     showToastMessage(msg, null, true, false, 6000);
                                     if (typeof checkLogin !== 'undefined')  //вывод логина
@@ -144,17 +152,17 @@
             showToastMessage('Если введён логин, то необходимо выбрать отделение и должность!', null, true, true, 5000);
             $('${name}Add').disabled = false;
             return;
-        }  else if (login != '' && !jQuery("input[name='${name}rad']")[0].checked && !jQuery("input[name='${name}rad']")[1].checked) {
+        } else if (login != '' && !jQuery("input[name='${name}rad']")[0].checked && !jQuery("input[name='${name}rad']")[1].checked) {
             showToastMessage('Если введён логин, то необходимо установить пароль!', null, true, true, 5000);
             $('${name}Add').disabled = false;
             return;
-        }else if (!isNaN(lpu) && lpu != 0 && (isNaN(vwf) || vwf == 0)
+        } else if (!isNaN(lpu) && lpu != 0 && (isNaN(vwf) || vwf == 0)
             || !isNaN(vwf) && vwf != 0 && (isNaN(lpu) || lpu == 0)) {
             showToastMessage('Нельзя выбрать только отделение или только должность!', null, true, true, 5000);
             $('${name}Add').disabled = false;
             return;
         } else if (login != '' || lpu != 0 || psw != '' || userCopy != 0) {
-            RolePoliciesService.addUserToHospShort(ID, lpu, vwf, psw, userCopy, login, null, {
+            RolePoliciesService.addUserToHospShort(ID, lpu, vwf, psw, userCopy, login, null, isAdmin, {
                 callback: function (msg) {
                     showToastMessage(msg, null, true, false, 6000);
                     if (typeof checkLogin !== 'undefined')  //вывод логина

@@ -32,11 +32,12 @@ public class Expert2ServiceJs {
     public void exportHospLeaveToAlkona(Long entryListId, HttpServletRequest request) throws NamingException {
         Injection.find(request).getService(IExpert2AlkonaService.class).exportHospLeaveToAlkona(entryListId);
     }
+
     //Выписку одного случая в Алькону
     public String exportHospLeaveEntryToAlkona(Long entryId, HttpServletRequest request) throws NamingException {
         String ret = Injection.find(request).getService(IExpert2AlkonaService.class).exportHospLeaveEntryToAlkona(entryId);
         LOG.info(ret);
-       return ret;
+        return ret;
     }
 
     //госпитализации по заполнению в алькону
@@ -46,7 +47,7 @@ public class Expert2ServiceJs {
 
     //Одну госпитализацию в Алькону
     public String exportHospEntryToAlkona(Long entryId, HttpServletRequest request) throws NamingException {
-       return Injection.find(request).getService(IExpert2AlkonaService.class).exportHospEntryToAlkona(entryId);
+        return Injection.find(request).getService(IExpert2AlkonaService.class).exportHospEntryToAlkona(entryId);
     }
 
     public static String getMedcaseCost(Long medcaseId, HttpServletRequest request) throws NamingException {
@@ -272,6 +273,21 @@ public class Expert2ServiceJs {
         sql.append("update e2entry e set ");
         IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
         switch (fldName) {
+            case "OTHER_FOR_ERROR": //Изменить поток обслуживания по дефекту(поток : дефект/номер_счета
+                String[] vals = newValue.split("/");
+                String sanctionCode = vals[0].trim();
+                String bill = vals.length > 1 ? vals[1].trim() : null;
+                sql.append("servicestream ='").append(aOldValue).append("'" +
+                        " from e2entrysanction es" +
+                        " where es.entry_id = e.id and es.dopcode ='").append(sanctionCode).append("' and e.listentry_id =")
+                .append(entryListId);
+                if (bill != null) {
+                    sql.append(" and e.billnumber ='").append(bill).append("'");
+                }
+                return "Изменен поток обслуживания по дефекту "
+                        + sanctionCode
+                        + (bill != null ? " и счету " + bill : " ")
+                        + ": " + service.executeUpdateNativeSql(sql.toString());
             case "SERVICESTREAM":
                 fieldName = "serviceStream";
                 break;

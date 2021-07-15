@@ -31,6 +31,7 @@ import java.util.List;
         , @AIndex(properties = {"finishDate"})
         , @AIndex(properties = {"serviceStream"})
         , @AIndex(properties = {"parentEntry"})
+        , @AIndex(properties = {"reanimationEntry"})
 
 })
 @NamedQueries({

@@ -1501,7 +1501,9 @@ public class Expert2ServiceBean implements IExpert2Service {
                 break;
             case EXTDISPTYPE:
                 //определяемся что ДД будем получать только с элмеда, VIDSLUCH уже есть
-                code = EXTDISPTYPE + "_" + (entry.getVidSluch() != null ? entry.getVidSluch().getCode() : "VIDSLUCH");
+                code = (entry.getSubType() != null
+                        ? entry.getSubType().getCode()
+                        : EXTDISPTYPE + "_" + (entry.getVidSluch() != null ? entry.getVidSluch().getCode() : "VIDSLUCH"));
                 fileType = "DV";
 
                 break;
@@ -2149,7 +2151,12 @@ public class Expert2ServiceBean implements IExpert2Service {
                         cancerDiagnosis = d;
                     } else if (mkbClass == 'C') {
                         findCDiagnosis = true;
+                    } else if (mkbClass == 'I') {
+                        cancerDiagnosisSql = " or gkp.mainmkb='I.'";
                     }
+                }
+                if (!cancerDiagnosisSql.equals("")) {
+                    mainDiagnosis.add("I.");
                 }
                 if (isCancer) {
                     if (cancerDiagnosis != null) { //Костыль по нахождению Д в интервале, TODO переделать на нормальное нахождение диагноза в интервале
@@ -2217,7 +2224,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             int maxWeight = 0;
             int weight;
             GrouperKSGPosition pos = null;
-            int ksgDuration = getKsgDuration(entry.getCalendarDays());
+            int ksgDuration = getKsgDuration(entry.getBedDays());
             GrouperKSGPosition therapicKsgPosition = null;
             GrouperKSGPosition surgicalKsgPosition = null;
             GrouperKSGPosition cancerKsgPosition = null;
@@ -2327,14 +2334,15 @@ public class Expert2ServiceBean implements IExpert2Service {
      * 3 - 11-20 дней
      * 4 - 21-30 дней
      *
-     * @param calendarDays кол-во календарных дней госпитализации
+     * @param daysCount кол-во дней госпитализации
      * @return Длительность КСГ
      */
-    private int getKsgDuration(Long calendarDays) {
-        return calendarDays < 4 ? 1
-                : calendarDays < 11 ? 2
-                : calendarDays < 21 ? 3
-                : calendarDays < 31 ? 4 : 0;
+    private int getKsgDuration(Long daysCount) {
+        return daysCount < 4 ? 1
+                : daysCount < 11 ? 2
+                : daysCount < 21 ? 3
+                : daysCount < 31 ? 4
+                : 0;
     }
 
     /**
