@@ -125,11 +125,19 @@ function saveCabinet(aForm, aEntity, aCtx) {
 //Начальник ЛПУ может быть только один
 function stayAdminUnique(aForm, aEntity, aCtx) {
     if (+aForm.getIsAdministrator() == 1) {
+        // aCtx.manager.createNativeQuery("update workfunction set isadministrator=false" +
+        //     " where id in (select wf.id from workfunction wf" +
+        //     " left join worker w on wf.worker_id=w.id" +
+        //     " left join worker wnow on wnow.id=" + aForm.getWorker() +
+        //     " where w.lpu_id =wnow.lpu_id and w.id<>wnow.id)").executeUpdate();
         aCtx.manager.createNativeQuery("update workfunction set isadministrator=false" +
-            " where id in (select wf.id from workfunction wf" +
+            " where id in (select distinct wf.id from workfunction wf" +
             " left join worker w on wf.worker_id=w.id" +
-            " left join worker wnow on wnow.id=" + aForm.getWorker() +
-            " where w.lpu_id =wnow.lpu_id and w.id<>wnow.id)").executeUpdate();
+            " left join worker wnow on wnow.lpu_id=(" +
+            " select distinct w.lpu_id from worker w" +
+            " left join workfunction wf on wf.worker_id=w.id" +
+            " where wf.id=" + aEntity.id + " limit 1)" +
+            " where w.lpu_id =wnow.lpu_id and w.id<>wnow.id and wf.id<>" + aEntity.id + ")").executeUpdate();
     }
 }
 
