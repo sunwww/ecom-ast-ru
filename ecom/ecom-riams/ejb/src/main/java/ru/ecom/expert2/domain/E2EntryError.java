@@ -13,47 +13,69 @@ import javax.persistence.PrePersist;
 
 @Entity
 @AIndexes({
-        @AIndex(properties= {"listEntry"})
-        , @AIndex(properties= {"errorCode"})
+        @AIndex(properties = {"listEntry"})
+        , @AIndex(properties = {"errorCode"})
+        , @AIndex(properties = {"entry"})
 })
 @Getter
 @Setter
 public class E2EntryError extends BaseEntity {
 
-    /** Заполнение с ошибкой */
+    /**
+     * Заполнение с ошибкой
+     */
     @OneToOne
-    public E2ListEntry getListEntry() {return listEntry;}
+    public E2ListEntry getListEntry() {
+        return listEntry;
+    }
+
     private E2ListEntry listEntry;
 
-    /** Случай */
+    /**
+     * Случай
+     */
     @ManyToOne
-    public E2Entry getEntry() {return entry;}
+    public E2Entry getEntry() {
+        return entry;
+    }
+
     private E2Entry entry;
 
-    /** Удаленная запись */
+    /**
+     * Удаленная запись
+     */
     private Boolean isDeleted;
 
     @PrePersist
-    void onPrePesist(){
-        if (isDeleted ==null) {
-            isDeleted =false;}
+    void onPrePesist() {
+        if (isDeleted == null) {
+            isDeleted = false;
+        }
     }
 
-    /** Код ошибки */
+    /**
+     * Код ошибки
+     */
     private String errorCode;
-    public E2EntryError(){}
-    public E2EntryError(E2Entry aEntry, String aCode) {
-        this.entry =aEntry;
-        this.errorCode =aCode;
-        this.listEntry =aEntry.getListEntry();
+
+    public E2EntryError() {
     }
+
+    public E2EntryError(E2Entry aEntry, String aCode) {
+        this.entry = aEntry;
+        this.errorCode = aCode;
+        this.listEntry = aEntry.getListEntry();
+    }
+
     public E2EntryError(E2Entry aEntry, String aCode, String aComment) {
-        this.entry =aEntry;
-        this.errorCode =aCode;
-        this.listEntry =aEntry.getListEntry();
+        this.entry = aEntry;
+        this.errorCode = aCode;
+        this.listEntry = aEntry.getListEntry();
         comment = aComment;
     }
 
-    /** Примечание */
-    private String comment ;
+    /**
+     * Примечание
+     */
+    private String comment;
 }
