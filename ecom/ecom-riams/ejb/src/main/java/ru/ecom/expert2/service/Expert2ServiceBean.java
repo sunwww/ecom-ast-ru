@@ -1501,7 +1501,9 @@ public class Expert2ServiceBean implements IExpert2Service {
                 break;
             case EXTDISPTYPE:
                 //определяемся что ДД будем получать только с элмеда, VIDSLUCH уже есть
-                code = EXTDISPTYPE + "_" + (entry.getVidSluch() != null ? entry.getVidSluch().getCode() : "VIDSLUCH");
+                code = (entry.getSubType() != null
+                        ? entry.getSubType().getCode()
+                        : EXTDISPTYPE + "_" + (entry.getVidSluch() != null ? entry.getVidSluch().getCode() : "VIDSLUCH"));
                 fileType = "DV";
 
                 break;
