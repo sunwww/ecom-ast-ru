@@ -7,6 +7,7 @@ import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocCT;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationResult;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.patient.voc.VocYesNo;
 import ru.ecom.mis.ejb.domain.patient.voc.VocYesNoMaybe;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -19,146 +20,249 @@ import java.util.List;
 @Getter
 @Setter
 public class Covid19 extends BaseEntity {
-    /** Пациент */
+    /**
+     * Пациент
+     */
     @Comment("Пациент")
     @OneToOne
-    public Patient getPatient() {return patient;}
-    private Patient patient ;
+    public Patient getPatient() {
+        return patient;
+    }
 
-    /** СМО */
+    private Patient patient;
+
+    /**
+     * СМО
+     */
     @Comment("СМО")
     @OneToOne
-    public MedCase getMedCase() {return medCase;}
-    private MedCase medCase ;
+    public MedCase getMedCase() {
+        return medCase;
+    }
 
-    /** Номер ИБ */
-    private String cardNumber ;
+    private MedCase medCase;
 
-    /** Место работы, должность */
-    private String workPlace ;
-    
-    /** Дата появления клинических симптомов */
-    private Date symptomsDate ;
+    /**
+     * Номер ИБ
+     */
+    private String cardNumber;
 
-   /** Диагноз */
-   private String diagnosis ;
+    /**
+     * Место работы, должность
+     */
+    private String workPlace;
 
-   /** Дата постановки диагноза */
-   private Date diagnosisDate ;
+    /**
+     * Дата появления клинических симптомов
+     */
+    private Date symptomsDate;
 
-   /** Дата исследования на COVID */
-   private Date covidResearchDate ;
+    /**
+     * Диагноз
+     */
+    private String diagnosis;
 
-   /** МО, где проводилось ЛИ */
-   private String labOrganization ;
+    /**
+     * Дата постановки диагноза
+     */
+    private Date diagnosisDate;
 
-   /** Результаты лабораторных исследования */
-   private String labResult ;
+    /**
+     * Дата исследования на COVID
+     */
+    private Date covidResearchDate;
 
-    /** Номер анализа */
-    private String labResultNumber ;
+    /**
+     * МО, где проводилось ЛИ
+     */
+    private String labOrganization;
 
-   /** Вакцинация пневмококком */
-   @Comment("Вакцинация пневмококком")
-   @OneToOne
-   public VocYesNoMaybe getVacPnKok() {return vacPnKok;}
-   private VocYesNoMaybe vacPnKok ;
+    /**
+     * Результаты лабораторных исследования
+     */
+    private String labResult;
 
-   /** Вакцинация от гриппа */
-   @Comment("Вакцинация от гриппа")
-   @OneToOne
-   public VocYesNoMaybe getVacFlu() {return vacFlu;}
-   private VocYesNoMaybe vacFlu ;
-   
-   /** Беременность */
-   private Boolean isPregnant ;
-   
-   /** Противовирусное лечение */
-   @Comment("Противовирусное лечение")
-   @OneToOne
-   public VocYesNoMaybe getIsAntivirus() {return isAntivirus;}
-   private VocYesNoMaybe isAntivirus ;
-   
-   /** Респираторная поддержка */
-   @Comment("Респираторная поддержка")
-   @OneToOne
-   public VocYesNoMaybe getIsIvl() {return isIvl;}
-   private VocYesNoMaybe isIvl ;
-   
-   /** Хронические заболевания бронхолегочной системы */
-   private String soputBronho ;
+    /**
+     * Номер анализа
+     */
+    private String labResultNumber;
 
-   /** Хронические заболевания сердечно-сосудистой системы */
-   private String soputHeart ;
-   
-   /** Хронические заболевания эндокринной системы */
-   private String soputEndo ;
-   
-   /** Онкологические заболевания */
-   private String soputOnko ;
+    /**
+     * Вакцинация пневмококком
+     */
+    @Comment("Вакцинация пневмококком")
+    @OneToOne
+    public VocYesNoMaybe getVacPnKok() {
+        return vacPnKok;
+    }
 
-   /** Болезнь, вызванная ВИЧ */
-   private String soputSpid ;
-   
-   /** Туберкулез */
-   private String soputTuber ;
-   
-   /** Иные  */
-   private String soputOther ;
+    private VocYesNoMaybe vacPnKok;
 
-   /** Уровень SpO2(%)(на момент поступления) */
-   private String saturationLevel ;
+    /**
+     * Вакцинация от гриппа
+     */
+    @Comment("Вакцинация от гриппа")
+    @OneToOne
+    public VocYesNoMaybe getVacFlu() {
+        return vacFlu;
+    }
 
-   /** Контактные лица */
-   @Comment("Контактные лица")
-   @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
-   public List<Covid19Contact> getContactList() {return contactList;}
-   private List<Covid19Contact> contactList ;
+    private VocYesNoMaybe vacFlu;
 
-   /** Дата создания */
-   private Date createDate ;
+    /**
+     * Беременность
+     */
+    private Boolean isPregnant;
 
-   /** Время создания */
-   private Time createTime ;
+    /**
+     * Противовирусное лечение
+     */
+    @Comment("Противовирусное лечение")
+    @OneToOne
+    public VocYesNoMaybe getIsAntivirus() {
+        return isAntivirus;
+    }
 
-   /** Создатель */
-   private String createUsername ;
+    private VocYesNoMaybe isAntivirus;
 
-   /** Дата выгрузки на портал */
-   private Date exportDate ;
+    /**
+     * Респираторная поддержка
+     */
+    @Comment("Респираторная поддержка")
+    @OneToOne
+    public VocYesNoMaybe getIsIvl() {
+        return isIvl;
+    }
 
-   /** Время выгузки на портал */
-   private Time exportTime ;
+    private VocYesNoMaybe isIvl;
 
-   /** Пользователь, выгузивший на портал */
-   private String exportUsername ;
+    /**
+     * Хронические заболевания бронхолегочной системы
+     */
+    private String soputBronho;
 
-    /** Карта заменена на новую */
-    private Boolean noActual ;
+    /**
+     * Хронические заболевания сердечно-сосудистой системы
+     */
+    private String soputHeart;
 
-    /** Дата исхода */
-    private Date ishodDate ;
+    /**
+     * Хронические заболевания эндокринной системы
+     */
+    private String soputEndo;
 
-    /** Результат исхода */
+    /**
+     * Онкологические заболевания
+     */
+    private String soputOnko;
+
+    /**
+     * Болезнь, вызванная ВИЧ
+     */
+    private String soputSpid;
+
+    /**
+     * Туберкулез
+     */
+    private String soputTuber;
+
+    /**
+     * Иные
+     */
+    private String soputOther;
+
+    /**
+     * Уровень SpO2(%)(на момент поступления)
+     */
+    private String saturationLevel;
+
+    /**
+     * Контактные лица
+     */
+    @Comment("Контактные лица")
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
+    public List<Covid19Contact> getContactList() {
+        return contactList;
+    }
+
+    private List<Covid19Contact> contactList;
+
+    /**
+     * Дата создания
+     */
+    private Date createDate;
+
+    /**
+     * Время создания
+     */
+    private Time createTime;
+
+    /**
+     * Создатель
+     */
+    private String createUsername;
+
+    /**
+     * Дата выгрузки на портал
+     */
+    private Date exportDate;
+
+    /**
+     * Время выгузки на портал
+     */
+    private Time exportTime;
+
+    /**
+     * Пользователь, выгузивший на портал
+     */
+    private String exportUsername;
+
+    /**
+     * Карта заменена на новую
+     */
+    private Boolean noActual;
+
+    /**
+     * Дата исхода
+     */
+    private Date ishodDate;
+
+    /**
+     * Результат исхода
+     */
     @Comment("Результат исхода")
     @OneToOne
-    public VocHospitalizationResult getHospResult() {return hospResult;}
-    private VocHospitalizationResult hospResult ;
+    public VocHospitalizationResult getHospResult() {
+        return hospResult;
+    }
 
-    /** Диагноз */
+    private VocHospitalizationResult hospResult;
+
+    /**
+     * Диагноз
+     */
     @Comment("Диагноз")
     @OneToOne
-    public VocIdc10 getMkb() {return mkb;}
-    private VocIdc10 mkb ;
-    
-    /** Номер бригады СМП */
-    private String brigadeNumber ;
+    public VocIdc10 getMkb() {
+        return mkb;
+    }
 
-    /** Эпид. номер */
-    private String epidNumber ;
+    private VocIdc10 mkb;
 
-    /** Мед. работник */
-    private Boolean isDoctor ;
+    /**
+     * Номер бригады СМП
+     */
+    private String brigadeNumber;
+
+    /**
+     * Эпид. номер
+     */
+    private String epidNumber;
+
+    /**
+     * Мед. работник
+     */
+    private Boolean isDoctor;
 
     @PrePersist
     void onPrePersist() {
@@ -167,48 +271,151 @@ public class Covid19 extends BaseEntity {
         setCreateTime(new Time(createTime));
     }
 
-    /** Дата первичной выгрузки */
-    private Date exportFirstDate ;
-    
-    /** Время первичной выгрузки */
-    private Time exportFirstTime ;
+    /**
+     * Дата первичной выгрузки
+     */
+    private Date exportFirstDate;
 
-    /** Кто первичную выгрузил? */
-    private String exportFirstUsername ;
+    /**
+     * Время первичной выгрузки
+     */
+    private Time exportFirstTime;
 
-    /** Дата повторной выгрузки */
-    private Date exportDoubleDate ;
+    /**
+     * Кто первичную выгрузил?
+     */
+    private String exportFirstUsername;
 
-    /** Время повторной выгрузки */
-    private Time exportDoubleTime ;
+    /**
+     * Дата повторной выгрузки
+     */
+    private Date exportDoubleDate;
 
-    /** Кто повторную выгрузил? */
-    private String exportDoubleUsername ;
+    /**
+     * Время повторной выгрузки
+     */
+    private Time exportDoubleTime;
 
-    /** Дата выписной выгрузки */
-    private Date exportDischargeDate ;
+    /**
+     * Кто повторную выгрузил?
+     */
+    private String exportDoubleUsername;
 
-    /** Время выписной выгрузки */
-    private Time exportDischargeTime ;
+    /**
+     * Дата выписной выгрузки
+     */
+    private Date exportDischargeDate;
 
-    /** Кто при выписке выгрузил? */
-    private String exportDischargeUsername ;
+    /**
+     * Время выписной выгрузки
+     */
+    private Time exportDischargeTime;
 
-    /** Диагноз основной выписной */
+    /**
+     * Кто при выписке выгрузил?
+     */
+    private String exportDischargeUsername;
+
+    /**
+     * Диагноз основной выписной
+     */
     @Comment("Диагноз основной выписной")
     @OneToOne
-    public VocIdc10 getMkbDischarge() {return mkbDischarge;}
-    private VocIdc10 mkbDischarge ;
+    public VocIdc10 getMkbDischarge() {
+        return mkbDischarge;
+    }
 
-    /** КТ */
+    private VocIdc10 mkbDischarge;
+
+    /**
+     * КТ
+     */
     @Comment("КТ")
     @OneToOne
-    public VocCT getCt() {return ct;}
+    public VocCT getCt() {
+        return ct;
+    }
+
     private VocCT ct;
 
-    /** Дата проведения КТ */
-    private Date dateCT ;
+    /**
+     * Дата проведения КТ
+     */
+    private Date dateCT;
 
-    /** Место проведения КТ */
-    private String lpuCT ;
+    /**
+     * Место проведения КТ
+     */
+    private String lpuCT;
+
+    /**
+     * Была ли вакцинация от COVID-19
+     */
+    private VocYesNo vaccinated;
+
+    /**
+     * Сделан ли первый компонент вакцины
+     */
+    private VocYesNo firstVaccineСomponent;
+
+    /**
+     * Сделан ли второй компонент вакцины
+     */
+    private VocYesNo secondVaccineСomponent;
+
+    /**
+     * Сделана ли ревакцинация
+     */
+    private VocYesNo reVaccineСomponent;
+
+    /**
+     * Дата первого компонента вакцины
+     */
+    private Date dateFirstVaccine;
+
+    /**
+     * Дата второго компонента вакцины
+     */
+    private Date dateSecondVaccine;
+
+    /**
+     * Дата ревакцинации
+     */
+    private Date dateReVaccine;
+
+    /**
+     * Была ли вакцинация от COVID-19
+     */
+    @Comment("Была ли вакцинация от COVID-19")
+    @OneToOne
+    public VocYesNo getVaccinated() {
+        return vaccinated;
+    }
+
+    /**
+     * Сделан ли первый компонент вакцины
+     */
+    @Comment("Сделан ли первый компонент вакцины")
+    @OneToOne
+    public VocYesNo getFirstVaccineСomponent() {
+        return firstVaccineСomponent;
+    }
+
+    /**
+     * Сделан ли первый компонент вакцины
+     */
+    @Comment("Сделан ли первый компонент вакцины")
+    @OneToOne
+    public VocYesNo getSecondVaccineСomponent() {
+        return secondVaccineСomponent;
+    }
+
+    /**
+     * Сделана ли ревакцинация
+     */
+    @Comment("Сделан ли первый компонент вакцины")
+    @OneToOne
+    public VocYesNo getReVaccineСomponent() {
+        return reVaccineСomponent;
+    }
 }
