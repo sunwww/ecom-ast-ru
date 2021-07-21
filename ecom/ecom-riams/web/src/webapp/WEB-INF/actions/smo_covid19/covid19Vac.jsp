@@ -90,13 +90,14 @@ select distinct sls.id as f1_id
 ,to_char(c.dateSecondVaccine,'dd.MM.yyyy') as f11_dSec
 ,case when c.reVaccineСomponent_id=1 then 'Да' else 'Нет' end as f12_re
 ,to_char(c.dateReVaccine,'dd.MM.yyyy') as f13_dRe
-from medcase sls
+from medcase m
+left join MedCase sls on sls.id = m.parent_id
 left join Patient pat on pat.id=sls.patient_id
 left join covid19 c on c.medcase_id=sls.id
 left join VocHospitalizationResult vhr on vhr.id=sls.result_id
 left join mislpu dep on dep.id=sls.department_id
 left join statisticstub st on st.medcase_id=sls.id
-where c.vaccinated_id=1
+where c.vaccinated_id=1 and m.dtype='DepartmentMedCase'
     ${addSql}"/>
                 <msh:table name="list_covidVac" action="entityParentView-stac_ssl.do" openNewWindow="true"
                            printToExcelButton="Сохранить в excel" idField="1" noDataMessage="Не найдено">
