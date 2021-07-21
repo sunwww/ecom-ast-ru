@@ -95,9 +95,11 @@ left join MedCase sls on sls.id = m.parent_id
 left join Patient pat on pat.id=sls.patient_id
 left join covid19 c on c.medcase_id=sls.id
 left join VocHospitalizationResult vhr on vhr.id=sls.result_id
-left join mislpu dep on dep.id=sls.department_id
+left join mislpu dep on dep.id=m.department_id
 left join statisticstub st on st.medcase_id=sls.id
 where c.vaccinated_id=1 and m.dtype='DepartmentMedCase'
+and m.id = (select max(id) from medcase m2 where dtype='DepartmentMedCase' and parent_id=sls.id)
+and c.id = (select max(id) from covid19 where medcase_id=sls.id)
     ${addSql}"/>
                 <msh:table name="list_covidVac" action="entityParentView-stac_ssl.do" openNewWindow="true"
                            printToExcelButton="Сохранить в excel" idField="1" noDataMessage="Не найдено">
