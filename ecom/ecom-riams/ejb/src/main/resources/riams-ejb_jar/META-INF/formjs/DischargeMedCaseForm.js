@@ -59,7 +59,12 @@ function totalDenialToEditDischargeAfter(aForm, aCtx) {
         .setParameter("aId", aForm.id)
         .getResultList();
     var isDenied = !isDeniedList.isEmpty() ? +isDeniedList.get(0) : null;
-    if (isDenied != null && +isDenied == 1)
+    //в будущем убрать EditAllAfterOut и умерших
+    var result = getObject(aCtx, +aForm.result, Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationResult); //результат госпит
+    if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAllAfterOut") && result != null && result.code == "11") {
+
+    }
+    else if (isDenied != null && +isDenied == 1 && !aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut"))
         throw "Изменение выписки невозможно, т.к. пациент уже выписан! Обратитесь в КЭО.";
 }
 
@@ -166,7 +171,12 @@ function onPreSave(aForm, aEntity, aCtx) {
             param.put("id", aForm.id);
             var check = aCtx.serviceInvoke("WorkerService", "checkPermission", param) + "";
 
-            if (+check == 0) {
+            //в будущем убрать EditAllAfterOut и умерших
+            /*var result = getObject(aCtx, +aForm.result, Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationResult); //результат госпит
+            if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAllAfterOut") && result != null && result.code == "11") {
+
+            }
+            else */if (+check == 0 && !aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut")) {
                 throw "У Вас стоит ограничение на дату выписки. Вы можете выписывать в течение " + cntHour + " часов.";
 
             }
@@ -201,8 +211,11 @@ function onPreSave(aForm, aEntity, aCtx) {
                 param.put("permission", "backdate");
                 param.put("id", aForm.id);
                 var check = aCtx.serviceInvoke("WorkerService", "checkPermission", param) + "";
+                //в будущем убрать EditAllAfterOut и умерших
+                if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAllAfterOut") && result != null && result.code == "11") {
 
-                if (+check == 0) {
+                }
+                else if (+check == 0) {
                     throw "У Вас стоит ограничение на дату выписки. Можно выписывать текущим числом любых пациентов " +
                     "или в течение заданного в настройках периода умерших/пациентов не инфекционных отделений!";
                 }

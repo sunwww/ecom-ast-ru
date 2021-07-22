@@ -794,17 +794,44 @@ public class TemplateProtocolJs {
     	 LoginInfo loginInfo = LoginInfo.find(aRequest.getSession()) ;
     	return loginInfo!=null ? loginInfo.getUsername() : "" ;
     }
-	/**
-	 * Проверить, может ли пользователь редактировать протокол (может, если он и есть создатель дневника)
-	 * или если он имеет роль на редактирование любых дневников.
-	 *
-	 * @param aUserCreate Создатель дневника
-	 * @param aRequest HttpServletRequest
-	 * @return boolean true - может, false - не может
-	 */
-    public boolean isCanEditProtocol(String aUserCreate, HttpServletRequest aRequest) throws JspException {
+
+    //если это умерший пациент  и пользователь с ролью
+	private Boolean checkEditAllAfterOutForDead(String aUserCreate, Long aDiaryId, HttpServletRequest aRequest) throws NamingException, JspException {
+		IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class) ;
+		Collection<WebQueryResult> res = service.executeNativeSql
+				("select case when dtype='DepartmentMedCase' then parent_id else 0 end,datefinish from medcase" +
+						" where id = (select medcase_id from diary where id = "+ aDiaryId + " )");
+		if (!res.isEmpty()) {
+			Long slsId = Long.valueOf(res.iterator().next().get1().toString());
+			Boolean isFinished = res.iterator().next().get2() != null;
+			if (!isFinished && getUsername(aRequest).equals(aUserCreate))
+				return true;
+			else if (slsId != 0L) {
+				res = service.executeNativeSql("select vhr.code from medcase sls left join vochospitalizationresult vhr on vhr.id=sls.result_id where sls.id=" + slsId);
+				if (!res.isEmpty()) {
+					WebQueryResult wqr = res.iterator().next();
+					if (wqr.get1()!=null && wqr.get1().toString().equals("11") && RolesHelper.checkRoles("/Policy/Mis/MedCase/Stac/Ssl/EditAllAfterOut", aRequest))
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+
+		/**
+         * Проверить, может ли пользователь редактировать протокол (может, если он и есть создатель дневника)
+         * или если он имеет роль на редактирование любых дневников.
+         * или это умерший пациент с момента создания дневника и пользователь с ролью (N часов проверяются в Form.js).
+         *
+         * @param aUserCreate Создатель дневника
+         * @param aDiaryId Дневник
+         * @param aRequest HttpServletRequest
+         * @return boolean true - может, false - не может
+         */
+    public boolean isCanEditProtocol(String aUserCreate, Long aDiaryId, HttpServletRequest aRequest) throws JspException, NamingException {
     	return (getUsername(aRequest).equals(aUserCreate))
-				|| RolesHelper.checkRoles(" /Policy/Mis/MedCase/Protocol/AllowEditAllProtocols", aRequest) ;
+				|| RolesHelper.checkRoles(" /Policy/Mis/MedCase/Protocol/AllowEditAllProtocols", aRequest)
+				|| checkEditAllAfterOutForDead(aUserCreate, aDiaryId, aRequest);
     }
 	/**
 	 * Получает единственное возможное значение разрешения по коду, в случае, если оно - единственное в справочнике

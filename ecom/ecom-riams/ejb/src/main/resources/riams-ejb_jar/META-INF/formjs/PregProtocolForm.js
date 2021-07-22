@@ -68,7 +68,7 @@ function onSave(aForm, aEntity, aCtx) {
     var username = aCtx.getSessionContext().getCallerPrincipal().getName();
     if (aForm.username != null && aForm.username != "" && !aForm.username.equals(username)) {
         if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/AllowEditAllProtocols"))
-            throw "У Вас стоит ограничение на редактрование данного протокола!" +
+            throw "У Вас стоит ограничение на редактирование данного протокола!" +
             "<br><br> Текущий пользователь: " + username + ", протокол был создан пользователем: " + aForm.username;
         else {
             //регистрация события

@@ -162,12 +162,12 @@
     	<msh:ifFormTypeAreViewOrEdit formName="smo_draftProtocolForm"><msh:ifFormTypeIsNotView formName="smo_draftProtocolForm">
     		<script type="text/javascript">
 
-    		TemplateProtocolService.isCanEditProtocol($('username').value,
+    		TemplateProtocolService.isCanEditProtocol($('username').value, ${param.id},
     			{
                     callback: function(aString) {
                     	//alert(aString) ;
                         if (+aString>0) {} else {
-                         	alert('У Вас стоит ограничение на редактрование данного протокола!');
+                         	alert('У Вас стоит ограничение на редактирование данного протокола!');
                          	window.location.href= "entityParentView-smo_draftProtocol.do?id=${param.id}";
                          }
                      }

@@ -545,12 +545,12 @@ horizontalFill="true" />
 						}
 						isEditable($('id').value);
 
-                        TemplateProtocolService.isCanEditProtocol($('username').value,
+                        TemplateProtocolService.isCanEditProtocol($('username').value, ${param.id},
                             {
                                 callback: function(aString) {
                                     //alert(aString);
                                     if (+aString>0) {} else {
-                                        alert('У Вас стоит ограничение на редактрование данного протокола!');
+                                        alert('У Вас стоит ограничение на редактирование данного протокола!');
                                         window.location.href= "entityParentView-smo_visitProtocol.do?id=${param.id}";
                                     }
                                 }
