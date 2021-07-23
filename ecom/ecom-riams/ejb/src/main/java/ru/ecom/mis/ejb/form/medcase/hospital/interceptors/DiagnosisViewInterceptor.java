@@ -22,7 +22,7 @@ public class DiagnosisViewInterceptor implements IFormInterceptor {
             MedCase mc = (parent instanceof DepartmentMedCase) ? parent.getParent() : parent;
             if (mc.getDateFinish() != null
                     //в будущем убрать
-                    && !checkEditAllAfterOutForDead((HospitalMedCase) parent, aContext)) {
+                    && !checkEditAllAfterOutForDead((HospitalMedCase) mc, aContext)) {
                 form.getPage();
                 form.setTypeViewOnly();
             }
