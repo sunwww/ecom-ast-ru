@@ -345,13 +345,11 @@ public class PatientServiceJs {
 
     public String getSexByOmccode(String omcCode, HttpServletRequest request) throws NamingException {
         IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
-        Collection<WebQueryResult> list = service.executeNativeSql("select id,name from vocSex where omcCode='" + omcCode + "'", 1);
-        if (list.isEmpty()) {
-            return "";
-        } else {
-            WebQueryResult wqr = list.iterator().next();
-            return wqr.get1() + "#" + wqr.get2();
-        }
+        return service.executeNativeSql("select id,name from vocSex where omcCode='" + omcCode + "'", 1).stream()
+                .findFirst()
+                .filter(wqr -> wqr.get1() != null)
+                .map(wqr -> wqr.get1() + "#" + wqr.get2())
+                .orElse("");
     }
 
     public void editColorType(Long patientId, String colorTypeCurrent, HttpServletRequest request) throws NamingException {
@@ -362,34 +360,26 @@ public class PatientServiceJs {
 
     public String getFactorByProfession(Long professionId, HttpServletRequest request) throws NamingException {
         IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
-        String sql = " select vdp.id,vdp.factorOfProduction from VocDocumentProfession vdp " +
-                " where  vdp.id='" + professionId + "'";
-        Collection<WebQueryResult> list = service.executeNativeSql(sql, 1);
-        if (!list.isEmpty()) {
-            WebQueryResult wqr = list.iterator().next();
-            if (wqr.get2() != null) {
-                return "" + wqr.get2();
-            }
-        }
-        return "";
+        String sql = "select vdp.id,vdp.factorOfProduction from VocDocumentProfession vdp " +
+                " where vdp.id='" + professionId + "'";
+        return service.executeNativeSql(sql, 1).stream().findFirst()
+                .filter(wqr -> wqr.get2() != null)
+                .map(wqr -> "" + wqr.get2())
+                .orElse("");
     }
 
     public String getCodefByRegIcForeign(Long areaId, Long companyId, HttpServletRequest request) throws NamingException {
         IWebQueryService service = Injection.find(request).getService(IWebQueryService.class);
-        String sql = " select smo.id,smo.name from Omc_SprSmo smo " +
+        String sql = " select smo.id,smo.name" +
+                " from Omc_SprSmo smo " +
                 " left join Omc_KodTer ter on ter.okato=smo.fondokato " +
                 " left join reg_ic com on com.ogrn=smo.voc_code " +
-                " where " +
-                " ter.id='" + areaId +
-                "' and com.id='" + companyId + "'";
-        Collection<WebQueryResult> list = service.executeNativeSql(sql, 1);
-        if (!list.isEmpty()) {
-            WebQueryResult wqr = list.iterator().next();
-            if (wqr.get1() != null) {
-                return wqr.get1() + "#" + wqr.get2();
-            }
-        }
-        return "";
+                " where ter.id=" + areaId +
+                " and com.id=" + companyId + " and smo.smoCode is not null and (smo.finishDate is null or smo.finishDate>=current_date)";
+        return service.executeNativeSql(sql, 1).stream().findFirst()
+                .filter(wqr -> wqr.get1() != null)
+                .map(wqr -> wqr.get1() + "#" + wqr.get2())
+                .orElse("");
     }
 
     public String getRegIcForeignByCodef(Long companyOgrn, HttpServletRequest request) throws NamingException {
@@ -399,25 +389,19 @@ public class PatientServiceJs {
                 " left join reg_ic com on com.ogrn=smo.voc_code " +
                 " where " +
                 " smo.id='" + companyOgrn + "'";
-        Collection<WebQueryResult> list = service.executeNativeSql(sql, 1);
-        if (!list.isEmpty()) {
-            WebQueryResult wqr = list.iterator().next();
-            if (wqr.get1() != null) {
-                return wqr.get1() + "#" + wqr.get2();
-            }
-        }
-        return "";
+        return service.executeNativeSql(sql, 1).stream().findFirst()
+                .filter(wqr -> wqr.get1() != null)
+                .map(wqr -> wqr.get1() + "#" + wqr.get2())
+                .orElse("");
     }
 
     public String getCodeByMedPolicyOmc(Long typeId, HttpServletRequest request) throws Exception {
-        IPatientService service = Injection.find(request).getService(IPatientService.class);
-        return service.getCodeByMedPolicyOmc(typeId);
+        return Injection.find(request).getService(IPatientService.class).getCodeByMedPolicyOmc(typeId);
 
     }
 
     public String getInfoVocForFond(String passportType, String address, String policy, HttpServletRequest request) throws Exception {
-        IPatientService service = Injection.find(request).getService(IPatientService.class);
-        return service.getInfoVocForFond(passportType, address, policy);
+        return Injection.find(request).getService(IPatientService.class).getInfoVocForFond(passportType, address, policy);
 
     }
 
@@ -433,13 +417,11 @@ public class PatientServiceJs {
     }
 
     public Object checkPatientByPolicy(Long patientId, String series, String number, HttpServletRequest request) throws Exception {
-        IPatientService service = Injection.find(request).getService(IPatientService.class);
-        return FondWebService.checkPatientByMedPolicy(request, getPatientInfo(patientId, service), series, number, patientId);
+        return FondWebService.checkPatientByMedPolicy(request, getPatientInfo(patientId, Injection.find(request).getService(IPatientService.class)), series, number, patientId);
     }
 
     public Object checkPatientByCommonNumber(Long paptientId, String commonNumber, HttpServletRequest request) throws Exception {
-        IPatientService service = Injection.find(request).getService(IPatientService.class);
-        return FondWebService.checkPatientByCommonNumber(request, getPatientInfo(paptientId, service), commonNumber, paptientId);
+        return FondWebService.checkPatientByCommonNumber(request, getPatientInfo(paptientId, Injection.find(request).getService(IPatientService.class)), commonNumber, paptientId);
     }
 
     public Object checkPatientBySnils(Long patientId, String snils, HttpServletRequest request) throws Exception {
