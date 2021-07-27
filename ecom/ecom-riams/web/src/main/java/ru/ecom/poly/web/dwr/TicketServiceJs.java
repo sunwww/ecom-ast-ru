@@ -671,7 +671,7 @@ public class TicketServiceJs {
                 return "1";
             }
         }
-        return "0#У Вас стоит ограничение на редактрование данного талона!";
+        return "0#У Вас стоит ограничение на редактирование данного талона!";
     }
 
     public boolean checkCreateDoubleBySpecAndDate(HttpServletRequest aRequest) throws Exception {

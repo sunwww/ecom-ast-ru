@@ -19,11 +19,19 @@ public class DiagnosisViewInterceptor implements IFormInterceptor {
         MedCase parent = aContext.getEntityManager().find(MedCase.class, form.getMedCase());
         if (!aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAfterOut") &&
                 parent instanceof HospitalMedCase) {
-            MedCase hmc = (parent instanceof DepartmentMedCase) ? parent.getParent() : parent;
-            if (hmc.getDateFinish() != null) {
+            MedCase mc = (parent instanceof DepartmentMedCase) ? parent.getParent() : parent;
+            if (mc.getDateFinish() != null
+                    //в будущем убрать
+                    && !checkEditAllAfterOutForDead((HospitalMedCase) mc, aContext)) {
                 form.getPage();
                 form.setTypeViewOnly();
             }
         }
+    }
+
+    //если роль + результат госп. - смерть
+    private boolean checkEditAllAfterOutForDead(HospitalMedCase hmc, InterceptorContext aContext) {
+        return aContext.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAllAfterOut")
+                && hmc.getResult() != null && "11".equals(hmc.getResult().getCode());
     }
 }

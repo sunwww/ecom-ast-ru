@@ -137,14 +137,29 @@ function onPreSave(aForm, aEntity, aCtx) {
     }
 }
 
+//если роль + результат госп. - смерть, либо не выписан
+function checkEditAllAfterOutForDead(aForm, aCtx) {
+    var sloId = aForm.medCase;
+    var res = aCtx.manager.createNativeQuery("select parent_id from medcase where dtype='DepartmentMedCase' and id = " + sloId).getResultList();
+    if (!res.isEmpty()) {
+        slsId = res.get(0);
+        var sls = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.HospitalMedCase, java.lang.Long.valueOf(slsId));
+        return (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAllAfterOut")
+            && sls != null && (sls.result != null && sls.result.code == "11" || sls.dateFinish == null));
+    }
+   return false;
+}
 /**
  * При сохранении
  */
 function onSave(aForm, aEntity, aCtx) {
     var username = aCtx.getSessionContext().getCallerPrincipal().getName();
     if (aForm.username != null && aForm.username != "" && !aForm.username.equals(username)) {
-        if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/AllowEditAllProtocols"))
-            throw "У Вас стоит ограничение на редактрование данного протокола!" +
+
+        if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/AllowEditAllProtocols")
+            //в будущем убрать
+            && !checkEditAllAfterOutForDead(aForm, aCtx))
+            throw "У Вас стоит ограничение на редактирование данного протокола!" +
             "<br><br> Текущий пользователь: " + username + ", протокол был создан пользователем: " + aForm.username;
         else {
             //регистрация события
@@ -260,6 +275,10 @@ function check(aForm, aCtx, isCreate) {
             if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Edit/EditAllProtocolsWithNoCheck")) {
                 var config = (dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') ? "count_hour_edit_hosp_protocol" : "count_hour_edit_protocol";
                 var cntHour = +getDefaultParameterByConfig(config, 24, aCtx);
+                //в будущем убрать
+                if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/EditAllAfterOut"))
+                    cntHour = +getDefaultParameterByConfig("count_EditAllAfterOut", 720, aCtx);
+
                 maxVisit.add(java.util.Calendar.HOUR, cntHour);
                 if (curDate.after(maxVisit) || t.get(0)[1] != null && !isCreate) {
                     var param1 = new java.util.HashMap();
@@ -277,9 +296,11 @@ function check(aForm, aCtx, isCreate) {
                         isCheck = aCtx.serviceInvoke("WorkerService", "checkPermission", param1) + "";
                         if (+isCheck !== 1 && ldm.isEmpty()) {
                             var tmpStr = (dtype === 'HospitalMedCase' || dtype === 'DepartmentMedCase') ? " госпитализации" : "";
-                            if (t.get(0)[1] == null && !aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Protocol/AllowEditAllProtocols"))
+
+                            if (t.get(0)[1] == null || (curDate.after(maxVisit))) //даже с ролью ограничение действует
                                 throw "У Вас стоит ограничение " + cntHour + " часов на редактирование протокола" + tmpStr + "!!!";
-                            else if (t.get(0)[1] != null)
+                            //в будущем убрать EditAllAfterOut и умерших
+                            else if (t.get(0)[1] != null && !checkEditAllAfterOutForDead(aForm, aCtx))
                                 throw "У Вас стоит ограничение на редактирование данных после выписки!!!";
                         }
                     }

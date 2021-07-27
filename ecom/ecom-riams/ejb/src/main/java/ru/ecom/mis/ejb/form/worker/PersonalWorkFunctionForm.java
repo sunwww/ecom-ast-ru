@@ -90,4 +90,20 @@ public class PersonalWorkFunctionForm extends WorkFunctionForm {
 	private Long worker;
 	/** Дополнительные групповые рабочие функции */
 	private String allGroups;
+
+	@Comment("Код рабочего места в промеде")
+	@Persist
+	public String getPromedCodeWorkstaff() {
+		return promedCodeWorkstaff;
+	}
+
+	private String promedCodeWorkstaff;
+
+
+	@Comment("Код отделения в промеде")
+	@Persist
+	public String getPromedCodeLpuSection() {
+		return promedCodeLpuSection;
+	}
+	private String promedCodeLpuSection;
 }

@@ -95,6 +95,12 @@
                 <msh:row>
                     <msh:separator label="Дополнительная информация" colSpan="4"/>
                 </msh:row>
+                <msh:ifInRole roles="/Policy/Mis/Worker/WorkCalendar/View">
+                    <msh:row>
+                        <msh:label property="promedCodeWorkstaff" label="promedCodeWorkstaff"/>
+                        <msh:label property="promedCodeLpuSection" label="promedCodeLpuSection"/>
+                    </msh:row>
+                </msh:ifInRole>
                 <msh:row>
                     <msh:label property="createDate" label="Дата создания"/>
                     <msh:label property="createTime" label="время"/>

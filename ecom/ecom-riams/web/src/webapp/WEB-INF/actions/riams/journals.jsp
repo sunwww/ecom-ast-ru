@@ -373,6 +373,11 @@
                                           roles="/Policy/Mis/MedCase/Covid19/View">
                                 Отчет - коронавирусные иногородние/иностранцы
                             </msh:link></li>
+                            <li>
+                                <msh:link isReport="true" action="covid19Vac.do"
+                                          roles="/Policy/Mis/MedCase/Covid19/View">
+                                    Отчёт по вакцинированным</msh:link>
+                            </li>
                             <li><msh:link isReport="true" action="/stac_admissionDoctorDiaryList.do"
                                           roles="/Policy/Mis/MedCase/Stac/Journal/HospitalByPeriod">
                                 Журнал пациентов, осмотренных врачами приемного отделения

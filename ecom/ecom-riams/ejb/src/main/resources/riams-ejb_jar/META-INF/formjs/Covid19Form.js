@@ -19,6 +19,15 @@ function onCreate(aForm, aEntity, aContext) {
     if (true == aEntity.isDoctor) {
         addBracelet(manager, "DOCTOR", aEntity, username);
     }
+    //отметка о вакцинации
+    if (aEntity.getVaccinated().getId()==1) {
+        if (aEntity.getReVaccineСomponent().getId()==1)
+            addBracelet(manager, "revac", aEntity, username);
+        else if (aEntity.getSecondVaccineСomponent().getId()==1)
+            addBracelet(manager, "vac2", aEntity, username);
+        else if (aEntity.getFirstVaccineСomponent().getId()==1)
+            addBracelet(manager, "vac1", aEntity, username);
+    }
 }
 
 function addBracelet(manager, code, aEntity, username) {
