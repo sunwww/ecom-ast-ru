@@ -1,7 +1,7 @@
 package ru.ecom.expomc.ejb.services.exportformat.driver;
 
 import org.apache.log4j.Logger;
-import ru.ecom.expomc.ejb.services.exportformat.AbstractExportFormatDriver;
+import ru.ecom.expomc.ejb.services.exportformat.IExportFormatDriver;
 import ru.ecom.expomc.ejb.services.exportformat.SaveXmlException;
 
 import javax.persistence.Entity;
@@ -20,7 +20,7 @@ import java.util.List;
  * @author ikouzmin 13.03.2007 16:52:47
  */
 
-public class DefaultExportDriver extends AbstractExportFormatDriver {
+public class DefaultExportDriver implements IExportFormatDriver {
     private static final Logger LOG = Logger.getLogger(DefaultExportDriver.class);
 
     protected boolean theNative;

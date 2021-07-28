@@ -27,7 +27,6 @@ public class BaseValidatorFormUtil {
     }
 
     public static ActionForm getForm(PageContext aContext) {
-        ActionForm form = (ActionForm) aContext.getAttribute(Constants.BEAN_KEY, PageContext.REQUEST_SCOPE);
-        return form ;
+        return (ActionForm) aContext.getAttribute(Constants.BEAN_KEY, PageContext.REQUEST_SCOPE);
     }
 }

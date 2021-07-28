@@ -331,7 +331,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
         Method[] methods = clazz.getMethods();
         for (Method method : methods) {
             if (method.isAnnotationPresent(PersistManyToManyOneProperty.class)) {
-                boolean isViewable = isEntityMethodDataAvailable(aEntity.getClass(), method, aId);
+                boolean isViewable = isEntityMethodDataAvailable(method, aId);
                 if (isViewable) {
                     String json = (String) method.invoke(aForm);
 
@@ -463,7 +463,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
         return findFormPersistance(aFormClass).clazz();
     }
 
-    private boolean isEntityMethodDataAvailable(Class aEntityClass, Method method, Object id) throws InstantiationException, IllegalAccessException {
+    private boolean isEntityMethodDataAvailable(Method method, Object id) throws InstantiationException, IllegalAccessException {
         boolean isViewable = true;
 
         if (method.isAnnotationPresent(ADynamicSecurityInterceptor.class)) {
@@ -500,7 +500,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
             baseValidatorForm = null;
         }
         for (Method method : formClass.getMethods()) {
-            boolean isViewable = isEntityMethodDataAvailable(entityClass, method, id);
+            boolean isViewable = isEntityMethodDataAvailable(method, id);
             if (!isViewable && baseValidatorForm != null) {
                 String name = PropertyUtil.getPropertyName(method);
                 baseValidatorForm.addPrivateField(name);
@@ -607,7 +607,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
         Object id = getIdValue(aForm, formClass);
 
         for (Method method : formClass.getMethods()) {
-            boolean isViewable = isEntityMethodDataAvailable(entityClass, method, id);
+            boolean isViewable = isEntityMethodDataAvailable(method, id);
             if (isViewable) {
                 if (method.isAnnotationPresent(PersistManyToManyOneProperty.class)) {
                     String json = (String) method.invoke(aForm);

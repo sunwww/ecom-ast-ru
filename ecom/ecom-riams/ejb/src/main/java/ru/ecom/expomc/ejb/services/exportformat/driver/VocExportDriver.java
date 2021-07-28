@@ -2,7 +2,7 @@ package ru.ecom.expomc.ejb.services.exportformat.driver;
 
 import ru.ecom.ejb.services.voc.helper.AllValueContext;
 import ru.ecom.ejb.services.voc.helper.IAllValue;
-import ru.ecom.expomc.ejb.services.exportformat.IExportFomatDriver;
+import ru.ecom.expomc.ejb.services.exportformat.IExportFormatDriver;
 import ru.ecom.expomc.ejb.services.exportformat.SaveXmlException;
 import ru.nuzmsh.util.voc.VocValue;
 
@@ -14,7 +14,7 @@ import java.util.Collection;
 /**
  * @author ikouzmin 14.03.2007 13:42:43
  */
-public class VocExportDriver implements IExportFomatDriver {
+public class VocExportDriver implements IExportFormatDriver {
 
     private Collection<VocValue> values;
 

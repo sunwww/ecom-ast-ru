@@ -6,7 +6,7 @@ package ru.ecom.expomc.ejb.services.exportformat;
 
 import java.io.Writer;
 
-public interface IExportFomatDriver {
+public interface IExportFormatDriver {
     void saveXml(StringBuilder s) throws SaveXmlException;
     void execute(int maxRecords);
     void saveXml(Writer writer) throws SaveXmlException;
