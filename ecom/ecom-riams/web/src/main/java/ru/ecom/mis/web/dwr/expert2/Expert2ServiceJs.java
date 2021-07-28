@@ -19,7 +19,6 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Collection;
 
 import static ru.nuzmsh.util.BooleanUtils.isTrue;
 import static ru.nuzmsh.util.StringUtil.isNotEmpty;
@@ -278,9 +277,9 @@ public class Expert2ServiceJs {
                 String sanctionCode = vals[0].trim();
                 String bill = vals.length > 1 ? vals[1].trim() : null;
                 sql.append("servicestream ='").append(aOldValue).append("'" +
-                        " from e2entrysanction es" +
-                        " where es.entry_id = e.id and es.dopcode ='").append(sanctionCode).append("' and e.listentry_id =")
-                .append(entryListId);
+                                " from e2entrysanction es" +
+                                " where es.entry_id = e.id and es.dopcode ='").append(sanctionCode).append("' and e.listentry_id =")
+                        .append(entryListId);
                 if (bill != null) {
                     sql.append(" and e.billnumber ='").append(bill).append("'");
                 }
@@ -471,11 +470,10 @@ public class Expert2ServiceJs {
     }
 
     private WebQueryResult getConfigString(String configValue, HttpServletRequest request) throws NamingException {
-        Collection<WebQueryResult> list = Injection.find(request).getService(IWebQueryService.class)
-                .executeNativeSql("select value from Expert2Config where code='" + configValue + "'");
-        return list.isEmpty() ? null : list.iterator().next();
-
-
+        return Injection.find(request).getService(IWebQueryService.class)
+                .executeNativeSql("select value from Expert2Config where code='" + configValue + "'").stream()
+                .findFirst()
+                .orElse(null);
     }
 
 }

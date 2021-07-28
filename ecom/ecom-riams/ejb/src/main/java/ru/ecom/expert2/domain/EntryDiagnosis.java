@@ -14,6 +14,7 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import java.util.Objects;
 
 /**
  * Список диагнозов по записи
@@ -90,4 +91,18 @@ public class EntryDiagnosis extends BaseEntity {
         vocIllnessPrimary = aEntryDiagnosis.getVocIllnessPrimary();
     }
     public EntryDiagnosis() {}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        EntryDiagnosis that = (EntryDiagnosis) o;
+        return Objects.equals(entry, that.entry) && Objects.equals(mkb, that.mkb) && Objects.equals(registrationType, that.registrationType) && Objects.equals(priority, that.priority) && Objects.equals(dopMkb, that.dopMkb) && Objects.equals(vocIllnessPrimary, that.vocIllnessPrimary) && Objects.equals(illnessPrimary, that.illnessPrimary);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), entry, mkb, registrationType, priority, dopMkb, vocIllnessPrimary, illnessPrimary);
+    }
 }

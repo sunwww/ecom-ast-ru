@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.Integer.parseInt;
+import static java.util.Objects.nonNull;
 import static ru.ecom.expert2.domain.voc.E2Enumerator.ALLTIMEHOSP;
 import static ru.ecom.expert2.domain.voc.E2Enumerator.DAYTIMEHOSP;
 import static ru.nuzmsh.util.BooleanUtils.isNotTrue;
@@ -482,7 +483,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         LOG.info("Разделяем иногородних по территории " + billNumber + " " + billDate + " " + territories);
         E2Bill bill = getBillEntryByDateAndNumber(billNumber, billDate, null);
         List<BigInteger> list = manager.createNativeQuery("select id from e2entry where listentry_id=:listId and substring(insurancecompanycode ,0,3) in (" + territories.toString() + ")" +
-                " and coalesce(isDeleted, false) = false and coalesce(doNotSend, false) = false ")
+                        " and coalesce(isDeleted, false) = false and coalesce(doNotSend, false) = false ")
                 .setParameter("listId", listEntryId).getResultList();
         for (BigInteger id : list) {
             E2Entry e = manager.find(E2Entry.class, id.longValue());
@@ -577,7 +578,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             manager.persist(newListEntry);
             for (String errorCode : errorCodes) {
                 List<BigInteger> list = manager.createNativeQuery("select err.entry_id from E2EntryError err " +
-                        " where err.listEntry_id=:id and err.errorCode=:errorCode")
+                                " where err.listEntry_id=:id and err.errorCode=:errorCode")
                         .setParameter("id", listEntryId).setParameter("errorCode", errorCode.trim()).getResultList();
                 LOG.info("creating errors [" + errorCode + "]... defect list size = " + list.size());
                 for (BigInteger entryId : list) {
@@ -596,8 +597,8 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
             for (String dopCode : sanctionCodes) {
                 List<BigInteger> list = manager.createNativeQuery("select es.entry_id from e2entrysanction es" +
-                        " left join e2entry ee on es.entry_id=ee.id " +
-                        " where ee.listEntry_id=:id and es.dopcode=:dopCode")
+                                " left join e2entry ee on es.entry_id=ee.id " +
+                                " where ee.listEntry_id=:id and es.dopcode=:dopCode")
                         .setParameter("id", listEntryId).setParameter("dopCode", dopCode.trim()).getResultList();
                 LOG.info("creating sanctions [" + dopCode + "]... defect list size = " + list.size());
                 for (BigInteger entryId : list) {
@@ -984,7 +985,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 throw new IllegalStateException("Необходимо указать ИД заполнения и ИД госпитализации");
             }
             List<E2Entry> entriesList = manager.createQuery("from E2Entry where listEntry_id=:listEntryId and externalParentId=:externalParentId " +
-                    "and (isDeleted is null or isDeleted='0') order by startdate, starttime")
+                            "and (isDeleted is null or isDeleted='0') order by startdate, starttime")
                     .setParameter("listEntryId", listEntryId).setParameter("externalParentId", hospitalMedcaseId).getResultList(); //Все СЛО по госпитализации, кроме уже объединенных
             if (entriesList.size() > 1) { //Работаем если только найдено больше 1 СЛО
                 E2Entry mainEntry = null;
@@ -1003,7 +1004,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     }
                     if ("4".equals(entry.getHelpKind())) { //В СЛС есть обсервационное отделение - запускаем функция по объединению родов! *27-12-2018
                         entriesList = manager.createQuery("from E2Entry where listEntry_id=:listEntryId and externalParentId=:externalParentId" +
-                                " and (isDeleted is null or isDeleted='0') order by startdate desc , starttime desc")
+                                        " and (isDeleted is null or isDeleted='0') order by startdate desc , starttime desc")
                                 .setParameter("listEntryId", listEntryId).setParameter("externalParentId", hospitalMedcaseId).getResultList(); //При склеивании родов склеиваем с конца
                         unionChildBirthHospital(entriesList);
                         return;
@@ -1168,10 +1169,10 @@ public class Expert2ServiceBean implements IExpert2Service {
         String key = bedType + "#" + bedSubType;
         if (!bedTypes.containsKey(key)) { //Если нет в карте - запускаем поиск
             List<BigInteger> list = manager.createNativeQuery("select link.profile_id from E2MedHelpProfileBedType link " +
-                    " left join VocE2FondV020 voc on voc.id = link.bedProfile_id " +
-                    " left join vocbedsubtype vbst on vbst.id=link.subType_id" +
-                    " where voc.code=:code and (vbst.id is null or vbst.code=:subTypeCode) " +
-                    "and coalesce(link.finishDate,current_date)>=:date")
+                            " left join VocE2FondV020 voc on voc.id = link.bedProfile_id " +
+                            " left join vocbedsubtype vbst on vbst.id=link.subType_id" +
+                            " where voc.code=:code and (vbst.id is null or vbst.code=:subTypeCode) " +
+                            "and coalesce(link.finishDate,current_date)>=:date")
                     .setParameter("code", bedType).setParameter("date", entry.getFinishDate())
                     .setParameter("subTypeCode", bedSubType)
                     .getResultList();
@@ -1774,16 +1775,15 @@ public class Expert2ServiceBean implements IExpert2Service {
             String diagnosisList = entry.getDiagnosisList();
             if (isNotLogicalNull(diagnosisList)) { //Создаем диагнозы для каждой записи
                 JSONArray diagnosiss = new JSONArray(diagnosisList);
-
-                String mkb, regType, priority;
                 boolean foundClinical = false, foundDischarge = false;
-                List<Long> clinicalIds = new ArrayList<>();
+                List<EntryDiagnosis> clinicalDiagnoses = new ArrayList<>();
                 boolean isCancer = false;
+                List<EntryDiagnosis> entryDiagnoses = new ArrayList<>();
                 for (int i = 0; i < diagnosiss.length(); i++) {
                     JSONObject ds = diagnosiss.getJSONObject(i);
-                    mkb = ds.getString("mkb");
-                    regType = ds.getString("registrationType");
-                    priority = ds.getString("priority");
+                    String mkb = ds.getString("mkb");
+                    String regType = ds.getString("registrationType");
+                    String priority = ds.getString("priority");
                     if (isCancerMkb(mkb, priority)) {
                         isCancer = true;
                     }
@@ -1828,18 +1828,18 @@ public class Expert2ServiceBean implements IExpert2Service {
                         if (isNotLogicalNull(vip))
                             diagnosis.setVocIllnessPrimary(getEntityByCode(vip, VocE2FondV027.class, false));
                     }
-                    if ((isLogicalNull(entry.getMainMkb())
+                    if (isLogicalNull(entry.getMainMkb())
                             && diagnosis.getRegistrationType() != null && diagnosis.getRegistrationType().getCode().equals("4")
-                            && diagnosis.getPriority() != null && diagnosis.getPriority().getCode().equals("1")) ||
-                            ((isOneOf(entry.getEntryType(), POLYCLINICTYPE, SERVICETYPE)) && diagnosis.getPriority() != null && diagnosis.getPriority().getCode().equals("1"))) {
+                            && diagnosis.getPriority() != null && diagnosis.getPriority().getCode().equals("1") ||
+                            isOneOf(entry.getEntryType(), POLYCLINICTYPE, SERVICETYPE) && diagnosis.getPriority() != null && diagnosis.getPriority().getCode().equals("1")) {
                         entry.setMainMkb(mkb);
                         manager.persist(entry);
                     }
                     String dopMkb = ds.getString("addMkb");
                     if (isNotLogicalNull(dopMkb)) diagnosis.setDopMkb(dopMkb);
-                    manager.persist(diagnosis);
+                    entryDiagnoses.add(diagnosis);
                     if (isClinical) {
-                        clinicalIds.add(diagnosis.getId());
+                        clinicalDiagnoses.add(diagnosis);
                     }
                 }
 
@@ -1847,13 +1847,34 @@ public class Expert2ServiceBean implements IExpert2Service {
                 if (isCancer) entry.setFileType("C");
                 manager.persist(entry);
                 if (foundClinical && foundDischarge) { //Если нашли и клинический и выписной диагноз - удаляем клинический.
-                    for (Long id : clinicalIds) {
-                        manager.createNativeQuery("delete from EntryDiagnosis where id=:id").setParameter("id", id).executeUpdate();
-                    }
+                    entryDiagnoses.removeAll(clinicalDiagnoses);
+                }
+                deleteDiagnosisDoubles(entryDiagnoses);
+                for (EntryDiagnosis d : entryDiagnoses) {
+                    manager.persist(d);
                 }
             }
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
+        }
+    }
+
+    //если есть основной и сопутствующий - удалим соп
+    private void deleteDiagnosisDoubles(List<EntryDiagnosis> diagnoses) {
+        if (isNotEmpty(diagnoses)) {
+            List<EntryDiagnosis> doubles = new ArrayList<>();
+            List<VocIdc10> mainMkbs = new ArrayList<>();
+            for (EntryDiagnosis d : diagnoses) {
+                if (nonNull(d.getPriority()) && isEquals(d.getPriority().getCode(), "1")) {
+                    mainMkbs.add(d.getMkb());
+                }
+            }
+            for (EntryDiagnosis d : diagnoses) {
+                if (mainMkbs.contains(d.getMkb()) && (d.getPriority() != null && !isEquals(d.getPriority().getCode(), "1"))) {
+                    doubles.add(d);
+                }
+            }
+            diagnoses.removeAll(doubles);
         }
     }
 
@@ -2490,10 +2511,10 @@ public class Expert2ServiceBean implements IExpert2Service {
                 BigDecimal cost;
                 if (!hospitalCostMap.containsKey(key)) {
                     List<BigDecimal> costs = manager.createNativeQuery("select coalesce(vmhc.cost, vkhc.cost)" +
-                            " from vockindhighcare vkhc " +
-                            " left join vocmethodhighcare vmhc on vmhc.kindhighcare = vkhc.code and :vmpDate between vmhc.dateFrom and coalesce(vmhc.dateTo,current_date)" +
-                            "where vkhc.code=:code " +
-                            "and :vmpDate between vkhc.dateFrom and coalesce(vkhc.dateTo,current_date) and vkhc.cost is not null")
+                                    " from vockindhighcare vkhc " +
+                                    " left join vocmethodhighcare vmhc on vmhc.kindhighcare = vkhc.code and :vmpDate between vmhc.dateFrom and coalesce(vmhc.dateTo,current_date)" +
+                                    "where vkhc.code=:code " +
+                                    "and :vmpDate between vkhc.dateFrom and coalesce(vkhc.dateTo,current_date) and vkhc.cost is not null")
                             .setParameter("code", entry.getVmpKind()).setParameter("vmpDate", entry.getFinishDate()).getResultList();
                     if (!costs.isEmpty()) {
                         cost = costs.get(0);
@@ -2641,9 +2662,9 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
             serviceCodes.delete(serviceCodes.length() - 1, serviceCodes.length());
             if (!manager.createNativeQuery("select vco.id from VocCombinedOperations vco" +
-                    " left join vocmedservice vms1 on vms1.id=vco.medservice1_id " +
-                    " left join vocmedservice vms2 on vms2.id=vco.medservice2_id " +
-                    " where vms1.code in (" + serviceCodes.toString() + ") and vms2.code in (" + serviceCodes.toString() + ") and coalesce(vco.finishDate,current_date)>=:actualDate ")
+                            " left join vocmedservice vms1 on vms1.id=vco.medservice1_id " +
+                            " left join vocmedservice vms2 on vms2.id=vco.medservice2_id " +
+                            " where vms1.code in (" + serviceCodes.toString() + ") and vms2.code in (" + serviceCodes.toString() + ") and coalesce(vco.finishDate,current_date)>=:actualDate ")
                     .setParameter("actualDate", actualDate)
                     .getResultList().isEmpty()
             ) {
@@ -3608,8 +3629,8 @@ public class Expert2ServiceBean implements IExpert2Service {
     public void makeOncologyCase(Long listEntryId, String jsonString, String defectCode) {
         JSONObject aJson = new JSONObject(jsonString);
         List<BigInteger> entryList = manager.createNativeQuery(" select e.id from e2entry e " +
-                " left join e2entrysanction s on s.entry_id=e.id " +
-                "where e.listEntry_id=:listId and s.dopcode=:code")
+                        " left join e2entrysanction s on s.entry_id=e.id " +
+                        "where e.listEntry_id=:listId and s.dopcode=:code")
                 .setParameter("listId", listEntryId).setParameter("code", defectCode.trim())
                 .getResultList();
         if (!entryList.isEmpty()) {
@@ -3750,7 +3771,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                         medServiceList.add(new EntryMedService(sloEntry, so.getMedService().getVocMedService()));
                     }
                     List<BigInteger> list = manager.createNativeQuery("SELECT vmssrv.id as msCode FROM MedCase mcsrv LEFT JOIN MedService mssrv ON mcsrv.medservice_id=mssrv.id" +
-                            " LEFT JOIN VocMedService vmssrv ON mssrv.vocmedservice_id=vmssrv.id WHERE mcsrv.parent_id=:id AND mcsrv.DTYPE = 'ServiceMedCase' and vmssrv.isOmc='1'")
+                                    " LEFT JOIN VocMedService vmssrv ON mssrv.vocmedservice_id=vmssrv.id WHERE mcsrv.parent_id=:id AND mcsrv.DTYPE = 'ServiceMedCase' and vmssrv.isOmc='1'")
                             .setParameter("id", medCase.getId()).getResultList();
                     if (!list.isEmpty()) {
                         for (BigInteger bi : list) {
