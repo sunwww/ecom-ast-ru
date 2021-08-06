@@ -59,7 +59,7 @@ public class PolyclinicResource {
     }
 
     @GET
-    @Path("exportPolyclinicCase")
+    @Path("getPolyclinicCaseByDateStart")
     @Produces(MediaType.APPLICATION_JSON)
     /**
      * Получить cписок случаев поликлинического обслуживания в JSON (только ОМС).
@@ -69,7 +69,7 @@ public class PolyclinicResource {
      * @param dateStart String Дата начала СПО в формате yyyy-MM-dd
      * @return JSON in String
      */
-    public String exportPolyclinicCase(@Context HttpServletRequest aRequest, @WebParam(name = "token") String aToken
+    public String getPolyclinicCaseByDateStart(@Context HttpServletRequest aRequest, @WebParam(name = "token") String aToken
             , @QueryParam("dateStart") String dateStart
     ) throws NamingException {
         if (aToken != null) {
