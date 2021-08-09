@@ -883,7 +883,7 @@
     </voc>
 
     <!--Лабораторные исследования в стационаре по типу назначения и потоку обслуживания тип назначения/поток обслуживания
-	с учётом разрешения для реанимаций
+	с учётом разрешения для реанимаций (24Ч)
 	-->
     <voc id="labMedServiceByServiceStreamStac" type="NativeVocService">
         <NativeVocService
@@ -897,12 +897,13 @@
 	and vsts.code='LABSURVEY'
 	) and 1=(select count(vss.id) from vocServiceStream vss where vss.id=:par2 and (
 					  (vss.isCalcOmcHosp='1' and (ms.isNoOmc is null or ms.isNoOmc='0'))
-					  or ((vss.isCalcOmcHosp is null or vss.isCalcOmcHosp='0') and pl.id is not null))) or ms.isAvailableReanimAlways and (select dep.isnoomc
+					  or ((vss.isCalcOmcHosp is null or vss.isCalcOmcHosp='0') and pl.id is not null)))
+					  or (ms.isAvailableReanimAlways and (select dep.isnoomc
 					  from prescriptionlist pllist
 					left join medcase dmc on dmc.id=pllist.medcase_id
 					left join mislpu dep on dep.id=dmc.department_id
 					where pllist.id=:par3)=true
-					)"
+					) and '1'=:par1)"
                 nameId=" ms.id"
                 join="
 				left join vocservicetype vst on vst.id=ms.servicetype_id
