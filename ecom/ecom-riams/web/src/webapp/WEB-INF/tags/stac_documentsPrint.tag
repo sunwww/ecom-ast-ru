@@ -28,7 +28,7 @@
                 </msh:row>
                 <msh:row>
                     <msh:checkBox property="${name}Consent1"
-                                  label="с обшим планом лечения и обследования (мед. вмешательство)"/>
+                                  label="с общим планом лечения и обследования (мед. вмешательство)"/>
                 </msh:row>
                 <msh:row>
                     <msh:checkBox property="${name}Consent2" label="на медицинское (оперативное) вмешательство"/>
@@ -48,6 +48,10 @@
                 <msh:row>
                     <msh:checkBox property="${name}Consent7"
                                   label="на анестезиологическое обеспечение медицинского вмешательства"/>
+                </msh:row>
+                <msh:row>
+                    <msh:checkBox property="${name}Consent8"
+                                  label="на процедуру подготовки шейки матки к родам и родовозбуждения"/>
                 </msh:row>
                 <msh:row>
                     <msh:separator label="Направления" colSpan="2"/>
@@ -116,6 +120,7 @@
             + "&consent5=" + ($('${name}Consent5').checked ? 1 : 0)
             + "&consent6=" + ($('${name}Consent6').checked ? 1 : 0)
             + "&consent7=" + ($('${name}Consent7').checked ? 1 : 0)
+            + "&consent8=" + ($('${name}Consent8').checked ? 1 : 0)
             + "&direct1=" + ($('${name}Direct1').checked ? 1 : 0)
             + "&rejection1=" + ($('${name}Rejection1').checked ? 1 : 0)
             + "&rejection2=" + ($('${name}Rejection2').checked ? 1 : 0)
