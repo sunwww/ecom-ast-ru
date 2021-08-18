@@ -412,7 +412,7 @@ public class LoginSaveAction extends LoginExitAction {
 				StringBuilder ret = new StringBuilder();
 				if (!list.isEmpty()) {
 					for (WebQueryResult wqr : list) {
-						ret.append(wqr.get2()).append(": <a href='lab_chief_report.do?").append(wqr.get1()).append("'>").append(wqr.get3()).append("</a><br>");
+						ret.append(wqr.get2()).append(": <a href=`lab_chief_report.do?").append(wqr.get1()).append("`>").append(wqr.get3()).append("</a><br>");
 					}
 					Long id = serviceLogin.createSystemMessage(labReport[0], ret.toString(), aUsername);
 					UserMessage.addMessage(aRequest, id, labReport[0], ret.toString(), "");
@@ -437,9 +437,9 @@ public class LoginSaveAction extends LoginExitAction {
 			if (!list.isEmpty()) {
 				for (WebQueryResult wqr: list) {
 					ret.append(wqr.get2())
-					.append("Не выполнено: <a href='lab_chief_report.do?").append(wqr.get1()).append("&typeState=0'>").append(wqr.get3()).append("</a>")
-					.append("  Не подтвержден: <a href='lab_chief_report.do?").append(wqr.get1()).append("&typeState=1'>").append(wqr.get4()).append("</a>")
-					.append("  Выполнено: <a href='lab_chief_report.do?").append(wqr.get1()).append("&typeState=2'>").append(wqr.get5()).append("</a>")
+					.append("Не выполнено: <a href=`lab_chief_report.do?").append(wqr.get1()).append("&typeState=0`>").append(wqr.get3()).append("</a>")
+					.append("  Не подтвержден: <a href=`lab_chief_report.do?").append(wqr.get1()).append("&typeState=1`>").append(wqr.get4()).append("</a>")
+					.append("  Выполнено: <a href=`lab_chief_report.do?").append(wqr.get1()).append("&typeState=2`>").append(wqr.get5()).append("</a>")
 						
 						.append("<br>");
 				}

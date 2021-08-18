@@ -177,8 +177,8 @@ public class PrescriptionServiceJs {
 
             for (int i = 0; i < 2; i++) { //экстренное и плановое сообщение
                 IPrescriptionService bean = Injection.find(aRequest).getService(IPrescriptionService.class);
-                String msgText = "Результаты исследования ''" + obj[2] + "'' пациента ''" + obj[1] + "'' были аннулированы сотрудником " +
-                        obj[3] + " " + obj[4] + ". Причина: " + obj[6] + "'";
+                String msgText = "Результаты исследования " + obj[2] + " пациента " + obj[1] + " были аннулированы сотрудником " +
+                        obj[3] + " " + obj[4] + ". Причина: " + obj[6];
                 bean.sendMessageCurrentDate(msgText, "Аннулирование результатов исследования", username
                         , obj[7].toString(), "entityParentView-stac_slo.do?id=" + obj[0].toString(), i < 1);
             }
