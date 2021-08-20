@@ -19,6 +19,8 @@ function onCreate(aForm, aEntity, aContext) {
     if (true == aEntity.isDoctor) {
         addBracelet(manager, "DOCTOR", aEntity, username);
     }
+    //удалить старые браслеты по вакцинации
+    deleteVacBraceletes(aEntity.medCase.id, aContext.manager);
     //отметка о вакцинации
     if (aEntity.getVaccinated().getId()==1) {
         if (aEntity.getReVaccineСomponent().getId()==1)
@@ -27,6 +29,18 @@ function onCreate(aForm, aEntity, aContext) {
             addBracelet(manager, "vac2", aEntity, username);
         else if (aEntity.getFirstVaccineСomponent().getId()==1)
             addBracelet(manager, "vac1", aEntity, username);
+    }
+}
+
+function deleteVacBraceletes(aMedCaseId, manager) {
+    var listBr = manager.createNativeQuery("select cip.id from ColorIdentityPatient cip" +
+        " left join VocColorIdentityPatient vcip on vcip.id=cip.voccoloridentity_id" +
+        " left join medcase_coloridentitypatient mcip on mcip.colorsidentity_id=cip.id" +
+        " where mcip.medcase_id=" + aMedCaseId + " and vcip.code in('vac1','vac2','revac')").getResultList();
+    for (var i=0; i<listBr.size(); i++) {
+        var cId = +listBr.get(i);
+        manager.createNativeQuery("delete from medcase_coloridentitypatient where colorsidentity_id = " + cId).executeUpdate();
+        manager.createNativeQuery("delete from ColorIdentityPatient where id = " + cId).executeUpdate();
     }
 }
 
