@@ -20,7 +20,7 @@ function onCreate(aForm, aEntity, aContext) {
         addBracelet(manager, "DOCTOR", aEntity, username);
     }
     //удалить старые браслеты по вакцинации
-    deleteVacBraceletes(aEntity.medCase.id, aContext.manager);
+    deleteVacBraceletes(aEntity.medCase.id, aContext);
     //отметка о вакцинации
     if (aEntity.getVaccinated().getId()==1) {
         if (aEntity.getReVaccineСomponent().getId()==1)
@@ -32,15 +32,15 @@ function onCreate(aForm, aEntity, aContext) {
     }
 }
 
-function deleteVacBraceletes(aMedCaseId, manager) {
-    var listBr = manager.createNativeQuery("select cip.id from ColorIdentityPatient cip" +
+function deleteVacBraceletes(aMedCaseId, aContext) {
+    var listBr = aContext.manager.createNativeQuery("select cip.id from ColorIdentityPatient cip" +
         " left join VocColorIdentityPatient vcip on vcip.id=cip.voccoloridentity_id" +
         " left join medcase_coloridentitypatient mcip on mcip.colorsidentity_id=cip.id" +
         " where mcip.medcase_id=" + aMedCaseId + " and vcip.code in('vac1','vac2','revac')").getResultList();
     for (var i=0; i<listBr.size(); i++) {
         var cId = +listBr.get(i);
-        manager.createNativeQuery("delete from medcase_coloridentitypatient where colorsidentity_id = " + cId).executeUpdate();
-        manager.createNativeQuery("delete from ColorIdentityPatient where id = " + cId).executeUpdate();
+        aContext.manager.createNativeQuery("update coloridentitypatient set finishdate=current_date, finishtime=current_time,editusername='"
+            + aContext.getSessionContext().getCallerPrincipal().toString() + "' where id=" + cId).executeUpdate();
     }
 }
 
@@ -51,7 +51,8 @@ function addBracelet(manager, code, aEntity, username) {
         var cipType = cipTypes.get(0);
         //Только если нет браслета
         if (manager.createNativeQuery("select b.medcase_id  from medcase_coloridentitypatient b " +
-            " left join colorIdentityPatient cip on cip.id=b.colorsidentity_id where b.medcase_id=:id and cip.voccoloridentity_id=:colorId")
+            " left join colorIdentityPatient cip on cip.id=b.colorsidentity_id where b.medcase_id=:id and cip.voccoloridentity_id=:colorId" +
+            " and cip.finishdate is null")
             .setParameter("id", aEntity.medCase.id).setParameter("colorId", cipType.getId()).getResultList().isEmpty()) {
             var cip = new Packages.ru.ecom.mis.ejb.domain.patient.ColorIdentityPatient();
             cip.setVocColorIdentity(cipType);
