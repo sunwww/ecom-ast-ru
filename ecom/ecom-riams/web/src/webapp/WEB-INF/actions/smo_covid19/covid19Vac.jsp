@@ -31,6 +31,9 @@
                     <td colspan="2" onclick="this.childNodes[1].checked='checked';">
                         <input type="radio" name="typeView" value="disch"> По выписанным
                     </td>
+                    <td colspan="3" onclick="this.childNodes[1].checked='checked';">
+                        <input type="radio" name="typeView" value="start"> По поступившим
+                    </td>
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete property="department" vocName="vocLpuHospOtdAll" label="Отделение"
@@ -66,6 +69,9 @@
                     case "disch":
                         addSql = " and sls.dateFinish between to_date(' " + date + "','dd.mm.yyyy') and to_date('" + dateEnd + "','dd.mm.yyyy')";
                         break;
+                    case "start":
+                        addSql = " and sls.dateStart between to_date(' " + date + "','dd.mm.yyyy') and to_date('" + dateEnd + "','dd.mm.yyyy')";
+                        break;
                     default:
                         addSql = " ";
                 }
@@ -90,6 +96,7 @@ select distinct sls.id as f1_id
 ,to_char(c.dateSecondVaccine,'dd.MM.yyyy') as f11_dSec
 ,case when c.reVaccineСomponent_id=1 then 'Да' else 'Нет' end as f12_re
 ,to_char(c.dateReVaccine,'dd.MM.yyyy') as f13_dRe
+,vcov.name as f14_covVac
 from medcase m
 left join MedCase sls on sls.id = m.parent_id
 left join Patient pat on pat.id=sls.patient_id
@@ -97,16 +104,17 @@ left join covid19 c on c.medcase_id=sls.id
 left join VocHospitalizationResult vhr on vhr.id=sls.result_id
 left join mislpu dep on dep.id=m.department_id
 left join statisticstub st on st.medcase_id=sls.id
+left join voccovvaccine vcov on vcov.id=c.covvaccine_id
 where c.vaccinated_id=1 and m.dtype='DepartmentMedCase'
+and (c.noactual=false or c.noactual is null)
 and m.id = (select max(id) from medcase m2 where dtype='DepartmentMedCase' and parent_id=sls.id)
-and c.id = (select max(id) from covid19 where medcase_id=sls.id)
     ${addSql}"/>
                 <msh:table name="list_covidVac" action="entityParentView-stac_ssl.do" openNewWindow="true"
                            printToExcelButton="Сохранить в excel" idField="1" noDataMessage="Не найдено">
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Пациент" property="2" width="20"/>
                     <msh:tableColumn columnName="Номер истории" property="3" width="5"/>
-                    <msh:tableColumn columnName="Отделение поступления" property="4" width="20"/>
+                    <msh:tableColumn columnName="Отделение" property="4" width="15"/>
                     <msh:tableColumn columnName="Дата поступления" property="5" width="5"/>
                     <msh:tableColumn columnName="Дата выписки" property="6" width="5"/>
                     <msh:tableColumn columnName="Результат госп." property="7" width="5"/>
@@ -116,6 +124,7 @@ and c.id = (select max(id) from covid19 where medcase_id=sls.id)
                     <msh:tableColumn columnName="Дата II" property="11" width="7"/>
                     <msh:tableColumn columnName="Ревак." property="12" width="7"/>
                     <msh:tableColumn columnName="Дата ревак." property="13" width="5"/>
+                    <msh:tableColumn columnName="Вакцина" property="14" width="5"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
