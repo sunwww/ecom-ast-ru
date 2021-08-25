@@ -138,7 +138,6 @@
             String view = (String) request.getAttribute("typeView");
 
             if (date != null && !date.equals("")) {
-                ActionUtil.setParameterFilterSql("result", "vhr.id", request);
                 String dateEnd = (String) request.getParameter("dateEnd");
                 if (dateEnd == null || dateEnd.equals("")) {
                     dateEnd = date;
@@ -161,7 +160,13 @@
                     reasonSql += " and vdr.id=" + pigeonHole;
                 }
                 request.setAttribute("reasonSql", reasonSql);
-                if ((view != null && (view.equals("1") || view.equals("5"))) && result != null && !result.equals("")) {
+
+                String resultSql = "";
+                if (result != null && !"".equals(result)) {
+                    resultSql += " and vhr.id=" + result;
+                }
+                request.setAttribute("resultSql", resultSql);
+                if ((view != null && (view.equals("1") || view.equals("5"))) && result != null) {
         %>
 
         <msh:section
