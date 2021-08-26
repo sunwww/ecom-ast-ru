@@ -6,7 +6,7 @@ import java.sql.Date;
  * Created by Milamesher on 06.02.2019.
  */
 public interface IApiPolyclinicService {
-    String getPolyclinicCase(Date dateTo, String sstream, Boolean isUpload, Boolean includeNeoUzi);
+    String getPolyclinicCase(Date dateTo, String sstream, Long wfId, Integer limitNum, Boolean isUpload);
 
     String setEvnTap(Long medcaseId, Long tapId);
 
@@ -14,5 +14,5 @@ public interface IApiPolyclinicService {
 
     String setWfInfo(Long workfunctionId, Long promedcodeLpuSection, Long promedcodeWorkstaff);
 
-    String exportPolyclinicCase(Date d, String sstream);
+    String getPolyclinicCaseByDateStart(Date dateStart, String sstream, Long wfId, Integer limitNum);
 }
