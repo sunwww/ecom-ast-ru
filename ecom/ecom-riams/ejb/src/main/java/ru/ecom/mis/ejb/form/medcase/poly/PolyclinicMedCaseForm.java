@@ -80,5 +80,13 @@ public class PolyclinicMedCaseForm extends MedCaseForm {
 	private String duration;
 	/** Дата окончания */
 	private String dateFinish;
+
+	private String promedCode;
+
+	@Comment("Код в промеде")
+	@Persist
+	public String getPromedCode() {
+		return promedCode;
+	}
 }
 
