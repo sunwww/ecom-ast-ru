@@ -23,6 +23,11 @@
         <msh:row>
           <msh:label property="duration" label="Длительность" />
         </msh:row>
+        <msh:ifInRole roles="/Policy/Mis/Worker/WorkFunction/UpdatePromedCodes">
+          <msh:row>
+            <msh:label property="promedCode" label="Код в промеде" />
+          </msh:row>
+      </msh:ifInRole>
         <msh:row>
           <msh:autoComplete vocName="vocIdc10" property="idc10" label="МКБ-10" fieldColSpan="3" horizontalFill="true" />
         </msh:row>

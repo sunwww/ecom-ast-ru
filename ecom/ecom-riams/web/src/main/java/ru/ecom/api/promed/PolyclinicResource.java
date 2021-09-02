@@ -21,21 +21,22 @@ public class PolyclinicResource {
     @GET
     @Path("getPolyclinicCase")
     @Produces(MediaType.APPLICATION_JSON)
-    /**
+    /*
      * Получить cписок случаев поликлинического обслуживания в JSON.
      *
      * @param aRequest HttpServletRequest
      * @param aToken String
      * @param dateTo String Дата окончания случая в формате yyyy-MM-dd
-     * @param sstream String Код потока обслуживания
+     * @param workFunctionId Рабочая функция врача
+     * @param limit Лимит по записям
      * @param isUpload Boolean Если true, то не возвращать выгруженные
      * @return JSON in String
      */
     public String getPolyclinicCase(@Context HttpServletRequest aRequest, @WebParam(name = "token") String aToken
-            , @QueryParam("dateTo") String dateTo, @QueryParam("sstream") String sstream
+            , @QueryParam("dateTo") String dateTo
+            , @QueryParam("workFunctionId") Long wfId
+            , @QueryParam("limit") Integer limitNum
             , @QueryParam("isUpload") Boolean isUpload
-            , @QueryParam("includeNeoUzi") Boolean includeNeoUzi
-            , @QueryParam("byDateStart") Boolean byDateStart
     ) throws NamingException {
         if (aToken != null) {
             ApiUtil.login(aToken, aRequest);
@@ -54,23 +55,27 @@ public class PolyclinicResource {
                     .put("reason", "incorrect dateTo");
             return res.toString();
         }
-        if (sstream == null || sstream.equals("")) sstream = "OBLIGATORYINSURANCE";
-        return service.getPolyclinicCase(d, sstream, isUpload, includeNeoUzi != null && includeNeoUzi);
+        String sstream = "OBLIGATORYINSURANCE";
+        return service.getPolyclinicCase(d, sstream, wfId, limitNum, isUpload);
     }
 
     @GET
     @Path("getPolyclinicCaseByDateStart")
     @Produces(MediaType.APPLICATION_JSON)
-    /**
+    /*
      * Получить cписок случаев поликлинического обслуживания в JSON (только ОМС).
      *
      * @param aRequest HttpServletRequest
      * @param aToken String
      * @param dateStart String Дата начала СПО в формате yyyy-MM-dd
+     * @param workFunctionId Рабочая функция врача
+     * @param limit Лимит по записям
      * @return JSON in String
      */
     public String getPolyclinicCaseByDateStart(@Context HttpServletRequest aRequest, @WebParam(name = "token") String aToken
             , @QueryParam("dateStart") String dateStart
+            , @QueryParam("workFunctionId") Long wfId
+            , @QueryParam("limit") Integer limitNum
     ) throws NamingException {
         if (aToken != null) {
             ApiUtil.login(aToken, aRequest);
@@ -83,17 +88,17 @@ public class PolyclinicResource {
         } catch (NullPointerException | ParseException ex) {
             JSONObject res = new JSONObject();
             res.put("status", "error")
-                    .put("reason", "incorrect dateTo");
+                    .put("reason", "incorrect dateStart");
             return res.toString();
         }
         String sstream = "OBLIGATORYINSURANCE";
-        return service.exportPolyclinicCase(d, sstream);
+        return service.getPolyclinicCaseByDateStart(d, sstream, wfId, limitNum);
     }
 
     @POST
     @Path("setEvnTap")
     @Produces(MediaType.APPLICATION_JSON)
-    /**
+    /*
      * Установить случаю promed_id и отметку о выгрузке.
      *
      * @param aRequest HttpServletRequest
@@ -116,7 +121,7 @@ public class PolyclinicResource {
     @GET
     @Path("getWfInfo")
     @Produces(MediaType.APPLICATION_JSON)
-    /**
+    /*
      * Получить ФИО, отделение и promedcode_lpusection и promedcode_workstaff.
      *
      * @param aRequest HttpServletRequest
@@ -138,7 +143,7 @@ public class PolyclinicResource {
     @POST
     @Path("setWfInfo")
     @Produces(MediaType.APPLICATION_JSON)
-    /**
+    /*
      * Установить promedcode_lpusection и promedcode_workstaff.
      *
      * @param aRequest HttpServletRequest
