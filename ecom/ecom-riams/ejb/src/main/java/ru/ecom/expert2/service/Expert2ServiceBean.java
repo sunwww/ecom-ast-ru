@@ -3546,7 +3546,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         } else if (extDispCase) { //расчет возраста ДД
             try {
                 entry.setExtDispAge(AgeUtil.calculateExtDispAge(entry.getStartDate(), entry.getBirthDate()));
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
                 manager.persist(new E2EntryError(entry, "Ошибка расчета возраста ДД:" + e.getMessage()));
                 LOG.warn("Ошибка расчета возраста ДД:" + e.getMessage());
             }
