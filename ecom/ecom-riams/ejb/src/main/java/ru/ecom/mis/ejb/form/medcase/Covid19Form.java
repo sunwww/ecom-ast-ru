@@ -665,6 +665,12 @@ public class Covid19Form extends IdEntityForm {
      */
     private String dateReVaccine;
 
+
+    /**
+     * Вакцина от COVID-19
+     */
+    private Long covVaccine;
+
     /**
      * Была ли вакцинация от COVID-19
      */
@@ -724,5 +730,14 @@ public class Covid19Form extends IdEntityForm {
     @Persist
     public String getDateReVaccine() {
         return dateReVaccine;
+    }
+
+    /**
+     * Вакцина от COVID-19
+     */
+    @Comment("Вакцина от COVID-19")
+    @Persist
+    public Long getCovVaccine() {
+        return covVaccine;
     }
 }

@@ -6,6 +6,7 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocCT;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalizationResult;
+import ru.ecom.mis.ejb.domain.medcase.voc.covidMarcVocs.VocCovVaccine;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.voc.VocYesNo;
 import ru.ecom.mis.ejb.domain.patient.voc.VocYesNoMaybe;
@@ -384,6 +385,11 @@ public class Covid19 extends BaseEntity {
     private Date dateReVaccine;
 
     /**
+     * Вакцина от COVID-19
+     */
+    private VocCovVaccine covVaccine;
+
+    /**
      * Была ли вакцинация от COVID-19
      */
     @Comment("Была ли вакцинация от COVID-19")
@@ -417,5 +423,14 @@ public class Covid19 extends BaseEntity {
     @OneToOne
     public VocYesNo getReVaccineСomponent() {
         return reVaccineСomponent;
+    }
+
+    /**
+     * Вакцина от COVID-19
+     */
+    @Comment("Вакцина от COVID-19")
+    @OneToOne
+    public VocCovVaccine getCovVaccine() {
+        return covVaccine;
     }
 }

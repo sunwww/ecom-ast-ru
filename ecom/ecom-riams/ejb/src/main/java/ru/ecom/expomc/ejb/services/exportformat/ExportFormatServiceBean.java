@@ -89,7 +89,7 @@ public class ExportFormatServiceBean implements IExportFormatService {
                     LOG.info("QUERY driver: `default' qry:`" + driverQuery + "'");
                 }
 
-                IExportFomatDriver driver = DriverManager.getDriver(driverName, manager, exportFormat.isNative(), driverQuery);
+                IExportFormatDriver driver = DriverManager.getDriver(driverName, manager, driverQuery);
                 driver.execute(getMaxRecords());
                 driver.saveXml(s);
             }
@@ -137,7 +137,7 @@ public class ExportFormatServiceBean implements IExportFormatService {
                     LOG.info("QUERY driver: `default' qry:`" + params + "'");
                 }
 
-                IExportFomatDriver driver = DriverManager.getDriver(driverName, manager, exportFormat.isNative(), params);
+                IExportFormatDriver driver = DriverManager.getDriver(driverName, manager, params);
                 driver.execute(getMaxRecords());
                 driver.saveXml(writer);
             }
@@ -239,18 +239,6 @@ public class ExportFormatServiceBean implements IExportFormatService {
         transform(anId, new StreamResult(stringWriter));
 
         return stringWriter.toString();
-    }
-
-    public void exportAsXml(Long anId, long aFileId) {
-        try {
-            File file = jbossGetFileLocalService.createFile(aFileId, "exportdata.xml");
-            transform(anId, new StreamResult(file));
-
-        } catch (IllegalMonitorStateException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e);
-        }
     }
 
 

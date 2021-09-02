@@ -303,7 +303,7 @@ public class MedService extends BaseEntity {
     private VocColorIdentityPatient vocColorIdentity;
 
     /**
-     * Всегда выполняется для реанимаций
+     * Всегда выполняется для реанимаций (при типе назначения 24Ч)
      */
     private Boolean isAvailableReanimAlways;
 

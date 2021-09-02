@@ -494,14 +494,14 @@ public class MedServiceForm extends IdEntityForm {
     /**
      * Всегда выполняется для реанимаций
      */
-    @Comment("Всегда выполняется для реанимаций")
+    @Comment("Всегда выполняется для реанимаций (при типе назначения 24Ч)")
     @Persist
     public Boolean getIsAvailableReanimAlways() {
         return isAvailableReanimAlways;
     }
 
     /**
-     * Всегда выполняется для реанимаций
+     * Всегда выполняется для реанимаций (24Ч)
      */
     private Boolean isAvailableReanimAlways;
 

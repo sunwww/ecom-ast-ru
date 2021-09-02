@@ -21,6 +21,8 @@
                             <li><msh:link action="ecom_release-201905.do">октябрь 2019 года </msh:link></li>
                             <% } %>
 
+<%--                            <li><msh:link action="ecom_release-202109.do">сентябрь 2021 года </msh:link></li>--%>
+                            <li><msh:link action="ecom_release-202108.do">август 2021 года </msh:link></li>
                             <li><msh:link action="ecom_release-202107.do">июль 2021 года </msh:link></li>
                             <li><msh:link action="ecom_release-202106.do">июнь 2021 года </msh:link></li>
                             <li><msh:link action="ecom_release-202105.do">май 2021 года </msh:link></li>

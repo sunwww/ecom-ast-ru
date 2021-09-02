@@ -18,7 +18,7 @@
         String typeViewBr = ActionUtil.updateParameter("BrList", "typeViewBr", "1", request);
     %>
     <tiles:put name="title" type="string">
-        <msh:title mainMenu="StacJournal" title="Отчет по браслетам пациентов"></msh:title>
+        <msh:title mainMenu="StacJournal" title="Отчет по браслетам пациентов"/>
     </tiles:put>
     <tiles:put name="body" type="string">
         <msh:form action="/journal_bracelets.do" defaultField="department" method="GET">
@@ -60,6 +60,9 @@
                         </td>
                         <td onclick="this.childNodes[1].checked='checked';" colSpan="2">
                             <input type="radio" name="typeDate" value="2"> выписки
+                        </td>
+                        <td onclick="this.childNodes[1].checked='checked';" colSpan="3">
+                            <input type="radio" name="typeDate" value="3"> состоящие
                         </td>
                     </msh:row>
 
@@ -179,6 +182,12 @@
                     " and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)";
             request.setAttribute("sqlDate", sqlDate);
 
+            if ("3".equals(typeDate)) {
+                request.setAttribute("sqlDate", " and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)");
+                request.setAttribute("date", "");
+                request.setAttribute("dateEnd", "");
+            }
+
             String brs = request.getParameter("brs");
 
             String brString = "";
@@ -223,6 +232,7 @@
             title += date != null && !date.equals("") ?
                     " за период " + date + " - " + dateEnd : " на текущий момент";
             request.setAttribute("title", title);
+            if (date != null || "3".equals(typeDate)) {
             if (typeView.equals("2") || (department != null && !department.equals(""))) {
         %>
         <msh:section>
@@ -303,7 +313,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
         } else {
         %>
         <msh:section>
-            <msh:sectionTitle>Результаты поиска. Если не введён период, показываются пациенты с браслетами в текущий момент</msh:sectionTitle>
+            <msh:sectionTitle>Результаты поиска. Если не введён период и отмечено ПО СОСТОЯЩИМ, показываются пациенты с браслетами в текущий момент</msh:sectionTitle>
         </msh:section>
         <msh:section>
             <msh:sectionContent>
@@ -334,7 +344,9 @@ left join voccolor vcr on vcr.id=vcid.color_id
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
-        <%}%>
+        <% } }else {%>
+        <i>Выберите параметры и нажмите найти </i>
+        <% }   %>
     </tiles:put>
     <tiles:put name="javascript" type="string">
         <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>

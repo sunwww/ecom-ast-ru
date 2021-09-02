@@ -263,6 +263,11 @@ abstract public class MedCase extends BaseEntity {
 	/**Код в промеде**/
 	private String promedCode;
 
+	@Comment("Код в промеде")
+	public String getPromedCode() {
+		return promedCode;
+	}
+
 	@PrePersist
 	void prePersist() {
 		setCreateDate(new Date(System.currentTimeMillis()));

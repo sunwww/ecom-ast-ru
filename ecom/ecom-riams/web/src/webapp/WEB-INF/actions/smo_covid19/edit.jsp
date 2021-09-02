@@ -62,6 +62,8 @@
             </msh:row><msh:row>
                 <msh:textField property="dateReVaccine" horizontalFill="true"/>
             </msh:row><msh:row>
+                <msh:autoComplete property="covVaccine" vocName="vocCovVaccine" horizontalFill="true"/>
+            </msh:row><msh:row>
                 <msh:autoComplete property="vacFlu" vocName="vocYesNoMaybe" horizontalFill="true"/>
             </msh:row><msh:row>
                 <msh:checkBox property="isPregnant"/>
@@ -427,6 +429,7 @@
                         $('dateFirstVaccine').removeAttribute("disabled");
                         $('dateSecondVaccine').removeAttribute("disabled");
                         $('dateReVaccine').removeAttribute("disabled");
+                        $('covVaccineName').removeAttribute("disabled");
                         $('firstVaccineСomponentName').className += " required";
                         $('secondVaccineСomponentName').className += " required";
                         $('reVaccineСomponentName').className += " required";
@@ -437,6 +440,7 @@
                         $('dateFirstVaccine').setAttribute('disabled', true);
                         $('dateSecondVaccine').setAttribute('disabled', true);
                         $('dateReVaccine').setAttribute('disabled', true);
+                        $('covVaccineName').setAttribute('disabled', true);
                         $('firstVaccineСomponent').value = '';
                         $('secondVaccineСomponent').value = '';
                         $('reVaccineСomponent').value = '';
@@ -446,6 +450,7 @@
                         $('dateFirstVaccine').value = '';
                         $('dateSecondVaccine').value = '';
                         $('dateReVaccine').value = '';
+                        $('covVaccineName').value = '';
                         $('firstVaccineСomponentName').className = $('firstVaccineСomponentName').className.replace(new RegExp("required", "g"), "");
                         $('secondVaccineСomponentName').className = $('secondVaccineСomponentName').className.replace(new RegExp("required", "g"), "");
                         $('reVaccineСomponentName').className = $('reVaccineСomponentName').className.replace(new RegExp("required", "g"), "");

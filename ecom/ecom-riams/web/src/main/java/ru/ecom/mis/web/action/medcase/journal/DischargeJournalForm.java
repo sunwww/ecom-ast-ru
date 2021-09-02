@@ -113,7 +113,6 @@ public class DischargeJournalForm extends BaseValidatorForm{
 	private Long thePigeonHole;
 	/** Результат госпитализации */
 	@Comment("Результат госпитализации")
-	@Required
 	public Long getResult() {
 		return theResult;
 	}

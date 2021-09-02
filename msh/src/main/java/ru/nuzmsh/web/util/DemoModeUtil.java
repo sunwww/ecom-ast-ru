@@ -22,7 +22,7 @@ public class DemoModeUtil {
 	public static Object secureValue(Object value) {
   	  // Для ДЕМО-режима
         try {
-        	if(value!=null && value instanceof String) {
+        	if(value instanceof String) {
         		String str = value.toString();
         		if(str.length()>2) {
         			value = str.substring(0,3)+"...";

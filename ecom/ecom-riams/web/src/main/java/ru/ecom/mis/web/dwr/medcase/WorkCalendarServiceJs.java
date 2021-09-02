@@ -591,7 +591,11 @@ public class WorkCalendarServiceJs {
         sql.append("select wct.id, cast(wct.timeFrom as varchar(5)) as tnp, vsrt.background,vsrt.colorText,vsrt.name from WorkCalendarTime wct ")
                 .append(" left join VocServiceReserveType vsrt on vsrt.id=wct.reserveType_id ")
                 .append(" where wct.workCalendarDay_id='").append(aWorkCalendarDay).append("' ");
-        sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is null and (wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')) and (vsrt.serviceStreams like '%,").append(aServiceStream).append(",%' or vsrt.serviceStreams = '' or vsrt.serviceStreams is null) and (vsrt.departments is null or vsrt.departments='' or vsrt.departments  like '%,").append(dep).append(",%') and vsrt.id is not null order by wct.timefrom");
+        sql.append(" and (wct.isDeleted is null or wct.isDeleted='0') and wct.medCase_id is null " +
+                "and (wct.prepatient_id is null and (wct.prepatientinfo is null or wct.prepatientinfo='')) " +
+                "and (vsrt.serviceStreams like '%,").append(aServiceStream).append(",%' or vsrt.serviceStreams = '' or vsrt.serviceStreams is null) " +
+                "and (vsrt.departments is null or vsrt.departments='' or vsrt.departments='0' or vsrt.departments  like '%,")
+                .append(dep).append(",%') and vsrt.id is not null order by wct.timefrom");
 
         list = service.executeNativeSql(sql.toString(), 50);
 

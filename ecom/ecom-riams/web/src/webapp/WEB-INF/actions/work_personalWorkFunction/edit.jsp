@@ -97,8 +97,8 @@
                 </msh:row>
                 <msh:ifInRole roles="/Policy/Mis/Worker/WorkCalendar/View">
                     <msh:row>
-                        <msh:label property="promedCodeWorkstaff" label="promedCodeWorkstaff"/>
-                        <msh:label property="promedCodeLpuSection" label="promedCodeLpuSection"/>
+                        <msh:textField property="promedCodeWorkstaff" label="promedCodeWorkstaff"/>
+                        <msh:textField property="promedCodeLpuSection" label="promedCodeLpuSection"/>
                     </msh:row>
                 </msh:ifInRole>
                 <msh:row>

@@ -169,5 +169,13 @@ public class VisitMedCaseForm extends TicketMedCaseForm {
 	private String concludingDiagnos;
 	/** Заключительный диагноз по МКБ-10 */
 	private Long concludingMkb;
+
+	private String promedCode;
+
+	@Comment("Код в промеде")
+	@Persist
+	public String getPromedCode() {
+		return promedCode;
+	}
 	
 }

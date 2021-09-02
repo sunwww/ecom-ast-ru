@@ -692,3 +692,5 @@ function disableAll(divToDisable) {
     jQuery(divToDisable).fadeTo('slow',.6);
     jQuery(divToDisable).append('<div style="position: absolute;bottom:0;left:0;width: 100%;height:90%;z-index:2;opacity:0.4;filter: alpha(opacity = 50)"></div>');
 }
+
+function showUserMessageTagOnce() {msh.effect.FadeEffect.putFade();}

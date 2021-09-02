@@ -185,6 +185,11 @@
                     <msh:checkBox property="noActuality" viewOnlyField="false" label="Недействительность визита"
                                   horizontalFill="false" fieldColSpan="1" labelColSpan="1"/>
                 </msh:row>
+                <msh:ifInRole roles="/Policy/Mis/Worker/WorkFunction/UpdatePromedCodes">
+                    <msh:row>
+                        <msh:label property="promedCode" label="Код в промеде" />
+                    </msh:row>
+                </msh:ifInRole>
                 <msh:row>
                     <msh:separator label="Дополнительно" colSpan="4"/>
                 </msh:row>

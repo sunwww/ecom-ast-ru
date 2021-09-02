@@ -110,7 +110,7 @@
         	</msh:ifFormTypeIsNotView>
         </msh:row>
           <msh:row>
-              <msh:checkBox property="isAvailableReanimAlways" label="Всегда выполняется для реанимаций"/>
+              <msh:checkBox property="isAvailableReanimAlways" label="Всегда выполняется для реанимаций (24Ч)"/>
           </msh:row>
           <msh:row>
               <msh:separator label="Примечания к услуге:" colSpan="4"/>
