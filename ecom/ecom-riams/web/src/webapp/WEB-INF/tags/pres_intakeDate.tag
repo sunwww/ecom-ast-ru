@@ -94,7 +94,8 @@
                     ${method}WithBarcode($('${name}List').value, $('${name}Date').value, $('${name}Time').value, $('${name}Barcode').value, $('${name}matPcr').value, {
                         callback: function (aResult) {
                             if (aResult == "1") {
-                                window.document.location.reload();
+                                // window.document.location.reload();
+                                cancel${name}IntakeInfo();
                             } else {
                                 alert("Ошибка: " + aResult);
                             }
@@ -105,7 +106,8 @@
                     ${method}($('${name}List').value, $('${name}Date').value, $('${name}Time').value, $('${name}matPcr').value, {
                         callback: function (aResult) {
                             if (aResult == "1") {
-                                window.document.location.reload();
+                                // window.document.location.reload();
+                                cancel${name}IntakeInfo();
                             } else {
                                 alert("Ошибка: " + aResult);
                             }

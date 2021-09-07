@@ -125,6 +125,10 @@
             checkFieldUpdate('typeGroup', '${typeGroup}', 1);
             checkFieldUpdate('typeTransfer', '${typeTransfer}', 1);
 
+            function hideRow(btn) {
+                jQuery(btn).parent().parent().fadeTo(0, 0.2);
+            }
+
             function checkfrm() {
                 document.forms[1].submit();
             }
@@ -377,14 +381,15 @@
             <msh:sectionContent>
                 <msh:table name="list" action="javascript:void()" idField="1" escapeSymbols="false">
                     <msh:tableColumn columnName="" property="16"/>
-                    <msh:tableButton property="1" buttonFunction="showBiomatIntakeInfo"
+                    <msh:tableButton property="1" buttonFunction="hideRow(this); showBiomatIntakeInfo"
                                      buttonName="Прием биоматериала осуществлен" buttonShortName="Прием"
                                      hideIfEmpty="true"/>
                     <msh:tableButton property="1"
-                                     buttonFunction="this.disabled=true;this.value='Подождите...';saveBiomatIntakeCurrent"
+                                     buttonFunction="this.disabled=true;this.value='Подождите...';hideRow(this);
+                                     saveBiomatIntakeCurrent"
                                      buttonName="Прием биоматериала осуществлен только что" buttonShortName="Прием ТД"
                                      hideIfEmpty="true"/>
-                    <msh:tableButton property="2" buttonFunction="removeService"
+                    <msh:tableButton property="2" buttonFunction="hideRow(this); removeService"
                                      buttonName="Очистить данные о приеме биоматериала"
                                      buttonShortName="Очистить данные о приеме" hideIfEmpty="true"
                                      role="/Policy/Mis/Journal/Prescription/LabSurvey/IsRemoveIntake"/>
