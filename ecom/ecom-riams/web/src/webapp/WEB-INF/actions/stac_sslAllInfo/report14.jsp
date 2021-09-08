@@ -1478,12 +1478,12 @@ order by ms.code
                     <msh:tableColumn columnName="#" property="sn"/>
                     <msh:tableColumn columnName="Код" property="2"/>
                     <msh:tableColumn columnName="Наименование" property="3"/>
-                    <msh:tableColumn columnName="Кол-во операций" property="4"/>
-                    <msh:tableColumn columnName="Кол-во пациентов" property="5"/>
-                    <msh:tableColumn columnName="кол-во операций с испол. ВМТ" property="6"/>
-                    <msh:tableColumn columnName="Кол-во умерших пациентов" property="7"/>
-                    <msh:tableColumn columnName="Отмечено исход операции летальный" property="8"/>
-                    <msh:tableColumn columnName="Отмечено исход операции летальный с испол. ВМТ" property="9"/>
+                    <msh:tableColumn columnName="Кол-во операций" property="4" isCalcAmount="true"/>
+                    <msh:tableColumn columnName="Кол-во пациентов" property="5" isCalcAmount="true"/>
+                    <msh:tableColumn columnName="кол-во операций с испол. ВМТ" property="6" isCalcAmount="true"/>
+                    <msh:tableColumn columnName="Кол-во умерших пациентов" property="7" isCalcAmount="true"/>
+                    <msh:tableColumn columnName="Отмечено исход операции летальный" property="8" isCalcAmount="true"/>
+                    <msh:tableColumn columnName="Отмечено исход операции летальный с испол. ВМТ" property="9" isCalcAmount="true"/>
                     <msh:tableColumn columnName="Экстренные" property="10"/>
                     <msh:tableColumn columnName="Эндоскопические" property="11"/>
                 </msh:table>
