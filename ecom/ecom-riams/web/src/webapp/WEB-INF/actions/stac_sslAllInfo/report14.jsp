@@ -77,7 +77,7 @@
                         sexWoman + "' then 54 else 59 end ";
                 request.setAttribute("reportInfo", "А.1. Взрослые трудоспособного возраста с 16 лет");
             } else if ("10".equals(typeAge)) {
-                age = ageSql +  " between 18 and case when p.sex_id='" +
+                age = ageSql + " between 18 and case when p.sex_id='" +
                         sexWoman + "' then 54 else 59 end ";
                 request.setAttribute("reportInfo", "А.1. Взрослые трудоспособного возраста с 18 лет");
             } else {
@@ -408,28 +408,7 @@
             <msh:sectionContent>
                 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_surOperation" nativeSql="
     select
-    sls.id as slsid,(select list(vrspt.strCode) from ReportSetTYpeParameterType rspt 
-    left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
-    where vrspt.classname='F14_DIAG' and coalesce(
-        (select mkb.code from Diagnosis diag
-        left join vocidc10 mkb on mkb.id=diag.idc10_id
-        left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
-        left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
-        where sls.id=diag.medcase_id 
-        and vdrt.id='${diag_typeReg_pat}'
-        and vpd.id='${diag_priority_m}'
-        )
-        ,
-        (select mkb.code from Diagnosis diag
-        left join vocidc10 mkb on mkb.id=diag.idc10_id
-        left join VocDiagnosisRegistrationType vdrt on vdrt.id=diag.registrationType_id
-        left join VocPriorityDiagnosis vpd on vpd.id=diag.priority_id
-        where sls.id=diag.medcase_id 
-        and vdrt.id='${diag_typeReg_cl}'
-        and vpd.id='${diag_priority_m}'
-        )
-        ) between rspt.codefrom and rspt.codeto
-    ) as listStr
+    sls.id as slsid
     ,ss.code as sscode
     ,p.lastname||' '||p.firstname||' '||p.middlename as fio
     ,cast(to_char(sls.${dateAgeFld},'yyyy') as int)
@@ -502,19 +481,18 @@
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityView-stac_ssl.do" idField="1">
                     <msh:tableColumn columnName="##" property="sn"/>
-                    <msh:tableColumn columnName="Строки отчета" property="2"/>
-                    <msh:tableColumn columnName="№стат. карт" property="3"/>
-                    <msh:tableColumn columnName="ФИО пациента" property="4"/>
-                    <msh:tableColumn columnName="Возраст" property="5"/>
-                    <msh:tableColumn columnName="Дата поступления" property="6"/>
-                    <msh:tableColumn columnName="Дата выписки" property="7"/>
-                    <msh:tableColumn columnName="Кол-во к.дней" property="8"/>
-                    <msh:tableColumn columnName="Диагноз" property="9"/>
-                    <msh:tableColumn columnName="Умер?" property="10"/>
-                    <msh:tableColumn columnName="Доставлен по экс. показаниям?" property="11"/>
-                    <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="12"/>
-                    <msh:tableColumn columnName="COVID" property="14"/>
-                    <msh:tableColumn columnName="Исход" property="13"/>
+                    <msh:tableColumn columnName="№стат. карт" property="2"/>
+                    <msh:tableColumn columnName="ФИО пациента" property="3"/>
+                    <msh:tableColumn columnName="Возраст" property="4"/>
+                    <msh:tableColumn columnName="Дата поступления" property="5"/>
+                    <msh:tableColumn columnName="Дата выписки" property="6"/>
+                    <msh:tableColumn columnName="Кол-во к.дней" property="7"/>
+                    <msh:tableColumn columnName="Диагноз" property="8"/>
+                    <msh:tableColumn columnName="Умер?" property="9"/>
+                    <msh:tableColumn columnName="Доставлен по экс. показаниям?" property="10"/>
+                    <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="11"/>
+                    <msh:tableColumn columnName="COVID" property="13"/>
+                    <msh:tableColumn columnName="Исход" property="12"/>
 
                 </msh:table>
             </msh:sectionContent>
@@ -619,10 +597,7 @@ order by vas.name
             <msh:sectionContent>
                 ${isReportBase}<ecom:webQuery isReportBase="${isReportBase}" name="journal_surOperation" nativeSql="
 select 
-sls.id as slsid,(select list(vrspt.strCode) from ReportSetTYpeParameterType rspt  
-left join VocReportSetParameterType vrspt on rspt.parameterType_id=vrspt.id
-where vrspt.classname='F14_DIAG' and mkb.code between rspt.codefrom and rspt.codeto
-) as listStr
+distinct sls.id as slsid
 ,ss.code as sscode
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
 ,cast(to_char(sls.${dateAgeFld},'yyyy') as int)
@@ -645,7 +620,7 @@ end
  ,case when sls.result_id='${result_death}' then 'Да' else null end as isDeath
 ,case when sls.emergency='1' then 'Да' else null end as emer
 ,case when sls.emergency='1' and sls.orderType_id='${orderType_amb}' then 'Да' else null end as emerSk
-
+,p.lastname,p.firstname,p.middlename
  from medcase sls
 left join StatisticStub ss on ss.id=sls.statisticStub_id
 left join VocHospitalizationResult vhr on vhr.id=sls.result_id
@@ -674,17 +649,16 @@ order by p.lastname,p.firstname,p.middlename "/>
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityView-stac_ssl.do" idField="1">
                     <msh:tableColumn columnName="##" property="sn"/>
-                    <msh:tableColumn columnName="Строки отчета" property="2"/>
-                    <msh:tableColumn columnName="№стат. карт" property="3"/>
-                    <msh:tableColumn columnName="ФИО пациента" property="4"/>
-                    <msh:tableColumn columnName="Возраст" property="5"/>
-                    <msh:tableColumn columnName="Дата поступления" property="6"/>
-                    <msh:tableColumn columnName="Дата выписки" property="7"/>
-                    <msh:tableColumn columnName="Кол-во к.дней" property="8"/>
-                    <msh:tableColumn columnName="Диагноз" property="9"/>
-                    <msh:tableColumn columnName="Умер?" property="10"/>
-                    <msh:tableColumn columnName="Доставлен по экс. показаниям?" property="11"/>
-                    <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="12"/>
+                    <msh:tableColumn columnName="№стат. карт" property="2"/>
+                    <msh:tableColumn columnName="ФИО пациента" property="3"/>
+                    <msh:tableColumn columnName="Возраст" property="4"/>
+                    <msh:tableColumn columnName="Дата поступления" property="5"/>
+                    <msh:tableColumn columnName="Дата выписки" property="6"/>
+                    <msh:tableColumn columnName="Кол-во к.дней" property="7"/>
+                    <msh:tableColumn columnName="Диагноз" property="8"/>
+                    <msh:tableColumn columnName="Умер?" property="9"/>
+                    <msh:tableColumn columnName="Доставлен по экс. показаниям?" property="10"/>
+                    <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="11"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -829,7 +803,7 @@ order by vrspt.strCode
                 <ecom:webQuery isReportBase="${isReportBase}" nameFldSql="journal_surOperation_sql"
                                name="journal_surOperation" nativeSql="
 select 
-sls.id as slsid,list(vrspt1.strCode) as listStr
+distinct sls.id as slsid
 ,ss.code as sscode
 ,p.lastname||' '||p.firstname||' '||p.middlename as fio
 ,cast(to_char(sls.${dateAgeFld},'yyyy') as int)
@@ -853,6 +827,7 @@ end
 ,case when sls.emergency='1' then 'Да' else null end as emer
 ,case when sls.emergency='1' and sls.orderType_id='${orderType_amb}' then 'Да' else null end as emerSk
 ,vho.name as vhoname
+,p.lastname,p.firstname,p.middlename
  from medcase sls
 left join StatisticStub ss on ss.id=sls.statisticStub_id
 left join VocHospitalizationResult vhr on vhr.id=sls.result_id
@@ -898,17 +873,16 @@ order by p.lastname,p.firstname,p.middlename "/>
                            viewUrl="entityShortView-stac_ssl.do"
                            action="entityView-stac_ssl.do" idField="1">
                     <msh:tableColumn columnName="##" property="sn"/>
-                    <msh:tableColumn columnName="Строки отчета" property="2"/>
-                    <msh:tableColumn columnName="№стат. карт" property="3"/>
-                    <msh:tableColumn columnName="ФИО пациента" property="4"/>
-                    <msh:tableColumn columnName="Возраст" property="5"/>
-                    <msh:tableColumn columnName="Дата поступления" property="6"/>
-                    <msh:tableColumn columnName="Дата выписки" property="7"/>
-                    <msh:tableColumn columnName="Кол-во к.дней" property="8"/>
-                    <msh:tableColumn columnName="Диагноз" property="9"/>
-                    <msh:tableColumn columnName="Доставлен по экс. показаниям?" property="11"/>
-                    <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="12"/>
-                    <msh:tableColumn columnName="Исход" property="13"/>
+                    <msh:tableColumn columnName="№стат. карт" property="2"/>
+                    <msh:tableColumn columnName="ФИО пациента" property="3"/>
+                    <msh:tableColumn columnName="Возраст" property="4"/>
+                    <msh:tableColumn columnName="Дата поступления" property="5"/>
+                    <msh:tableColumn columnName="Дата выписки" property="6"/>
+                    <msh:tableColumn columnName="Кол-во к.дней" property="7"/>
+                    <msh:tableColumn columnName="Диагноз" property="8"/>
+                    <msh:tableColumn columnName="Доставлен по экс. показаниям?" property="10"/>
+                    <msh:tableColumn columnName="Доставлен по экс. показаниям на карете скорой помощи?" property="11"/>
+                    <msh:tableColumn columnName="Исход" property="12"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -1691,7 +1665,6 @@ order by vrspt.strCode
                 ${isReportBase}<ecom:webQuery isReportBase="true" name="journal_surOperation" nativeSql="
     select 
 so.id as soid
-,list(vrspt1.strCode)
 ,ss.code as sscode
 ,p.lastname||' '||p.firstname||' '||p.middlename
 ,sls.dateStart,sls.dateFinish
@@ -1729,15 +1702,14 @@ order by p.lastname,p.firstname,p.middlename "/>
                            viewUrl="entityShortView-stac_surOperation.do"
                            action="entityView-stac_surOperation.do" idField="1">
                     <msh:tableColumn columnName="##" property="sn"/>
-                    <msh:tableColumn columnName="Строки отчета" property="2"/>
-                    <msh:tableColumn columnName="№стат. карт" property="3"/>
-                    <msh:tableColumn columnName="ФИО пациента" property="4"/>
-                    <msh:tableColumn columnName="Возраст" property="7"/>
-                    <msh:tableColumn columnName="Дата поступления" property="5"/>
-                    <msh:tableColumn columnName="Дата выписки" property="6"/>
-                    <msh:tableColumn columnName="Код операции" property="8"/>
-                    <msh:tableColumn columnName="Наименование операции" property="9"/>
-                    <msh:tableColumn columnName="Код соответствия для 14 формы" property="10"/>
+                    <msh:tableColumn columnName="№стат. карт" property="2"/>
+                    <msh:tableColumn columnName="ФИО пациента" property="3"/>
+                    <msh:tableColumn columnName="Возраст" property="6"/>
+                    <msh:tableColumn columnName="Дата поступления" property="4"/>
+                    <msh:tableColumn columnName="Дата выписки" property="5"/>
+                    <msh:tableColumn columnName="Код операции" property="7"/>
+                    <msh:tableColumn columnName="Наименование операции" property="8"/>
+                    <msh:tableColumn columnName="Код соответствия для 14 формы" property="9"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
