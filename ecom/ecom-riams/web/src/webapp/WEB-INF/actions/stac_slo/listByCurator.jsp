@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -52,17 +52,11 @@
 			when bf.addCaseDuration='1' then ((CURRENT_DATE-m.dateStart)+1) 
 			else (CURRENT_DATE-m.dateStart)
 		  end as c8nt2
-		  , list(vocCrit.code||' '||vocCrit.name) as f9_crits
-		  , list(mkb.code) as f10_diagnosis
     from medCase m 
     left join MedCase as sls on sls.id = m.parent_id 
     left join bedfund as bf on bf.id=m.bedfund_id 
     left join StatisticStub as sc on sc.medCase_id=sls.id 
-    left outer join Patient pat on m.patient_id = pat.id
-    left join OmcCriterion crit on crit.medcase_id=sls.id
-    left join VocClassificationCriterion vocCrit on vocCrit.id= crit.criterion_id
-    left join diagnosis d on d.medcase_id=m.id
-    left join vocidc10 mkb on mkb.id=d.idc10_id
+    left outer join Patient pat on m.patient_id = pat.id 
     where m.DTYPE='DepartmentMedCase' and m.ownerFunction_id='${curator}' 
     and m.transferDate is null and m.dateFinish is null
     group by  m.id,m.dateStart,pat.lastname,pat.firstname
@@ -81,8 +75,6 @@
       <msh:tableColumn columnName="Кол-во к.дней СЛС" property="7"/>
       <msh:tableColumn columnName="Операции" property="6"/>
       <msh:tableColumn columnName="Кол-во к.дней СЛО" property="8"/>
-      <msh:tableColumn columnName="Диагноз" property="10"/>
-      <msh:tableColumn columnName="Критерии ОМС" property="9"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>

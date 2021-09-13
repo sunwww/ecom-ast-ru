@@ -94,9 +94,6 @@
         	<msh:autoComplete property="department" fieldColSpan="4" horizontalFill="true" label="Отделение" vocName="lpu"/>
         </msh:row>
         <msh:row>
-        	<msh:autoComplete property="bedType" fieldColSpan="4" horizontalFill="true" label="Профиль коек" vocName="vocBedType"/>
-        </msh:row>
-        <msh:row>
         	<msh:autoComplete property="serviceStream" fieldColSpan="4" horizontalFill="true" label="Поток обслуживания" vocName="vocServiceStream"/>
         </msh:row>
         <msh:row>
@@ -195,11 +192,6 @@
   	}
     request.setAttribute("dateSql", "1".equals(typeDate) ? "sls.dateStart" : "slo.dateFinish") ;
 
-  	String bedType = request.getParameter("bedType");
-  	if (bedType!=null && !bedType.equals("")) {
-  	    request.setAttribute("bedTypeSql", " and vbt.id="+bedType);
-    }
-
   	if ("1".equals(typeEmergency)) {
     	request.setAttribute("emergencySql", " and sls.emergency='1'") ;
     } else if ("2".equals(typeEmergency)) {
@@ -219,7 +211,7 @@
     <msh:sectionTitle>Свод ${reportInfo}</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery isReportBase="${isReportBase}" name="report_direct_swod" nativeSql="
-select '&bedType=${param.bedType}&department=${param.department}&serviceStream=${param.serviceStream}&${typeGroupColumn}='||${typeGroupId},coalesce(${typeGroupName},'Без направления (самообращение)'),
+select '&department=${param.department}&serviceStream=${param.serviceStream}&${typeGroupColumn}='||${typeGroupId},coalesce(${typeGroupName},'Без направления (самообращение)'),
 count(distinct sls.id) 
 ,count(distinct case when sls.emergency='1' then sls.id else null end) as cntEmergency
 ,count(distinct case when sls.emergency='1' and of_.voc_code='А' then sls.id else null end) as cntEmerVrAmb
@@ -239,8 +231,6 @@ from medcase sls
 left join medcase slo on slo.parent_id=sls.id  and slo.dtype='DepartmentMedCase'
 left join misLpu ml on ml.id=sls.orderLpu_id
 left join misLpu dep on dep.id=sls.department_id
-left join bedfund bf on bf.id = slo.bedfund_id
-left join vocbedtype vbt on vbt.id=bf.bedtype_id
 left join omc_frm of_ on of_.id=sls.orderType_id
 left join vocServiceStream vss on vss.id=sls.serviceStream_id
 left join VocHospType vht on sls.sourceHospType_id=vht.id
@@ -248,7 +238,7 @@ left join VocLpuFunction vlf on vlf.id=ml.lpuFunction_id
 where ${dateSql} between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')
     and sls.dtype='HospitalMedCase'
-${department} ${emergencySql} ${lpuDirectSql} ${serviceStreamSql} ${bedTypeSql}
+${department} ${emergencySql} ${lpuDirectSql} ${serviceStreamSql}
 ${lpuFunctionDirectSql}
 and sls.deniedhospitalizating_id is null
 group by ${typeGroupId},${typeGroupName}
@@ -292,7 +282,7 @@ order by ${typeGroupName}
     <msh:sectionTitle>Свод ${reportInfo}</msh:sectionTitle>
     <msh:sectionContent>
     <ecom:webQuery isReportBase="${isReportBase}" name="report_direct_swod" nativeSql="
-select '&bedType=${param.bedType}&department=${param.department}&serviceStream=${param.serviceStream}&${typeGroupColumn}='||${typeGroupId},coalesce(${typeGroupName},'Без направления'),
+select '&department=${param.department}&serviceStream=${param.serviceStream}&${typeGroupColumn}='||${typeGroupId},coalesce(${typeGroupName},'Без направления'),
 count(distinct sls.id) 
 ,count(distinct case when sls.emergency='1' then sls.id else null end) as cntEmergency
 ,count(distinct case when sls.emergency='1' and of_.voc_code='А' then sls.id else null end) as cntEmerVrAmb
@@ -393,8 +383,6 @@ from MedCase sls
 left join VocHospType vht on sls.sourceHospType_id=vht.id
 left join patient p on p.id=sls.patient_id
 left join medcase slo on slo.parent_id=sls.id  and slo.dtype='DepartmentMedCase'
-left join bedfund bf on bf.id = slo.bedfund_id
-left join vocbedtype vbt on vbt.id=bf.bedtype_id
 left join StatisticStub ss on ss.id=sls.statisticStub_id
 left join misLpu ml on ml.id=sls.orderLpu_id
 left join misLpu dep on dep.id=sls.department_id
@@ -408,7 +396,7 @@ where ${dateSql} between to_date('${dateBegin}','dd.mm.yyyy')
     and to_date('${dateEnd}','dd.mm.yyyy')
     and sls.dtype='HospitalMedCase'
  
-${department} ${emergencySql} ${lpuDirectSql} ${serviceStreamSql} ${bedTypeSql}
+${department} ${emergencySql} ${lpuDirectSql} ${serviceStreamSql}
 ${lpuFunctionDirectSql}
 and sls.deniedhospitalizating_id is null
 group by sls.id ,ss.code ,p.id
