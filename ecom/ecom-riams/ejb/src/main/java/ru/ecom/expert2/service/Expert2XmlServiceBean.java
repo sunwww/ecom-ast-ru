@@ -691,12 +691,12 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     }
                 } else if (!isVmp) { //стационар //нах все услуги с ВМП
                     List<Object[]> list = manager.createNativeQuery("select vms.code as ms, cast(count(ems.id) as varchar) as cnt" +
-                            ", coalesce(cast(case when ems.serviceDate>e.finishdate then e.finishdate else ems.servicedate end as varchar(10)),'') as serviceDate" +
-                            " from EntryMedService ems" +
-                            " left join e2entry e on ems.entry_id = e.id" +
-                            " left join vocMedService vms on vms.id=ems.medService_id" +
-                            " where (e.id=:id or e.parententry_id=:id) and ems.serviceDate>=:entryDate" + //выгружаем только услуги
-                            " group by vms.code, case when ems.serviceDate>e.finishdate then e.finishdate else ems.servicedate end")
+                                    ", coalesce(cast(case when ems.serviceDate>e.finishdate then e.finishdate else ems.servicedate end as varchar(10)),'') as serviceDate" +
+                                    " from EntryMedService ems" +
+                                    " left join e2entry e on ems.entry_id = e.id" +
+                                    " left join vocMedService vms on vms.id=ems.medService_id" +
+                                    " where (e.id=:id or e.parententry_id=:id) and ems.serviceDate>=:entryDate" + //выгружаем только услуги
+                                    " group by vms.code, case when ems.serviceDate>e.finishdate then e.finishdate else ems.servicedate end")
                             .setParameter("id", currentEntry.getId()).setParameter("entryDate", currentEntry.getStartDate()).getResultList();
 
                     if (!list.isEmpty()) {
@@ -1144,7 +1144,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     private E2Entry calculateHospitalEntry(Long hospitalMedcaseId, String ids) {
         E2Entry hospital = null;
         List<E2Entry> slo = manager.createQuery("from E2Entry where id in (" + ids + ") and externalParentId=:parent and serviceStream!='COMPLEXCASE' " +
-                "and coalesce(isDeleted, false) = false and coalesce(doNotSend, false) = false order by startDate").setParameter("parent", hospitalMedcaseId)
+                        "and coalesce(isDeleted, false) = false and coalesce(doNotSend, false) = false order by startDate").setParameter("parent", hospitalMedcaseId)
                 .getResultList();
         if (!slo.isEmpty()) {
             hospital = cloneEntity(slo.get(0));
@@ -1347,16 +1347,15 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             if (isNotEmpty(otherDiagnosis)) {
                 //Нашли диабет поставили его на первое место!
                 for (String d : otherDiagnosis) {
-                    if (d.startsWith("E")) { //Нашли диабет поставили его на первое место!
+                    if (d.startsWith("E10") || d.startsWith("E11")) { //Нашли диабет поставили его на первое место!
                         otherDiagnosis.remove(d);
                         otherDiagnosis.add(isNotNull(ds.getDopMkb()) ? 1 : 0, d);
                         break;
                     }
                 }
-
-                //Удалим диагнозы, совпадающие с основным
-                add(element, "DS2", otherDiagnosis.get(0));
-
+                for (String d : otherDiagnosis) {
+                    add(element, "DS2", d);
+                }
             }
             if (isNotEmpty(heavyDiagnosis)) {
                 if (exchangeCovidDs && mainMkb.startsWith("U07")) { //если ковид - он - ослжнение, а осложнение - главный
@@ -1365,7 +1364,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(element, "DS2", mainMkb);
                     if (isNotEmpty(otherDiagnosis)) add(element, "DS2", otherDiagnosis.get(0));
                 } else {
-                    add(element, "DS3", heavyDiagnosis.get(0));
+                    for (String d : heavyDiagnosis) {
+                        add(element, "DS3", d);
+                    }
                 }
 
             }
