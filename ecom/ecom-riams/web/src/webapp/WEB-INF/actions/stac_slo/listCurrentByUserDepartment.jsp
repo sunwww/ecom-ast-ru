@@ -61,16 +61,7 @@
     ,sstream.name||' ; '||list(''||mp.polnumber||' '||ri.name) as sstr_and_pol
 ,case when cast(max(cast(vcid.isfornewborn as int)) as boolean) and cast(max(cast(dep.isnewborn as int)) as boolean) then 'background-color:'||max(vcr.code)||'; color:black' else '' end as styleRow
 		  ,cast('-' as varchar(1)) as tempId
-    , cast ((select to_json(array_agg(t)) from	(select cip.id,vc.name||' ('||vcip.name||')' as colName
-    ,vc.code as colorCode,vcip.name as vsipnameJust,vc.picture as picture, substring(cip.info from 0 for 30) as info
-,case when vcip.isforpatology then '1' else '0' end as isforpat
-				from vocColorIdentityPatient vcip
-				left join coloridentitypatient cip on cip.voccoloridentity_id=vcip.id
-				left join voccolor vc on vcip.color_id=vc.id
-				 left join medcase_coloridentitypatient
-				 ss on ss.colorsidentity_id=cip.id where
-				(medcase_id=sls.id or medcase_id=m.id) and (cip.startdate<=current_date and cip.finishdate is null
-				 or (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp)) order by cip.startdate) as t) as varchar) as jsonAr
+    , cast ('[]' as varchar) as jsonAr
 				 from medCase m
     left join Diagnosis diag on diag.medcase_id=m.id
     left join vocidc10 mkb on mkb.id=diag.idc10_id
@@ -127,16 +118,7 @@ left join voccolor vcr on vcr.id=vcid.color_id
 		  ,vbt.name as bedType
     ,sstream.name||' ; '||list(''||mp.polnumber||' '||ri.name) as sstr_and_pol
 		  ,cast('-' as varchar(1)) as tempId
-     , cast ((select to_json(array_agg(t)) from	(select cip.id,vc.name||' ('||vcip.name||')' as colName
-    ,vc.code as colorCode,vcip.name as vsipnameJust,vc.picture as picture, substring(cip.info from 0 for 30) as info
-    ,case when vcip.isforpatology then '1' else '0' end as isforpat
-				from vocColorIdentityPatient vcip
-				left join coloridentitypatient cip on cip.voccoloridentity_id=vcip.id
-				left join voccolor vc on vcip.color_id=vc.id
-				 left join medcase_coloridentitypatient
-				 ss on ss.colorsidentity_id=cip.id where
-				medcase_id=sls.id  and (cip.startdate<=current_date and cip.finishdate is null
-				 or (cast ((cip.finishdate||' '||cip.finishtime) as TIMESTAMP) > current_timestamp))) as t) as varchar) as jsonAr
+     , cast ('[]' as varchar) as jsonAr
     from medCase m
 
     left join MedCase as prev1 on prev1.id=m.prevMedCase_id
@@ -241,31 +223,11 @@ left join reg_ic ri on ri.id=mp.company_id
                 , pat.houseNumber , pat.houseBuilding ,pat.flatNumber
                 , pat.territoryRegistrationNonresident_id , okt.name,pat.RegionRegistrationNonresident,oq.name,pat.SettlementNonresident
  	       ,ost.name,pat.StreetNonresident
-               , pat.HouseNonresident , pat.BuildingHousesNonresident,pat.ApartmentNonresident,vbt.name
+               , pat.HouseNonresident , pat.BuildingHousesNonresident,pat.ApartmentNonresident,vbt.name,m.department_id
 
         , pat.foreignRegistrationAddress,sls.id, dep.name, dep.id, vs.id, vs.name
      order by pat.lastname,pat.firstname,pat.middlename
 "/>
-                <form action="print-stac_current_department_covid.do" method="post" target="_blank">
-                    Журнал COVID
-                    <input type='hidden' name="sqlText" id="sqlText" value="${covid_journal_sql}">
-                    <input type='hidden' name="sqlInfo" id="sqlInfo"
-                           value='Журнал состоящих пациентов в отделении  ${departmentInfo} COVID'>
-                    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
-                    <input type='hidden' name="s" id="s" value="PrintService">
-                    <input type='hidden' name="m" id="m" value="printNativeQuery">
-                    <input type="submit" value="Печать">
-                </form>
-                <form action="print-stac_current_department_covid_lab.do" method="post" target="_blank">
-                    Журнал COVID для Иванова
-                    <input type='hidden' name="sqlText" id="sqlText" value="${covid_journal_sql}">
-                    <input type='hidden' name="sqlInfo" id="sqlInfo"
-                           value='Журнал состоящих пациентов в отделении  ${departmentInfo} COVID'>
-                    <input type='hidden' name="sqlColumn" id="sqlColumn" value="">
-                    <input type='hidden' name="s" id="s" value="PrintService">
-                    <input type='hidden' name="m" id="m" value="printNativeQuery">
-                    <input type="submit" value="Печать">
-                </form>
                 <form action="print-stac_current_department.do" method="post" target="_blank">
                     Журнал состоящих пациентов в отделении ${departmentInfo} на текущий момент
                     <input type='hidden' name="sqlText" id="sqlText" value="${datelist_sql}">
@@ -295,7 +257,7 @@ left join reg_ic ri on ri.id=mp.company_id
             <msh:sectionContent>
 
                 <msh:table name="datelist" viewUrl="entityShortView-stac_slo.do" action="entityParentView-stac_slo.do"
-                           idField="1" styleRow="13">
+                           idField="1" styleRow="14">
                     <msh:tableColumn property="sn" columnName="#"/>
                     <msh:tableColumn columnName="Стат.карта" property="2"/>
                     <msh:tableColumn columnName="Фамилия имя отчество пациента" property="3"/>
@@ -306,10 +268,10 @@ left join reg_ic ri on ri.id=mp.company_id
                     <msh:tableColumn columnName="Операции" property="8"/>
                     <msh:tableColumn columnName="Кол-во к.дней СЛО" property="9"/>
                     <msh:tableColumn columnName="Диагноз" property="10"/>
-                    <msh:tableColumn columnName="Поток обслуживания и полис" property="12"/>
-                    <msh:tableColumn columnName="Профиль койки" property="11"/>
-                    <msh:tableColumn columnName="Браслеты пациента" property="14"/>
-                    <msh:tableColumn columnName="Браслеты пациента hidden" property="15" hidden="true"/>
+                    <msh:tableColumn columnName="Паспортные данные" property="11"/>
+                    <msh:tableColumn columnName="Профиль койки" property="12"/>
+                    <msh:tableColumn columnName="Браслеты пациента" property="15"/>
+                    <msh:tableColumn columnName="Браслеты пациента hidden" property="16" hidden="true"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -328,12 +290,8 @@ left join reg_ic ri on ri.id=mp.company_id
                     <msh:tableColumn columnName="Леч.врач" property="7"/>
                     <msh:tableColumn columnName="Кол-во к.дней СЛС" property="8"/>
                     <msh:tableColumn columnName="Операции" property="6"/>
-                    <msh:tableColumn columnName="Кол-во к.дней СЛО" property="10"/>
-                    <msh:tableColumn columnName="Диагноз" property="9"/>
-                    <msh:tableColumn columnName="Поток обслуживания и полис" property="12"/>
-                    <msh:tableColumn columnName="Профиль койки" property="11"/>
-                    <msh:tableColumn columnName="Браслеты пациента" property="13"/>
-                    <msh:tableColumn columnName="Браслеты пациента hidden" property="14" hidden="true"/>
+                    <msh:tableColumn columnName="Браслеты пациента" property="9"/>
+                    <msh:tableColumn columnName="Браслеты пациента hidden" property="10" hidden="true"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
@@ -388,7 +346,7 @@ left join reg_ic ri on ri.id=mp.company_id
                 setBr(table, 13, 14);
             var table_r = getTableToSetBracelets('datelist_r');
             if (table_r != null)
-                setBr(table_r, 13, 14);
+                setBr(table_r, 9, 10);
         </script>
     </tiles:put>
     <%}%>

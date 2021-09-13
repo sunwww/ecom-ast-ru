@@ -66,8 +66,6 @@ public class EntityEJBEntityFormManager implements IEntityFormManager {
                 Class idClass = id.getClass() ;
                 Object home = findHome(aObject.getClass()) ;
                 Object ejbObject = findByPrimaryKey(home, id, idClass) ;
-//                Method findByPrimaryKeyMethod = home.getClass().getMethod("findByPrimaryKey", idClass) ; // todo
-//                Object ejbObject = findByPrimaryKeyMethod.invoke(home, id) ;
                 if(ejbObject==null) {
                     throw new EJBException("Нет EJB объекта с идентификатором "+id) ;
                 } else {
@@ -95,9 +93,6 @@ public class EntityEJBEntityFormManager implements IEntityFormManager {
             Class formClass = aForm.getClass() ;
             Object home = findHome(formClass);
             Class idClass = findIdClass(formClass);
-            if (idClass == null) {
-                throw new IllegalArgumentException("Нет описания идентификатора. Нет ни отдного свойства с аннотацией @Id.");
-            }
             Class homeClass = home.getClass();
             Method findByPrimaryKey = homeClass.getMethod("findByPrimaryKey", idClass);
             Object id = getId(aForm);
@@ -144,9 +139,6 @@ public class EntityEJBEntityFormManager implements IEntityFormManager {
             Class formClass = aForm.getClass() ;
             Object home = findHome(formClass);
             Class idClass = findIdClass(formClass);
-            if (idClass == null) {
-                throw new IllegalArgumentException("Нет описания идентификатора. Нет ни отдного свойства с аннотацией @Id.");
-            }
             Class homeClass = home.getClass();
             Method findByPrimaryKey = homeClass.getMethod("findByPrimaryKey", idClass);
             Object id = getId(aForm);
@@ -165,59 +157,6 @@ public class EntityEJBEntityFormManager implements IEntityFormManager {
         }
     }
 
-    public void storeOld(Object aObject, IEntityFormManagerContext aContext) {
-        if (aObject == null) throw new IllegalArgumentException("Нет параметра aObject");
-
-        Class clazz = aObject.getClass();
-        EntityForm entityForm = (EntityForm) clazz.getAnnotation(EntityForm.class);
-        if (entityForm == null) throw new IllegalArgumentException("У класса " + clazz + " нет аннотации @EntityForm, список доступных аннотаций " + arrayToString(clazz.getAnnotations()));
-
-        EntityFormEntityEJB entityFormEJB = (EntityFormEntityEJB) clazz.getAnnotation(EntityFormEntityEJB.class);
-        if (entityFormEJB == null) throw new IllegalArgumentException("У класса " + clazz + " нет аннотации @EntityFormEntityEJB, список доступных аннотаций " + arrayToString(clazz.getAnnotations()));
-
-        try {
-            // todo
-            String jndiName = new StringBuilder(theJndiPrefix).append('/').append(entityFormEJB.jndiSimpleName()).toString();
-            Object objRef = theInitialContext.lookup(theJndiPrefix + "/" + entityFormEJB.jndiSimpleName());
-            Object home = PortableRemoteObject.narrow(objRef, entityFormEJB.home());
-
-            Class idClass = findIdClass(clazz);
-            if (idClass == null) {
-                throw new IllegalArgumentException("Нет описания идентификатора. Нет ни отдного свойства с аннотацией @Id.");
-            }
-            Class homeClass = home.getClass();
-            Method findByPrimaryKey = homeClass.getMethod("findByPrimaryKey", idClass);
-            Object id = getId(aObject);
-            Object ejbObject = id != null ? findByPrimaryKey.invoke(home, getId(aObject)) : null;
-            if (id == null ) {
-                // todo обработать GENERATE
-                throw new IllegalStateException("Ошибка сохранения/создания. Нет ни идентификатора, ни EntityEJB объекта");
-            } else if (ejbObject == null) {
-                // добавляем
-                RolesToCreate createRoles = (RolesToCreate) clazz.getAnnotation(RolesToCreate.class);
-      //          if (createRoles == null || checkRoles(createRoles.value(), aContext)) {
-                    Method createMethod = homeClass.getMethod("create", idClass);
-                    Object entityObject = createMethod.invoke(home, id);
-                    setProperties(aObject, entityObject);
-      /*          } else {
-                    throw new IllegalAccessException("Недостаточно прав для создания");
-                }
-       */     } else  { //if (ejbObject != null) {
-                RolesToEdit editRoles = (RolesToEdit) clazz.getAnnotation(RolesToEdit.class);
-         //       if (editRoles == null || checkRoles(editRoles.value(), aContext)) {
-                    setProperties(aObject, ejbObject);
-         //       }
-                // заменяем
-            } /*else {
-                throw new IllegalStateException("Неправильное состояние [id=" + id + ", ejbObject=" + ejbObject + "]");
-            }*/
-
-        } catch (Exception e) {
-            throw new RuntimeException("Ошибка при сохранении", e);
-        }
-
-    }
-
 
     private Object findHome(Class aFormClass) {
         Class clazz = aFormClass ;
@@ -229,15 +168,9 @@ public class EntityEJBEntityFormManager implements IEntityFormManager {
 
         try {
             // todo
-            String jndiName = new StringBuilder(theJndiPrefix).append('/').append(entityFormEJB.jndiSimpleName()).toString();
             Object objRef = theInitialContext.lookup(theJndiPrefix + "/" + entityFormEJB.jndiSimpleName());
-            Object home = PortableRemoteObject.narrow(objRef, entityFormEJB.home());
 
-            Class idClass = findIdClass(clazz);
-            if (idClass == null) {
-                throw new IllegalArgumentException("Нет описания идентификатора. Нет ни отдного свойства с аннотацией @Id.");
-            }
-            return home ;
+            return PortableRemoteObject.narrow(objRef, entityFormEJB.home());
 
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при сохранении", e);
@@ -265,10 +198,6 @@ public class EntityEJBEntityFormManager implements IEntityFormManager {
                 PropertyUtil.copyProperty(aEntity, aForm, method);
             }
         }
-    }
-
-    private static boolean checkRoles(String[] aRoles, IEntityFormManagerContext aContext) {
-        return true;
     }
 
     private static Method findIdMethod(Class aClass) {

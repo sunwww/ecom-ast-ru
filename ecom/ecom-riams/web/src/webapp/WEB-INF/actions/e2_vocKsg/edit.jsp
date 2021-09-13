@@ -87,6 +87,7 @@
 
     <tiles:put name="side" type="string">
         <msh:ifFormTypeIsView formName="e2_vocKsgForm">
+            <tags:expertvoc_menu currentAction="e2_vocKsg_st"/>
             <msh:sideMenu>
                 <msh:sideLink key="ALT+2" params="id" action="/entityEdit-e2_vocKsg" name="Изменить"
                               roles="/Policy/E2/Edit"/>
