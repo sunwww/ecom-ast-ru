@@ -2769,6 +2769,7 @@ function printCovidAllDepartments(aCtx, aParams) {
         " else pat.foreignRegistrationAddress end as address" +
         " , st.code as stCode" +
         " ,to_char(sls.dateStart,'dd.mm.yyyy') as dSt" +
+        " ,coalesce(vic.name,'')||' сер. '||pat.passportSeries||' №'||pat.passportNumber||' выдан '||to_char(pat.passportDateIssued,'dd.mm.yyyy')||' '||pat.passportWhomIssued as passport" +
         " from medCase m" +
         " left join MedCase as sls on sls.id = m.parent_id" +
         " left join Mislpu dep on dep.id=m.department_id" +
@@ -2779,6 +2780,7 @@ function printCovidAllDepartments(aCtx, aParams) {
         " left join Omc_Qnp oq on oq.id=pat.TypeSettlementNonresident_id" +
         " left join Omc_StreetT ost on ost.id=pat.TypeStreetNonresident_id" +
         " left join StatisticStub st on st.medcase_id=sls.id" +
+        "  left join VocIdentityCard vic on vic.id=pat.passportType_id" +
         " where m.DTYPE='DepartmentMedCase' and dep.isForCovid=true" +
         dateSql +
         " group by dep.name,pat.lastname,pat.firstname" +
@@ -2789,6 +2791,7 @@ function printCovidAllDepartments(aCtx, aParams) {
         " ,ost.name,pat.StreetNonresident" +
         " , pat.HouseNonresident , pat.BuildingHousesNonresident,pat.ApartmentNonresident" +
         " , pat.foreignRegistrationAddress,sls.id,st.code,sls.dateStart" +
+        " ,vic.name, pat.passportSeries,pat.passportNumber,pat.passportDateIssued,pat.passportWhomIssued" +
         " order by dep.name,pat.lastname,pat.firstname,pat.middlename";
     var resultPatList = aCtx.manager.createNativeQuery(patListSql).getResultList();
     var patients = new java.util.ArrayList();
@@ -2803,6 +2806,7 @@ function printCovidAllDepartments(aCtx, aParams) {
             var adr = p[4];
             var hist = p[5];
             var datest = p[6];
+            var passp = p[7];
 
             pp.add(((i + 1) + '').replace('.0', ''));//0
             pp.add(dept);
@@ -2812,6 +2816,7 @@ function printCovidAllDepartments(aCtx, aParams) {
             pp.add(adr);
             pp.add(hist);
             pp.add(datest);
+            pp.add(passp);
 
             patients.add(pp);
         }
