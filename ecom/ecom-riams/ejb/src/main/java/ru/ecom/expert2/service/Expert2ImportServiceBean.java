@@ -13,10 +13,10 @@ import ru.ecom.expert2.domain.*;
 import ru.ecom.expert2.domain.voc.VocE2BillStatus;
 import ru.ecom.expert2.domain.voc.VocE2EntrySubType;
 import ru.ecom.expert2.domain.voc.VocE2Sanction;
+import ru.ecom.expert2.domain.voc.VocOmcMedServiceCost;
 import ru.ecom.expert2.domain.voc.federal.*;
 import ru.ecom.jaas.ejb.service.ISoftConfigService;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.nuzmsh.util.StringUtil;
 
@@ -48,6 +48,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     private static final EjbEcomConfig CONFIG = EjbEcomConfig.getInstance();
     private static final String XMLDIR = CONFIG.get("expert2.input.folder", "/opt/jboss-4.0.4.GAi/server/default/riams/expert2xml");
     private final HashMap<String, PersonalWorkFunction> DOCTORLIST = new HashMap<>();
+    private final HashMap<String, VocOmcMedServiceCost> serviceCost = new HashMap<>();
     /**
      * Загружаем MP файл (ответ от фонда)
      * импорт версии от 2020 года
@@ -216,10 +217,10 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     manager.persist(entry);
                     List<Element> uslList = sl.getChildren("USL");
                     for (Element usl : uslList) {
-                        VocMedService vms = getVocByCode(VocMedService.class, finishDate, usl.getChildText("VID_VME"));
-                        EntryMedService ms = new EntryMedService(entry, vms);
+                        VocOmcMedServiceCost cost = getMedServiceCost(usl.getChildText("VID_VME"), finishDate);
+                        EntryMedService ms = new EntryMedService(entry, cost.getMedService());
                         ms.setDoctorSnils(usl.getChildText("IDDOKT_U"));
-                        ms.setCost(BigDecimal.ZERO);
+                        ms.setCost(cost.getCost());
                         try {
                             ms.setServiceDate(toDate(usl.getChildText("DATE_IN")));
                         } catch (NullPointerException | ParseException ee) {
@@ -243,6 +244,17 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         }
     }
 
+    private VocOmcMedServiceCost getMedServiceCost(String medServiceCode, Date finishDate) {
+        if (medServiceCode == null || finishDate == null) return null;
+        String key = medServiceCode + "#" + new SimpleDateFormat("MM.yyyy").format(finishDate);
+        if (!serviceCost.containsKey(key)) {
+            List<VocOmcMedServiceCost> costs = manager.createNamedQuery("VocOmcMedServiceCost.getByCodeAndDate").setParameter("code", medServiceCode)
+                    .setParameter("finishDate", finishDate).getResultList();
+            serviceCost.put(key, costs.isEmpty() ? null : costs.get(0));
+        }
+        return serviceCost.get(key);
+    }
+
     @Override
     public void importDepartmentAddressCodes(long monitorId, String fileName, Long entryListId) {
         IMonitor monitor = startMonitor(monitorId, "Обновляем коды отделений: " + fileName);
@@ -252,7 +264,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             List<Element> zaps = root.getChildren("ZAP");
             String lpuCode = softConfigService.getConfigValue("DEFAULT_LPU_OMCCODE");
             for (Element zap : zaps) {
-                if (isEquals(lpuCode,zap.getChildText("N_REESTR"))) {
+                if (isEquals(lpuCode, zap.getChildText("N_REESTR"))) {
                     List<Element> profiles = zap.getChildren("PROF");
                     for (Element profil : profiles) {
                         String key = zap.getChildText("LPU_1") + "#" + profil.getChildText("PROFIL");
@@ -262,11 +274,11 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     }
                 }
             }
-            monitor.setText("Найдено "+addresses.size()+" кодов для подстановки");
+            monitor.setText("Найдено " + addresses.size() + " кодов для подстановки");
             List<E2Entry> entries = manager.createNamedQuery("E2Entry.getAllByListEntryId").setParameter("listEntryId", entryListId).getResultList();
             int cnt = 1;
             int found = 0;
-            LOG.info("start addressing entries: "+entries.size()+", map: "+addresses.size());
+            LOG.info("start addressing entries: " + entries.size() + ", map: " + addresses.size());
             for (E2Entry entry : entries) {
                 if (entry.getMedHelpProfile() != null && StringUtil.isNullOrEmpty(entry.getDepartmentAddressCode())
                         && isOneOf(entry.getServiceStream(), "OBLIGATORYINSURANCE", "COMPLEXCASE")) {
@@ -275,14 +287,14 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     manager.persist(entry);
                     found++;
                 }
-                if (cnt%100==0 && isMonitorCancel(monitor, "Проверено записей "+cnt+" из "+entries.size()+" записей, проставлено кодов "+found)) {
+                if (cnt % 100 == 0 && isMonitorCancel(monitor, "Проверено записей " + cnt + " из " + entries.size() + " записей, проставлено кодов " + found)) {
                     return;
                 }
                 cnt++;
             }
 
         } catch (JDOMException | IOException e) {
-            LOG.error("some error :"+e.getMessage(),e);
+            LOG.error("some error :" + e.getMessage(), e);
             e.printStackTrace();
         }
         monitor.finish("Закончено!");
@@ -435,7 +447,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                         manager.persist(entry);
                     }
                 }
-                LOG.info(i+" По счету №" + savedBill.getBillNumber() + " сумма = " + totalSum);
+                LOG.info(i + " По счету №" + savedBill.getBillNumber() + " сумма = " + totalSum);
                 monitor.setText("По счету №" + savedBill.getBillNumber() + " сумма = " + totalSum);
                 savedBill.setSum(totalSum);
                 manager.persist(savedBill);
