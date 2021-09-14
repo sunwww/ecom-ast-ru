@@ -2781,7 +2781,7 @@ function printCovidAllDepartments(aCtx, aParams) {
         " left join Omc_StreetT ost on ost.id=pat.TypeStreetNonresident_id" +
         " left join StatisticStub st on st.medcase_id=sls.id" +
         "  left join VocIdentityCard vic on vic.id=pat.passportType_id" +
-        " where m.DTYPE='DepartmentMedCase' and dep.isForCovid=true" +
+        " where m.DTYPE='DepartmentMedCase' " +
         dateSql +
         " group by dep.name,pat.lastname,pat.firstname" +
         " ,pat.middlename,pat.birthday,sex.name" +
