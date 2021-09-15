@@ -212,6 +212,7 @@ left join reg_ic ri on ri.id=mp.company_id
        		, vs.name as f10
        		,sc.code as f11_ss
        		,to_char(sls.datestart,'dd.MM.yyyy') as f12_slsStart
+       		 ,coalesce(vic.name,'')||' сер. '||pat.passportSeries||' №'||pat.passportNumber||' выдан '||to_char(pat.passportDateIssued,'dd.mm.yyyy')||' '||pat.passportWhomIssued as passport
      			 from medCase m
      left join Diagnosis diag on diag.medcase_id=m.id
      left join vocidc10 mkb on mkb.id=diag.idc10_id
@@ -231,6 +232,7 @@ left join reg_ic ri on ri.id=mp.company_id
      left join Omc_KodTer okt on okt.id=pat.territoryRegistrationNonresident_id
      left join Omc_Qnp oq on oq.id=pat.TypeSettlementNonresident_id
      left join Omc_StreetT ost on ost.id=pat.TypeStreetNonresident_id
+     left join VocIdentityCard vic on vic.id=pat.passportType_id
      where m.DTYPE='DepartmentMedCase' and m.department_id='${department}'
      and m.transferDate is null and (m.dateFinish is null or m.dateFinish=current_date and m.dischargetime>CURRENT_TIME)
      group by pat.id, m.id,m.dateStart,pat.lastname,pat.firstname
@@ -244,6 +246,7 @@ left join reg_ic ri on ri.id=mp.company_id
                , pat.HouseNonresident , pat.BuildingHousesNonresident,pat.ApartmentNonresident,vbt.name
 
         , pat.foreignRegistrationAddress,sls.id, dep.name, dep.id, vs.id, vs.name
+        ,vic.name, pat.passportSeries,pat.passportNumber,pat.passportDateIssued,pat.passportWhomIssued
      order by pat.lastname,pat.firstname,pat.middlename
 "/>
                 <form action="print-stac_current_department_covid.do" method="post" target="_blank">
