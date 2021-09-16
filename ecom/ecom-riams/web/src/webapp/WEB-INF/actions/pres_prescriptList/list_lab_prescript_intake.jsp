@@ -69,10 +69,10 @@
                     <td class="label" title="Группировка (typeGroup)" colspan="1"><label for="typeGroupName"
                                                                                          id="typeGroupLabel">Группировка:</label>
                     </td>
-                    <td onclick="this.childNodes[1].checked='checked';checkfrm();this.form.submit() ;">
+                    <td onclick="this.childNodes[1].checked='checked';checkfrm();">
                         <input type="radio" name="typeGroup" value="1"> по типу биоматериала
                     </td>
-                    <td onclick="this.childNodes[1].checked='checked';checkfrm();this.form.submit() ;">
+                    <td onclick="this.childNodes[1].checked='checked';checkfrm();">
                         <input type="radio" name="typeGroup" value="2"> без группировки
                     </td>
                 </msh:row>
@@ -80,10 +80,10 @@
                     <td class="label" title="Забор материала (typeIntake)" colspan="1"><label for="typeIntakeame"
                                                                                               id="typeIntakeLabel">Забор:</label>
                     </td>
-                    <td onclick="this.childNodes[1].checked='checked';checkfrm();this.form.submit() ;">
+                    <td onclick="this.childNodes[1].checked='checked';checkfrm();">
                         <input type="radio" name="typeIntake" value="1"> был
                     </td>
-                    <td onclick="this.childNodes[1].checked='checked';checkfrm();this.form.submit() ;">
+                    <td onclick="this.childNodes[1].checked='checked';checkfrm();">
                         <input type="radio" name="typeIntake" value="2"> не был
                     </td>
                     <td onclick="this.childNodes[1].checked='checked';checkfrm();" colspan="2">
@@ -109,7 +109,6 @@
                 <msh:row>
                     <msh:autoComplete property="serviceSubType" parentId="LABSURVEY" fieldColSpan="4"
                                       horizontalFill="true" label="Тип биоматериала" vocName="vocServiceSubTypeByCode"/>
-                    <td class="label" title="Передача в лабораторию (typeTransfer)"><label>При изменении нажмите Отобразить данные</label></td>
                 </msh:row>
                 <msh:row>
                     <msh:textField property="beginDate" label="Период с"/>
@@ -127,11 +126,12 @@
             checkFieldUpdate('typeTransfer', '${typeTransfer}', 1);
 
             function hideRow(btn) {
+                jQuery(btn).parent().parent().children().first().children().prop('checked', false);
                 jQuery(btn).parent().parent().fadeTo(0, 0.2);
             }
 
             function checkfrm() {
-                document.forms[1].submit();
+                document.forms["mainForm"].submit();
             }
 
             function checkFieldUpdate(aField, aValue, aDefaultValue) {
@@ -435,9 +435,9 @@
                 });
             }
 
-            // serviceSubTypeAutocomplete.addOnChangeCallback(function () {
-            //     checkfrm()
-            // });
+            serviceSubTypeAutocomplete.addOnChangeCallback(function () {
+                checkfrm()
+            });
         </script>
     </tiles:put>
 </tiles:insert>
