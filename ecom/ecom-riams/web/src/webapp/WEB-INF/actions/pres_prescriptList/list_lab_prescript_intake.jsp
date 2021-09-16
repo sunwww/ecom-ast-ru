@@ -109,6 +109,7 @@
                 <msh:row>
                     <msh:autoComplete property="serviceSubType" parentId="LABSURVEY" fieldColSpan="4"
                                       horizontalFill="true" label="Тип биоматериала" vocName="vocServiceSubTypeByCode"/>
+                    <td class="label" title="Передача в лабораторию (typeTransfer)"><label>При изменении нажмите Отобразить данные</label></td>
                 </msh:row>
                 <msh:row>
                     <msh:textField property="beginDate" label="Период с"/>
@@ -434,9 +435,9 @@
                 });
             }
 
-            serviceSubTypeAutocomplete.addOnChangeCallback(function () {
-                checkfrm()
-            });
+            // serviceSubTypeAutocomplete.addOnChangeCallback(function () {
+            //     checkfrm()
+            // });
         </script>
     </tiles:put>
 </tiles:insert>
