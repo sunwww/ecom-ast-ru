@@ -17,6 +17,7 @@ import ru.ecom.expert2.domain.voc.VocOmcMedServiceCost;
 import ru.ecom.expert2.domain.voc.federal.*;
 import ru.ecom.jaas.ejb.service.ISoftConfigService;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.nuzmsh.util.StringUtil;
 
@@ -49,6 +50,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     private static final String XMLDIR = CONFIG.get("expert2.input.folder", "/opt/jboss-4.0.4.GAi/server/default/riams/expert2xml");
     private final HashMap<String, PersonalWorkFunction> DOCTORLIST = new HashMap<>();
     private final HashMap<String, VocOmcMedServiceCost> serviceCost = new HashMap<>();
+    private final SimpleDateFormat mmYYYY = new SimpleDateFormat("MM.yyyy");
     /**
      * Загружаем MP файл (ответ от фонда)
      * импорт версии от 2020 года
@@ -128,7 +130,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             manager.persist(le);
             Element root = doc.getRootElement();
             int i = 0;
-
+            serviceCost.clear();
             List<Element> zaps = root.getChildren("ZAP");
             LOG.info("start import elmed " + xmlFilename + ", found " + zaps.size() + " records");
             IMonitor monitor = startMonitor(monitorId, "Импортируем записи с ЭлМед-а {" + xmlFilename + "}. Всего записей: " + zaps.size());
@@ -218,9 +220,16 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     List<Element> uslList = sl.getChildren("USL");
                     for (Element usl : uslList) {
                         VocOmcMedServiceCost cost = getMedServiceCost(usl.getChildText("VID_VME"), finishDate);
-                        EntryMedService ms = new EntryMedService(entry, cost.getMedService());
+                        EntryMedService ms;
+                        if (cost!=null) {
+                            ms = new EntryMedService(entry, cost.getMedService());
+                            ms.setCost(cost.getCost());
+                        } else {
+                            VocMedService vms = getVocByCode(VocMedService.class, finishDate, usl.getChildText("VID_VME"));
+                            ms = new EntryMedService(entry, vms);
+                            ms.setCost(BigDecimal.ZERO);
+                        }
                         ms.setDoctorSnils(usl.getChildText("IDDOKT_U"));
-                        ms.setCost(cost.getCost());
                         try {
                             ms.setServiceDate(toDate(usl.getChildText("DATE_IN")));
                         } catch (NullPointerException | ParseException ee) {
@@ -246,7 +255,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
 
     private VocOmcMedServiceCost getMedServiceCost(String medServiceCode, Date finishDate) {
         if (medServiceCode == null || finishDate == null) return null;
-        String key = medServiceCode + "#" + new SimpleDateFormat("MM.yyyy").format(finishDate);
+        String key = medServiceCode + "#" + mmYYYY.format(finishDate);
         if (!serviceCost.containsKey(key)) {
             List<VocOmcMedServiceCost> costs = manager.createNamedQuery("VocOmcMedServiceCost.getByCodeAndDate").setParameter("code", medServiceCode)
                     .setParameter("finishDate", finishDate).getResultList();
