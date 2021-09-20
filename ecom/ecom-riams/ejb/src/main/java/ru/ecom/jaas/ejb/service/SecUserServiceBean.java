@@ -565,6 +565,7 @@ public class SecUserServiceBean implements ISecUserService {
         secUser.setCreateDate(dd);
         secUser.setCreateTime(tt);
         secUser.setCreateUsername(context.getCallerPrincipal().getName());
+        secUser.setPassword("");
         manager.persist(secUser);
         manager.flush();
         manager.clear();

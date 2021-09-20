@@ -152,6 +152,10 @@
             showToastMessage('Если введён логин, то необходимо выбрать отделение и должность!', null, true, true, 5000);
             $('${name}Add').disabled = false;
             return;
+        } else if (login != '' && userCopy == '') {
+            showToastMessage('Если введён логин, то необходимо указать, у кого скопировать роли!', null, true, true, 5000);
+            $('${name}Add').disabled = false;
+            return;
         } else if (login != '' && !jQuery("input[name='${name}rad']")[0].checked && !jQuery("input[name='${name}rad']")[1].checked) {
             showToastMessage('Если введён логин, то необходимо установить пароль!', null, true, true, 5000);
             $('${name}Add').disabled = false;
