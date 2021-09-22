@@ -97,6 +97,7 @@ select distinct sls.id as f1_id
 ,case when c.reVaccineСomponent_id=1 then 'Да' else 'Нет' end as f12_re
 ,to_char(c.dateReVaccine,'dd.MM.yyyy') as f13_dRe
 ,vcov.name as f14_covVac
+,to_char(c.symptomsDate,'dd.MM.yyyy') as f15_start
 from medcase m
 left join MedCase sls on sls.id = m.parent_id
 left join Patient pat on pat.id=sls.patient_id
@@ -116,6 +117,7 @@ and m.id = (select max(id) from medcase m2 where dtype='DepartmentMedCase' and p
                     <msh:tableColumn columnName="Номер истории" property="3" width="5"/>
                     <msh:tableColumn columnName="Отделение" property="4" width="15"/>
                     <msh:tableColumn columnName="Дата поступления" property="5" width="5"/>
+                    <msh:tableColumn columnName="Дата п-я клин. с-в" property="15" width="5"/>
                     <msh:tableColumn columnName="Дата выписки" property="6" width="5"/>
                     <msh:tableColumn columnName="Результат госп." property="7" width="5"/>
                     <msh:tableColumn columnName="I этап" property="8" width="7"/>
