@@ -62,6 +62,10 @@ select distinct sls.id as f1_id,pat.lastname||' ' ||pat.firstname||' '||pat.midd
 , getAllParamsByMedService(sls.id,'A09.05.020') as f14_kreat
 , getAllParamsByMedService(sls.id,'B03.016.002') as f15_oak
 , getAllParamsByMedService(sls.id,'B03.016.003') as f16_oak_razv
+, getAllParamsByMedService(sls.id,'B03.005.006') as f17_koag
+, getAllParamsByMedService(sls.id,'A12.05.001') as f18_soe
+, getAllParamsByMedService(sls.id,'A09.05.193') as f19_ur_trop
+, getAllParamsByMedService(sls.id,'A09.05.193.001') as f20_trop_exp
 from prescription p
 left join medcase mc on mc.id = p.medcase_id
 left join prescriptionlist pl on pl.id=p.prescriptionlist_id
@@ -96,6 +100,10 @@ group by sls.id,pat.lastname||' ' ||pat.firstname||' '||pat.middlename
                     <msh:tableColumn property="14" columnName="креат."/>
                     <msh:tableColumn property="15" columnName="оак"/>
                     <msh:tableColumn property="16" columnName="оак (разв.)"/>
+                    <msh:tableColumn property="17" columnName="коаг."/>
+                    <msh:tableColumn property="18" columnName="СОЭ"/>
+                    <msh:tableColumn property="19" columnName="Ур. троп."/>
+                    <msh:tableColumn property="20" columnName="Троп. эксп."/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
