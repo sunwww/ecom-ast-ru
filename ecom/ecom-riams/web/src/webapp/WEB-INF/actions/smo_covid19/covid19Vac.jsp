@@ -59,7 +59,6 @@
                 if (dateEnd == null || dateEnd.equals("")) {
                     dateEnd = date;
                 }
-                request.setAttribute("addSql", "sls.dateStart between to_date('" + date + "','dd.mm.yyyy') and to_date('" + dateEnd + "','dd.mm.yyyy')");
                 String addSql;
                 switch (typeView) {
                     case "now":
@@ -98,6 +97,7 @@ select distinct sls.id as f1_id
 ,to_char(c.dateReVaccine,'dd.MM.yyyy') as f13_dRe
 ,vcov.name as f14_covVac
 ,to_char(c.symptomsDate,'dd.MM.yyyy') as f15_start
+, coalesce(mkb.code||' '||mkb.name,'') as f16_mkbD
 from medcase m
 left join MedCase sls on sls.id = m.parent_id
 left join Patient pat on pat.id=sls.patient_id
@@ -106,6 +106,7 @@ left join VocHospitalizationResult vhr on vhr.id=sls.result_id
 left join mislpu dep on dep.id=m.department_id
 left join statisticstub st on st.medcase_id=sls.id
 left join voccovvaccine vcov on vcov.id=c.covvaccine_id
+left join  VocIdc10 mkb on mkb.id=c.mkbDischarge_id
 where c.vaccinated_id=1 and m.dtype='DepartmentMedCase'
 and (c.noactual=false or c.noactual is null)
 and m.id = (select max(id) from medcase m2 where dtype='DepartmentMedCase' and parent_id=sls.id)
@@ -127,6 +128,7 @@ and m.id = (select max(id) from medcase m2 where dtype='DepartmentMedCase' and p
                     <msh:tableColumn columnName="Ревак." property="12" width="7"/>
                     <msh:tableColumn columnName="Дата ревак." property="13" width="5"/>
                     <msh:tableColumn columnName="Вакцина" property="14" width="5"/>
+                    <msh:tableColumn columnName="Диагноз осн. вып." property="16" width="20"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
