@@ -38,8 +38,8 @@ function printKiliProtocol(aCtx, aParams) {
         ",dth.reasoncomplicationtext as f15_, dth.reasonconcomitanttext as f16_, case when dth.commentcategory is null or dth.commentcategory ='' then 'Имеется совпадение диагнозов' else dth.commentcategory end as f17_com" +
         ", pk.protocolNumber as f18_pkNumber, pk.protocolDate as f19_pkDate, case when mlp.isnoomc='1' then depPrev.kiliprofile_id else mlp.kiliprofile_id end as f20_profileId  " +
         ", case when mlp.isnoomc='1' then vkp.name else vkp2.name end as f21_profileName, vkc.name as f22_kiliConclusion " +
-        ",case when dth.isneonatologic=true then pk.protocolComment else '' end as protCom23 " +
-        ", case when dth.isneonatologic=true then dth.commentreason else '' end as dReas24 " +
+        ", pk.protocolComment as protCom23 " +
+        ", dth.commentreason as dReas24 " +
         ", case when dth.isneonatologic=true then dth.newbornhistory else '' end as nBHist25 " +
         " from protocolKili pk " +
         " left join deathcase dth on dth.id = pk.deathcase_id " +
@@ -100,7 +100,7 @@ function printKiliProtocol(aCtx, aParams) {
             var dReas = (p[23] == '') ? '' : 'Причина смерти: ' + p[23];
             var nBHist = (p[24] == null || p[24] == '' || p[24] == 'undefined') ? '' : p[24];
 
-            pp.add(fio);//0
+            pp.add(fio);//0protCom
             pp.add(bth);//1
             pp.add(stat);//2
             pp.add(dept);//3

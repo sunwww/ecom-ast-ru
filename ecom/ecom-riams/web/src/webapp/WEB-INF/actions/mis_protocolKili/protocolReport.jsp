@@ -275,6 +275,7 @@
 	  <ecom:webQuery isReportBase="true" name="calc_reestr" nameFldSql="calc_reestr_sql" nativeSql="
 SELECT pat.id, pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_char(pat.birthday,'dd.MM.yyyy') as f1_fio, 'Протокол №'||pk.protocolNumber||' от '||to_char(pk.protocoldate,'dd.MM.yyyy') as protocolField, sts.code
 , to_char(sls.dateFinish,'dd.MM.yyyy') as dateFinish
+,case when dc.id is null then '-' else '+' end as hasDc
   FROM medcase sls
 	left join medcase slo on slo.parent_id=sls.id and slo.datefinish is not null and slo.dtype='DepartmentMedCase'
 	left join mislpu dep on dep.id=slo.department_id
@@ -307,6 +308,7 @@ SELECT pat.id, pat.lastname||' '||pat.firstname||' '||pat.middlename||' '||to_ch
 				  <msh:tableColumn columnName="Номер протокола" property="3" />
 				  <msh:tableColumn columnName="Номер истории" property="4" />
 				  <msh:tableColumn columnName="Дата смерти" property="5" />
+				  <msh:tableColumn columnName="Случай смерти" property="6" />
 			  </msh:table>
 		  </msh:sectionContent>
 	  </msh:section>
