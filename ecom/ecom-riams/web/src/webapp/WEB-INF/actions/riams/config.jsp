@@ -256,9 +256,10 @@
                 }
             }
             function syncRecordTomorrow () {
-                var date = prompt('Введите дату направления',getDateAfterOrBeforeCurrent());
-                if (date!=null && date!='' && date!='dd.mm.yyyy') window.open('api/foncCheck/syncRecordTomorrow?dateStart='+date);
-                else window.open('api/foncCheck/syncRecordTomorrow');
+				var date = prompt('Введите дату направления',getDateAfterOrBeforeCurrent());
+				if (date == null) return;
+				if (date!='' && date!='dd.mm.yyyy') window.open('api/foncCheck/syncRecordTomorrow?dateStart='+date);
+				else window.open('api/foncCheck/syncRecordTomorrow');
             }
 			<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin">
 				//Отметить сообщения прочитанными #201
