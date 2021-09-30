@@ -40,7 +40,10 @@
 								Автоматическая проверка по базе ФОМС
 							</msh:link></li>
 							<li><msh:link roles='/Policy/Mis/Patient' action="/javascript:syncRecordTomorrow()">
-								Синхронизация с базой ФОМС пациентов, записанных на завтра
+								Синхронизация с базой ФОМС пациентов, записанных на завтра (поликлиника)
+							</msh:link></li>
+							<li><msh:link roles='/Policy/Mis/Patient' action="/javascript:syncMonth()">
+								Синхронизация с базой ФОМС пациентов стационара за последний месяц
 							</msh:link></li>
 							<li><msh:link roles='/Policy/Exp/Document/View' action="js-ecom_vocEntity-list.do">
 								Редактор справочников
@@ -261,6 +264,9 @@
 				if (date!='' && date!='dd.mm.yyyy') window.open('api/foncCheck/syncRecordTomorrow?dateStart='+date);
 				else window.open('api/foncCheck/syncRecordTomorrow');
             }
+			function syncMonth () {
+				window.open('api/medcaseMedpolicy/syncMedcaseMedpolic');
+			}
 			<msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin">
 				//Отметить сообщения прочитанными #201
 				function readOldMessages() {
