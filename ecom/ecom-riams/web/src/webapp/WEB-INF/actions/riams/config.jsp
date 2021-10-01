@@ -261,8 +261,11 @@
             function syncRecordTomorrow () {
 				var date = prompt('Введите дату направления',getDateAfterOrBeforeCurrent());
 				if (date == null) return;
-				if (date!='' && date!='dd.mm.yyyy') window.open('api/foncCheck/syncRecordTomorrow?dateStart='+date);
-				else window.open('api/foncCheck/syncRecordTomorrow');
+				else if (date==getDateAfterOrBeforeCurrent())
+					window.open('api/foncCheck/syncRecordTomorrow');
+				else if (date!='' && date!='dd.mm.yyyy') window.open('api/foncCheck/syncRecordDayVisited?token=123&dateVisit='+date);
+				else
+				    window.open('api/foncCheck/syncRecordTomorrow');
             }
 			function syncMonth () {
 				window.open('api/medcaseMedpolicy/syncMedcaseMedpolic');
