@@ -1,15 +1,17 @@
 package ru.ecom.api.form;
 
+import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 @Data
-public class PromedPatientForm {
+@Builder
+public class PromedPatientForm extends BasePromedForm {
 
     private String lastName;
     private String firstName;
     private String middleName;
-    private LocalDate birthDate;
+    private Date birthDate;
     private String snils;
 }

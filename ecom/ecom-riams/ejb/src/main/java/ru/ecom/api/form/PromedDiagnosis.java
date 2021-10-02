@@ -1,9 +1,11 @@
 package ru.ecom.api.form;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class PromedDiagnosis {
+@Builder
+public class PromedDiagnosis extends BasePromedForm {
     /**
      * Код МКБ
      */
@@ -15,5 +17,5 @@ public class PromedDiagnosis {
     private String acuity; //DeseaseType_id
 
     @Deprecated //TODO не использовать
-    private Long promedId;
+    private String promedId;
 }

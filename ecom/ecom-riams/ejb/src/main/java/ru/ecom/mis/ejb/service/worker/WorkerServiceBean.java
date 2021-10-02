@@ -49,7 +49,7 @@ public class WorkerServiceBean implements IWorkerService {
     public Long getWorkingLpu() {
         WorkFunction workFunction = getWorkFunction(context, manager);
         MisLpu lpu = workFunction.getLpuRegister();
-        return lpu != null ? lpu.getId() : 0L;
+        return lpu != null ? lpu.getId() : 0L; //TODO allways null
     }
 
     public String getWorkFunctionInfo(Long aWorkFunction) {

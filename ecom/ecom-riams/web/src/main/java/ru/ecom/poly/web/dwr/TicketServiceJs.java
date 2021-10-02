@@ -6,6 +6,7 @@ import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.script.IScriptService;
 import ru.ecom.ejb.services.util.ConvertSql;
+import ru.ecom.mis.ejb.service.IPromedExportService;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 import ru.ecom.mis.ejb.service.worker.IWorkerService;
 import ru.ecom.mis.web.dwr.medcase.HospitalMedCaseServiceJs;
@@ -24,6 +25,11 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class TicketServiceJs {
+
+    public String exportToPromed(Long spoId, HttpServletRequest aRequest) throws NamingException {
+        Injection.find(aRequest).getService(IPromedExportService.class).exportPolyclinicById(spoId);
+        return "success";
+    }
 
     public String showSimpleServiceBySpecialist(Long aWorkfunctionId, HttpServletRequest aRequest) throws SQLException, NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);

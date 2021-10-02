@@ -179,8 +179,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
      * @return List<BigInteger>
      */
     private List<ShortMedCase> getAllVisitsInSpo(Long polyclinicCaseId, boolean isUpload) {
-        String upStr = isUpload ? " and (upload is null or upload=false)" : "";
-        return manager.createQuery("from ShortMedCase where parent_id  = :parentId and (noActuality is null or noActuality='0') and dateStart is not null " + upStr + " order by dateStart , timeExecute ")
+        return manager.createQuery("from ShortMedCase where parent_id  = :parentId and (noActuality is null or noActuality='0') and dateStart is not null " + (isUpload ? " and (upload is null or upload=false)" : "") + " order by dateStart , timeExecute ")
                 .setParameter("parentId", polyclinicCaseId).getResultList();
     }
 

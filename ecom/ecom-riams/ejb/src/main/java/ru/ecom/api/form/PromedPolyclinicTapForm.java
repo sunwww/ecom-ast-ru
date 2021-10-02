@@ -1,6 +1,8 @@
 package ru.ecom.api.form;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -8,7 +10,9 @@ import java.util.List;
  * Поликлинический случай мед. обслуживания (аналог PolyclinicMedCase)
  */
 @Data
-public class PromedPolyclinicTapForm {
+@Builder
+@ToString
+public class PromedPolyclinicTapForm extends BasePromedForm {
     private PromedPatientForm patient;
     List<PromedPolyclinicVisitForm> visits;
     private PromedDiagnosis diagnosis;

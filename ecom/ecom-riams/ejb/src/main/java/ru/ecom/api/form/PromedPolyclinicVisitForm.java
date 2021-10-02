@@ -1,16 +1,15 @@
 package ru.ecom.api.form;
 
-import com.google.gwt.codegen.server.StringGenerator;
+import lombok.Builder;
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 
 /**
  * Посещение (аналог ShortMedCase, Ticket)
  */
 @Data
-public class PromedPolyclinicVisitForm {
+@Builder
+public class PromedPolyclinicVisitForm extends BasePromedForm {
 
     /**
      * Первый визит в случае
@@ -21,7 +20,7 @@ public class PromedPolyclinicVisitForm {
     /**
      * Дата начала приема
      */
-    private LocalDateTime startTime;
+    private String startTime;
 
     /**
      * ИД случая во внутренней системе
@@ -74,7 +73,6 @@ public class PromedPolyclinicVisitForm {
      */
     //TODO высчитывать на стороне медоса
     private String visitPurpose;//VizitType_id //dbo.VizitType
-
 
 
 }
