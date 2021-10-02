@@ -44,7 +44,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
     private static final String MESID = "Mes_id";                         //МЭС
     private static final String DESEASETYPE = "DeseaseType_id";           //характер заболевания
     private static final String MEDCICALCARE = "MedicalCareKind_id";      //идентификатор вида медицинской помощи
-    private static final String MEDCICALCAREVAL = "87";
+    private static final String MEDCICALCAREVAL = "87"; //В промеде - ИД вид помощи - поликлиника //TODO нужно - первичная, специализированная,...
     private static final String VISITID = "MedosId";                      //id визита
     private static final String FIRSTVISITID = "firstVisit";              //id первого визита
     private static final String VISITRESULT = "ResultClass_id";           //результат обращения (обязательно, если случай закончен)
@@ -269,7 +269,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
                 .put(VISITREASON, (vr == null || vr.getOmcCode() == null) ? "" : vr.getOmcCode())
                 .put(SSTREAM, (vss == null || vss.getCode() == null) ? "" : vss.getCode())
                 .put(MESID, wf.getPromedCodeLpuSection())
-                .put(DESEASETYPE, vh != null ? vh.getCode() : "1")
+                .put(DESEASETYPE, vh != null ? vh.getCode() : "1") //TODO неправильно, надо выздоровление, улучшение,...  1.2.643.5.1.13.2.1.1.688 dbo.ResultDeseaseType
                 .put(MEDCICALCARE, MEDCICALCAREVAL)
                 .put(VISITID, visit.getId())
                 .put(FIRSTVISITID, (visit.getId() == firstResultId) ? "true" : "false")
