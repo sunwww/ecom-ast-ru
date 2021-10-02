@@ -19,20 +19,21 @@ import java.util.Map;
 public class WebClientServiceBean implements IWebClientService {
 
     private static final Logger LOG = Logger.getLogger(WebClientServiceBean.class);
+
     @Override
     public String makePOSTRequest(String data, String address, String aMethod, Map<String, String> params) {
         //LOG.info("create connection, address = "+address+",method = "+aMethod+" , data="+data);
-        if (address==null) {
+        if (address == null) {
             return "";
         }
         HttpURLConnection connection = null;
         try {
-            URL url = new URL(address+"/"+aMethod);
+            URL url = new URL(address + "/" + aMethod);
             connection = (HttpURLConnection) url.openConnection();
-            if (params!=null&&!params.isEmpty()) {
-                for (Map.Entry<String,String> par: params.entrySet()) {
+            if (params != null && !params.isEmpty()) {
+                for (Map.Entry<String, String> par : params.entrySet()) {
                     //	LOG.info("send HTTP request. Key = "+par.getKey()+"<< value = "+par.getValue());
-                    connection.setRequestProperty(par.getKey(),par.getValue());
+                    connection.setRequestProperty(par.getKey(), par.getValue());
                 }
             }
             connection.setDoInput(true);
@@ -44,7 +45,7 @@ public class WebClientServiceBean implements IWebClientService {
             writer.flush();
             writer.close();
             StringBuilder response = new StringBuilder();
-            try(BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
                 String s;
                 while ((s = in.readLine()) != null) {
                     response.append(s);
@@ -54,10 +55,12 @@ public class WebClientServiceBean implements IWebClientService {
             return response.toString();
 
         } catch (ConnectException e) {
-            LOG.error("Ошибка соединения с сервисом. "+e);
+            LOG.error("Ошибка соединения с сервисом. " + e);
         } catch (Exception e) {
-            if (connection!=null) {connection.disconnect();}
-            LOG.error("in thread happens exception"+e);
+            if (connection != null) {
+                connection.disconnect();
+            }
+            LOG.error("in thread happens exception" + e);
             e.printStackTrace();
         }
         return "";

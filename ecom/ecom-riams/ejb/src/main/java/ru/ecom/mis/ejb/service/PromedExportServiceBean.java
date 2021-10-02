@@ -1,7 +1,9 @@
 package ru.ecom.mis.ejb.service;
 
+import com.google.gson.GsonBuilder;
 import org.apache.log4j.Logger;
 import ru.ecom.api.form.*;
+import ru.ecom.api.webclient.IWebClientService;
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
 import ru.ecom.mis.ejb.domain.medcase.ShortMedCase;
@@ -10,7 +12,6 @@ import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.ecom.poly.ejb.domain.voc.VocReason;
-import ru.ecom.rabbit.IRabbitService;
 
 import javax.annotation.EJB;
 import javax.ejb.Local;
@@ -18,18 +19,22 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static ru.nuzmsh.util.EqualsUtil.isEquals;
 
+/**
+ * Выгрузка данных в РИАМС промед. Работает через сервис "Промедатор" за авторством @Rashgild'a
+ */
 @Stateless
 @Local(IPromedExportService.class)
 @Remote(IPromedExportService.class)
 public class PromedExportServiceBean implements IPromedExportService {
 
     private static final Logger LOG = Logger.getLogger(PromedExportServiceBean.class);
+    private static final String PROMEDATOR_URL = "http://localhost:8899/ambulatory";
 
     /**
      * Экспорт поликлинического случая в РИАМС Промед
@@ -43,11 +48,15 @@ public class PromedExportServiceBean implements IPromedExportService {
         PromedPolyclinicTapForm form = getPolyclinicCase(medCase);
         LOG.warn("made form: " + form);
         try {
-            rabbitService.sendPromedPolycMessage(form);
+            LOG.info(">>"+webService.makePOSTRequest(toString(form),PROMEDATOR_URL,"epicrisis-export", new HashMap<>())+"<<");
         } catch (Exception e) {
             e.printStackTrace();
         }
         LOG.warn("sent");
+    }
+
+    private String toString(PromedPolyclinicTapForm form) {
+        return new GsonBuilder().setDateFormat("yyyy-MM-dd").create().toJson(form);
     }
 
     @Override
@@ -187,5 +196,5 @@ public class PromedExportServiceBean implements IPromedExportService {
     private EntityManager manager;
 
     private @EJB
-    IRabbitService rabbitService;
+    IWebClientService webService;
 }

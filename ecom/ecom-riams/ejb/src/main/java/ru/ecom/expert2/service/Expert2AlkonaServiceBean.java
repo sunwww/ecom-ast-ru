@@ -193,7 +193,7 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
         return time == null ? null : TIME_FORMAT.format(time);
     }
 
-    public String toString(Object o) {
+    private String toString(Object o) {
         Gson gson = new Gson();
         return gson.toJson(o);
     }
