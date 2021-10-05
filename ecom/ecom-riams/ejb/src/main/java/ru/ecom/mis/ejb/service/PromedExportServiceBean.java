@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder;
 import org.apache.log4j.Logger;
 import ru.ecom.api.form.*;
 import ru.ecom.api.webclient.IWebClientService;
+import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
 import ru.ecom.mis.ejb.domain.medcase.ShortMedCase;
@@ -34,7 +35,7 @@ import static ru.nuzmsh.util.EqualsUtil.isEquals;
 public class PromedExportServiceBean implements IPromedExportService {
 
     private static final Logger LOG = Logger.getLogger(PromedExportServiceBean.class);
-    private static final String PROMEDATOR_URL = "http://localhost:8899/ambulatory";
+    private static String PROMEDATOR_URL = null;
 
     /**
      * Экспорт поликлинического случая в РИАМС Промед
@@ -43,16 +44,23 @@ public class PromedExportServiceBean implements IPromedExportService {
      */
     @Override
     public void exportPolyclinic(PolyclinicMedCase medCase) {
-        validate(medCase);
-        LOG.warn("validated");
-        PromedPolyclinicTapForm form = getPolyclinicCase(medCase);
-        LOG.warn("made form: " + form);
-        try {
-            LOG.info(">>"+webService.makePOSTRequest(toString(form),PROMEDATOR_URL,"epicrisis-export", new HashMap<>())+"<<");
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (isEnabled()) {
+            validate(medCase);
+            LOG.warn("validated");
+            PromedPolyclinicTapForm form = getPolyclinicCase(medCase);
+            LOG.warn("made form: " + form);
+            try {
+                LOG.info(">>" + webService.makePOSTRequest(toString(form), PROMEDATOR_URL, "epicrisis-export", new HashMap<>()) + "<<");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            LOG.warn("sent");
         }
-        LOG.warn("sent");
+    }
+
+    private boolean isEnabled() {
+        PROMEDATOR_URL = EjbEcomConfig.getInstance().get("promedator.url", null);
+        return PROMEDATOR_URL != null;
     }
 
     private String toString(PromedPolyclinicTapForm form) {
@@ -61,13 +69,15 @@ public class PromedExportServiceBean implements IPromedExportService {
 
     @Override
     public void exportPolyclinicById(Long medCaseId) {
-        exportPolyclinic(manager.find(PolyclinicMedCase.class, medCaseId));
+        if (isEnabled()) {
+            exportPolyclinic(manager.find(PolyclinicMedCase.class, medCaseId));
+        }
     }
 
     private void validate(PolyclinicMedCase medCase) {
     }
 
-    public PromedPolyclinicTapForm getPolyclinicCase(PolyclinicMedCase polyclinicCase) {
+    private PromedPolyclinicTapForm getPolyclinicCase(PolyclinicMedCase polyclinicCase) {
         Long polyclinicCaseId = polyclinicCase.getId();
         List<ShortMedCase> allVisits = getAllVisitsInSpo(polyclinicCaseId);
         if (allVisits.isEmpty()) {
@@ -83,7 +93,7 @@ public class PromedExportServiceBean implements IPromedExportService {
 
         ShortMedCase lastVisit = allVisits.get(allVisits.size() - 1);
         if (lastVisit != null && lastVisit.getVisitResult() != null) {
-            tap.tapResult(lastVisit.getVisitResult().getCodefpl());
+            tap.tapResult(lastVisit.getVisitResult().getCodefIshod());
             PromedDiagnosis lastDiagnosis;
             if (Boolean.TRUE.equals(lastVisit.getWorkFunctionExecute().getWorkFunction().getIsNoDiagnosis())) {
                 //диагностика - диагноз Z
@@ -181,13 +191,13 @@ public class PromedExportServiceBean implements IPromedExportService {
     }
 
     private PromedDiagnosis mapDiagnosis(Diagnosis diagnosis) {
-        if (diagnosis ==null) {
-            throw  new IllegalStateException("Нет основного диагноза");
+        if (diagnosis == null) {
+            throw new IllegalStateException("Нет основного диагноза");
         } else {
             return PromedDiagnosis.builder()
                     .promedId(diagnosis.getIdc10().getPromedCode())
                     .mkbCode(diagnosis.getIdc10().getCode())
-                    .build() ;
+                    .build();
         }
 
     }
