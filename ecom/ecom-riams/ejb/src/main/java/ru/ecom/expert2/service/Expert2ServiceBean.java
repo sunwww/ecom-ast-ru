@@ -1505,7 +1505,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 code = (entry.getSubType() != null
                         ? entry.getSubType().getCode()
                         : EXTDISPTYPE + "_" + (entry.getVidSluch() != null ? entry.getVidSluch().getCode() : "VIDSLUCH"));
-                fileType = "DV";
+                fileType = "SomeDisp";
 
                 break;
             case KDPTYPE:
