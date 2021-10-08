@@ -26,7 +26,8 @@ public class ScriptServiceBean  implements IScriptService {
 
 	private static final Logger LOG = Logger.getLogger(ScriptServiceBean.class);
 	private static final boolean CAN_DEBUG = LOG.isDebugEnabled();
-	
+
+	@Override
 	public Object invoke(String aServiceName, String aMethodName, Object[] args) {
 
 		String jsResourceName = "/META-INF/scriptService/"+aServiceName+".js" ;

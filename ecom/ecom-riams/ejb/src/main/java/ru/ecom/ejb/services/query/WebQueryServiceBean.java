@@ -32,6 +32,7 @@ public class WebQueryServiceBean implements IWebQueryService {
      * limit - максимальное количество записей для нахождения
      * nameArray - имя объекта, куда будет помещен массив
      */
+    @Override
     public String executeSqlGetJson(String aQuery, Integer limit, String nameArray) throws NamingException {
 
         DataSource ds = findDataSource();
@@ -60,10 +61,12 @@ public class WebQueryServiceBean implements IWebQueryService {
     /**
      * Возвращаем json массив с результатом запроса
      */
+    @Override
     public String executeSqlGetJson(String aQuery) throws NamingException {
         return executeSqlGetJson(aQuery, null, null);
     }
 
+    @Override
     public String executeSqlGetJson(String aQuery, Integer limit) throws NamingException {
         return executeSqlGetJson(aQuery, limit, null);
     }
@@ -71,6 +74,7 @@ public class WebQueryServiceBean implements IWebQueryService {
     /**
      * Возвращаем первый результат запроса в качестве json объекта
      */
+    @Override
     public String executeSqlGetJsonObject(String aQuery) throws NamingException {
         JSONArray arr = new JSONArray(executeSqlGetJson(aQuery, 1, null));
         return arr.isEmpty() ? null : arr.getJSONObject(0).toString();
@@ -80,10 +84,12 @@ public class WebQueryServiceBean implements IWebQueryService {
         return ApplicationDataSourceHelper.getInstance().findDataSource();
     }
 
+    @Override
     public int executeUpdateNativeSql(String aQuery) {
         return manager.createNativeQuery(aQuery).executeUpdate();
     }
 
+    @Override
     public String executeNativeSqlGetJSON(String[] aFieldNames, String aQuery, Integer aMaxResult) {
         List<Object> list;
         Query query = manager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " "));
@@ -121,26 +127,25 @@ public class WebQueryServiceBean implements IWebQueryService {
         return null;
     }
 
+    @Override
     public Collection<WebQueryResult> executeNativeSql(String aQuery, Integer aMaxResult) {
         return executeNativeSql(aQuery, aMaxResult, null);
     }
 
-    public Collection<WebQueryResult> executeNativeSql(String aQuery, Integer aMaxResult, EntityManager aManager) {
+    private Collection<WebQueryResult> executeNativeSql(String aQuery, Integer aMaxResult, EntityManager aManager) {
         if (aManager == null) aManager = manager;
         return executeQuery(aManager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " ")), aMaxResult);
     }
 
+    @Override
     public Collection<WebQueryResult> executeNativeSql(String aQuery) {
 
         return executeNativeSql(aQuery, null);
     }
 
-    public Collection<WebQueryResult> executeQuery(Query aQuery) {
-        return executeQuery(aQuery, null);
-    }
 
     @SuppressWarnings("unchecked")
-    public Collection<WebQueryResult> executeQuery(Query aQuery, Integer aMaxResult) {
+    private Collection<WebQueryResult> executeQuery(Query aQuery, Integer aMaxResult) {
         List<Object> list;
         if (aMaxResult != null) {
             list = aQuery.setMaxResults(aMaxResult).getResultList();
@@ -176,17 +181,7 @@ public class WebQueryServiceBean implements IWebQueryService {
         return ret;
     }
 
-    /**
-     * Выполняет запрос на HQL
-     *
-     * @param aQuery
-     * @return
-     */
-    public Collection<WebQueryResult> executeHql(String aQuery) {
-        return executeHql(aQuery,
-                null);
-    }
-
+    @Override
     public Collection<WebQueryResult> executeHql(String aQuery,
                                                  Integer aMaxResult) {
         return executeQuery(manager.createQuery(
@@ -197,6 +192,7 @@ public class WebQueryServiceBean implements IWebQueryService {
     private @PersistenceContext
     EntityManager manager;
 
+    @Override
     public List<Object[]> executeNativeSqlGetObj(String aQuery,
                                                  Integer aMaxResult) {
         Query query = manager.createNativeQuery(aQuery.replace("&#xA;", " ").replace("&#x9;", " "));
@@ -209,6 +205,7 @@ public class WebQueryServiceBean implements IWebQueryService {
         return list;
     }
 
+    @Override
     public List<Object[]> executeNativeSqlGetObj(String aQuery) {
         return executeNativeSqlGetObj(aQuery, null);
     }

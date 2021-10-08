@@ -1,8 +1,8 @@
 package ru.ecom.jaas.ejb.service;
 
-import java.util.List;
-
 import ru.ecom.jaas.ejb.form.SecUserForm;
+
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,18 +12,25 @@ import ru.ecom.jaas.ejb.form.SecUserForm;
  * To change this template use File | Settings | File Templates.
  */
 public interface ISecRoleService {
-	public CheckNode loadPoliciesByRole(long aRoleId) ;
-    public CheckNode loadPolicies() ;
-    public void saveRolePolicies(long aRoleId, long[] aAdded, long[] aRemoved) ;
+    CheckNode loadPoliciesByRole(long aRoleId);
+
+    CheckNode loadPolicies();
+
+    void saveRolePolicies(long aRoleId, long[] aAdded, long[] aRemoved);
+
     //Получить список пользователей у которых, есть данная роль
-    public List<SecUserForm>listUsersByRole(long aRoleId, boolean aIsSystemView) ;
+    List<SecUserForm> listUsersByRole(long aRoleId, boolean aIsSystemView);
+
     //Получить список пользователей, которым можно добавить роль
-    public List<SecUserForm> listUsersToAdd(long aRoleId, boolean aIsSystemView) ;
+    List<SecUserForm> listUsersToAdd(long aRoleId, boolean aIsSystemView);
+
     //Добавить список пользователей к роли
-    public void addUsersToRole(long aRoleId, long[] aUsersId);
+    void addUsersToRole(long aRoleId, long[] aUsersId);
+
     //Удалить список пользователей из роли
-    public void removeUsersFromRole(long aRoleId, long[] aUsersIs);
+    void removeUsersFromRole(long aRoleId, long[] aUsersIs);
+
     //Получить информацию по ИД роли
-    public String getRoleInfo(long aRoleId) ;
+    String getRoleInfo(long aRoleId);
 
 }

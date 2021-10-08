@@ -78,11 +78,6 @@ public class SoftConfigServiceBean implements ISoftConfigService {
 		return l.isEmpty() ? null : l.get(0)[1].toString();
 	}
 
-	public void addConfigDefaults() {
-		Map<String,String> defaultConfig = create() ;
-		findOrCreateSoftConfig("data_base_namespace", defaultConfig) ;
-	}
-
 	private SoftConfig findOrCreateSoftConfig(String aKey, Map<String,String> aDefault) {
 		if (aKey!=null && !aKey.equals("")) {
 			SoftConfig config ;

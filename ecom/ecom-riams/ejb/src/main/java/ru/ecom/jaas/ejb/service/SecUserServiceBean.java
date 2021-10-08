@@ -46,6 +46,7 @@ public class SecUserServiceBean implements ISecUserService {
         }
     }
 
+    @Override
     public void setDefaultPassword(String aNewPassword, String aUsername, String aUsernameChange) throws IOException {
         String hashPassword = getHashPassword(aUsername, aNewPassword);
 
@@ -56,6 +57,7 @@ public class SecUserServiceBean implements ISecUserService {
         exportUsersProperties();
     }
 
+    @Override
     public String changePassword(String aNewPassword, String aOldPassword, String aUsername) throws IOException {
         if (aOldPassword.equals(aNewPassword)) {
             return "0Новый пароль ничем не отличается от старого";
@@ -78,7 +80,6 @@ public class SecUserServiceBean implements ISecUserService {
                     .setParameter("username", aUsername).setParameter("hash", hashPassword)
                     .executeUpdate();
             exportUsersProperties();
-
             return "1Пароль успешно обновлен";
         } else
             return msg;
@@ -103,6 +104,7 @@ public class SecUserServiceBean implements ISecUserService {
         return "";
     }
 
+    @Override
     public void fhushJboss() throws ReflectionException, InstanceNotFoundException, MBeanException, MalformedObjectNameException {
         MBeanServer SERVER = MBeanServerLocator.locateJBoss();
         String[] signature = {"java.lang.String"};
@@ -110,6 +112,7 @@ public class SecUserServiceBean implements ISecUserService {
 
     }
 
+    @Override
     public void exportUsersProperties() throws IOException {
         exportUsersProperties(Config.getConfigDir() + "/users.properties");
     }
@@ -119,6 +122,7 @@ public class SecUserServiceBean implements ISecUserService {
         return "F" + hash;
     }
 
+    @Override
     public void exportUsersProperties(String aFilename) throws IOException {
 
         try (PrintWriter out = new PrintWriter(new FileWriter(aFilename))) {
@@ -144,10 +148,12 @@ public class SecUserServiceBean implements ISecUserService {
         }
     }
 
+    @Override
     public void exportRolesProperties() {
         exportRolesProperties(Config.getConfigDir() + "/roles.properties");
     }
 
+    @Override
     public void exportRolesProperties(String aFilename) {
         Map<SecPolicy, String> hash = new HashMap<>();
         try (PrintWriter out = new PrintWriter(new FileWriter(aFilename))) {
@@ -161,7 +167,6 @@ public class SecUserServiceBean implements ISecUserService {
                 for (SecRole role : user.getRoles()) {
                     Long idP = role.getId();
                     if (!listRole.contains(idP)) {
-                        //	log("Добавление..") ;
                         listRole.add(idP);
                         out.print(createPoliciesString(role, hash));
                         for (SecRole childRole : role.getChildren()) {
@@ -196,6 +201,7 @@ public class SecUserServiceBean implements ISecUserService {
         return sb.toString();
     }
 
+    @Override
     public String getPolicyFullKey(SecPolicy aPolicy, Map<SecPolicy, String> aPoliciesHash) {
         StringBuilder sb = new StringBuilder();
         if (aPoliciesHash.containsKey(aPolicy)) {
@@ -211,6 +217,7 @@ public class SecUserServiceBean implements ISecUserService {
         return policy;
     }
 
+    @Override
     public Collection<SecRoleForm> listRolesToAdd(long aUserId, boolean aIsSystemView) {
         SecUser user = manager.find(SecUser.class, aUserId);
         List<SecRole> userRoles = user.getRoles();
@@ -239,12 +246,14 @@ public class SecUserServiceBean implements ISecUserService {
         return ret;
     }
 
+    @Override
     public Collection<SecRoleForm> listUserRoles(long aUserId, boolean aIsSystemView) {
         SecUser user = manager.find(SecUser.class, aUserId);
         List<SecRole> roles = user.getRoles();
         return convert(roles, aIsSystemView);
     }
 
+    @Override
     public void addRoles(long aUserId, long[] aRoles) {
         for (long role : aRoles) {
             Object check = manager.createNativeQuery("select count(*) from SecUser_SecRole where roles_id=:idRole and secuser_id=:idUser")
@@ -273,6 +282,7 @@ public class SecUserServiceBean implements ISecUserService {
         }
     }
 
+    @Override
     public void removeRoles(long aUserId, long[] aRoles) {
         SecUser user = manager.find(SecUser.class, aUserId);
         List<SecRole> roles = user.getRoles();
@@ -331,7 +341,7 @@ public class SecUserServiceBean implements ISecUserService {
                 .setParameter("vwfId", avWfId)
                 .getResultList();
         return !list.isEmpty() && !list.get(0).equals(0) ?
-                Long.valueOf(list.get(0).toString())
+                Long.parseLong(list.get(0).toString())
                 : 0L;
     }
 
@@ -354,7 +364,7 @@ public class SecUserServiceBean implements ISecUserService {
                 .setMaxResults(1)
                 .getResultList();
         return !list.isEmpty() ?
-                (SecUser) manager.find(SecUser.class, Long.valueOf(list.get(0).toString()))
+                manager.find(SecUser.class, Long.valueOf(list.get(0).toString()))
                 : null;
     }
 
@@ -365,7 +375,7 @@ public class SecUserServiceBean implements ISecUserService {
      * @param suId Long id Пользователя
      * @return true если существует
      */
-    private Boolean getIfAnotherPwfWithSecUserExists(Long suId) {
+    private boolean getIfAnotherPwfWithSecUserExists(Long suId) {
         List<Object> list = manager.createQuery("from PersonalWorkFunction where" +
                 " secuser_id=:suId")
                 .setParameter("suId", suId)
@@ -406,7 +416,7 @@ public class SecUserServiceBean implements ISecUserService {
      * @param tt              Time Время создания
      * @return SecUser
      */
-    private PersonalWorkFunction createPersonalWorkFunction(SecUser secUser, Worker w, VocWorkFunction vocWorkFunction, Patient patient, String username, java.sql.Date dd, java.sql.Time tt, Boolean isAdmin) {
+    private void createPersonalWorkFunction(SecUser secUser, Worker w, VocWorkFunction vocWorkFunction, Patient patient, String username, java.sql.Date dd, java.sql.Time tt, Boolean isAdmin) {
         PersonalWorkFunction pwf = new PersonalWorkFunction();
         pwf.setWorkFunction(vocWorkFunction);
         pwf.setWorker(w);
@@ -415,8 +425,8 @@ public class SecUserServiceBean implements ISecUserService {
         pwf.setCreateTime(tt);
         pwf.setCreateUsername(username);
         if (isAdmin) {
-            pwf.setIsAdministrator(isAdmin);
-            Long newId = pwf.getId();
+            pwf.setIsAdministrator(true);
+            long newId = pwf.getId();
             //начальник - только один
             manager.createNativeQuery("update workfunction set isadministrator=false" +
                     " where id in (select distinct wf.id from workfunction wf" +
@@ -431,7 +441,6 @@ public class SecUserServiceBean implements ISecUserService {
         if (patient != null && !getIfAnotherPwfWithSecUserExists(secUser.getId())) //проверка, если не проставлена связь в другой раб функции
             pwf.setSecUser(secUser); //проставить связь с юзером
         manager.persist(pwf);
-        return pwf;
     }
 
     /**
@@ -444,7 +453,7 @@ public class SecUserServiceBean implements ISecUserService {
      * @param tt      Time Время создания
      * @return
      */
-    public void setPasswordShort(String newPsw, SecUser secUser, String aUsernameChange, java.sql.Date dd, java.sql.Time tt) throws IOException {
+    private void setPasswordShort(String newPsw, SecUser secUser, String aUsernameChange, java.sql.Date dd, java.sql.Time tt) throws IOException {
         String hashPassword = getHashPassword(secUser.getLogin(), newPsw);
         secUser.setPassword(hashPassword);
         secUser.setChangePasswordAtLogin(newPsw.equals("1"));
@@ -477,7 +486,7 @@ public class SecUserServiceBean implements ISecUserService {
         if (misLpu != null && vocWorkFunction != null) {
             if (secUser != null) {
                 Worker w = getIfWorkerExists(patient.getId(), misLpu.getId());
-                Long wId = 0L;
+                long wId;
                 if (w == null) {
                     w = createWorker(patient, misLpu, username, dd, tt);
                     wId = w.getId();
@@ -539,7 +548,7 @@ public class SecUserServiceBean implements ISecUserService {
      * @param username SecUser.login
      * @return true - если свободен
      */
-    private Boolean freeUserName(String username) {
+    private boolean freeUserName(String username) {
         List<Object> list = manager.createQuery("from SecUser where" +
                 " login=:username")
                 .setParameter("username", username)
@@ -584,6 +593,7 @@ public class SecUserServiceBean implements ISecUserService {
      * @param username   String Логин
      * @return Сообщение
      */
+    @Override
     public String addUserToHospShort(Long aPatientId, Long aLpuId, Long avWfId, String newPsw, Long userCopyId, String username, Long aUserId, Boolean isAdmin) throws IOException {
         Patient patient = manager.find(Patient.class, aPatientId);
         MisLpu misLpu = manager.find(MisLpu.class, aLpuId);
