@@ -600,9 +600,10 @@ where cancer.entry_id=${param.id}"/>
                     }
 
                 }
+
                 //направление в алькону
                 function exportRefferalsEntryToAlkona() {
-                    Expert2Service.exportRefferalsEntryToAlkona(${param.id}, {
+                    Expert2Service.exportDirectionToAlkona(${param.id}, {
                         callback: function (ret) {
                             alert("Вот ответ: " + ret);
                         }
@@ -611,8 +612,8 @@ where cancer.entry_id=${param.id}"/>
 
                 //выписка в алькону
                 function exportHospLeaveEntryToAlkona() {
-                        Expert2Service.exportHospLeaveEntryToAlkona(${param.id}, {
-                            callback: function (ret) {
+                    Expert2Service.exportHospLeaveEntryToAlkona(${param.id}, {
+                        callback: function (ret) {
                                 alert("Вот ответ: " + ret);
                             }
                         });
