@@ -194,6 +194,8 @@
                               roles="/Policy/E2/Admin"/>
                 <msh:sideLink action="/javascript:exportHospToAlkona()" name="Послать госпитализации в Алькону"
                               roles="/Policy/E2/Admin"/>
+                <msh:sideLink action="/javascript:exportDirectionsToAlkona()" name="Послать СВОИ направления в Алькону"
+                              roles="/Policy/E2/Admin"/>
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
     </tiles:put>
@@ -270,6 +272,16 @@
                     var emergency = confirm("Послать Экстренные (ДА) или плановые (ОТМЕНА)?");
                     if (confirm("Уверены?")) {
                         Expert2Service.exportHospToAlkona(${param.id},emergency, {
+                            callback: function () {
+                                alert("Отправили все случаи!");
+                            }
+                        });
+                        alert("Запрос на отправку отправлен");
+                    }
+                }
+                function exportDirectionsToAlkona() {
+                    if (confirm("Уверены что хоите отправить направления к самому себе?")) {
+                        Expert2Service.exportDirectionsToAlkona(${param.id}, {
                             callback: function () {
                                 alert("Отправили все случаи!");
                             }

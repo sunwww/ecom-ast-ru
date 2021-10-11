@@ -6,6 +6,7 @@ import ru.ecom.api.webclient.IWebClientService;
 import ru.ecom.expert2.domain.E2Entry;
 import ru.ecom.expert2.dto.Hosp;
 import ru.ecom.expert2.dto.HospLeave;
+import ru.ecom.expert2.dto.Refferal;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.format.DateConverter;
 
@@ -21,6 +22,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
+
+import static ru.nuzmsh.util.EqualsUtil.isEquals;
 
 @Stateless
 @Local(IExpert2AlkonaService.class)
@@ -56,6 +59,39 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
         LOG.info("Finish. sent entries: " + i);
     }
 
+    @Override
+    public void exportDirectionsToAlkona(Long entryListId) {
+        LOG.info("start send to alkona");
+        String alkonaUrl = getAlkonaUrl();
+        List<E2Entry> entries = manager.createNamedQuery("E2Entry.getAllByListEntryIdAndServiceStream")
+                .setParameter("listEntryId", entryListId).setParameter("serviceStream", OMC_SERVICE_STREAM).getResultList();
+        int i = 0;
+        LOG.info("found " + entries.size() + " entries");
+        String directLpuCode = "300001"; //выгружаем направления только своей ЛПУ TODO
+        for (E2Entry entry : entries) {
+            if (isEquals(entry.getDirectLpu(), directLpuCode)) {
+                try {
+                    i++;
+                    if (i % 100 == 0) LOG.info("Отправлено в алькону " + i + " записей");
+                    LOG.info("id:" + entry.getId() + " Response: " + clientService.makePOSTRequest(toString(mapEntryRefferal(entry)), alkonaUrl, "postRefferals", Collections.emptyMap()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        LOG.info("Finish. sent entries: " + i);
+    }
+
+    @Override
+    public String exportDirectionToAlkona(Long entryId) {
+        LOG.info("start send to alkona: " + entryId);
+        String alkonaUrl = getAlkonaUrl();
+        E2Entry entry = manager.find(E2Entry.class, entryId);
+        String request = toString(mapEntryRefferal(entry));
+        String response = clientService.makePOSTRequest(request, alkonaUrl, "postRefferals", Collections.emptyMap());
+        LOG.info("id:" + entry.getId() + "{" + request + "}" + " Response: " + response);
+        return response;
+    }
 
     @Override
     public String exportHospLeaveEntryToAlkona(Long entryId) {
@@ -128,6 +164,38 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
         return leave;
     }
 
+    private Refferal mapEntryRefferal(E2Entry entry) {
+        Refferal ref = new Refferal();
+        ref.setExternalId(entry.getExternalId() + "");
+        ref.setDirectNumber(entry.getTicket263Number());
+        ref.setDirectDate(toLocalDate(entry.getDirectDate()));
+        ref.setServiceKind(Boolean.TRUE.equals(entry.getIsEmergency()) ? 2 : 1);
+        ref.setDirectLpu(entry.getDirectLpu());
+        ref.setLpuCode(entry.getLpuCode());
+        ref.setPlanHospDate(toLocalDate(entry.getStartDate()));
+        ref.setMedPolicyType(Integer.parseInt(entry.getMedPolicyType()));
+        if (StringUtil.isNotEmpty(entry.getMedPolicySeries())) {
+            ref.setMedPolicySeries(entry.getMedPolicySeries());
+        }
+        ref.setMedPolicyNumber(entry.getMedPolicyNumber());
+        ref.setInsuranceCompanyCode(entry.getInsuranceCompanyCode());
+        ref.setDiagnosis(entry.getMainMkb());
+        ref.setRegionOkato("12000");
+        ref.setPatientLastname(entry.getLastname());
+        ref.setPatientFirstname(entry.getFirstname());
+        if (StringUtil.isNotEmpty(entry.getMiddlename())) {
+            ref.setPatientMiddlename(entry.getMiddlename());
+        }
+        ref.setSex("1".equals(entry.getSex()) ? 1 : 0); //палка - мальчик, дырка - девочка!
+        ref.setBirthDate(toLocalDate(entry.getBirthDate()));
+        ref.setMedHelpProfile(entry.getBedProfile().getCode());
+        ref.setHospitalBranch(entry.getDepartmentName());
+        ref.setMedTerms(mapMedTerms(entry.getMedHelpUsl().getCode()));
+        ref.setDoctorInfo(entry.getDoctorName());//TODO не тот доктор
+        ref.setDoctorSnils(entry.getDoctorSnils());//TODO не тот доктор
+        return ref;
+    }
+
 
     private Hosp mapEntryHosp(E2Entry entry) {
         Hosp hosp = new Hosp();
@@ -193,7 +261,7 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
         return time == null ? null : TIME_FORMAT.format(time);
     }
 
-    public String toString(Object o) {
+    private String toString(Object o) {
         Gson gson = new Gson();
         return gson.toJson(o);
     }
