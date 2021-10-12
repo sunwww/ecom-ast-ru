@@ -139,6 +139,9 @@
                     <msh:textField property="directDate" size="30"/>
                 </msh:row>
                 <msh:row>
+                    <msh:textField property="ticket263Number" size="30"/>
+                </msh:row>
+                <msh:row>
                     <msh:textField property="helpKind" size="30"/>
                     <msh:textField property="stacType" size="30"/>
 

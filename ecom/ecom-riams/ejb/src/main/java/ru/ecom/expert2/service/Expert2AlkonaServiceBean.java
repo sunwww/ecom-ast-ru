@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
 
+import static ru.nuzmsh.util.BooleanUtils.isNotTrue;
 import static ru.nuzmsh.util.EqualsUtil.isEquals;
 
 @Stateless
@@ -32,6 +33,7 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
     private static final Logger LOG = Logger.getLogger(Expert2AlkonaServiceBean.class);
     private static final String OMC_SERVICE_STREAM = "OBLIGATORYINSURANCE";
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat YEAR_YY = new SimpleDateFormat("yy");
     private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:00");
     private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:00");
     private @EJB
@@ -69,7 +71,7 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
         LOG.info("found " + entries.size() + " entries");
         String directLpuCode = "300001"; //выгружаем направления только своей ЛПУ TODO
         for (E2Entry entry : entries) {
-            if (isEquals(entry.getDirectLpu(), directLpuCode)) {
+            if (isNotTrue(entry.getIsEmergency()) && isEquals(entry.getDirectLpu(), directLpuCode)) {
                 try {
                     i++;
                     if (i % 100 == 0) LOG.info("Отправлено в алькону " + i + " записей");
@@ -145,7 +147,7 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
     private HospLeave mapEntryHospLeave(E2Entry entry) {
         HospLeave leave = new HospLeave();
         leave.setExternalId(entry.getExternalId() + "");
-        leave.setDirectNumber(entry.getTicket263Number());
+        leave.setDirectNumber(getTickerNumber(entry));
         leave.setDirectDate(toLocalDate(entry.getDirectDate()));
         leave.setServiceKind(Boolean.TRUE.equals(entry.getIsEmergency()) ? "2" : "1");
         leave.setLpuCode(entry.getLpuCode());
@@ -167,17 +169,21 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
     private Refferal mapEntryRefferal(E2Entry entry) {
         Refferal ref = new Refferal();
         ref.setExternalId(entry.getExternalId() + "");
-        ref.setDirectNumber(entry.getTicket263Number());
-        ref.setDirectDate(toLocalDate(entry.getDirectDate()));
+        ref.setDirectNumber(getTickerNumber(entry));
+        ref.setDirectDate(toLocalDate(entry.getDirectDate() != null ? entry.getDirectDate() : entry.getStartDate()));
         ref.setServiceKind(Boolean.TRUE.equals(entry.getIsEmergency()) ? 2 : 1);
         ref.setDirectLpu(entry.getDirectLpu());
         ref.setLpuCode(entry.getLpuCode());
         ref.setPlanHospDate(toLocalDate(entry.getStartDate()));
         ref.setMedPolicyType(Integer.parseInt(entry.getMedPolicyType()));
-        if (StringUtil.isNotEmpty(entry.getMedPolicySeries())) {
-            ref.setMedPolicySeries(entry.getMedPolicySeries());
+        if ("3".equals(entry.getMedPolicyType())) {
+            ref.setMedPolicyNumber(entry.getCommonNumber());
+        } else {
+            ref.setMedPolicyNumber(entry.getMedPolicyNumber());
+            if (StringUtil.isNotEmpty(entry.getMedPolicySeries())) {
+                ref.setMedPolicySeries(entry.getMedPolicySeries());
+            }
         }
-        ref.setMedPolicyNumber(entry.getMedPolicyNumber());
         ref.setInsuranceCompanyCode(entry.getInsuranceCompanyCode());
         ref.setDiagnosis(entry.getMainMkb());
         ref.setRegionOkato("12000");
@@ -191,9 +197,22 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
         ref.setMedHelpProfile(entry.getBedProfile().getCode());
         ref.setHospitalBranch(entry.getDepartmentName());
         ref.setMedTerms(mapMedTerms(entry.getMedHelpUsl().getCode()));
-        ref.setDoctorInfo(entry.getDoctorName());//TODO не тот доктор
-        ref.setDoctorSnils(entry.getDoctorSnils());//TODO не тот доктор
+        ref.setDoctorInfo("СУХОВА ИРИНА АЛЕКСЕЕВНА");//TODO не тот доктор
+        ref.setDoctorSnils("040-482-502 20");//TODO не тот доктор
         return ref;
+    }
+
+    private String getTickerNumber(E2Entry entry) {
+
+        if (entry.getTicket263Number() != null && entry.getTicket263Number().length() == 13) {
+            return entry.getTicket263Number();
+        }
+        //ММММММГГВННННН - ММММММ - код МО, ГГ - последние цифры года, В - вид номера направления (0-авто, 1-ручное формирование); ННННН - порядковый номер направления в данной МО за заданный год;
+        String code = entry.getDirectLpu() + YEAR_YY.format(entry.getDirectDate() != null ? entry.getDirectDate() : entry.getStartDate())+"0" +
+                "00000".substring(0, Math.max(5 - entry.getHistoryNumber().length(),0)) + entry.getHistoryNumber();
+        entry.setTicket263Number(code);
+        return code;
+
     }
 
 
@@ -211,10 +230,14 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
         hosp.setHospStartDate(toLocalDate(entry.getStartDate()));
         hosp.setHospStartTime(toLocalTime(entry.getStartTime()));
         hosp.setMedPolicyType(Integer.parseInt(entry.getMedPolicyType()));
-        if (StringUtil.isNotEmpty(entry.getMedPolicySeries())) {
-            hosp.setMedPolicySeries(entry.getMedPolicySeries());
+        if ("3".equals(entry.getMedPolicyType())) {
+            hosp.setMedPolicyNumber(entry.getCommonNumber());
+        } else {
+            hosp.setMedPolicyNumber(entry.getMedPolicyNumber());
+            if (StringUtil.isNotEmpty(entry.getMedPolicySeries())) {
+                hosp.setMedPolicySeries(entry.getMedPolicySeries());
+            }
         }
-        hosp.setMedPolicyNumber(entry.getMedPolicyNumber());
         hosp.setInsuranceCompanyCode(entry.getInsuranceCompanyCode());
         hosp.setDiagnosis(entry.getMainMkb());
         hosp.setRegionOkato("12000");
