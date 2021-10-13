@@ -148,7 +148,7 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
         HospLeave leave = new HospLeave();
         leave.setExternalId(entry.getExternalId() + "");
         leave.setDirectNumber(getTickerNumber(entry));
-        leave.setDirectDate(toLocalDate(entry.getDirectDate()));
+        leave.setDirectDate(toLocalDate(entry.getDirectDate() != null ? entry.getDirectDate() : entry.getStartDate()));
         leave.setServiceKind(Boolean.TRUE.equals(entry.getIsEmergency()) ? "2" : "1");
         leave.setLpuCode(entry.getLpuCode());
         leave.setHospStartDate(toLocalDateTime(entry.getStartDate(), entry.getStartTime()));
@@ -203,11 +203,10 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
     }
 
     private String getTickerNumber(E2Entry entry) {
-
         if (entry.getTicket263Number() != null && entry.getTicket263Number().length() == 13) {
             return entry.getTicket263Number();
         }
-        //ММММММГГВННННН - ММММММ - код МО, ГГ - последние цифры года, В - вид номера направления (0-авто, 1-ручное формирование); ННННН - порядковый номер направления в данной МО за заданный год;
+        //ММММММГГВННННН - ММММММ - код МО, ГГ - последние цифры года, В - вид номера направления (0-авто, 1-ручное формирование); ННННН - порядковый номер направления в данной МО за заданный год (у нас - номер ИБ);
         String code = entry.getDirectLpu() + YEAR_YY.format(entry.getDirectDate() != null ? entry.getDirectDate() : entry.getStartDate())+"0" +
                 "00000".substring(0, Math.max(5 - entry.getHistoryNumber().length(),0)) + entry.getHistoryNumber();
         entry.setTicket263Number(code);
@@ -220,8 +219,8 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
         Hosp hosp = new Hosp();
         hosp.setExternalId(entry.getExternalId() + "");
         hosp.setIsEmergency(Boolean.TRUE.equals(entry.getIsEmergency()) ? 1 : 0);
-        hosp.setDirectNumber(entry.getTicket263Number());
-        hosp.setDirectDate(toLocalDate(entry.getDirectDate()));
+        hosp.setDirectNumber(getTickerNumber(entry));
+        hosp.setDirectDate(toLocalDate(entry.getDirectDate() != null ? entry.getDirectDate() : entry.getStartDate()));
         hosp.setServiceKind(Boolean.TRUE.equals(entry.getIsEmergency()) ? 2 : 1);
         hosp.setDirectLpu(entry.getDirectLpu());
 //        hosp.setDirectLpuDepartment(entry.getDirectLpu());
