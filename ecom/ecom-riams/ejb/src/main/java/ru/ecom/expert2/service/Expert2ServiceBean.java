@@ -3620,6 +3620,19 @@ public class Expert2ServiceBean implements IExpert2Service {
         //   resultMap = new HashMap<String, Object>(); //результат госпитализации
     }
 
+    public List<E2Entry> getEntriesByListEntryIdAndErrorCode(Long listEntryId, String defectCode) {
+        List<BigInteger> ids = manager.createNativeQuery(" select e.id from e2entry e " +
+                        " left join e2entrysanction s on s.entry_id=e.id " +
+                        "where e.listEntry_id=:listId and s.dopcode=:code")
+                .setParameter("listId", listEntryId).setParameter("code", defectCode.trim())
+                .getResultList();
+        List<Long> longIds = new ArrayList<>();
+        for (BigInteger i : ids) {
+            longIds.add(i.longValue());
+        }
+        return manager.createQuery("from E2Entry where id in (:ids)")
+                .setParameter("ids", longIds).getResultList();
+    }
 
     /**
      * Создаем онкослучай по умолчанию
@@ -3627,19 +3640,14 @@ public class Expert2ServiceBean implements IExpert2Service {
     @Override
     public void makeOncologyCase(Long listEntryId, String jsonString, String defectCode) {
         JSONObject aJson = new JSONObject(jsonString);
-        List<BigInteger> entryList = manager.createNativeQuery(" select e.id from e2entry e " +
-                        " left join e2entrysanction s on s.entry_id=e.id " +
-                        "where e.listEntry_id=:listId and s.dopcode=:code")
-                .setParameter("listId", listEntryId).setParameter("code", defectCode.trim())
-                .getResultList();
+        List<E2Entry> entryList = getEntriesByListEntryIdAndErrorCode(listEntryId, defectCode);
         if (!entryList.isEmpty()) {
             LOG.info("Создаем онкослучаи, найдено " + entryList.size() + " записей");
             String occasion = getString(aJson, "occasion");
             String consiliumResult = getString(aJson, "consiliumResult");
             String directionType = getString(aJson, "directionType");
             String directionSurveyMethod = getString(aJson, "directionSurveyMethod");
-            for (BigInteger entryId : entryList) {
-                E2Entry entry = manager.find(E2Entry.class, entryId.longValue());
+            for (E2Entry entry : entryList) {
                 if (isEmpty(entry.getCancerEntries())) {
                     E2CancerEntry cancerEntry = new E2CancerEntry();
                     cancerEntry.setEntry(entry);

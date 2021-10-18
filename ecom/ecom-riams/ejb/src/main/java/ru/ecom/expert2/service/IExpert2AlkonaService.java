@@ -8,8 +8,9 @@ public interface IExpert2AlkonaService {
     /**
      * Выгрузка направлений на госпитализацию самих к себе
      * @param entryListId ИД заполнения
+     * @param errorCode код дефекта
      */
-    void exportDirectionsToAlkona(Long entryListId);
+    void exportDirectionsToAlkona(Long entryListId, String errorCode);
 
     /**
      * Выгрузка одного направления на госпитализацию

@@ -48,7 +48,8 @@
                 <option value="MEDSERVICE_REPLACE_STRING">Мед.услуги из настроек</option>
                 <option value="DEPARTMENT_BY_SERVICE">Поменять департаменты по профилям из настроек</option>
                 <option value="DEPARTMENT_ADDRESS_BY_SERVICE">Поменять длинные коды департаментов по профилям из
-                <option value="OTHER_FOR_ERROR">Изменить поток обслуживания по дефекту(поток : дефект/номер_счета)</option>
+                <option value="OTHER_FOR_ERROR">Изменить поток обслуживания по дефекту(поток : дефект/номер_счета)
+                </option>
             </select>
             <input type="text" name="replaceFrom" id="replaceFrom" placeholder="Заменить с">
             <input type="text" name="replaceTo" id="replaceTo" placeholder="Заменить на">
@@ -258,20 +259,8 @@
 
                 //
                 function exportHospLeaveToAlkona() {
-                  if (confirm("Отправить все ОМС случаи в алькону?")) {
-                      Expert2Service.exportHospLeaveToAlkona(${param.id}, {
-                          callback: function () {
-                              alert("Отправили все случаи!");
-                          }
-                      });
-                      alert("Запрос на отправку отправлен");
-                  }
-                }
-
-                function exportHospToAlkona() {
-                    var emergency = confirm("Послать Экстренные (ДА) или плановые (ОТМЕНА)?");
-                    if (confirm("Уверены?")) {
-                        Expert2Service.exportHospToAlkona(${param.id},emergency, {
+                    if (confirm("Отправить все ОМС случаи в алькону?")) {
+                        Expert2Service.exportHospLeaveToAlkona(${param.id}, {
                             callback: function () {
                                 alert("Отправили все случаи!");
                             }
@@ -279,9 +268,22 @@
                         alert("Запрос на отправку отправлен");
                     }
                 }
+
+                function exportHospToAlkona() {
+                    var emergency = confirm("Послать Экстренные (ДА) или плановые (ОТМЕНА)?");
+                    if (confirm("Уверены?")) {
+                        Expert2Service.exportHospToAlkona(${param.id}, emergency, {
+                            callback: function () {
+                                alert("Отправили все случаи!");
+                            }
+                        });
+                        alert("Запрос на отправку отправлен");
+                    }
+                }
+
                 function exportDirectionsToAlkona() {
-                    if (confirm("Уверены что хоите отправить направления к самому себе?")) {
-                        Expert2Service.exportDirectionsToAlkona(${param.id}, {
+                    if (confirm("Уверены что хотите отправить направления к самому себе?")) {
+                        Expert2Service.exportDirectionsToAlkona(${param.id}, prompt("Введите код дефекта или оставьте пустое чтобы послать всех!"), {
                             callback: function () {
                                 alert("Отправили все случаи!");
                             }

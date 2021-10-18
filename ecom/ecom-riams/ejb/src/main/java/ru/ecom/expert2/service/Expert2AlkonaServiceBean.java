@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static ru.nuzmsh.util.BooleanUtils.isNotTrue;
-import static ru.nuzmsh.util.EqualsUtil.isEquals;
 
 @Stateless
 @Local(IExpert2AlkonaService.class)
@@ -38,6 +37,8 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
     private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:00");
     private @EJB
     IWebClientService clientService;
+    private @EJB
+    IExpert2Service expert2Service;
     private @PersistenceContext
     EntityManager manager;
 
@@ -62,16 +63,21 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
     }
 
     @Override
-    public void exportDirectionsToAlkona(Long entryListId) {
+    public void exportDirectionsToAlkona(Long entryListId, String errorCode) {
         LOG.info("start send to alkona");
         String alkonaUrl = getAlkonaUrl();
-        List<E2Entry> entries = manager.createNamedQuery("E2Entry.getAllByListEntryIdAndServiceStream")
-                .setParameter("listEntryId", entryListId).setParameter("serviceStream", OMC_SERVICE_STREAM).getResultList();
+        List<E2Entry> entries;
+        if (StringUtil.isNullOrEmpty(errorCode)) {
+            entries = manager.createNamedQuery("E2Entry.getAllByListEntryIdAndServiceStream")
+                    .setParameter("listEntryId", entryListId).setParameter("serviceStream", OMC_SERVICE_STREAM).getResultList();
+
+        } else {
+            entries =expert2Service.getEntriesByListEntryIdAndErrorCode(entryListId, errorCode);
+        }
         int i = 0;
         LOG.info("found " + entries.size() + " entries");
-        String directLpuCode = "300001"; //выгружаем направления только своей ЛПУ TODO
         for (E2Entry entry : entries) {
-            if (isNotTrue(entry.getIsEmergency()) && isEquals(entry.getDirectLpu(), directLpuCode)) {
+            if (isNotTrue(entry.getIsEmergency())) {
                 try {
                     i++;
                     if (i % 100 == 0) LOG.info("Отправлено в алькону " + i + " записей");
@@ -207,8 +213,8 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
             return entry.getTicket263Number();
         }
         //ММММММГГВННННН - ММММММ - код МО, ГГ - последние цифры года, В - вид номера направления (0-авто, 1-ручное формирование); ННННН - порядковый номер направления в данной МО за заданный год (у нас - номер ИБ);
-        String code = entry.getDirectLpu() + YEAR_YY.format(entry.getDirectDate() != null ? entry.getDirectDate() : entry.getStartDate())+"0" +
-                "00000".substring(0, Math.max(5 - entry.getHistoryNumber().length(),0)) + entry.getHistoryNumber();
+        String code = entry.getDirectLpu() + YEAR_YY.format(entry.getDirectDate() != null ? entry.getDirectDate() : entry.getStartDate()) + "0" +
+                "00000".substring(0, Math.max(5 - entry.getHistoryNumber().length(), 0)) + entry.getHistoryNumber();
         entry.setTicket263Number(code);
         return code;
 
