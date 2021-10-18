@@ -3606,18 +3606,18 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     private synchronized void cleanAllMaps() {
-        entrySubTypeHashMap = new HashMap<>();
+        entrySubTypeHashMap.clear();
         //  diagnosisMap = new HashMap<String, Object>();
         // serviceList = new HashMap<String, VocMedService>();
-        ksgMap = new HashMap<>();
-        tariffMap = new HashMap<>();
-        cusmoMap = new HashMap<>();
+        ksgMap.clear();
+        tariffMap.clear();
+        cusmoMap.clear();
         //  hospitalCostMap = new HashMap<String, BigDecimal>();
-        difficultyHashMap = new HashMap<>();
-        polyclinicCasePrice = new HashMap<>();
-        bedTypes = new HashMap<>();
+        difficultyHashMap.clear();
+        polyclinicCasePrice.clear();
+        bedTypes.clear();
         ksgCoefficientMap.clear();
-        //   resultMap = new HashMap<String, Object>(); //результат госпитализации
+        resultMap.clear(); //результат госпитализации
     }
 
     public List<E2Entry> getEntriesByListEntryIdAndErrorCode(Long listEntryId, String defectCode) {
