@@ -44,11 +44,9 @@ end as KK_DEN
 ,list(vbt.name) as BED_FUND_OLD_DOST
 ,vof.name as DOSTAV
 ,olpu.name as NAPRAVLEN
-,olpu.omcCode as NAPR
-,list(mkb.code) as DIAG
-,''||pat.commonNumber||' ' as ENP
 ,pat.snils as SNILS
-
+,list(mkb.code) as DIAG
+,pat.commonNumber||'_' as ENP
 from medcase hosp
 left join diagnosis diag on diag.medcase_id=hosp.id and diag.priority_id=1 and diag.registrationtype_id=4
 left join vocidc10 mkb on diag.idc10_id=mkb.id
@@ -127,10 +125,9 @@ hosp.id
             <msh:tableColumn columnName="bedfund" property="22"/>
             <msh:tableColumn columnName="dostav" property="23"/>
             <msh:tableColumn columnName="napravlen" property="24"/>
-            <msh:tableColumn columnName="napr" property="25"/>
             <msh:tableColumn columnName="diag" property="26"/>
             <msh:tableColumn columnName="enp" property="27"/>
-            <msh:tableColumn columnName="snils" property="28"/>
+            <msh:tableColumn columnName="snils" property="25"/>
         </msh:table>
         <% } else {%>
 
