@@ -3,22 +3,20 @@
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
 
-<tiles:insert page="/WEB-INF/tiles/printLayout.jsp" flush="true" >
-  <tiles:put name="body" type="string">
-    <%
-    String date = request.getParameter("dateBegin") ;
-    
-    
-    if (date!=null && !date.equals(""))  {
-    	String date1 = request.getParameter("dateEnd") ;
-    	if (date1==null || date1.equals("")) {
-    		request.setAttribute("dateEnd",date) ;
-    	} else {
-    		request.setAttribute("dateEnd",date1) ;
-    	}
-    	%>
-    
-    <ecom:webQuery name="journal_ticket" nativeSql="select 
+<tiles:insert page="/WEB-INF/tiles/printLayout.jsp" flush="true">
+    <tiles:put name="body" type="string">
+        <%
+            String date = request.getParameter("dateBegin");
+            if (date != null && !date.equals("")) {
+                String date1 = request.getParameter("dateEnd");
+                if (date1 == null || date1.equals("")) {
+                    request.setAttribute("dateEnd", date);
+                } else {
+                    request.setAttribute("dateEnd", date1);
+                }
+        %>
+
+        <ecom:webQuery name="journal_ticket" nativeSql="select
 ldep.name as NAM_OTD
 ,pat.lastname||' '||pat.firstname||' '||pat.middlename as FIO
 ,vr.name  as K_ADRESA
@@ -48,6 +46,9 @@ end as KK_DEN
 ,olpu.name as NAPRAVLEN
 ,olpu.omcCode as NAPR
 ,list(mkb.code) as DIAG
+,pat.commonNumber as ENP
+,pat.snils as SNILS
+,list(vbt.name) as BED_FUND
 from medcase hosp
 left join diagnosis diag on diag.medcase_id=hosp.id and diag.priority_id=1 and diag.registrationtype_id=4
 left join vocidc10 mkb on diag.idc10_id=mkb.id
@@ -71,6 +72,8 @@ left join vocsex vs on vs.id=pat.sex_id
 left join vochospitalizationoutcome vho on vho.id = hosp.outcome_id
 left join omc_frm vof on vof.id=hosp.ordertype_id
 left join mislpu olpu on olpu.id=hosp.orderlpu_id
+left join bedfund bf on bf.id=md.bedfund_id
+left join vocbedtype vbt on vbt.id=bf.bedtype_id
 where hosp.dtype='HospitalMedCase'
 and hosp.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy') 
     	and to_date('${dateEnd}','dd.mm.yyyy')
@@ -79,7 +82,7 @@ and hosp.deniedHospitalizating_id is null
 group by 
 hosp.id
 ,ldep.name 
-,pat.lastname,pat.firstname,pat.middlename 
+,pat.lastname,pat.firstname,pat.middlename,pat.commonNumber,pat.snils
 ,vr.name  
 ,adr.fullname 
 ,vs.omcCode
@@ -98,7 +101,7 @@ hosp.id
 ,vof.voc_code
 ,vof.name
 ,olpu.name,olpu.omcCode ,vht.code
- " />
+ "/>
         <msh:table name="journal_ticket" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="nam_otd" property="1"/>
             <msh:tableColumn columnName="fio" property="2"/>
@@ -127,9 +130,9 @@ hosp.id
             <msh:tableColumn columnName="napr" property="25"/>
             <msh:tableColumn columnName="diag" property="26"/>
         </msh:table>
-    <% } else {%>
+        <% } else {%>
 
-    	<% }   %>
-  </tiles:put>
+        <% } %>
+    </tiles:put>
 </tiles:insert>
 
