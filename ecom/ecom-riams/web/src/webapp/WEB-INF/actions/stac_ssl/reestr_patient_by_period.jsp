@@ -20,8 +20,11 @@
 ldep.name as NAM_OTD
 ,pat.lastname||' '||pat.firstname||' '||pat.middlename as FIO
 ,vr.name  as K_ADRESA
-,adr.fullname as NAS_PUNKT
-,vs.omcCode as POL
+,list(adr.fullname
+               ||case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end
+               ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end
+	       ||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end) as NAS_PUNKT
+,vs.name as POL
 ,to_char(pat.birthday,'dd.mm.yyyy') as D_ROGD
 ,to_char(hosp.dateStart,'dd.mm.yyyy') as D_POST
 ,to_char(hosp.dateFinish,'dd.mm.yyyy') as D_VIP
@@ -31,7 +34,7 @@ else hosp.dateFinish-hosp.dateStart
 end as KK_DEN
 ,to_char(so.operationdate,'dd.mm.yyyy') as D_OPER
 ,vo.code as K_OPER
-,count(*) as KOL_OPER
+,list(pat.phone) as PHONE
 ,case when hosp.emergency='1' then 1 else 0 end as EKSTR
 ,vho.code as ISHOD
 ,vho.name as ISHOD1
@@ -40,7 +43,7 @@ end as KK_DEN
 ,sowf.code as VRACH
 ,sowfpat.lastname||' '||sowfpat.firstname||' '||sowfpat.middlename as FIO_WR
 ,lwf.code as VRACH1
-,lwfpat.lastname||' '||lwfpat.firstname||' '||lwfpat.middlename as FIO_WR1
+,list(vss.name) as SERVICE_STREAM
 ,list(vbt.name) as BED_FUND_OLD_DOST
 ,vof.name as DOSTAV
 ,olpu.name as NAPRAVLEN
@@ -72,18 +75,20 @@ left join omc_frm vof on vof.id=hosp.ordertype_id
 left join mislpu olpu on olpu.id=hosp.orderlpu_id
 left join bedfund bf on bf.id=md.bedfund_id
 left join vocbedtype vbt on vbt.id=bf.bedtype_id
+left join vocservicestream vss on vss.id= hosp.servicestream_id
 where hosp.dtype='HospitalMedCase'
 and hosp.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy') 
     	and to_date('${dateEnd}','dd.mm.yyyy')
 and hosp.dischargeTime is not null
 and hosp.deniedHospitalizating_id is null
+and hosp.result_id !=6
 group by 
 hosp.id
 ,ldep.name 
 ,pat.lastname,pat.firstname,pat.middlename,pat.commonNumber,pat.snils
 ,vr.name  
 ,adr.fullname 
-,vs.omcCode
+,vs.name
 ,pat.birthday
 ,hosp.dateStart 
 ,hosp.dateFinish 
@@ -103,31 +108,31 @@ hosp.id
         <msh:table name="journal_ticket" action="stac_groupByBedFundData.do" idField="1" noDataMessage="Не найдено">
             <msh:tableColumn columnName="nam_otd" property="1"/>
             <msh:tableColumn columnName="fio" property="2"/>
-            <msh:tableColumn columnName="k_adresa" property="3"/>
-            <msh:tableColumn columnName="nas_punkt" property="4"/>
-            <msh:tableColumn columnName="pol" property="5"/>
+            <msh:tableColumn columnName="Район" property="3"/>
+            <msh:tableColumn columnName="Адрес" property="4"/>
+            <msh:tableColumn columnName="Пол" property="5"/>
             <msh:tableColumn columnName="d_rogd" property="6"/>
             <msh:tableColumn columnName="d_post" property="7"/>
             <msh:tableColumn columnName="d_vip" property="8"/>
             <msh:tableColumn columnName="kk_den" property="9"/>
             <msh:tableColumn columnName="d_oper" property="10"/>
             <msh:tableColumn columnName="k_oper" property="11"/>
-            <msh:tableColumn columnName="kol_oper" property="12"/>
+            <msh:tableColumn columnName="Телефон" property="12"/>
             <msh:tableColumn columnName="ekstr" property="13"/>
             <msh:tableColumn columnName="ishod" property="14"/>
             <msh:tableColumn columnName="ishod1" property="15"/>
             <msh:tableColumn columnName="n_karta" property="16"/>
             <msh:tableColumn columnName="otdel" property="17"/>
             <msh:tableColumn columnName="vrach" property="18"/>
-            <msh:tableColumn columnName="fio_wr" property="19"/>
+            <msh:tableColumn columnName="ФИО врача" property="19"/>
             <msh:tableColumn columnName="vrach1" property="20"/>
-            <msh:tableColumn columnName="fio_wr1" property="21"/>
+            <msh:tableColumn columnName="Поток обслуживания" property="21"/>
             <msh:tableColumn columnName="bedfund" property="22"/>
             <msh:tableColumn columnName="dostav" property="23"/>
             <msh:tableColumn columnName="napravlen" property="24"/>
             <msh:tableColumn columnName="diag" property="26"/>
-            <msh:tableColumn columnName="enp" property="27"/>
-            <msh:tableColumn columnName="snils" property="25"/>
+            <msh:tableColumn columnName="ЕНП" property="27"/>
+            <msh:tableColumn columnName="СНИЛС" property="25"/>
         </msh:table>
         <% } else {%>
 
