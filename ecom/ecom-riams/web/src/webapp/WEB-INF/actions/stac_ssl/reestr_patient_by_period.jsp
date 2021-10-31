@@ -23,33 +23,29 @@ ldep.name as NAM_OTD
 ,list(adr.fullname
                ||case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end
                ||case when pat.houseBuilding is not null and pat.houseBuilding!='' then ' корп.'|| pat.houseBuilding else '' end
-	       ||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end) as NAS_PUNKT
-,vs.name as POL
+	       ||case when pat.flatNumber is not null and pat.flatNumber!='' then ' кв. '|| pat.flatNumber else '' end) as f4_NAS_PUNKT
+,vs.name as f5_POL
 ,to_char(pat.birthday,'dd.mm.yyyy') as D_ROGD
 ,to_char(hosp.dateStart,'dd.mm.yyyy') as D_POST
 ,to_char(hosp.dateFinish,'dd.mm.yyyy') as D_VIP
 ,case when (hosp.dateFinish-hosp.dateStart)=0 then 1
 when (vht.code='DAYTIMEHOSP') then hosp.dateFinish-hosp.dateStart+1
 else hosp.dateFinish-hosp.dateStart
-end as KK_DEN
-,to_char(so.operationdate,'dd.mm.yyyy') as D_OPER
-,vo.code as K_OPER
-,list(pat.phone) as PHONE
-,case when hosp.emergency='1' then 1 else 0 end as EKSTR
+end as f9_KK_DEN
+,list(pat.phone) as f10_PHONE
+,case when hosp.emergency='1' then 1 else 0 end as f11_EKSTR
 ,vho.code as ISHOD
 ,vho.name as ISHOD1
 ,ss.code as N_KARTA
-,ldep.id as OTDEL
-,sowf.code as VRACH
-,sowfpat.lastname||' '||sowfpat.firstname||' '||sowfpat.middlename as FIO_WR
-,lwf.code as VRACH1
-,list(vss.name) as SERVICE_STREAM
-,list(vbt.name) as BED_FUND_OLD_DOST
+,ldep.id as f15_OTDEL
+,lwfpat.lastname||' '||lwfpat.firstname||' '||lwfpat.middlename as f16_FIO_WR1
+,list(vss.name) as f18_SERVICE_STREAM
+,list(vbt.name) as f19_BED_FUND_OLD_DOST
 ,vof.name as DOSTAV
 ,olpu.name as NAPRAVLEN
-,pat.snils as SNILS
+,pat.snils as f22_SNILS
 ,list(mkb.code) as DIAG
-,pat.commonNumber||'_' as ENP
+,pat.commonNumber||'_' as f24_ENP
 from medcase hosp
 left join diagnosis diag on diag.medcase_id=hosp.id and diag.priority_id=1 and diag.registrationtype_id=4
 left join vocidc10 mkb on diag.idc10_id=mkb.id
@@ -58,11 +54,6 @@ left join statisticstub ss on ss.id=hosp.statisticstub_id
 left join patient pat on pat.id=hosp.patient_id
 left join vocrayon vr on vr.id=pat.rayon_id
 left join medcase md on md.parent_id=hosp.id
-left join surgicaloperation so on (so.medcase_id=hosp.id or so.medcase_id=md.id)
-left join workfunction sowf on sowf.id=so.surgeon_id
-left join worker sow on sow.id=sowf.worker_id
-left join patient sowfpat on sowfpat.id=sow.person_id
-left join medService vo on vo.id=so.medService_id
 left join medcase lmd on lmd.parent_id=hosp.id and lmd.dateFinish is not null 
 left join workfunction lwf on lwf.id=lmd.ownerfunction_id
 left join worker lw on lw.id=lwf.worker_id
@@ -82,25 +73,21 @@ and hosp.dateFinish between to_date('${param.dateBegin}','dd.mm.yyyy')
 and hosp.dischargeTime is not null
 and hosp.deniedHospitalizating_id is null
 and hosp.result_id !=6
-group by 
+group by
 hosp.id
 ,ldep.name 
 ,pat.lastname,pat.firstname,pat.middlename,pat.commonNumber,pat.snils
-,vr.name  
-,adr.fullname 
+,vr.name
+,adr.fullname
 ,vs.name
 ,pat.birthday
-,hosp.dateStart 
-,hosp.dateFinish 
-,so.operationdate 
-,vo.code
+,hosp.dateStart
+,hosp.dateFinish
 ,ss.code
 ,hosp.emergency
 ,vho.code,vho.name,ldep.id
-,sowf.code
-,sowfpat.lastname,sowfpat.firstname,sowfpat.middlename 
-,lwf.code 
-,lwfpat.lastname,lwfpat.firstname,lwfpat.middlename 
+,lwf.code
+,lwfpat.lastname,lwfpat.firstname,lwfpat.middlename
 ,vof.voc_code
 ,vof.name
 ,olpu.name,olpu.omcCode ,vht.code
@@ -115,24 +102,20 @@ hosp.id
             <msh:tableColumn columnName="d_post" property="7"/>
             <msh:tableColumn columnName="d_vip" property="8"/>
             <msh:tableColumn columnName="kk_den" property="9"/>
-            <msh:tableColumn columnName="d_oper" property="10"/>
-            <msh:tableColumn columnName="k_oper" property="11"/>
-            <msh:tableColumn columnName="Телефон" property="12"/>
-            <msh:tableColumn columnName="ekstr" property="13"/>
-            <msh:tableColumn columnName="ishod" property="14"/>
-            <msh:tableColumn columnName="ishod1" property="15"/>
-            <msh:tableColumn columnName="n_karta" property="16"/>
-            <msh:tableColumn columnName="otdel" property="17"/>
-            <msh:tableColumn columnName="vrach" property="18"/>
-            <msh:tableColumn columnName="ФИО врача" property="19"/>
-            <msh:tableColumn columnName="vrach1" property="20"/>
-            <msh:tableColumn columnName="Поток обслуживания" property="21"/>
-            <msh:tableColumn columnName="bedfund" property="22"/>
-            <msh:tableColumn columnName="dostav" property="23"/>
-            <msh:tableColumn columnName="napravlen" property="24"/>
-            <msh:tableColumn columnName="diag" property="26"/>
-            <msh:tableColumn columnName="ЕНП" property="27"/>
-            <msh:tableColumn columnName="СНИЛС" property="25"/>
+            <msh:tableColumn columnName="Телефон" property="10"/>
+            <msh:tableColumn columnName="ekstr" property="11"/>
+            <msh:tableColumn columnName="ishod" property="12"/>
+            <msh:tableColumn columnName="ishod1" property="13"/>
+            <msh:tableColumn columnName="n_karta" property="14"/>
+            <msh:tableColumn columnName="otdel" property="15"/>
+            <msh:tableColumn columnName="vrach1" property="16"/>
+            <msh:tableColumn columnName="Поток обслуживания" property="17"/>
+            <msh:tableColumn columnName="bedfund" property="18"/>
+            <msh:tableColumn columnName="dostav" property="19"/>
+            <msh:tableColumn columnName="napravlen" property="20"/>
+            <msh:tableColumn columnName="diag" property="22"/>
+            <msh:tableColumn columnName="ЕНП" property="23"/>
+            <msh:tableColumn columnName="СНИЛС" property="21"/>
         </msh:table>
         <% } else {%>
 
