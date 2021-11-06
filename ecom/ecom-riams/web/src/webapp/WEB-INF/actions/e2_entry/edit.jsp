@@ -139,6 +139,9 @@
                     <msh:textField property="directDate" size="30"/>
                 </msh:row>
                 <msh:row>
+                    <msh:textField property="ticket263Number" size="30"/>
+                </msh:row>
+                <msh:row>
                     <msh:textField property="helpKind" size="30"/>
                     <msh:textField property="stacType" size="30"/>
 
@@ -600,14 +603,26 @@ where cancer.entry_id=${param.id}"/>
                     }
 
                 }
+
+                //направление в алькону
+                function exportRefferalsEntryToAlkona() {
+                    Expert2Service.exportDirectionToAlkona(${param.id}, {
+                        callback: function (ret) {
+                            alert("Вот ответ: " + ret);
+                        }
+                    });
+                }
+
+                //выписка в алькону
                 function exportHospLeaveEntryToAlkona() {
-                        Expert2Service.exportHospLeaveEntryToAlkona(${param.id}, {
-                            callback: function (ret) {
+                    Expert2Service.exportHospLeaveEntryToAlkona(${param.id}, {
+                        callback: function (ret) {
                                 alert("Вот ответ: " + ret);
                             }
                         });
                 }
 
+                //поступление в алькону
                 function exportHospEntryToAlkona() {
                     Expert2Service.exportHospEntryToAlkona(${param.id}, {
                         callback: function (ret) {
@@ -625,7 +640,6 @@ where cancer.entry_id=${param.id}"/>
         <msh:ifFormTypeIsView formName="e2_entryForm">
             <msh:sideMenu>
                 <msh:sideLink action="/javascript:window.history.back()" name="Назад" roles="/Policy/E2/Edit"/>
-                <%--<msh:IfPropertyIsFalse formName="some_shit" propertyName="doNotSend">--%>
                 <msh:sideLink params="id" action="/entityParentEdit-e2_entry" name="Изменить" roles="/Policy/E2/Edit"/>
                 <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id"
                               action="/entityParentDeleteGoParentView-e2_entry" name="Удалить"
@@ -635,7 +649,6 @@ where cancer.entry_id=${param.id}"/>
                               roles="/Policy/E2/Edit"/>
                 <msh:sideLink action="/javascript:showDiagnosisAddServiceDialog()" name="Добавить диагноз/услугу"
                               roles="/Policy/E2/Edit"/>
-                <%--</msh:IfPropertyIsFalse>--%>
                 <msh:sideLink action="/javascript:gotoMedcase()" name="Перейти к СМО" roles="/Policy/E2"/>
                 <msh:sideLink action="/javascript:showAllEntriesByPatient()" name="Показать все случаи по пациенту"
                               roles="/Policy/E2"/>
@@ -644,6 +657,8 @@ where cancer.entry_id=${param.id}"/>
                 <msh:sideLink action="/javascript:exportHospEntryToAlkona()" name="Послать случай в Алькону"
                               roles="/Policy/E2/Admin"/>
                 <msh:sideLink action="/javascript:exportHospLeaveEntryToAlkona()" name="Послать выписку в Алькону"
+                              roles="/Policy/E2/Admin"/>
+                <msh:sideLink action="/javascript:exportRefferalsEntryToAlkona()" name="Послать направление в Алькону"
                               roles="/Policy/E2/Admin"/>
             </msh:sideMenu>
         </msh:ifFormTypeIsView>

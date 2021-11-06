@@ -31,6 +31,7 @@ public class LoginServiceBean implements ILoginService {
 
     private static final Logger LOG = Logger.getLogger(LoginServiceBean.class) ;
 
+	@Override
     public String[] getConfigUrl() {
     	String ret = null ;
     	String ret1 = null ;
@@ -45,6 +46,7 @@ public class LoginServiceBean implements ILoginService {
     }
 
     @PermitAll
+	@Override
     public Set getUserRoles() {
         String user = context.getCallerPrincipal().getName();
         Properties prop = new Properties();
@@ -71,6 +73,7 @@ public class LoginServiceBean implements ILoginService {
     }
     
     @PermitAll
+	@Override
     public void createRecordInAuthJournal(String aUsername, String aRemoteAdd, String aLocalAdd
     		,String aServerName,boolean aIsChecked,String aError,String aErrorPassword) {
     	AuthenticationJournal authJour = new AuthenticationJournal() ;
@@ -87,6 +90,7 @@ public class LoginServiceBean implements ILoginService {
     	manager.persist(authJour) ;
     }
 
+	@Override
     public Long createSystemMessage(String aTitle, String aText, String aRecipient) {
     	CustomMessage mes = new CustomMessage() ;
     	mes.setMessageTitle(aTitle) ;
@@ -103,6 +107,8 @@ public class LoginServiceBean implements ILoginService {
     	manager.persist(mes) ;
     	return mes.getId() ;
     }
+
+	@Override
     public void dispatchMessage(Long aIdMessage) {
     	CustomMessage mes = manager.find(CustomMessage.class, aIdMessage) ;
     	if (mes==null) return;
@@ -111,12 +117,16 @@ public class LoginServiceBean implements ILoginService {
     	mes.setTimeReceipt(new Time(date)) ;
     	manager.persist(mes) ;
     }
+
+	@Override
     public void checkMessage(Long aIdMessage) {
     	java.util.Date date = new java.util.Date() ;
     	SimpleDateFormat formatD = new SimpleDateFormat("dd.MM.yyyy") ;
     	SimpleDateFormat formatT = new SimpleDateFormat("HH:mm") ;
     	manager.createNativeQuery("update CustomMessage set readDate=to_date('"+formatD.format(date)+"','dd.mm.yyyy'),readTime=cast('"+formatT.format(date)+"' as time) where id="+aIdMessage).executeUpdate() ;
     }
+
+	@Override
 	public void hideMessage(Long aIdMessage) {
     	manager.createNativeQuery("update CustomMessage set isHidden='1' where id="+aIdMessage).executeUpdate() ;
 	}

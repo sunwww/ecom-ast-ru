@@ -46,15 +46,12 @@ public class ApplicationDataSourceHelper {
 
     private String getDataSourceFromPersistenceXml() throws IOException, JDOMException {
         String aResource = "/META-INF/persistence.xml";
-        InputStream in = getClass().getResourceAsStream(aResource);
-        try {
+        try (InputStream in = getClass().getResourceAsStream(aResource)){
             Document doc = new SAXBuilder().build(in);
             Element rootElement = doc.getRootElement();
             Element unit = rootElement.getChild("persistence-unit");
             Element jtaDataSource = unit.getChild("jta-data-source");
             return jtaDataSource.getTextTrim();
-        } finally {
-            in.close();
         }
     }
 }

@@ -13,7 +13,7 @@ public interface IImportTimeService {
      * @param aActualDate дата актуальности
      * @return данные
      */
-    public <T> T findByCode(java.lang.Class<T> aClass, String aCode, Date aActualDate) ;
+    <T> T findByCode(java.lang.Class<T> aClass, String aCode, Date aActualDate) ;
 
     /**
      * Получение наименования по коду
@@ -22,7 +22,7 @@ public interface IImportTimeService {
      * @param aActualDate дата актуальности
      * @return наименование
      */
-    public String getName(Class aClass, String aCode, Date aActualDate) ;
+    String getName(Class aClass, String aCode, Date aActualDate) ;
 
 
     /**
@@ -31,6 +31,6 @@ public interface IImportTimeService {
      * @param aActualDate  дата актуальности
      * @return идентификатор времени
      */
-    public long findTime(Class aClass, java.util.Date aActualDate) ;
+    long findTime(Class aClass, java.util.Date aActualDate) ;
 
 }

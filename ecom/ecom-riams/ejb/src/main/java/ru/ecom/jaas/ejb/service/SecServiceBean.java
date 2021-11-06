@@ -1,6 +1,5 @@
 package ru.ecom.jaas.ejb.service;
 
-import org.apache.log4j.Logger;
 import org.w3c.dom.Element;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
@@ -20,189 +19,196 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.util.*;
+
 /**
  * Экспорт, импорт политик, ролей
- * @author stkacheva
  *
+ * @author stkacheva
  */
 @Stateless
 @Remote(ISecService.class)
 public class SecServiceBean implements ISecService {
-    private static final Logger LOG = Logger.getLogger(SecServiceBean.class);
 
+    @Override
     public Long findRole(PolicyForm aRole) {
-    	SecRole role;
-		if (aRole.getKey()==null || aRole.getKey().equals("") || aRole.getName()==null 
-					|| aRole.getName().equals("")) throw new IllegalStateException("Одно из полей должно быть заполнено или название, или ключ")   ;
-		
-		if (aRole.getName()!=null && !aRole.getName().equals("")){
-			role = QueryResultUtil.getFirst(SecRole.class
-    				, manager.createQuery("from SecRole where name=:name")
-    	    		  .setParameter("name", aRole.getName())) ;
-		} else {
-			role = QueryResultUtil.getFirst(SecRole.class
-    				, manager.createQuery("from SecRole where key=:key")
-    	    		  .setParameter("key", aRole.getKey())) ;
-		}
-    	return role!=null?role.getId():null;
-    }
-    
-    public List<SecRoleForm> listRoles() {
-    	List<SecRoleForm> list = new LinkedList<>();
-    	List<SecRole> allRoles = manager.createQuery("from SecRole").getResultList();
-    	  LOG.debug(allRoles);
-    	 for (SecRole role : allRoles) {
-    		 LOG.info(role);
-             SecRoleForm form = new SecRoleForm();
-             form.setId(role.getId());
-             form.setKey(role.getKey());
-             form.setName(role.getName());
-             form.setComment(role.getComment());
-             list.add(form) ;
-         }
-		return list;
-	}
+        SecRole role;
+        if (aRole.getKey() == null || aRole.getKey().equals("") || aRole.getName() == null
+                || aRole.getName().equals(""))
+            throw new IllegalStateException("Одно из полей должно быть заполнено или название, или ключ");
 
-    public String exportRoles(long[] aRoles) throws ParserConfigurationException, TransformerException {
-    	EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-    	Map<SecPolicy, String> hash = new HashMap<>() ;
-    	String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
-    	String filename = "export-role-"+System.currentTimeMillis()+".xml" ;
-    	File outFile = new File(workDir+"/"+filename) ;
-    	XmlDocument xmlDoc = new XmlDocument() ;
-    	Element root = xmlDoc.newElement(xmlDoc.getDocument(), "roles", null) ;
-    	
-    	SecUserServiceBean userbean = new SecUserServiceBean() ;
-    	for (Long idrole:aRoles) {
-    		SecRole role = manager.find(SecRole.class, idrole) ;
-    		Collection<SecPolicy> listPolicies = role.getSecPolicies() ;
-    		
-    		Element roleEl = xmlDoc.newElement(root, "role", null);
-    		xmlDoc.newAttribute(roleEl, "key", role.getKey());
-    		xmlDoc.newAttribute(roleEl, "name", role.getName());
-    		xmlDoc.newAttribute(roleEl, "comment", role.getComment());
-    		
-    		for (SecPolicy policy : listPolicies) {
-        		String key = userbean.getPolicyFullKey(policy,hash) ;
-        		String name= policy.getName() ;
-        		String comment = policy.getComment() ;
-        		Element pol = xmlDoc.newElement(roleEl, "policy", null);
-        		xmlDoc.newAttribute(pol, "key", key);
-        		xmlDoc.newAttribute(pol, "name", name);
-        		xmlDoc.newAttribute(pol, "comment", comment);
-    		}
-    	}
-    	xmlDoc.saveDocument(outFile) ;
-    	return filename;
+        if (aRole.getName() != null && !aRole.getName().equals("")) {
+            role = QueryResultUtil.getFirst(SecRole.class
+                    , manager.createQuery("from SecRole where name=:name")
+                            .setParameter("name", aRole.getName()));
+        } else {
+            role = QueryResultUtil.getFirst(SecRole.class
+                    , manager.createQuery("from SecRole where key=:key")
+                            .setParameter("key", aRole.getKey()));
+        }
+        return role != null ? role.getId() : null;
     }
-    
-	public String exportPolicy(long[] aPolicies) throws ParserConfigurationException, TransformerException {
-        EjbEcomConfig config = EjbEcomConfig.getInstance() ;
-        Map<SecPolicy, String> hash = new HashMap<>() ;
-        String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
-        workDir = config.get("tomcat.data.dir",workDir!=null ? workDir : "/opt/tomcat/webapps/rtf") ;
-        String filename = "export-policy-"+System.currentTimeMillis()+".xml" ;
-        File outFile = new File(workDir+"/"+filename) ;
-        XmlDocument xmlDoc = new XmlDocument() ;
+
+    @Override
+    public List<SecRoleForm> listRoles() {
+        List<SecRoleForm> list = new LinkedList<>();
+        List<SecRole> allRoles = manager.createQuery("from SecRole").getResultList();
+        for (SecRole role : allRoles) {
+            SecRoleForm form = new SecRoleForm();
+            form.setId(role.getId());
+            form.setKey(role.getKey());
+            form.setName(role.getName());
+            form.setComment(role.getComment());
+            list.add(form);
+        }
+        return list;
+    }
+
+    @Override
+    public String exportRoles(long[] aRoles) throws ParserConfigurationException, TransformerException {
+        EjbEcomConfig config = EjbEcomConfig.getInstance();
+        Map<SecPolicy, String> hash = new HashMap<>();
+        String workDir = config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+        String filename = "export-role-" + System.currentTimeMillis() + ".xml";
+        File outFile = new File(workDir + "/" + filename);
+        XmlDocument xmlDoc = new XmlDocument();
+        Element root = xmlDoc.newElement(xmlDoc.getDocument(), "roles", null);
+
+        for (Long idrole : aRoles) {
+            SecRole role = manager.find(SecRole.class, idrole);
+            Collection<SecPolicy> listPolicies = role.getSecPolicies();
+
+            Element roleEl = xmlDoc.newElement(root, "role", null);
+            xmlDoc.newAttribute(roleEl, "key", role.getKey());
+            xmlDoc.newAttribute(roleEl, "name", role.getName());
+            xmlDoc.newAttribute(roleEl, "comment", role.getComment());
+
+            for (SecPolicy policy : listPolicies) {
+                String key = secUserService.getPolicyFullKey(policy, hash);
+                String name = policy.getName();
+                String comment = policy.getComment();
+                Element pol = xmlDoc.newElement(roleEl, "policy", null);
+                xmlDoc.newAttribute(pol, "key", key);
+                xmlDoc.newAttribute(pol, "name", name);
+                xmlDoc.newAttribute(pol, "comment", comment);
+            }
+        }
+        xmlDoc.saveDocument(outFile);
+        return filename;
+    }
+
+    @Override
+    public String exportPolicy(long[] aPolicies) throws ParserConfigurationException, TransformerException {
+        EjbEcomConfig config = EjbEcomConfig.getInstance();
+        Map<SecPolicy, String> hash = new HashMap<>();
+        String workDir = config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+        workDir = config.get("tomcat.data.dir", workDir != null ? workDir : "/opt/tomcat/webapps/rtf");
+        String filename = "export-policy-" + System.currentTimeMillis() + ".xml";
+        File outFile = new File(workDir + "/" + filename);
+        XmlDocument xmlDoc = new XmlDocument();
         Element root = xmlDoc.newElement(xmlDoc.getDocument(), "policies", null);
-        
-		SecUserServiceBean userbean = new SecUserServiceBean() ;
-		for (Long idpol:aPolicies) {
-			SecPolicy policy = manager.find(SecPolicy.class, idpol) ;
-			String key = userbean.getPolicyFullKey(policy,hash) ;
-			String name= policy.getName() ;
-			String comment = policy.getComment() ;
-			Element pol = xmlDoc.newElement(root, "policy", null);
-			xmlDoc.newAttribute(pol, "key", key);
-			xmlDoc.newAttribute(pol, "name", name);
-			xmlDoc.newAttribute(pol, "comment", comment);
-		}
-		xmlDoc.saveDocument(outFile) ;
-		return filename;
-	}
-    
-	/**
-	 * С поддержкой кэша
-	 * @param aPolicies массив политик
-	 * @param aNames    перевод политик
-	 */
-	public void importPolicies(long aMonitorId, List<PolicyForm> aPolicies) {
-		
-		IMonitor monitor = monitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
-		try {
-			monitor = monitorService.startMonitor(aMonitorId, "Импорт политик безопасности", aPolicies.size()) ;
-			Map<String, SecPolicy> hash = new HashMap<>() ;
-			hash.put("/", findRootPolicy()) ;
-			for(PolicyForm policy : aPolicies) {
-				if(monitor.isCancelled()) throw new IllegalStateException("Прервано пользователем") ;
-				monitor.advice(1) ;
-				monitor.setText("Импортируется "+policy);
-				importPolicy(policy, hash) ;
-			}
-			monitor.finish(hash.get("/").getId()+"") ;
-		} catch (Exception e) {
-			monitor.error(e.getMessage(), e) ;
-		}
-		
-	}
-	
-	/**
-	 * Импорт ролей с поддержкой кэша
-	 * @param aListRoles - список ролей с их политиками
-	 */
-	public void importRoles(long aMonitorId, boolean aClearRole, List<ImportRoles> aListRoles) {
-		IMonitor monitor = monitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
-		try {
-			double size = 0 ;
-			for (ImportRoles role : aListRoles) {
-				size=size+role.getPolicies().size() ;
-			}
-			monitor = monitorService.startMonitor(aMonitorId, "Импорт политик безопасности", size) ;
-			Map<String, SecPolicy> hash = new HashMap<>() ;
-			for (ImportRoles role : aListRoles) {
-				importPoliciesByRole(monitor,hash, aClearRole,role.getRole() , role.getPolicies()) ;
-			}
-			monitor.finish(hash.get("/").getId()+"") ;
-		} catch(Exception e) {
-			monitor.error(e.getMessage(), e) ;
-		}
-		
-	}
+
+        for (Long idpol : aPolicies) {
+            SecPolicy policy = manager.find(SecPolicy.class, idpol);
+            String key = secUserService.getPolicyFullKey(policy, hash);
+            String name = policy.getName();
+            String comment = policy.getComment();
+            Element pol = xmlDoc.newElement(root, "policy", null);
+            xmlDoc.newAttribute(pol, "key", key);
+            xmlDoc.newAttribute(pol, "name", name);
+            xmlDoc.newAttribute(pol, "comment", comment);
+        }
+        xmlDoc.saveDocument(outFile);
+        return filename;
+    }
+
     /**
      * С поддержкой кэша
+     *
+     * @param aPolicies массив политик
+     * @param aPolicies перевод политик
+     */
+    @Override
+    public void importPolicies(long aMonitorId, List<PolicyForm> aPolicies) {
+
+        IMonitor monitor = monitorService.acceptMonitor(aMonitorId, "Подготовка к импорту");
+        try {
+            monitor = monitorService.startMonitor(aMonitorId, "Импорт политик безопасности", aPolicies.size());
+            Map<String, SecPolicy> hash = new HashMap<>();
+            hash.put("/", findRootPolicy());
+            for (PolicyForm policy : aPolicies) {
+                if (monitor.isCancelled()) throw new IllegalStateException("Прервано пользователем");
+                monitor.advice(1);
+                monitor.setText("Импортируется " + policy);
+                importPolicy(policy, hash);
+            }
+            monitor.finish(hash.get("/").getId() + "");
+        } catch (Exception e) {
+            monitor.error(e.getMessage(), e);
+        }
+
+    }
+
+    /**
+     * Импорт ролей с поддержкой кэша
+     *
+     * @param aListRoles - список ролей с их политиками
+     */
+    @Override
+    public void importRoles(long aMonitorId, boolean aClearRole, List<ImportRoles> aListRoles) {
+        IMonitor monitor = monitorService.acceptMonitor(aMonitorId, "Подготовка к импорту");
+        try {
+            double size = 0;
+            for (ImportRoles role : aListRoles) {
+                size = size + role.getPolicies().size();
+            }
+            monitor = monitorService.startMonitor(aMonitorId, "Импорт политик безопасности", size);
+            Map<String, SecPolicy> hash = new HashMap<>();
+            for (ImportRoles role : aListRoles) {
+                importPoliciesByRole(monitor, hash, aClearRole, role.getRole(), role.getPolicies());
+            }
+            monitor.finish(hash.get("/").getId() + "");
+        } catch (Exception e) {
+            monitor.error(e.getMessage(), e);
+        }
+
+    }
+
+    /**
+     * С поддержкой кэша
+     *
      * @param aPolicies массив политик
      * @param aNames    перевод политик
      */
-    public void importPoliciesByRole(IMonitor aMonitor,Map<String, SecPolicy> aHash,boolean aClearRole, PolicyForm aRole, List<PolicyForm> aPolicies) {
-		SecRole role= findOrCreateRole(aRole) ;
-		Collection<SecPolicy> listPolicy ;
-		if (aClearRole) {
-			listPolicy = new LinkedList<>();
-		} else {
-			listPolicy = role.getSecPolicies() ;
-		}
-		
-		aMonitor.setText("Импортируется РОЛЬ: "+role.getName());
-    	
-    	aHash.put("/", findRootPolicy()) ;
-    	if(aMonitor.isCancelled()) throw new IllegalStateException("Прервано пользователем") ;
-    	
-    	for(PolicyForm policy : aPolicies) {
-    		aMonitor.setText("Импортируется РОЛЬ: "+role.getName()+ " политика "+ policy.getKey());
-    		if(aMonitor.isCancelled()) throw new IllegalStateException("Прервано пользователем") ;
-    		SecPolicy policyByRole = importPolicy(policy, aHash) ;
-    		if (!listPolicy.contains(policyByRole)) listPolicy.add(policyByRole) ;
-    		aMonitor.advice(1) ;
-    	}
-    	role.setSecPolicies(listPolicy);
-    	
-    	manager.persist(role) ;
+    private void importPoliciesByRole(IMonitor aMonitor, Map<String, SecPolicy> aHash, boolean aClearRole, PolicyForm aRole, List<PolicyForm> aPolicies) {
+        SecRole role = findOrCreateRole(aRole);
+        Collection<SecPolicy> listPolicy;
+        if (aClearRole) {
+            listPolicy = new LinkedList<>();
+        } else {
+            listPolicy = role.getSecPolicies();
+        }
+
+        aMonitor.setText("Импортируется РОЛЬ: " + role.getName());
+
+        aHash.put("/", findRootPolicy());
+        if (aMonitor.isCancelled()) throw new IllegalStateException("Прервано пользователем");
+
+        for (PolicyForm policy : aPolicies) {
+            aMonitor.setText("Импортируется РОЛЬ: " + role.getName() + " политика " + policy.getKey());
+            if (aMonitor.isCancelled()) throw new IllegalStateException("Прервано пользователем");
+            SecPolicy policyByRole = importPolicy(policy, aHash);
+            if (!listPolicy.contains(policyByRole)) listPolicy.add(policyByRole);
+            aMonitor.advice(1);
+        }
+        role.setSecPolicies(listPolicy);
+
+        manager.persist(role);
     }
 
     private SecPolicy findRootPolicy() {
-    	SecPolicy policy = QueryResultUtil.getFirst(SecPolicy.class
-    			, manager.createQuery("from SecPolicy where key=:key")
-    				.setParameter("key", "/")) ; 
+        SecPolicy policy = QueryResultUtil.getFirst(SecPolicy.class
+                , manager.createQuery("from SecPolicy where key=:key")
+                        .setParameter("key", "/"));
         if (policy == null) {
             policy = new SecPolicy();
             policy.setKey("/");
@@ -211,85 +217,88 @@ public class SecServiceBean implements ISecService {
             manager.persist(policy);
         }
         return policy;
-    }    
+    }
 
     private SecPolicy importPolicy(PolicyForm aPolicy, Map<String, SecPolicy> aHash) {
-    	// уже импортировали
-    	if(aHash.containsKey(aPolicy.getKey())) {
-    		return aHash.get(aPolicy.getKey());
-    	} else { // поиск от самой верхней
-    		StringTokenizer st = new StringTokenizer(aPolicy.getKey(), " /\\\"'\t,.:|\n") ; 
-    		StringBuilder sb = new StringBuilder() ;
-    		SecPolicy parentPolicy = aHash.get("/") ; //findOrCreatePolicy("/", aHash) ;
-    		while(st.hasMoreTokens()) {
-    			String key = st.nextToken() ;
-    			if(sb.length()!=1) sb.append(key) ;
-    			if (st.hasMoreTokens()) {
-    				parentPolicy = findOrCreatePolicy(false,parentPolicy, key, aHash, sb.toString(), "", "") ;
-    			} else {
-    				parentPolicy =findOrCreatePolicy(true,parentPolicy, key, aHash, sb.toString(), aPolicy.getName(), aPolicy.getComment()) ;
-    			}
-    		}
-    		return parentPolicy ; 
-    	}
+        // уже импортировали
+        if (aHash.containsKey(aPolicy.getKey())) {
+            return aHash.get(aPolicy.getKey());
+        } else { // поиск от самой верхней
+            StringTokenizer st = new StringTokenizer(aPolicy.getKey(), " /\\\"'\t,.:|\n");
+            StringBuilder sb = new StringBuilder();
+            SecPolicy parentPolicy = aHash.get("/");
+            while (st.hasMoreTokens()) {
+                String key = st.nextToken();
+                if (sb.length() != 1) sb.append(key);
+                if (st.hasMoreTokens()) {
+                    parentPolicy = findOrCreatePolicy(false, parentPolicy, key, aHash, sb.toString(), "", "");
+                } else {
+                    parentPolicy = findOrCreatePolicy(true, parentPolicy, key, aHash, sb.toString(), aPolicy.getName(), aPolicy.getComment());
+                }
+            }
+            return parentPolicy;
+        }
     }
 
     private SecPolicy findOrCreatePolicy(boolean aEditIs, SecPolicy aParentPolicy, String aKey, Map<String, SecPolicy> aHash, String aFullPath, String aName, String aComment) {
-    	SecPolicy policy = aHash.get(aFullPath) ;
-    	if(policy==null) {
-    		policy = QueryResultUtil.getFirst(SecPolicy.class
-    				, manager.createQuery("from SecPolicy where key=:key and parentSecPolicy=:parent")
-    		  .setParameter("key", aKey)
-    		  .setParameter("parent", aParentPolicy));
-    		if(policy==null) {
-    			
-    			policy = new SecPolicy() ;
-    			policy.setKey(aKey) ;
-    			// name
-    			policy.setParentSecPolicy(aParentPolicy) ;
-    			manager.persist(policy) ;
-    			aHash.put(aFullPath, policy) ;
-    		}
-    	}
-		if (aEditIs) {
-			if (aName!=null&&!aName.equals(""))policy.setName(aName);
-			if (aComment!=null&&!aComment.equals(""))policy.setComment(aComment);
-		}
-    	return policy ;
-	}
+        SecPolicy policy = aHash.get(aFullPath);
+        if (policy == null) {
+            policy = QueryResultUtil.getFirst(SecPolicy.class
+                    , manager.createQuery("from SecPolicy where key=:key and parentSecPolicy=:parent")
+                            .setParameter("key", aKey)
+                            .setParameter("parent", aParentPolicy));
+            if (policy == null) {
+
+                policy = new SecPolicy();
+                policy.setKey(aKey);
+                policy.setParentSecPolicy(aParentPolicy);
+                manager.persist(policy);
+                aHash.put(aFullPath, policy);
+            }
+        }
+        if (aEditIs) {
+            if (aName != null && !aName.equals("")) policy.setName(aName);
+            if (aComment != null && !aComment.equals("")) policy.setComment(aComment);
+        }
+        return policy;
+    }
 
     /**
      * Поиск роли, если роль не найдена, то она создается
+     *
      * @param aRole - информация о роли
      */
     private SecRole findOrCreateRole(PolicyForm aRole) {
-    	SecRole role;
-		if (aRole.getKey()==null || aRole.getKey().equals("") || aRole.getName()==null 
-					|| aRole.getName().equals("")) throw new IllegalStateException("Одно из полей должно быть заполнено или название, или ключ")   ;
-		
-		if (aRole.getName()!=null && !aRole.getName().equals("")){
-			role = QueryResultUtil.getFirst(SecRole.class
-    				, manager.createQuery("from SecRole where name=:name")
-    	    		  .setParameter("name", aRole.getName())) ;
-		} else {
-			role = QueryResultUtil.getFirst(SecRole.class
-    				, manager.createQuery("from SecRole where key=:key")
-    	    		  .setParameter("key", aRole.getKey())) ;
-		}
-		if (role ==null) {
+        SecRole role;
+        if (aRole.getKey() == null || aRole.getKey().equals("") || aRole.getName() == null
+                || aRole.getName().equals(""))
+            throw new IllegalStateException("Одно из полей должно быть заполнено или название, или ключ");
+
+        if (aRole.getName() != null && !aRole.getName().equals("")) {
+            role = QueryResultUtil.getFirst(SecRole.class
+                    , manager.createQuery("from SecRole where name=:name")
+                            .setParameter("name", aRole.getName()));
+        } else {
+            role = QueryResultUtil.getFirst(SecRole.class
+                    , manager.createQuery("from SecRole where key=:key")
+                            .setParameter("key", aRole.getKey()));
+        }
+        if (role == null) {
             role = new SecRole();
             role.setKey(aRole.getKey());
             role.setName(aRole.getName());
             role.setComment(aRole.getComment());
-            role.setSecPolicies(new LinkedList<>()) ;
+            role.setSecPolicies(new LinkedList<>());
             manager.persist(role);
-		} 
-    	return role;
+        }
+        return role;
     }
-    
-	@PersistenceContext private EntityManager manager ;
-    private @EJB ILocalMonitorService monitorService ;
 
+    @PersistenceContext
+    private EntityManager manager;
+    private @EJB
+    ILocalMonitorService monitorService;
 
-
+    private @EJB
+    ISecUserService secUserService;
 }

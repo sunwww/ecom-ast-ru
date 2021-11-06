@@ -34,9 +34,6 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.Map.Entry;
 
-//import ru.ecom.expomc.ejb.domain.message.MessageChange;
-//import ru.ecom.expomc.ejb.domain.message.MessageLog;
-
 /**
  * Проверка реестра
  */
@@ -69,81 +66,6 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
 
     }
 
-    public String checkByFormatHtml(String aFormatName, Map<String, Object> aMap) {
-        try {
-
-            StringBuilder sb = new StringBuilder();
-            Format format;
-            try {
-                format = (Format) manager.createQuery("from Format where comment=:name")
-                        .setParameter("name", aFormatName).getSingleResult();
-            } catch (Exception e) {
-                throw new IllegalStateException("Ошибка при поиске формата с комментарием " + aFormatName, e);
-            }
-
-            Collection<Field> fields = Collections.unmodifiableCollection(format.getFields());
-            Class entityClass = ClassLoaderHelper.getInstance().loadClass(format.getDocument().getEntityClassName());
-            Object entity = entityClass.newInstance();
-            ImportServiceBean.copyMapToEntity(fields, aMap, entity);
-
-            HashMap<String, Object> map = new HashMap<>();
-            copyToMap(entity, map, entityClass);
-
-            // список полей
-            HashSet<String> allowedFields = new HashSet<>();
-            for (Method method : entityClass.getMethods()) {
-                if (method.getAnnotation(Comment.class) != null) {
-                    allowedFields.add(PropertyUtil.getPropertyName(method));
-                }
-            }
-
-            CheckContext ctx = new CheckContext(format, map, allowedFields, new java.sql.Date(new Date().getTime()), manager, entity);
-
-            // проверки
-            Collection<Check> list = format.getDocument().getChecks();
-            sb.append("\n<ol class='result'>");
-            for (Check check : list) {
-                ICheck icheck = (ICheck) findCheckClass(check).newInstance();
-                setCheckProperties(check, icheck);
-                try {
-                    if (!check.isDisabled()) {
-                        CheckResult result = icheck.check(ctx);
-
-                        if (result.isAccepted()) {
-                            sb.append("\n<li class='checkType").append(check.getCheckType()).append("'>");
-                            sb.append(check.getName());
-                            if (check.getComment() != null) {
-                                sb.append(" <span class='comment'>").append(check.getComment()).append("</span>");
-                            }
-
-                            if (!result.getChanged().isEmpty()) {
-                                sb.append("\n<ol>");
-                                for (Entry<String, Object> entry : result.getChanged().entrySet()) {
-                                    sb.append("<li>");
-                                    sb.append(entry.getKey()).append(" = ").append(entry.getValue());
-                                    sb.append("</li>");
-                                }
-                                sb.append("</ol>\n");
-                            }
-                            sb.append("</li>");
-                        }
-                    }
-                } catch (Exception e) {
-                    LOG.warn(e.getMessage(), e);
-                    sb.append("<li>");
-                    sb.append(check.getName()).append(": ").append(e.getMessage());
-                    sb.append("</li>");
-                }
-            }
-            sb.append("</ol>");
-            return sb.toString();
-
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-
-    }
-
     private Collection<CheckPair> createIteratorsChecks(Collection<Check> aChecks, boolean aSqlSupports) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, ParseException {
         LinkedList<CheckPair> ret = new LinkedList<>();
         for (Check check : aChecks) {
@@ -167,23 +89,18 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
         return ret;
     }
 
+    @Override
     public void checkDocumentData(long aMonitorId, long aTime) throws CheckDocumentDataException {
         IMonitor monitor = monitorService.acceptMonitor(aMonitorId, "Начало проверки ...");
-        if (CAN_DEBUG) LOG.debug("monitor=" + aMonitorId);
-        if (CAN_DEBUG) LOG.debug("time=" + aTime);
         try {
             ImportTime time = manager.find(ImportTime.class, aTime);
-            if (CAN_DEBUG) LOG.debug("checkDocumentData: time = " + time);
 
             ImportDocument document = time.getDocument();
-            if (CAN_DEBUG) LOG.debug("checkDocumentData: document = " + document);
 
             Format format = (Format) time.getFormat();
-            if (CAN_DEBUG) LOG.debug("checkDocumentData: format = " + format);
 
             // перебор всех записей в реестре
 
-            if (CAN_DEBUG) LOG.debug(" Определение количества записей...");
             Query countQuery;
             if (document.isTimeSupport()) {
                 countQuery = manager.createQuery("select count(*) from " + document.getEntityClassName() + " where time =:time")
@@ -192,7 +109,6 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
                 countQuery = manager.createQuery("select count(*) from " + document.getEntityClassName());
             }
             Long count = (Long) countQuery.getSingleResult();
-            if (CAN_DEBUG) LOG.debug(" Количество = " + count);
 
             monitor = monitorService.startMonitor(aMonitorId, "Проверка", count);
             monitor.setText("Удаление старых проверок ...");
@@ -238,7 +154,6 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
 
                 // проверки
                 for (CheckPair pair : list) {
-                    if (CAN_DEBUG) LOG.debug(" Checking " + pair.check.getName() + " ...");
                     CheckResult result;
                     try {
                         result = pair.icheck.check(ctx);
@@ -269,7 +184,6 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
                         }
                     }
                 }
-                //theManager.persist(entity) ;
                 manager.flush();
                 manager.clear();
             }
@@ -313,6 +227,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
         LOG.debug("count = " + i);
     }
 
+    @Override
     public void setCheckProperties(Check aCheck, ICheck aChecker) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException, ParseException {
         for (CheckProperty property : aCheck.getProperties()) {
             setPropertyValue(aChecker, property.getProperty(), property.getValue());
@@ -323,7 +238,8 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
         return allowedChecksAllValues.getCheckClassById(aCheck.getCheckId());
     }
 
-    public Collection<CheckPropertyRow> listProperties(long aCheckId) throws ClassNotFoundException {
+    @Override
+    public Collection<CheckPropertyRow> listProperties(long aCheckId) {
         Check check = manager.find(Check.class, aCheckId);
 
         Collection<CheckProperty> properties = check.getProperties();
@@ -354,17 +270,8 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
         return ret;
     }
 
-//    private static void copyToMap(Object aEntity, Map<String, Object> aMap, Format aFormat) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-//       for (Field field : aFormat.getFields()) {
-//           String name = field.getName();
-//           String property = field.getProperty() ;
-//           Object value = PropertyUtil.getPropertyValue(aEntity, property) ;
-//           aMap.put(name, value ) ;
-//       }
-//   }
-
+    @Override
     public CheckPropertyForm loadForm(long aCheckId, String aProperty) throws ClassNotFoundException {
-        //StringTokenizer st = new StringTokenizer(aCheckAndProperty, ",");
         Collection<CheckPropertyRow> rows = listProperties(aCheckId);
         String value = null;
         Long id = null;
@@ -384,6 +291,7 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
         return form;
     }
 
+    @Override
     public void saveForm(CheckPropertyForm aForm) throws ClassNotFoundException {
         CheckPropertyForm fromBaseForm = loadForm(aForm.getCheck(), aForm.getProperty());
         CheckProperty property;
@@ -400,7 +308,6 @@ public class CheckServiceBean implements ICheckService, ICheckServiceLocal {
     }
 
     private void storeResult(Object aEntity, CheckResult aResult, Check aCheck, Map<String, Object> aOldValues) throws IllegalAccessException, NoSuchMethodException, ParseException, InvocationTargetException {
-
         if (aCheck.getCheckType() == Check.TYPE_CHANGE) {
             Map<String, Object> map = aResult.getChanged();
             for (Map.Entry<String, Object> entry : map.entrySet()) {

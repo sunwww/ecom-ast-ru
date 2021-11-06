@@ -29,13 +29,14 @@ public class SecRoleServiceBean implements ISecRoleService {
 
     private static final Logger LOG = Logger.getLogger(SecRoleServiceBean.class);
 
+	@Override
     public String getRoleInfo(long aRoleId) {
     	SecRole role = manager.find(SecRole.class, aRoleId) ;
     	return role!=null? role.getName() : "" ;
     }
 
+	@Override
 	public List<SecUserForm>listUsersByRole(long aRoleId, boolean aIsSystemView) {
-	//	SecRole role = manager.find(SecRole.class, aRoleId) ;
 		String add="" ;
 		if (!aIsSystemView) add=" and (su.isSystems is null or su.isSystems='0') " ;
         List<Object[]> roles = manager.createNativeQuery("select su.id,su.fullname,su.login,su.comment from SecUser_SecRole as susr"
@@ -43,7 +44,8 @@ public class SecRoleServiceBean implements ISecRoleService {
         	+" where susr.roles_id=:idRole and (su.disabled is null or su.disabled='0')"+add+" order by su.login").setParameter("idRole", aRoleId).getResultList() ;
 		return convert(roles) ;
 	}
-	
+
+	@Override
 	public List<SecUserForm> listUsersToAdd(long aRoleId, boolean aIsSystemView) {
 		String add="" ;
 		if (!aIsSystemView) add=" and (su.isSystems is null or su.isSystems='0') " ;
@@ -51,14 +53,14 @@ public class SecRoleServiceBean implements ISecRoleService {
 			.setParameter("idRole", aRoleId).getResultList() ;
 		return convert(roles) ;		
 	}
-	
+
+	@Override
 	public void removeUsersFromRole(long aRoleId, long[] aUsersId) {
 		String ids =convertArrayToString(aUsersId);
 		java.util.Date date = new java.util.Date() ;
 		String username = context.getCallerPrincipal().getName() ;
 		manager.createNativeQuery("delete from SecUser_SecRole where roles_id=:idRole and secuser_id in ("+ids+")")
 			.setParameter("idRole", aRoleId)
-			//.setParameter("idUsers", ids)
 			.executeUpdate() ;
 		for (long user:aUsersId) {
 	        ChangeJournal jour = new ChangeJournal() ;
@@ -73,8 +75,9 @@ public class SecRoleServiceBean implements ISecRoleService {
 			manager.persist(jour) ;
 		}
 	}
+
+	@Override
 	public void addUsersToRole(long aRoleId, long[] aUsersId) {
-		//LOG.info("ids="+convertArrayToString(aUsersId)) ;
 		java.util.Date date = new java.util.Date() ;
 		String username = context.getCallerPrincipal().getName() ;
 		for (long user:aUsersId) {
@@ -85,13 +88,12 @@ public class SecRoleServiceBean implements ISecRoleService {
 			Long ch = PersistList.parseLong(check) ;
 			
 			if (ch.intValue()==0) {
-				int result = manager.createNativeQuery("insert into SecUser_SecRole (roles_id,secuser_id) values (:idRole,:idUser)")
-					.setParameter("idRole", aRoleId)
-					.setParameter("idUser", user)
-					.executeUpdate() ;
+				manager.createNativeQuery("insert into SecUser_SecRole (roles_id,secuser_id) values (:idRole,:idUser)")
+						.setParameter("idRole", aRoleId)
+						.setParameter("idUser", user)
+						.executeUpdate();
 				ChangeJournal jour = new ChangeJournal() ;
 				jour.setClassName("SecUser_SecRole") ;
-				
 				jour.setChangeDate(new java.sql.Date(date.getTime())) ;
 				jour.setChangeTime(new java.sql.Time(date.getTime())) ;
 				jour.setLoginName(username) ;
@@ -103,6 +105,7 @@ public class SecRoleServiceBean implements ISecRoleService {
 		}
 		
 	}
+
 	private String convertArrayToString(long[] aArray) {
 		StringBuilder ret = new StringBuilder() ;
 		for (long id:aArray) {
@@ -124,6 +127,7 @@ public class SecRoleServiceBean implements ISecRoleService {
         return ret ;
     }
 
+	@Override
     public void saveRolePolicies(long aRoleId, long[] aAdded, long[] aRemoved) {
         SecRole role = manager.find(SecRole.class, aRoleId) ;
         Collection<SecPolicy> policies = role.getSecPolicies() ;
@@ -144,6 +148,7 @@ public class SecRoleServiceBean implements ISecRoleService {
         manager.persist(role);
     }
 
+	@Override
     public CheckNode loadPoliciesByRole(long aRoleId) {
     	TreeSet<Long> policiesSet  = new TreeSet<>();
     	SecRole role = manager.find(SecRole.class, aRoleId) ;
@@ -151,12 +156,13 @@ public class SecRoleServiceBean implements ISecRoleService {
     		policiesSet.add(policy.getId()) ;
     	}
     	
-    	SecPolicy rootPolicy = findRootPolicy() ; //theManager.find(SecPolicy.class, SecPolicy.ROOT_POLICY_ID)  ;
+    	SecPolicy rootPolicy = findRootPolicy() ;
     	CheckNode rootNode = new CheckNode(1, "/", false);
     	add(rootPolicy, rootNode, policiesSet);
     	return rootNode;
     }
     // Загрузка дерева политик
+	@Override
     public CheckNode loadPolicies() {
         TreeSet<Long> policiesSet  = new TreeSet<>();
         SecPolicy rootPolicy = findRootPolicy() ;

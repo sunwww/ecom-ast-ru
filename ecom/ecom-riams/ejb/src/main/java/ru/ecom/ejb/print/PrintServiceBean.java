@@ -1,6 +1,5 @@
 package ru.ecom.ejb.print;
 
-import ru.ecom.ejb.services.file.IJbossGetFileLocalService;
 import ru.ecom.ejb.services.script.IScriptService;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.ejb.util.injection.EjbInjection;
@@ -9,7 +8,6 @@ import ru.ecom.report.replace.IValueInit;
 import ru.ecom.report.replace.SetValueException;
 import ru.ecom.report.rtf.RtfPrintServiceHelper;
 
-import javax.annotation.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -21,50 +19,57 @@ import java.util.Map;
 @Remote(IPrintService.class)
 public class PrintServiceBean implements IPrintService {
 
-	public String print(String aKey
-			, String aServiceName
-			, String aMethodName, Map<String,String> aParams) {
-		return print("user",false, aKey, aServiceName, aMethodName, aParams);		
-	}
-	public String print(String aLogin,boolean aIsTxtFirst, String aKey
-			, String aServiceName
-			, String aMethodName, Map<String,String> aParams) {
-		// получение данных
-		IScriptService serv = EjbInjection.getInstance().getLocalService(IScriptService.class) ;
-		return print(aLogin, aIsTxtFirst, aKey,serv ,aServiceName,aMethodName, aParams);
-	}
-	public String print(String aLogin,boolean aIsTxtFirst, String aKey
-			,IScriptService aServiceScr, String aServiceName
-			, String aMethodName, Map<String,String> aParams) {
-		try {
-			Map<String,Object> values = (Map<String, Object>)aServiceScr.invoke(aServiceName, aMethodName,new Object[] {aParams});
-			// печать
-            EjbEcomConfig config = EjbEcomConfig.getInstance() ;
+    @Override
+    public String print(String aKey
+            , String aServiceName
+            , String aMethodName, Map<String, String> aParams) {
+        return print("user", false, aKey, aServiceName, aMethodName, aParams);
+    }
+
+    @Override
+    public String print(String aLogin, boolean aIsTxtFirst, String aKey
+            , String aServiceName
+            , String aMethodName, Map<String, String> aParams) {
+        // получение данных
+        IScriptService serv = EjbInjection.getInstance().getLocalService(IScriptService.class);
+        return print(aLogin, aIsTxtFirst, aKey, serv, aServiceName, aMethodName, aParams);
+    }
+
+    @Override
+    public String print(String aLogin, boolean aIsTxtFirst, String aKey
+            , IScriptService aServiceScr, String aServiceName
+            , String aMethodName, Map<String, String> aParams) {
+        try {
+            Map<String, Object> values = (Map<String, Object>) aServiceScr.invoke(aServiceName, aMethodName, new Object[]{aParams});
+            // печать
+            EjbEcomConfig config = EjbEcomConfig.getInstance();
 
             RtfPrintServiceHelper service = new RtfPrintServiceHelper(aIsTxtFirst);
-            String workDir =config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
-            boolean removedTemp =config.get("tomcat.data.dir.removedtemp", "1").equals("1");
+            String workDir = config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+            boolean removedTemp = config.get("tomcat.data.dir.removedtemp", "1").equals("1");
             service.setWorkDir(workDir);
             service.setTemplateDir(System.getProperty("jboss.server.data.dir"));
             service.setRemovedTempFile(removedTemp);
-            service.setLogin(aLogin) ;
-            return service.print(aKey, new ValueInit(values), new HashMap<>()) ;
-		} catch (Exception e) {
-			throw new IllegalStateException(e);
-		}
-	}
+            service.setLogin(aLogin);
+            return service.print(aKey, new ValueInit(values), new HashMap<>());
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
-	public static class ValueInit implements IValueInit {
+    public static class ValueInit implements IValueInit {
 
-		public ValueInit(Map<String, Object> values) {
-			this.values = values ;
-		}
-		public void init(Map<String, String> aParams, IValueGetter aGetter) throws SetValueException {
-			for (Map.Entry<String, Object> entry : values.entrySet()) {
-				aGetter.set(entry.getKey(), entry.getValue());
-			}
-		}
-		private final Map<String, Object> values ;
-		
-	}
+        public ValueInit(Map<String, Object> values) {
+            this.values = values;
+        }
+
+        public void init(Map<String, String> aParams, IValueGetter aGetter) throws SetValueException {
+            for (Map.Entry<String, Object> entry : values.entrySet()) {
+                aGetter.set(entry.getKey(), entry.getValue());
+            }
+        }
+
+        private final Map<String, Object> values;
+
+    }
 }

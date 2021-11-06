@@ -1505,7 +1505,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 code = (entry.getSubType() != null
                         ? entry.getSubType().getCode()
                         : EXTDISPTYPE + "_" + (entry.getVidSluch() != null ? entry.getVidSluch().getCode() : "VIDSLUCH"));
-                fileType = "DV";
+                fileType = "SomeDisp";
 
                 break;
             case KDPTYPE:
@@ -2896,51 +2896,51 @@ public class Expert2ServiceBean implements IExpert2Service {
         б. Иначе - расчет цены полным случаем
         * услуга считается выполненной, если указана дата выполнения услуги
         * */
-        ExtDispPrice price = getExtDispPrice(entry);
+        ExtDispPrice vocPrice = getExtDispPrice(entry);
         BigDecimal cost;
-        if (price != null) {
+        if (vocPrice != null) {
             manager.createNativeQuery("delete from entrymedservice where entry_id=:id and medservice_id is null").setParameter("id", entry.getId()).executeUpdate(); //удаляем пустые услуги
-            List<EntryMedService> serviceList = entry.getMedServices();
-            int mustBeServices = price.getMinServices();
-            int foundGoodService = 0;
-            int serviceInPeriod = 0;
-            List<ExtDispPriceMedService> dispPriceMedServices = price.getServiceList();
-            List<String> goodList = new ArrayList<>();
+            List<EntryMedService> dispServices = entry.getMedServices(); //оказанные услуги
+            int minRequiredServices = vocPrice.getMinServices(); //мин кол-во обязательных услуг по плану (85%)
+            int madeServicesCount = 0; //кол-во оказанных услуг (с датой, которые есть в плане)
+            int serviceInPeriod = 0; //кол-во услуг, входящих в период ДД
+            List<ExtDispPriceMedService> vocMedServices = vocPrice.getServiceList();
+            List<String> foundServiceCodes = new ArrayList<>(); //список кодов выполненных услуг (которые должны быть выполнены по плану)
             long startDispTime = entry.getStartDate().getTime();
             long finishDispTime = entry.getFinishDate().getTime();
-            if (dispPriceMedServices.isEmpty()) {
+            if (vocMedServices.isEmpty()) {
                 saveError(entry, "NO_DISP_PRICE_SERVICES_ADMIN_SKIP");
-                cost = price.getCost();
+                cost = vocPrice.getCost();
             } else {
-                for (EntryMedService medService : serviceList) { //TODO да, мне стыдно, переделать на лямды в меосе 2.0
-                    boolean found = false;
-                    if (medService.getMedService() != null) {
-                        for (ExtDispPriceMedService dispPriceMedService : dispPriceMedServices) {
-                            if (dispPriceMedService.getMedService().equals(medService.getMedService().getCode())) {
-                                found = true;
-                                if (medService.getServiceDate() != null) {
-                                    foundGoodService++;
-                                    long serviceTime = medService.getServiceDate().getTime();
+                for (EntryMedService dispService : dispServices) {
+                    boolean isServiceNeed = false; //услуга должна быть оказана по плану
+                    if (dispService.getMedService() != null) {
+                        for (ExtDispPriceMedService dispPriceMedService : vocMedServices) {
+                            if (isEquals(dispPriceMedService.getMedService(), dispService.getMedService().getCode())) {
+                                isServiceNeed = true;
+                                if (dispService.getServiceDate() != null) { //если нет даты услуги - она не была оказана, отображается для информации
+                                    madeServicesCount++;
+                                    long serviceTime = dispService.getServiceDate().getTime();
                                     if (startDispTime <= serviceTime && serviceTime <= finishDispTime) {
                                         serviceInPeriod++;
                                     }
                                 }
-                                goodList.add(dispPriceMedService.getMedService());
+                                foundServiceCodes.add(dispPriceMedService.getMedService());
                                 break;
                             }
                         }
-                        if (!found) {
-                            medService.setComment("Услуга не требуется по возрасту");
-                            manager.persist(medService);
+                        if (!isServiceNeed) {
+                            dispService.setComment("Услуга не требуется по возрасту");
+                            manager.persist(dispService);
                         }
                     }
                 }
-                if (dispPriceMedServices.size() > foundGoodService) { //не все услуги оказаны, смотрим чего нет и считаем цену по услугам
-                    boolean lostRequired = false;
+                if (vocMedServices.size() > madeServicesCount) { //не все услуги оказаны, смотрим чего нет и считаем цену по услугам
+                    boolean lostRequired = false; //обязательная услуга не оказана
                     cost = BigDecimal.ZERO;
-                    for (ExtDispPriceMedService dispPriceMedService : dispPriceMedServices) {
+                    for (ExtDispPriceMedService dispPriceMedService : vocMedServices) {
                         String medserviceCode = dispPriceMedService.getMedService();
-                        if (isNotLogicalNull(medserviceCode) && !goodList.contains(medserviceCode)) {
+                        if (!foundServiceCodes.contains(medserviceCode)) { //если услуги из плана нет в списке выполненных услуг, создаем услугу без даты для удобства пользователя
                             VocMedService vms;
                             if (!SERVICELIST.containsKey(medserviceCode)) {
                                 vms = getEntityByCode(medserviceCode, VocMedService.class, false);
@@ -2958,7 +2958,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                                 BigDecimal serviceCost = medServiceCost.getCost();
                                 medService.setDoctorSpeciality(medServiceCost.getWorkFunction());
                                 medService.setCost(serviceCost);
-                                cost = cost.add(serviceCost);
                             } else {
                                 LOG.warn("No medServiceCost" + medserviceCode);
                             }
@@ -2967,14 +2966,14 @@ public class Expert2ServiceBean implements IExpert2Service {
                             manager.persist(medService);
                         }
                     }
-                    if (lostRequired || foundGoodService < mustBeServices) { //нет хоть одной обязательной услуги сообщение об ошибке.
+                    if (lostRequired || madeServicesCount < minRequiredServices) { //нет хоть одной обязательной услуги сообщение об ошибке.
                         saveError(entry, E2EntryErrorCode.NOT_FULL_DISP);
-                    } else if (serviceInPeriod >= mustBeServices) {  //в период ДД сделали >85% - полный случай
-                        cost = price.getCost();
+                    } else if (madeServicesCount != serviceInPeriod && serviceInPeriod >= minRequiredServices) {  //в период ДД сделали >85% - полный случай
+                        cost = vocPrice.getCost();
                         LOG.info("85% услуг сделано в рамках ДД");
                     } else {//иначе - по услугам
                         LOG.info("DISP calc by service: " + entry.getId());
-                        for (EntryMedService medService : serviceList) {
+                        for (EntryMedService medService : dispServices) {
                             if (medService.getServiceDate() != null) {
                                 VocOmcMedServiceCost medServiceCost = getMedServiceOmc(medService.getMedService(), medService.getServiceDate());
                                 if (medServiceCost != null) {
@@ -2988,7 +2987,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                         LOG.info("DISP COST by service: " + entry.getId() + ">>" + cost);
                     }
                 } else {
-                    cost = price.getCost();
+                    cost = vocPrice.getCost();
                 }
             }
         } else { //2 этап - считаем цену по услугам
@@ -3607,20 +3606,33 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     private synchronized void cleanAllMaps() {
-        entrySubTypeHashMap = new HashMap<>();
+        entrySubTypeHashMap.clear();
         //  diagnosisMap = new HashMap<String, Object>();
         // serviceList = new HashMap<String, VocMedService>();
-        ksgMap = new HashMap<>();
-        tariffMap = new HashMap<>();
-        cusmoMap = new HashMap<>();
+        ksgMap.clear();
+        tariffMap.clear();
+        cusmoMap.clear();
         //  hospitalCostMap = new HashMap<String, BigDecimal>();
-        difficultyHashMap = new HashMap<>();
-        polyclinicCasePrice = new HashMap<>();
-        bedTypes = new HashMap<>();
+        difficultyHashMap.clear();
+        polyclinicCasePrice.clear();
+        bedTypes.clear();
         ksgCoefficientMap.clear();
-        //   resultMap = new HashMap<String, Object>(); //результат госпитализации
+        resultMap.clear(); //результат госпитализации
     }
 
+    public List<E2Entry> getEntriesByListEntryIdAndErrorCode(Long listEntryId, String defectCode) {
+        List<BigInteger> ids = manager.createNativeQuery(" select e.id from e2entry e " +
+                        " left join e2entrysanction s on s.entry_id=e.id " +
+                        "where e.listEntry_id=:listId and s.dopcode=:code")
+                .setParameter("listId", listEntryId).setParameter("code", defectCode.trim())
+                .getResultList();
+        List<Long> longIds = new ArrayList<>();
+        for (BigInteger i : ids) {
+            longIds.add(i.longValue());
+        }
+        return manager.createQuery("from E2Entry where id in (:ids)")
+                .setParameter("ids", longIds).getResultList();
+    }
 
     /**
      * Создаем онкослучай по умолчанию
@@ -3628,19 +3640,14 @@ public class Expert2ServiceBean implements IExpert2Service {
     @Override
     public void makeOncologyCase(Long listEntryId, String jsonString, String defectCode) {
         JSONObject aJson = new JSONObject(jsonString);
-        List<BigInteger> entryList = manager.createNativeQuery(" select e.id from e2entry e " +
-                        " left join e2entrysanction s on s.entry_id=e.id " +
-                        "where e.listEntry_id=:listId and s.dopcode=:code")
-                .setParameter("listId", listEntryId).setParameter("code", defectCode.trim())
-                .getResultList();
+        List<E2Entry> entryList = getEntriesByListEntryIdAndErrorCode(listEntryId, defectCode);
         if (!entryList.isEmpty()) {
             LOG.info("Создаем онкослучаи, найдено " + entryList.size() + " записей");
             String occasion = getString(aJson, "occasion");
             String consiliumResult = getString(aJson, "consiliumResult");
             String directionType = getString(aJson, "directionType");
             String directionSurveyMethod = getString(aJson, "directionSurveyMethod");
-            for (BigInteger entryId : entryList) {
-                E2Entry entry = manager.find(E2Entry.class, entryId.longValue());
+            for (E2Entry entry : entryList) {
                 if (isEmpty(entry.getCancerEntries())) {
                     E2CancerEntry cancerEntry = new E2CancerEntry();
                     cancerEntry.setEntry(entry);

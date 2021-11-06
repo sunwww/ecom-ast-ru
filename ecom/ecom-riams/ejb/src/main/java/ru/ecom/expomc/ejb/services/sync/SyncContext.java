@@ -16,13 +16,6 @@ public class SyncContext {
         importTime = aImportTime;
         entityManager = aManager;
     }
-
-    /** Транзакции */
-//    public UserTransaction getTransactionManager() { return transactionManager ; }
-//    public void setTransactionManager(UserTransaction aTransactionManager) { transactionManager = aTransactionManager ; }
-
-    /** Транзакции */
-//    private UserTransaction transactionManager ;
     /**  */
     public EntityManager getEntityManager() { return entityManager ; }
 

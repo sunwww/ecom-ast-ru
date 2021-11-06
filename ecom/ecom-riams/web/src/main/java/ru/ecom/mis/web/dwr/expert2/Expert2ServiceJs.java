@@ -32,9 +32,20 @@ public class Expert2ServiceJs {
         Injection.find(request).getService(IExpert2AlkonaService.class).exportHospLeaveToAlkona(entryListId);
     }
 
+    //выписки по заполнению и коду дефекта в алькону
+    public void exportDirectionsToAlkona(Long entryListId, String errorCode, HttpServletRequest request) throws NamingException {
+        Injection.find(request).getService(IExpert2AlkonaService.class).exportDirectionsToAlkona(entryListId, errorCode);
+    }
+
     //Выписку одного случая в Алькону
     public String exportHospLeaveEntryToAlkona(Long entryId, HttpServletRequest request) throws NamingException {
         String ret = Injection.find(request).getService(IExpert2AlkonaService.class).exportHospLeaveEntryToAlkona(entryId);
+        LOG.info(ret);
+        return ret;
+    }
+    //Выписку одного случая в Алькону
+    public String exportDirectionToAlkona(Long entryId, HttpServletRequest request) throws NamingException {
+        String ret = Injection.find(request).getService(IExpert2AlkonaService.class).exportDirectionToAlkona(entryId);
         LOG.info(ret);
         return ret;
     }

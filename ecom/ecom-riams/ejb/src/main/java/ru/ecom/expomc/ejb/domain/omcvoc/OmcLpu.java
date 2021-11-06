@@ -15,7 +15,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Comment("Лечебно-профилактические учреждения ")
 @Entity
 @Table(name = "OMC_LPU",schema="SQLUser")
-@EntitySecurityPrefix("/Policy/Mis/MisLpu")
 @Getter
 @Setter
 public class OmcLpu extends OmcAbstractVoc {

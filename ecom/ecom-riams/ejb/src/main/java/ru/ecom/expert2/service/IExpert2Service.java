@@ -11,6 +11,7 @@ import javax.naming.NamingException;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.List;
 
 public interface IExpert2Service {
     void makeOncologyCase(Long aListEntryId, String aJsonString, String aDefectCode);
@@ -36,4 +37,12 @@ public interface IExpert2Service {
     BigDecimal calculateResultDifficultyCoefficient(E2Entry aEntry);
     String fixFondAnswerError(Long aListEntryId, String aSanctionCode);
     BigDecimal getSumKuet(E2Entry entry);
+
+    /**
+     * Получаем записи по заполнению и коду дефекта
+     * @param listEntryId
+     * @param defectCode
+     * @return
+     */
+    List<E2Entry> getEntriesByListEntryIdAndErrorCode(Long listEntryId, String defectCode);
 }

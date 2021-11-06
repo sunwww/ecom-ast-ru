@@ -903,7 +903,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         break;
                     case EXTDISP_TYPE:
                         //Пока сделаем заглушку
-                        packetType = "DV";
+                        packetType = "SomeDisp";
                         break;
                     default:
                         throw new IllegalStateException("Неизвестный тип счета: " + type);
