@@ -27,8 +27,8 @@ import java.util.*;
 public class TicketServiceJs {
 
     public String exportToPromed(Long spoId, HttpServletRequest aRequest) throws NamingException {
-        Injection.find(aRequest).getService(IPromedExportService.class).exportPolyclinicById(spoId);
-        return "success";
+        String guid = Injection.find(aRequest).getService(IPromedExportService.class).exportPolyclinicById(spoId);
+        return guid == null ? "Отправка выключена" : "success: " + guid;
     }
 
     public String showSimpleServiceBySpecialist(Long aWorkfunctionId, HttpServletRequest aRequest) throws SQLException, NamingException {
@@ -200,9 +200,9 @@ public class TicketServiceJs {
         StringBuilder str = new StringBuilder();
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         str.append("select spo.id, to_char(spo.datestart,'dd.MM.yyyy') as dstart,to_char(spo.datefinish,'dd.MM.yyyy') as dfinish " +
-                " from medcase spo " +
-                " left join workfunction wf on wf.id=spo.ownerfunction_id" +
-                " where spo.dtype='PolyclinicMedCase' and spo.datefinish is not null")
+                        " from medcase spo " +
+                        " left join workfunction wf on wf.id=spo.ownerfunction_id" +
+                        " where spo.dtype='PolyclinicMedCase' and spo.datefinish is not null")
                 .append(" and spo.patient_id=").append(aPatientId)
                 .append(" and wf.workfunction_id = (select workfunction_id from workfunction where id=").append(aWorkfuntionId).append(")")
                 .append(" and spo.datestart<=to_date('").append(aDate).append("','dd.MM.yyyy')")

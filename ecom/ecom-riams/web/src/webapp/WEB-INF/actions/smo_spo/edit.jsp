@@ -301,7 +301,7 @@ order by vis.dateStart
             <msh:sideMenu title="Администрирование">
                 <tags:mis_changeServiceStream name="CSS" title="Изменить поток обслуживания"
                                               roles="/Policy/Mis/MedCase/Visit/ChangeServiceStream"/>
-                <msh:sideLink action="/javascript:exportToPromed()"
+                <msh:sideLink action="/javascript:exportToPromed()" roles="/Policy/Promed/ExportVisit"
                               name='Тест промед' title="Попробовать отправить в промед"
                 />
 

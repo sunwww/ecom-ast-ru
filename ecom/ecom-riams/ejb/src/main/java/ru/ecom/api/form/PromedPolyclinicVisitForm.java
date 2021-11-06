@@ -12,12 +12,6 @@ import lombok.Data;
 public class PromedPolyclinicVisitForm extends BasePromedForm {
 
     /**
-     * Первый визит в случае
-     */
-    //TODO возможно, выпилить
-    private Boolean firstVisit;
-
-    /**
      * Дата начала приема
      */
     private String startTime;
@@ -45,13 +39,14 @@ public class PromedPolyclinicVisitForm extends BasePromedForm {
      * Текст дневника
      */
     private String diary;
-
+    /**
+     * Состояние больного
+     */
+    private String illnessState;
     /**
      * Вид медицинской помощи (НСИ 1.2.643.5.1.13.2.1.1.655) специализированная, первичная МСП, доврачебная,..
      */
     private String medicalCareKindCode;
-
-    private String serviceTypeCode;
 
     /**
      * Исход случая (возможно, перенести в ТАП)
@@ -61,7 +56,7 @@ public class PromedPolyclinicVisitForm extends BasePromedForm {
     /**
      * Уровень МЭС (1,2,3,5)
      */
-    private String mesCode;
+//    private String mesCode;
 
     /**
      * Источник финансирования. <b>Временно не используется, всегда будет заполняться ОМС (1)</b>
@@ -73,6 +68,7 @@ public class PromedPolyclinicVisitForm extends BasePromedForm {
      */
     //TODO высчитывать на стороне медоса
     private String visitPurpose;//VizitType_id //dbo.VizitType
+    private String promedCode; //ИД визита в промеде
 
 
 }

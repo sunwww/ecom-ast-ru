@@ -18,6 +18,8 @@ public class PromedPolyclinicTapForm extends BasePromedForm {
     private PromedDiagnosis diagnosis;
     private String ticketNumber; //EvnPL_NumCard
     private Boolean isFinished; //EvnPL_IsFinish
+    private Boolean isEmergency;
+    private String promedCode; //ИД ТАП в промеде
 
     /**
      * результат случая

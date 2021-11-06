@@ -4,7 +4,17 @@ import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
 
 public interface IPromedExportService {
 
-    void exportPolyclinic(PolyclinicMedCase medCase);
+    /**
+     * Экспорт поликлинического случая в риамс промед
+     * @param medCase PolyclinicMedCase
+     * @return ГУИД запроса
+     */
+    String exportPolyclinic(PolyclinicMedCase medCase);
 
-    void exportPolyclinicById(Long medCaseId);
+    /**
+     * Экспорт поликлинического случая в риамс промед
+     * @param medCaseId - ИД СМО (PolyclinicMedCase)
+     * @return ГУИД запроса
+     */
+    String exportPolyclinicById(Long medCaseId);
 }

@@ -43,19 +43,25 @@ public class PromedExportServiceBean implements IPromedExportService {
      * @param medCase
      */
     @Override
-    public void exportPolyclinic(PolyclinicMedCase medCase) {
+    public String exportPolyclinic(PolyclinicMedCase medCase) {
         if (isEnabled()) {
             validate(medCase);
             LOG.warn("validated");
             PromedPolyclinicTapForm form = getPolyclinicCase(medCase);
             LOG.warn("made form: " + form);
+            String response;
             try {
-                LOG.info(">>" + webService.makePOSTRequest(toString(form), PROMEDATOR_URL, "epicrisis-export", new HashMap<>()) + "<<");
+                //TODO check, должно быть guid;
+                response = webService.makePOSTRequest(toString(form), PROMEDATOR_URL, "epicrisis-export", new HashMap<>());
+                LOG.info(">>" + response + "<<");
             } catch (Exception e) {
                 e.printStackTrace();
+                response = e.getMessage();
             }
             LOG.warn("sent");
+            return response;
         }
+        return null;
     }
 
     private boolean isEnabled() {
@@ -68,10 +74,11 @@ public class PromedExportServiceBean implements IPromedExportService {
     }
 
     @Override
-    public void exportPolyclinicById(Long medCaseId) {
+    public String exportPolyclinicById(Long medCaseId) {
         if (isEnabled()) {
-            exportPolyclinic(manager.find(PolyclinicMedCase.class, medCaseId));
+            return exportPolyclinic(manager.find(PolyclinicMedCase.class, medCaseId));
         }
+        return null;
     }
 
     private void validate(PolyclinicMedCase medCase) {
@@ -90,6 +97,8 @@ public class PromedExportServiceBean implements IPromedExportService {
         LOG.info("С датой окончания СПО  записей для выгрузки в промед" + polyclinicCase.getId());
         tap.isFinished(polyclinicCase.getDateFinish() != null);
         tap.ticketNumber(String.valueOf(polyclinicCaseId));
+        tap.promedCode(polyclinicCase.getPromedCode());
+        tap.isEmergency(polyclinicCase.getEmergency());
 
         ShortMedCase lastVisit = allVisits.get(allVisits.size() - 1);
         if (lastVisit != null && lastVisit.getVisitResult() != null) {
@@ -127,6 +136,7 @@ public class PromedExportServiceBean implements IPromedExportService {
                     .visitPurpose(vr.getOmcCode()) //1,2,3,4
                     .ishodCode(visit.getVisitResult().getCodefpl())
                     .medicalCareKindCode(mapMedicalCare(wf))
+                    .promedCode(visit.getPromedCode())
             ;
             visitForms.add(visitForm.build());
         }
@@ -167,12 +177,10 @@ public class PromedExportServiceBean implements IPromedExportService {
     private PromedDoctor mapDoctor(PersonalWorkFunction doctor) {
         Patient person = doctor.getWorker().getPerson();
         return PromedDoctor.builder()
-                .workfunctionCode("123")
                 .lastName(person.getLastname())
                 .firstName(person.getFirstname())
                 .middleName(person.getMiddlename())
                 .snils(person.getSnils())
-                .birthDate(person.getBirthday())
                 .build();
     }
 

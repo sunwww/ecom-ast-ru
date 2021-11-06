@@ -16,6 +16,6 @@ public class PromedDiagnosis extends BasePromedForm {
      */
     private String acuity; //DeseaseType_id
 
-    @Deprecated //TODO не использовать
+//    @Deprecated //TODO не использовать
     private String promedId;
 }

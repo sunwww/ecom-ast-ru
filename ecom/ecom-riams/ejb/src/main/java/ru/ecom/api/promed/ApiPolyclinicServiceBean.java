@@ -143,17 +143,17 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
      */
     private List<BigInteger> getAllSPOByDateFinish(Date dateTo, String serviceStream, Long wfId, Integer limitNum, boolean isUpload) {
         return manager.createNativeQuery("select m.id from medcase m " +
-                "left join vocservicestream vss on vss.id=m.servicestream_id" +
-                " left join workfunction wf on wf.id=m.finishfunction_id" +
-                " left join vocworkfunction  vwf on vwf.id=wf.workfunction_id" +
-                " where m.datefinish = :dateTo and m.dtype='PolyclinicMedCase' and (m.noactuality is null or m.noactuality=false)" +
-                " and (vss.code=:sstream or vss.code is null)" +
-                " and (vwf.isnodiagnosis is null or vwf.isnodiagnosis ='0') and (vwf.isFuncDiag is null or vwf.isFuncDiag='0') and (vwf.isLab is null or vwf.isLab='0')" +
-                " and (select count(id) from medcase vis where (vis.noactuality is null or vis.noactuality = false)" +
-                " and vis.visitResult_id!=11 and vis.parent_id = m.id  and vis.timeexecute is not null) > 0" +
-                (wfId != null ? " and wf.id = " + wfId : "") +
-                " and :sstream= all(select code from vocservicestream vstr left join medcase vis on vstr.id=vis.servicestream_id where vis.parent_id=m.id)" + (isUpload ? " and (m.upload is null or m.upload=false)" : "") +
-                (limitNum != null ? " limit " + limitNum : ""))
+                        "left join vocservicestream vss on vss.id=m.servicestream_id" +
+                        " left join workfunction wf on wf.id=m.finishfunction_id" +
+                        " left join vocworkfunction  vwf on vwf.id=wf.workfunction_id" +
+                        " where m.datefinish = :dateTo and m.dtype='PolyclinicMedCase' and (m.noactuality is null or m.noactuality=false)" +
+                        " and (vss.code=:sstream or vss.code is null)" +
+                        " and (vwf.isnodiagnosis is null or vwf.isnodiagnosis ='0') and (vwf.isFuncDiag is null or vwf.isFuncDiag='0') and (vwf.isLab is null or vwf.isLab='0')" +
+                        " and (select count(id) from medcase vis where (vis.noactuality is null or vis.noactuality = false)" +
+                        " and vis.visitResult_id!=11 and vis.parent_id = m.id  and vis.timeexecute is not null) > 0" +
+                        (wfId != null ? " and wf.id = " + wfId : "") +
+                        " and :sstream= all(select code from vocservicestream vstr left join medcase vis on vstr.id=vis.servicestream_id where vis.parent_id=m.id)" + (isUpload ? " and (m.upload is null or m.upload=false)" : "") +
+                        (limitNum != null ? " limit " + limitNum : ""))
                 .setParameter("dateTo", dateTo).setParameter("sstream", serviceStream).getResultList();
     }
 
@@ -297,8 +297,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
             res.put("status", "error")
                     .put("reason", "medcase_id is null");
         } else {
-            List<String> info = manager.createNativeQuery("select promedcode from medcase where id=:medcaseId").setParameter("medcaseId", medcaseId).getResultList();
-            if (info.isEmpty()) {
+            if (manager.createNativeQuery("select id from medcase where id=:medcaseId").setParameter("medcaseId", medcaseId).getResultList().isEmpty()) {
                 res.put("status", "error")
                         .put("reason", "medcase not found");
             } else {
@@ -434,17 +433,17 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
      */
     private List<BigInteger> getSPOByDateStart(Date dateStart, String serviceStream, Long wfId, Integer limitNum) {
         return manager.createNativeQuery("select m.id from medcase m" +
-                " left join vocservicestream vss on vss.id=m.servicestream_id" +
-                " left join workfunction wf on wf.id=m.finishfunction_id" +
-                " left join vocworkfunction  vwf on vwf.id=wf.workfunction_id" +
-                " where m.datestart = :dateStart and m.dtype='PolyclinicMedCase' and (m.noactuality is null or m.noactuality=false)" +
-                " and (vss.code=:sstream or vss.code is null)" +
-                " and (vwf.isnodiagnosis is null or vwf.isnodiagnosis ='0') and (vwf.isFuncDiag is null or vwf.isFuncDiag='0') and (vwf.isLab is null or vwf.isLab='0')" +
-                " and (select count(id) from medcase vis where (vis.noactuality is null or vis.noactuality = false)" +
-                " and vis.visitResult_id!=11 and vis.parent_id = m.id  and vis.timeexecute is not null) > 0" +
-                (wfId != null? " and wf.id = " + wfId : "") +
-                " and :sstream= all(select code from vocservicestream vstr left join medcase vis on vstr.id=vis.servicestream_id where vis.parent_id=m.id)" +
-                (limitNum != null ? " limit " + limitNum : ""))
+                        " left join vocservicestream vss on vss.id=m.servicestream_id" +
+                        " left join workfunction wf on wf.id=m.finishfunction_id" +
+                        " left join vocworkfunction  vwf on vwf.id=wf.workfunction_id" +
+                        " where m.datestart = :dateStart and m.dtype='PolyclinicMedCase' and (m.noactuality is null or m.noactuality=false)" +
+                        " and (vss.code=:sstream or vss.code is null)" +
+                        " and (vwf.isnodiagnosis is null or vwf.isnodiagnosis ='0') and (vwf.isFuncDiag is null or vwf.isFuncDiag='0') and (vwf.isLab is null or vwf.isLab='0')" +
+                        " and (select count(id) from medcase vis where (vis.noactuality is null or vis.noactuality = false)" +
+                        " and vis.visitResult_id!=11 and vis.parent_id = m.id  and vis.timeexecute is not null) > 0" +
+                        (wfId != null ? " and wf.id = " + wfId : "") +
+                        " and :sstream= all(select code from vocservicestream vstr left join medcase vis on vstr.id=vis.servicestream_id where vis.parent_id=m.id)" +
+                        (limitNum != null ? " limit " + limitNum : ""))
                 .setParameter("dateStart", dateStart).setParameter("sstream", serviceStream).getResultList();
     }
 }
