@@ -3,26 +3,21 @@ package ru.ecom.mis.ejb.service.addresspoint.dto;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvBindByPosition;
 import com.opencsv.bean.CsvDate;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Date;
 
+@Setter
+@Getter
 public class PatientAttachmentDto {
     public final static String[] HEADERS = {"Тип_ДПФС", "ИД_полиса", "ЕНП", "Фамилия", "Имя", "Отчество", "Дата_рождения"
             , "Место_рождения", "Тип_УДЛ", "", "Дата_УДЛ", "Орган_УДЛ", "СНИЛС", "ИД_МО","Способ_прикрепления","Тип_прикрепления"
     ,"Дата_прикрепления","Дата_открепления","ОИД_МО","Код_подразделения","Код_участка","СНИЛС_врача","Категория_врача"};
 
-    public String getActionType() {
-        return actionType;
-    }
-
-    public void setActionType(String actionType) {
-        this.actionType = actionType;
-    }
-
     @CsvBindByPosition(position = 0)
     @CsvBindByName(column = "Действие")
     String actionType="Р";
-
     @CsvBindByName(column = "Тип_ДПФС")
     @CsvBindByPosition(position = 1)
     String medPolicyType;
@@ -96,187 +91,4 @@ public class PatientAttachmentDto {
     @CsvBindByPosition(position = 23)
     String doctorType = "1"; //врач
 
-    public String getMedPolicyType() {
-        return medPolicyType;
-    }
-
-    public void setMedPolicyType(String medPolicyType) {
-        this.medPolicyType = medPolicyType;
-    }
-
-    public String getMedPolicyNumber() {
-        return medPolicyNumber;
-    }
-
-    public void setMedPolicyNumber(String medPolicyNumber) {
-        this.medPolicyNumber = medPolicyNumber;
-    }
-
-    public String getCommonNumber() {
-        return commonNumber;
-    }
-
-    public void setCommonNumber(String commonNumber) {
-        this.commonNumber = commonNumber;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getMiddlename() {
-        return middlename;
-    }
-
-    public void setMiddlename(String middlename) {
-        this.middlename = middlename;
-    }
-
-    public Date getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public String getBirthPlace() {
-        return birthPlace;
-    }
-
-    public void setBirthPlace(String birthPlace) {
-        this.birthPlace = birthPlace;
-    }
-
-    public String getPassportType() {
-        return passportType;
-    }
-
-    public void setPassportType(String passportType) {
-        this.passportType = passportType;
-    }
-
-    public String getPassportNumber() {
-        return passportNumber;
-    }
-
-    public void setPassportNumber(String passportNumber) {
-        this.passportNumber = passportNumber;
-    }
-
-    public Date getPassportDate() {
-        return passportDate;
-    }
-
-    public void setPassportDate(Date passportDate) {
-        this.passportDate = passportDate;
-    }
-
-    public String getPassportWhom() {
-        return passportWhom;
-    }
-
-    public void setPassportWhom(String passportWhom) {
-        this.passportWhom = passportWhom;
-    }
-
-    public String getSnils() {
-        return snils;
-    }
-
-    public void setSnils(String snils) {
-        this.snils = snils;
-    }
-
-    public String getLpuCode() {
-        return lpuCode;
-    }
-
-    public void setLpuCode(String lpuCode) {
-        this.lpuCode = lpuCode;
-    }
-
-    public String getAttachedMethod() {
-        return attachedMethod;
-    }
-
-    public void setAttachedMethod(String attachedMethod) {
-        this.attachedMethod = attachedMethod;
-    }
-
-    public String getAttachedType() {
-        return attachedType;
-    }
-
-    public void setAttachedType(String attachedType) {
-        this.attachedType = attachedType;
-    }
-
-    public Date getAttachedDate() {
-        return attachedDate;
-    }
-
-    public void setAttachedDate(Date attachedDate) {
-        this.attachedDate = attachedDate;
-    }
-
-    public Date getDettachedDate() {
-        return dettachedDate;
-    }
-
-    public void setDettachedDate(Date dettachedDate) {
-        this.dettachedDate = dettachedDate;
-    }
-
-    public String getLpuOid() {
-        return lpuOid;
-    }
-
-    public void setLpuOid(String lpuOid) {
-        this.lpuOid = lpuOid;
-    }
-
-    public String getDepartmentCode() {
-        return departmentCode;
-    }
-
-    public void setDepartmentCode(String departmentCode) {
-        this.departmentCode = departmentCode;
-    }
-
-    public String getAreaNumber() {
-        return areaNumber;
-    }
-
-    public void setAreaNumber(String areaNumber) {
-        this.areaNumber = areaNumber;
-    }
-
-    public String getDoctorSnils() {
-        return doctorSnils;
-    }
-
-    public void setDoctorSnils(String doctorSnils) {
-        this.doctorSnils = doctorSnils;
-    }
-
-    public String getDoctorType() {
-        return doctorType;
-    }
-
-    public void setDoctorType(String doctorType) {
-        this.doctorType = doctorType;
-    }
 }

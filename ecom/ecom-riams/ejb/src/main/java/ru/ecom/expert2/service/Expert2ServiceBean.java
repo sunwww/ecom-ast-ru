@@ -3047,14 +3047,17 @@ public class Expert2ServiceBean implements IExpert2Service {
             VocE2FondV025 visitPurpose = subType.getVisitPurpose();
             VocE2FondV010 idsp = getEntityByCode("41", VocE2FondV010.class, false); //
             boolean isFirst;
-            VocE2FondV008 medHelpKind = getEntityByCode("13", VocE2FondV008.class, false); // первичная специализированная медико-санитарная помощь
+            Map<String, VocE2FondV008>medHelpMap = new HashMap<>();
+            medHelpMap.put("12", getEntityByCode("12", VocE2FondV008.class, false));// терапевт - 12 вид МП
+            medHelpMap.put("13", getEntityByCode("13", VocE2FondV008.class, false));// первичная специализированная медико-санитарная помощь
+
             VocE2FondV009 fondResult = getEntityByCode("301", VocE2FondV009.class, false); // ЛЕЧЕНИЕ ЗАВЕРШЕНО
             VocE2FondV012 fondIshod = getEntityByCode("303", VocE2FondV012.class, false); // УЛУЧШЕНИЕ
             VocIdc10 healthMkb = getEntityByCode("Z02.9", VocIdc10.class, false);
             VocPriorityDiagnosis prior = getEntityByCode("1", VocPriorityDiagnosis.class, false);
 
             for (E2Entry entry : entries) { // запись = 1 отказ в госпитализации //TODO делать правильное проставление услуг
-                entry.setMedHelpKind(medHelpKind);
+                entry.setMedHelpKind(medHelpMap.get(calculateHelpKindPol(entry)));
                 entry.setFondResult(fondResult);
                 entry.setFondIshod(fondIshod);
                 entry.setDoNotSend(true); //По умолчанию - НМП отмечаем как брак. Хороший НМП отметим позже.
@@ -3495,7 +3498,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             String v008Code;
             if (isTrue(entry.getIsRehabBed()) && "7".equals(entry.getDepartmentType())
                     || entry.getSubType() != null && "POLDAYTIMEHOSP".equals(entry.getSubType().getCode())) { //реабилитация в стационаре при пол-ке
-                v008Code = "13";
+                v008Code = calculateHelpKindPol(entry);
             } else {
                 v008Code = vmpCase ? "32" : "31";
             }
