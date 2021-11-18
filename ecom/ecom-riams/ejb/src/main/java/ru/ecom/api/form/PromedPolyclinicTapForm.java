@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Поликлинический случай мед. обслуживания (аналог PolyclinicMedCase)
@@ -13,6 +14,7 @@ import java.util.List;
 @Builder
 @ToString
 public class PromedPolyclinicTapForm extends BasePromedForm {
+    private UUID guid;
     private PromedPatientForm patient;
     List<PromedPolyclinicVisitForm> visits;
     private PromedDiagnosis diagnosis;

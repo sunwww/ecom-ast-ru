@@ -55,7 +55,7 @@ public class WebClientServiceBean implements IWebClientService {
             return response.toString();
 
         } catch (ConnectException e) {
-            LOG.error("Ошибка соединения с сервисом. " + e);
+            LOG.error("Ошибка соединения с сервисом. " + address + ": " + e);
         } catch (Exception e) {
             if (connection != null) {
                 connection.disconnect();

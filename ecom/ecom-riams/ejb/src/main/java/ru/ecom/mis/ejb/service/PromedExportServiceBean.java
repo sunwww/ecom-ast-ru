@@ -52,7 +52,7 @@ public class PromedExportServiceBean implements IPromedExportService {
             String response;
             try {
                 //TODO check, должно быть guid;
-                response = webService.makePOSTRequest(toString(form), PROMEDATOR_URL, "epicrisis-export", new HashMap<>());
+                response = webService.makePOSTRequest(toString(form), PROMEDATOR_URL, "ambulatory/epicrisis-export", new HashMap<>());
                 LOG.info(">>" + response + "<<");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -181,6 +181,7 @@ public class PromedExportServiceBean implements IPromedExportService {
                 .firstName(person.getFirstname())
                 .middleName(person.getMiddlename())
                 .snils(person.getSnils())
+                .promedWorkstaffId(doctor.getPromedCodeWorkstaff() == null ? null : Long.valueOf(doctor.getPromedCodeWorkstaff()))
                 .build();
     }
 
