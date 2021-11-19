@@ -33,7 +33,7 @@ public class PromedPolyclinicVisitForm extends BasePromedForm {
     /**
      * Место обслуживания (промед dbo.ServiceType) 1 полка, 2 на дому, 3 на дому актив,5 на дому НМП, 6 пол-ка НМП, 7 моб бригада
      */
-    private String workplaceCode; //ServiceType_id //TODO сделать enum
+    private String workPlaceCode; //ServiceType_id //TODO сделать enum
 
     /**
      * Текст дневника

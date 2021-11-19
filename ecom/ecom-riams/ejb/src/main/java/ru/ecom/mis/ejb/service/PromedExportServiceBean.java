@@ -51,7 +51,7 @@ public class PromedExportServiceBean implements IPromedExportService {
             LOG.warn("made form: " + form);
             String response;
             try {
-                //TODO check, должно быть guid;
+                //TODO выпилить неактуальный промедатор
                 response = webService.makePOSTRequest(toString(form), PROMEDATOR_URL, "ambulatory/epicrisis-export", new HashMap<>());
                 LOG.info(">>" + response + "<<");
             } catch (Exception e) {
@@ -102,7 +102,7 @@ public class PromedExportServiceBean implements IPromedExportService {
 
         ShortMedCase lastVisit = allVisits.get(allVisits.size() - 1);
         if (lastVisit != null && lastVisit.getVisitResult() != null) {
-            tap.tapResult(lastVisit.getVisitResult().getCodefIshod());
+            tap.tapResult(lastVisit.getVisitResult().getOmcCode());
             PromedDiagnosis lastDiagnosis;
             if (Boolean.TRUE.equals(lastVisit.getWorkFunctionExecute().getWorkFunction().getIsNoDiagnosis())) {
                 //диагностика - диагноз Z
@@ -130,7 +130,7 @@ public class PromedExportServiceBean implements IPromedExportService {
                     .internalId(String.valueOf(visit.getId()))
                     .diagnosis(mapDiagnosis(getPrioryDiagnosis(visit.getDiagnoses())))
                     .doctor(mapDoctor(wf))
-                    .workplaceCode(vwr.getOmcCode())
+                    .workPlaceCode(vwr.getOmcCode())
                     .diary(getDiaryInVisit(visit.getId()))
                     .serviceStream(vss.getCode()) //unused
                     .visitPurpose(vr.getOmcCode()) //1,2,3,4
