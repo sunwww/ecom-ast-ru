@@ -294,6 +294,7 @@ order by vis.dateStart
                               roles="/Policy/Mis/Contract/Journals/AnalisisMedServices"/>
 
                 <tags:contract_getAccount name="ACCOUNT"/>
+                <tags:mis_showPromedExportJournal name="PROMED" medcaseId="${param.id}"/>
             </msh:sideMenu>
             <msh:sideMenu title="Добавить">
                 <%-- <msh:sideLink params="id" action="/entityParentPrepareCreate-dis_case" name="Нетрудоспособность" title="Добавить случай нетрудоспособности" /> --%>
@@ -302,8 +303,9 @@ order by vis.dateStart
                 <tags:mis_changeServiceStream name="CSS" title="Изменить поток обслуживания"
                                               roles="/Policy/Mis/MedCase/Visit/ChangeServiceStream"/>
                 <msh:sideLink action="/javascript:exportToPromed()" roles="/Policy/Promed/ExportVisit"
-                              name='Тест промед' title="Попробовать отправить в промед"
-                />
+                              name='Тест промед' title="Попробовать отправить в промед"/>
+                <msh:sideLink action="/javascript:getJournalToPromed()" roles="/Policy/Promed/ExportVisit"
+                              name='Журнал промед' title="Журнал отправки пакетов в промед"/>
 
             </msh:sideMenu>
         </msh:ifFormTypeIsView>
@@ -330,6 +332,16 @@ order by vis.dateStart
                 TicketService.exportToPromed(${param.id}, {
                     callback: function (ret) {
                         alert(ret);
+                    }
+                })
+            }
+            function getJournalToPromed() {
+                TicketService.getJournalToPromed(${param.id}, {
+                    callback: function (ret) {
+                        if (ret!=null) {
+                            showPROMEDByPromedHistory(JSON.parse(ret).data);
+                        }
+                        console.log(ret);
                     }
                 })
             }

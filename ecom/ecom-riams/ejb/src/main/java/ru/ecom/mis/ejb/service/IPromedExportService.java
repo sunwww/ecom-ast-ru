@@ -17,4 +17,11 @@ public interface IPromedExportService {
      * @return ГУИД запроса
      */
     String exportPolyclinicById(Long medCaseId);
+
+    /**
+     *  Получить журнал экспорта по ИД СПО
+     * @param spoId
+     * @return
+     */
+    String getJournalToPromed(Long spoId);
 }

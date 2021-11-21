@@ -75,7 +75,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
      * @param wfId workFunction.id
      * @return Object[]
      */
-    private HashMap<Long, Object[]> doctorMap = new HashMap<>();
+    private final HashMap<Long, Object[]> doctorMap = new HashMap<>();
     private @PersistenceContext
     EntityManager manager;
 

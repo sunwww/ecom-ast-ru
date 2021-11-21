@@ -2,6 +2,9 @@ package ru.ecom.mis.ejb.service;
 
 import com.google.gson.GsonBuilder;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
+import ru.ecom.api.entity.export.ExportType;
+import ru.ecom.api.entity.export.MedCaseExportJournal;
 import ru.ecom.api.form.*;
 import ru.ecom.api.webclient.IWebClientService;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
@@ -23,6 +26,7 @@ import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static ru.nuzmsh.util.EqualsUtil.isEquals;
 
@@ -37,6 +41,9 @@ public class PromedExportServiceBean implements IPromedExportService {
     private static final Logger LOG = Logger.getLogger(PromedExportServiceBean.class);
     private static String PROMEDATOR_URL = null;
 
+    private static final String POL_EXPORT_URL = "ambulatory/epicrisis-export"; //отправка пол. случая
+    private static final String GET_BY_GUID_URL = "ambulatory/get-by-guid"; //получение информации по отправке СМО
+
     /**
      * Экспорт поликлинического случая в РИАМС Промед
      *
@@ -46,19 +53,36 @@ public class PromedExportServiceBean implements IPromedExportService {
     public String exportPolyclinic(PolyclinicMedCase medCase) {
         if (isEnabled()) {
             validate(medCase);
-            LOG.warn("validated");
             PromedPolyclinicTapForm form = getPolyclinicCase(medCase);
             LOG.warn("made form: " + form);
             String response;
             try {
                 //TODO выпилить неактуальный промедатор
-                response = webService.makePOSTRequest(toString(form), PROMEDATOR_URL, "ambulatory/epicrisis-export", new HashMap<>());
-                LOG.info(">>" + response + "<<");
+                Map.Entry<Integer, JSONObject> responseMap = webService.makePOSTRequestExt(toString(form), PROMEDATOR_URL, POL_EXPORT_URL, new HashMap<>());
+
+                if (responseMap != null) {
+                    LOG.info(">>" + responseMap + "<<");
+                    response = responseMap.getValue().getString("data");
+                    MedCaseExportJournal journal = new MedCaseExportJournal();
+                    journal.setMedCase(medCase.getId());
+                    journal.setExportType(ExportType.MANUAL);
+
+                    if (isEquals(responseMap.getKey(), 200)) { //success
+                        journal.setPacketGuid(response);
+                    } else {
+                        journal.setErrorText(responseMap.getValue().getString("error"));
+                    }
+                    manager.persist(journal);
+                } else {
+                    LOG.error("Error sending medcase to promedator");
+                    response = null;
+                }
+
+
             } catch (Exception e) {
                 e.printStackTrace();
                 response = e.getMessage();
             }
-            LOG.warn("sent");
             return response;
         }
         return null;
@@ -75,9 +99,29 @@ public class PromedExportServiceBean implements IPromedExportService {
 
     @Override
     public String exportPolyclinicById(Long medCaseId) {
-        if (isEnabled()) {
-            return exportPolyclinic(manager.find(PolyclinicMedCase.class, medCaseId));
+        return exportPolyclinic(manager.find(PolyclinicMedCase.class, medCaseId));
+    }
+
+    @Override
+    public String getJournalToPromed(Long spoId) {
+        if (PROMEDATOR_URL!=null ||  isEnabled()) {
+            List<MedCaseExportJournal> journals = manager.createQuery(" from MedCaseExportJournal j where medcase = :spoId")
+                    .setParameter("spoId", spoId).getResultList();
+            if (!journals.isEmpty()) {
+                StringBuilder guids = new StringBuilder();
+                for (MedCaseExportJournal j : journals) {
+                    guids.append(",").append(j.getPacketGuid());
+                }
+                Map.Entry<Integer, JSONObject> ret = webService.makeGetRequest(PROMEDATOR_URL, GET_BY_GUID_URL + "?guids=" + guids.substring(1));
+                if (ret==null || ret.getKey()!=200) {
+                    LOG.error("ERROR: "+ret);
+                } else {
+                    return ret.getValue().toString();
+                }
+
+            }
         }
+
         return null;
     }
 
@@ -94,7 +138,6 @@ public class PromedExportServiceBean implements IPromedExportService {
         Patient pat = polyclinicCase.getPatient();
         tap.patient(PromedPatientForm.builder().lastName(pat.getLastname()).firstName(pat.getFirstname()).middleName(pat.getMiddlename())
                 .snils(pat.getSnils()).birthDate(pat.getBirthday()).build());
-        LOG.info("С датой окончания СПО  записей для выгрузки в промед" + polyclinicCase.getId());
         tap.isFinished(polyclinicCase.getDateFinish() != null);
         tap.ticketNumber(String.valueOf(polyclinicCaseId));
         tap.promedCode(polyclinicCase.getPromedCode());
