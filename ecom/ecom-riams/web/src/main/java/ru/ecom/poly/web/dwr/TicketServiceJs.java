@@ -31,6 +31,11 @@ public class TicketServiceJs {
         return guid == null ? "Отправка выключена" : "success: " + guid;
     }
 
+    public String getJournalToPromed(Long spoId, HttpServletRequest aRequest) throws NamingException {
+        String result = Injection.find(aRequest).getService(IPromedExportService.class).getJournalToPromed(spoId);
+        return result == null ? "Отправок не было" : result;
+    }
+
     public String showSimpleServiceBySpecialist(Long aWorkfunctionId, HttpServletRequest aRequest) throws SQLException, NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         String sql = "select ms.id as serviceid, ms.code||' '||ms.name as servicename, case when link.isDefault='1' then 'true' else 'false' end as isDefault " +
