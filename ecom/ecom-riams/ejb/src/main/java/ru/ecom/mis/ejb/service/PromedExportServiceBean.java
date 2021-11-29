@@ -62,17 +62,19 @@ public class PromedExportServiceBean implements IPromedExportService {
 
                 if (responseMap != null) {
                     LOG.info(">>" + responseMap + "<<");
-                    response = responseMap.getValue().getString("data");
-                    MedCaseExportJournal journal = new MedCaseExportJournal();
-                    journal.setMedCase(medCase.getId());
-                    journal.setExportType(ExportType.MANUAL);
+                    JSONObject jso = responseMap.getValue();
 
-                    if (isEquals(responseMap.getKey(), 200)) { //success
+                    if (isEquals(responseMap.getKey(), 200) && jso.getBoolean("success")) { //success
+                        MedCaseExportJournal journal = new MedCaseExportJournal();
+                        journal.setMedCase(medCase.getId());
+                        journal.setExportType(ExportType.MANUAL);
+                        response = jso.getString("data");
                         journal.setPacketGuid(response);
+                        manager.persist(journal);
                     } else {
-                        journal.setErrorText(responseMap.getValue().getString("error"));
+                        LOG.error("Ошибка отправки СМО с ИД "+medCase.getId()+" в Промед: "+jso);
+                        response = jso.getJSONObject("error").getString("text");
                     }
-                    manager.persist(journal);
                 } else {
                     LOG.error("Error sending medcase to promedator");
                     response = null;
@@ -104,7 +106,7 @@ public class PromedExportServiceBean implements IPromedExportService {
 
     @Override
     public String getJournalToPromed(Long spoId) {
-        if (PROMEDATOR_URL!=null ||  isEnabled()) {
+        if (PROMEDATOR_URL != null || isEnabled()) {
             List<MedCaseExportJournal> journals = manager.createQuery(" from MedCaseExportJournal j where medcase = :spoId")
                     .setParameter("spoId", spoId).getResultList();
             if (!journals.isEmpty()) {
@@ -113,8 +115,8 @@ public class PromedExportServiceBean implements IPromedExportService {
                     guids.append(",").append(j.getPacketGuid());
                 }
                 Map.Entry<Integer, JSONObject> ret = webService.makeGetRequest(PROMEDATOR_URL, GET_BY_GUID_URL + "?guids=" + guids.substring(1));
-                if (ret==null || ret.getKey()!=200) {
-                    LOG.error("ERROR: "+ret);
+                if (ret == null || ret.getKey() != 200) {
+                    LOG.error("ERROR: " + ret);
                 } else {
                     return ret.getValue().toString();
                 }
@@ -173,7 +175,7 @@ public class PromedExportServiceBean implements IPromedExportService {
                     .internalId(String.valueOf(visit.getId()))
                     .diagnosis(mapDiagnosis(getPrioryDiagnosis(visit.getDiagnoses())))
                     .doctor(mapDoctor(wf))
-                    .workPlaceCode(vwr.getOmcCode())
+                    .workPlaceCode(vwr == null ? null : vwr.getOmcCode())
                     .diary(getDiaryInVisit(visit.getId()))
                     .serviceStream(vss.getCode()) //unused
                     .visitPurpose(vr.getOmcCode()) //1,2,3,4
@@ -224,7 +226,7 @@ public class PromedExportServiceBean implements IPromedExportService {
                 .firstName(person.getFirstname())
                 .middleName(person.getMiddlename())
                 .snils(person.getSnils())
-                .promedWorkstaffId(doctor.getPromedCodeWorkstaff() == null ? null : Long.valueOf(doctor.getPromedCodeWorkstaff()))
+                .promedWorkstaffId(doctor.getPromedCodeWorkstaff() == null || doctor.getPromedCodeWorkstaff().isEmpty() ? null : Long.valueOf(doctor.getPromedCodeWorkstaff()))
                 .build();
     }
 
@@ -249,6 +251,7 @@ public class PromedExportServiceBean implements IPromedExportService {
             return PromedDiagnosis.builder()
                     .promedId(diagnosis.getIdc10().getPromedCode())
                     .mkbCode(diagnosis.getIdc10().getCode())
+                    .acuity(diagnosis.getAcuity() == null ? null : diagnosis.getAcuity().getCode())
                     .build();
         }
 
