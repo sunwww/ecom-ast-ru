@@ -1,8 +1,6 @@
 package ru.ecom.api.form;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,5 +25,12 @@ public class PromedPolyclinicTapForm extends BasePromedForm {
      * результат случая
      */
     private String tapResult;
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TapList {
+        private List<PromedPolyclinicTapForm> taps;
+    }
 
 }

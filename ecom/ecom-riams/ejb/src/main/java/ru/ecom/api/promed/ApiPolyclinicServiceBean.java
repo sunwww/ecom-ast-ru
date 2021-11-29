@@ -4,6 +4,9 @@ package ru.ecom.api.promed;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import ru.ecom.api.entity.export.ExportType;
+import ru.ecom.api.entity.export.MedCaseExportJournal;
+import ru.ecom.api.form.PromedPolyclinicTapForm;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
 import ru.ecom.mis.ejb.domain.medcase.ShortMedCase;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
@@ -11,8 +14,10 @@ import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
+import ru.ecom.mis.ejb.service.IPromedExportService;
 import ru.ecom.poly.ejb.domain.voc.VocReason;
 
+import javax.annotation.EJB;
 import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
@@ -20,8 +25,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigInteger;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Сервис для выгрузки в промед поликлинических случаев
@@ -79,6 +86,9 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
     private @PersistenceContext
     EntityManager manager;
 
+    private @EJB
+    IPromedExportService promedExportService;
+
     /**
      * Получить cписок закрытых случаев поликлинического обслуживания в JSON.
      *
@@ -86,51 +96,19 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
      * @param serviceStream VocServiceStream.code (по умолчанию - ОМС)
      * @return JSON in String
      */
-    public String getPolyclinicCase(Date dateTo, String serviceStream, Long wfId, Integer limitNum, Boolean isUpload) {
-        JSONArray jTap = new JSONArray();
+    @Override
+    public List<PromedPolyclinicTapForm> getPolyclinicCase(Date dateTo, String serviceStream, Long wfId, Integer limitNum, Boolean isUpload) {
         List<BigInteger> list = getAllSPOByDateFinish(dateTo, serviceStream, wfId, limitNum, Boolean.TRUE.equals(isUpload));
-
-        LOG.info("С датой окончания СПО " + dateTo + " найдено " + list.size() + " записей для выгрузки в промед");
-        for (BigInteger bigInteger : list) {
-            JSONObject json = new JSONObject();
-            Long polyclinicCaseId = bigInteger.longValue();
-            PolyclinicMedCase polyclinicCase = manager.find(PolyclinicMedCase.class, polyclinicCaseId);
-            json.put(POLYCLINICID, polyclinicCaseId)
-                    .put(ISCASEFINISHED, "1");
-
-            List<ShortMedCase> allVisits = getAllVisitsInSpo(polyclinicCaseId, Boolean.TRUE.equals(isUpload));
-            if (allVisits.isEmpty()) {
-                LOG.error("Законченный случай без визитов, быть такого не может");
-                return "";
+        List<PromedPolyclinicTapForm> returnList = new ArrayList<>();
+        for (BigInteger bi : list) {
+            PromedPolyclinicTapForm form = promedExportService.getPolyclinicCase(manager.find(PolyclinicMedCase.class, bi.longValue()));
+            if (form == null) {
+                LOG.error("Не удалось сконвертировать СМО с ИД " + bi + "в правильный случай");
+            } else {
+                returnList.add(form);
             }
-            ShortMedCase lastVisit = allVisits.get(allVisits.size() - 1);
-            if (lastVisit != null && lastVisit.getVisitResult() != null) {
-                json.put(VISITRESULT, lastVisit.getVisitResult().getCodefpl());
-                if (Boolean.TRUE.equals(lastVisit.getWorkFunctionExecute().getWorkFunction().getIsNoDiagnosis())) {
-                    //диагностика - диагноз Z
-                    json.put(DIAGRES, "11052");
-                    json.put(DIAGMKB, "Z34.9");
-                } else {
-                    Object[] ds = getDiagnosisFromDiagnosisInVisit(lastVisit.getId());
-                    if (ds != null) {
-                        json.put(DIAGRES, ds[0]);
-                        json.put(DIAGMKB, ds[1]);
-                    }
-                }
-
-            }
-
-            Long firstResultId = allVisits.get(0).getId();
-            JSONArray jVisit = new JSONArray();
-
-            for (ShortMedCase visit : allVisits)
-                jVisit.put(getVisitInJson(visit, firstResultId));
-
-            json.put(PATIENT, getPatient(polyclinicCase));
-            json.put(VISITS, jVisit);
-            jTap.put(json);
         }
-        return new JSONObject().put(CACES, jTap).toString();
+        return returnList;
     }
 
     /**
@@ -148,11 +126,13 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
                         " left join vocworkfunction  vwf on vwf.id=wf.workfunction_id" +
                         " where m.datefinish = :dateTo and m.dtype='PolyclinicMedCase' and (m.noactuality is null or m.noactuality=false)" +
                         " and (vss.code=:sstream or vss.code is null)" +
-                        " and (vwf.isnodiagnosis is null or vwf.isnodiagnosis ='0') and (vwf.isFuncDiag is null or vwf.isFuncDiag='0') and (vwf.isLab is null or vwf.isLab='0')" +
+                        " and (vwf.isnodiagnosis is null or vwf.isnodiagnosis ='0') and (vwf.isFuncDiag is null or vwf.isFuncDiag='0')" +
+                        " and (vwf.isLab is null or vwf.isLab='0')" +
                         " and (select count(id) from medcase vis where (vis.noactuality is null or vis.noactuality = false)" +
                         " and vis.visitResult_id!=11 and vis.parent_id = m.id  and vis.timeexecute is not null) > 0" +
                         (wfId != null ? " and wf.id = " + wfId : "") +
-                        " and :sstream= all(select code from vocservicestream vstr left join medcase vis on vstr.id=vis.servicestream_id where vis.parent_id=m.id)" + (isUpload ? " and (m.upload is null or m.upload=false)" : "") +
+                        " and :sstream= all(select code from vocservicestream vstr left join medcase vis on vstr.id=vis.servicestream_id" +
+                        " where vis.parent_id=m.id)" + (isUpload ? " and (m.upload is null or m.upload=false)" : "") +
                         (limitNum != null ? " limit " + limitNum : ""))
                 .setParameter("dateTo", dateTo).setParameter("sstream", serviceStream).getResultList();
     }
@@ -307,6 +287,15 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
             }
         }
         return res.toString();
+    }
+
+    @Override
+    public void createPacketLog(Long medcaseId, UUID packetGuid, ExportType exportType) {
+        MedCaseExportJournal journal = new MedCaseExportJournal();
+        journal.setExportType(exportType);
+        journal.setMedCase(medcaseId);
+        journal.setPacketGuid(packetGuid.toString());
+        manager.persist(journal);
     }
 
     /**

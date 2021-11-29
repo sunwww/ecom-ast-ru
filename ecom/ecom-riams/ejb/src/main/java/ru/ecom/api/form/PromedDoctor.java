@@ -16,6 +16,5 @@ public class PromedDoctor extends BasePromedForm {
     private String lastName;
     private String firstName;
     private String middleName;
-//    private Date birthDate;
     private String snils;
 }

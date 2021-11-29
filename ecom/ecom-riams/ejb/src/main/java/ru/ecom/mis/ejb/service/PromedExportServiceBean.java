@@ -130,37 +130,45 @@ public class PromedExportServiceBean implements IPromedExportService {
     private void validate(PolyclinicMedCase medCase) {
     }
 
-    private PromedPolyclinicTapForm getPolyclinicCase(PolyclinicMedCase polyclinicCase) {
-        Long polyclinicCaseId = polyclinicCase.getId();
-        List<ShortMedCase> allVisits = getAllVisitsInSpo(polyclinicCaseId);
-        if (allVisits.isEmpty()) {
-            throw new IllegalStateException("Законченный случай без визитов, быть такого не может");
-        }
-        PromedPolyclinicTapForm.PromedPolyclinicTapFormBuilder tap = PromedPolyclinicTapForm.builder();
-        Patient pat = polyclinicCase.getPatient();
-        tap.patient(PromedPatientForm.builder().lastName(pat.getLastname()).firstName(pat.getFirstname()).middleName(pat.getMiddlename())
-                .snils(pat.getSnils()).birthDate(pat.getBirthday()).build());
-        tap.isFinished(polyclinicCase.getDateFinish() != null);
-        tap.ticketNumber(String.valueOf(polyclinicCaseId));
-        tap.promedCode(polyclinicCase.getPromedCode());
-        tap.isEmergency(polyclinicCase.getEmergency());
-
-        ShortMedCase lastVisit = allVisits.get(allVisits.size() - 1);
-        if (lastVisit != null && lastVisit.getVisitResult() != null) {
-            tap.tapResult(lastVisit.getVisitResult().getOmcCode());
-            PromedDiagnosis lastDiagnosis;
-            if (Boolean.TRUE.equals(lastVisit.getWorkFunctionExecute().getWorkFunction().getIsNoDiagnosis())) {
-                //диагностика - диагноз Z
-                lastDiagnosis = PromedDiagnosis.builder()
-                        .promedId("11052")
-                        .mkbCode("Z34.9").build();
-            } else {
-                lastDiagnosis = mapDiagnosis(getPrioryDiagnosis(lastVisit.getDiagnoses()));
+    @Override
+    public PromedPolyclinicTapForm getPolyclinicCase(PolyclinicMedCase polyclinicCase) {
+        try {
+            Long polyclinicCaseId = polyclinicCase.getId();
+            List<ShortMedCase> allVisits = getAllVisitsInSpo(polyclinicCaseId);
+            if (allVisits.isEmpty()) {
+                LOG.error("Законченный случай без визитов, быть такого не может: " + polyclinicCaseId);
+                return null;
             }
-            tap.diagnosis(lastDiagnosis);
+            PromedPolyclinicTapForm.PromedPolyclinicTapFormBuilder tap = PromedPolyclinicTapForm.builder();
+            Patient pat = polyclinicCase.getPatient();
+            tap.patient(PromedPatientForm.builder().lastName(pat.getLastname()).firstName(pat.getFirstname()).middleName(pat.getMiddlename())
+                    .snils(pat.getSnils()).birthDate(pat.getBirthday()).build());
+            tap.isFinished(polyclinicCase.getDateFinish() != null);
+            tap.ticketNumber(String.valueOf(polyclinicCaseId));
+            tap.promedCode(polyclinicCase.getPromedCode());
+            tap.isEmergency(polyclinicCase.getEmergency());
+
+            ShortMedCase lastVisit = allVisits.get(allVisits.size() - 1);
+            if (lastVisit != null && lastVisit.getVisitResult() != null) {
+                tap.tapResult(lastVisit.getVisitResult().getOmcCode());
+                PromedDiagnosis lastDiagnosis;
+                if (Boolean.TRUE.equals(lastVisit.getWorkFunctionExecute().getWorkFunction().getIsNoDiagnosis())) {
+                    //диагностика - диагноз Z
+                    lastDiagnosis = PromedDiagnosis.builder()
+                            .promedId("11052")
+                            .mkbCode("Z34.9").build();
+                } else {
+                    lastDiagnosis = mapDiagnosis(getPrioryDiagnosis(lastVisit.getDiagnoses()), polyclinicCaseId);
+                }
+                tap.diagnosis(lastDiagnosis);
+            }
+            tap.visits(mapVisits(allVisits));
+            return tap.build();
+        } catch (Exception e) {
+            LOG.error("Ошибка создания ДТО:" + e.getMessage(), e);
+            return null;
         }
-        tap.visits(mapVisits(allVisits));
-        return tap.build();
+
     }
 
     private List<PromedPolyclinicVisitForm> mapVisits(List<ShortMedCase> visits) {
@@ -173,7 +181,7 @@ public class PromedExportServiceBean implements IPromedExportService {
             VocServiceStream vss = visit.getServiceStream();
             visitForm.startTime(visit.getDateStart() + " " + (visit.getTimeExecute() == null ? "" : visit.getTimeExecute())) //TODO check timezone!!
                     .internalId(String.valueOf(visit.getId()))
-                    .diagnosis(mapDiagnosis(getPrioryDiagnosis(visit.getDiagnoses())))
+                    .diagnosis(mapDiagnosis(getPrioryDiagnosis(visit.getDiagnoses()), visit.getId()))
                     .doctor(mapDoctor(wf))
                     .workPlaceCode(vwr == null ? null : vwr.getOmcCode())
                     .diary(getDiaryInVisit(visit.getId()))
@@ -244,9 +252,10 @@ public class PromedExportServiceBean implements IPromedExportService {
         return null;
     }
 
-    private PromedDiagnosis mapDiagnosis(Diagnosis diagnosis) {
+    private PromedDiagnosis mapDiagnosis(Diagnosis diagnosis, Long medcaseId) {
         if (diagnosis == null) {
-            throw new IllegalStateException("Нет основного диагноза");
+            LOG.error("Нет основного диагноза: " + medcaseId);
+            return PromedDiagnosis.builder().build();
         } else {
             return PromedDiagnosis.builder()
                     .promedId(diagnosis.getIdc10().getPromedCode())

@@ -1,5 +1,6 @@
 package ru.ecom.mis.ejb.service;
 
+import ru.ecom.api.form.PromedPolyclinicTapForm;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
 
 public interface IPromedExportService {
@@ -10,6 +11,13 @@ public interface IPromedExportService {
      * @return ГУИД запроса
      */
     String exportPolyclinic(PolyclinicMedCase medCase);
+
+    /**
+     * Маппим наш СПО на ДТО для промедатора
+     * @param polyclinicCase
+     * @return
+     */
+    PromedPolyclinicTapForm getPolyclinicCase(PolyclinicMedCase polyclinicCase);
 
     /**
      * Экспорт поликлинического случая в риамс промед
