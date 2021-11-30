@@ -21,7 +21,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
 
-
+/**
+ * Контроллер для записи пациентов на прием (запись с сайта, телеграм бота)
+ */
 @Path("/record")
 public class ApiRecordResource {
     private static final Logger LOG = Logger.getLogger(ApiRecordResource.class);
