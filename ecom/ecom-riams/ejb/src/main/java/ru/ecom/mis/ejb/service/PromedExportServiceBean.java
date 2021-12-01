@@ -57,7 +57,6 @@ public class PromedExportServiceBean implements IPromedExportService {
             LOG.warn("made form: " + form);
             String response;
             try {
-                //TODO выпилить неактуальный промедатор
                 Map.Entry<Integer, JSONObject> responseMap = webService.makePOSTRequestExt(toString(form), PROMEDATOR_URL, POL_EXPORT_URL, new HashMap<>());
 
                 if (responseMap != null) {
@@ -72,7 +71,7 @@ public class PromedExportServiceBean implements IPromedExportService {
                         journal.setPacketGuid(response);
                         manager.persist(journal);
                     } else {
-                        LOG.error("Ошибка отправки СМО с ИД "+medCase.getId()+" в Промед: "+jso);
+                        LOG.error("Ошибка отправки СМО с ИД " + medCase.getId() + " в Промед: " + jso);
                         response = jso.getJSONObject("error").getString("text");
                     }
                 } else {
@@ -179,15 +178,15 @@ public class PromedExportServiceBean implements IPromedExportService {
             VocReason vr = visit.getVisitReason();
             VocWorkPlaceType vwr = visit.getWorkPlaceType();
             VocServiceStream vss = visit.getServiceStream();
-            visitForm.startTime(visit.getDateStart() + " " + (visit.getTimeExecute() == null ? "" : visit.getTimeExecute())) //TODO check timezone!!
+            visitForm.startTime(visit.getDateStart() + " " + (visit.getTimeExecute() == null ? "" : visit.getTimeExecute()))
                     .internalId(String.valueOf(visit.getId()))
                     .diagnosis(mapDiagnosis(getPrioryDiagnosis(visit.getDiagnoses()), visit.getId()))
                     .doctor(mapDoctor(wf))
                     .workPlaceCode(vwr == null ? null : vwr.getOmcCode())
                     .diary(getDiaryInVisit(visit.getId()))
-                    .serviceStream(vss.getCode()) //unused
-                    .visitPurpose(vr.getOmcCode()) //1,2,3,4
-                    .ishodCode(visit.getVisitResult().getCodefpl())
+                    .serviceStream(vss == null ? null : vss.getCode()) //unused
+                    .visitPurpose(vr == null ? null : vr.getOmcCode()) //1,2,3,4
+                    .ishodCode(visit.getVisitResult() == null ? null : visit.getVisitResult().getCodefpl())
                     .medicalCareKindCode(mapMedicalCare(wf))
                     .promedCode(visit.getPromedCode())
             ;
@@ -244,9 +243,11 @@ public class PromedExportServiceBean implements IPromedExportService {
     }
 
     private Diagnosis getPrioryDiagnosis(List<Diagnosis> diagnoses) {
-        for (Diagnosis d : diagnoses) {
-            if (d.getPriority() != null && isEquals(d.getPriority().getCode(), "1")) {
-                return d;
+        if (diagnoses!=null && !diagnoses.isEmpty()) {
+            for (Diagnosis d : diagnoses) {
+                if (d.getPriority() != null && isEquals(d.getPriority().getCode(), "1")) {
+                    return d;
+                }
             }
         }
         return null;
@@ -255,7 +256,7 @@ public class PromedExportServiceBean implements IPromedExportService {
     private PromedDiagnosis mapDiagnosis(Diagnosis diagnosis, Long medcaseId) {
         if (diagnosis == null) {
             LOG.error("Нет основного диагноза: " + medcaseId);
-            return PromedDiagnosis.builder().build();
+            return null;
         } else {
             return PromedDiagnosis.builder()
                     .promedId(diagnosis.getIdc10().getPromedCode())

@@ -40,42 +40,6 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
 
     private static final Logger LOG = Logger.getLogger(ApiPolyclinicServiceBean.class);
 
-    private static final String POLYCLINICID = "EvnPL_NumCard";           //уникальный номер талона
-    private static final String ISCASEFINISHED = "EvnPL_IsFinish";        //случай закончен (1 - да, 0 - нет)
-    private static final String DATETIMEVISIT = "Evn_setDT";              //дата и время посещения
-    private static final String WFLPUSECTIION = "LpuSection_id";          //отделение специалиста
-    private static final String WORKSTAFF = "MedStaffFact_id";            //ид врача
-    private static final String WORKPLACETYPE = "ServiceType_id";         //место обслуживания
-    private static final String VISITREASON = "VizitType_id";             //цель посещения
-    private static final String SSTREAM = "PayType_id";                   //тип оплаты
-    private static final String MESID = "Mes_id";                         //МЭС
-    private static final String DESEASETYPE = "DeseaseType_id";           //характер заболевания
-    private static final String MEDCICALCARE = "MedicalCareKind_id";      //идентификатор вида медицинской помощи
-    private static final String MEDCICALCAREVAL = "87"; //В промеде - ИД вид помощи - поликлиника //TODO нужно - первичная, специализированная,...
-    private static final String VISITID = "MedosId";                      //id визита
-    private static final String FIRSTVISITID = "firstVisit";              //id первого визита
-    private static final String VISITRESULT = "ResultClass_id";           //результат обращения (обязательно, если случай закончен)
-    private static final String DIAGRES = "Diag_lid";                     //заключительный диагноз
-    private static final String DIAGMKB = "Diag_code";                    //заключительный диагноз (код МКБ)
-    private static final String DIARY = "diary";                          //заключение
-    private static final String DOCTORWF = "doctorWf";                    //должность врача
-    private static final String workFunctionId = "workFunctionId";        //WorkFunction.id
-    private static final String DOCTORLASTNAME = "doctorLastname";        //ФИО врача
-    private static final String DOCTORFIRSTNAME = "doctorFirstname";
-    private static final String DOCTORMIDNAME = "doctorMiddlename";
-    private static final String DOCTORSNILS = "doctorSnils";              //СНИЛС врача
-    private static final String PATLASTNAME = "lastname";                 //ФИО пациента
-    private static final String PATFIRSTNAME = "firstname";
-    private static final String PATMIDNAME = "middlename";
-    private static final String PATSNILS = "snils";                       //СНИЛС пациента
-    private static final String PATBIRTHDAY = "birthday";                 //ДР пациента
-    private static final String WORKSTAFFINFO = "WorkStaffInfo";          //инфо о враче (ФИО, должность, СНИЛС)
-    private static final String PATIENT = "patient";                      //пациент
-    private static final String VISITS = "visits";                        //визиты случая
-    private static final String CACES = "tap";                            //все визиты
-    private static final String DOCTORPROMEDCODE = "promedCode_workstaff";//ИД врача в промеде
-    private static final String SPOPROMEDCODE = "promedCode_base";        //ИД СПО в промеде
-    private static final String VISITPROMEDCODE = "promedCode_visit";     //ИД визита в промеде
     /**
      * Получить инфо по рабочей функции врача (ФИО, СНИЛС, ДОЛЖНОСТЬ)
      *
@@ -89,13 +53,6 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
     private @EJB
     IPromedExportService promedExportService;
 
-    /**
-     * Получить cписок закрытых случаев поликлинического обслуживания в JSON.
-     *
-     * @param dateTo        MedCase.dateFinish
-     * @param serviceStream VocServiceStream.code (по умолчанию - ОМС)
-     * @return JSON in String
-     */
     @Override
     public List<PromedPolyclinicTapForm> getPolyclinicCase(Date dateTo, String serviceStream, Long wfId, Integer limitNum, Boolean isUpload) {
         List<BigInteger> list = getAllSPOByDateFinish(dateTo, serviceStream, wfId, limitNum, Boolean.TRUE.equals(isUpload));
@@ -128,8 +85,8 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
                         " and (vss.code=:sstream or vss.code is null)" +
                         " and (vwf.isnodiagnosis is null or vwf.isnodiagnosis ='0') and (vwf.isFuncDiag is null or vwf.isFuncDiag='0')" +
                         " and (vwf.isLab is null or vwf.isLab='0')" +
-                        " and (select count(id) from medcase vis where (vis.noactuality is null or vis.noactuality = false)" +
-                        " and vis.visitResult_id!=11 and vis.parent_id = m.id  and vis.timeexecute is not null) > 0" +
+                        " and (select count(id) from medcase vis where vis.parent_id = m.id  and (vis.noactuality is null or vis.noactuality = false)" +
+                        " and vis.visitResult_id!=11 and  vis.timeexecute is not null) > 0" +
                         (wfId != null ? " and wf.id = " + wfId : "") +
                         " and :sstream= all(select code from vocservicestream vstr left join medcase vis on vstr.id=vis.servicestream_id" +
                         " where vis.parent_id=m.id)" + (isUpload ? " and (m.upload is null or m.upload=false)" : "") +
@@ -137,132 +94,6 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
                 .setParameter("dateTo", dateTo).setParameter("sstream", serviceStream).getResultList();
     }
 
-    /**
-     * Получить код из диагноза визита (заключительный основной клинический диагноз)
-     *
-     * @param visitId
-     * @return Long
-     */
-    private Object[] getDiagnosisFromDiagnosisInVisit(Long visitId) {
-        List<String[]> mkbPromedCode = manager.createNativeQuery("select mkb.promedCode as dPromed,mkb.code as dCode" +
-                " from diagnosis ds" +
-                " left join vocidc10 mkb on mkb.id=ds.idc10_id" +
-                " left join vocprioritydiagnosis vpd on vpd.id=ds.priority_id" +
-                " where ds.medcase_id =:visitId and vpd.code='1' ").setParameter("visitId", visitId).getResultList();
-        return mkbPromedCode.isEmpty() ? null : mkbPromedCode.get(0);
-    }
-
-    /**
-     * Получить список всех визитов случая
-     *
-     * @param polyclinicCaseId
-     * @return List<BigInteger>
-     */
-    private List<ShortMedCase> getAllVisitsInSpo(Long polyclinicCaseId, boolean isUpload) {
-        return manager.createQuery("from ShortMedCase where parent_id  = :parentId and (noActuality is null or noActuality='0') and dateStart is not null " + (isUpload ? " and (upload is null or upload=false)" : "") + " order by dateStart , timeExecute ")
-                .setParameter("parentId", polyclinicCaseId).getResultList();
-    }
-
-    /**
-     * Получить заключение по визиту
-     *
-     * @param visitId
-     * @return String
-     */
-    private String getDiaryInVisit(Long visitId) {
-        List<String> diary = manager.createNativeQuery("select record from Diary where medcase_id=:visitId")
-                .setParameter("visitId", visitId).getResultList();
-        return diary.isEmpty() ? "" : diary.get(0);
-    }
-
-    private Object[] getDoctorInfo(Long wfId) {
-        if (doctorMap.containsKey(wfId)) return doctorMap.get(wfId); //Не будем каждый раз искать врача в БД
-        List<Object[]> docInfoList = manager.createNativeQuery("select wf.id,vwf.name, wpat.lastname,wpat.firstname,wpat.middlename,wpat.snils,wf.promedCode_workstaff as promedCode" +
-                " from Workfunction wf" +
-                " left join Worker w on w.id=wf.worker_id" +
-                " left join VocWorkfunction vwf on vwf.id=wf.workfunction_id" +
-                " left join Patient wpat on wpat.id=w.person_id" +
-                " where wf.id=:workfunctionId").setParameter("workfunctionId", wfId).getResultList();
-        doctorMap.put(wfId, docInfoList.get(0));
-        return docInfoList.get(0);
-    }
-
-    /**
-     * Получить в JSON инфо по рабочей функции врача (WorkFinction.id,ФИО, СНИЛС, ДОЛЖНОСТЬ)
-     *
-     * @param wf WorkFunction
-     * @return JSONObject
-     */
-    private JSONObject getDoctorInfoInJson(WorkFunction wf) {
-        JSONObject dccInfoJson = new JSONObject();
-        Object[] doctorInfo = getDoctorInfo(wf.getId());
-        if (doctorInfo != null) {
-            dccInfoJson.put(workFunctionId, doctorInfo[0])
-                    .put(DOCTORWF, doctorInfo[1])
-                    .put(DOCTORLASTNAME, doctorInfo[2])
-                    .put(DOCTORFIRSTNAME, doctorInfo[3])
-                    .put(DOCTORMIDNAME, doctorInfo[4])
-                    .put(DOCTORSNILS, doctorInfo[5])
-                    .put(DOCTORPROMEDCODE, doctorInfo[6])
-            ;
-        }
-        return dccInfoJson;
-    }
-
-    /**
-     * Получить в JSON инфо о пациенте
-     *
-     * @param polyclinicCase
-     * @return JSONObject
-     */
-    private JSONObject getPatient(PolyclinicMedCase polyclinicCase) {
-        Patient patientEntity = polyclinicCase.getPatient(); //Не может быть пациент пустым в СПО. Если будет - будем падать с ошибкой
-        if (patientEntity == null) throw new IllegalStateException("Не найден пациент");
-        JSONObject patient = new JSONObject();
-        patient.put(PATLASTNAME, patientEntity.getLastname())
-                .put(PATFIRSTNAME, patientEntity.getFirstname())
-                .put(PATMIDNAME, patientEntity.getMiddlename())
-                .put(PATBIRTHDAY, patientEntity.getBirthday())
-                .put(PATSNILS, patientEntity.getSnils());
-        return patient;
-    }
-
-    /**
-     * Получить весь визит в json
-     *
-     * @param visit
-     * @param firstResultId
-     * @return JSONObject
-     */
-    private JSONObject getVisitInJson(ShortMedCase visit, Long firstResultId) {
-        JSONObject jsonVis = new JSONObject();
-        WorkFunction wf = visit.getWorkFunctionExecute();
-        VocReason vr = visit.getVisitReason();
-        VocWorkPlaceType vwr = visit.getWorkPlaceType();
-        VocServiceStream vss = visit.getServiceStream();
-        VocHospitalization vh = visit.getHospitalization();
-        jsonVis.put(DATETIMEVISIT, visit.getDateStart() + " " + (visit.getTimeExecute() == null ? "" : visit.getTimeExecute()))
-                .put(WFLPUSECTIION, wf.getPromedCodeLpuSection())
-                .put(WORKSTAFF, wf.getPromedCodeWorkstaff())
-                .put(WORKPLACETYPE, (vwr == null || vwr.getOmcCode() == null) ? "" : vwr.getOmcCode())
-                .put(VISITREASON, (vr == null || vr.getOmcCode() == null) ? "" : vr.getOmcCode())
-                .put(SSTREAM, (vss == null || vss.getCode() == null) ? "" : vss.getCode())
-                .put(MESID, wf.getPromedCodeLpuSection())
-                .put(DESEASETYPE, vh != null ? vh.getCode() : "1") //TODO неправильно, надо выздоровление, улучшение,...  1.2.643.5.1.13.2.1.1.688 dbo.ResultDeseaseType
-                .put(MEDCICALCARE, MEDCICALCAREVAL)
-                .put(VISITID, visit.getId())
-                .put(FIRSTVISITID, (visit.getId() == firstResultId) ? "true" : "false")
-                .put(VISITPROMEDCODE, visit.getPromedCode() != null && !"".equals(visit.getPromedCode()) ? visit.getPromedCode() : "0")
-                .put(SPOPROMEDCODE, visit.getParent().getPromedCode() != null && !"".equals(visit.getParent().getPromedCode()) ? visit.getParent().getPromedCode() : "0")
-                .put(DIARY, getDiaryInVisit(visit.getId()))
-                .put(WORKSTAFFINFO, getDoctorInfoInJson(wf));
-        Object[] ds = getDiagnosisFromDiagnosisInVisit(visit.getId());
-        if (ds != null) {
-            jsonVis.put(DIAGRES, ds[0]);
-            jsonVis.put(DIAGMKB, ds[1]);
-        }
-        return jsonVis;
-    }
 
     /**
      * Установить отметку о выгрузке.
@@ -271,6 +102,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
      * @param tapId     Long promed_id
      * @return JSONObject
      */
+    @Override
     public String setEvnTap(Long medcaseId, Long tapId) {
         JSONObject res = new JSONObject();
         if (medcaseId == null) {
@@ -304,6 +136,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
      * @param workfunctionId WorkFunction.id
      * @return JSON in String
      */
+    @Override
     public String getWfInfo(Long workfunctionId) {
         JSONObject res = new JSONObject();
         if (workfunctionId == null) {
@@ -330,8 +163,6 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
                     res.put("promedcode_lpusection", String.valueOf(info.get(0)[2]));
                 if (info.get(0)[3] != null)
                     res.put("promedcode_workstaff", String.valueOf(info.get(0)[3]));
-            /*res.put("promedcode_lpusection",info.get(0)[0]==null? "" : String.valueOf(info.get(0)[0]));
-            res.put("promedcode_workstaff",info.get(0)[1]==null? "" : String.valueOf(info.get(0)[1]));*/
             }
         }
         return res.toString();
@@ -364,75 +195,5 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
             }
         }
         return res.toString();
-    }
-
-    @Override
-    public String getPolyclinicCaseByDateStart(Date dateStart, String sstream, Long wfId, Integer limitNum) {
-        JSONArray jTap = new JSONArray();
-        List<BigInteger> list = getSPOByDateStart(dateStart, sstream, wfId, limitNum);
-        LOG.info("С датой начала СПО " + dateStart + " найдено " + list.size() + " записей для выгрузки в промед");
-        for (BigInteger bigInteger : list) {
-            JSONObject json = new JSONObject();
-            Long polyclinicCaseId = bigInteger.longValue();
-            PolyclinicMedCase polyclinicCase = manager.find(PolyclinicMedCase.class, polyclinicCaseId);
-            json.put(POLYCLINICID, polyclinicCaseId)
-                    .put(ISCASEFINISHED, polyclinicCase.getDateFinish() != null ? "1" : "0");
-
-            List<ShortMedCase> allVisits = getAllVisitsInSpo(polyclinicCaseId, false);
-            if (allVisits.isEmpty()) {
-                LOG.error("Случай без визитов, не должно такого быть!");
-                return "";
-            }
-            ShortMedCase lastVisit = allVisits.get(allVisits.size() - 1);
-            if (lastVisit != null && lastVisit.getVisitResult() != null) {
-                json.put(VISITRESULT, lastVisit.getVisitResult().getCodefpl());
-                if (Boolean.TRUE.equals(lastVisit.getWorkFunctionExecute().getWorkFunction().getIsNoDiagnosis())) {
-                    //диагностика - диагноз Z
-                    json.put(DIAGRES, "11052");
-                    json.put(DIAGMKB, "Z34.9");
-                } else {
-                    Object[] ds = getDiagnosisFromDiagnosisInVisit(lastVisit.getId());
-                    if (ds != null) {
-                        json.put(DIAGRES, ds[0]);
-                        json.put(DIAGMKB, ds[1]);
-                    }
-                }
-
-            }
-
-            Long firstResultId = allVisits.get(0).getId();
-            JSONArray jVisit = new JSONArray();
-
-            for (ShortMedCase visit : allVisits)
-                jVisit.put(getVisitInJson(visit, firstResultId));
-
-            json.put(PATIENT, getPatient(polyclinicCase));
-            json.put(VISITS, jVisit);
-            jTap.put(json);
-        }
-        return new JSONObject().put(CACES, jTap).toString();
-    }
-
-    /**
-     * Получить ID всех СПО с датой начала и потоком обслуживания.
-     *
-     * @param dateStart     MedCase.dateStart
-     * @param serviceStream VocServiceStream.name
-     * @return List<BigInteger>
-     */
-    private List<BigInteger> getSPOByDateStart(Date dateStart, String serviceStream, Long wfId, Integer limitNum) {
-        return manager.createNativeQuery("select m.id from medcase m" +
-                        " left join vocservicestream vss on vss.id=m.servicestream_id" +
-                        " left join workfunction wf on wf.id=m.finishfunction_id" +
-                        " left join vocworkfunction  vwf on vwf.id=wf.workfunction_id" +
-                        " where m.datestart = :dateStart and m.dtype='PolyclinicMedCase' and (m.noactuality is null or m.noactuality=false)" +
-                        " and (vss.code=:sstream or vss.code is null)" +
-                        " and (vwf.isnodiagnosis is null or vwf.isnodiagnosis ='0') and (vwf.isFuncDiag is null or vwf.isFuncDiag='0') and (vwf.isLab is null or vwf.isLab='0')" +
-                        " and (select count(id) from medcase vis where (vis.noactuality is null or vis.noactuality = false)" +
-                        " and vis.visitResult_id!=11 and vis.parent_id = m.id  and vis.timeexecute is not null) > 0" +
-                        (wfId != null ? " and wf.id = " + wfId : "") +
-                        " and :sstream= all(select code from vocservicestream vstr left join medcase vis on vstr.id=vis.servicestream_id where vis.parent_id=m.id)" +
-                        (limitNum != null ? " limit " + limitNum : ""))
-                .setParameter("dateStart", dateStart).setParameter("sstream", serviceStream).getResultList();
     }
 }
