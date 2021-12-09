@@ -73,8 +73,8 @@
             <msh:sectionContent>
                 <ecom:webQuery name="lab_plus_list" nameFldSql="lab_plus_list_sql"  nativeSql="
 select sls.id as slsId
-,pat.lastname||' '||pat.firstname||' '||pat.middlename as fio
- ,to_char(pat.birthday,'dd.mm.yyyy') as bday
+,pat.lastname||' '||pat.firstname||' '||pat.middlename as f2_fio
+ ,to_char(pat.birthday,'dd.mm.yyyy') as f3_bday
  , case when pat.address_addressId is not null
           then coalesce(adr.fullname,adr.name)
                ||case when pat.houseNumber is not null and pat.houseNumber!='' then ' д.'||pat.houseNumber else '' end
@@ -86,10 +86,11 @@ select sls.id as slsId
                ||case when pat.HouseNonresident is not null and pat.HouseNonresident!='' then ' д.'||pat.HouseNonresident else '' end
 	       ||case when pat.BuildingHousesNonresident is not null and pat.BuildingHousesNonresident!='' then ' корп.'|| pat.BuildingHousesNonresident else '' end
 	       ||case when pat.ApartmentNonresident is not null and pat.ApartmentNonresident!='' then ' кв. '|| pat.ApartmentNonresident else '' end
-       else  pat.foreignRegistrationAddress end as address
- ,coalesce((select c.workplace from covid19 c where c.id=(select max(id) from covid19 where medcase_id=sls.id )),pat.works,'') as work
- ,to_char(p.intakedate,'dd.mm.yyyy')||cast('/' as varchar)||' '||to_char(mc.datestart,'dd.mm.yyyy')||cast(', №' as varchar)||fiprNum.valuetext
- ,max(cov.epidnumber) as cepid
+       else  pat.foreignRegistrationAddress end as f4_address
+ ,coalesce((select c.workplace from covid19 c where c.id=(select max(id) from covid19 where medcase_id=sls.id )),pat.works,'') as f5_work
+ ,to_char(p.intakedate,'dd.mm.yyyy')||cast('/' as varchar)||' '||to_char(mc.datestart,'dd.mm.yyyy')||cast(', №' as varchar)||fiprNum.valuetext as f6_some_date
+ ,max(cov.epidnumber) as f7_cepid
+ ,pat.snils as f8_snils
  from prescription p
  left join PrescriptionList pl on pl.id=p.prescriptionList_id
  left join MedCase slo on slo.id=pl.medCase_id
@@ -116,7 +117,7 @@ and p.intakeDate is not null and vsst.code='COVID'
 and sls.dtype='HospitalMedCase'
 and d.id is not null
 ${addResSql}
-group by  pat.id,pat.lastname,pat.firstname
+group by  pat.id,pat.lastname,pat.firstname, pat.snils
      ,pat.middlename,pat.birthday,
      pat.address_addressId ,adr.fullname,adr.name
                 , pat.houseNumber , pat.houseBuilding ,pat.flatNumber
@@ -141,6 +142,7 @@ group by  pat.id,pat.lastname,pat.firstname
                     <msh:tableColumn property="sn" columnName="#" />
                     <msh:tableColumn property="2" columnName="ФИО"/>
                     <msh:tableColumn property="3" columnName="Дата рождения"/>
+                    <msh:tableColumn property="8" columnName="СНИЛС"/>
                     <msh:tableColumn property="4" columnName="Адрес"/>
                     <msh:tableColumn property="5" columnName="Место работы, учёбы"/>
                     <msh:tableColumn property="6" columnName="Результат (дата забора/дата результата, №)"/>
