@@ -43,7 +43,6 @@ public class PolyclinicResource {
         }
         ApiUtil.init(aRequest, aToken);
         if (isUpload == null) isUpload = false;
-        IApiPolyclinicService service = Injection.find(aRequest).getService(IApiPolyclinicService.class);
         SimpleDateFormat format;
         java.sql.Date d;
         try {
@@ -56,7 +55,7 @@ public class PolyclinicResource {
             return res.toString();
         }
         String sstream = "OBLIGATORYINSURANCE";
-        return service.getPolyclinicCase(d, sstream, wfId, limitNum, isUpload);
+        return Injection.find(aRequest).getService(IApiPolyclinicService.class).getPolyclinicCase(d, sstream, wfId, limitNum, isUpload);
     }
 
     @GET
