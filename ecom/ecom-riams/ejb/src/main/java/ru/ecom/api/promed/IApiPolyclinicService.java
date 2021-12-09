@@ -11,6 +11,15 @@ import java.util.UUID;
  * Created by Milamesher on 06.02.2019.
  */
 public interface IApiPolyclinicService {
+    /**
+     * Получить список закрытых за определенную дату поликлинических СМО в формате для загрузки их в РИАМС ПРомед
+     * @param dateTo Дата закрытия СПО
+     * @param sstream Поток обслуживания
+     * @param wfId ИД рабочей функции врача, закрывшего СМО
+     * @param limitNum Лимит СМО
+     * @param isUpload были ли случаи выгружены ранее //TODO ненужно?
+     * @return Список закрытых СМО
+     */
     List<PromedPolyclinicTapForm> getPolyclinicCase(Date dateTo, String sstream, Long wfId, Integer limitNum, Boolean isUpload);
 
     String setEvnTap(Long medcaseId, Long tapId);
@@ -26,6 +35,4 @@ public interface IApiPolyclinicService {
     String getWfInfo(Long workfunctionId);
 
     String setWfInfo(Long workfunctionId, Long promedcodeLpuSection, Long promedcodeWorkstaff);
-
-    String getPolyclinicCaseByDateStart(Date dateStart, String sstream, Long wfId, Integer limitNum);
 }

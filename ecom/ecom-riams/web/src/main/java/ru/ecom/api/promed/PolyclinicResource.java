@@ -2,7 +2,6 @@ package ru.ecom.api.promed;
 
 
 import com.google.gson.GsonBuilder;
-import org.json.JSONObject;
 import ru.ecom.api.form.PromedPolyclinicTapForm;
 import ru.ecom.api.util.ApiUtil;
 import ru.ecom.web.util.Injection;
@@ -77,23 +76,8 @@ public class PolyclinicResource {
             , @QueryParam("dateStart") String dateStart
             , @QueryParam("workFunctionId") Long wfId
             , @QueryParam("limit") Integer limitNum
-    ) throws NamingException {
-        if (aToken != null) {
-            ApiUtil.login(aToken, aRequest);
-        }
-        ApiUtil.init(aRequest, aToken);
-        IApiPolyclinicService service = Injection.find(aRequest).getService(IApiPolyclinicService.class);
-        java.sql.Date d;
-        try {
-            d = new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse(dateStart).getTime());
-        } catch (NullPointerException | ParseException ex) {
-            JSONObject res = new JSONObject();
-            res.put("status", "error")
-                    .put("reason", "incorrect dateStart");
-            return res.toString();
-        }
-        String sstream = "OBLIGATORYINSURANCE";
-        return service.getPolyclinicCaseByDateStart(d, sstream, wfId, limitNum);
+    ) {
+        return "Неиспользуется, используйте /getPolyclinicCase";
     }
 
 
