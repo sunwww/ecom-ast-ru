@@ -3,6 +3,8 @@ package ru.ecom.api.form;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 
 /**
  * Посещение (аналог ShortMedCase, Ticket)
@@ -69,6 +71,11 @@ public class PromedPolyclinicVisitForm extends BasePromedForm {
     //TODO высчитывать на стороне медоса
     private String visitPurpose;//VizitType_id //dbo.VizitType
     private String promedCode; //ИД визита в промеде
+
+    /**
+     * Список мед. услуг в рамках визита (не СПО)
+     */
+    private List<PromedMedService> services;
 
 
 }

@@ -10,11 +10,13 @@ import ru.ecom.api.webclient.IWebClientService;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.mis.ejb.domain.medcase.Diagnosis;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
+import ru.ecom.mis.ejb.domain.medcase.ServiceMedCase;
 import ru.ecom.mis.ejb.domain.medcase.ShortMedCase;
 import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
+import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.poly.ejb.domain.voc.VocReason;
 
 import javax.annotation.EJB;
@@ -23,10 +25,8 @@ import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Time;
+import java.util.*;
 
 import static ru.nuzmsh.util.EqualsUtil.isEquals;
 
@@ -146,6 +146,8 @@ public class PromedExportServiceBean implements IPromedExportService {
             tap.ticketNumber(String.valueOf(polyclinicCaseId));
             tap.promedCode(polyclinicCase.getPromedCode());
             tap.isEmergency(polyclinicCase.getEmergency());
+            tap.serviceStream(polyclinicCase.getServiceStream() == null ? null : polyclinicCase.getServiceStream().getPromedCode());
+            tap.directLpuCode(findDirectLpu(allVisits));
 
             ShortMedCase lastVisit = allVisits.get(allVisits.size() - 1);
             if (lastVisit != null && lastVisit.getVisitResult() != null) {
@@ -170,6 +172,19 @@ public class PromedExportServiceBean implements IPromedExportService {
 
     }
 
+    private String findDirectLpu(List<ShortMedCase> visits) {
+        for (ShortMedCase visit : visits) {
+            if (visit.getOrderLpu() != null) {
+                return visit.getOrderLpu().getCodef();
+            }
+        }
+        return null;
+    }
+
+    private String getDateTime(Date date, Time time) {
+        return date + " " + (time == null ? "" : time);
+    }
+
     private List<PromedPolyclinicVisitForm> mapVisits(List<ShortMedCase> visits) {
         List<PromedPolyclinicVisitForm> visitForms = new ArrayList<>();
         for (ShortMedCase visit : visits) {
@@ -178,7 +193,7 @@ public class PromedExportServiceBean implements IPromedExportService {
             VocReason vr = visit.getVisitReason();
             VocWorkPlaceType vwr = visit.getWorkPlaceType();
             VocServiceStream vss = visit.getServiceStream();
-            visitForm.startTime(visit.getDateStart() + " " + (visit.getTimeExecute() == null ? "" : visit.getTimeExecute()))
+            visitForm.startTime(getDateTime(visit.getDateStart(), visit.getTimeExecute()))
                     .internalId(String.valueOf(visit.getId()))
                     .diagnosis(mapDiagnosis(getPrioryDiagnosis(visit.getDiagnoses()), visit.getId()))
                     .doctor(mapDoctor(wf))
@@ -189,10 +204,27 @@ public class PromedExportServiceBean implements IPromedExportService {
                     .ishodCode(visit.getVisitResult() == null ? null : visit.getVisitResult().getCodefpl())
                     .medicalCareKindCode(mapMedicalCare(wf))
                     .promedCode(visit.getPromedCode())
+                    .services(mapServices(visit.getId()))
             ;
             visitForms.add(visitForm.build());
         }
         return visitForms;
+    }
+
+    private List<PromedMedService> mapServices(long visitId) {
+        List<ServiceMedCase> serviceList = manager.createQuery("from ServiceMedCase where parent_id=:visitId")
+                .setParameter("visitId", visitId).getResultList();
+        List<PromedMedService> promedMedServices = new ArrayList<>();
+        for (ServiceMedCase ms : serviceList) {
+            PromedMedService pms = new PromedMedService();
+            pms.setAmount(ms.getMedServiceAmount() == null ? 1 : ms.getMedServiceAmount());
+            pms.setFinishTime(getDateTime(ms.getDateStart(), ms.getTimeExecute()));
+            pms.setMedserviceCode(ms.getMedService().getCode());
+            pms.setStartTime(pms.getFinishTime());
+            pms.setDoctor(mapDoctor(ms.getWorkFunctionExecute()));
+            promedMedServices.add(pms);
+        }
+        return promedMedServices;
     }
 
     //TODO check, скопипащено с экспертизы
@@ -226,15 +258,22 @@ public class PromedExportServiceBean implements IPromedExportService {
         return diary.isEmpty() ? "" : diary.get(0);
     }
 
-    private PromedDoctor mapDoctor(PersonalWorkFunction doctor) {
-        Patient person = doctor.getWorker().getPerson();
-        return PromedDoctor.builder()
-                .lastName(person.getLastname())
-                .firstName(person.getFirstname())
-                .middleName(person.getMiddlename())
-                .snils(person.getSnils())
-                .promedWorkstaffId(doctor.getPromedCodeWorkstaff() == null || doctor.getPromedCodeWorkstaff().isEmpty() ? null : Long.valueOf(doctor.getPromedCodeWorkstaff()))
-                .build();
+    private PromedDoctor mapDoctor(WorkFunction wf) {
+        if (wf instanceof PersonalWorkFunction) {
+            PersonalWorkFunction doctor = (PersonalWorkFunction) wf;
+            Patient person = doctor.getWorker().getPerson();
+            return PromedDoctor.builder()
+                    .lastName(person.getLastname())
+                    .firstName(person.getFirstname())
+                    .middleName(person.getMiddlename())
+                    .snils(person.getSnils())
+                    .promedWorkstaffId(doctor.getPromedCodeWorkstaff() == null || doctor.getPromedCodeWorkstaff().isEmpty() ? null : Long.valueOf(doctor.getPromedCodeWorkstaff()))
+                    .build();
+        } else {
+            LOG.error("Рабочая функция для экспорта в промед - неперсональная!!! " + wf.getId());
+            return null;
+        }
+
     }
 
     private List<ShortMedCase> getAllVisitsInSpo(Long polyclinicCaseId) {
@@ -243,7 +282,7 @@ public class PromedExportServiceBean implements IPromedExportService {
     }
 
     private Diagnosis getPrioryDiagnosis(List<Diagnosis> diagnoses) {
-        if (diagnoses!=null && !diagnoses.isEmpty()) {
+        if (diagnoses != null && !diagnoses.isEmpty()) {
             for (Diagnosis d : diagnoses) {
                 if (d.getPriority() != null && isEquals(d.getPriority().getCode(), "1")) {
                     return d;
