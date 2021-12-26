@@ -2,20 +2,12 @@ package ru.ecom.api.promed;
 
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import ru.ecom.api.entity.export.ExportType;
 import ru.ecom.api.entity.export.MedCaseExportJournal;
 import ru.ecom.api.form.PromedPolyclinicTapForm;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
-import ru.ecom.mis.ejb.domain.medcase.ShortMedCase;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocHospitalization;
-import ru.ecom.mis.ejb.domain.patient.Patient;
-import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
-import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
-import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.service.IPromedExportService;
-import ru.ecom.poly.ejb.domain.voc.VocReason;
 
 import javax.annotation.EJB;
 import javax.ejb.Local;
@@ -25,10 +17,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigInteger;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.util.*;
 
 /**
  * Сервис для выгрузки в промед поликлинических случаев
@@ -55,9 +45,19 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
 
     @Override
     public List<PromedPolyclinicTapForm> getPolyclinicCase(Date dateTo, String serviceStream, Long wfId, Integer limitNum, Boolean isUpload) {
-        List<BigInteger> list = getAllSPOByDateFinish(dateTo, serviceStream, wfId, limitNum, Boolean.TRUE.equals(isUpload));
+        return mapSpoList(getAllSPOByDateFinish(dateTo, serviceStream, wfId, limitNum, Boolean.TRUE.equals(isUpload)));
+    }
+
+    @Override
+    public List<PromedPolyclinicTapForm> getPolyclinicCaseByVisitDateStart(LocalDate dateStart, String[] serviceStreams) {
+        LOG.info("Export for day " + dateStart);
+        return mapSpoList(getAllSPOByVisitCreateDate(dateStart, Arrays.asList(serviceStreams)));
+    }
+
+    private List<PromedPolyclinicTapForm> mapSpoList(List<BigInteger> spoIds) {
+
         List<PromedPolyclinicTapForm> returnList = new ArrayList<>();
-        for (BigInteger bi : list) {
+        for (BigInteger bi : spoIds) {
             PromedPolyclinicTapForm form = promedExportService.getPolyclinicCase(manager.find(PolyclinicMedCase.class, bi.longValue()));
             if (form == null) {
                 LOG.error("Не удалось сконвертировать СМО с ИД " + bi + "в правильный случай");
@@ -92,6 +92,34 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
                         " where vis.parent_id=m.id)" + (isUpload ? " and (m.upload is null or m.upload=false)" : "") +
                         (limitNum != null ? " limit " + limitNum : ""))
                 .setParameter("dateTo", dateTo).setParameter("sstream", serviceStream).getResultList();
+    }
+
+    /**
+     * Получить ID всех СПО, в которых есть визиты, созданные за указанную дату
+     *
+     * @param createDate     MedCase.createDate
+     * @param serviceStreams VocServiceStream.name
+     * @return List<BigInteger> ИД СПО
+     */
+    private List<BigInteger> getAllSPOByVisitCreateDate(LocalDate createDate, List<String> serviceStreams) {
+        return manager.createNativeQuery("select m.id from medcase visit" +
+                        "    left join medcase m on m.id= visit.parent_id " +
+                        "    left join vocservicestream vss on vss.id=m.servicestream_id" +
+                        "    left join workfunction wf on visit.workfunctionexecute_id = wf.id" +
+                        "    left join vocworkfunction  vwf on vwf.id=wf.workfunction_id" +
+                        " where visit.datestart = :dateTo " +
+                        "  and visit.timeexecute is not null" +
+                        " and (visit.noactuality is null or visit.noactuality='0')" +
+                        " and m.dtype='PolyclinicMedCase'" +
+                        " and (m.noactuality is null or m.noactuality='0')" +
+                        " and (vss.code in (:sstream))" +
+                        " and (vwf.isnodiagnosis is null or vwf.isnodiagnosis='0') and (vwf.isFuncDiag is null or vwf.isFuncDiag='0')" +
+                        " and (vwf.isLab is null or vwf.isLab ='0')" +
+                        " and visit.visitResult_id!=11"
+                )
+                .setParameter("dateTo", Date.valueOf(createDate))
+                .setParameter("sstream", serviceStreams)
+                .getResultList();
     }
 
 

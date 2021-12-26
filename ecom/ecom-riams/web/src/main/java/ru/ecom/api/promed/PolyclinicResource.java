@@ -17,7 +17,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.List;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Path("/promed")
 public class PolyclinicResource {
@@ -59,25 +62,29 @@ public class PolyclinicResource {
         return new GsonBuilder().setDateFormat("yyyy-MM-dd").create().toJson(new PromedPolyclinicTapForm.TapList(forms));
     }
 
-    @GET
-    @Path("getPolyclinicCaseByDateStart")
-    @Produces(MediaType.APPLICATION_JSON)
-    /*
-     * Получить cписок случаев поликлинического обслуживания в JSON (только ОМС).
+    /**
+     * Выгрузка в промед всех СПО с потоком (ОМС, военкомат, бюджет), в которых есть посещения, созданные за вчерашний день
      *
-     * @param aRequest HttpServletRequest
-     * @param aToken String
-     * @param dateStart String Дата начала СПО в формате yyyy-MM-dd
-     * @param workFunctionId Рабочая функция врача
-     * @param limit Лимит по записям
-     * @return JSON in String
+     * @return пусто
      */
-    public String getPolyclinicCaseByDateStart(@Context HttpServletRequest aRequest, @WebParam(name = "token") String aToken
-            , @QueryParam("dateStart") String dateStart
-            , @QueryParam("workFunctionId") Long wfId
-            , @QueryParam("limit") Integer limitNum
-    ) {
-        return "Неиспользуется, используйте /getPolyclinicCase";
+    @GET
+    @Path("/exportYesterdayOmc")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String autoExportOmcYesterday(@Context HttpServletRequest aRequest,
+                                         @QueryParam("daysAgo") Integer daysAgo,
+                                         @WebParam(name = "token") String aToken) throws NamingException {
+        if (aToken != null) {
+            ApiUtil.login(aToken, aRequest);
+        }
+        ApiUtil.init(aRequest, aToken);
+        LocalDate ld = LocalDate.now();
+        if (daysAgo != null) {
+            ld = ld.minus(daysAgo, DAYS);
+        }
+
+        String[] serviceStream = {"OBLIGATORYINSURANCE", "BUDGET"}; //выгружаем только ОМС + все виды бюджета
+        List<PromedPolyclinicTapForm> forms = Injection.find(aRequest).getService(IApiPolyclinicService.class).getPolyclinicCaseByVisitDateStart(ld, serviceStream);
+        return new GsonBuilder().setDateFormat("yyyy-MM-dd").create().toJson(new PromedPolyclinicTapForm.TapList(forms));
     }
 
 

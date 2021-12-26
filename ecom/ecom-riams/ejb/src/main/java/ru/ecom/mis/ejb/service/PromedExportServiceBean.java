@@ -193,10 +193,11 @@ public class PromedExportServiceBean implements IPromedExportService {
             VocReason vr = visit.getVisitReason();
             VocWorkPlaceType vwr = visit.getWorkPlaceType();
             VocServiceStream vss = visit.getServiceStream();
+            PromedDoctor doc = mapDoctor(wf);
             visitForm.startTime(getDateTime(visit.getDateStart(), visit.getTimeExecute()))
                     .internalId(String.valueOf(visit.getId()))
                     .diagnosis(mapDiagnosis(getPrioryDiagnosis(visit.getDiagnoses()), visit.getId()))
-                    .doctor(mapDoctor(wf))
+                    .doctor(doc)
                     .workPlaceCode(vwr == null ? null : vwr.getOmcCode())
                     .diary(getDiaryInVisit(visit.getId()))
                     .serviceStream(vss == null ? null : vss.getCode()) //unused
@@ -204,14 +205,14 @@ public class PromedExportServiceBean implements IPromedExportService {
                     .ishodCode(visit.getVisitResult() == null ? null : visit.getVisitResult().getCodefpl())
                     .medicalCareKindCode(mapMedicalCare(wf))
                     .promedCode(visit.getPromedCode())
-                    .services(mapServices(visit.getId()))
+                    .services(mapServices(visit.getId(), doc))
             ;
             visitForms.add(visitForm.build());
         }
         return visitForms;
     }
 
-    private List<PromedMedService> mapServices(long visitId) {
+    private List<PromedMedService> mapServices(long visitId, PromedDoctor visitDoctor) {
         List<ServiceMedCase> serviceList = manager.createQuery("from ServiceMedCase where parent_id=:visitId")
                 .setParameter("visitId", visitId).getResultList();
         List<PromedMedService> promedMedServices = new ArrayList<>();
@@ -221,7 +222,7 @@ public class PromedExportServiceBean implements IPromedExportService {
             pms.setFinishTime(getDateTime(ms.getDateStart(), ms.getTimeExecute()));
             pms.setMedserviceCode(ms.getMedService().getCode());
             pms.setStartTime(pms.getFinishTime());
-            pms.setDoctor(mapDoctor(ms.getWorkFunctionExecute()));
+            pms.setDoctor(ms.getWorkFunctionExecute() == null ? visitDoctor : mapDoctor(ms.getWorkFunctionExecute()));
             promedMedServices.add(pms);
         }
         return promedMedServices;
@@ -295,7 +296,7 @@ public class PromedExportServiceBean implements IPromedExportService {
 
     private PromedDiagnosis mapDiagnosis(Diagnosis diagnosis, Long medcaseId) {
         if (diagnosis == null) {
-            LOG.error("Нет основного диагноза: " + medcaseId);
+            LOG.warn("Нет основного диагноза: " + medcaseId);
             return null;
         } else {
             return PromedDiagnosis.builder()
