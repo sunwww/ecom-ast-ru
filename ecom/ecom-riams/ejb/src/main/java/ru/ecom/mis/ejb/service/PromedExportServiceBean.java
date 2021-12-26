@@ -267,10 +267,11 @@ public class PromedExportServiceBean implements IPromedExportService {
                     .firstName(person.getFirstname())
                     .middleName(person.getMiddlename())
                     .snils(person.getSnils())
+                    .workfunctionCode(doctor.getWorkFunction() != null && doctor.getWorkFunction().getFondSpeciality() != null ? doctor.getWorkFunction().getFondSpeciality().getCode() : null)
                     .promedWorkstaffId(doctor.getPromedCodeWorkstaff() == null || doctor.getPromedCodeWorkstaff().isEmpty() ? null : Long.valueOf(doctor.getPromedCodeWorkstaff()))
                     .build();
         } else {
-            LOG.error("Рабочая функция для экспорта в промед - неперсональная!!! " + wf.getId());
+            LOG.error("Рабочая функция для экспорта в промед - неперсональная!!! " + (wf == null ? "NULL" : wf.getId()));
             return null;
         }
 

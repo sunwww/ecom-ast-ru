@@ -9,9 +9,9 @@ import java.util.Date;
 @Builder
 public class PromedDoctor extends BasePromedForm {
     /**
-     * Код специальности. по какому справочнику //TODO
+     * Код специальности по справочнику V021
      */
-//    private String workfunctionCode;
+    private String workfunctionCode;
     private Long promedWorkstaffId;
     private String lastName;
     private String firstName;
