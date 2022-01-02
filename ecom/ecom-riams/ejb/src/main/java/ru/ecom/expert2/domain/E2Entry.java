@@ -68,9 +68,14 @@ public class E2Entry extends BaseEntity {
         return list.get(0);
     }
 
-    @OneToMany(mappedBy = "entry", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "entry")
     public List<E2CancerEntry> getCancerEntries() {
         return cancerEntries;
+    }
+
+    @OneToMany(mappedBy = "entry")
+    public List<E2DrugEntry> getDrugEntries() {
+        return drugEntries;
     }
 
     @OneToOne
@@ -250,6 +255,11 @@ public class E2Entry extends BaseEntity {
      */
 
     private List<E2CancerEntry> cancerEntries;
+
+    /**
+     * Случаи введения лекарственного препарата (пока только covid-19)
+     */
+    private List<E2DrugEntry> drugEntries;
 
     /**
      * Онкологический случай

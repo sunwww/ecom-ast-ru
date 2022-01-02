@@ -354,7 +354,21 @@ where cancer.entry_id=${param.id}"/>
                            action="entityView-e2_cancerEntry.do" noDataMessage="Нет онкослучаев">
                     <msh:tableColumn columnName="ИД" property="1"/>
                     <msh:tableColumn columnName="тип услуги" property="2"/>
-                    <msh:tableColumn columnName="Коэффициент" property="3"/>
+                </msh:table>
+            </msh:section>
+            <msh:section title="Введения лекарственных препаратов"
+                         createUrl="entityParentPrepareCreate-e2_drugEntry.do?id=${param.id}">
+                <ecom:webQuery name="drugEntry" nativeSql="select drug.id, drug.injectDate, n020.name as f3_drugName
+                ,v032.code||' '||v032.name as f4_schemaName
+    from E2DrugEntry drug
+    left join VocE2FondV032 v032 on v032.id=drug.drugGroupSchema_id
+    left join VocE2FondN020 n020 on n020.id=drug.drug_id
+    where drug.entry_id=${param.id}"/>
+                <msh:table idField="1" deleteUrl="entityParentDeleteGoParentView-e2_drugEntry.do" name="drugEntry"
+                           action="entityView-e2_drugEntry.do" noDataMessage="Нет лекарств">
+                    <msh:tableColumn columnName="Лек. средство" property="3"/>
+                    <msh:tableColumn columnName="Схема лечения" property="4"/>
+                    <msh:tableColumn columnName="Дата введения" property="2"/>
                 </msh:table>
             </msh:section>
 
@@ -617,9 +631,9 @@ where cancer.entry_id=${param.id}"/>
                 function exportHospLeaveEntryToAlkona() {
                     Expert2Service.exportHospLeaveEntryToAlkona(${param.id}, {
                         callback: function (ret) {
-                                alert("Вот ответ: " + ret);
-                            }
-                        });
+                            alert("Вот ответ: " + ret);
+                        }
+                    });
                 }
 
                 //поступление в алькону

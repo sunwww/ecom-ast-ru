@@ -42,6 +42,7 @@
         <form-bean name="e2_cancerRefusalForm" type="ru.ecom.expert2.form.E2CancerRefusalForm"/>
         <form-bean name="e2_cancerDiagnosticForm" type="ru.ecom.expert2.form.E2CancerDiagnosticForm"/>
         <form-bean name="e2_cancerDrugForm" type="ru.ecom.expert2.form.E2CancerDrugForm"/>
+        <form-bean name="e2_drugEntryForm" type="ru.ecom.expert2.form.E2DrugEntryForm"/>
         <form-bean name="e2_cancerDrugDateForm" type="ru.ecom.expert2.form.E2CancerDrugDateForm"/>
         <form-bean name="e2_importFileForm" type="ru.ecom.expert2.web.form.ImportFileForm"/>
 

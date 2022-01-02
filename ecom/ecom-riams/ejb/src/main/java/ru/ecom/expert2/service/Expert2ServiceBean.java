@@ -1,5 +1,6 @@
 package ru.ecom.expert2.service;
 
+import com.google.gson.JsonObject;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -38,6 +39,7 @@ import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Transient;
 import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.File;
@@ -3984,5 +3986,16 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
 
         return "Всего найдено: " + errorEntries.size() + ", исправлено: " + good;
+    }
+
+
+    @Override
+    @Transient
+    public String loadDrugSchemaByDrugGroupSchemaId(Long groupSchemaId) {
+        VocE2FondV030 schema = manager.find(VocE2FondV032.class, groupSchemaId).getSchema();
+        JsonObject jso = new JsonObject();
+        jso.addProperty("schemaId", schema.getId());
+        jso.addProperty("schemaName", schema.getName());
+        return jso.toString();
     }
 }

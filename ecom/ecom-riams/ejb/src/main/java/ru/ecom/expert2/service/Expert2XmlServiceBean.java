@@ -5,6 +5,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.domain.simple.VocBaseEntity;
 import ru.ecom.ejb.sequence.service.SequenceHelper;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
@@ -624,6 +625,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(sl, "TARIF", currentEntry.getCost());
                     add(sl, "SUM_M", currentEntry.getCost());
                 }
+                if (isNotEmpty(currentEntry.getDrugEntries())) {
+                    addDrug(sl, currentEntry.getDrugEntries());
+                }
 
                 //USL start
                 int uslCnt = 0;
@@ -738,9 +742,29 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             throw new IllegalStateException("Entry #" + entry.getId() + ", error = " + e.getLocalizedMessage(), e);
         }
     }
+//TODO refactor with cancer drug?
+    private void addDrug(Element sl, List<E2DrugEntry> drugEntries) {
+        for (E2DrugEntry drug : drugEntries) {
+            Element d = new Element("LEK_PR");
+            addIfNotNull(d, "DATA_INJ", drug.getInjectDate());
+            addIfNotNull(d, "CODE_SH", getVocCode(drug.getDrugGroupSchema()));
+            addIfNotNull(d, "REGNUM", getVocCode(drug.getDrug()));
+            addIfNotNull(d, "COD_MARK", null);
+            Element dose = new Element("LEK_DOSE");
+            addIfNotNull(dose, "ED_IZM", getVocCode(drug.getInjectUnit()));
+            addIfNotNull(dose, "DOSE_INJ", drug.getInjectAmount());
+            addIfNotNull(dose, "METHOD_INJ", getVocCode(drug.getInjectMethod()));
+            addIfNotNull(dose, "COL_INJ", drug.getInjectNumber());
+            d.addContent(dose);
+            sl.addContent(d);
+        }
+    }
+
+    private <T extends VocBaseEntity> String getVocCode(T voc) {
+        return voc == null ? null : voc.getCode();
+    }
 
     private String calculateDentalEdcol(E2Entry entry) {
-        LOG.debug(" = " + isEmpty(entry.getMedServices()));
         return expertService.getSumKuet(entry).toString();
     }
 
@@ -843,8 +867,10 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             return ((BigDecimal) object).compareTo(BigDecimal.ZERO) > 0;
         } else if (object instanceof BaseEntity) {
             return true;
+        } else if (object instanceof Number) {
+            return true;
         } else {
-            throw new IllegalStateException("Нет преобразования для объекта " + object);
+            throw new IllegalStateException("Нет преобразования для объекта " + object.getClass());
         }
     }
 
