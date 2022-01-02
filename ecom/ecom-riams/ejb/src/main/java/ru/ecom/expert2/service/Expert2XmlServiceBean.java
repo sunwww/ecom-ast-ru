@@ -742,7 +742,8 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             throw new IllegalStateException("Entry #" + entry.getId() + ", error = " + e.getLocalizedMessage(), e);
         }
     }
-//TODO refactor with cancer drug?
+
+    //TODO refactor with cancer drug?
     private void addDrug(Element sl, List<E2DrugEntry> drugEntries) {
         for (E2DrugEntry drug : drugEntries) {
             Element d = new Element("LEK_PR");
@@ -803,10 +804,17 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         }
         //  add(usl,"TARIF","1");
         add(usl, "SUMV_USL", cost != null ? cost : BigDecimal.ZERO);
-        add(usl, "PRVS", prvs);
-        add(usl, "CODE_MD", codeMd);
+        addUslDoctor(usl, prvs, codeMd);
         //   add(usl,"NPL","0");
         return usl;
+    }
+
+    private void addUslDoctor(Element usl, String prvs, String doctorSnils) {
+        Element uslDoctor = new Element("MR_USL_N");
+        add(uslDoctor, "MR_N", "1"); //1 услуга = 1 доктор
+        add(uslDoctor, "PRVS", prvs);
+        add(uslDoctor, "CODE_MD", doctorSnils);
+        usl.addContent(uslDoctor);
     }
 
     /**
