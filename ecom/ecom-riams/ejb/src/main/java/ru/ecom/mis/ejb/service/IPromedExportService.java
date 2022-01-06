@@ -27,6 +27,13 @@ public interface IPromedExportService {
     String exportPolyclinicById(Long medCaseId);
 
     /**
+     * Экспорт поликлинического случая в риамс промед
+     * @param hospitalMedCaseId - ИД СЛС (HospitalMedCase)
+     * @return ГУИД запроса
+     */
+    String exportHospitalById(Long hospitalMedCaseId);
+
+    /**
      *  Получить журнал экспорта по ИД СПО
      * @param spoId
      * @return

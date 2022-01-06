@@ -80,8 +80,10 @@
                 <msh:row>
                     <msh:textField property="codef" label='№реестра' horizontalFill="true"/>
                     <msh:textField property="departmentAddressCode" label='Код адреса' horizontalFill="true"/>
-                </msh:row><msh:row>
+                </msh:row>
+                <msh:row>
                     <msh:textField property="socCode" label="Код в ФСС"/>
+                    <msh:textField property="promedLpuSectionId"/>
                 </msh:row>
                 <msh:row>
                     <msh:textField property="inn" label="ИНН"/>

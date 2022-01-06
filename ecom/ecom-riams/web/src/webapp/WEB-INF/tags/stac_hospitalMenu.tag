@@ -273,6 +273,10 @@
                   title="Добавить разрешение на редактирование случая"
                   roles="/Policy/Jaas/Permission/User/Create"
     />
+    <msh:sideLink action="/javascript:exportToPromed()" roles="/Policy/Promed/ExportVisit"
+                  name='Тест промед' title="Попробовать отправить в промед ГОСП"/>
+    <msh:sideLink action="/javascript:getJournalToPromed()" roles="/Policy/Promed/ExportVisit"
+                  name='Журнал промед' title="Журнал отправки пакетов в промед"/>
     <tags:stac_deniedHospitalizating name="DH" title="Оформить отказ больного"
                                      roles="/Policy/Mis/MedCase/Stac/Ssl/DeniedHospitalizatingSls"/>
     <tags:mis_changeServiceStream name="CSS" title="Изменить поток обслуживания"
