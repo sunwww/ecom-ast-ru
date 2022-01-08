@@ -1,4 +1,4 @@
-package ru.ecom.mis.ejb.service;
+package ru.ecom.mis.ejb.service.promed;
 
 import com.google.gson.GsonBuilder;
 import org.apache.log4j.Logger;
@@ -19,6 +19,7 @@ import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.poly.ejb.domain.voc.VocReason;
+import ru.nuzmsh.forms.validator.ValidateException;
 
 import javax.annotation.EJB;
 import javax.ejb.Local;
@@ -27,7 +28,10 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.Time;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static ru.nuzmsh.util.EqualsUtil.isEquals;
 
@@ -54,42 +58,22 @@ public class PromedExportServiceBean implements IPromedExportService {
      *
      * @param medCase
      */
-    @Override
-    public String exportPolyclinic(PolyclinicMedCase medCase) {
-        if (isEnabled()) {
+    private String exportMedCase(MedCase medCase) throws ValidateException {
+        if (medCase != null && isEnabled()) {
             validate(medCase);
-            PromedPolyclinicTapForm form = getPolyclinicCase(medCase);
-            LOG.warn("made form: " + form);
-            String response;
-            try {
-                Map.Entry<Integer, JSONObject> responseMap = webService.makePOSTRequestExt(toString(form), PROMEDATOR_URL, POL_EXPORT_URL, new HashMap<>());
-
-                if (responseMap != null) {
-                    LOG.info(">>" + responseMap + "<<");
-                    JSONObject jso = responseMap.getValue();
-
-                    if (isEquals(responseMap.getKey(), 200) && jso.getBoolean("success")) { //success
-                        MedCaseExportJournal journal = new MedCaseExportJournal();
-                        journal.setMedCase(medCase.getId());
-                        journal.setExportType(ExportType.MANUAL);
-                        response = jso.getString("data");
-                        journal.setPacketGuid(response);
-                        manager.persist(journal);
-                    } else {
-                        LOG.error("Ошибка отправки СМО с ИД " + medCase.getId() + " в Промед: " + jso);
-                        response = jso.getJSONObject("error").getString("text");
-                    }
-                } else {
-                    LOG.error("Error sending medcase to promedator");
-                    response = null;
-                }
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                response = e.getMessage();
+            String formString;
+            String methodUrl;
+            if (medCase instanceof HospitalMedCase) {
+                formString = toString(getHospitalCase((HospitalMedCase) medCase));
+                methodUrl = STAC_EXPORT_URL;
+            } else if (medCase instanceof PolyclinicMedCase) {
+                formString = toString(getPolyclinicCase((PolyclinicMedCase) medCase));
+                methodUrl = POL_EXPORT_URL;
+            } else {
+                throw new IllegalArgumentException("Невозможно выгрузить случай с типом " + medCase.getClass().getSimpleName());
             }
-            return response;
+            LOG.warn("made medcase form: " + formString);
+            return processExportMedCaseToPromed(formString, methodUrl, medCase.getId());
         }
         return null;
     }
@@ -104,53 +88,48 @@ public class PromedExportServiceBean implements IPromedExportService {
     }
 
     @Override
-    public String exportPolyclinicById(Long medCaseId) {
-        return exportPolyclinic(manager.find(PolyclinicMedCase.class, medCaseId));
+    public String exportPolyclinicById(Long medCaseId) throws ValidateException {
+        return exportMedCase(manager.find(PolyclinicMedCase.class, medCaseId));
     }
 
-    public String exportHospitalById(Long hospitalMedCaseId) {
-        return exportHospital(manager.find(HospitalMedCase.class, hospitalMedCaseId));
+    @Override
+    public String exportHospitalById(Long hospitalMedCaseId) throws ValidateException {
+        return exportMedCase(manager.find(HospitalMedCase.class, hospitalMedCaseId));
     }
 
-    private String exportHospital(HospitalMedCase hospitalMedCase) {
-        if (isEnabled()) {
-            validate(hospitalMedCase);
-            PromedHospitalForm form = getHospitalCase(hospitalMedCase);
-            LOG.warn("made form: " + form);
-            String response;
-            try {
-                Map.Entry<Integer, JSONObject> responseMap = webService.makePOSTRequestExt(toString(form), PROMEDATOR_URL, STAC_EXPORT_URL, new HashMap<>());
+    private String processExportMedCaseToPromed(String formString, String promedMethodUrl, Long medcaseId) {
+        String response;
+        try {
+            Map.Entry<Integer, JSONObject> responseMap = webService.makePOSTRequestExt(formString, PROMEDATOR_URL, promedMethodUrl, new HashMap<>());
 
-                if (responseMap != null) {
-                    LOG.info(">>" + responseMap + "<<");
-                    JSONObject jso = responseMap.getValue();
+            if (responseMap != null) {
+                LOG.info(">>" + responseMap + "<<");
+                JSONObject jso = responseMap.getValue();
 
-                    if (isEquals(responseMap.getKey(), 200) && jso.getBoolean("success")) { //success
-                        MedCaseExportJournal journal = new MedCaseExportJournal();
-                        journal.setMedCase(hospitalMedCase.getId());
-                        journal.setExportType(ExportType.MANUAL);
-                        response = jso.getString("data");
-                        journal.setPacketGuid(response);
-                        manager.persist(journal);
-                    } else {
-                        LOG.error("Ошибка отправки СМО с ИД " + hospitalMedCase.getId() + " в Промед: " + jso);
-                        response = jso.getJSONObject("error").getString("text");
-                    }
+                if (isEquals(responseMap.getKey(), 200) && jso.getBoolean("success")) { //success
+                    MedCaseExportJournal journal = new MedCaseExportJournal();
+                    journal.setMedCase(medcaseId);
+                    journal.setExportType(ExportType.MANUAL);
+                    response = jso.getString("data");
+                    journal.setPacketGuid(response);
+                    manager.persist(journal);
                 } else {
-                    LOG.error("Error sending medcase to promedator");
-                    response = null;
+                    LOG.error("Ошибка отправки СМО с ИД " + medcaseId + " в Промед: " + jso);
+                    response = jso.getJSONObject("error").getString("text");
                 }
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                response = e.getMessage();
+            } else {
+                LOG.error("Error sending medcase to promedator");
+                response = null;
             }
-            return response;
-        }
-        return null;
 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response = e.getMessage();
+        }
+        return response;
     }
+
 
     private PromedHospitalForm getHospitalCase(HospitalMedCase sls) {
         long slsId = sls.getId();
@@ -181,8 +160,8 @@ public class PromedExportServiceBean implements IPromedExportService {
         form.transferLpuCode(sls.getMoveToAnotherLPU() == null ? null : sls.getMoveToAnotherLPU().getCodef());
         List<PromedDepartmentForm> cases = mapDepartmentCases(deps);
         form.departmentCases(cases);
-        form.priemDischargeDate(cases.get(0).getEntranceDate().substring(0,10));//TODO сделать красиво //дата выбытия из приемного отделения = дата поступления в первое отделение
-        PromedHospitalForm hosp =  form.build();
+        form.priemDischargeDate(cases.get(0).getEntranceDate().substring(0, 10));//TODO сделать красиво //дата выбытия из приемного отделения = дата поступления в первое отделение
+        PromedHospitalForm hosp = form.build();
         hosp.setMedosId(sls.getId());
         hosp.setPromedCode(sls.getPromedCode());
         hosp.setServiceStream(sls.getServiceStream() != null ? sls.getServiceStream().getPromedCode() : null);
@@ -288,10 +267,21 @@ public class PromedExportServiceBean implements IPromedExportService {
         return null;
     }
 
-    private void validate(PolyclinicMedCase medCase) {
-    }
-
-    private void validate(HospitalMedCase medCase) {
+    private void validate(MedCase medCase) throws ValidateException {
+        List<String> errors = new ArrayList<>();
+        if (medCase == null) {
+            throw new ValidateException("СМО не найдено");
+        }
+        if (medCase.getPatient() == null) {
+            errors.add("Не указан пациент");
+        }
+        if (!errors.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (String err : errors) {
+                sb.append(err).append(";");
+            }
+            throw new ValidateException(sb.toString());
+        }
     }
 
     @Override
@@ -321,7 +311,6 @@ public class PromedExportServiceBean implements IPromedExportService {
                 if (Boolean.TRUE.equals(lastVisit.getWorkFunctionExecute().getWorkFunction().getIsNoDiagnosis())) {
                     //диагностика - диагноз Z
                     lastDiagnosis = PromedDiagnosis.builder()
-                            .promedId("11052")
                             .mkbCode("Z34.9").build();
                 } else {
                     lastDiagnosis = mapDiagnosis(getPrioryDiagnosis(lastVisit.getDiagnoses()), polyclinicCaseId);

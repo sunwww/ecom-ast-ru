@@ -1,19 +1,14 @@
-package ru.ecom.mis.ejb.service;
+package ru.ecom.mis.ejb.service.promed;
 
 import ru.ecom.api.form.PromedPolyclinicTapForm;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
+import ru.nuzmsh.forms.validator.ValidateException;
 
 public interface IPromedExportService {
 
     /**
-     * Экспорт поликлинического случая в риамс промед
-     * @param medCase PolyclinicMedCase
-     * @return ГУИД запроса
-     */
-    String exportPolyclinic(PolyclinicMedCase medCase);
-
-    /**
      * Маппим наш СПО на ДТО для промедатора
+     *
      * @param polyclinicCase
      * @return
      */
@@ -21,20 +16,23 @@ public interface IPromedExportService {
 
     /**
      * Экспорт поликлинического случая в риамс промед
+     *
      * @param medCaseId - ИД СМО (PolyclinicMedCase)
      * @return ГУИД запроса
      */
-    String exportPolyclinicById(Long medCaseId);
+    String exportPolyclinicById(Long medCaseId) throws ValidateException;
 
     /**
-     * Экспорт поликлинического случая в риамс промед
+     * Экспорт стационарного случая в риамс промед
+     *
      * @param hospitalMedCaseId - ИД СЛС (HospitalMedCase)
      * @return ГУИД запроса
      */
-    String exportHospitalById(Long hospitalMedCaseId);
+    String exportHospitalById(Long hospitalMedCaseId) throws ValidateException;
 
     /**
-     *  Получить журнал экспорта по ИД СПО
+     * Получить журнал экспорта по ИД СПО
+     *
      * @param spoId
      * @return
      */
