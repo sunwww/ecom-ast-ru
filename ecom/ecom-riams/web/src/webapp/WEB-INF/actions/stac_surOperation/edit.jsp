@@ -105,10 +105,7 @@
                 </mis:ifPatientIsWoman>
                 <msh:ifInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
                     <msh:hidden property="surgeonFunctions"/>
-                    <msh:hidden property="complications"/>
-
                     <msh:hidden property="operatingNurse"/>
-
                     <msh:hidden property="operationText"/>
                     <msh:hidden property="aspect"/>
                     <msh:hidden property="technology"/>

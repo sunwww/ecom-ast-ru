@@ -32,7 +32,7 @@ public class VocServiceStream extends VocIdNameOmcCode {
 	/** Вычислять договор */
 	private Boolean isCalcDogovor;
 
-	@Deprecated
+	@Deprecated //пока не выпиливаем
 	private String promedCode;
 
 	/** Считать цену по ОМС тарифу */

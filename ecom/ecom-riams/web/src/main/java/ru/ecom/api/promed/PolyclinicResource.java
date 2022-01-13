@@ -1,19 +1,26 @@
 package ru.ecom.api.promed;
 
 
-import org.json.JSONObject;
+import com.google.gson.GsonBuilder;
+import ru.ecom.api.form.PromedPolyclinicTapForm;
 import ru.ecom.api.util.ApiUtil;
 import ru.ecom.web.util.Injection;
 
 import javax.jws.WebParam;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.List;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Path("/promed")
 public class PolyclinicResource {
@@ -42,129 +49,43 @@ public class PolyclinicResource {
             ApiUtil.login(aToken, aRequest);
         }
         ApiUtil.init(aRequest, aToken);
-        if (isUpload == null) isUpload = false;
         SimpleDateFormat format;
         java.sql.Date d;
         try {
             format = new SimpleDateFormat("yyyy-MM-dd");
             d = new java.sql.Date(format.parse(dateTo).getTime());
         } catch (NullPointerException | ParseException ex) {
-            JSONObject res = new JSONObject();
-            res.put("status", "error")
-                    .put("reason", "incorrect dateTo");
-            return res.toString();
+            throw new IllegalStateException("incorrect dateTo");
         }
-        String sstream = "OBLIGATORYINSURANCE";
-        return Injection.find(aRequest).getService(IApiPolyclinicService.class).getPolyclinicCase(d, sstream, wfId, limitNum, isUpload);
+        String serviceStream = "OBLIGATORYINSURANCE";
+        List<PromedPolyclinicTapForm> forms = Injection.find(aRequest).getService(IApiPolyclinicService.class).getPolyclinicCase(d, serviceStream, wfId, limitNum, isUpload);
+        return new GsonBuilder().setDateFormat("yyyy-MM-dd").create().toJson(new PromedPolyclinicTapForm.TapList(forms));
     }
 
+    /**
+     * Выгрузка в промед всех СПО с потоком (ОМС, военкомат, бюджет), в которых есть посещения, созданные за вчерашний день
+     *
+     * @return пусто
+     */
     @GET
-    @Path("getPolyclinicCaseByDateStart")
+    @Path("/exportYesterdayOmc")
     @Produces(MediaType.APPLICATION_JSON)
-    /*
-     * Получить cписок случаев поликлинического обслуживания в JSON (только ОМС).
-     *
-     * @param aRequest HttpServletRequest
-     * @param aToken String
-     * @param dateStart String Дата начала СПО в формате yyyy-MM-dd
-     * @param workFunctionId Рабочая функция врача
-     * @param limit Лимит по записям
-     * @return JSON in String
-     */
-    public String getPolyclinicCaseByDateStart(@Context HttpServletRequest aRequest, @WebParam(name = "token") String aToken
-            , @QueryParam("dateStart") String dateStart
-            , @QueryParam("workFunctionId") Long wfId
-            , @QueryParam("limit") Integer limitNum
-    ) throws NamingException {
+    public String autoExportOmcYesterday(@Context HttpServletRequest aRequest,
+                                         @QueryParam("daysAgo") Integer daysAgo,
+                                         @WebParam(name = "token") String aToken) throws NamingException {
         if (aToken != null) {
             ApiUtil.login(aToken, aRequest);
         }
         ApiUtil.init(aRequest, aToken);
-        IApiPolyclinicService service = Injection.find(aRequest).getService(IApiPolyclinicService.class);
-        java.sql.Date d;
-        try {
-            d = new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse(dateStart).getTime());
-        } catch (NullPointerException | ParseException ex) {
-            JSONObject res = new JSONObject();
-            res.put("status", "error")
-                    .put("reason", "incorrect dateStart");
-            return res.toString();
+        LocalDate ld = LocalDate.now();
+        if (daysAgo != null) {
+            ld = ld.minus(daysAgo, DAYS);
         }
-        String sstream = "OBLIGATORYINSURANCE";
-        return service.getPolyclinicCaseByDateStart(d, sstream, wfId, limitNum);
-    }
 
-    @POST
-    @Path("setEvnTap")
-    @Produces(MediaType.APPLICATION_JSON)
-    /*
-     * Установить случаю promed_id и отметку о выгрузке.
-     *
-     * @param aRequest HttpServletRequest
-     * @param aToken String
-     * @param medcase_id Long id случая
-     * @param tap_id String promed_id
-     * @return JSON in String
-     */
-    public String setEvnTap(@Context HttpServletRequest aRequest, @WebParam(name = "token") String aToken
-            , @QueryParam("medcase_id") Long medcaseId, @QueryParam("tap_id") Long tapId
-    ) throws NamingException {
-        if (aToken != null) {
-            ApiUtil.login(aToken, aRequest);
-        }
-        ApiUtil.init(aRequest, aToken);
-        IApiPolyclinicService service = Injection.find(aRequest).getService(IApiPolyclinicService.class);
-        return service.setEvnTap(medcaseId, tapId);
-    }
-
-    @GET
-    @Path("getWfInfo")
-    @Produces(MediaType.APPLICATION_JSON)
-    /*
-     * Получить ФИО, отделение и promedcode_lpusection и promedcode_workstaff.
-     *
-     * @param aRequest HttpServletRequest
-     * @param aToken String
-     * @param workfunction_id Long Рабочая функция
-     * @return JSON in String
-     */
-    public String getWfInfo(@Context HttpServletRequest aRequest, @WebParam(name = "token") String aToken
-            , @QueryParam("workfunction_id") Long workfunction_id) throws NamingException {
-        if (aToken != null) {
-            ApiUtil.login(aToken, aRequest);
-        }
-        ApiUtil.init(aRequest, aToken);
-        IApiPolyclinicService service = Injection.find(aRequest).getService(IApiPolyclinicService.class);
-        return service.getWfInfo(workfunction_id);
+        String[] serviceStream = {"OBLIGATORYINSURANCE", "BUDGET"}; //выгружаем только ОМС + все виды бюджета
+        List<PromedPolyclinicTapForm> forms = Injection.find(aRequest).getService(IApiPolyclinicService.class).getPolyclinicCaseByVisitDateStart(ld, serviceStream);
+        return new GsonBuilder().setDateFormat("yyyy-MM-dd").create().toJson(new PromedPolyclinicTapForm.TapList(forms));
     }
 
 
-    @POST
-    @Path("setWfInfo")
-    @Produces(MediaType.APPLICATION_JSON)
-    /*
-     * Установить promedcode_lpusection и promedcode_workstaff.
-     *
-     * @param aRequest HttpServletRequest
-     * @param aToken String
-     * @param workfunction_id Long Рабочая функция
-     * @param promedcode_lpusection String promedcode_lpusection
-     * @param promedcode_workstaff String promedcode_workstaff
-     * @return JSON in String
-     */
-    public String setWfInfo(@Context HttpServletRequest aRequest, @Context HttpServletResponse aResponse, String jsonData) throws NamingException {
-        aResponse.setHeader("Access-Control-Allow-Origin", "*");
-        aResponse.setHeader("Access-Control-Allow-Methods", "POST");
-        JSONObject req = new JSONObject(jsonData);
-        String token = req.has("token") ? req.getString("token") : null;
-        if (token != null) {
-            ApiUtil.login(token, aRequest);
-        }
-        ApiUtil.init(aRequest, token);
-        Long workFunctionId = req.getLong("workfunctionId");
-        Long promedcodeLpuSection = req.getLong("promedcodeLpuSection");
-        Long promedcodeWorkstaff = req.getLong("promedcodeWorkstaff");
-        IApiPolyclinicService service = Injection.find(aRequest).getService(IApiPolyclinicService.class);
-        return service.setWfInfo(workFunctionId, promedcodeLpuSection, promedcodeWorkstaff);
-    }
 }

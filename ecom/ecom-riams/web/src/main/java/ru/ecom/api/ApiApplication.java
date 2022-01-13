@@ -6,6 +6,7 @@ import ru.ecom.api.journal.PolyclinicScheduleResource;
 import ru.ecom.api.medcaseMedpolicy.MedcaseMedpolicy;
 import ru.ecom.api.onco.OncoResource;
 import ru.ecom.api.promed.PolyclinicResource;
+import ru.ecom.api.promed.PromedResource;
 import ru.ecom.api.queue.HospitalQueueResource;
 import ru.ecom.api.queue.TicketQueueResource;
 import ru.ecom.api.scheduler.ScheduleTasks;
@@ -32,6 +33,7 @@ public class ApiApplication extends Application {
         set.add(ScheduleTasks.class);
         set.add(OncoResource.class);
         set.add(PolyclinicResource.class);
+        set.add(PromedResource.class);
         set.add(PolyclinicScheduleResource.class);
         set.add(CustomMessageResource.class);
         return set;
