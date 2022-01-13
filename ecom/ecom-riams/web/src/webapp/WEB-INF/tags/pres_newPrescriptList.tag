@@ -73,6 +73,12 @@
                 </tr>
                 <tr>
                     <td>
+                        <input name="add" type='button' onclick="javascript:goTo('covidDrugShort')"
+                               value='Добавить назначение лекарства от covid-19'>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
                         <input name="add" type='button' onclick="javascript:goTo('cons')"
                                value='Добавить назначение на консультацию'>
                     </td>

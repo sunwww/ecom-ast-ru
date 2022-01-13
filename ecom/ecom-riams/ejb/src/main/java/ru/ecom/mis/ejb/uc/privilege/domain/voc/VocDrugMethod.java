@@ -1,13 +1,11 @@
 package ru.ecom.mis.ejb.uc.privilege.domain.voc;
 
+import lombok.Getter;
 import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
-import ru.ecom.expert2.domain.voc.federal.VocE2FondV035;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -20,12 +18,12 @@ import javax.persistence.Table;
 @Entity
 @Table(schema = "SQLUser")
 @Setter
+@Getter
 public class VocDrugMethod extends VocBaseEntity {
 
-    private VocE2FondV035 federalMethod;
+    /**
+     * Код по справочнику ТФОМС V035
+     */
+    private String federalCode;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    public VocE2FondV035 getFederalMethod() {
-        return federalMethod;
-    }
 }

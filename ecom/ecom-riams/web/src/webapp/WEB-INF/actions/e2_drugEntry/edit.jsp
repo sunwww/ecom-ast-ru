@@ -44,7 +44,7 @@
         <script type="text/javascript">
             loadSchema();
             function loadSchema() {
-                if (!$('vocSchema').value && $('drugGroupSchema').value) {
+                if ($('vocSchemaName') && !$('vocSchema').value && $('drugGroupSchema').value) {
                     Expert2Service.loadDrugSchemaByDrugGroupSchemaId($('drugGroupSchema').value, {
                         callback: function(ret) {
                             if (ret) {

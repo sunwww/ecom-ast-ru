@@ -1,4 +1,27 @@
 <vocconfig>
+<!--    Лекарства, применяемые при лечении covid-19-->
+    <voc id="vocDrugCovid" type="NativeVocService">
+        <NativeVocService
+                from="VocDrug as voc"
+                nameId="voc.id"
+                queryAppend="voc.isCovidDrug is true"
+                order=""
+                queried=""
+                names="voc.name"
+        />
+    </voc><!--    Лекарства, применяемые при лечении covid-19 для выбранной схемы лечения-->
+    <voc id="vocDrugByCovidSchema" type="NativeVocService">
+        <NativeVocService
+                parent="v033.groupschema_id =:parent"
+                from="voce2fondv033 as v033"
+                join="inner join VocDrug as voc on voc.vocdrug_id = v033.drug_id"
+                nameId="voc.id"
+                queryAppend="voc.isCovidDrug is true"
+                order=""
+                queried=""
+                names="voc.name"
+        />
+    </voc>
     <voc id="vocLeftRight" type="NativeVocService">
         <NativeVocService
                 from="VocLeftRight as voc"

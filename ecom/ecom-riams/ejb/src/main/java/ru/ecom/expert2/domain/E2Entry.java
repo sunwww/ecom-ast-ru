@@ -1102,6 +1102,18 @@ public class E2Entry extends BaseEntity {
      * Стоматологический случай
      */
     private Boolean isDentalCase;
+
+    @Transient
+    public String getCovidPrescriptions() {
+        return covidPrescriptions;
+    }
+
+    public void setCovidPrescriptions(String covidPrescriptions) {
+        this.covidPrescriptions = covidPrescriptions;
+    }
+
+    private String covidPrescriptions;
+
     public E2Entry() {
         addGroupFld = "";
         setIsDeleted(false);

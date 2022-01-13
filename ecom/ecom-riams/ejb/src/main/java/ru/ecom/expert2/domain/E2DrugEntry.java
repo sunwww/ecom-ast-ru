@@ -27,6 +27,13 @@ public class E2DrugEntry extends BaseEntity {
     private Integer injectNumber;
     private VocE2FondV035 injectMethod;
 
+    public E2DrugEntry(E2Entry aEntry) {
+        entry = aEntry;
+    }
+
+    public E2DrugEntry() {
+    }
+
     @ManyToOne
     public E2Entry getEntry() {
         return entry;

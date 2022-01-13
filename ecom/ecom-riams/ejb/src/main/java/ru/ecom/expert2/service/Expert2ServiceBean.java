@@ -514,7 +514,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 bill = new E2Bill();
                 bill.setBillNumber(billNumber);
                 bill.setBillDate(billDate);
-                bill.setStatus(getActualVocByClassName(VocE2BillStatus.class, null, "code='DRAFT'"));
+                bill.setStatus(getActualVocByCode(VocE2BillStatus.class, "DRAFT"));
             } else if (list.size() > 1) {
                 LOG.error(list.get(0) + "<>" + list.get(1) + " Найдено более 1 счета с номером " + billNumber + " и датой " + billDate + "(" + list.size() + ")");
                 bill = null;
@@ -813,8 +813,8 @@ public class Expert2ServiceBean implements IExpert2Service {
             long calendarDays = isNotLogicalNull(patologyEntry.getCalendarDays()) ? patologyEntry.getCalendarDays() : 0;
             if (isNotTrue(patologyEntry.getIsChildBirthDepartment())
                     && (calendarDays > 5 || calendarDays > 1 && CHILD_BIRTH_MKB.contains(patologyEntry.getMainMkb()))) { //Если длительность случая - больше пяти дней (или диагноз входит в список)- не объединяемъ
-                VocE2FondV009 perevodResult = getActualVocByClassName(VocE2FondV009.class, patologyEntry.getFinishDate(), " code='104'"); //TODO Колхоз - исправить
-                patologyEntry.setFondIshod(getActualVocByClassName(VocE2FondV012.class, patologyEntry.getFinishDate(), " code='103'")); //TODO Колхоз - исправить
+                VocE2FondV009 perevodResult = getActualVocByCode(VocE2FondV009.class, patologyEntry.getFinishDate(), "104"); //TODO Колхоз - исправить
+                patologyEntry.setFondIshod(getActualVocByCode(VocE2FondV012.class, patologyEntry.getFinishDate(), "103")); //TODO Колхоз - исправить
                 patologyEntry.setFondResult(perevodResult); //TODO Колхоз - исправить
                 patologyEntry.setIsUnion(true);
                 childEntry.setExternalPrevMedcaseId(patologyEntry.getExternalId());
@@ -1049,8 +1049,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                             }
                         } else { //Если классы МКБ не сходятся, текущее СЛО становится главным *01.03.2020 исход случая - без перемен, ТФОМС
                             String ss = mainEntry.getBedSubType(); //Текущему случаю ставим результат - перевод на другой профиль коек
-                            mainEntry.setFondResult(getActualVocByClassName(VocE2FondV009.class, mainEntry.getFinishDate(), " code='" + ss + "04'"));
-                            mainEntry.setFondIshod(getActualVocByClassName(VocE2FondV012.class, mainEntry.getFinishDate(), " code='" + ss + "03'"));
+                            mainEntry.setFondResult(getActualVocByCode(VocE2FondV009.class, mainEntry.getFinishDate(), ss + "04"));
+                            mainEntry.setFondIshod(getActualVocByCode(VocE2FondV012.class, mainEntry.getFinishDate(), ss + "03"));
                             manager.persist(mainEntry);
                             mainEntry = entry;
                         }
@@ -1980,7 +1980,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                             VocE2FondV021 doctor;
                             String key = "DOCTOR#" + workfunction;
                             if (!resultMap.containsKey(key)) {
-                                doctor = getActualVocByClassName(VocE2FondV021.class, null, "code='" + workfunction + "'");
+                                doctor = getActualVocByCode(VocE2FondV021.class, workfunction);
                                 resultMap.put(key, doctor);
                                 if (doctor == null) LOG.error("S_Не нашел доктора по коду V021 = " + workfunction);
                             } else {
@@ -2001,10 +2001,40 @@ public class Expert2ServiceBean implements IExpert2Service {
                     }
                 }
             }
+            makeDrugEntry(entry);
         } catch (Exception e) {
             LOG.error("error creating service = " + entry.getOperationList() + "<>" + entry.getServices() + "<>" + entry.getPrescriptionList(), e);
         }
     }
+
+    private void makeDrugEntry(E2Entry entry) {
+        if (isNotLogicalNull(entry.getCovidPrescriptions())) {
+            LOG.info("Пытаемся обработать назначение лек. средства covid-19: " + entry.getCovidPrescriptions());
+            JSONArray services = new JSONArray(entry.getCovidPrescriptions());
+            for (int i = 0; i < services.length(); i++) {
+                JSONObject covid = services.getJSONObject(i);
+                E2DrugEntry de = new E2DrugEntry(entry);
+                de.setDrug(getActualVocByCode(VocE2FondN020.class, covid.getString("serviceCode")));
+                de.setDrugGroupSchema(getActualVocByCode(VocE2FondV032.class, covid.getString("covidSchema")));
+                de.setInjectMethod(getActualVocByCode(VocE2FondV035.class, covid.getString("methodCode")));
+                de.setInjectAmount(covid.getString("amount"));
+
+                Date injectDate;
+                try {
+                    injectDate = DateFormat.parseSqlDate(covid.getString("serviceDate"), "yyyy-MM-dd");
+                } catch (ParseException e) {
+                    LOG.warn("Не смог получить дату: "+covid.getString("serviceDate")+": "+e.getMessage());
+                    injectDate = null;
+                }
+                de.setInjectDate(injectDate);
+                de.setInjectNumber(covid.getInt("frequency"));
+                de.setInjectUnit(getActualVocByCode(VocE2FondV034.class, covid.getString("injectUnit")));
+                manager.persist(de);
+            }
+
+        }
+    }
+
 
     /*Нахождение услуги по умолчанию по специальности врача*/
     private VocMedService findDefaultMedServiceByWorkfunction(String workfunctionCode) {
@@ -2090,7 +2120,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
         }
         if (foundMain && foundOther) {
-            return getActualVocByClassName(VocKsg.class, null, "code='st29.007'");
+            return getActualVocByCode(VocKsg.class, "st29.007");
         }
         return null;
     }
@@ -2694,7 +2724,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         if (!codes.isEmpty()) {
             for (String code : codes) {
                 if (!difficultyHashMap.containsKey(code)) {
-                    difficultyHashMap.put(code, getActualVocByClassName(VocE2CoefficientPatientDifficulty.class, null, " code='" + code + "'"));
+                    difficultyHashMap.put(code, getActualVocByCode(VocE2CoefficientPatientDifficulty.class, code));
                 }
                 VocE2CoefficientPatientDifficulty difficulty = difficultyHashMap.get(code);
                 link = new E2CoefficientPatientDifficultyEntryLink();
@@ -3049,7 +3079,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             VocE2FondV025 visitPurpose = subType.getVisitPurpose();
             VocE2FondV010 idsp = getEntityByCode("41", VocE2FondV010.class, false); //
             boolean isFirst;
-            Map<String, VocE2FondV008>medHelpMap = new HashMap<>();
+            Map<String, VocE2FondV008> medHelpMap = new HashMap<>();
             medHelpMap.put("12", getEntityByCode("12", VocE2FondV008.class, false));// терапевт - 12 вид МП
             medHelpMap.put("13", getEntityByCode("13", VocE2FondV008.class, false));// первичная специализированная медико-санитарная помощь
 
@@ -3285,6 +3315,14 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     }
 
+    private <T> T getActualVocByCode(Class<T> clazz, String code) {
+        return getActualVocByClassName(clazz, null, " code='" + code + "'");
+    }
+
+    private <T> T getActualVocByCode(Class<T> clazz, Date actualDate, String code) {
+        return getActualVocByClassName(clazz, actualDate, " code='" + code + "'");
+    }
+
     @Override
     public <T> T getActualVocByClassName(Class<T> clazz, Date actualDate, String sqlAdd) {
         String sql = " from " + clazz.getName() + " where ";
@@ -3400,7 +3438,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 String bedType = entry.getHelpKind(); //V020
                 key = "BEDPROFILE#" + bedType;
                 if (!resultMap.containsKey(key)) {
-                    resultMap.put(key, getActualVocByClassName(VocE2FondV020.class, entry.getFinishDate(), "code='" + bedType + "'"));
+                    resultMap.put(key, getActualVocByCode(VocE2FondV020.class, entry.getFinishDate(), bedType));
                 }
                 entry.setBedProfile((VocE2FondV020) resultMap.get(key));
             }
@@ -3419,11 +3457,11 @@ public class Expert2ServiceBean implements IExpert2Service {
                         && isEquals(entry.getMedHelpProfile().getProfileK(), "81") && doctorWorkFunction.equals("25")) { //09-12 26VWF = 25V021 = кардиолог
                     key += "#VMP";
                     if (!resultMap.containsKey(key)) {
-                        resultMap.put(key, getActualVocByClassName(VocE2FondV021.class, actualDate, "code='45'"));
+                        resultMap.put(key, getActualVocByCode(VocE2FondV021.class, actualDate, "45"));
                     }
                 }
                 if (!resultMap.containsKey(key)) {
-                    resultMap.put(key, getActualVocByClassName(VocE2FondV021.class, actualDate, "code='" + doctorWorkFunction + "'"));
+                    resultMap.put(key, getActualVocByCode(VocE2FondV021.class, actualDate, doctorWorkFunction));
                 }
                 VocE2FondV021 doctor = (VocE2FondV021) resultMap.get(key);
                 if (doctor == null) {
@@ -3507,7 +3545,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
             key = "V008#" + v008Code;
             if (!resultMap.containsKey(key)) {
-                resultMap.put(key, getActualVocByClassName(VocE2FondV008.class, actualDate, "code='" + v008Code + "'"));
+                resultMap.put(key, getActualVocByCode(VocE2FondV008.class, actualDate, v008Code));
             }
             entry.setMedHelpKind((VocE2FondV008) resultMap.get(key));
         } else if (polyclinicCase) { //Заполняем поля для пол-ки
@@ -3516,7 +3554,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             if (entry.getFondResult() == null || forceUpdate) {
                 key = "VISIT#RESULT#" + resultCode;
                 if (!resultMap.containsKey(key)) {
-                    resultMap.put(key, getActualVocByClassName(VocE2FondV009.class, actualDate, "code='" + resultCode + "'"));
+                    resultMap.put(key, getActualVocByCode(VocE2FondV009.class, actualDate, resultCode));
                 }
                 if (resultMap.get(key) != null) entry.setFondResult((VocE2FondV009) resultMap.get(key));
             }
@@ -3525,7 +3563,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             if (entry.getFondIshod() == null || forceUpdate) {
                 key = "VISIT#ISHOD#" + ishodCode;
                 if (!resultMap.containsKey(key)) {
-                    resultMap.put(key, getActualVocByClassName(VocE2FondV012.class, actualDate, "code='" + ishodCode + "'"));
+                    resultMap.put(key, getActualVocByCode(VocE2FondV012.class, actualDate, ishodCode));
                 }
                 if (resultMap.get(key) != null) entry.setFondIshod((VocE2FondV012) resultMap.get(key));
             }
@@ -3540,7 +3578,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 String v008Code = calculateHelpKindPol(entry);
                 key = "V008#" + v008Code;
                 if (!resultMap.containsKey(key)) {
-                    resultMap.put(key, getActualVocByClassName(VocE2FondV008.class, actualDate, "code='" + v008Code + "'"));
+                    resultMap.put(key, getActualVocByCode(VocE2FondV008.class, actualDate, v008Code));
                 }
                 entry.setMedHelpKind((VocE2FondV008) resultMap.get(key));
             }
@@ -3558,7 +3596,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 String ishodCode = "306";
                 key = "EXTDISP#ISHOD#" + ishodCode;
                 if (!resultMap.containsKey(key)) {
-                    resultMap.put(key, getActualVocByClassName(VocE2FondV012.class, actualDate, "code='" + ishodCode + "'"));
+                    resultMap.put(key, getActualVocByCode(VocE2FondV012.class, actualDate, ishodCode));
                 }
                 entry.setFondIshod((VocE2FondV012) resultMap.get(key));
             }
