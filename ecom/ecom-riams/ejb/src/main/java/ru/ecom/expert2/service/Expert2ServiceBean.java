@@ -2664,7 +2664,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             if (!manager.createNativeQuery("select vco.id from VocCombinedOperations vco" +
                             " left join vocmedservice vms1 on vms1.id=vco.medservice1_id " +
                             " left join vocmedservice vms2 on vms2.id=vco.medservice2_id " +
-                            " where vms1.code in (" + serviceCodes.toString() + ") and vms2.code in (" + serviceCodes.toString() + ") and coalesce(vco.finishDate,current_date)>=:actualDate ")
+                            " where vms1.code in (" + serviceCodes + ") and vms2.code in (" + serviceCodes + ") and coalesce(vco.finishDate,current_date)>=:actualDate ")
                     .setParameter("actualDate", actualDate)
                     .getResultList().isEmpty()
             ) {
