@@ -2711,14 +2711,14 @@ public class Expert2ServiceBean implements IExpert2Service {
         if (sluchDuration > 70L) {
             codes.add("10");
         }
-        if (entry.getFactorList() != null) {
+      /*  if (entry.getFactorList() != null) { //с 2022 года нет
             for (VocE2EntryFactor factor : entry.getFactorList()) {
                 String factorCode = factor.getCode();
                 if ("KSLP_INFECT".equals(factorCode)) {
                     codes.add("8");
                 }
             }
-        }
+        }*/
 
         //Пришло время сохранять все сложности пациента
         if (!codes.isEmpty()) {
