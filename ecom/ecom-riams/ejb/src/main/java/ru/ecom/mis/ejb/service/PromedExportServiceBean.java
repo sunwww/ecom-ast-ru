@@ -39,10 +39,13 @@ import static ru.nuzmsh.util.EqualsUtil.isEquals;
 public class PromedExportServiceBean implements IPromedExportService {
 
     private static final Logger LOG = Logger.getLogger(PromedExportServiceBean.class);
-    private static String PROMEDATOR_URL = null;
-
     private static final String POL_EXPORT_URL = "ambulatory/epicrisis-export"; //отправка пол. случая
     private static final String GET_BY_GUID_URL = "ambulatory/get-by-guid"; //получение информации по отправке СМО
+    private static String PROMEDATOR_URL = null;
+    @PersistenceContext
+    private EntityManager manager;
+    private @EJB
+    IWebClientService webService;
 
     /**
      * Экспорт поликлинического случая в РИАМС Промед
@@ -181,8 +184,10 @@ public class PromedExportServiceBean implements IPromedExportService {
         return null;
     }
 
-    private String getDateTime(Date date, Time time) {
-        return date + " " + (time == null ? "" : time);
+    private String getDateTime(Date date, Time time, String defaultDateTime) {
+        return date == null || time == null
+                ? defaultDateTime
+                : date + " " + time;
     }
 
     private List<PromedPolyclinicVisitForm> mapVisits(List<ShortMedCase> visits) {
@@ -194,7 +199,8 @@ public class PromedExportServiceBean implements IPromedExportService {
             VocWorkPlaceType vwr = visit.getWorkPlaceType();
             VocServiceStream vss = visit.getServiceStream();
             PromedDoctor doc = mapDoctor(wf);
-            visitForm.startTime(getDateTime(visit.getDateStart(), visit.getTimeExecute()))
+            String startDateTime = getDateTime(visit.getDateStart(), visit.getTimeExecute(), null);
+            visitForm.startTime(startDateTime)
                     .internalId(String.valueOf(visit.getId()))
                     .diagnosis(mapDiagnosis(getPrioryDiagnosis(visit.getDiagnoses()), visit.getId()))
                     .doctor(doc)
@@ -205,21 +211,21 @@ public class PromedExportServiceBean implements IPromedExportService {
                     .ishodCode(visit.getVisitResult() == null ? null : visit.getVisitResult().getCodefpl())
                     .medicalCareKindCode(mapMedicalCare(wf))
                     .promedCode(visit.getPromedCode())
-                    .services(mapServices(visit.getId(), doc))
+                    .services(mapServices(visit.getId(), doc, startDateTime))
             ;
             visitForms.add(visitForm.build());
         }
         return visitForms;
     }
 
-    private List<PromedMedService> mapServices(long visitId, PromedDoctor visitDoctor) {
+    private List<PromedMedService> mapServices(long visitId, PromedDoctor visitDoctor, String defaultDateStart) {
         List<ServiceMedCase> serviceList = manager.createQuery("from ServiceMedCase where parent_id=:visitId")
                 .setParameter("visitId", visitId).getResultList();
         List<PromedMedService> promedMedServices = new ArrayList<>();
         for (ServiceMedCase ms : serviceList) {
             PromedMedService pms = new PromedMedService();
             pms.setAmount(ms.getMedServiceAmount() == null ? 1 : ms.getMedServiceAmount());
-            pms.setFinishTime(getDateTime(ms.getDateStart(), ms.getTimeExecute()));
+            pms.setFinishTime(getDateTime(ms.getDateStart(), ms.getTimeExecute(), defaultDateStart));
             pms.setMedserviceCode(ms.getMedService().getCode());
             pms.setStartTime(pms.getFinishTime());
             pms.setDoctor(ms.getWorkFunctionExecute() == null ? visitDoctor : mapDoctor(ms.getWorkFunctionExecute()));
@@ -307,10 +313,4 @@ public class PromedExportServiceBean implements IPromedExportService {
         }
 
     }
-
-    @PersistenceContext
-    private EntityManager manager;
-
-    private @EJB
-    IWebClientService webService;
 }
