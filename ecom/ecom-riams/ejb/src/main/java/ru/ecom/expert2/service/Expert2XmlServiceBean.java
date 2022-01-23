@@ -338,7 +338,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 add(pat, "NPOLIS", entry.getMedPolicyNumber());
                 add(pat, "ST_OKATO", "12000");
             } else {
-                add(pat, "NPOLIS", entry.getCommonNumber());
+                add(pat, "ENP", entry.getCommonNumber());
             }
 
             if (isNotNull(entry.getInsuranceCompanyCode())) {
@@ -625,6 +625,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(sl, "TARIF", currentEntry.getCost());
                     add(sl, "SUM_M", currentEntry.getCost());
                 }
+                addIfNotNull(sl, "WEI", currentEntry.getWeigth()); //масса тела (кг)
                 if (isNotEmpty(currentEntry.getDrugEntries())) {
                     addDrug(sl, currentEntry.getDrugEntries());
                 }
@@ -809,12 +810,15 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         return usl;
     }
 
+    //TODO непонятно как правильно
     private void addUslDoctor(Element usl, String prvs, String doctorSnils) {
-        Element uslDoctor = new Element("MR_USL_N");
+        add(usl, "PRVS", prvs);
+        add(usl, "CODE_MD", doctorSnils);
+       /* Element uslDoctor = new Element("MR_USL_N");
         add(uslDoctor, "MR_N", "1"); //1 услуга = 1 доктор
         add(uslDoctor, "PRVS", prvs);
         add(uslDoctor, "CODE_MD", doctorSnils);
-        usl.addContent(uslDoctor);
+        usl.addContent(uslDoctor);*/
     }
 
     /**
@@ -834,7 +838,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
      */
     private void makeHTitle(Element root, Date documentDate, String filename, int count, String billNumber, Date billDate, BigDecimal totalSum, String lpu, String dispType) {
         Element zglv = new Element("ZGLV");
-        add(zglv, "VERSION", "3.1");
+        add(zglv, "VERSION", "3.2");
         add(zglv, "DATA", dateToString(documentDate));
         add(zglv, "FILENAME", filename);
         add(zglv, "SD_Z", count + "");
