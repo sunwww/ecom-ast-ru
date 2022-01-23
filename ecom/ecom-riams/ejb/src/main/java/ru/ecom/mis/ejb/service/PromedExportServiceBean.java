@@ -122,7 +122,6 @@ public class PromedExportServiceBean implements IPromedExportService {
                 } else {
                     return ret.getValue().toString();
                 }
-
             }
         }
 
@@ -153,26 +152,17 @@ public class PromedExportServiceBean implements IPromedExportService {
             tap.directLpuCode(findDirectLpu(allVisits));
 
             ShortMedCase lastVisit = allVisits.get(allVisits.size() - 1);
+            List<PromedPolyclinicVisitForm> visitForms = mapVisits(allVisits);
             if (lastVisit != null && lastVisit.getVisitResult() != null) {
                 tap.tapResult(lastVisit.getVisitResult().getOmcCode());
-                PromedDiagnosis lastDiagnosis;
-                if (Boolean.TRUE.equals(lastVisit.getWorkFunctionExecute().getWorkFunction().getIsNoDiagnosis())) {
-                    //диагностика - диагноз Z
-                    lastDiagnosis = PromedDiagnosis.builder()
-                            .promedId("11052")
-                            .mkbCode("Z34.9").build();
-                } else {
-                    lastDiagnosis = mapDiagnosis(getPrioryDiagnosis(lastVisit.getDiagnoses()), polyclinicCaseId);
-                }
-                tap.diagnosis(lastDiagnosis);
+                tap.diagnosis(visitForms.get(visitForms.size() - 1).getDiagnosis());
             }
-            tap.visits(mapVisits(allVisits));
+            tap.visits(visitForms);
             return tap.build();
         } catch (Exception e) {
             LOG.error("Ошибка создания ДТО:" + e.getMessage(), e);
             return null;
         }
-
     }
 
     private String findDirectLpu(List<ShortMedCase> visits) {
@@ -200,9 +190,19 @@ public class PromedExportServiceBean implements IPromedExportService {
             VocServiceStream vss = visit.getServiceStream();
             PromedDoctor doc = mapDoctor(wf);
             String startDateTime = getDateTime(visit.getDateStart(), visit.getTimeExecute(), null);
+            PromedDiagnosis diagnosis;
+            if (Boolean.TRUE.equals(visit.getWorkFunctionExecute().getWorkFunction().getIsNoDiagnosis())) {
+                //диагностика - диагноз Z
+                diagnosis = PromedDiagnosis.builder()
+                        .promedId("11052")
+                        .mkbCode("Z34.9").build();
+            } else {
+                diagnosis = mapDiagnosis(getPrioryDiagnosis(visit.getDiagnoses()), visit.getId());
+            }
+
             visitForm.startTime(startDateTime)
                     .internalId(String.valueOf(visit.getId()))
-                    .diagnosis(mapDiagnosis(getPrioryDiagnosis(visit.getDiagnoses()), visit.getId()))
+                    .diagnosis(diagnosis)
                     .doctor(doc)
                     .workPlaceCode(vwr == null ? null : vwr.getOmcCode())
                     .diary(getDiaryInVisit(visit.getId()))
