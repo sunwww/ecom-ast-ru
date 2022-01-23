@@ -45,4 +45,11 @@ public interface IExpert2Service {
      * @return
      */
     List<E2Entry> getEntriesByListEntryIdAndErrorCode(Long listEntryId, String defectCode);
+
+    /**
+     * Находим схему лечения по V033
+     * @param groupSchemaId
+     * @return
+     */
+    String loadDrugSchemaByDrugGroupSchemaId(Long groupSchemaId);
 }

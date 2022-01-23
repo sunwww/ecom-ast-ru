@@ -72,7 +72,7 @@ public class Expert2AlkonaServiceBean implements IExpert2AlkonaService {
                     .setParameter("listEntryId", entryListId).setParameter("serviceStream", OMC_SERVICE_STREAM).getResultList();
 
         } else {
-            entries =expert2Service.getEntriesByListEntryIdAndErrorCode(entryListId, errorCode);
+            entries = expert2Service.getEntriesByListEntryIdAndErrorCode(entryListId, errorCode);
         }
         int i = 0;
         LOG.info("found " + entries.size() + " entries");

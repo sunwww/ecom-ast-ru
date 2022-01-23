@@ -130,6 +130,30 @@
 
         />
     </voc>
+    <voc id="vocE2FondV032BySchema" type="NativeVocService">
+        <NativeVocService
+                from="vocE2FondV032 voc"
+                nameId="voc.id"
+                order="voc.name, voc.finishDate desc"
+                names="voc.code||' '||voc.name"
+                queried="upper(voc.name) like upper(:query) or upper(voc.code) like upper(:query) "
+                queryAppend="(voc.finishDate is null or voc.finishDate>current_date)"
+                parent="voc.schema_id = :parent "
+        />
+    </voc>
+    <voc id="vocE2FondN020BySchema" type="NativeVocService">
+<!--        Справочник лекарственных средств, доступных для выбранной схемы лечения-->
+        <NativeVocService
+                from="VocE2FondV033 link "
+                nameId="voc.id"
+                order="voc.name, voc.finishDate desc"
+                names="voc.code||' '||voc.name"
+                join="inner join vocE2FondN020 voc on link.drug_id=voc.id"
+                queried="upper(voc.name) like upper(:query) or upper(voc.code) like upper(:query) "
+                queryAppend="(voc.finishDate is null or voc.finishDate>current_date)"
+                parent="link.groupschema_id = :parent "
+        />
+    </voc>
     <voc id="vocListEntry" type="NativeVocService">
         <NativeVocService
                 from="e2listentry voc"

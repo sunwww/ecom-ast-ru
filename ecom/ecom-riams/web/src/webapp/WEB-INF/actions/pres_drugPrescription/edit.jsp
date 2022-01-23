@@ -14,6 +14,7 @@
       <msh:hidden property="id" />
       <msh:hidden property="prescriptionList"/>
       <msh:hidden property="saveType" />
+      <msh:hidden property="drugCovidSchema" />
       <msh:panel colsWidth="3">
         <msh:row>
           <msh:autoComplete vocName="vocDrug" property="vocDrug" label="Лекарственный препарат" horizontalFill="true" fieldColSpan="3" size="50" />

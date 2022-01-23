@@ -41,7 +41,13 @@ public class DrugPrescriptionForm extends PrescriptionForm{
 	private String descriptionInfo;
 	private String planEndDate;
 	private String planEndTime;
+	private Long drugCovidSchema;
 
+	@Persist
+	@Comment("Схема лечения при назначении лекарств covid-19")
+	public Long getDrugCovidSchema() {
+		return drugCovidSchema;
+	}
 
 	/** Плановая дата окончания */
 	@Comment("Плановая дата окончания")

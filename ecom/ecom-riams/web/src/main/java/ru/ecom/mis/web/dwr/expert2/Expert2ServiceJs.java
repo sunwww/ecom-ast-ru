@@ -27,6 +27,10 @@ import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
 public class Expert2ServiceJs {
     private static final Logger LOG = Logger.getLogger(Expert2ServiceJs.class);
 
+    public String loadDrugSchemaByDrugGroupSchemaId(Long groupSchemaId, HttpServletRequest request) throws NamingException {
+        return Injection.find(request).getService(IExpert2Service.class).loadDrugSchemaByDrugGroupSchemaId(groupSchemaId);
+    }
+
     //выписки по заполнению в алькону
     public void exportHospLeaveToAlkona(Long entryListId, HttpServletRequest request) throws NamingException {
         Injection.find(request).getService(IExpert2AlkonaService.class).exportHospLeaveToAlkona(entryListId);
