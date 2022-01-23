@@ -309,6 +309,7 @@ public class PromedExportServiceBean implements IPromedExportService {
                     .promedId(diagnosis.getIdc10().getPromedCode())
                     .mkbCode(diagnosis.getIdc10().getCode())
                     .acuity(diagnosis.getAcuity() == null ? null : diagnosis.getAcuity().getCode())
+                    .diagReasonMkb(diagnosis.getIdc10Reason() == null ? null : diagnosis.getIdc10Reason().getCode())
                     .build();
         }
 

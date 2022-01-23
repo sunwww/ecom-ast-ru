@@ -18,4 +18,9 @@ public class PromedDiagnosis extends BasePromedForm {
 
 //    @Deprecated //TODO не использовать
     private String promedId;
+
+    /**
+     * Внешняя причина
+     */
+    private String diagReasonMkb;
 }
