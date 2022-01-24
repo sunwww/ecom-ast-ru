@@ -82,7 +82,6 @@
 , coalesce(p.cancelreasontext,'') as cancelText
 ,case when canceldate is not null then 'color:red;' else null end as styleCancel
  from Prescription p
-
  left join PrescriptionList pl on pl.id=p.prescriptionList_id
  left join medservice ms on ms.id=p.medService_id
  left join vocservicetype as vms on vms.id=ms.serviceType_id
@@ -108,7 +107,6 @@
 <msh:section>
     <ecom:webQuery name="pres" nativeSql="select
     	p.id as pid,pl.id as plid,ms.name as drname
-
  ,p.planStartDate,p.planEndDate,p.materialId,vpt.name as vptname
  ,ml.name as mlname,coalesce(vpcr.name,'')||' '||coalesce(p.cancelReasonText,'') as fldCancel
 , case when vpcr.code='another_lab' then 'color:blue' else case when p.canceldate is not null then 'color:red;' else null end end as stylCancel
@@ -154,7 +152,6 @@ left join Patient as wp on wp.id=w.person_id
 ,to_char(p.planStartDate,'dd.MM.yyyy')
 ,cast (wct.timefrom as varchar(5))
 ,wf.groupname
-
  from Prescription p
  left join PrescriptionList pl on pl.id=p.prescriptionList_id
  left join workfunction wf on wf.id=p.prescriptcabinet_id
