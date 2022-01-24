@@ -8,6 +8,6 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 public interface IEntityForm {
     /** Порядковый номер */
 	@Comment("Порядковый номер")
-	public Integer getSn();
-	public void setSn(Integer aSn);
+	Integer getSn();
+	void setSn(Integer aSn);
 }

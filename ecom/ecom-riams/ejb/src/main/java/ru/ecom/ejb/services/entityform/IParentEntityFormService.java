@@ -13,9 +13,9 @@ public interface IParentEntityFormService extends IFormService {
      * @param aParentId Идентификатор родителя
      * @return форма
      */
-    public <T extends IEntityForm> T prepareToCreate(Class<T> aFormClass, Object aParentId) throws EntityFormException;
+    <T extends IEntityForm> T prepareToCreate(Class<T> aFormClass, Object aParentId) throws EntityFormException;
 
-    public IEntityForm prepareToCreate(String aFormClassName, Object aParentId) throws EntityFormException;
+    IEntityForm prepareToCreate(String aFormClassName, Object aParentId) throws EntityFormException;
 
     /**
      * Список всех объектов
@@ -23,8 +23,8 @@ public interface IParentEntityFormService extends IFormService {
      * @param type
      * @param aParentId Идентификатор родителя
      */
-    public <E extends IEntityForm> Collection<E> listAll(Class<E> type, Object aParentId) throws EntityFormException;
+    <E extends IEntityForm> Collection<E> listAll(Class<E> type, Object aParentId) throws EntityFormException;
 
-    public Collection<IEntityForm> listAll(String aClassName, Object aParentId) throws EntityFormException;
+    Collection<IEntityForm> listAll(String aClassName, Object aParentId) throws EntityFormException;
 
 }
