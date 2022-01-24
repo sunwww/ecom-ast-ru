@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -31,7 +31,6 @@
           <msh:textField property="username" label="Пользователь" viewOnlyField="true" />
         </msh:row>
         <msh:submitCancelButtonsRow colSpan="4" />
-        <input type="button" onclick="saveGoNext()" value="test_create">
       </msh:panel>
     </msh:form>
   </tiles:put>
@@ -46,20 +45,6 @@
       </msh:ifFormTypeIsView>
     </msh:sideMenu>
     <script type="text/javascript">
-      function saveGoNext() {
-          var form = $('mainForm');
-          alert ("FFF="+form.serialize());
-          var myAjax = new Ajax.Request(
-              'entitySaveGoView-pres_prescriptionFulfilment.do',
-               {
-               method:"post",
-               parameters:form.serialize(),
-               onComplete:showResponse
-              }
-          );
-          ///alert (myAjax);
-      }
-      function showResponse() {alert(123);}
     </script>
 
   </tiles:put>
