@@ -105,7 +105,7 @@
 
     <tiles:put name="javascript" type="string">
 
-        <script type="text/javascript" src="./dwr/interface/PharmacyService.js"></script>
+        <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
         <script type="text/javascript">
             function cancelService() {
                 var reason = '' + prompt('Введите причину отмены');
@@ -115,7 +115,7 @@
                             alert(a);
                         }
                     });
-                } else{
+                } else {
                     alert("Необходимо указать причину аннулирования!");
                 }
             }

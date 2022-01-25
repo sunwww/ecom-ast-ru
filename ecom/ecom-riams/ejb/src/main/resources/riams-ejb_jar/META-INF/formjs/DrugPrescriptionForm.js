@@ -9,7 +9,7 @@ function onSave(aForm, aEntity, aCtx) {
 }
 
 function onPreDelete(id, ctx) {
-    ctx.manager.createNativeQuery("delete from prescriptionfulfilment where prescription_id='" + id + "'").executeUpdate();
+    ctx.manager.createNativeQuery("delete from prescriptionfulfilment where prescription_id=" + id).executeUpdate();
 }
 
 /**
