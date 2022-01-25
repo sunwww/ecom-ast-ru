@@ -80,6 +80,8 @@
     <tiles:put name="side" type="string">
         <msh:ifFormTypeIsView formName="pres_covidDrugShortPrescriptionForm">
             <msh:sideMenu title="Лекарственное назначение">
+                <msh:sideLink roles="/Policy/Mis/Prescription/DrugPrescription/Edit" params="id"
+                              action="/javascript:cancelService()" name="Отменить" key="ALT+2"/>
             </msh:sideMenu>
 
             <msh:sideMenu title="Добавить">
@@ -105,7 +107,18 @@
 
         <script type="text/javascript" src="./dwr/interface/PharmacyService.js"></script>
         <script type="text/javascript">
-
+            function cancelService() {
+                var reason = '' + prompt('Введите причину отмены');
+                if (reason != 'null') {
+                    PrescriptionService.cancelPrescription($('id').value, reason, {
+                        callback: function (a) {
+                            alert(a);
+                        }
+                    });
+                } else{
+                    alert("Необходимо указать причину аннулирования!");
+                }
+            }
 
             function goBack() {
                 window.document.location.href = "entityParentView-pres_prescriptList.do?id=" + $('prescriptionList').value;
