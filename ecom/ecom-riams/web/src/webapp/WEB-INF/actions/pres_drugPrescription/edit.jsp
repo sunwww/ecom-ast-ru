@@ -77,7 +77,8 @@
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="pres_drugPrescriptionForm">
       <msh:sideMenu title="Лекарственное назначение">
-        <msh:sideLink roles="/Policy/Mis/Prescription/DrugPrescription/Edit" params="id" action="/javascript:cancelPrescription()" name="Отменить" key="ALT+2"/>
+        <msh:sideLink roles="/Policy/Mis/Prescription/DrugPrescription/Edit" params="id"
+                      action="/javascript:cancelService()" name="Отменить" key="ALT+2"/>
       </msh:sideMenu>
 
       <msh:sideMenu title="Добавить">
