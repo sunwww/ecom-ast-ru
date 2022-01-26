@@ -81,7 +81,6 @@ public class CovidDrugPrescriptionForm extends DrugPrescriptionForm {
 
     @Comment("Единица частоты использования")
     @Persist
-    @Required
     public Long getFrequencyUnit() {
         return frequencyUnit;
     }
