@@ -107,6 +107,17 @@
 
         <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
         <script type="text/javascript">
+            eventutil.addEventListener($('planStartDate'), 'blur', function () {
+                if ($('planStartTime').value && $('planStartDate').value) {
+                    changeTime($('planStartDate').value, $('planStartTime').value, 60)
+                }
+            });
+            eventutil.addEventListener($('planStartTime'), 'blur', function () {
+                if ($('planStartTime').value && $('planStartDate').value) {
+                    changeTime($('planStartDate').value, $('planStartTime').value, 60)
+                }
+            });
+
             function cancelService() {
                 var reason = '' + prompt('Введите причину отмены');
                 if (reason != 'null') {
@@ -120,9 +131,22 @@
                 }
             }
 
-            function goBack() {
-                window.document.location.href = "entityParentView-pres_prescriptList.do?id=" + $('prescriptionList').value;
+            //добавить минут к полю
+            function changeTime(fldDate, fldTime, minutes) {
+                var l = fldDate;
+                l = l.substr(6, 4) + '-' + l.substr(3, 2) + '-' + l.substr(0, 2) + " " + fldTime + ":00";
+                var currentDate = new Date();
+                currentDate.setTime(Date.parse(l));
+
+                currentDate.setMinutes(currentDate.getMinutes() + minutes);
+                var newTextDay = currentDate.getDate() < 10 ? '0' + currentDate.getDate() : currentDate.getDate();
+                var newTextMonth = currentDate.getMonth() + 1;
+                newTextMonth = newTextMonth < 10 ? '0' + newTextMonth : newTextMonth;
+                var newTextYear = currentDate.getFullYear();
+                $('fulfilmentForm.fulfilDate').value = newTextDay + '.' + newTextMonth + '.' + newTextYear;
+                $('fulfilmentForm.fulfilTime').value = (currentDate.getHours() < 10 ? "0" + currentDate.getHours() : currentDate.getHours()) + ":" + currentDate.getMinutes();
             }
+
         </script>
     </tiles:put>
 </tiles:insert>
