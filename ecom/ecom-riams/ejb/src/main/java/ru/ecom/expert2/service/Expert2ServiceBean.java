@@ -561,7 +561,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
             return newEntity;
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error(e.getMessage(), e);
             return null;
         }
 
@@ -765,8 +765,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
             return true;
         } catch (Exception e) {
-            LOG.error("ERROR_PARSING_JSON:" + jsonData);
-            LOG.error(e);
+            LOG.error("ERROR_PARSING_JSON:" + jsonData + ">" + e.getMessage(), e);
             return false;
         }
     }
@@ -1647,7 +1646,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     LOG.info("create new voc(" + clazz.getName() + ").set code = " + code);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    LOG.error(e);
+                    LOG.error(e.getMessage(), e);
                 }
             }
             manager.persist(ret);
@@ -2261,7 +2260,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             List<BigInteger> results;
             String key = mainDiagnosis.hashCode() + "#SQL#" + sql.toString().hashCode();
             if (!ksgMap.containsKey(key)) {
-                //     LOG.info(key+" not found new sql ="+sql);
+                LOG.info(key + " not found new sql =" + sql);
                 LocalDate date = entry.getFinishDate().toLocalDate();
                 results = manager.createNativeQuery(sql.toString()).setParameter("year", date.getYear()).getResultList();
                 ksgMap.put(key, results);
@@ -2376,7 +2375,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
         } catch (Exception e) {
             e.printStackTrace();
-            LOG.error(e);
+            LOG.error(e.getMessage(), e);
         }
         return null;
     }
@@ -2583,16 +2582,27 @@ public class Expert2ServiceBean implements IExpert2Service {
                     } else {
                         String costFormula;
                         BigDecimal totalCoefficient;
+                        BigDecimal cost;
                         if (ksg.getDoctorCost() == null) {
                             costFormula = "Тариф=" + tarif + ", КЗ=" + kz + ", КУксг=" + kuksg + ", КУСмо=" + cusmo + ", КМ=" + km + ", КСЛП=" + kslp + ", Кпр=" + kpr;
-                            totalCoefficient = kz.multiply(kuksg).multiply(cusmo).multiply(kslp).multiply(km).multiply(kpr).setScale(12, RoundingMode.HALF_UP); //Округляем до 2х знаков
+                            totalCoefficient = ((kz.multiply(kuksg).multiply(cusmo)).add(kslp)).multiply(km).multiply(kpr).setScale(12, RoundingMode.HALF_UP); //Округляем до 2х знаков
+//                            totalCoefficient = kz.multiply(kuksg).multiply(cusmo).multiply(kslp).multiply(km).multiply(kpr).setScale(12, RoundingMode.HALF_UP); //Округляем до 2х знаков
+                            cost = tarif.multiply(totalCoefficient).setScale(2, RoundingMode.HALF_UP);
                         } else {
+
                             costFormula = "Тариф=" + tarif + ", КЗ=" + kz + ", Кзп=" + ksg.getDoctorCost() + ", КУксг=" + kuksg + ", КУСмо=" + cusmo + ", КМ=" + km + ", КСЛП=" + kslp + ", Кпр=" + kpr;
-                            totalCoefficient = kz.multiply((BigDecimal.ONE.subtract(ksg.getDoctorCost()))
-                                    .add(ksg.getDoctorCost().multiply(kuksg).multiply(cusmo).multiply(kslp).multiply(km).multiply(kpr))).setScale(12, RoundingMode.HALF_UP); //Округляем до 2х знаков
+                            cost = (tarif.multiply(kz)
+                                    .multiply((BigDecimal.ONE.subtract(ksg.getDoctorCost()))
+                                            .add(ksg.getDoctorCost().multiply(kuksg).multiply(cusmo)))
+                                    .add(tarif.multiply(km).multiply(kpr).multiply(kslp)))
+                                    .multiply(km).multiply(kpr).setScale(12, RoundingMode.HALF_UP); //Округляем до 2х знаков
+//                            totalCoefficient = kz.multiply((BigDecimal.ONE.subtract(ksg.getDoctorCost()))
+//                                    .add(ksg.getDoctorCost().multiply(kuksg).multiply(cusmo).multiply(kslp).multiply(km).multiply(kpr))).setScale(12, RoundingMode.HALF_UP); //Округляем до 2х знаков
+//                            cost = totalCoefficient.setScale(2, RoundingMode.HALF_UP);;
+                            totalCoefficient = BigDecimal.ONE;
                         }
                         entry.setCostFormulaString(costFormula);
-                        BigDecimal cost = tarif.multiply(totalCoefficient).setScale(2, RoundingMode.HALF_UP);
+
                         entry.setBaseTarif(tarif);
                         entry.setTotalCoefficient(totalCoefficient);
                         entry.setCost(cost);
@@ -2600,7 +2610,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
             }
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            LOG.error("Ошибка расчет цены стационарного случая c ИД " + entry.getId() + ": " + e.getMessage(), e);
         }
     }
 
@@ -2663,10 +2673,10 @@ public class Expert2ServiceBean implements IExpert2Service {
         List<String> codes = new ArrayList<>(); //Тут все сложности
         long ageDays = (AgeUtil.calculateDays(entry.getBirthDate(), entry.getStartDate()) + 1);
         if (ageDays > 27394) { //Если возраст более 75 лет
-            codes.add("1");
+            codes.add("3");
         }
         if (isNotLogicalNull(entry.getHotelServices())) {
-            codes.add("3");
+            codes.add("1");
         }
         Date actualDate = entry.getFinishDate();
         //6
@@ -2674,7 +2684,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         List<String> anotherMkb = findDiagnosisCodes(list, null, "3");
         for (String ds : anotherMkb) {
             if (ds.startsWith("E10") || ds.startsWith("E11")) {
-                codes.add("9");
+                codes.add("5");
                 break;
             }
         }
@@ -2700,17 +2710,17 @@ public class Expert2ServiceBean implements IExpert2Service {
                     .setParameter("actualDate", actualDate)
                     .getResultList().isEmpty()
             ) {
-                codes.add("6");
+                codes.add("8"); //TODO завязаться на перечень операций
             }
         }
 
-        E2CoefficientPatientDifficultyEntryLink link;
+
         //calc 10
         ArrayList<E2CoefficientPatientDifficultyEntryLink> difficultyEntryLinks = new ArrayList<>();
-        long sluchDuration = entry.getBedDays() != null ? entry.getBedDays() : 1;
+       /* long sluchDuration = entry.getBedDays() != null ? entry.getBedDays() : 1;
         if (sluchDuration > 70L) {
             codes.add("10");
-        }
+        }*/
       /*  if (entry.getFactorList() != null) { //с 2022 года нет
             for (VocE2EntryFactor factor : entry.getFactorList()) {
                 String factorCode = factor.getCode();
@@ -2727,7 +2737,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     difficultyHashMap.put(code, getActualVocByCode(VocE2CoefficientPatientDifficulty.class, code));
                 }
                 VocE2CoefficientPatientDifficulty difficulty = difficultyHashMap.get(code);
-                link = new E2CoefficientPatientDifficultyEntryLink();
+                E2CoefficientPatientDifficultyEntryLink link = new E2CoefficientPatientDifficultyEntryLink();
                 link.setEntry(entry);
                 link.setDifficulty(difficulty);
                 link.setValue(difficulty.getValue());
@@ -2751,34 +2761,34 @@ public class Expert2ServiceBean implements IExpert2Service {
             return one;
         }
         List<E2CoefficientPatientDifficultyEntryLink> list = entry.getPatientDifficulty();
-        BigDecimal ret = BigDecimal.ONE;
+        BigDecimal ret = BigDecimal.ZERO;
         if (isNotEmpty(list)) { //Нет КСЛП - возвращаем 1.
-            if (list.size() == 1) { //Если один - возвращаем его.
-                ret = list.get(0).getValue();
-            } else {
-                boolean first = true;
+//            if (list.size() == 1) { //Если один - возвращаем его.
+//                ret = list.get(0).getValue();
+//            } else {
+//                boolean first = true;
 //                BigDecimal tooLongCoeff = BigDecimal.ONE; //коэффициент сверхдлительности
-                for (E2CoefficientPatientDifficultyEntryLink link : list) { //Если несколько, возвращаем К1+(К2-1)+(Кн-1)
+            for (E2CoefficientPatientDifficultyEntryLink link : list) { //Если несколько, возвращаем К1+(К2-1)+(Кн-1)
 //                    if ("9".equals(link.getDifficulty().getCode())) {
 //                        tooLongCoeff = link.getValue();
 //                    } else {
-                    if (first) {
-                        ret = link.getValue();
-                        first = false;
-                    } else {
-                        ret = ret.add(link.getValue()).subtract(one);
-                    }
+//                    if (first) {
+//                        ret = link.getValue();
+//                        first = false;
+//                    } else {
+                ret = ret.add(link.getValue());//.subtract(one);
 //                    }
-                }
+//                    }
+//                }
 
-                if (ret.compareTo(MAX_KSLP_COEFF) > 0) { //если коэфф без длит > 1.8 - коэфф = 1.8+коэф по сверхдлит. операции.
-                    ret = MAX_KSLP_COEFF;//.add(tooLongCoeff).subtract(one);
+//                if (ret.compareTo(MAX_KSLP_COEFF) > 0) { //если коэфф без длит > 1.8 - коэфф = 1.8+коэф по сверхдлит. операции.
+//                    ret = MAX_KSLP_COEFF;//.add(tooLongCoeff).subtract(one);
 //                } else {
 //                    ret = ret.add(tooLongCoeff).subtract(one);
-                }
+//                }
             }
         }
-        if (ret == null) LOG.info("finish calc difficult.id=" + entry.getId() + ", value is NULL!! = ");
+//        if (ret == null) LOG.info("finish calc difficult.id=" + entry.getId() + ", value is NULL!! = ");
         return ret;
     }
 
@@ -2804,7 +2814,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             BigDecimal tariff = baseTariff.getValue();
             return tariff.multiply(coef);
         } catch (Exception e) {
-            LOG.error(e);
+            LOG.error(e.getMessage(), e);
             return BigDecimal.ZERO;
         }
     }
@@ -4019,7 +4029,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 }
                 LOG.info((policyFound ? "" : "NOT ") + "found actual policy " + entry.getLastname());
             } catch (Exception e) {
-                LOG.error(e.getMessage());
+                LOG.error(e.getMessage(), e);
             }
         }
 

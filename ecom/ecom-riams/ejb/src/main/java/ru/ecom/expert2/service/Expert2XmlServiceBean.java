@@ -625,7 +625,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(sl, "TARIF", currentEntry.getCost());
                     add(sl, "SUM_M", currentEntry.getCost());
                 }
-                addIfNotNull(sl, "WEI", currentEntry.getWeigth()); //масса тела (кг)
+                if (currentEntry.getMainMkb() != null && currentEntry.getMainMkb().startsWith("U07")) {
+                    addIfNotNull(sl, "WEI", currentEntry.getWeigth()); //масса тела (кг)
+                }
                 if (isNotEmpty(currentEntry.getDrugEntries())) {
                     addDrug(sl, currentEntry.getDrugEntries());
                 }
@@ -836,9 +838,12 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     /**
      * Создаем заголовок для H файла (информация о мед. услугах)
      */
-    private void makeHTitle(Element root, Date documentDate, String filename, int count, String billNumber, Date billDate, BigDecimal totalSum, String lpu, String dispType) {
+    private void makeHTitle(Element root, Date documentDate, String filename, int count, String billNumber
+            , Date billDate, BigDecimal totalSum, String lpu, String dispType
+            , String fileType) {
+        String version = isOneOf(fileType, "C", "T") ? "3.1" : "3.2";//долбанные уроды со своей логикой
         Element zglv = new Element("ZGLV");
-        add(zglv, "VERSION", "3.2");
+        add(zglv, "VERSION", version);
         add(zglv, "DATA", dateToString(documentDate));
         add(zglv, "FILENAME", filename);
         add(zglv, "SD_Z", count + "");
@@ -889,6 +894,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     /**
      * Создаем MP файл с данными по стационару/поликлинике
      */
+    @Override
     public String makeMPFIle(Long entryListId, String type, String billNumber, Date billDate, Long entryId
             , Boolean calcAllListEntry, long monitorId, String version, String fileType) {
         LOG.info("Формирование файла версии " + version);
@@ -896,6 +902,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         try {
             if (isCheckIsRunning) {
                 LOG.warn("Формирование чего-то уже запущено, выходим_ALREADY_RAN");
+                return "Олег, нельзя запускать больше одной выгрузки одновременно!";
             }
             Date periodDate;
             isCheckIsRunning = true;
@@ -1141,7 +1148,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             }
             LOG.info("ok, we made all, let's make files");
             monitor.setText("Формирование файла завершено, сохраняем архив");
-            makeHTitle(hRoot, periodDate, "H" + fileName, cnt, billNumber, billDate, totalSum, regNumber, dispType);
+            makeHTitle(hRoot, periodDate, "H" + fileName, cnt, billNumber, billDate, totalSum, regNumber, dispType, fileType);
             E2Bill bill = expertService.getBillEntryByDateAndNumber(billNumber, billDate, null);
             if (bill != null) {
                 E2Bill savedBill = manager.find(E2Bill.class, bill.getId());
@@ -1174,6 +1181,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         } catch (Exception err) {
             monitor.error("Произошла ошибка: " + err.getMessage(), err);
             LOG.error("ERR = ", err);
+            isCheckIsRunning = false;
             return "ERR";
         }
     }
