@@ -80,6 +80,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     /**
      * Экспорт запроса в центральный сегмент
      */
+    @Override
     public String exportToCentralSegment(Long listEntryId, String historyNumbers) {
         StringBuilder sqlAdd = new StringBuilder();
         if (isNullOrEmpty(historyNumbers)) {
@@ -992,6 +993,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 isDisp = true;
                 exportDispServiceNoDate = "1".equals(getExpertConfigValue("EXPORT_DISP_SERVICE_NO_DATE", "0"));
             }
+            boolean dontSendDefets = "1".equals(getExpertConfigValue("DONT_EXPORT_DEFECTS", "0"));
             String sql;
             if (entryId == null) { //формируем файл по заполнению
                 sql = "select " + selectSqlAdd + " from E2Entry e" +
@@ -1000,7 +1002,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         "  e.billNumber=:billNumber and e.billDate=:billDate " +
                         " and coalesce(e.isDeleted, false) = false" +
                         " and e.serviceStream!='COMPLEXCASE'" +
-                        " and coalesce(child.doNotSend, false) = false group by " + groupSqlAdd;
+                        " and coalesce(child.doNotSend, false) = false" + (dontSendDefets ? " and coalesce(e.isDefect, false) = false" : "") + " group by " + groupSqlAdd;
                 LOG.info("sql=" + sql);
                 records = manager.createNativeQuery(sql)
                         .setParameter("billNumber", billNumber).setParameter("billDate", billDate).getResultList();
@@ -1257,7 +1259,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     /**
      * Создаем файл из документа
      */
-    public void createXmlFile(Element element, String filename) {
+    private void createXmlFile(Element element, String filename) {
         if (element == null) {
             LOG.error("no data for create file " + filename);
             return;
