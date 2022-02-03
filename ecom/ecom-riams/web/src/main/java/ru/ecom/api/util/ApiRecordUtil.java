@@ -32,9 +32,7 @@ public class ApiRecordUtil {
     }
 
     public static JSONObject getErrorJsonObj(String errorText, String errorCode) {
-        JSONObject err = createJson(null, null, errorCode, errorText);
-        LOG.error("ERROR_JSON " + err);
-        return err;
+        return createJson(null, null, errorCode, errorText);
     }
 
     /**
