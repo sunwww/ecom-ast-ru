@@ -2591,11 +2591,11 @@ public class Expert2ServiceBean implements IExpert2Service {
                         } else {
 
                             costFormula = "Тариф=" + tarif + ", КЗ=" + kz + ", Кзп=" + ksg.getDoctorCost() + ", КУксг=" + kuksg + ", КУСмо=" + cusmo + ", КМ=" + km + ", КСЛП=" + kslp + ", Кпр=" + kpr;
-                            cost = (tarif.multiply(kz)
+                            cost = ((tarif.multiply(kz)
                                     .multiply((BigDecimal.ONE.subtract(ksg.getDoctorCost()))
                                             .add(ksg.getDoctorCost().multiply(kuksg).multiply(cusmo)))
                                     .add(tarif.multiply(km).multiply(kpr).multiply(kslp)))
-                                    .multiply(km).multiply(kpr).setScale(12, RoundingMode.HALF_UP); //Округляем до 2х знаков
+                                    .multiply(km).multiply(kpr)).setScale(2, RoundingMode.HALF_UP); //Округляем до 2х знаков
 //                            totalCoefficient = kz.multiply((BigDecimal.ONE.subtract(ksg.getDoctorCost()))
 //                                    .add(ksg.getDoctorCost().multiply(kuksg).multiply(cusmo).multiply(kslp).multiply(km).multiply(kpr))).setScale(12, RoundingMode.HALF_UP); //Округляем до 2х знаков
 //                            cost = totalCoefficient.setScale(2, RoundingMode.HALF_UP);;
