@@ -49,14 +49,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.net.URLEncoder;
+import java.sql.Date;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Objects.nonNull;
@@ -83,18 +81,20 @@ public class Expert2ServiceBean implements IExpert2Service {
     private static final String SERVICETYPE = "SERVICE";
     private static final String COMPLEXSERVICESTREAM = "COMPLEXCASE";
     private static final String OMC_SERVICE_STREAM = "OBLIGATORYINSURANCE";
-    private static final ArrayList<String> CHILD_BIRTH_MKB = new ArrayList<>();
     private static final BigDecimal MAX_KSLP_COEFF = BigDecimal.valueOf(1.8); //максимально возможный коэффициент КСЛП
-    private static final String[] politravmaMainList = {"S02.7", "S12.7", "S22.1", "S27.7", "S29.7", "S31.7", "S32.7", "S36.7", "S38.1", "S39.6", "S39.7", "S37.7", "S42.7", "S49.7", "T01.1", "T01.8", "T01.9", "T02.0", "T02.1", "T02.2", "T02.3", "T02.4", "T02.5", "T02.6", "T02.7", "T02.8", "T02.9", "T04.0", "T04.1", "T04.2", "T04.3", "T04.4", "T04.7", "T04.8", "T04.9", "T05.0", "T05.1", "T05.2", "T05.3", "T05.4", "T05.5", "T05.6", "T05.8", "T05.9", "T06.0", "T06.1", "T06.2", "T06.3", "T06.4", "T06.5", "T06.8", "T07"};
-    private static final String[] politravmaSeconaryList = {"J94.2", "J94.8", "J94.9", "J93", "J93.0", "J93.1", "J93.8", "J93.9", "J96.0", "N17", "T79.4", "R57.1", "R57.8"};
-    private static final String[] ksgExceptions = {"st02.008#st02.010", "st02.008#st02.011", "st02.009#st02.010", "st04.002#st14.001", "st04.002#st14.002", "st21.007#st21.001"
-            , "st34.001#st34.002", "st26.001#st34.002", "st30.003#st34.006", "st30.005#st09.001", "st31.017#st31.002"}; //терапевтическая#Хирургическая
+    private static final List<String> CHILD_BIRTH_MKB = Arrays.asList("O14.1", "O34.2", "O36.3", "O36.4", "O42.2"); //Список диагнозов, с которыми разрешена подача обсервационного отделения менее 5 дней
+    private static final List<String> politravmaMainList = Arrays.asList("S02.7", "S12.7", "S22.1", "S27.7", "S29.7", "S31.7", "S32.7", "S36.7", "S38.1", "S39.6", "S39.7", "S37.7", "S42.7", "S49.7", "T01.1", "T01.8", "T01.9", "T02.0", "T02.1", "T02.2", "T02.3", "T02.4", "T02.5", "T02.6", "T02.7", "T02.8", "T02.9", "T04.0", "T04.1", "T04.2", "T04.3", "T04.4", "T04.7", "T04.8", "T04.9", "T05.0", "T05.1", "T05.2", "T05.3", "T05.4", "T05.5", "T05.6", "T05.8", "T05.9", "T06.0", "T06.1", "T06.2", "T06.3", "T06.4", "T06.5", "T06.8", "T07");
+    private static final List<String> politravmaSeconaryList = Arrays.asList("J94.2", "J94.8", "J94.9", "J93", "J93.0", "J93.1", "J93.8", "J93.9", "J96.0", "N17", "T79.4", "R57.1", "R57.8");
+    private static final List<String> ksgExceptions = Arrays.asList("st02.008#st02.010", "st02.008#st02.011", "st02.009#st02.010", "st04.002#st14.001", "st04.002#st14.002", "st21.007#st21.001"
+            , "st34.001#st34.002", "st26.001#st34.002", "st30.003#st34.006", "st30.005#st09.001", "st31.017#st31.002"); //терапевтическая#Хирургическая
+
+    private static final List<Long> serviceDepartments = Arrays.asList(224L, 416L); //визиты в этих департаментах подаем как услуги
     /**
      * Создаем список диагнозов из строки с диагнозами +устанавливаем основной диагноз
      * UPD 18-07-2018 Помечаем случай как раковый
      */ //делаем разово
 
-    private static final String[] covidMkbs = {"U07.1", "U07.2"};
+    private static final List<String> covidMkbs = Arrays.asList("U07.1", "U07.2");
     private static final HashMap<String, E2KsgCoefficientHistory> ksgCoefficientMap = new HashMap<>();
     private static final HashMap<String, Object> resultMap = new HashMap<>(); //результат госпитализации
     /**
@@ -104,22 +104,22 @@ public class Expert2ServiceBean implements IExpert2Service {
     /**
      * Нахождение КСГ с бОльшим коэффициентом трудозатрат для случая
      */
-    private static HashMap<String, List<BigInteger>> ksgMap = new HashMap<>();
+    private static Map<String, List<BigInteger>> ksgMap = new HashMap<>();
     private static boolean isBillCreating = false;
     private static boolean isCheckIsRunning = false;
     private final SimpleDateFormat SQLDATE = new SimpleDateFormat("yyyy-MM-dd");
     private final SimpleDateFormat MONTHYEARDATE = new SimpleDateFormat("yyyy-MM");
-    private final HashMap<String, Object> diagnosisMap = new HashMap<>();
+    private final Map<String, Object> diagnosisMap = new HashMap<>();
     private final Map<String, VocMedService> SERVICELIST = new HashMap<>();
-    private final HashMap<String, BigDecimal> hospitalCostMap = new HashMap<>();
+    private final Map<String, BigDecimal> hospitalCostMap = new HashMap<>();
     private boolean isConsultativePolyclinic = true;
     private boolean isNeedSplitDayTimeHosp = false;
-    private HashMap<String, VocE2EntrySubType> entrySubTypeHashMap = new HashMap<>();
-    private HashMap<String, BigDecimal> tariffMap = new HashMap<>();
+    private Map<String, VocE2EntrySubType> entrySubTypeHashMap = new HashMap<>();
+    private Map<String, BigDecimal> tariffMap = new HashMap<>();
 
-    private HashMap<String, BigDecimal> cusmoMap = new HashMap<>();
-    private HashMap<String, VocE2CoefficientPatientDifficulty> difficultyHashMap = new HashMap<>();
-    private HashMap<String, VocE2PolyclinicCoefficient> polyclinicCasePrice = new HashMap<>();
+    private Map<String, BigDecimal> cusmoMap = new HashMap<>();
+    private Map<String, VocE2CoefficientPatientDifficulty> difficultyHashMap = new HashMap<>();
+    private Map<String, VocE2PolyclinicCoefficient> polyclinicCasePrice = new HashMap<>();
     private @PersistenceContext
     EntityManager manager;
     private @EJB
@@ -192,7 +192,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         String searchSql = getFileAsSTring(resourceName)
                 .replace("##dateStart##", toSQlDateString(listEntry.getStartDate()))
                 .replace("##dateEnd##", toSQlDateString(listEntry.getFinishDate()))
-                .replace("##LPU_CODE##", getExpertConfigValue("LPU_REG_NUMBER", "300001"))
+                .replace("##LPU_CODE##", getExpertConfigValue("LPU_REG_NUMBER", "30001"))
                 + sqlHistory;
         LOG.info("SQL = " + searchSql);
 
@@ -345,7 +345,6 @@ public class Expert2ServiceBean implements IExpert2Service {
 
                     i = 0;
                     isMonitorCancel(monitor, "Приступаем к объединению случаев. START_UNION");
-                    fillChildBirthMkbs();
                     for (BigInteger hospId : hospitalIds) {
                         i++;
                         if (i % 100 == 0 && isMonitorCancel(monitor, "Идет объединение случаев: " + i)) return;
@@ -1788,10 +1787,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                     if (isCancerMkb(mkb, priority)) {
                         isCancer = true;
                     }
-                    for (String cv : covidMkbs) {
-                        if (mkb.equals(cv) && isLogicalNull(entry.getDopKritKSG())) {
-                            manager.persist(new E2EntryError(entry, "COVID_NO_CARD"));
-                        }
+                    if (covidMkbs.contains(mkb) && isLogicalNull(entry.getDopKritKSG())) {
+                        manager.persist(new E2EntryError(entry, "COVID_NO_CARD"));
                     }
                     boolean isClinical = false;
                     if (!diagnosisMap.containsKey("MKB_" + mkb)) {
@@ -2022,7 +2019,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 try {
                     injectDate = DateFormat.parseSqlDate(covid.getString("serviceDate"), "yyyy-MM-dd");
                 } catch (ParseException e) {
-                    LOG.warn("Не смог получить дату: "+covid.getString("serviceDate")+": "+e.getMessage());
+                    LOG.warn("Не смог получить дату: " + covid.getString("serviceDate") + ": " + e.getMessage());
                     injectDate = null;
                 }
                 de.setInjectDate(injectDate);
@@ -2099,22 +2096,19 @@ public class Expert2ServiceBean implements IExpert2Service {
     private VocKsg getPolitravmaKsg(List<String> mainDiagnosisList, List<String> otherDiagnosisList) {
         boolean foundMain = false, foundOther = false;
         for (String main : mainDiagnosisList) {
-            for (String d : politravmaMainList) {
-                if (main.equals(d)) {
-                    foundMain = true;
-                    break;
-                }
+            if (politravmaMainList.contains(main)) {
+                foundMain = true;
+                break;
             }
         }
 
         if (foundMain) { //Если нашли главный диагноз, ищем сопутствующий
             for (String other : otherDiagnosisList) {
-                for (String d : politravmaSeconaryList) {
-                    if (other.equals(d)) {
-                        foundOther = true;
-                        break;
-                    }
+                if (politravmaSeconaryList.contains(other)) {
+                    foundOther = true;
+                    break;
                 }
+
             }
 
         }
@@ -2402,12 +2396,7 @@ public class Expert2ServiceBean implements IExpert2Service {
      */
     private GrouperKSGPosition checkIsKsgException(GrouperKSGPosition surgicalKsgPosition, GrouperKSGPosition therapicalKsgPosition) {
         String key = therapicalKsgPosition.getKsgValue().getCode() + "#" + surgicalKsgPosition.getKsgValue().getCode();
-        for (String str : ksgExceptions) {
-            if (str.equals(key)) { //Если есть КСГ по услуге, подаем его
-                return surgicalKsgPosition;
-            }
-        }
-        return null;
+        return ksgExceptions.contains(key) ? surgicalKsgPosition : null; //Если есть КСГ по услуге, подаем его
     }
 
     /**
@@ -3066,15 +3055,6 @@ public class Expert2ServiceBean implements IExpert2Service {
         return list.isEmpty() ? null : manager.find(ExtDispPrice.class, list.get(0).longValue());
     }
 
-    /*Список диагнозов, с которыми разрешена подача обсервационного отделения менее 5 дней*/
-    private void fillChildBirthMkbs() {
-        CHILD_BIRTH_MKB.add("O14.1");
-        CHILD_BIRTH_MKB.add("O34.2");
-        CHILD_BIRTH_MKB.add("O36.3");
-        CHILD_BIRTH_MKB.add("O36.4");
-        CHILD_BIRTH_MKB.add("O42.2");
-    }
-
     /**
      * Создаем случаи НМП в поликлинике для отказных госпитализаций
      */
@@ -3206,7 +3186,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             entryCode = VMPTYPE;
         } else if (entryCode.equals(HOSPITALPEREVODTYPE)) {
             entryCode = HOSPITALTYPE;
-        } else if (entryCode.equals(POLYCLINICTYPE) && (entry.getDepartmentId() != null && entry.getDepartmentId().equals(416L))) { //телемедицина амокб
+        } else if (entryCode.equals(POLYCLINICTYPE) && serviceDepartments.contains(entry.getDepartmentId())) { //телемедицина+лаборатория амокб
             entryCode = SERVICETYPE;
         }
         if (isNotLogicalNull(entry.getInsuranceCompanyCode())) {
