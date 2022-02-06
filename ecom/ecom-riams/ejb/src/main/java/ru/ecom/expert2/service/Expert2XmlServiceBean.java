@@ -626,12 +626,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(sl, "TARIF", currentEntry.getCost());
                     add(sl, "SUM_M", currentEntry.getCost());
                 }
-                if (currentEntry.getMainMkb() != null && currentEntry.getMainMkb().startsWith("U07")) {
-                    addIfNotNull(sl, "WEI", currentEntry.getWeigth()); //масса тела (кг)
-                }
-                if (isNotEmpty(currentEntry.getDrugEntries())) {
-                    addDrug(sl, currentEntry.getDrugEntries());
-                }
 
                 //USL start
                 int uslCnt = 0;
@@ -723,6 +717,12 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     sl.addContent(createUsl(a3, ++uslCnt + "", lpuRegNumber, profileK, entry.getVmpMethod()
                             , isChild, finishDate, finishDate, sl.getChildText("DS1"), "1"
                             , prvs, currentEntry.getDoctorSnils(), BigDecimal.ZERO, currentEntry.getDepartmentAddressCode()));
+                }
+                if (currentEntry.getMainMkb() != null && currentEntry.getMainMkb().startsWith("U07")) {
+                    addIfNotNull(sl, "WEI", currentEntry.getWeigth()); //масса тела (кг)
+                }
+                if (isNotEmpty(currentEntry.getDrugEntries())) {
+                    addDrug(sl, currentEntry.getDrugEntries());
                 }
                 // USL finish
                 zSl.addContent(indSl, sl);
@@ -902,6 +902,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         IMonitor monitor = monitorService.startMonitor(monitorId, "Формирование xml файла. Размер: ", 999);
         try {
             if (isCheckIsRunning) {
+                isMonitorCancel(monitor, "Олег, нельзя запускать больше одной выгрузки одновременно!");
                 LOG.warn("Формирование чего-то уже запущено, выходим_ALREADY_RAN");
                 return "Олег, нельзя запускать больше одной выгрузки одновременно!";
             }
@@ -917,10 +918,12 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 periodDate = listEntry.getFinishDate();
                 if (isNull(billDate) || isNull(billNumber)) {
                     monitor.finish("Необходимо указать номер и дату счета!");
+                    isCheckIsRunning = false;
                     return "";
                 }
                 if (isAnyIsNull(listEntry.getCheckDate(), listEntry.getCheckTime())) {
                     monitor.finish("Олег, необходимо выполнить проверку перед формированием пакета");
+                    isCheckIsRunning = false;
                     return "";
 
                 }
@@ -952,6 +955,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         packetType = "SomeDisp";
                         break;
                     default:
+                        isCheckIsRunning = false;
                         throw new IllegalStateException("Неизвестный тип счета: " + type);
                 }
             }
@@ -1054,6 +1058,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 }
                 i++;
                 if (i % 100 == 0 && isMonitorCancel(monitor, "Сформировано " + i + " записей в счете")) {
+                    isCheckIsRunning = false;
                     return "Прерванно пользователем";
                 }
                 StringBuilder err = new StringBuilder();
@@ -1132,6 +1137,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     z = createSlElements2020(entry, sls, cnt + 1, regNumber, fileType);
                 } else {
                     LOG.error("Неизвестный формат пакета: " + version);
+                    isCheckIsRunning = false;
                     throw new IllegalStateException("Неизвестный формат пакета: " + version);
                 }
 
