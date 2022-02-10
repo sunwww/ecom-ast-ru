@@ -43,7 +43,9 @@ import java.util.List;
                 " and isDeleted is not true"),
         @NamedQuery(name = "E2Entry.getAllByListEntryIdAndServiceStream"
                 , query = "from E2Entry where listEntry.id=:listEntryId and serviceStream=:serviceStream" +
-                " and isDeleted is not true ")
+                " and isDeleted is not true "),
+        @NamedQuery(name = "E2Entry.allByIds"
+        ,query = "from E2Entry e where id in (:ids)")
 })
 @Setter
 @Getter

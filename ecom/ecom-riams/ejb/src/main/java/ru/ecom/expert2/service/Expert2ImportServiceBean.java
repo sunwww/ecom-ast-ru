@@ -6,6 +6,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static ru.nuzmsh.util.EqualsUtil.isEquals;
 import static ru.nuzmsh.util.EqualsUtil.isOneOf;
@@ -382,6 +384,15 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 int i = 0;
                 List<Element> zaps = root.getChildren("ZAP");
                 if (isMonitorCancel(monitor, "Найдено записей для импорта: " + zaps.size())) return;
+                List<Long> entryIds = new ArrayList<>();
+                for (Element zap: zaps) {
+                    for (Element sl: (List<Element>)zap.getChild("Z_SL").getChildren("SL")) {
+                        entryIds.add(Long.parseLong(sl.getChildText("SL_ID")));
+                    }
+                }
+                LOG.info("found "+entryIds+" ids");
+                List<E2Entry> allEntries = manager.createNamedQuery("E2Entry.allByIds").setParameter("ids", entryIds).getResultList();
+                Map<Long, E2Entry> entryMap = allEntries.stream().collect(Collectors.toMap(BaseEntity::getId, v->v));
 
                 BigDecimal totalSum = BigDecimal.ZERO;
                 for (Element zap : zaps) {
@@ -394,7 +405,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                         if (isComplexCase) break;
                         Element slId = sl.getChild("SL_ID");
                         Long entryId = Long.parseLong(slId.getText());
-                        E2Entry entry = manager.find(E2Entry.class, entryId);
+                        E2Entry entry = entryMap.get(entryId); // manager.find(E2Entry.class, entryId);
                         if (entry == null || isTrue(entry.getIsDeleted())) {
                             LOG.warn("Ошибка при импорте ответа от фонда - не найдена запись с ИД = " + entryId);
                             continue;
