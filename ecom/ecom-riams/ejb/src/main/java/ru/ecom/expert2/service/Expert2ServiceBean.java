@@ -49,8 +49,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.net.URLEncoder;
-import java.sql.*;
 import java.sql.Date;
+import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -2694,14 +2694,14 @@ public class Expert2ServiceBean implements IExpert2Service {
 
             }
             serviceCodes.delete(serviceCodes.length() - 1, serviceCodes.length());
-            if (!manager.createNativeQuery("select vco.id from VocCombinedOperations vco" +
+            List<String> combined = manager.createNativeQuery("select vco.difficultyCode from VocCombinedOperations vco" +
                             " left join vocmedservice vms1 on vms1.id=vco.medservice1_id " +
                             " left join vocmedservice vms2 on vms2.id=vco.medservice2_id " +
                             " where vms1.code in (" + serviceCodes + ") and vms2.code in (" + serviceCodes + ") and coalesce(vco.finishDate,current_date)>=:actualDate ")
                     .setParameter("actualDate", actualDate)
-                    .getResultList().isEmpty()
-            ) {
-                codes.add("8"); //TODO завязаться на перечень операций
+                    .getResultList();
+            if (!combined.isEmpty()) {
+                codes.add(combined.get(0)); //TODO завязаться на перечень операций
             }
         }
 
