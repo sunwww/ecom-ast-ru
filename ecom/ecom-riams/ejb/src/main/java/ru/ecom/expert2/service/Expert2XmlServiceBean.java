@@ -910,8 +910,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             String packetDateAdd;
             String cntNumber = null;
             boolean needCreateArchive = false;
-            E2Entry entry = null;
+            E2Entry testEntry ;
             if (entryListId != null) {
+                testEntry = null;
                 needCreateArchive = true;
                 E2ListEntry listEntry = manager.find(E2ListEntry.class, entryListId);
                 periodDate = listEntry.getFinishDate();
@@ -925,12 +926,12 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
 
                 }
             } else { //Сделано для теста.
-                entry = manager.find(E2Entry.class, entryId);
-                periodDate = entry.getFinishDate();
+                testEntry = manager.find(E2Entry.class, entryId);
+                periodDate = testEntry.getFinishDate();
                 billDate = new Date(0L);
                 billNumber = "TEST";
                 cntNumber = "00";
-                entryListId = entry.getListEntry().getId();
+                entryListId = testEntry.getListEntry().getId();
             }
             packetDateAdd = dateToString(periodDate, "yyMM");
             String packetType;
@@ -973,22 +974,22 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             List<Element> perss = new ArrayList<>();
             int cnt = 0;
             List<Object[]> records;
-            String selectSqlAdd;
+            String selectSqlAdd = " e.id as cnt";
             String groupSqlAdd = "e.id";
             boolean isHosp;
             boolean isPolic;
             boolean isDisp;
             if (isOneOf(type, HOSPITAL_TYPE, HOSPITAL_PEREVOD_TYPE, VMP_TYPE)) {
-                selectSqlAdd = " list(''||e.id) as ids, e.id, count(distinct e.id) as cnt";//Ищем все СЛО *список ИД, ИД госпитализации,кол-во СЛО
+//                selectSqlAdd = " list(''||e.id) as ids, e.id, count(distinct e.id) as cnt";//Ищем все СЛО *список ИД, ИД госпитализации,кол-во СЛО
                 isDisp = isPolic = false;
                 isHosp = true;
                 exchangeCovidDs = "1".equals(getExpertConfigValue("EXCHANGE_COVID_DS", "0"));
             } else if (isOneOf(type, POLYCLINIC_TYPE, SERVICE_TYPE)) {
-                selectSqlAdd = " list(''||e.id) as ids, e.id, count(distinct e.id) as cnt";//Ищем все комплексные случаи
+//                selectSqlAdd = " list(''||e.id) as ids, e.id, count(distinct e.id) as cnt";//Ищем все комплексные случаи
                 isDisp = isHosp = false;
                 isPolic = true;
             } else { //ДД
-                selectSqlAdd = "list(''||e.id) as ids, e.id, count(distinct e.id) as cnt";//Ищем все комплексные случаи
+//                selectSqlAdd = "list(''||e.id) as ids, e.id, count(distinct e.id) as cnt";//Ищем все комплексные случаи
                 isPolic = isHosp = false;
                 isDisp = true;
                 exportDispServiceNoDate = "1".equals(getExpertConfigValue("EXPORT_DISP_SERVICE_NO_DATE", "0"));
@@ -997,22 +998,22 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             String sql;
             if (entryId == null) { //формируем файл по заполнению
                 sql = "select " + selectSqlAdd + " from E2Entry e" +
-                        " left join e2entry child on child.parentEntry_id=e.id and coalesce(child.isDeleted, false) = false" +
+//                        " left join e2entry child on child.parentEntry_id=e.id and coalesce(child.isDeleted, false) = false" +
                         " where " + (isTrue(calcAllListEntry) ? "" : "e.listEntry_id=" + entryListId + " and") +
                         "  e.billNumber=:billNumber and e.billDate=:billDate " +
                         " and coalesce(e.isDeleted, false) = false" +
                         " and e.serviceStream!='COMPLEXCASE'" +
-                        " and coalesce(child.doNotSend, false) = false" + (dontSendDefets ? " and coalesce(e.isDefect, false) = false" : "") + " group by " + groupSqlAdd;
+                       /* " and coalesce(child.doNotSend, false) = false" +*/ (dontSendDefets ? " and coalesce(e.isDefect, false) = false" : "") /* + " group by " + groupSqlAdd*/;
                 LOG.info("sql=" + sql);
                 records = manager.createNativeQuery(sql)
                         .setParameter("billNumber", billNumber).setParameter("billDate", billDate).getResultList();
-            } else if (entry != null) { //файл по одному случаю (для теста)
+            } else if (testEntry != null) { //файл по одному случаю (для теста)
                 sql = "select " + selectSqlAdd + " from E2Entry e" +
                         " left join e2entry child on child.parentEntry_id=e.id and coalesce(child.isDeleted, false) = false" +
                         " where e.listEntry_id=" + entryListId +
                         " and coalesce(e.isDeleted, false) = false " +
                         " and e.serviceStream!='COMPLEXCASE'" +
-                        " and e.externalparentid=" + entry.getExternalParentId() +
+                        " and e.externalparentid=" + testEntry.getExternalParentId() +
                         " and coalesce(e.doNotSend, false) = false group by " + groupSqlAdd;
                 LOG.info("sql=" + sql);
                 records = manager.createNativeQuery(sql).getResultList();
@@ -1027,24 +1028,24 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             /*Вот тут - 1 строка - список записей по 1 госпитализация */
             String dispType = null;
             String billProperty = "";
-            for (Object[] sluch : records) {
-                int cntSlo = Integer.parseInt(sluch[2].toString());
-                String sluchId = sluch[1].toString().trim();
-                String sls = sluch[0].toString().trim();
-                if (isHosp) {
-                    if (cntSlo > 1) {
-                        entry = calculateHospitalEntry(Long.valueOf(sluchId), sls);
-                    } else {
-                        entry = manager.find(E2Entry.class, Long.valueOf(sls));
-                    }
-                } else {
-                    entry = manager.find(E2Entry.class, Long.valueOf(sluchId));
-                    if (cntSlo == 0) {
-                        sls = sluchId;
-                    }
-                }
+            for (Object sluch : records) {
+//                int cntSlo = Integer.parseInt(sluch.toString());
+//                String sluchId = sluch.toString().trim();
+                String sls = sluch.toString().trim();
+//                if (isHosp) {
+//                    if (cntSlo > 1) {
+//                        entry = calculateHospitalEntry(Long.valueOf(sluchId), sls);
+//                    } else {
+                       E2Entry entry = manager.find(E2Entry.class, Long.valueOf(sls));
+//                    }
+//                } else {
+//                    entry = manager.find(E2Entry.class, Long.valueOf(sls));
+//                    if (cntSlo == 0) {
+//                        sls = sluchId;
+//                    }
+//                }
                 if (entry == null) {
-                    throw new IllegalStateException("Не найден случай с ИД: " + sluchId);
+                    throw new IllegalStateException("Не найден случай с ИД: " + sls);
                 }
                 if (i == 0) { //вычисляем тип ДД по первой записи
                     if (isDisp) {
@@ -1191,6 +1192,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     /*Формируем случай с госпитализацией (не сохраняя в БД)*/
     private E2Entry calculateHospitalEntry(Long hospitalMedcaseId, String ids) {
         E2Entry hospital = null;
+        LOG.warn("НЕ должно вызываться при формировании реестра!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        LOG.warn("НЕ должно вызываться при формировании реестра!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        LOG.warn("НЕ должно вызываться при формировании реестра!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         List<E2Entry> slo = manager.createQuery("from E2Entry where id in (" + ids + ") and externalParentId=:parent and serviceStream!='COMPLEXCASE' " +
                         "and coalesce(isDeleted, false) = false and coalesce(doNotSend, false) = false order by startDate").setParameter("parent", hospitalMedcaseId)
                 .getResultList();
@@ -1438,6 +1442,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         LOG.info(monitorText);
         if (monitor.isCancelled()) {
             monitor.setText("Проверка прервана пользователем");
+            LOG.info("Проверка прервана пользователем");
             return true;
         }
         return false;

@@ -49,8 +49,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.net.URLEncoder;
-import java.sql.Date;
 import java.sql.*;
+import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -3450,6 +3450,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                         resultMap.put(key, getActualVocByCode(VocE2FondV021.class, actualDate, "45"));
                     }
                 }
+
+                //TODO замена бактериологии на 26 лаборатория **update e2entry ee set fonddoctorspecv021_id  =398 where  fonddoctorspecv021_id = 496
                 if (!resultMap.containsKey(key)) {
                     resultMap.put(key, getActualVocByCode(VocE2FondV021.class, actualDate, doctorWorkFunction));
                 }
