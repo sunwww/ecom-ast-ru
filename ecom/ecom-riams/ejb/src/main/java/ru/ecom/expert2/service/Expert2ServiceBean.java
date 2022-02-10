@@ -82,6 +82,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     private static final String COMPLEXSERVICESTREAM = "COMPLEXCASE";
     private static final String OMC_SERVICE_STREAM = "OBLIGATORYINSURANCE";
     private static final BigDecimal MAX_KSLP_COEFF = BigDecimal.valueOf(1.8); //максимально возможный коэффициент КСЛП
+    private static BigDecimal DAY_TIME_HOSP_KSLP = BigDecimal.ZERO; //КСЛП для дневного стационара
     private static final List<String> CHILD_BIRTH_MKB = Arrays.asList("O14.1", "O34.2", "O36.3", "O36.4", "O42.2"); //Список диагнозов, с которыми разрешена подача обсервационного отделения менее 5 дней
     private static final List<String> politravmaMainList = Arrays.asList("S02.7", "S12.7", "S22.1", "S27.7", "S29.7", "S31.7", "S32.7", "S36.7", "S38.1", "S39.6", "S39.7", "S37.7", "S42.7", "S49.7", "T01.1", "T01.8", "T01.9", "T02.0", "T02.1", "T02.2", "T02.3", "T02.4", "T02.5", "T02.6", "T02.7", "T02.8", "T02.9", "T04.0", "T04.1", "T04.2", "T04.3", "T04.4", "T04.7", "T04.8", "T04.9", "T05.0", "T05.1", "T05.2", "T05.3", "T05.4", "T05.5", "T05.6", "T05.8", "T05.9", "T06.0", "T06.1", "T06.2", "T06.3", "T06.4", "T06.5", "T06.8", "T07");
     private static final List<String> politravmaSeconaryList = Arrays.asList("J94.2", "J94.8", "J94.9", "J93", "J93.0", "J93.1", "J93.8", "J93.9", "J96.0", "N17", "T79.4", "R57.1", "R57.8");
@@ -1218,6 +1219,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     private void setIsConsultativePolyclinic() {
         isConsultativePolyclinic = "1".equals(getExpertConfigValue("CONSULTATIVE_LPU", "0"));
         isNeedSplitDayTimeHosp = "1".equals(getExpertConfigValue("SPLIT_DAYTIME_HOSP", "0"));
+        DAY_TIME_HOSP_KSLP = new BigDecimal(getExpertConfigValue("DAY_TIME_HOSP_KSLP", "0"));
     }
 
     /**
@@ -2747,7 +2749,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     public BigDecimal calculateResultDifficultyCoefficient(E2Entry entry) {
         final BigDecimal one = BigDecimal.ONE;
         if (entry.getEntryType().equals(HOSPITALTYPE) && !entry.getBedSubType().equals("1")) {
-            return one;
+            return getDayTimeHospKslpValue();
         }
         List<E2CoefficientPatientDifficultyEntryLink> list = entry.getPatientDifficulty();
         BigDecimal ret = BigDecimal.ZERO;
@@ -2779,6 +2781,10 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
 //        if (ret == null) LOG.info("finish calc difficult.id=" + entry.getId() + ", value is NULL!! = ");
         return ret;
+    }
+
+    private BigDecimal getDayTimeHospKslpValue() {
+        return DAY_TIME_HOSP_KSLP;
     }
 
     @Override
