@@ -87,6 +87,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     }
 
     /*Импортируем ответ ФЛК от фонда*/
+    @Override
     public void importFlkAnswer(long monitorId, String filename, Long listEntryId) {
         LOG.info("start import FLK=" + filename);
         IMonitor monitor = startMonitor(monitorId, "Импортируем ФЛК " + filename + ".");
@@ -115,6 +116,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     }
 
     /*Импортируем файл с элмед*/
+    @Override
     public void importElmed(long monitorId, String xmlFilename) {
         try { //делаем только ДД
             Document doc = getDocumentFromFile(XMLDIR + "/", xmlFilename, false);
@@ -320,6 +322,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         return workFunction;
     }
 
+    @Override
     public String getConfigValue(String keyName, String defaultName) {
         return CONFIG.get(keyName, defaultName);
     }
@@ -327,6 +330,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     /*Загружаем ответ от фонда (версия файла {3.1}
      * Добавляем импорт целиком пакета (*.paket)
      * */
+    @Override
     public void importFondMPAnswer(long monitorId, String mpFileName) {
         IMonitor monitor = startMonitor(monitorId, "Импорт дефектов. Файл: " + mpFileName);
         importFondMPAnswer(mpFileName, monitor);
@@ -381,12 +385,19 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
 
                 int i = 0;
                 List<Element> zaps = root.getChildren("ZAP");
-                if (isMonitorCancel(monitor, "Найдено записей для импорта: " + zaps.size())) return;
+                if (zaps.isEmpty() || isMonitorCancel(monitor, "Найдено записей для импорта: " + zaps.size())) {
+                    LOG.info("Прерван импорт файла (пустой файл либо отмена пользователем");
+                    return;
+                }
                 List<Long> entryIds = new ArrayList<>();
                 for (Element zap : zaps) {
                     for (Element sl : (List<Element>) zap.getChild("Z_SL").getChildren("SL")) {
                         entryIds.add(Long.parseLong(sl.getChildText("SL_ID")));
                     }
+                }
+                if (entryIds.isEmpty()) {
+                    LOG.info(hFilename + " Не найдено ни одной entryId, что странно, выходим");
+                    return;
                 }
                 List<E2Entry> allEntries = manager.createNamedQuery("E2Entry.allByIds").setParameter("ids", entryIds).getResultList();
                 Map<Long, E2Entry> entryMap = getEntryMap(allEntries);
