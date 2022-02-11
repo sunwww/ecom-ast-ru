@@ -338,21 +338,24 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 addIfNotNull(pat, "SPOLIS", entry.getMedPolicySeries()); //Если полис не нового образца - добавляем серию полиса
                 add(pat, "NPOLIS", entry.getMedPolicyNumber());
                 add(pat, "ST_OKATO", "12000");
-            } else {
-                add(pat, "ENP", entry.getCommonNumber());
             }
 
             if (isNotNull(entry.getInsuranceCompanyCode())) {
                 add(pat, "SMO", entry.getInsuranceCompanyCode());
+                if ("3".equals(entry.getMedPolicyType())) {
+                    add(pat, "ENP", entry.getCommonNumber());
+                }
             } else {
                 add(pat, "SMO_OGRN", entry.getInsuranceCompanyOgrn());
+                if ("3".equals(entry.getMedPolicyType())) {
+                    add(pat, "ENP", entry.getCommonNumber());
+                }
                 add(pat, "SMO_NAM", entry.getInsuranceCompanyName());
             }
             add(pat, "NOVOR", makeNovorString(entry));
             if (a1 && isNedonosh) {
                 add(pat, "VNOV_D", entry.getNewbornWeight() + "");
             }
-
             zap.addContent(pat); //Добавили данные по пациенту
             List<E2Entry> children;
             String isChild = isTrue(entry.getIsChild()) ? "1" : "0";
@@ -1125,8 +1128,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     isError = true;
                 }
                 if (isError) {
-                    E2EntryError error = new E2EntryError(entry, "NO_FOND_FIELDS:" + err);
-                    manager.persist(error);
+                    manager.persist(new E2EntryError(entry, "NO_FOND_FIELDS:" + err));
                     LOG.error("Запись с ИД " + entry.getId() + " не будет выгружена в xml: " + err);
                     continue;
                 }
