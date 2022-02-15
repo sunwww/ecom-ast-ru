@@ -51,6 +51,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     private final HashMap<String, PersonalWorkFunction> DOCTORLIST = new HashMap<>();
     private final HashMap<String, VocOmcMedServiceCost> serviceCost = new HashMap<>();
     private final SimpleDateFormat mmYYYY = new SimpleDateFormat("MM.yyyy");
+    private Boolean needImportFondPrice = false;
     /**
      * Загружаем MP файл (ответ от фонда)
      * импорт версии от 2020 года
@@ -333,6 +334,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     @Override
     public void importFondMPAnswer(long monitorId, String mpFileName) {
         IMonitor monitor = startMonitor(monitorId, "Импорт дефектов. Файл: " + mpFileName);
+        needImportFondPrice = "1".equals(getConfigValue(Expert2Config.NEED_IMPORT_PRICE_FROM_DEFECT,"0"));
         importFondMPAnswer(mpFileName, monitor);
         monitor.finish("Закончили импорт дефектов");
     }
@@ -432,10 +434,21 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                             Element commentRoot = commentCalc.getChild("root");
                             List<Element> ерт = commentRoot.getChildren();
                             StringBuilder commentError = new StringBuilder();
+                            BigDecimal costFromDefect = BigDecimal.ZERO;
                             for (Element еб : ерт) {
+                                if (needImportFondPrice && "Цена_случая".equals(еб.getName())) {
+                                    try {
+                                        costFromDefect = new BigDecimal(еб.getText());
+                                    } catch (Exception ignored) {
+                                        LOG.warn("Не смог распознать цену, хотя должен был: "+еб);
+                                    }
+                                }
                                 commentError.append(еб.getName()).append(": ").append(еб.getText()).append("\n");
                             }
                             entry.setFondComment(commentError.toString());
+                            if (needImportFondPrice && costFromDefect.compareTo(BigDecimal.ZERO)>0) {
+                                entry.setCost(costFromDefect);
+                            }
                         } else {
                             entry.setFondComment("");
                         }
