@@ -429,12 +429,13 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
 
                         //Расчет цены случая ФОМС
                         Element commentCalc = sl.getChild("D_COMMENT_CALC");
+                        BigDecimal costFromDefect = BigDecimal.ZERO;
                         if (commentCalc != null && commentCalc.getChild("root") != null) {
 
                             Element commentRoot = commentCalc.getChild("root");
                             List<Element> ерт = commentRoot.getChildren();
                             StringBuilder commentError = new StringBuilder();
-                            BigDecimal costFromDefect = BigDecimal.ZERO;
+
                             for (Element еб : ерт) {
                                 if (needImportFondPrice && "Цена_случая".equals(еб.getName())) {
                                     try {
@@ -446,9 +447,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                                 commentError.append(еб.getName()).append(": ").append(еб.getText()).append("\n");
                             }
                             entry.setFondComment(commentError.toString());
-                            if (needImportFondPrice && costFromDefect.compareTo(BigDecimal.ZERO)>0) {
-                                entry.setCost(costFromDefect);
-                            }
+
                         } else {
                             entry.setFondComment("");
                         }
@@ -457,9 +456,13 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                         if (isDefect(zsl)) {
                             List<Element> sanks = zsl.getChildren("SANK");
                             ArrayList<String> sanks1 = new ArrayList<>();
+                            boolean foundWrongCost = false;
                             for (Element sank : sanks) {
                                 String key = sank.getChildText("S_OSN");
                                 String dopCode = sank.getChildText("S_DOP");
+                                if (needImportFondPrice && ("2013".equals(key) || "2013".equals(dopCode))) { //если есть ошибка расчета цены
+                                    foundWrongCost = true;
+                                }
                                 if (!sanks1.contains(dopCode)) {
                                     if (!sanctionMap.containsKey(key)) {
                                         sanctionMap.put(key, getActualVocByCode(VocE2Sanction.class, null, "osn='" + key + "'"));
@@ -470,6 +473,9 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                                 }
                             }
                             entry.setIsDefect(true);
+                            if (foundWrongCost && costFromDefect.compareTo(BigDecimal.ZERO) > 0) {
+                                entry.setCost(costFromDefect);
+                            }
                         } else {
                             entry.setIsDefect(false);
                             entry.setFondComment(null);
