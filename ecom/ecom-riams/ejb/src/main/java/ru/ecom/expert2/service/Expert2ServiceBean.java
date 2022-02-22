@@ -78,10 +78,10 @@ public class Expert2ServiceBean implements IExpert2Service {
     private static final String POLYCLINICTYPE = "POLYCLINIC";
     private static final String VMPTYPE = "VMP";
     private static final String EXTDISPTYPE = "EXTDISP";
+    private static final String POLYCLINICCOVIDTYPE = "POLYCLINICCOVIDTYPE";
     private static final String SERVICETYPE = "SERVICE";
     private static final String COMPLEXSERVICESTREAM = "COMPLEXCASE";
     private static final String OMC_SERVICE_STREAM = "OBLIGATORYINSURANCE";
-    private static final BigDecimal MAX_KSLP_COEFF = BigDecimal.valueOf(1.8); //максимально возможный коэффициент КСЛП
     private static BigDecimal DAY_TIME_HOSP_KSLP = BigDecimal.ZERO; //КСЛП для дневного стационара
     private static final List<String> CHILD_BIRTH_MKB = Arrays.asList("O14.1", "O34.2", "O36.3", "O36.4", "O42.2"); //Список диагнозов, с которыми разрешена подача обсервационного отделения менее 5 дней
     private static final List<String> politravmaMainList = Arrays.asList("S02.7", "S12.7", "S22.1", "S27.7", "S29.7", "S31.7", "S32.7", "S36.7", "S38.1", "S39.6", "S39.7", "S37.7", "S42.7", "S49.7", "T01.1", "T01.8", "T01.9", "T02.0", "T02.1", "T02.2", "T02.3", "T02.4", "T02.5", "T02.6", "T02.7", "T02.8", "T02.9", "T04.0", "T04.1", "T04.2", "T04.3", "T04.4", "T04.7", "T04.8", "T04.9", "T05.0", "T05.1", "T05.2", "T05.3", "T05.4", "T05.5", "T05.6", "T05.8", "T05.9", "T06.0", "T06.1", "T06.2", "T06.3", "T06.4", "T06.5", "T06.8", "T07");
@@ -101,11 +101,11 @@ public class Expert2ServiceBean implements IExpert2Service {
     /**
      * Получение значения из справочника V002 по профилю коек
      */
-    private static HashMap<String, VocE2MedHelpProfile> bedTypes = new HashMap<>();
+    private static final HashMap<String, VocE2MedHelpProfile> bedTypes = new HashMap<>();
     /**
      * Нахождение КСГ с бОльшим коэффициентом трудозатрат для случая
      */
-    private static Map<String, List<BigInteger>> ksgMap = new HashMap<>();
+    private static final Map<String, List<BigInteger>> ksgMap = new HashMap<>();
     private static boolean isBillCreating = false;
     private static boolean isCheckIsRunning = false;
     private final SimpleDateFormat SQLDATE = new SimpleDateFormat("yyyy-MM-dd");
@@ -115,12 +115,12 @@ public class Expert2ServiceBean implements IExpert2Service {
     private final Map<String, BigDecimal> hospitalCostMap = new HashMap<>();
     private boolean isConsultativePolyclinic = true;
     private boolean isNeedSplitDayTimeHosp = false;
-    private Map<String, VocE2EntrySubType> entrySubTypeHashMap = new HashMap<>();
-    private Map<String, BigDecimal> tariffMap = new HashMap<>();
+    private final Map<String, VocE2EntrySubType> entrySubTypeHashMap = new HashMap<>();
+    private final Map<String, BigDecimal> tariffMap = new HashMap<>();
 
-    private Map<String, BigDecimal> cusmoMap = new HashMap<>();
-    private Map<String, VocE2CoefficientPatientDifficulty> difficultyHashMap = new HashMap<>();
-    private Map<String, VocE2PolyclinicCoefficient> polyclinicCasePrice = new HashMap<>();
+    private final Map<String, BigDecimal> cusmoMap = new HashMap<>();
+    private final Map<String, VocE2CoefficientPatientDifficulty> difficultyHashMap = new HashMap<>();
+    private final Map<String, VocE2PolyclinicCoefficient> polyclinicCasePrice = new HashMap<>();
     private @PersistenceContext
     EntityManager manager;
     private @EJB
@@ -149,6 +149,9 @@ public class Expert2ServiceBean implements IExpert2Service {
 
         String resourceName;
         switch (listEntryType) {
+            case POLYCLINICCOVIDTYPE:
+                resourceName = "VisitCovid.sql";
+                break;
             case EXTDISPTYPE:
                 resourceName = "ExtDisp.sql";
                 break;
@@ -366,6 +369,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     }
                     break;
                 }
+                case POLYCLINICCOVIDTYPE:
                 case POLYCLINICTYPE: {
                     //Проверка поликлинических случаев
                     monitor.setText("Удаляем дубли в поликлинике");
@@ -3192,7 +3196,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             entryCode = VMPTYPE;
         } else if (entryCode.equals(HOSPITALPEREVODTYPE)) {
             entryCode = HOSPITALTYPE;
-        } else if (entryCode.equals(POLYCLINICTYPE) && serviceDepartments.contains(entry.getDepartmentId())) { //телемедицина+лаборатория амокб
+        } else if (entryCode.equals(POLYCLINICCOVIDTYPE) || entryCode.equals(POLYCLINICTYPE) && serviceDepartments.contains(entry.getDepartmentId())) { //телемедицина+лаборатория амокб
             entryCode = SERVICETYPE;
         }
         if (isNotLogicalNull(entry.getInsuranceCompanyCode())) {
