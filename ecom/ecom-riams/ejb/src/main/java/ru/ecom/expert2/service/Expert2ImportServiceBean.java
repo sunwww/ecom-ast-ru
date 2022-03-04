@@ -51,13 +51,13 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     private final HashMap<String, PersonalWorkFunction> DOCTORLIST = new HashMap<>();
     private final HashMap<String, VocOmcMedServiceCost> serviceCost = new HashMap<>();
     private final SimpleDateFormat mmYYYY = new SimpleDateFormat("MM.yyyy");
-    private Boolean needImportFondPrice = false;
     /**
      * Загружаем MP файл (ответ от фонда)
      * импорт версии от 2020 года
      */
 
     private final HashMap<String, VocE2Sanction> sanctionMap = new HashMap<>();
+    private Boolean needImportFondPrice = false;
     private @PersistenceContext
     EntityManager manager;
     private @EJB
@@ -274,7 +274,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             Element root = new SAXBuilder().build(fileName).getRootElement();
             Map<String, String> addresses = new HashMap<>();
             List<Element> zaps = root.getChildren("ZAP");
-            String lpuCode = softConfigService.getConfigValue("DEFAULT_LPU_OMCCODE");
+            String lpuCode = getSoftConfig("DEFAULT_LPU_OMCCODE");
             for (Element zap : zaps) {
                 if (isEquals(lpuCode, zap.getChildText("N_REESTR"))) {
                     List<Element> profiles = zap.getChildren("PROF");
@@ -334,7 +334,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     @Override
     public void importFondMPAnswer(long monitorId, String mpFileName) {
         IMonitor monitor = startMonitor(monitorId, "Импорт дефектов. Файл: " + mpFileName);
-        needImportFondPrice = "1".equals(getConfigValue(Expert2Config.NEED_IMPORT_PRICE_FROM_DEFECT,"0"));
+        needImportFondPrice = "1".equals(getSoftConfig(Expert2Config.NEED_IMPORT_PRICE_FROM_DEFECT, "0"));
         importFondMPAnswer(mpFileName, monitor);
         monitor.finish("Закончили импорт дефектов");
     }
@@ -441,7 +441,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                                     try {
                                         costFromDefect = new BigDecimal(еб.getText());
                                     } catch (Exception ignored) {
-                                        LOG.warn("Не смог распознать цену, хотя должен был: "+еб);
+                                        LOG.warn("Не смог распознать цену, хотя должен был: " + еб);
                                     }
                                 }
                                 commentError.append(еб.getName()).append(": ").append(еб.getText()).append("\n");
@@ -637,4 +637,14 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     private IMonitor startMonitor(long monitorId, String message) {
         return monitorService.startMonitor(monitorId, message, 999);
     }
+
+    private String getSoftConfig(String key) {
+        return getSoftConfig(key, null);
+    }
+
+    private String getSoftConfig(String key, String defaultValue) {
+        String val = softConfigService.getConfigValue(key);
+        return val == null ? defaultValue : val;
+    }
+
 }
