@@ -195,7 +195,7 @@
         </msh:form>
         <msh:ifFormTypeIsView formName="smo_ticketForm">
             <msh:section title="Услуги">
-                <ecom:webQuery name="services" nativeSql="select mc.id,ms.name
+                <ecom:webQuery name="services" nativeSql="select mc.id,ms.code||' '||ms.name
       		,mc.uet,mc.orderNumber
       		,mc.medServiceAmount
       		,vwf.name||' '||wp.lastname||' '||wp.firstname||' '||wp.middlename||' ('||lpu.name||')' as f6_doctor

@@ -480,7 +480,11 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                             entry.setIsDefect(false);
                             entry.setFondComment(null);
                         }
-                        totalSum = totalSum.add(entry.getCost());
+                        if (entry.getCost() != null) {
+                            totalSum = totalSum.add(entry.getCost());
+                        } else {
+                            LOG.error("Нет цены в случае " + entryId + " в ответе фонда");
+                        }
                         Element prikMo = zsl.getChild("D_PRIK_MO");
                         if (prikMo != null && isNotNull(prikMo.getText())) { //Проставляем информацию о прик. ЛПУ для формирования МУР
                             entry.setAttachedLpu(prikMo.getText());
