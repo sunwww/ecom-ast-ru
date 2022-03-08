@@ -43,6 +43,7 @@ import java.nio.charset.Charset;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static ru.nuzmsh.util.BooleanUtils.isNotTrue;
@@ -67,6 +68,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     private static final String SERVICE_TYPE = "SERVICE";
     private static final String CENTRAL_SEGMENT_DOC = "CENTRAL_SEGMENT";
     private final static String EXPORT_DIR = "/rtf/expert2xml/";
+    private List<String> DISP_LIST = new ArrayList<>();
     private boolean isCheckIsRunning = false;
     private boolean exchangeCovidDs = false;
     private boolean exportDispServiceNoDate = false;
@@ -286,44 +288,26 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             switch (entryType) {
                 case HOSPITAL_TYPE:
                     isHosp = true;
-                    isVmp = false;
-                    isPoliclinic = false;
-                    isExtDisp = false;
-                    isPoliclinicKdp = false;
+                    isVmp = isPoliclinic = isExtDisp = isPoliclinicKdp = false;
                     isNedonosh = entry.getKsg() != null && ",st17.001,st17.002,st17.003,".contains("," + entry.getKsg().getCode() + ",");
                     break;
                 case VMP_TYPE:
-                    isHosp = false;
                     isVmp = true;
-                    isPoliclinic = false;
-                    isExtDisp = false;
-                    isPoliclinicKdp = false;
+                    isHosp = isPoliclinic = isExtDisp = isPoliclinicKdp = false;
                     isNedonosh = isTrue(entry.getIsChild());
                     break;
                 case POLYCLINIC_TYPE:
                 case SERVICE_TYPE:
-                    isHosp = false;
-                    isVmp = false;
                     isPoliclinic = true;
-                    isExtDisp = false;
-                    isPoliclinicKdp = false;
-                    isNedonosh = false;
+                    isHosp = isVmp = isExtDisp = isPoliclinicKdp = isNedonosh = false;
                     break;
                 case KDP_TYPE:
-                    isHosp = false;
-                    isVmp = false;
-                    isPoliclinic = true;
-                    isExtDisp = false;
-                    isPoliclinicKdp = true;
-                    isNedonosh = false;
+                    isPoliclinic = isPoliclinicKdp = true;
+                    isHosp = isVmp = isExtDisp = isNedonosh = false;
                     break;
                 case EXTDISP_TYPE:
-                    isHosp = false;
-                    isVmp = false;
-                    isPoliclinic = false;
                     isExtDisp = true;
-                    isPoliclinicKdp = false;
-                    isNedonosh = false;
+                    isHosp = isVmp = isPoliclinic = isPoliclinicKdp = isNedonosh = false;
                     break;
                 default:
                     throw new IllegalStateException("UNKNOWN ENTRYTYPE" + entryType);
@@ -367,7 +351,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             final int firstIndSl = indSl;
             Date startHospitalDate = null;
             Date finishHospitalDate = null;
-            int kdz = 0;
 
             /* Вот тут создаем Sl*/
             boolean isDiagnosisFill = false;
@@ -376,14 +359,14 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             for (String slId : slIds) {
                 Element sl = new Element("SL");
                 E2Entry currentEntry = manager.find(E2Entry.class, Long.valueOf(slId.trim()));
+                if (validateEntry(currentEntry, isPoliclinic, isExtDisp)) {
+                    return null;
+                }
                 String edCol = isTrue(entry.getIsDentalCase()) ? calculateDentalEdcol(entry) : "1";
 
                 if (isPoliclinic) {
                     children = manager.createQuery("from E2Entry where parentEntry_id=:id and coalesce(isDeleted, false) = false and coalesce(doNotSend, false) = false order by startDate").setParameter("id", currentEntry.getId()).getResultList();
                 } else {
-                    if (!isPoliclinicKdp) {
-                        kdz += currentEntry.getBedDays().intValue();
-                    }
                     children = new ArrayList<>();
                 }
 
@@ -453,7 +436,10 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     return null;
                 }
                 if (!a1) add(sl, "DS_ONK", (cancerEntry != null && isTrue(cancerEntry.getMaybeCancer())) ? "1" : "0");
-                //*DN дисп. наблюдение !! только для терр.
+                if (isPoliclinic && !DISP_LIST.contains(currentEntry.getMainMkb())) {
+                    //*DN дисп. наблюдение !! только для терр.
+                    add(sl, "DN", "1");
+                }
                 if (a3) add(sl, "PR_D_N", "1"); // взят-состоит
                 //if (a3) *DS2_N
                 //CODE_MES1
@@ -735,7 +721,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             zSl.getChild("DATE_Z_1").setText(dateToString(startHospitalDate));
             zSl.getChild("DATE_Z_2").setText(dateToString(finishHospitalDate));
             if (zSl.getChild("KD_Z") != null) {
-                zSl.getChild("KD_Z").setText(kdz + "");
+                zSl.getChild("KD_Z").setText("" + Math.max(1, AgeUtil.calculateDays(startHospitalDate, finishHospitalDate)));
             }
             if (isHosp && entry.havePrevMedCase()) {
                 add(firstIndSl, zSl, "VB_P", "1");
@@ -748,6 +734,78 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             LOG.error("Entry #" + entry.getId() + ", error = " + e.getLocalizedMessage(), e);
             throw new IllegalStateException("Entry #" + entry.getId() + ", error = " + e.getLocalizedMessage(), e);
         }
+    }
+
+    //валидация случая на основные поля
+    private boolean validateEntry(E2Entry entry, boolean isPolic, boolean isDisp) {
+        StringBuilder err = new StringBuilder();
+        boolean isError = false;
+        if (null == entry.getFondResult()) {
+            err.append("НЕ РАСЧИТАН РЕЗУЛЬТАТ СЛУЧАЯ;");
+            isError = true;
+        }
+        if (null == entry.getFondIshod()) {
+            err.append("НЕ РАСЧИТАН ИСХОД СЛУЧАЯ;");
+            isError = true;
+        }
+        if (null == entry.getMedHelpProfile()) {
+            err.append("НЕ УКАЗАН ПРОФИЛЬ МЕД. ПОМОЩИ;");
+            isError = true;
+        }
+        if (null == entry.getFondDoctorSpecV021()) {
+            err.append("НЕ РАСЧИТАНА СПЕЦИАЛЬНОСТЬ ВРАЧА;");
+            isError = true;
+        }
+        if (null == entry.getCost()) {
+            err.append("НЕ РАСЧИТАНА ЦЕНА СЛУЧАЯ;");
+            isError = true;
+        }
+        if (null == entry.getBaseTarif()) {
+            err.append("НЕ РАСЧИТАН БАЗОВЫЙ ТАРИФ;");
+            isError = true;
+        }
+        if (null == entry.getIdsp()) {
+            err.append("НЕ РАСЧИТАН СПОСОБ ОПЛАТЫ МЕД. ПОМОЩИ;");
+            isError = true;
+        }
+        if (isNullOrEmpty(entry.getMedPolicyType())) {
+            err.append("НЕ УКАЗАН ВИД ПОЛИСА;");
+            isError = true;
+        }
+        if (isNullOrEmpty(entry.getMedPolicyNumber())) {
+            err.append("НЕ УКАЗАН НОМЕР ПОЛИСА;");
+            isError = true;
+        }
+        if (isNullOrEmpty(entry.getInsuranceCompanyCode())) {
+            err.append("НЕ УКАЗАН КОД СТРАХ КОМПАНИИ;");
+            isError = true;
+        }
+        if (isPolic && isNullOrEmpty(entry.getMainMkb())) {
+            err.append("НЕ УКАЗАН ОСНОВНОЙ ДИАГНОЗ");
+            isError = true;
+        }
+        if (isNullOrEmpty(entry.getHistoryNumber())) {
+            err.append("НЕ ЗАПОЛНЕН НОМЕР ИСТОРИИ БОЛЕЗНИ");
+            isError = true;
+        }
+        if (null == entry.getVidSluch()) {
+            err.append("НЕ ЗАПОЛНЕН ВИД СЛУЧАЯ");
+            isError = true;
+        }
+        if (!isDisp && isNullOrEmpty(entry.getDoctorSnils())) {
+            err.append("НЕ УКАЗАН СНИЛС ВРАЧА");
+            isError = true;
+        }
+        if (entry.getMedHelpKind() == null) {
+            err.append("НЕ УКАЗАН ВИД МП");
+            isError = true;
+        }
+        if (isError) {
+            manager.persist(new E2EntryError(entry, "NO_FOND_FIELDS:" + err));
+            LOG.error("Запись с ИД " + entry.getId() + " не будет выгружена в xml: " + err);
+
+        }
+        return isError;
     }
 
     //TODO refactor with cancer drug?
@@ -914,7 +972,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             String packetDateAdd;
             String cntNumber = null;
             boolean needCreateArchive = false;
-            E2Entry testEntry ;
+            E2Entry testEntry;
             if (entryListId != null) {
                 testEntry = null;
                 needCreateArchive = true;
@@ -965,7 +1023,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             }
 
             java.util.Date startStartDate = new java.util.Date();
-            String regNumber = getExpertConfigValue("LPU_REG_NUMBER", "300001");
+            String regNumber = getExpertConfigValue(Expert2Config.LPU_REG_NUMBER, "300001");
             String fileName = "M" + regNumber + "T30_" + packetDateAdd; // M300001T30_171227
             SequenceHelper sequenceHelper = SequenceHelper.getInstance();
             if (cntNumber == null) {
@@ -981,27 +1039,30 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             List<Element> perss = new ArrayList<>();
             int cnt = 0;
             List<Object[]> records;
-            String selectSqlAdd = " e.id as cnt";
+            String selectSqlAdd = " e.id as cnt, e.id as cnt2, e.id as cnt3";
             String groupSqlAdd = "e.id";
             boolean isHosp;
             boolean isPolic;
             boolean isDisp;
             if (isOneOf(type, HOSPITAL_TYPE, HOSPITAL_PEREVOD_TYPE, VMP_TYPE)) {
 //                selectSqlAdd = " list(''||e.id) as ids, e.id, count(distinct e.id) as cnt";//Ищем все СЛО *список ИД, ИД госпитализации,кол-во СЛО
+                selectSqlAdd = " list(''||e.id) as ids, e.externalparentid, count(distinct e.id) as cnt";//Ищем все СЛО *список ИД, ИД госпитализации,кол-во СЛО
                 isDisp = isPolic = false;
                 isHosp = true;
-                exchangeCovidDs = "1".equals(getExpertConfigValue("EXCHANGE_COVID_DS", "0"));
+                exchangeCovidDs = "1".equals(getExpertConfigValue(Expert2Config.EXCHANGE_COVID_DS, "0"));
+                groupSqlAdd = "e.externalparentid";
             } else if (isOneOf(type, POLYCLINIC_TYPE, SERVICE_TYPE)) {
 //                selectSqlAdd = " list(''||e.id) as ids, e.id, count(distinct e.id) as cnt";//Ищем все комплексные случаи
                 isDisp = isHosp = false;
                 isPolic = true;
+                DISP_LIST = Arrays.asList(getExpertConfigValue(Expert2Config.DISP_DIAGNOSIS_LIST, "").split(","));
             } else { //ДД
 //                selectSqlAdd = "list(''||e.id) as ids, e.id, count(distinct e.id) as cnt";//Ищем все комплексные случаи
                 isPolic = isHosp = false;
                 isDisp = true;
-                exportDispServiceNoDate = "1".equals(getExpertConfigValue("EXPORT_DISP_SERVICE_NO_DATE", "0"));
+                exportDispServiceNoDate = "1".equals(getExpertConfigValue(Expert2Config.EXPORT_DISP_SERVICE_NO_DATE, "0"));
             }
-            boolean dontSendDefets = "1".equals(getExpertConfigValue("DONT_EXPORT_DEFECTS", "0"));
+            boolean dontSendDefets = "1".equals(getExpertConfigValue(Expert2Config.DONT_EXPORT_DEFECTS, "0"));
             String sql;
             if (entryId == null) { //формируем файл по заполнению
                 sql = "select " + selectSqlAdd + " from E2Entry e" +
@@ -1010,7 +1071,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         "  e.billNumber=:billNumber and e.billDate=:billDate " +
                         " and coalesce(e.isDeleted, false) = false" +
                         " and e.serviceStream!='COMPLEXCASE'" +
-                       /* " and coalesce(child.doNotSend, false) = false" +*/ (dontSendDefets ? " and coalesce(e.isDefect, false) = false" : "") /* + " group by " + groupSqlAdd*/;
+                        /* " and coalesce(child.doNotSend, false) = false" +*/ (dontSendDefets ? " and coalesce(e.isDefect, false) = false" : "") + " group by " + groupSqlAdd;
                 LOG.info("sql=" + sql);
                 records = manager.createNativeQuery(sql)
                         .setParameter("billNumber", billNumber).setParameter("billDate", billDate).getResultList();
@@ -1035,16 +1096,17 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             /*Вот тут - 1 строка - список записей по 1 госпитализация */
             String dispType = null;
             String billProperty = "";
-            for (Object sluch : records) {
-//                int cntSlo = Integer.parseInt(sluch.toString());
-//                String sluchId = sluch.toString().trim();
-                String sls = sluch.toString().trim();
+            for (Object[] sluch : records) {
+                int cntSlo = Integer.parseInt(sluch[2].toString());
+                String sluchId = sluch[1].toString().trim();
+                String sls = sluch[0].toString().trim();
 //                if (isHosp) {
-//                    if (cntSlo > 1) {
-//                        entry = calculateHospitalEntry(Long.valueOf(sluchId), sls);
-//                    } else {
-                       E2Entry entry = manager.find(E2Entry.class, Long.valueOf(sls));
-//                    }
+                E2Entry entry;
+                if (isHosp && cntSlo > 1) {
+                    entry = calculateHospitalEntry(Long.valueOf(sluchId), sls);
+                } else {
+                    entry = manager.find(E2Entry.class, Long.valueOf(sls));
+                }
 //                } else {
 //                    entry = manager.find(E2Entry.class, Long.valueOf(sls));
 //                    if (cntSlo == 0) {
@@ -1053,6 +1115,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
 //                }
                 if (entry == null) {
                     throw new IllegalStateException("Не найден случай с ИД: " + sls);
+                }
+                if (validateEntry(entry, isPolic, isDisp)) {
+                    continue;
                 }
                 if (i == 0) { //вычисляем тип ДД по первой записи
                     if (isDisp) {
@@ -1064,73 +1129,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 if (i % 100 == 0 && isMonitorCancel(monitor, "Сформировано " + i + " записей в счете")) {
                     isCheckIsRunning = false;
                     return "Прерванно пользователем";
-                }
-                StringBuilder err = new StringBuilder();
-                boolean isError = false;
-                if (null == entry.getFondResult()) {
-                    err.append("НЕ РАСЧИТАН РЕЗУЛЬТАТ СЛУЧАЯ;");
-                    isError = true;
-                }
-                if (null == entry.getFondIshod()) {
-                    err.append("НЕ РАСЧИТАН ИСХОД СЛУЧАЯ;");
-                    isError = true;
-                }
-                if (null == entry.getMedHelpProfile()) {
-                    err.append("НЕ УКАЗАН ПРОФИЛЬ МЕД. ПОМОЩИ;");
-                    isError = true;
-                }
-                if (null == entry.getFondDoctorSpecV021()) {
-                    err.append("НЕ РАСЧИТАНА СПЕЦИАЛЬНОСТЬ ВРАЧА;");
-                    isError = true;
-                }
-                if (null == entry.getCost()) {
-                    err.append("НЕ РАСЧИТАНА ЦЕНА СЛУЧАЯ;");
-                    isError = true;
-                }
-                if (null == entry.getBaseTarif()) {
-                    err.append("НЕ РАСЧИТАН БАЗОВЫЙ ТАРИФ;");
-                    isError = true;
-                }
-                if (null == entry.getIdsp()) {
-                    err.append("НЕ РАСЧИТАН СПОСОБ ОПЛАТЫ МЕД. ПОМОЩИ;");
-                    isError = true;
-                }
-                if (isNullOrEmpty(entry.getMedPolicyType())) {
-                    err.append("НЕ УКАЗАН ВИД ПОЛИСА;");
-                    isError = true;
-                }
-                if (isNullOrEmpty(entry.getMedPolicyNumber())) {
-                    err.append("НЕ УКАЗАН НОМЕР ПОЛИСА;");
-                    isError = true;
-                }
-                if (isNullOrEmpty(entry.getInsuranceCompanyCode())) {
-                    err.append("НЕ УКАЗАН КОД СТРАХ КОМПАНИИ;");
-                    isError = true;
-                }
-                if (isPolic && isNullOrEmpty(entry.getMainMkb())) {
-                    err.append("НЕ УКАЗАН ОСНОВНОЙ ДИАГНОЗ");
-                    isError = true;
-                }
-                if (isNullOrEmpty(entry.getHistoryNumber())) {
-                    err.append("НЕ ЗАПОЛНЕН НОМЕР ИСТОРИИ БОЛЕЗНИ");
-                    isError = true;
-                }
-                if (null == entry.getVidSluch()) {
-                    err.append("НЕ ЗАПОЛНЕН ВИД СЛУЧАЯ");
-                    isError = true;
-                }
-                if (!isDisp && isNullOrEmpty(entry.getDoctorSnils())) {
-                    err.append("НЕ УКАЗАН СНИЛС ВРАЧА");
-                    isError = true;
-                }
-                if (entry.getMedHelpKind() == null) {
-                    err.append("НЕ УКАЗАН ВИД МП");
-                    isError = true;
-                }
-                if (isError) {
-                    manager.persist(new E2EntryError(entry, "NO_FOND_FIELDS:" + err));
-                    LOG.error("Запись с ИД " + entry.getId() + " не будет выгружена в xml: " + err);
-                    continue;
                 }
 
                 Long personId = entry.getExternalPatientId();
@@ -1200,11 +1198,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     /*Формируем случай с госпитализацией (не сохраняя в БД)*/
     private E2Entry calculateHospitalEntry(Long hospitalMedcaseId, String ids) {
         E2Entry hospital = null;
-        LOG.warn("НЕ должно вызываться при формировании реестра!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        LOG.warn("НЕ должно вызываться при формировании реестра!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        LOG.warn("НЕ должно вызываться при формировании реестра!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         List<E2Entry> slo = manager.createQuery("from E2Entry where id in (" + ids + ") and externalParentId=:parent and serviceStream!='COMPLEXCASE' " +
-                        "and coalesce(isDeleted, false) = false and coalesce(doNotSend, false) = false order by startDate").setParameter("parent", hospitalMedcaseId)
+                        "and coalesce(isDeleted, false) = false and coalesce(doNotSend, false) = false order by startDate")
+                .setParameter("parent", hospitalMedcaseId)
                 .getResultList();
         if (!slo.isEmpty()) {
             hospital = cloneEntity(slo.get(0));
