@@ -6,7 +6,10 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.expert2.domain.voc.*;
+import ru.ecom.expert2.domain.voc.VocE2EntryFactor;
+import ru.ecom.expert2.domain.voc.VocE2EntrySubType;
+import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
+import ru.ecom.expert2.domain.voc.VocE2VidSluch;
 import ru.ecom.expert2.domain.voc.federal.*;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -1108,6 +1111,13 @@ public class E2Entry extends BaseEntity {
     @Transient
     public String getCovidPrescriptions() {
         return covidPrescriptions;
+    }
+
+    private Boolean isNedonosh = false;
+
+    @Transient
+    public Boolean getIsNedonosh() {
+        return isNedonosh;
     }
 
     public void setCovidPrescriptions(String covidPrescriptions) {

@@ -289,7 +289,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 case HOSPITAL_TYPE:
                     isHosp = true;
                     isVmp = isPoliclinic = isExtDisp = isPoliclinicKdp = false;
-                    isNedonosh = entry.getKsg() != null && ",st17.001,st17.002,st17.003,".contains("," + entry.getKsg().getCode() + ",");
+                    isNedonosh = isTrue(entry.getIsNedonosh()) || isNedonoshKsg(entry.getKsg());
                     break;
                 case VMP_TYPE:
                     isVmp = true;
@@ -1224,6 +1224,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 } else {
                     LOG.warn("entry ID =" + e.getId() + " NO COST");
                 }
+                if (isNedonoshKsg(e.getKsg())) {
+                    hospital.setIsNedonosh(true);
+                }
             }
             if (hospital.getId() == 0L) {
                 hospital.setId(lastEntry.getId());
@@ -1231,6 +1234,10 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             hospital.setCost(cost);
         }
         return hospital;
+    }
+
+    private boolean isNedonoshKsg(VocKsg ksg) {
+        return ksg != null && ",st17.001,st17.002,st17.003,".contains("," + ksg.getCode() + ",");
     }
 
     private E2Entry cloneEntity(E2Entry source) {
