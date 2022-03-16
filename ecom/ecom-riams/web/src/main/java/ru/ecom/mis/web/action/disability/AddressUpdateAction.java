@@ -13,8 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 public class AddressUpdateAction extends BaseAction {
 
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
-        //SearchForm form = (SearchForm) aForm;
-        //form.validate(aMapping, aRequest);
         IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
         
         String clear = aRequest.getParameter("clear") ;
