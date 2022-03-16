@@ -191,8 +191,8 @@
 </script>
 
 <msh:ifFormTypeIsView formName="${form}">
-    <script type="text/javascript">/
-    $('buttonShow${name}addressNonresident').style.display = 'none';
+    <script type="text/javascript">
+        $('buttonShow${name}addressNonresident').style.display = 'none';
     </script>
 </msh:ifFormTypeIsView>
 

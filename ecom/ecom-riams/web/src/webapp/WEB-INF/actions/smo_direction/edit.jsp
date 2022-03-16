@@ -284,24 +284,24 @@ left join Patient as wp on wp.id=w.person_id
         <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
         <msh:ifFormTypeIsView formName="smo_directionForm">
 
-            <script type="text/javascript">//var theBedFund = $('bedFund').value;
+            <script type="text/javascript">
 
-            function goNewDirection() {
-                window.location = 'entityParentPrepareCreate-smo_direction.do?id=' + $('patient').value + "&orderLpu=" + $('orderLpu').value + "&tmp=" + Math.random();
-            }
+                function goNewDirection() {
+                    window.location = 'entityParentPrepareCreate-smo_direction.do?id=' + $('patient').value + "&orderLpu=" + $('orderLpu').value + "&tmp=" + Math.random();
+                }
             </script>
         </msh:ifFormTypeIsView>
-        <script type="text/javascript">//var theBedFund = $('bedFund').value;
-        if ($('infoByPolicy').value.length > 0) {
-            WorkCalendarService.getChargedServiceStream({
-                callback: function (a) {
-                    a = JSON.parse(a);
-                    $('serviceStream').value = a.id;
-                    $('serviceStreamName').value = a.name;
-                }
-            });
-            $('medPolicyInformation').innerHTML = $('infoByPolicy').value + " <u>Направление к врачу по потоку обслуживания ОМС создаваться не будет!!!</u>";
-            $('medPolicyInformation').style.display = 'block';
+        <script type="text/javascript">
+            if ($('infoByPolicy').value.length > 0) {
+                WorkCalendarService.getChargedServiceStream({
+                    callback: function (a) {
+                        a = JSON.parse(a);
+                        $('serviceStream').value = a.id;
+                        $('serviceStreamName').value = a.name;
+                    }
+                });
+                $('medPolicyInformation').innerHTML = $('infoByPolicy').value + " <u>Направление к врачу по потоку обслуживания ОМС создаваться не будет!!!</u>";
+                $('medPolicyInformation').style.display = 'block';
         } else {
             $('medPolicyInformation').style.display = 'none';
         }

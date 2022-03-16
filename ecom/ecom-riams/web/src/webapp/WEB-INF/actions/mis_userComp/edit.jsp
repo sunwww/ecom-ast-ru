@@ -55,9 +55,9 @@
   </tiles:put>
   <tiles:put name="javascript" type="string">
   <msh:ifFormTypeIsCreate formName="mis_userCompForm" insideJavascript="true">
-        <script type="text/javascript">// <![CDATA[//
-        		$('remoteAddress').value = '${remote_address}' ;
-	    	//]]></script>
+    <script type="text/javascript">
+      $('remoteAddress').value = '${remote_address}';
+    </script>
       </msh:ifFormTypeIsCreate>
   </tiles:put>
 

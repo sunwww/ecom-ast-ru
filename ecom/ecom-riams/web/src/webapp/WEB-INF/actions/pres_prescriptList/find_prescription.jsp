@@ -132,19 +132,19 @@
             <tags:pres_intake_biomaterial name="Bio" role="/Policy/Mis/Journal/Prescription/LabSurvey/LaborantRegistrator"/>
     </tiles:put>
     <tiles:put name="javascript" type="string">
-    <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
-  	
-    <script type="text/javascript">// <![CDATA[//
-    	
-    	$('number').focus() ;
-    	$('number').select() ;
-    	if ($('dateFrom').value=="") {
-	    	var currentDate = new Date;
-			var textDay = currentDate.getDate()<10?'0'+currentDate.getDate():currentDate.getDate();
-			var textMonth = currentDate.getMonth()+1;
-			var textMonth = textMonth<10?'0'+textMonth:textMonth;
-			var textYear =currentDate.getFullYear();
-			$('dateFrom').value=textDay+'.'+textMonth+'.'+textYear;
+        <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
+
+        <script type="text/javascript">
+
+            $('number').focus();
+            $('number').select();
+            if ($('dateFrom').value == "") {
+                var currentDate = new Date;
+                var textDay = currentDate.getDate() < 10 ? '0' + currentDate.getDate() : currentDate.getDate();
+                var textMonth = currentDate.getMonth() + 1;
+                var textMonth = textMonth < 10 ? '0' + textMonth : textMonth;
+                var textYear = currentDate.getFullYear();
+                $('dateFrom').value = textDay + '.' + textMonth + '.' + textYear;
     	}
     	
     	function printBarcode(id)

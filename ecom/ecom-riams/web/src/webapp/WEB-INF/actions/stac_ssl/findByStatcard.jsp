@@ -118,8 +118,6 @@
     </tiles:put>
   <tiles:put name="javascript" type="string">
     <script type="text/javascript">
-    // <![CDATA[//
-    	
     	$('number').focus() ;
     	$('number').select() ;
 
@@ -137,7 +135,6 @@
     		$('exactMatch').checked='' ;
     		$('exactMatchH').value='0' ;
     	}
-  		//]]
   	</script>
   </tiles:put>
 
