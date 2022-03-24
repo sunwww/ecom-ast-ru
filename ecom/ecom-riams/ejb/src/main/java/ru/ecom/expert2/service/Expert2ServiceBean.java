@@ -651,6 +651,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     cloneMedService(entry, newEntry);
                     cloneChildEntries(entry, newEntry);
                     cloneOncologyCases(entry, newEntry);
+                    cloneCovidDrugs(entry, newEntry);
                 }
             }
             LOG.info("Finish create defects!");
@@ -658,6 +659,20 @@ public class Expert2ServiceBean implements IExpert2Service {
             LOG.error(e.getMessage(), e);
         }
         return true;
+    }
+
+    private void cloneCovidDrugs(E2Entry entry, E2Entry newEntry) {
+        if (isNotEmpty(entry.getDrugEntries())) {
+            List<E2DrugEntry> drugEntryList = new ArrayList<>();
+            for (E2DrugEntry drug : entry.getDrugEntries()) {
+                E2DrugEntry cloned = new E2DrugEntry(drug, newEntry);
+                manager.persist(cloned);
+                drugEntryList.add(cloned);
+
+            }
+            newEntry.setDrugEntries(drugEntryList);
+            manager.persist(newEntry);
+        }
     }
 
     private void cloneOncologyCases(E2Entry oldEntry, E2Entry newEntry) {
@@ -2792,11 +2807,17 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     @Override
-    public BigDecimal calculatePolyclinicEntryPrice(VocE2VidSluch vidSluch, Date finishDate, VocE2MedHelpProfile medHelpProfile) {
-        VocE2BaseTariff baseTariff = getActualVocByClassName(VocE2BaseTariff.class, finishDate, "vidSluch_id=" + vidSluch.getId());
-        if (baseTariff == null) {
-            LOG.warn("Cant calc polyclinic tariff: " + vidSluch.getCode() + " <> " + finishDate);
-            return BigDecimal.ZERO;
+    public BigDecimal calculatePolyclinicEntryPrice(E2Entry entry, VocE2VidSluch vidSluch, Date finishDate, VocE2MedHelpProfile medHelpProfile) {
+        BigDecimal tariff;
+        if (entry != null) {
+            tariff = calculateTariff(entry);
+        } else {
+            VocE2BaseTariff baseTariff = getActualVocByClassName(VocE2BaseTariff.class, finishDate, "vidSluch_id=" + vidSluch.getId());
+            if (baseTariff == null) {
+                LOG.warn("Cant calc polyclinic tariff: " + vidSluch.getCode() + " <> " + finishDate);
+                return BigDecimal.ZERO;
+            }
+            tariff = baseTariff.getValue();
         }
         try {
             List<VocE2PolyclinicCoefficient> coefficients;
@@ -2810,7 +2831,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                     coef = coef.multiply(coefficient.getValue());
                 }
             }
-            BigDecimal tariff = baseTariff.getValue();
             return tariff.multiply(coef);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
@@ -3794,7 +3814,9 @@ public class Expert2ServiceBean implements IExpert2Service {
                     setEntrySubType(sloEntry);
                     VocWorkFunction vwf = wf.getWorkFunction(); //не считаем цену по поликлинике если врач - не ОМС
                     sloEntry.setMedHelpProfile(vwf.getMedHelpProfile());
-                    sloEntry.setCost(isTrue(vwf.getIsNoOmc()) ? BigDecimal.ZERO : calculatePolyclinicEntryPrice(sloEntry.getVidSluch(), sloEntry.getFinishDate(), sloEntry.getMedHelpProfile()));
+                    sloEntry.setCost(isTrue(vwf.getIsNoOmc())
+                            ? BigDecimal.ZERO
+                            : calculatePolyclinicEntryPrice(sloEntry, sloEntry.getVidSluch(), sloEntry.getFinishDate(), sloEntry.getMedHelpProfile()));
                 } else if (medCase instanceof HospitalMedCase) { //Формируем цену по СЛО
                     DepartmentMedCase departmentMedCase;
                     if (medCase instanceof DepartmentMedCase) {

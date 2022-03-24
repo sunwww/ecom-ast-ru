@@ -31,6 +31,17 @@ public class E2DrugEntry extends BaseEntity {
         entry = aEntry;
     }
 
+    public E2DrugEntry(E2DrugEntry drugEntry, E2Entry aEntry) {
+        this.entry = aEntry;
+        this.injectDate = drugEntry.injectDate;
+        this.drugGroupSchema = drugEntry.drugGroupSchema;
+        this.drug = drugEntry.drug;
+        this.injectUnit = drugEntry.injectUnit;
+        this.injectAmount = drugEntry.injectAmount;
+        this.injectNumber = drugEntry.injectNumber;
+        this.injectMethod = drugEntry.injectMethod;
+    }
+
     public E2DrugEntry() {
     }
 

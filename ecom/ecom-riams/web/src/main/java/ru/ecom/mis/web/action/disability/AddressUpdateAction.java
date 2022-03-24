@@ -14,16 +14,16 @@ public class AddressUpdateAction extends BaseAction {
 
     public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
         IHospitalMedCaseService service = Injection.find(aRequest).getService(IHospitalMedCaseService.class);
-        
-        String clear = aRequest.getParameter("clear") ;
-    	long id = 0 ;
-        if (clear!=null && clear.equals("1")) {
-        	service.addressClear();
+
+        String clear = aRequest.getParameter("clear");
+        if ("1".equals(clear)) {
+            service.addressClear();
         }
-    	while (id!=-1) {
-    		id=service.addressUpdate(id);
-    	}
-        
+        long id = 0;
+        while (id != -1) {
+            id = service.addressUpdate(id);
+        }
+
 
         return aMapping.findForward(SUCCESS);
     }

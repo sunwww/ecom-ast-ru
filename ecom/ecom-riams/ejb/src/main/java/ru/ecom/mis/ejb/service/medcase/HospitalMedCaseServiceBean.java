@@ -1898,7 +1898,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
     @Override
     public void addressClear() {
-        manager.createNativeQuery("update Address2 set fullname=null").executeUpdate();
+        manager.createNativeQuery("update Address2 set fullname=null where fullname is not null").executeUpdate();
     }
 
     @Override
@@ -1907,6 +1907,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
         list = manager.createNativeQuery("select a.addressid,a.fullname,a.name,att.shortName,a.parent_addressid from address2 a left join AddressType att on att.id=a.type_id where a.addressid>" + id + " and a.fullname is null order by a.addressid")
                 .setMaxResults(450)
                 .getResultList();
+        LOG.info("Updating 450 addresses from id: " + id);
         if (!list.isEmpty()) {
             for (Object[] adr : list) {
                 id = ConvertSql.parseLong(adr[0]);
