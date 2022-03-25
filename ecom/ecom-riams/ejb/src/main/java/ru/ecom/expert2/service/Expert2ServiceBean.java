@@ -2809,8 +2809,10 @@ public class Expert2ServiceBean implements IExpert2Service {
     @Override
     public BigDecimal calculatePolyclinicEntryPrice(E2Entry entry, VocE2VidSluch vidSluch, Date finishDate, VocE2MedHelpProfile medHelpProfile) {
         BigDecimal tariff;
+        String sqlAdd;
         if (entry != null) {
             tariff = calculateTariff(entry);
+            sqlAdd = "profile_id=" + medHelpProfile.getId() + " and tariffType.code='" + entry.getSubType().getTariffCodeString() + "'";
         } else {
             VocE2BaseTariff baseTariff = getActualVocByClassName(VocE2BaseTariff.class, finishDate, "vidSluch_id=" + vidSluch.getId());
             if (baseTariff == null) {
@@ -2818,20 +2820,21 @@ public class Expert2ServiceBean implements IExpert2Service {
                 return BigDecimal.ZERO;
             }
             tariff = baseTariff.getValue();
+            sqlAdd = "vidSluch_id=" + vidSluch.getId() + " and profile_id=" + medHelpProfile.getId();
         }
         try {
             List<VocE2PolyclinicCoefficient> coefficients;
             //находим Кз
-            coefficients = manager.createQuery(" from VocE2PolyclinicCoefficient where vidSluch_id=:vidSluchId and profile_id=:profileId and :actualDate between startDate and coalesce(finishDate,current_date)")
-                    .setParameter("vidSluchId", vidSluch.getId()).setParameter("actualDate", finishDate)
-                    .setParameter("profileId", medHelpProfile.getId()).getResultList();
+            coefficients = manager.createQuery(" from VocE2PolyclinicCoefficient where " + sqlAdd + " and :actualDate between startDate and coalesce(finishDate,current_date)")
+                    .setParameter("actualDate", finishDate)
+                    .getResultList();
             BigDecimal coef = new BigDecimal(1);
             if (!coefficients.isEmpty()) {
                 for (VocE2PolyclinicCoefficient coefficient : coefficients) {
                     coef = coef.multiply(coefficient.getValue());
                 }
             }
-            return tariff.multiply(coef);
+            return tariff.multiply(coef).setScale(2, RoundingMode.HALF_UP);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return BigDecimal.ZERO;
