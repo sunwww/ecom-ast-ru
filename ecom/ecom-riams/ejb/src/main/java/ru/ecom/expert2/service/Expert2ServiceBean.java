@@ -2812,7 +2812,9 @@ public class Expert2ServiceBean implements IExpert2Service {
         String sqlAdd;
         if (entry != null) {
             tariff = calculateTariff(entry);
-            sqlAdd = "profile_id=" + medHelpProfile.getId() + " and tariffType.code='" + entry.getSubType().getTariffCodeString() + "'";
+            sqlAdd = "profile_id=" + (medHelpProfile == null ? 0L : medHelpProfile.getId())
+                    + " and tariffType.code='"
+                    + (entry.getSubType() == null ? "" : entry.getSubType().getTariffCodeString()) + "'";
         } else {
             VocE2BaseTariff baseTariff = getActualVocByClassName(VocE2BaseTariff.class, finishDate, "vidSluch_id=" + vidSluch.getId());
             if (baseTariff == null) {
@@ -3647,7 +3649,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     private String calculateHelpKindPol(E2Entry entry) {
         String defaultHelpKindCode = "13";
         if (entry.getDoctorWorkfunction() == null) {
-            if (isEquals(entry.getFondDoctorSpecV021().getCode(), "76")) { //НМП без
+            if (entry.getFondDoctorSpecV021() != null && isEquals(entry.getFondDoctorSpecV021().getCode(), "76")) { //НМП без
                 return "12";
             }
             return defaultHelpKindCode;
