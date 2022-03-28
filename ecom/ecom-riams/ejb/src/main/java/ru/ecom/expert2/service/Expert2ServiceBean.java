@@ -2807,13 +2807,12 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     @Override
-    public BigDecimal calculatePolyclinicEntryPrice(E2Entry entry, VocE2VidSluch vidSluch, Date finishDate, VocE2MedHelpProfile medHelpProfile) {
+    public BigDecimal calculatePolyclinicEntryPrice(E2Entry entry, VocE2VidSluch vidSluch, Date finishDate, Long medHelpProfileId) {
         BigDecimal tariff;
         String sqlAdd;
         if (entry != null) {
             tariff = calculateTariff(entry);
-            sqlAdd = "profile_id=" + (medHelpProfile == null ? 0L : medHelpProfile.getId())
-                    + " and tariffType.code='"
+            sqlAdd = "profile_id=" + medHelpProfileId + " and tariffType.code='"
                     + (entry.getSubType() == null ? "" : entry.getSubType().getTariffCodeString()) + "'";
         } else {
             VocE2BaseTariff baseTariff = getActualVocByClassName(VocE2BaseTariff.class, finishDate, "vidSluch_id=" + vidSluch.getId());
@@ -2822,7 +2821,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 return BigDecimal.ZERO;
             }
             tariff = baseTariff.getValue();
-            sqlAdd = "vidSluch_id=" + vidSluch.getId() + " and profile_id=" + medHelpProfile.getId();
+            sqlAdd = "vidSluch_id=" + vidSluch.getId() + " and profile_id=" + medHelpProfileId;
         }
         try {
             List<VocE2PolyclinicCoefficient> coefficients;
@@ -3821,7 +3820,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     sloEntry.setMedHelpProfile(vwf.getMedHelpProfile());
                     sloEntry.setCost(isTrue(vwf.getIsNoOmc())
                             ? BigDecimal.ZERO
-                            : calculatePolyclinicEntryPrice(sloEntry, sloEntry.getVidSluch(), sloEntry.getFinishDate(), sloEntry.getMedHelpProfile()));
+                            : calculatePolyclinicEntryPrice(sloEntry, sloEntry.getVidSluch(), sloEntry.getFinishDate(), sloEntry.getMedHelpProfile() == null ? null : sloEntry.getMedHelpProfile().getId()));
                 } else if (medCase instanceof HospitalMedCase) { //Формируем цену по СЛО
                     DepartmentMedCase departmentMedCase;
                     if (medCase instanceof DepartmentMedCase) {

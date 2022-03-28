@@ -3,7 +3,6 @@ package ru.ecom.expert2.service;
 import ru.ecom.expert2.domain.E2Bill;
 import ru.ecom.expert2.domain.E2Entry;
 import ru.ecom.expert2.domain.E2ListEntry;
-import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
 import ru.ecom.expert2.domain.voc.VocE2VidSluch;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 
@@ -19,7 +18,7 @@ public interface IExpert2Service {
     String getMedcaseCost(Long aMedcaseId);
     String splitForeignOtherBill(Long aListEntryId, String aBillNumber, Date aBillDate, String aTerritories);
 
-    BigDecimal calculatePolyclinicEntryPrice(E2Entry entry, VocE2VidSluch aVidSluch, Date aFinishDate, VocE2MedHelpProfile aMedHelpProfile);
+    BigDecimal calculatePolyclinicEntryPrice(E2Entry entry, VocE2VidSluch aVidSluch, Date aFinishDate, Long aMedHelpProfile);
 
     E2Bill getBillEntryByDateAndNumber(String aBillNumber, Date aBillDate, String aComment);
     boolean exportDefectNewListEntry(Long aListEntryId);
