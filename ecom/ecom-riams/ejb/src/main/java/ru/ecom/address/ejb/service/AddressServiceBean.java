@@ -114,7 +114,7 @@ public class AddressServiceBean implements IAddressService, ILocalAddressService
     }
 
     public Address getAddressForLevel(long aDomain, Address aAddress) {
-    	if(aAddress==null) return null ;
+    	if( aAddress==null) return null ;
     	Long id = getIdForLevel(aDomain, aAddress.getId());
     	return id!=null ? entityManager.find(Address.class, id) : null ;
     }
