@@ -334,7 +334,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     @Override
     public void importFondMPAnswer(long monitorId, String mpFileName) {
         IMonitor monitor = startMonitor(monitorId, "Импорт дефектов. Файл: " + mpFileName);
-        needImportFondPrice = "1".equals(getSoftConfig(Expert2Config.NEED_IMPORT_PRICE_FROM_DEFECT, "0"));
+        needImportFondPrice = "1".equals(getExpertConfigValue(Expert2Config.NEED_IMPORT_PRICE_FROM_DEFECT, "0"));
         importFondMPAnswer(mpFileName, monitor);
         monitor.finish("Закончили импорт дефектов");
     }
@@ -643,12 +643,16 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     }
 
     private String getSoftConfig(String key) {
-        return getSoftConfig(key, null);
+        return softConfigService.getConfigValue(key);
     }
 
-    private String getSoftConfig(String key, String defaultValue) {
-        String val = softConfigService.getConfigValue(key);
-        return val == null ? defaultValue : val;
+    private String getExpertConfigValue(String parameterName, String defaultValue) {
+        List<Object> ret = manager.createNativeQuery("select value from Expert2Config where code=:code AND coalesce(isDeleted, false) = false").setParameter("code", parameterName).getResultList();
+        if (ret.isEmpty()) {
+            LOG.warn("Не удалось найти настройку с ключем " + parameterName + ", возвращаю значение по умолчанию");
+            return defaultValue;
+        }
+        return ret.get(0).toString();
     }
 
 }

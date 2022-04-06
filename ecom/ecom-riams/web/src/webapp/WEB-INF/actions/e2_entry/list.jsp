@@ -175,6 +175,7 @@
                         <input type="button" onclick="fixSomeError('223')" value="Поправить 223">
                         <input type="button" onclick="fixSomeError('CV_DEATH')" value="Поправить смерь от ковида">
                         <input type="button" onclick="fixSomeError('AUTOSMO')" value="Сделать согаз всем безполисным">
+                        <input type="button" onclick="fixSomeError('COST_1_RUB')" value="1 руб">
                     </td>
                 </tr>
             </table>

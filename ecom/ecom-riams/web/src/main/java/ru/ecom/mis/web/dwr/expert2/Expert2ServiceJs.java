@@ -27,6 +27,10 @@ import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
 public class Expert2ServiceJs {
     private static final Logger LOG = Logger.getLogger(Expert2ServiceJs.class);
 
+    public static String getMedcaseCost(Long medcaseId, HttpServletRequest request) throws NamingException {
+        return Injection.find(request).getService(IExpert2Service.class).getMedcaseCost(medcaseId);
+    }
+
     public String loadDrugSchemaByDrugGroupSchemaId(Long groupSchemaId, HttpServletRequest request) throws NamingException {
         return Injection.find(request).getService(IExpert2Service.class).loadDrugSchemaByDrugGroupSchemaId(groupSchemaId);
     }
@@ -47,6 +51,7 @@ public class Expert2ServiceJs {
         LOG.info(ret);
         return ret;
     }
+
     //Выписку одного случая в Алькону
     public String exportDirectionToAlkona(Long entryId, HttpServletRequest request) throws NamingException {
         String ret = Injection.find(request).getService(IExpert2AlkonaService.class).exportDirectionToAlkona(entryId);
@@ -62,10 +67,6 @@ public class Expert2ServiceJs {
     //Одну госпитализацию в Алькону
     public String exportHospEntryToAlkona(Long entryId, HttpServletRequest request) throws NamingException {
         return Injection.find(request).getService(IExpert2AlkonaService.class).exportHospEntryToAlkona(entryId);
-    }
-
-    public static String getMedcaseCost(Long medcaseId, HttpServletRequest request) throws NamingException {
-        return Injection.find(request).getService(IExpert2Service.class).getMedcaseCost(medcaseId);
     }
 
     public void deleteAllDrugByCancer(Long aCancerEntryId, HttpServletRequest aRequest) throws NamingException {
@@ -90,27 +91,31 @@ public class Expert2ServiceJs {
                         " where sc.key='DEFAULT_LPU' ").iterator().next().get1().toString();
     }
 
-    public String fixSomeErrors(Long aListEntryId, String aErrorCode, HttpServletRequest aRequest) throws NamingException, SQLException {
-        if ("223".equals(aErrorCode)) {
+    public String fixSomeErrors(Long listEntryId, String errorCode, HttpServletRequest request) throws NamingException {
+        if ("223".equals(errorCode)) { //TODO enum!
             LOG.info("Проверяем по базе ТФОМС и проставляем действующие полиса на дату начала случая");
-            return Injection.find(aRequest).getService(IExpert2Service.class)
-                    .fixFondAnswerError(aListEntryId, aErrorCode);
-        } else if ("CV_DEATH".equals(aErrorCode)) {
+            return Injection.find(request).getService(IExpert2Service.class)
+                    .fixFondAnswerError(listEntryId, errorCode);
+        } else if ("CV_DEATH".equals(errorCode)) {
             LOG.info("Перенос диагнозов из реанимации в род. отделение");
             String sql = "update EntryDiagnosis ed set entry_id =child.parentEntry_id from " +
-                    " e2entry child where child.listEntry_id=" + aListEntryId + " and (child.isDeleted is null or child.isDeleted='0') and child.serviceStream='COMPLEXCASE'" +
+                    " e2entry child where child.listEntry_id=" + listEntryId + " and (child.isDeleted is null or child.isDeleted='0') and child.serviceStream='COMPLEXCASE'" +
                     " and child.parentEntry_id is not null and ed.entry_id=child.id";
-            Injection.find(aRequest).getService(IWebQueryService.class)
+            Injection.find(request).getService(IWebQueryService.class)
                     .executeUpdateNativeSql(sql);
             return "All OK";
-        } else if ("AUTOSMO".equals(aErrorCode)) { //изменить код страх компании на СОГАЗ
+        } else if ("AUTOSMO".equals(errorCode)) { //изменить код страх компании на СОГАЗ
             int insuranceCode = 30002; //СОГАЗ
             LOG.info("Заменяем пустой код страховой компании на СОГАЗ " + insuranceCode);
-            Injection.find(aRequest).getService(IWebQueryService.class)
-                    .executeUpdateNativeSql("update e2entry set smocode = '" + insuranceCode + "' where listentry_id=" + aListEntryId + " and (smocode is null or smocode='')" +
+            Injection.find(request).getService(IWebQueryService.class)
+                    .executeUpdateNativeSql("update e2entry set smocode = '" + insuranceCode + "' where listentry_id=" + listEntryId + " and (smocode is null or smocode='')" +
                             " and (isDeleted is null or e.isDeleted='0') " +
                             " and (isForeign is null or isForeign is false) ");
             return "Страховая компания заменена на " + insuranceCode;
+        } else if ("COST_1_RUB".equals(errorCode)) { //установить цену 1 руб случаям без цены (цена = 0 руб)
+            Injection.find(request).getService(IWebQueryService.class)
+                    .executeNativeSql("update e2entry set cost ='1' where listentry_id="+listEntryId+" and coalesce(isDeleted, false) = false and cost = '0'");
+            return "Установлена цена = 1 руб";
         } else {
             return "Я не понял что мне делать!";
         }
