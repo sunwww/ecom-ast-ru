@@ -151,7 +151,7 @@ public class PromedExportServiceBean implements IPromedExportService {
             form.directNumber(sls.getOrderNumber());
             form.directDiagnosis(mapDiagnosis(sls.getDiagnoses(), "2", slsId)); //направительные диагноз
         }
-        form.entranceDate(getDateTime(sls.getDateStart(), sls.getEntranceTime()));
+        form.entranceDate(getDateTime(sls.getDateStart(), sls.getEntranceTime(), null));
         form.preAdmissionHour(mapAdmissionHour(sls.getPreAdmissionTime()));
         form.isUnLawTrauma(wasCrimeMessages(slsId));
         MisLpu entranceDepartment = sls.getDepartment();
@@ -172,8 +172,8 @@ public class PromedExportServiceBean implements IPromedExportService {
         List<PromedDepartmentForm> cases = new ArrayList<>();
         for (DepartmentMedCase slo : deps) {
             PromedDepartmentForm form = new PromedDepartmentForm();
-            form.setEntranceDate(getDateTime(slo.getDateStart(), slo.getEntranceTime()));
-            form.setTransferDate(getDateTime(slo.getTransferDate() != null ? slo.getTransferDate() : slo.getDateFinish(), slo.getTransferDate() != null ? slo.getTransferTime() : slo.getDischargeTime()));
+            form.setEntranceDate(getDateTime(slo.getDateStart(), slo.getEntranceTime(), null));
+            form.setTransferDate(getDateTime(slo.getTransferDate() != null ? slo.getTransferDate() : slo.getDateFinish(), slo.getTransferDate() != null ? slo.getTransferTime() : slo.getDischargeTime(), null));
             form.setDepartmentPromedId(slo.getDepartment().getPromedLpuSectionId());
             form.setDoctor(mapDoctor(slo.getOwnerFunction()));
             form.setMainDiagnosis(mapDiagnosis(slo.getMainDiagnosis(), slo.getId()));

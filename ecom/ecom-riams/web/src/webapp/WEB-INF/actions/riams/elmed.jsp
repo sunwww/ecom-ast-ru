@@ -106,23 +106,22 @@
                     type: typePost
                     ,url:elmedUrl+urlAppend
                     ,data: data
-                }).done (function(htm) {
-                    console.log(htm);
-                    handler(JSON.parse(htm));
+                }).done (function(jso) {
+                    console.log(jso);
+                    handler(jso);
                 }).fail( function (err) {
                     console.log("ERROR "+JSON.stringify(err));
                     alert("Не получен ответ от службы импорта Элмед: "+JSON.stringify(err));
-                    handler(JSON.parse(err));
+                    handler(err);
                 });
             }
 
             function makeImport(fileName) {
                 jQuery.ajax({
                     url:elmedUrl+"/importFile?file="+fileName
-                }).done(function(res) {
-                    var dt = JSON.parse(res);
+                }).done(function(jso) {
                         let str = "";
-                        jQuery.each(dt.data, function (ind, el) {
+                        jQuery.each(jso.data, function (ind, el) {
                             str+="<br><p style=\"color: "+(el.status=="ok" ?"green\">"+el.recordId +" УСПЕШНО": "red\">"+el.recordId+" "+el.statusName)+"</p>";
                         });
                         jQuery('#fileInfo').html(str);
