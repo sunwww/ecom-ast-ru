@@ -283,7 +283,7 @@ public class MisLpu extends BaseEntity {
     /**
      * Ид отделения в промеде
      */
-    private Integer promedLpuSectionId;
+    private Long promedLpuSectionId;
 
 
     /**

@@ -34,9 +34,12 @@ public class PromedHospitalForm extends PromedEntityForm {
     private Integer preAdmissionHour; //Кол-во часов с начала заболевания (маппим на стороне медоса)
     private Boolean isUnLawTrauma; //противоправная травма
 
-    private Integer departmentPromedId; //ИД отделения, куда направили пациента с приемного отделения
-    private Integer departmentProfileId; //ИД отделения, куда направили пациента с приемного отделения
+    private Long departmentPromedId; //ИД отделения, куда направили пациента с приемного отделения
+    private Long departmentProfileId; //ИД отделения, куда направили пациента с приемного отделения
     private Boolean isAmbulanceTreatment; //направлен на амбулаторное лечение (после выписки)
     private String transferLpuCode;
+    private String dischargeOutcomeCode; //Исход, VocHospitalizationOutcome
+    private String dischargeResultCode; //Результат, VocHospitalizationResult
+    private String dischargeReasonCode; //Причина выписки, VocReasonDischarge
 
 }

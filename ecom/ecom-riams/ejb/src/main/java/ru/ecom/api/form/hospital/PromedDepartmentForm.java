@@ -10,8 +10,9 @@ import java.util.List;
 @Data
 public class PromedDepartmentForm extends PromedEntityForm {
     private String entranceDate; //дата время поступления в отделения
-    private String transferDate; //дата и время перевода/выписки из отделения
-    private Integer departmentPromedId; //ИД отделения в промеде
+    private String transferDate; //дата и время перевода из отделения (в другое отделение)
+    private String dischargeDate; //дата и время выписки из отделения
+    private Long departmentPromedId; //ИД отделения в промеде
     private PromedDoctor doctor; //Лечащий врач
     private PromedDiagnosis mainDiagnosis;//Основной (клинический) диагноз
     private List<PromedDiagnosis> diagnoses; //сопутствующие, осложнения, фоновые,..

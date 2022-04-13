@@ -144,6 +144,11 @@ public class PromedExportServiceBean implements IPromedExportService {
                 .snils(pat.getSnils()).birthDate(pat.getBirthday()).build());
         form.statStubNumber(sls.getStatCardNumber());
         form.isFinished(true); //только закрытые СЛС!
+        form.dischargeResultCode(sls.getResult() == null ? null : sls.getResult().getCode())
+                .dischargeOutcomeCode(sls.getOutcome() == null ? null : sls.getOutcome().getCode())
+                .dischargeReasonCode(sls.getStatisticStub().getReasonDischarge() == null
+                        ? null
+                        : sls.getStatisticStub().getReasonDischarge().getCode());
         form.isEmergency(sls.getEmergency());
         if (!Boolean.TRUE.equals(sls.getEmergency())) {
             form.directDate(sls.getOrderDate());
@@ -173,7 +178,13 @@ public class PromedExportServiceBean implements IPromedExportService {
         for (DepartmentMedCase slo : deps) {
             PromedDepartmentForm form = new PromedDepartmentForm();
             form.setEntranceDate(getDateTime(slo.getDateStart(), slo.getEntranceTime(), null));
-            form.setTransferDate(getDateTime(slo.getTransferDate() != null ? slo.getTransferDate() : slo.getDateFinish(), slo.getTransferDate() != null ? slo.getTransferTime() : slo.getDischargeTime(), null));
+            if (slo.getDateFinish() != null) { //пациент выписан из этого отделения
+                form.setDischargeDate(getDateTime(slo.getDateFinish(), slo.getDischargeTime(), null));
+            } else if (slo.getTransferDate() != null) {
+                form.setTransferDate(getDateTime(slo.getTransferDate(), slo.getTransferTime(), null));
+            } else {
+                LOG.error("Что ты такое?!?!?!?!" + slo.getId());
+            }
             form.setDepartmentPromedId(slo.getDepartment().getPromedLpuSectionId());
             form.setDoctor(mapDoctor(slo.getOwnerFunction()));
             form.setMainDiagnosis(mapDiagnosis(slo.getMainDiagnosis(), slo.getId()));
