@@ -1,15 +1,13 @@
 package ru.ecom.mis.ejb.domain.medcase.voc;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 import lombok.Getter;
 import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
-import ru.nuzmsh.commons.formpersistence.annotation.Comment;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.sql.Date;
 
 /**
  * Методы ВМП
@@ -19,16 +17,32 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 @Getter
 @Setter
 public class VocMethodHighCare extends VocBaseEntity {
-	/** Список диагнозов */
-	private String diagnosis;
-	/** Код вида ВМП */
-	private String kindHighCare;
-	/** Дата начала */
-	private Date dateFrom;
-	/** Дата окончания */
-	private Date dateTo;
-	/** Модель пациента */
-	private String patientModel ;
-	/** Цена */
-	private BigDecimal cost ;
+    /**
+     * Список диагнозов
+     */
+    private String diagnosis;
+    /**
+     * Код вида ВМП
+     */
+    private String kindHighCare;
+    /**
+     * Дата начала
+     */
+    private Date dateFrom;
+    /**
+     * Дата окончания
+     */
+    private Date dateTo;
+    /**
+     * Модель пациента
+     */
+    private String patientModel;
+    /**
+     * ИД модели пациента
+     */
+    private Long patientModelId;
+    /**
+     * Цена
+     */
+    private BigDecimal cost;
 }
