@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -43,37 +43,20 @@
             <input type="submit" onclick="find()" value="Найти" />
           </td>
         </msh:row>
-        <%--
-        <msh:row>
-        
-        <td class="label" title="Длительность (period)" colspan="1"><label for="periodName" id="peroidLabel">Длительность:</label></td>
-        
-        <td onclick="this.childNodes[1].checked='checked';changePeriod()">
-        	<input type="radio" name="period" value="3"> День
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';changePeriod()">
-        	<input type="radio" name="period" value="1"> Неделя
-        </td>
-        <td onclick="this.childNodes[1].checked='checked';changePeriod()">
-        	<input type="radio" name="period" value="2"> Месяц
-        </td>
-         
 
-      </msh:row>
-      --%>
     </msh:panel>
     </msh:form>
     
     <%
-    String date = (String)request.getParameter("dateBegin") ;
-    String date1 = (String)request.getParameter("dateEnd") ;
-    if (date!=null && !date.equals(""))  {
-    	if (date1!=null &&!date1.equals("")) {
-    		request.setAttribute("dateEnd", date1) ;
-    	} else {
-    		request.setAttribute("dateEnd", date) ;
-    	}
-    	%>
+        String date = request.getParameter("dateBegin");
+        String date1 = request.getParameter("dateEnd");
+        if (date != null && !date.equals("")) {
+            if (date1 != null && !date1.equals("")) {
+                request.setAttribute("dateEnd", date1);
+            } else {
+                request.setAttribute("dateEnd", date);
+            }
+    %>
     
     <msh:section>
     <msh:sectionTitle>Результаты поиска ${infoTypePat}. Период с ${param.dateBegin} по ${param.dateEnd}. ${infoSearch} ${dateInfo}</msh:sectionTitle>
@@ -108,21 +91,12 @@
     <% } else {%>
     	<i>Выберите параметры и нажмите найти </i>
     	<% }   %>
-    <%-- 
-    <script type='text/javascript' src='/skin/ext/jscalendar/calendar.js'></script> 
-    <script type='text/javascript' src='/skin/ext/jscalendar/calendar-setup.js'></script> 
-    <script type='text/javascript' src='/skin/ext/jscalendar/calendar-ru.js'></script> 
-    <style type="text/css">@import url(/skin/ext/jscalendar/css/calendar-blue.css);</style>
-     --%>
     <script type='text/javascript'>
     
     checkFieldUpdate('typePatient','${typePatient}',4) ;
-    //checkFieldUpdate('typeDate','${typeDate}',2) ;
-    //checkFieldUpdate('period','${period}',3) ;
-    
+
     function checkFieldUpdate(aField,aValue,aDefaultValue) {
        	eval('var chk =  document.forms[0].'+aField) ;
-       	//alert(aField+" "+aValue+" "+aMax+" "+chk) ;
        	aValue=+aValue ;
        	var max=chk.length ;
        	if (aValue==0 || (aValue)>(max)) {
@@ -140,79 +114,7 @@
     	var frm = document.forms[0] ;
     	frm.target='_blank' ;
     	frm.action='stac_groupByMoveToAnotherLpuList.do' ;
-    }/*
-    function getPeriod() {
-    	//var period = document.forms[0].period ;
-    	for (i=0;i<period.length;i++) {
-    		if (period[i].checked) return +period[i].value ;
-    	}
-    	return 1 ;
     }
-    function changePeriod() {
-    	
-    	var field1 = document.getElementById("dateBegin").value;
-    	var field2 = document.getElementById("dateEnd");
-    	var date2 ;
-    	var date = new Date(field1.substring(0,4),(+field1.substring(5,7)-1),field1.substring(8)) ;
-    	if (getPeriod()==1) {
-		 	date2 = new Date(date.getFullYear(),date.getMonth(),date.getDate()+6) ;
-		 	//time += Date.WEEK; // substract one week
-		 } else if (getPeriod()==2) {
-		 	date2=new Date(date.getFullYear(),date.getMonth()+1,date.getDate()-1) ;
-		 } else {
-		 	date2=new Date(date.getFullYear(),date.getMonth(),date.getDate()) ;
-		 }
-		field2.value = date2.print("%Y-%m-%d");
-    }
-    function catcalc(cal) {
-			var date = cal.date;
-			var time = date.getTime() ;
-			 // use the _other_ field
-			 var field = document.getElementById("dateEnd");
-			 var date2 ;
-			 if (field == cal.params.inputField) {
-				 field = document.getElementById("dateBegin");
-				 if (getPeriod()==1) {
-				 	date2 = new Date(date.getFullYear(),date.getMonth(),date.getDate()-6) ;
-				 	//date2 = new Date(time) ;
-				 } else if (getPeriod()==2) {
-				 	date2 = new Date(date.getFullYear(),date.getMonth()-1,date.getDate()+1) ;
-				 	//date2 = new Date(time) ;
-				 } else{
-				 	date2=new Date(date.getFullYear(),date.getMonth(),date.getDate()) ;
-				 	
-				 }
-			 } else {
-				 if (getPeriod()==2) {
-				 	date2 = new Date(date.getFullYear(),date.getMonth()+1,date.getDate()-1) ;
-				 	//time += Date.WEEK; // substract one week
-				 } else if (getPeriod()==1) {
-				 	date2 = new Date(date.getFullYear(),date.getMonth(),date.getDate()+6) ;
-				 	//time += Date.WEEK; // substract one week
-				 } else {
-				 	date2=new Date(date.getFullYear(),date.getMonth(),date.getDate()) ;
-				 }
-			 }
-			 //var date2 = new Date(time);
-			 field.value = date2.print("%Y-%m-%d");
-	}
-			 Calendar.setup({
-				 inputField : "dateBegin", // id of the input field
-				 ifFormat : "%Y-%m-%d", // format of the input field
-				 showsTime : false,
-				 timeFormat : "24",
-				 eventName: "focus",
-				 onUpdate : catcalc
-			 });
-			 Calendar.setup({
-				 inputField : "dateEnd",
-				 ifFormat : "%Y-%m-%d",
-				 showsTime : false,
-				 timeFormat : "24",
-				 eventName: "focus",
-				 onUpdate : catcalc
- 			});
-			 */
     </script>
   </tiles:put>
 </tiles:insert>

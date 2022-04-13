@@ -15,23 +15,40 @@ import javax.persistence.OneToOne;
 @Getter
 @Setter
 public class VocIllnesPrimary extends VocBaseEntity {
-	/** Первичность */
+	/**
+	 * Первичность
+	 */
 	@Comment("Первичность")
 	@OneToOne
-	public VocPrimaryDiagnosis getPrimary() {return primary;}
+	public VocPrimaryDiagnosis getPrimary() {
+		return primary;
+	}
 
-	/** Острота */
+	/**
+	 * Устарел
+	 */
+	private Boolean deprecated;
+	/**
+	 * Острота
+	 */
+	private VocAcuityDiagnosis illnesType;
+	/**
+	 * Первичность
+	 */
+	private VocPrimaryDiagnosis primary;
+	/**
+	 * Код ОМС (справочник V027)
+	 */
+	private String omcCode;
+
+	/**
+	 * Острота
+	 */
 	@Comment("Острота")
 	@OneToOne
-	public VocAcuityDiagnosis getIllnesType() {return illnesType;}
-	/** Устарел */
-	private Boolean deprecated;
-	/** Острота */
-	private VocAcuityDiagnosis illnesType;
-	/** Первичность */
-	private VocPrimaryDiagnosis primary;
-	/** Код ОМС */
-	private String omcCode ;
+	public VocAcuityDiagnosis getIllnesType() {
+		return illnesType;
+	}
 
 
 }

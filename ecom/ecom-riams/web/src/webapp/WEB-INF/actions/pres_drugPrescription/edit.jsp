@@ -14,6 +14,7 @@
       <msh:hidden property="id" />
       <msh:hidden property="prescriptionList"/>
       <msh:hidden property="saveType" />
+      <msh:hidden property="drugCovidSchema" />
       <msh:panel colsWidth="3">
         <msh:row>
           <msh:autoComplete vocName="vocDrug" property="vocDrug" label="Лекарственный препарат" horizontalFill="true" fieldColSpan="3" size="50" />
@@ -76,7 +77,8 @@
   <tiles:put name="side" type="string">
     <msh:ifFormTypeIsView formName="pres_drugPrescriptionForm">
       <msh:sideMenu title="Лекарственное назначение">
-        <msh:sideLink roles="/Policy/Mis/Prescription/DrugPrescription/Edit" params="id" action="/javascript:cancelPrescription()" name="Отменить" key="ALT+2"/>
+        <msh:sideLink roles="/Policy/Mis/Prescription/DrugPrescription/Edit" params="id"
+                      action="/javascript:cancelService()" name="Отменить" key="ALT+2"/>
       </msh:sideMenu>
 
       <msh:sideMenu title="Добавить">
@@ -94,26 +96,23 @@
 
   <tiles:put name="javascript" type="string">
 
-  <script type="text/javascript" src="./dwr/interface/PharmacyService.js"></script>
-  <script type="text/javascript">
+    <script type="text/javascript" src="./dwr/interface/PrescriptionService.js"></script>
+    <script type="text/javascript">
 
-      function cancelPrescription() {
-          PharmacyService.endPrescription(${param.id},"${username}", {
-              callback : function(aResult) {
-                  if(aResult=="1"){
-                      alert("Назначение уже закрыто!");
-                  }else {
-                      alert("Назначение закрыто!");
-                      goBack();
-                  }
-              }
+      function cancelService() {
+        var reason = '' + prompt('Введите причину отмены');
+        if (reason != 'null') {
+          PrescriptionService.cancelPrescription($('id').value, reason, {
+            callback: function (a) {
+              alert(a);
+            }
           });
+        } else {
+          alert("Необходимо указать причину аннулирования!");
+        }
       }
 
-      function goBack(){
-          location.href = "entityParentView-pres_prescriptList.do?id="+$('prescriptionList').value;
-      }
-  </script>
+    </script>
   </tiles:put>
 </tiles:insert>
 

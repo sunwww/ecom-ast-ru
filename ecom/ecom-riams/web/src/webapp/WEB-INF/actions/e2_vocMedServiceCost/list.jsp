@@ -24,7 +24,7 @@
                  from VocOmcMedServiceCost voc
   left join vocmedservice vms on vms.id=voc.medservice_id
   left join VocE2FondV021 v021 on v021.id=voc.workFunction_id
-  order by voc.startDate, vms.code
+  order by voc.startDate desc, vms.code
 "/>
 
                 <msh:table  name="listAll" styleRow="6" action="entityView-e2_vocMedServiceCost.do" idField="1" disableKeySupport="true">

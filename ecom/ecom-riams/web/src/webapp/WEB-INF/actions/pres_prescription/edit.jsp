@@ -17,7 +17,7 @@
             <msh:hidden property="setPatologySpecial"/>
             <msh:hidden property="setPatologyUsername"/>
             <msh:hidden property="setPatologyDate"/>
-            <msh:hidden property="SetPatologyTime"/>
+            <msh:hidden property="setPatologyTime"/>
             <msh:panel>
                 <msh:row>
                     <msh:label property="descriptionInfo" label="Назначение" viewOnlyField="true" horizontalFill="true"
@@ -40,7 +40,7 @@
                                       horizontalFill="true" fieldColSpan="4"/>
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete vocName="vocWorker" property="cancelWorker" label="Отменил" horizontalFill="true"
+                    <msh:autoComplete vocName="vocWorker" property="cancelSpecial" label="Отменил" horizontalFill="true"
                                       fieldColSpan="4"/>
                 </msh:row>
                 <msh:row>

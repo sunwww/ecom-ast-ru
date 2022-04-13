@@ -428,6 +428,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
      *
      * @param aId идентификатор
      */
+    @Override
     public void delete(Class aFormClass, Object aId) {
         checkPermission(aFormClass, "Delete");
         checkDynamicPermission(aFormClass, aId, "Delete");
@@ -455,6 +456,7 @@ public class AbstractFormServiceBeanHelper implements IFormService {
 
     }
 
+    @Override
     public void delete(String aFormClassName, Object aId) {
         delete(loadMapForm(aFormClassName), aId);
     }

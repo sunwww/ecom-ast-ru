@@ -260,7 +260,6 @@ public class PromedExportServiceBean implements IPromedExportService {
                 } else {
                     return ret.getValue().toString();
                 }
-
             }
         }
 
@@ -305,6 +304,7 @@ public class PromedExportServiceBean implements IPromedExportService {
             tap.directLpuCode(findDirectLpu(allVisits));
 
             ShortMedCase lastVisit = allVisits.get(allVisits.size() - 1);
+            List<PromedPolyclinicVisitForm> visitForms = mapVisits(allVisits);
             if (lastVisit != null && lastVisit.getVisitResult() != null) {
                 tap.tapResult(lastVisit.getVisitResult().getOmcCode());
                 PromedDiagnosis lastDiagnosis;
@@ -317,13 +317,12 @@ public class PromedExportServiceBean implements IPromedExportService {
                 }
                 tap.diagnosis(lastDiagnosis);
             }
-            tap.visits(mapVisits(allVisits));
+            tap.visits(visitForms);
             return tap.build();
         } catch (Exception e) {
             LOG.error("Ошибка создания ДТО:" + e.getMessage(), e);
             return null;
         }
-
     }
 
     private String findDirectLpu(List<ShortMedCase> visits) {
@@ -335,8 +334,10 @@ public class PromedExportServiceBean implements IPromedExportService {
         return null;
     }
 
-    private String getDateTime(java.sql.Date date, Time time) {
-        return date + " " + (time == null ? "" : time);
+    private String getDateTime(java.sql.Date date, Time time, String defaultDateTime) {
+        return date == null || time == null
+                ? defaultDateTime
+                : date + " " + time;
     }
 
     private List<PromedPolyclinicVisitForm> mapVisits(List<ShortMedCase> visits) {
@@ -348,9 +349,20 @@ public class PromedExportServiceBean implements IPromedExportService {
             VocWorkPlaceType vwr = visit.getWorkPlaceType();
             VocServiceStream vss = visit.getServiceStream();
             PromedDoctor doc = mapDoctor(wf);
-            visitForm.startTime(getDateTime(visit.getDateStart(), visit.getTimeExecute()))
+            String startDateTime = getDateTime(visit.getDateStart(), visit.getTimeExecute(), null);
+            PromedDiagnosis diagnosis;
+            if (Boolean.TRUE.equals(visit.getWorkFunctionExecute().getWorkFunction().getIsNoDiagnosis())) {
+                //диагностика - диагноз Z
+                diagnosis = PromedDiagnosis.builder()
+                        .promedId("11052")
+                        .mkbCode("Z34.9").build();
+            } else {
+                diagnosis = mapDiagnosis(getPrioryDiagnosis(visit.getDiagnoses()), visit.getId());
+            }
+
+            visitForm.startTime(startDateTime)
                     .internalId(String.valueOf(visit.getId()))
-                    .diagnosis(mapDiagnosis(getPrioryDiagnosis(visit.getDiagnoses()), visit.getId()))
+                    .diagnosis(diagnosis)
                     .doctor(doc)
                     .workPlaceCode(vwr == null ? null : vwr.getOmcCode())
                     .diary(getDiaryInVisit(visit.getId()))
@@ -359,21 +371,21 @@ public class PromedExportServiceBean implements IPromedExportService {
                     .ishodCode(visit.getVisitResult() == null ? null : visit.getVisitResult().getCodefpl())
                     .medicalCareKindCode(mapMedicalCare(wf))
                     .promedCode(visit.getPromedCode())
-                    .services(mapServices(visit.getId(), doc))
+                    .services(mapServices(visit.getId(), doc, startDateTime))
             ;
             visitForms.add(visitForm.build());
         }
         return visitForms;
     }
 
-    private List<PromedMedService> mapServices(long visitId, PromedDoctor visitDoctor) {
+    private List<PromedMedService> mapServices(long visitId, PromedDoctor visitDoctor, String defaultDateStart) {
         List<ServiceMedCase> serviceList = manager.createQuery("from ServiceMedCase where parent_id=:visitId")
                 .setParameter("visitId", visitId).getResultList();
         List<PromedMedService> promedMedServices = new ArrayList<>();
         for (ServiceMedCase ms : serviceList) {
             PromedMedService pms = new PromedMedService();
             pms.setAmount(ms.getMedServiceAmount() == null ? 1 : ms.getMedServiceAmount());
-            pms.setFinishTime(getDateTime(ms.getDateStart(), ms.getTimeExecute()));
+            pms.setFinishTime(getDateTime(ms.getDateStart(), ms.getTimeExecute(), defaultDateStart));
             pms.setMedserviceCode(ms.getMedService().getCode());
             pms.setStartTime(pms.getFinishTime());
             pms.setDoctor(ms.getWorkFunctionExecute() == null ? visitDoctor : mapDoctor(ms.getWorkFunctionExecute()));
@@ -458,6 +470,7 @@ public class PromedExportServiceBean implements IPromedExportService {
                     .mkbCode(diagnosis.getIdc10().getCode())
                     .comment(diagnosis.getName())
                     .acuity(diagnosis.getIllnesPrimary() == null ? null : diagnosis.getIllnesPrimary().getCode())
+                    .diagReasonMkb(diagnosis.getIdc10Reason() == null ? null : diagnosis.getIdc10Reason().getCode())
                     .build();
         }
 

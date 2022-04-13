@@ -1,16 +1,21 @@
-function onPreCreate(aForm, aCtx) {
-
-    //Проверка на создание талона позже даты смерти пациента
-    var pat = aCtx.manager.createQuery(" from Patient where id = :pat").setParameter("pat", aForm.getPatient()).getResultList().get(0);
-    if (pat.getDeathDate() != null && (aForm.isNoActuality() == null
-        || aForm.isNoActuality().equals(java.lang.Boolean.FALSE))) {
-        var dateStart = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.getDateStart());
-        var deathDate = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(pat.getDeathDate(), "yyyy-MM-dd");
+function checkIsDead(form, ctx) {
+    var deadPatient = ctx.manager.createQuery(" from Patient where id = :pat and deathDate is not null")
+        .setParameter("pat", form.getPatient())
+        .getResultList();
+    if (!deadPatient.isEmpty()) {
+        var deathPatientDate =  deadPatient.get(0).getDeathDate();
+        var dateStart = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(form.getDateStart());
+        var deathDate = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(deathPatientDate, "yyyy-MM-dd");
         if (dateStart.getTime() > deathDate.getTime()) {
             throw "Невозможно создать посещение. На дату приема пациент уже умер ("
             + Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(deathDate) + ")";
         }
     }
+}
+
+function onPreCreate(aForm, aCtx) {
+    //Проверка на создание талона позже даты смерти пациента
+    checkIsDead(aForm, aCtx);
     var param = new java.util.HashMap();
     param.put("obj", "ShortMedCase");
     param.put("permission", "dateClosePeriod");
@@ -75,17 +80,7 @@ function onCreate(aForm, aEntity, aContext) {
 
 /** Перед сохранением */
 function onPreSave(aForm, aEntity, aCtx) {
-    var pat = aCtx.manager.createQuery(" from Patient where id = :pat").setParameter("pat", aForm.getPatient()).getResultList().get(0);
-    if (pat.getDeathDate() != null && (aForm.isNoActuality() == null
-        || aForm.isNoActuality().equals(java.lang.Boolean.FALSE))) {
-        var dateStart = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(aForm.getDateStart());
-        var deathDate = Packages.ru.nuzmsh.util.format.DateFormat.parseDate(pat.getDeathDate(), "yyyy-MM-dd");
-        if (dateStart.getTime() > deathDate.getTime()) {
-            throw "Невозможно создать посещение. На дату приема пациент уже умер ("
-            + Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(deathDate) + ")";
-        }
-    }
-
+    checkIsDead(aForm, aCtx);
     var param = new java.util.HashMap();
     param.put("obj", "ShortMedCase");
     param.put("permission", "dateClosePeriod");
@@ -208,7 +203,7 @@ function saveServices(aForm, aEntity, aCtx) {
                 servMC.setUet(+serv[1] > 0 ? new java.math.BigDecimal(serv[1]) : null);
                 servMC.setOrderNumber(serv[2]);
                 var amount = java.lang.Long.valueOf(serv[3]);
-                var medserviceExecutor = +serv[4]>0 ? aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction, java.lang.Long.valueOf(+serv[4])) : aEntity.getWorkFunctionExecute();
+                var medserviceExecutor = +serv[4] > 0 ? aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction, java.lang.Long.valueOf(+serv[4])) : aEntity.getWorkFunctionExecute();
                 servMC.setMedServiceAmount(amount != null ? amount.intValue() : null);
                 servMC.setMedService(servObj);
                 servMC.setPatient(aEntity.getPatient());

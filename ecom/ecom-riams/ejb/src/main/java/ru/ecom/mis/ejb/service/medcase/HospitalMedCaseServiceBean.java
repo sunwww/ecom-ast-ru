@@ -5,18 +5,13 @@ import org.jboss.annotation.security.SecurityDomain;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Element;
 import ru.ecom.diary.ejb.domain.DischargeEpicrisis;
 import ru.ecom.diary.ejb.domain.protocol.template.TemplateProtocol;
-import ru.ecom.ejb.sequence.service.ISequenceService;
 import ru.ecom.ejb.services.entityform.ILocalEntityFormService;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
-import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.util.ConvertSql;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
-import ru.ecom.ejb.util.injection.EjbInjection;
-import ru.ecom.ejb.xml.XmlUtil;
 import ru.ecom.expert2.service.IExpert2Service;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameter;
 import ru.ecom.mis.ejb.domain.licence.voc.VocDocumentParameterConfig;
@@ -35,7 +30,6 @@ import ru.ecom.mis.ejb.domain.report.AggregateHospitalReport;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.HospitalMedCaseViewInterceptor;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.StatisticStubStac;
 import ru.ecom.mis.ejb.form.patient.MedPolicyForm;
-import ru.ecom.report.util.XmlDocument;
 import ru.nuzmsh.util.format.DateFormat;
 
 import javax.annotation.EJB;
@@ -45,13 +39,11 @@ import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.sql.Date;
 import java.text.ParseException;
@@ -557,6 +549,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     @Override
     public String makeReportCostCase(String aDateFrom, String aDateTo, String aType, String aLpuCode, String aReportType) {
         //Начинаем стационар
+        if (aLpuCode == null || aLpuCode.equals("")) {
+            return "Не указан код ЛПУ";
+        }
         try {
             Integer findDays = 10; //дни до госпитализации/СПО, в течение которых надо искать договор
             StringBuilder sqlSelect = new StringBuilder();
@@ -565,9 +560,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
             HashMap<String, String> profileMap = "BANK".equals(aReportType) ?
                     getStacProfileMapBank() : getStacProfileMap();
             HashMap<String, String> sredstvaMap = getMiacServiceStreamMap();
-            if (aLpuCode == null || aLpuCode.equals("")) {
-                return "Не указан код ЛПУ";
-            }
+
             if ("inog".equals(aType)) {
                 sqlAppend.append(" and a.addressid is not null and coalesce(a.kladr,'')!='' and a.kladr not like '30%' ");
                 sqlSelect.append(",substring(a.kladr,0,3)");
@@ -605,11 +598,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                 vssGroup = " ,vss.code";
                 vbtSelect2 = ", vbt.name as vbtNameNote ";
             }
-            List<Object> listPr = manager.createNativeQuery("select id from PriceList where isdefault='1'").setMaxResults(1).getResultList();
-            String priceListId = null;
-            if (!listPr.isEmpty()) {
-                priceListId = listPr.get(0).toString();
-            }
+            Long priceListId = getDefaultPriceListId();
             StringBuilder sql = new StringBuilder() //считаем стационар
                     .append(" select to_char(sls.datefinish,'yyyy-MM') as f0_date")
                     .append(" ,count(distinct pat.id) as f1_person_count")
@@ -896,9 +885,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
      * @return String Регион для отчёта
      */
     private String getRegionForBank(String regCode) {
-        while (regCode.length() < 3)
-            regCode = "0" + regCode;
-        return regCode;
+        return regCode.length() > 2 ? regCode : ("000" + regCode).substring(regCode.length());
     }
 
     /**
@@ -911,11 +898,11 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
      */
     private String getRegion(String regCode, String aReportType, HashMap<String, String> regionOrCountry) {
         String region;
-        if ("MIAC".equals(aReportType))
+        if ("MIAC".equals(aReportType)) {
             region = regionOrCountry.get(toString(regCode)) != null ? regionOrCountry.get(toString(regCode)) : "REGION_CODE=" + toString(regCode);
-        else if ("BANK".equals(aReportType))
+        } else if ("BANK".equals(aReportType)) {
             region = getRegionForBank(toString(regCode));
-        else {
+        } else {
             region = null;
             LOG.info("unknown type report");
         }
@@ -936,45 +923,43 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     }
 
     @Override
-    public String getAllServicesByMedCase(Long aMedcaseId) {
-        return countMedcaseCost(aMedcaseId, null, true);
+    public String getAllServicesByMedCase(Long medcaseId) {
+        return countMedcaseCost(medcaseId, getDefaultPriceListId(), true);
     }
 
-    private String countMedcaseCost(Long aMedcaseId, String aPriceList) {
-        return countMedcaseCost(aMedcaseId, aPriceList, false);
+    private String countMedcaseCost(Long medcaseId, Long priceListId) {
+        return countMedcaseCost(medcaseId, priceListId, false);
+    }
+
+    private Long getDefaultPriceListId() {
+        List<BigInteger> list = manager.createNativeQuery("select id from pricelist where isdefault='1'").getResultList();
+        return list != null && !list.isEmpty() ?
+                list.get(0).longValue()
+                : null;
     }
 
     /**
      * Расчитываем стоимость случая госпитализации
      *
-     * @param aMedcaseId ID госпитализации
+     * @param medcaseId ID госпитализации
      * @return - JSON объект с полной стоимостью + список оказанных услуг
      */
-    private String countMedcaseCost(Long aMedcaseId, String aPriceListId, boolean allIsCharged) {
+    private String countMedcaseCost(Long medcaseId, Long priceListId, boolean allIsCharged) {
         JSONObject root = new JSONObject();
         String ppidNull = allIsCharged ? " " : " and pp.id is not null ";
         try {
-            String priceListId = null;
-            if (aPriceListId != null) {
-                priceListId = aPriceListId;
-            } else {
-                List<Object> list = manager.createNativeQuery("select id from pricelist where isdefault='1'").getResultList();
-                if (list != null && !list.isEmpty()) {
-                    priceListId = list.get(0).toString();
-                }
-            }
             String idsertypebed = "11";
             String dtype;
             long patientId;
             Long serviceStreamId;
-            MedCase mc = (MedCase) manager.createQuery(" from MedCase where id=:id").setParameter("id", aMedcaseId).getSingleResult();
+            MedCase mc = (MedCase) manager.createQuery(" from MedCase where id=:id").setParameter("id", medcaseId).getSingleResult();
             if (mc instanceof HospitalMedCase) {
                 HospitalMedCase hmc = (HospitalMedCase) mc;
                 patientId = hmc.getPatient().getId();
                 serviceStreamId = hmc.getServiceStream().getId();
                 String startDate = DateFormat.formatToDate(hmc.getDateStart());
                 String finishDate = DateFormat.formatToDate(hmc.getDateFinish() != null ? hmc.getDateFinish() : new java.sql.Date(new java.util.Date().getTime()));
-                if (hmc.getServiceStream().getFinanceSource() != null && hmc.getServiceStream().getFinanceSource().equals("CHARGED") || allIsCharged) { //Для платных считаем цену случая сами
+                if (allIsCharged || Objects.equals(hmc.getServiceStream().getFinanceSource(), "CHARGED")) { //Для платных считаем цену случая сами
 
                     StringBuilder sql = new StringBuilder().append("select slo.id as f0,ml.name||' '||vbt.name||' '||vbst.name||' '||vrt.name as sloinfo")
                             .append(" ,list(pp.code||' '||pp.name) as f2_ppname")
@@ -1080,13 +1065,12 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                             .append(" left join medservice ms on ms.id=smc.medservice_id")
                             .append(" left join pricemedservice pms on pms.medservice_id=smc.medservice_id")
                             .append(" left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='").append(priceListId).append("'")
-                            .append(" where vis.parent_id='").append(aMedcaseId).append("'")
+                            .append(" where vis.parent_id='").append(medcaseId).append("'")
                             .append(" and vis.datestart between to_date('").append(startDate).append("','dd.mm.yyyy') and to_date('").append(finishDate).append("','dd.mm.yyyy')")
                             .append(" and upper(vis.dtype)='VISIT' and upper(smc.dtype)='SERVICEMEDCASE'")
                             .append(" and (vss.code='HOSPITAL' or vss.id is null)")
                             .append(" and (vis.noActuality='0' or vis.noActuality is null) ")
-                            .append(ppidNull);//pp.id is not null");
-                    //LOG.info("calc price, labsurvey = " + sql);
+                            .append(ppidNull);
                     list = manager.createNativeQuery(sql.toString()).getResultList();
                     arr = new JSONArray();
                     sum = 0.0;
@@ -1119,9 +1103,8 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                             .append(" left join medservice ms on ms.id=so.medservice_id")
                             .append(" left join pricemedservice pms on pms.medservice_id=so.medservice_id")
                             .append(" left join priceposition pp on pp.id=pms.priceposition_id and  pp.priceList_id='").append(priceListId).append("'")
-                            .append(" where (slo.parent_id='").append(aMedcaseId).append("' or slo.id='").append(aMedcaseId).append("') ")
+                            .append(" where (slo.parent_id='").append(medcaseId).append("' or slo.id='").append(medcaseId).append("') ")
                             .append(ppidNull);
-                    //LOG.info("calc price, operation = " + sql);
                     list = manager.createNativeQuery(sql.toString()).getResultList();
                     arr = new JSONArray();
                     sum = 0.0;
@@ -1157,8 +1140,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                             .append(" left join medservice ms on ms.id=aso.medservice_id")
                             .append(" left join pricemedservice pms on pms.medservice_id=aso.medservice_id")
                             .append(" left join priceposition pp on pp.id=pms.priceposition_id")
-                            .append(" where (slo.parent_id='").append(aMedcaseId).append("' or slo.id='").append(aMedcaseId).append("') and pp.priceList_id='").append(priceListId).append("'");
-                    //LOG.info("calc price, anathesia = " + sql);
+                            .append(" where (slo.parent_id='").append(medcaseId).append("' or slo.id='").append(medcaseId).append("') and pp.priceList_id='").append(priceListId).append("'");
                     list = manager.createNativeQuery(sql.toString()).getResultList();
                     arr = new JSONArray(); //Операции
                     sum = 0.0;
@@ -1179,7 +1161,6 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                     //Доп. услуги
                     sql = new StringBuilder()
                             .append("select")
-                            //.append(" so.id,to_char(so.dateStart,'dd.mm.yyyy')||' - '||ms.code||'. '||ms.name||' - '||vwf.name||' '||wp.lastname as sloinfo")
                             .append(" pp.code||' '||pp.name as ppname")
                             .append(" ,pp.cost as ppcost, ms.code ")
                             .append(" ,mkb.code as mkbcode")
@@ -1196,10 +1177,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                             .append(" left join medservice ms on ms.id=so.medservice_id")
                             .append(" left join pricemedservice pms on pms.medservice_id=so.medservice_id")
                             .append(" left join priceposition pp on pp.id=pms.priceposition_id and pp.priceList_id='").append(priceListId).append("'")
-                            .append(" where (slo.parent_id='").append(aMedcaseId).append("' or slo.id='").append(aMedcaseId).append("')")
+                            .append(" where (slo.parent_id='").append(medcaseId).append("' or slo.id='").append(medcaseId).append("')")
                             .append(" and upper(so.dtype)='SERVICEMEDCASE' and upper(slo.dtype)!='VISIT' ")
                             .append(ppidNull);
-                    //LOG.info("calc price, dop_uslugi = " + sql);
                     list = manager.createNativeQuery(sql.toString()).getResultList();
                     arr = new JSONArray(); //Операции
                     sum = 0.0;
@@ -1222,7 +1202,6 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                 }
                 dtype = "Hospital";
             } else if (mc instanceof PolyclinicMedCase) {
-
                 dtype = "POlyclinic";
             } else {
                 dtype = "unknow";
@@ -1232,7 +1211,6 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
             LOG.error("some JSON exception happens");
             e.printStackTrace();
         }
-
         return root.toString();
     }
 
@@ -1241,32 +1219,32 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
      */
 
     @Override
-    public String getDischargeEpicrisis(long aMedCaseId) {
-        return HospitalMedCaseViewInterceptor.getDischargeEpicrisis(aMedCaseId, manager);
+    public String getDischargeEpicrisis(long medcaseId) {
+        return HospitalMedCaseViewInterceptor.getDischargeEpicrisis(medcaseId, manager);
     }
 
-    public void addMonitor(long aMonitorId, int aInt) {
+    public void addMonitor(long monitorId, int someInt) {
         try {
-            IMonitor monitor = monitorService.getMonitor(aMonitorId);
-            monitor.advice(aInt);
+            IMonitor monitor = monitorService.getMonitor(monitorId);
+            monitor.advice(someInt);
         } catch (Exception ignored) {
 
         }
     }
 
     @Override
-    public void finishMonitor(long aMonitorId) {
+    public void finishMonitor(long monitorId) {
         try {
-            monitorService.getMonitor(aMonitorId).finish("");
+            monitorService.getMonitor(monitorId).finish("");
         } catch (Exception ignored) {
 
         }
     }
 
     @Override
-    public void startMonitor(long aMonitorId) {
+    public void startMonitor(long monitorId) {
         try {
-            monitorService.startMonitor(aMonitorId, "Обработка данных", 100);
+            monitorService.startMonitor(monitorId, "Обработка данных", 100);
         } catch (Exception ignored) {
 
         }
@@ -1274,23 +1252,23 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
     //психушка
     @Override
-    public void refreshCompTreatmentReportByPeriod(String aEntranceDate, String aDischargeDate, long aIdMonitor) {
+    public void refreshCompTreatmentReportByPeriod(String entranceDate, String dischargeDate, long idMonitor) {
         IMonitor monitor = null;
         java.util.Date dt = new java.util.Date();
         String curDate = DateFormat.formatToDate(dt);
         try {
-            monitor = monitorService.startMonitor(aIdMonitor, "Обработка данных за период: " + aEntranceDate + " " + aDischargeDate, 100);
+            monitor = monitorService.startMonitor(idMonitor, "Обработка данных за период: " + entranceDate + " " + dischargeDate, 100);
 
-            String sqlD = " delete from CompulsoryTreatmentAggregate where entrancehospdate <= (to_date('" + aDischargeDate + "','dd.mm.yyyy')-1)" +
-                    " and (dischargehospdate >= (to_date('" + aEntranceDate + "','dd.mm.yyyy')-1) or dischargehospdate is null)";
+            String sqlD = " delete from CompulsoryTreatmentAggregate where entrancehospdate <= (to_date('" + dischargeDate + "','dd.mm.yyyy')-1)" +
+                    " and (dischargehospdate >= (to_date('" + entranceDate + "','dd.mm.yyyy')-1) or dischargehospdate is null)";
             manager.createNativeQuery(sqlD).executeUpdate();
 
             monitor.advice(20);
 
             String sql = "select ct.ordernumber,ct.carecard_id,pcc.patient_id from CompulsoryTreatment ct " +
                     " left join PsychiatricCareCard pcc on pcc.id=ct.careCard_id " +
-                    " where coalesce(ct.registrationdate,ct.DecisionDate)<=to_date('" + aDischargeDate + "','dd.mm.yyyy') " +
-                    " and coalesce(ct.RegistrationReplaceDate,ct.Datereplace,to_date('" + aEntranceDate + "','dd.mm.yyyy'))>=to_date('" + aEntranceDate + "','dd.mm.yyyy') and ct.kind_id in (2,3) " +
+                    " where coalesce(ct.registrationdate,ct.DecisionDate)<=to_date('" + dischargeDate + "','dd.mm.yyyy') " +
+                    " and coalesce(ct.RegistrationReplaceDate,ct.Datereplace,to_date('" + entranceDate + "','dd.mm.yyyy'))>=to_date('" + entranceDate + "','dd.mm.yyyy') and ct.kind_id in (2,3) " +
                     " group by ct.ordernumber,ct.carecard_id,pcc.patient_id";
             List<Object[]> list = manager.createNativeQuery(sql).getResultList();
             int size = list.size() / 80;
@@ -1317,7 +1295,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
                 for (Object[] o1 : l1) {
                     manager.createNativeQuery("delete from CompulsoryTreatmentAggregate where sls in (" + o1[5] + ")").executeUpdate();
-                    boolean prevCT = (o1[4] != null && Integer.parseInt("" + o1[4]) == 1);
+                    boolean prevCT = o1[4] != null && Integer.parseInt("" + o1[4]) == 1;
                     if (!prevCT) {
                         l2.add(o1);
                     } else {
@@ -1681,12 +1659,12 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                 switch (dtype) {
                     case "HospitalMedCase": {
                         List<Object[]> listBedFund = manager.createNativeQuery("select slo.id as sloid,bfNew.id as bfNewid from MedCase slo"
-                                + " left join BedFund bf on bf.id=slo.bedFund_id"
-                                + " left join BedFund bfNew on bfNew.lpu_id=bf.lpu_id"
-                                + " where slo.parent_id='" + aSmo + "' and slo.dtype='DepartmentMedCase'"
-                                + " and bfNew.bedSubType_id = bf.bedSubType_id"
-                                + " and bfNew.bedType_id = bf.bedType_id"
-                                + " and bfNew.serviceStream_id = '" + aServiceStream + "' and slo.dateStart between bfNew.dateStart and coalesce(bfNew.dateFinish,CURRENT_DATE)")
+                                        + " left join BedFund bf on bf.id=slo.bedFund_id"
+                                        + " left join BedFund bfNew on bfNew.lpu_id=bf.lpu_id"
+                                        + " where slo.parent_id='" + aSmo + "' and slo.dtype='DepartmentMedCase'"
+                                        + " and bfNew.bedSubType_id = bf.bedSubType_id"
+                                        + " and bfNew.bedType_id = bf.bedType_id"
+                                        + " and bfNew.serviceStream_id = '" + aServiceStream + "' and slo.dateStart between bfNew.dateStart and coalesce(bfNew.dateFinish,CURRENT_DATE)")
                                 .getResultList();
                         Long cntSlo = ConvertSql.parseLong(obj[1]);
                         if (cntSlo.intValue() == listBedFund.size()) {
@@ -1703,12 +1681,12 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                     }
                     case "DepartmentMedCase": { // не будет случаться, убрать
                         List<Object[]> listBedFund = manager.createNativeQuery("select slo.id as sloid,bfNew.id as bfNewid from MedCase slo"
-                                + " left join BedFund bf on bf.id=slo.bedFund_id"
-                                + " left join BedFund bfNew on bfNew.lpu_id=bf.lpu_id"
-                                + " where slo.id='" + aSmo + "' and slo.dtype='DepartmentMedCase'"
-                                + " and bfNew.bedSubType_id = bf.bedSubType_id"
-                                + " and bfNew.bedType_id = bf.bedType_id"
-                                + " and bfNew.serviceStream_id = '" + aServiceStream + "' and slo.dateStart between bfNew.dateStart and coalesce(bfNew.dateFinish,CURRENT_DATE)")
+                                        + " left join BedFund bf on bf.id=slo.bedFund_id"
+                                        + " left join BedFund bfNew on bfNew.lpu_id=bf.lpu_id"
+                                        + " where slo.id='" + aSmo + "' and slo.dtype='DepartmentMedCase'"
+                                        + " and bfNew.bedSubType_id = bf.bedSubType_id"
+                                        + " and bfNew.bedType_id = bf.bedType_id"
+                                        + " and bfNew.serviceStream_id = '" + aServiceStream + "' and slo.dateStart between bfNew.dateStart and coalesce(bfNew.dateFinish,CURRENT_DATE)")
                                 .getResultList();
                         Object[] slo = listBedFund.get(0);
                         if (listBedFund.size() == 1) {
@@ -1735,19 +1713,19 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     @Override
     public void unionSloWithNextSlo(Long aSlo) {
         List<Object[]> list = manager.createNativeQuery("select  "
-                + "case when sloNext1.department_id is not null and"
-                + " sloNext1.department_id=slo.department_id then '1' end equalsDep"
-                + " ,sloNext.id as sloNext,sloNext1.id as sloNext1,sloNext2.id as sloNext2"
-                + " ,sloNext.dateFinish as sloNextDateFinish,sloNext.dischargeTime as sloNextDischargeTime"
-                + " ,sloNext.transferDate as sloNextTransferDate,sloNext.transferTime as sloNextTransferTime"
-                + " ,sloNext1.dateFinish as sloNext1DateFinish,sloNext1.dischargeTime as sloNext1DischargeTime"
-                + " ,sloNext1.transferDate as sloNext1TransferDate,sloNext1.transferTime as sloNext1TransferTime"
+                        + "case when sloNext1.department_id is not null and"
+                        + " sloNext1.department_id=slo.department_id then '1' end equalsDep"
+                        + " ,sloNext.id as sloNext,sloNext1.id as sloNext1,sloNext2.id as sloNext2"
+                        + " ,sloNext.dateFinish as sloNextDateFinish,sloNext.dischargeTime as sloNextDischargeTime"
+                        + " ,sloNext.transferDate as sloNextTransferDate,sloNext.transferTime as sloNextTransferTime"
+                        + " ,sloNext1.dateFinish as sloNext1DateFinish,sloNext1.dischargeTime as sloNext1DischargeTime"
+                        + " ,sloNext1.transferDate as sloNext1TransferDate,sloNext1.transferTime as sloNext1TransferTime"
 
-                + " from medcase slo"
-                + " left join MedCase sloNext on sloNext.prevMedCase_id=slo.id"
-                + " left join MedCase sloNext1 on sloNext1.prevMedCase_id=sloNext.id"
-                + " left join MedCase sloNext2 on sloNext2.prevMedCase_id=sloNext1.id"
-                + " where slo.id='" + aSlo + "'")
+                        + " from medcase slo"
+                        + " left join MedCase sloNext on sloNext.prevMedCase_id=slo.id"
+                        + " left join MedCase sloNext1 on sloNext1.prevMedCase_id=sloNext.id"
+                        + " left join MedCase sloNext2 on sloNext2.prevMedCase_id=sloNext1.id"
+                        + " where slo.id='" + aSlo + "'")
                 .getResultList();
         if (!list.isEmpty()) {
             Object[] obj = list.get(0);
@@ -1854,7 +1832,6 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
     @Override
     public void preRecordDischarge(Long aMedCaseId, String aDischargeEpicrisis) {
-
         saveDischargeEpicrisis(aMedCaseId, aDischargeEpicrisis, manager);
     }
 
@@ -1883,10 +1860,17 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
         }
     }
 
+    private final Map<Long, String> addressFullNameMap = new HashMap<>();
     private String addressInfo(EntityManager aManager, Long aAddressId, Object[] aAddress) {
+        if (addressFullNameMap.containsKey(aAddressId)) {
+            return addressFullNameMap.get(aAddressId);
+        }
+        String fullname = aAddress[1] == null ? "" : aAddress[1].toString().trim();
+        if (aAddress[1] != null && !fullname.equals("")) {
+            addressFullNameMap.put(aAddressId, fullname);
+            return fullname;
+        }
         StringBuilder sb = new StringBuilder();
-        String fullname = aAddress[1].toString().trim();
-        if (aAddress[1] != null && !fullname.equals("")) return fullname;
         sb.insert(0, aAddress[2]);
         if (aAddress[3] != null) {
             String shortName = aAddress[3] + " ";
@@ -1895,22 +1879,26 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
 
         if (aAddress[4] != null) {
             Long id1 = ConvertSql.parseLong(aAddress[4]);
-            List<Object[]> list = manager.createNativeQuery("select a.addressid,a.fullname,a.name,att.shortName,a.parent_addressid from address2 a left join AddressType att on att.id=a.type_id where a.addressid=" + id1 + " order by a.addressid")
+            List<Object[]> list = manager.createNativeQuery("select a.addressid,a.fullname,a.name,att.shortName,a.parent_addressid from address2 a" +
+                            " left join AddressType att on att.id=a.type_id" +
+                            " where a.addressid=:parentId")
+                    .setParameter("parentId", id1)
                     .setMaxResults(1)
                     .getResultList();
             if (!list.isEmpty()) {
-
                 sb.insert(0, ", ");
                 sb.insert(0, addressInfo(aManager, id1, list.get(0)));
             }
         }
-        aManager.createNativeQuery("update Address2 set fullname='" + sb.toString().trim() + "' where addressid=" + aAddressId).executeUpdate();
-        return sb.toString().trim();
+        String calcedFullName = sb.toString().trim();
+        aManager.createNativeQuery("update Address2 set fullname='" + calcedFullName + "' where addressid=" + aAddressId).executeUpdate();
+        addressFullNameMap.put(aAddressId, calcedFullName);
+        return calcedFullName;
     }
 
     @Override
     public void addressClear() {
-        manager.createNativeQuery("update Address2 set fullname=null").executeUpdate();
+        manager.createNativeQuery("update Address2 set fullname=null where fullname is not null").executeUpdate();
     }
 
     @Override
@@ -1919,6 +1907,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
         list = manager.createNativeQuery("select a.addressid,a.fullname,a.name,att.shortName,a.parent_addressid from address2 a left join AddressType att on att.id=a.type_id where a.addressid>" + id + " and a.fullname is null order by a.addressid")
                 .setMaxResults(450)
                 .getResultList();
+        LOG.info("Updating 450 addresses from id: " + id);
         if (!list.isEmpty()) {
             for (Object[] adr : list) {
                 id = ConvertSql.parseLong(adr[0]);
@@ -1926,6 +1915,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
             }
         } else {
             id = -1;
+            addressFullNameMap.clear();
         }
         return id;
     }
@@ -1967,10 +1957,10 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                 .append(" left join vocservicestream as vss on vss.id=smc.servicestream_id")
                 .append(" where smc.patient_id=:pat and smc.DTYPE='ServiceMedCase' and smc.medService_id=:usl and smc.dateExecute=:dat");
         if (aMedService != null && aMedService > 0) {
-            sql.append(" and smc.id!='").append(aMedService).append("'");
+            sql.append(" and smc.id!=").append(aMedService);
         }
         List<Object[]> doubles = manager.createNativeQuery(
-                sql.toString())
+                        sql.toString())
                 .setParameter("pat", aPatient)
                 .setParameter("usl", aService)
                 .setParameter("dat", date)
@@ -2009,7 +1999,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
         }
 
         List<Object[]> doubles = manager.createNativeQuery(
-                sql.toString())
+                        sql.toString())
                 .setParameter("mcid", aParentMedCase)
                 .setParameter("usl", aOperation)
                 .setParameter("dat", date)
@@ -2106,9 +2096,9 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
     public Collection<MedPolicyForm> listPoliciesToAdd(Long aMedCase) {
         HospitalMedCase hospital = manager.find(HospitalMedCase.class, aMedCase);
         List<Object[]> listPolicies = manager.createNativeQuery("select p.id,count(case when mp.medCase_id='"
-                + aMedCase
-                + "' then 1 end) from MedPolicy p left join MedCase_MedPolicy mp on p.id=mp.policies_id left join MedCase m on m.id=mp.medCase_id where p.patient_id='"
-                + hospital.getPatient().getId() + "' group by p.id")
+                        + aMedCase
+                        + "' then 1 end) from MedPolicy p left join MedCase_MedPolicy mp on p.id=mp.policies_id left join MedCase m on m.id=mp.medCase_id where p.patient_id='"
+                        + hospital.getPatient().getId() + "' group by p.id")
                 .getResultList();
         List<MedPolicy> allPolicies = new ArrayList<>();
         for (Object[] obj : listPolicies) {

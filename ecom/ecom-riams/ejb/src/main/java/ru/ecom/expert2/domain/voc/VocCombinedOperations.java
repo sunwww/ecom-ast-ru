@@ -19,19 +19,33 @@ public class VocCombinedOperations extends BaseEntity {
     /** Операция 1 */
     @Comment("Операция 1")
     @OneToOne
-    public VocMedService getMedService1() {return medService1;}
+    public VocMedService getMedService1() {
+        return medService1;
+    }
+
     private VocMedService medService1;
 
-    /** Операция 2 */
+    /**
+     * Операция 2
+     */
     @Comment("Операция 2")
     @OneToOne
-    public VocMedService getMedService2() {return medService2;}
+    public VocMedService getMedService2() {
+        return medService2;
+    }
+
     private VocMedService medService2;
 
+    /*Код сложности КСЛП*/
+    private String difficultyCode;
 
-    /** Дата начала действия */
+    /**
+     * Дата начала действия
+     */
     private Date startDate;
 
-    /** Дата окончания действия */
+    /**
+     * Дата окончания действия
+     */
     private Date finishDate;
 }

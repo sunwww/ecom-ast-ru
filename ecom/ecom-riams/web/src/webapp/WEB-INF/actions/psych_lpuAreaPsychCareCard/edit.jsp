@@ -104,14 +104,15 @@
     </msh:ifFormTypeAreViewOrEdit>
   </tiles:put>
       <tiles:put name="javascript" type="string">
-        <script type="text/javascript">//var theBedFund = $('bedFund').value;
+          <script type="text/javascript">
 
-      	function goTransfer() {
-      		window.location = 'entityParentPrepareCreate-psych_lpuAreaPsychCareCard.do?id='+$('careCard').value+"&tmp="+Math.random() ;
-      	}
-      	function goEditCareCard() {
-      		window.location = 'entityParentEdit-psych_careCard.do?id='+$('careCard').value+"&tmp="+Math.random() ;
-      	}
-      	</script>
-  </tiles:put>
+              function goTransfer() {
+                  window.location = 'entityParentPrepareCreate-psych_lpuAreaPsychCareCard.do?id=' + $('careCard').value + "&tmp=" + Math.random();
+              }
+
+              function goEditCareCard() {
+                  window.location = 'entityParentEdit-psych_careCard.do?id=' + $('careCard').value + "&tmp=" + Math.random();
+              }
+          </script>
+      </tiles:put>
 </tiles:insert>

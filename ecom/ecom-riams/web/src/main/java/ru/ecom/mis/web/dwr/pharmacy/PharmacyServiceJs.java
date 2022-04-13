@@ -20,7 +20,7 @@ public class PharmacyServiceJs {
     public void SQLupdate(HttpServletRequest aRequest, String SQLUpdateString) {
 
     }
-
+//TODO deprecated
     public Integer endPrescription(Long prescriptionId, String username, HttpServletRequest aRequest) throws NamingException {
         IPharmOperationService service = Injection.find(aRequest).getService(IPharmOperationService.class);
         service.setFunctionEndPrescription();

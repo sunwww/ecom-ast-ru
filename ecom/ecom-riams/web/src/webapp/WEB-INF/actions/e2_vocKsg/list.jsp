@@ -15,17 +15,18 @@
     </tiles:put>
 
     <tiles:put name='body' type='string'>
-        <label><input type="text" id="year" name="year"/>Указать год</label><button onclick="showAll()" value="Фильтр"></button>
+        <label><input type="text" id="year" name="year"/></label>
+        <button onclick="showAll()" value="Фильтр">Найти за год</button>
         <%
-        String year = request.getParameter("year");
-        request.setAttribute("yearSql","where ksg.year="+(year!=null && !"".equals(year) ? "'"+year+"'" : "cast(to_char(current_date,'yyyy') as int)"));
-            %>
+            String year = request.getParameter("year");
+            request.setAttribute("yearSql", "where ksg.year=" + (year != null && !"".equals(year) ? "'" + year + "'" : "cast(to_char(current_date,'yyyy') as int)"));
+        %>
         <ecom:webQuery name="entryList" nativeSql="select ksg.id
             ,ksg.code||' '||ksg.name ||' ('||ksg.year||' год)' as ksg
-            ,ksg.kz as kz
+            ,ksg.kz as f3_kz
             , ksg.profile
-            ,vbst.name
-            ,ksg.isoperation
+            ,vbst.name as f5
+            ,ksg.isoperation as f6
             ,ksg.longKsg
             ,ksg.isFullPayment
             , kuksg.value as f9_kuksg
@@ -35,15 +36,16 @@
              ${yearSql}
               order by ksg.year desc, vbst.id, ksg.code "/>
         <msh:section title='Результат поиска'>
-            <msh:table  name="entryList" action="entityView-e2_vocKsg.do" idField="1" disableKeySupport="true" styleRow="6">
-                <msh:tableColumn columnName="КСГ" property="2" />
-                <msh:tableColumn columnName="KZ" property="3" />
+            <msh:table name="entryList" action="entityView-e2_vocKsg.do" idField="1" disableKeySupport="true"
+                       styleRow="6">
+                <msh:tableColumn columnName="КСГ" property="2"/>
+                <msh:tableColumn columnName="KZ" property="3"/>
                 <msh:tableColumn columnName="КУКсг(КС)" property="9"/>
-                <msh:tableColumn columnName="Профиль" property="4" />
-                <msh:tableColumn columnName="Тип коек" property="5" />
-                <msh:tableColumn columnName="Операционное КСГ" property="8" />
-                <msh:tableColumn columnName="Сверхдлительное КСГ" property="6" />
-                <msh:tableColumn columnName="ПРизнак полной оплаты" property="7" />
+                <msh:tableColumn columnName="Профиль" property="4"/>
+                <msh:tableColumn columnName="Тип коек" property="5"/>
+                <msh:tableColumn columnName="Операционное КСГ" property="6"/>
+                <msh:tableColumn columnName="Сверхдлительное КСГ" property="7"/>
+                <msh:tableColumn columnName="ПРизнак полной оплаты" property="8"/>
             </msh:table>
         </msh:section>
 
@@ -51,8 +53,8 @@
     <tiles:put name="javascript" type="string">
         <script type="text/javascript">
             function showAll() {
-                window.location.href+="?year="+$('year').value;
+                window.location.href += "?year=" + $('year').value;
             }
         </script>
-            </tiles:put>
+    </tiles:put>
 </tiles:insert>

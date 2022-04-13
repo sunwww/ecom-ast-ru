@@ -8,6 +8,10 @@ function onSave(aForm, aEntity, aCtx) {
     aEntity.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().getName());
 }
 
+function onPreDelete(id, ctx) {
+    ctx.manager.createNativeQuery("delete from prescriptionfulfilment where prescription_id=" + id).executeUpdate();
+}
+
 /**
  * Перед созданием
  */
@@ -28,25 +32,4 @@ function onCreate(aForm, aEntity, aCtx) {
         ff.setComments(ffForm.comments);
         aCtx.manager.persist(ff);
     }
-}
-
-function onCreateDeprecated(aForm, aEntity, aCtx) {
-
-    var sql = "select wf.id from secuser su " +
-        "left join workfunction wf on wf.secuser_id = su.id " +
-        "where su.login = '" + aCtx.getSessionContext().getCallerPrincipal().toString() + "'";
-    var list = aCtx.manager.createNativeQuery(sql).getResultList();
-    var workfunc = "" + list.get(0);
-    var Id = aEntity.getId();
-    sql = "select (to_date('" + aEntity.getPlanEndDate() + "','yyyy-MM-dd') - to_date('" + aEntity.getPlanStartDate() + "','yyyy-MM-dd')) as dates";
-    list = aCtx.manager.createNativeQuery(sql).getResultList();
-    var dateCount = "" + list.get(0);
-    var countPerDay = aEntity.getAmount();
-    var freq = aEntity.getFrequency();
-
-    var result = (dateCount + 1) * (freq * countPerDay);
-    var functionExist = new Packages.ru.ecom.mis.ejb.service.pharmacy.PharmOperationServiceBean;//.setFunctionReserve(aCtx.manager);
-    functionExist.setFunctionReserve(aCtx.manager);
-    sql = "select pharmReseve(" + aEntity.getDrug().getId() + "," + result + "," + Id + "," + workfunc + ");";
-    aCtx.manager.createNativeQuery(sql).getResultList();
 }

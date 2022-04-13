@@ -126,7 +126,7 @@ public class FinanceServiceBean implements IFinanceService {
                         priceKey = "POL#" + monthPlan.getVidSluch().getId() + "#" + currentMonth.getTime();
 
                         if (!caseCost.containsKey(priceKey)) {
-                            cost = expert2Service.calculatePolyclinicEntryPrice(monthPlan.getVidSluch(), monthPlan.getFinishDate(), monthPlan.getProfile());
+                            cost = expert2Service.calculatePolyclinicEntryPrice(null, monthPlan.getVidSluch(), monthPlan.getFinishDate(), monthPlan.getProfile().getId());
                             caseCost.put(priceKey, cost);
                         } else {
                             cost = caseCost.get(priceKey);

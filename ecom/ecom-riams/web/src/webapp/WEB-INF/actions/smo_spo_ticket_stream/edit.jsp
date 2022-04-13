@@ -470,17 +470,17 @@
   	</msh:ifFormTypeIsNotView>
   </msh:ifFormTypeAreViewOrEdit>  
   <msh:ifFormTypeIsNotView formName="smo_spo_ticket_streamForm">
-    <script type="text/javascript">// <![CDATA[//
-    
-    	var oldaction = document.forms[0].action ;
-    	var oldValue = $('dateStart').value ;
-    	document.forms[0].action = 'javascript:checkFields()';
-    	concludingMkbAutocomplete.addOnChangeCallback(function() {
-    		setDiagnosisText('concludingMkb','concludingDiagnos') ;
-    		if (($('concludingMkbName').value!='') &&($('concludingMkbName').value.substring(0,1)=='Z')) {
-	      	 	TicketService.findProvReason($('visitReason').value,{
-	      	 		callback: function(aResult) {
-	      	 			var ind = aResult.indexOf('#') ;
+      <script type="text/javascript">
+
+          var oldaction = document.forms[0].action;
+          var oldValue = $('dateStart').value;
+          document.forms[0].action = 'javascript:checkFields()';
+          concludingMkbAutocomplete.addOnChangeCallback(function () {
+              setDiagnosisText('concludingMkb', 'concludingDiagnos');
+              if (($('concludingMkbName').value != '') && ($('concludingMkbName').value.substring(0, 1) == 'Z')) {
+                  TicketService.findProvReason($('visitReason').value, {
+                      callback: function (aResult) {
+                          var ind = aResult.indexOf('#');
 	      	 			if (ind!=-1) {
 	      	 				$('visitReason').value=aResult.substring(0,ind) ;
 	      	 				$('visitReasonName').value=aResult.substring(ind+1) ;
@@ -623,8 +623,6 @@
     			}
     		}
     		 medServiceAutocomplete.setParentId((+$("workFunctionExecute").value)+"#"+$("dateStart").value) ;
-    	//]]>
-    		 
     	</script>
     	
   </msh:ifFormTypeIsNotView>

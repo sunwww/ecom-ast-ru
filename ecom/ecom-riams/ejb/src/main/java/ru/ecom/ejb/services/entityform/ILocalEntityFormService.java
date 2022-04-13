@@ -9,6 +9,6 @@ package ru.ecom.ejb.services.entityform;
  */
 public interface ILocalEntityFormService {
 
-    public <T extends IEntityForm> T loadForm(Class<T> aFormClass, Object aEntity) throws EntityFormException ;
+    <T extends IEntityForm> T loadForm(Class<T> aFormClass, Object aEntity) throws EntityFormException ;
 
 }

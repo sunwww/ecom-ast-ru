@@ -88,7 +88,7 @@ public class PrescriptionServiceJs {
             IWebQueryService wqs = Injection.find(aRequest).getService(IWebQueryService.class);
             StringBuilder sql = new StringBuilder();
             sql.append("select gwf.id as labCabinet , msGr.id as groupId, replace(list(''||p.id),' ','') as prescIds, replace(list(''||ms.id),' ','')as medServIds" +
-                    ", p.transferdate as transferDate")
+                            ", p.transferdate as transferDate")
                     .append(" from prescription p")
                     .append(" left join medservice ms on ms.id=p.medservice_id")
                     .append(" left join medservice msGr on msGr.id=ms.parent_id")
@@ -714,7 +714,7 @@ public class PrescriptionServiceJs {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         //если брак до ввода результата и браслет связан с назначением
         service.executeUpdateNativeSql("update coloridentitypatient set voccoloridentity_id=(select id from VocColorIdentityPatient where code='Pres_COVID_cans') " +
-               " where entityname='prescription' and entityid in (" + aPrescripts + ")");
+                " where entityname='prescription' and entityid in (" + aPrescripts + ")");
         //пбрак после введения результата (тогда будет Protocol, а не Prescription)
         service.executeUpdateNativeSql("update coloridentitypatient set voccoloridentity_id=(select id from VocColorIdentityPatient where code='Pres_COVID_cans') " +
                 " where entityname='Protocol' and entityid in (select id from diary where medcase_id=ANY(select medcase_id from prescription  where id in (" + aPrescripts + ")))");
@@ -1934,6 +1934,9 @@ public class PrescriptionServiceJs {
      * @return список через запятую 1,2,3, где указаны типы примечаний (noteForLabPrescript)
      */
     public String checkNoteNecessary(String msIds, HttpServletRequest aRequest) throws NamingException {
+        if (msIds == null || msIds.equals("")) {
+            return "";
+        }
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         String query = "select list(distinct case when m1.isaskstatuswomen then '1' else '' end" +
                 " ||(case when m2.isaskbiotype then '2' else '' end)" +

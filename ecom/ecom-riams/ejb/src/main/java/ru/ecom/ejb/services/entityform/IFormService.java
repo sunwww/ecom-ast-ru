@@ -10,8 +10,8 @@ public interface IFormService {
      * @param aId идентификатор
      * @return форма
      */
-	public <T extends IEntityForm> T load(Class<T> aFormClass, Object aId) throws EntityFormException ;
-    public IEntityForm load(String aFormClassName, Object aId) throws EntityFormException ;
+    <T extends IEntityForm> T load(Class<T> aFormClass, Object aId) throws EntityFormException ;
+    IEntityForm load(String aFormClassName, Object aId) throws EntityFormException ;
 
 
     /**
@@ -19,24 +19,24 @@ public interface IFormService {
      * @param aId идентификатор
      * @return форма
      */
-    public <T extends IEntityForm> T loadBySubclass(Class<T> aFormClass, Object aId) throws EntityFormException ;
+    <T extends IEntityForm> T loadBySubclass(Class<T> aFormClass, Object aId) throws EntityFormException ;
 
     /**
      * Создание нового
      * @param aForm форма
      */
-    public long create(IEntityForm aForm) throws EntityFormException;
+    long create(IEntityForm aForm) throws EntityFormException;
 
     /**
      * Сохранение
      * @param aForm форма
      */
-    public void save(IEntityForm aForm) throws EntityFormException;
+    void save(IEntityForm aForm) throws EntityFormException;
     /**
      * Удалить объект
      * @param aId идентификатор
      */
-    public void delete(Class aFormClass, Object aId) ;
-    public void delete(String aFormClassName, Object aId) ;
+    void delete(Class aFormClass, Object aId) ;
+    void delete(String aFormClassName, Object aId) ;
 
 }

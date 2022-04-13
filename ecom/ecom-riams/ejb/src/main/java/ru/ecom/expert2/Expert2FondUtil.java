@@ -50,7 +50,7 @@ public class Expert2FondUtil {
         if (isTrue(entry.getMultiplyBirth()) && isNotEmpty(entry.getKinsmanLastname())) {
             ret.append("1;");
         }
-        if (isNullOrEmpty(entry.getKinsmanMiddlename()) && isNullOrEmpty(entry.getMiddlename())) {
+        if ((isNotEmpty(entry.getKinsmanLastname()) && isNullOrEmpty(entry.getKinsmanMiddlename())) || isNullOrEmpty(entry.getMiddlename())) {
             ret.append("2;");
         }
         if (isTrue(entry.getIsCriminalMessage())) {

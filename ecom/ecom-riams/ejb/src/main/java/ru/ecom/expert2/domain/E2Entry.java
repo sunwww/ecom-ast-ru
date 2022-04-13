@@ -6,7 +6,10 @@ import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.expert2.domain.voc.*;
+import ru.ecom.expert2.domain.voc.VocE2EntryFactor;
+import ru.ecom.expert2.domain.voc.VocE2EntrySubType;
+import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
+import ru.ecom.expert2.domain.voc.VocE2VidSluch;
 import ru.ecom.expert2.domain.voc.federal.*;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -43,7 +46,9 @@ import java.util.List;
                 " and isDeleted is not true"),
         @NamedQuery(name = "E2Entry.getAllByListEntryIdAndServiceStream"
                 , query = "from E2Entry where listEntry.id=:listEntryId and serviceStream=:serviceStream" +
-                " and isDeleted is not true ")
+                " and isDeleted is not true "),
+        @NamedQuery(name = "E2Entry.allByIds"
+        ,query = "from E2Entry e where id in (:ids)")
 })
 @Setter
 @Getter
@@ -68,9 +73,14 @@ public class E2Entry extends BaseEntity {
         return list.get(0);
     }
 
-    @OneToMany(mappedBy = "entry", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "entry")
     public List<E2CancerEntry> getCancerEntries() {
         return cancerEntries;
+    }
+
+    @OneToMany(mappedBy = "entry")
+    public List<E2DrugEntry> getDrugEntries() {
+        return drugEntries;
     }
 
     @OneToOne
@@ -250,6 +260,11 @@ public class E2Entry extends BaseEntity {
      */
 
     private List<E2CancerEntry> cancerEntries;
+
+    /**
+     * Случаи введения лекарственного препарата (пока только covid-19)
+     */
+    private List<E2DrugEntry> drugEntries;
 
     /**
      * Онкологический случай
@@ -1092,6 +1107,25 @@ public class E2Entry extends BaseEntity {
      * Стоматологический случай
      */
     private Boolean isDentalCase;
+
+    @Transient
+    public String getCovidPrescriptions() {
+        return covidPrescriptions;
+    }
+
+    private Boolean isNedonosh = false;
+
+    @Transient
+    public Boolean getIsNedonosh() {
+        return isNedonosh;
+    }
+
+    public void setCovidPrescriptions(String covidPrescriptions) {
+        this.covidPrescriptions = covidPrescriptions;
+    }
+
+    private String covidPrescriptions;
+
     public E2Entry() {
         addGroupFld = "";
         setIsDeleted(false);

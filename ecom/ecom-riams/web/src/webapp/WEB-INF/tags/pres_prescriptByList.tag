@@ -48,6 +48,7 @@
 	, p.orderTime ||' '||coalesce(cast(p.orderType_id as varchar),vpot.name,'') as pord
 	, p.amount ||' '||coalesce(cast(p.amountUnit_id as varchar),vdau.name,'') as pam
 	, p.duration ||' '||coalesce(cast(p.durationUnit_id as varchar),vdu.name,'') as pdur
+	, case when p.cancelDate is not null then 'color:red;' end as f13_style
 	from Prescription p
 	left join PrescriptionList pl on pl.id=p.prescriptionList_id
 	left join vocdrug as dr on dr.id=p.vocDrug_id
@@ -59,7 +60,7 @@
 	where ${field} and p.DTYPE='DrugPrescription' order by p.planStartDate"/>
     <msh:sectionTitle>Список лекарственных назначений</msh:sectionTitle>
     <msh:sectionContent>
-        <msh:table name="pres" action="entitySubclassView-pres_prescription.do" idField="1">
+        <msh:table name="pres" action="entitySubclassView-pres_prescription.do" idField="1" styleRow="13">
             <msh:tableColumn property="3" columnName="Лек.средство"/>
             <msh:tableColumn property="4" columnName="Дата начала"/>
             <msh:tableColumn property="6" columnName="Дата окончания"/>
@@ -80,9 +81,8 @@
 ,coalesce(d.record,'')
 , p.canceldate as canceldate
 , coalesce(p.cancelreasontext,'') as cancelText
-,case when canceldate is not null then 'color:red;' else null end as styleCancel
+,case when canceldate is not null then 'color:red;' end as styleCancel
  from Prescription p
-
  left join PrescriptionList pl on pl.id=p.prescriptionList_id
  left join medservice ms on ms.id=p.medService_id
  left join vocservicetype as vms on vms.id=ms.serviceType_id
@@ -108,7 +108,6 @@
 <msh:section>
     <ecom:webQuery name="pres" nativeSql="select
     	p.id as pid,pl.id as plid,ms.name as drname
-
  ,p.planStartDate,p.planEndDate,p.materialId,vpt.name as vptname
  ,ml.name as mlname,coalesce(vpcr.name,'')||' '||coalesce(p.cancelReasonText,'') as fldCancel
 , case when vpcr.code='another_lab' then 'color:blue' else case when p.canceldate is not null then 'color:red;' else null end end as stylCancel
@@ -154,7 +153,6 @@ left join Patient as wp on wp.id=w.person_id
 ,to_char(p.planStartDate,'dd.MM.yyyy')
 ,cast (wct.timefrom as varchar(5))
 ,wf.groupname
-
  from Prescription p
  left join PrescriptionList pl on pl.id=p.prescriptionList_id
  left join workfunction wf on wf.id=p.prescriptcabinet_id

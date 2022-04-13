@@ -32,6 +32,8 @@ public class VocKsg extends VocIdCodeName {
 	private Integer year;
 
 	/** Сверхдлительный КСГ (45 дней)	*/
+
+	@Deprecated
 	private Boolean longKsg;
 
 	/** Является операцией */

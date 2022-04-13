@@ -270,17 +270,17 @@
   	</msh:ifFormTypeIsNotView>
   </msh:ifFormTypeAreViewOrEdit>  
   <msh:ifFormTypeIsNotView formName="poly_ticketForm">
-    <script type="text/javascript">// <![CDATA[//
-    	
-    	var oldaction = document.forms[0].action ;
-    	var oldValue = $('date').value ;
-    	document.forms[0].action = 'javascript:isExistTicket()';
-    	idc10Autocomplete.addOnChangeCallback(function() {
-    		if (($('idc10Name').value!='') &&($('idc10Name').value.substring(0,1)=='Z')) {
-	      	 	TicketService.findProvReason({
-	      	 		callback: function(aResult) {
-	      	 			var ind = aResult.indexOf('#') ;
-	      	 			if (ind!=-1) {
+      <script type="text/javascript">
+
+          var oldaction = document.forms[0].action;
+          var oldValue = $('date').value;
+          document.forms[0].action = 'javascript:isExistTicket()';
+          idc10Autocomplete.addOnChangeCallback(function () {
+              if (($('idc10Name').value != '') && ($('idc10Name').value.substring(0, 1) == 'Z')) {
+                  TicketService.findProvReason({
+                      callback: function (aResult) {
+                          var ind = aResult.indexOf('#');
+                          if (ind != -1) {
 	      	 				$('vocReason').value=aResult.substring(0,ind) ;
 	      	 				$('vocReasonName').value=aResult.substring(ind+1) ;
 	      	 			}
@@ -354,7 +354,6 @@
     			}
     		}
     		 if (theOtmoa_medServices) theOtmoa_medServices.setParentId((+$("workFunction").value)+"#"+$("date").value) ;
-    	//]]>
     	</script>
     	
   </msh:ifFormTypeIsNotView>

@@ -102,7 +102,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
      * @return List<BigInteger> ИД СПО
      */
     private List<BigInteger> getAllSPOByVisitCreateDate(LocalDate createDate, List<String> serviceStreams) {
-        return manager.createNativeQuery("select m.id from medcase visit" +
+        return manager.createNativeQuery("select distinct m.id from medcase visit" +
                         "    left join medcase m on m.id= visit.parent_id " +
                         "    left join vocservicestream vss on vss.id=m.servicestream_id" +
                         "    left join workfunction wf on visit.workfunctionexecute_id = wf.id" +

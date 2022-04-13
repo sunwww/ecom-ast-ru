@@ -250,18 +250,18 @@
   </tiles:put>
   <tiles:put name="javascript" type="string" >
           <msh:ifFormTypeIsNotView formName="stac_deathCaseForm">
-          <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
-      <script type="text/javascript">//var theBedFund = $('bedFund').value;
-       try {
-    	   deathReasonAutocomplete.addOnChangeCallback(function() {
-    		   if (+$('deathReason').value>0) HospitalMedCaseService.getCriminalPhoneMessageByTrauma($('medCase').value,$('deathReason').value,{
-    				
-   	  			callback: function(aResult) {
-   	  				//alert(aResult) ;
-   	  				if (aResult!=null) {
-   	  					var sp = aResult.split("@#@") ;
-   	  					$('accidentDate').value=sp[0] ;
-   	  					$('accidentPlace').value=sp[1] ;
+            <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js">/**/</script>
+            <script type="text/javascript">
+              try {
+                deathReasonAutocomplete.addOnChangeCallback(function () {
+                  if (+$('deathReason').value > 0) HospitalMedCaseService.getCriminalPhoneMessageByTrauma($('medCase').value, $('deathReason').value, {
+
+                    callback: function (aResult) {
+                      //alert(aResult) ;
+                      if (aResult != null) {
+                        var sp = aResult.split("@#@");
+                        $('accidentDate').value = sp[0];
+                        $('accidentPlace').value = sp[1];
    	  					$('accidentCircumstance').value=sp[2] ;
    	  				}
    	  				
