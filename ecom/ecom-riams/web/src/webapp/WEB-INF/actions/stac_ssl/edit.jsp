@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -12,6 +12,7 @@
     </tiles:put>
     <tiles:put name="side" type="string">
         <tags:stac_hospitalMenu currentAction="stac_ssl" />
+        <tags:mis_showPromedExportJournal name="PROMED" medcaseId="${param.id}"/>
     </tiles:put>
     <tiles:put name="body" type="string">
         <!--
@@ -319,6 +320,24 @@
 
         <script type="text/javascript" >
         <msh:ifFormTypeIsView formName="stac_sslForm">
+        function exportToPromed() {
+            HospitalMedCaseService.exportToPromed(${param.id}, {
+                callback: function (ret) {
+                    alert(ret);
+                }
+            })
+        }
+        function getJournalToPromed() {
+            TicketService.getJournalToPromed(${param.id}, {
+                callback: function (ret) {
+                    if (ret!=null) {
+                        showPROMEDByPromedHistory(JSON.parse(ret).data);
+                    }
+                    console.log(ret);
+                }
+            })
+        }
+
         function makeTimurHappy() {
             showToastMessage("Подождите, идет расчет...",null,true,null, 5000);
                 jQuery.ajax({

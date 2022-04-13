@@ -1,5 +1,6 @@
 package ru.ecom.api.promed;
 
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import ru.ecom.api.entity.export.ExportType;
 import ru.ecom.api.util.ApiUtil;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 @Path("/promed")
 public class PromedResource {
+    private static final Logger LOG = Logger.getLogger(PromedResource.class);
 
 
     @POST
@@ -69,7 +71,7 @@ public class PromedResource {
     @Path("setWfInfo")
     @Produces(MediaType.APPLICATION_JSON)
     /*
-     * Установить promedcode_lpusection и promedcode_workstaff.
+     * Установить promedcode_lpusection и promedcode_workstaff (используется промедосом.
      *
      * @param aRequest HttpServletRequest
      * @param aToken String
@@ -114,6 +116,36 @@ public class PromedResource {
         ApiUtil.init(aRequest, token);
         Injection.find(aRequest).getService(IApiPolyclinicService.class).createPacketLog(medcaseId, packetGuid, ExportType.AUTO);
         return Response.ok().build();
+    }
+
+    /**
+     * Проставляем промедовский код департаменту (используется промедосом)
+     * @param request
+     * @param response
+     * @param departmentId ИД MisLpu
+     * @param promedcodeLpuSection ИД подразделения в системе промед
+     * @param token
+     * @return
+     * @throws NamingException
+     */
+    @POST
+    @Path("/setDepInfo")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response setDepInfo(@Context HttpServletRequest request,
+                               @Context HttpServletResponse response,
+                               @QueryParam("departmentId") Long departmentId,
+                               @QueryParam("promedcodeLpuSection") String promedcodeLpuSection,
+                               @QueryParam("token") String token
+    ) throws NamingException {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "POST");
+        LOG.info("got setDepInfo message: " + departmentId + ">" + promedcodeLpuSection);
+        if (token != null) {
+            ApiUtil.login(token, request);
+        }
+        ApiUtil.init(request, token);
+        String str = Injection.find(request).getService(IApiPolyclinicService.class).setDepInfo(departmentId, promedcodeLpuSection);
+        return Response.ok(str).build();
     }
 
 

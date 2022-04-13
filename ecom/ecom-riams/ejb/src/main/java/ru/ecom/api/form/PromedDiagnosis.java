@@ -3,6 +3,8 @@ package ru.ecom.api.form;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 public class PromedDiagnosis extends BasePromedForm {
@@ -16,7 +18,11 @@ public class PromedDiagnosis extends BasePromedForm {
      */
     private String acuity; //DeseaseType_id
 
-//    @Deprecated //TODO не использовать
+    private String type; //фоновое, сопутствующее,...
+    private LocalDate diagnosisDate; //Дата установления
+    private String comment; //описание диагноза
+
+    @Deprecated //TODO не использовать
     private String promedId;
 
     /**

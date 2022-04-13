@@ -7,7 +7,7 @@ import ru.ecom.api.entity.export.ExportType;
 import ru.ecom.api.entity.export.MedCaseExportJournal;
 import ru.ecom.api.form.PromedPolyclinicTapForm;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
-import ru.ecom.mis.ejb.service.IPromedExportService;
+import ru.ecom.mis.ejb.service.promed.IPromedExportService;
 
 import javax.annotation.EJB;
 import javax.ejb.Local;
@@ -221,6 +221,23 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
                         .setParameter("workfunctionId", workfunctionId).executeUpdate();
                 res.put("status", "ok");
             }
+        }
+        return res.toString();
+    }
+
+    @Override
+    public String setDepInfo(Long departmentId, String promedcodeLpuSection) {
+        JSONObject res = new JSONObject();
+        if (departmentId!=null) {
+            manager.createNativeQuery("update mislpu set promedlpusectionid = :promedLpuSection where id = :id")
+                    .setParameter("id", departmentId)
+                    .setParameter("promedLpuSection", promedcodeLpuSection)
+                    .executeUpdate();
+            res.put("status", "ok");
+
+        } else {
+            res.put("status", "error")
+                    .put("reason", "departmentId is null");
         }
         return res.toString();
     }
