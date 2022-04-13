@@ -1805,7 +1805,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     String mkb = ds.getString("mkb");
                     String regType = ds.getString("registrationType");
                     String priority = ds.getString("priority");
-                    if (isCancerMkb(mkb, priority)) {
+                    if (!isCancer && isCancerMkb(mkb, priority)) {
                         isCancer = true;
                     }
                     if (covidMkbs.contains(mkb) && isLogicalNull(entry.getDopKritKSG())) {
@@ -2553,10 +2553,17 @@ public class Expert2ServiceBean implements IExpert2Service {
                 if (!hospitalCostMap.containsKey(key)) {
                     List<BigDecimal> costs = manager.createNativeQuery("select coalesce(vmhc.cost, vkhc.cost)" +
                                     " from vockindhighcare vkhc " +
-                                    " left join vocmethodhighcare vmhc on vmhc.kindhighcare = vkhc.code and :vmpDate between vmhc.dateFrom and coalesce(vmhc.dateTo,current_date)" +
+                                    " left join vocmethodhighcare vmhc on vmhc.kindhighcare = vkhc.code " +
+                                    "   and vmhc.code=:methodCode " +
+                                    "   and (vmhc.patientmodelid is null or vmhc.patientmodelid = :patientModelId)" +
+                                    "   and :vmpDate between vmhc.dateFrom and coalesce(vmhc.dateTo,current_date)" +
                                     "where vkhc.code=:code " +
                                     "and :vmpDate between vkhc.dateFrom and coalesce(vkhc.dateTo,current_date) and vkhc.cost is not null")
-                            .setParameter("code", entry.getVmpKind()).setParameter("vmpDate", entry.getFinishDate()).getResultList();
+                            .setParameter("code", entry.getVmpKind())
+                            .setParameter("methodCode", entry.getVmpMethod())
+                            .setParameter("vmpDate", entry.getFinishDate())
+                            .setParameter("patientModelId", entry.getVmpPatientModelId())
+                            .getResultList();
                     if (!costs.isEmpty()) {
                         cost = costs.get(0);
                         hospitalCostMap.put(key, cost);
@@ -2604,7 +2611,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                             cost = ((tarif.multiply(kz)
                                     .multiply((BigDecimal.ONE.subtract(ksg.getDoctorCost()))
                                             .add(ksg.getDoctorCost().multiply(kuksg).multiply(cusmo)))
-                                    .add(tarif.multiply(km).multiply(kpr).multiply(kslp)))
+                                    .add(tarif.multiply(km).multiply(kslp)))
                                     .multiply(km).multiply(kpr)).setScale(2, RoundingMode.HALF_UP); //Округляем до 2х знаков
 //                            totalCoefficient = kz.multiply((BigDecimal.ONE.subtract(ksg.getDoctorCost()))
 //                                    .add(ksg.getDoctorCost().multiply(kuksg).multiply(cusmo).multiply(kslp).multiply(km).multiply(kpr))).setScale(12, RoundingMode.HALF_UP); //Округляем до 2х знаков
@@ -3414,16 +3421,20 @@ public class Expert2ServiceBean implements IExpert2Service {
         String otherLpuResult = "102,103,202,203"; //перевод в другое ЛПУ
         String lpuLikeResult = "108,208"; //по желанию ЛПУ
         String patientLikeResult = "107,207"; //по желанию пациента
+        String perevodResult = "104,204"; //по желанию пациента
         boolean isDeadCase = deadResult.contains(result);
         boolean isOtherLpu = otherLpuResult.contains(result);
         boolean isLpuLike = lpuLikeResult.contains(result);
         boolean isPatientLike = patientLikeResult.contains(result);
+        boolean isPerevod = perevodResult.contains(result);
         VocKsg ksg = entry.getKsg();
         boolean isPrerSluch;
         if (isDeadCase || isPatientLike || isOtherLpu || isLpuLike) { //не стандартная выписка
             isPrerSluch = true;
         } else if (entry.getBedDays() < 4) {  //Если плановая выписки и длительность случая менее 4 дней. //28-02-2018 4 целых дня.
             isPrerSluch = ksg == null || isNotTrue(ksg.getIsFullPayment());
+        } else if (isPerevod) {
+            isPrerSluch = true;
         } else {
             isPrerSluch = false;
         }

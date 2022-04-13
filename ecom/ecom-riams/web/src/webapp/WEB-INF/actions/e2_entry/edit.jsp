@@ -205,10 +205,14 @@
                 <msh:row>
                     <msh:textField property="vmpKind" size="30"/>
                     <msh:textField property="vmpMethod" size="30"/>
+                </msh:row>
+                <msh:row>
+                    <msh:textField property="vmpPatientModelId" size="30"/>
+                </msh:row>
+                <msh:row>
+                    <msh:textField property="vmpStantAmount" size="30"/>
+                    <msh:textField property="vmpTicketNumber" size="30"/>
                 </msh:row><msh:row>
-                <msh:textField property="vmpStantAmount" size="30"/>
-                <msh:textField property="vmpTicketNumber" size="30"/>
-            </msh:row><msh:row>
                 <msh:textField property="vmpTicketDate"/>
                 <msh:textField property="vmpPlanHospDate"/>
             </msh:row>

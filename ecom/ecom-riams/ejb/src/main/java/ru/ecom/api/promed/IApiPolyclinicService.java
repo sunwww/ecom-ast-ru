@@ -47,4 +47,12 @@ public interface IApiPolyclinicService {
     String getWfInfo(Long workfunctionId);
 
     String setWfInfo(Long workfunctionId, Long promedcodeLpuSection, Long promedcodeWorkstaff);
+
+    /**
+     * Обновить промедовский код департамента
+     * @param departmentId ИД отделения (mislpu)
+     * @param promedcodeLpuSection Код отделения по в промеде
+     * @return гут/не гут
+     */
+    String setDepInfo(Long departmentId, String promedcodeLpuSection);
 }

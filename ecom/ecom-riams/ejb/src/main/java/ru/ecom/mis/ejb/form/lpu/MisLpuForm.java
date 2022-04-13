@@ -254,6 +254,14 @@ public class MisLpuForm extends IdNameEntityForm {
      */
     private Boolean isOperBlock;
 
+    private Integer promedLpuSectionId;
+
+    @Persist
+    @Comment("ИД отделения в Промеде")
+    public Integer getPromedLpuSectionId() {
+        return promedLpuSectionId;
+    }
+
     @Comment("Код адреса отделения")
     @Persist
     public String getDepartmentAddressCode() {

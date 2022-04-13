@@ -6,7 +6,7 @@ import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.script.IScriptService;
 import ru.ecom.ejb.services.util.ConvertSql;
-import ru.ecom.mis.ejb.service.IPromedExportService;
+import ru.ecom.mis.ejb.service.promed.IPromedExportService;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 import ru.ecom.mis.ejb.service.worker.IWorkerService;
 import ru.ecom.mis.web.dwr.medcase.HospitalMedCaseServiceJs;
@@ -14,6 +14,7 @@ import ru.ecom.poly.ejb.services.ITicketService;
 import ru.ecom.template.web.dwr.TemplateProtocolJs;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
+import ru.nuzmsh.forms.validator.ValidateException;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
@@ -26,7 +27,7 @@ import java.util.*;
 
 public class TicketServiceJs {
 
-    public String exportToPromed(Long spoId, HttpServletRequest aRequest) throws NamingException {
+    public String exportToPromed(Long spoId, HttpServletRequest aRequest) throws NamingException, ValidateException {
         String guid = Injection.find(aRequest).getService(IPromedExportService.class).exportPolyclinicById(spoId);
         return guid == null ? "Отправка выключена" : "success: " + guid;
     }

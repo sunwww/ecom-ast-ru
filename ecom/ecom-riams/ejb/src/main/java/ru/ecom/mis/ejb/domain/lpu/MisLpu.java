@@ -280,6 +280,11 @@ public class MisLpu extends BaseEntity {
      */
     private Boolean isOperBlock;
 
+    /**
+     * Ид отделения в промеде
+     */
+    private Integer promedLpuSectionId;
+
 
     /**
      * Стандарт оказания мед. помощи

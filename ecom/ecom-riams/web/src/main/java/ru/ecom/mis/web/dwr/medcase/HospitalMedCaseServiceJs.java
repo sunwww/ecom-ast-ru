@@ -6,12 +6,14 @@ import org.json.JSONObject;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.ejb.services.script.IScriptService;
+import ru.ecom.mis.ejb.service.promed.IPromedExportService;
 import ru.ecom.mis.ejb.service.contract.IContractService;
 import ru.ecom.mis.ejb.service.medcase.IHospitalMedCaseService;
 import ru.ecom.mis.ejb.service.worker.IWorkerService;
 import ru.ecom.poly.web.dwr.TicketServiceJs;
 import ru.ecom.web.login.LoginInfo;
 import ru.ecom.web.util.Injection;
+import ru.nuzmsh.forms.validator.ValidateException;
 import ru.nuzmsh.web.tags.helper.RolesHelper;
 
 import javax.naming.NamingException;
@@ -31,6 +33,11 @@ import java.util.List;
  * @author Tkacheva Sveltana
  */
 public class HospitalMedCaseServiceJs {
+
+    public String exportToPromed(Long slsId, HttpServletRequest aRequest) throws NamingException, ValidateException {
+        String guid = Injection.find(aRequest).getService(IPromedExportService.class).exportHospitalById(slsId);
+        return guid == null ? "Отправка выключена" : "success: " + guid;
+    }
 
     /**
      * Календарь с предварительной госпитализацией

@@ -195,25 +195,49 @@ public class E2EntryForm extends IdEntityForm {
     private String medPolicySeries;
     /** Номер полиса */
     private String medPolicyNumber;
-    /** Страх. компания (федеральный код) */
+    /**
+     * Страх. компания (федеральный код)
+     */
     private String insuranceCompanyCode;
-    /** Талон ВМП - дата выдачи талона */
+    /**
+     * Талон ВМП - дата выдачи талона
+     */
     private String vmpTicketDate;
-    /** Талон ВМП - дата плановой госпитализации */
+    /**
+     * Талон ВМП - дата плановой госпитализации
+     */
     private String vmpPlanHospDate;
-    /** Вид ВМП */
+    /**
+     * Вид ВМП
+     */
     private String vmpKind;
-    /** Метод ВМП */
+    /**
+     * Метод ВМП
+     */
     private String vmpMethod;
-    /** Поток обслуживания */
+    /**
+     * Ид модели пациента ВМП
+     */
+    private Long vmpPatientModelId;
+    /**
+     * Поток обслуживания
+     */
     private String serviceStream;
-    /** Были сообщения в полицию */
+    /**
+     * Были сообщения в полицию
+     */
     private Boolean isCriminalMessage;
-    /** Находился по уходу за родственников */
+    /**
+     * Находился по уходу за родственников
+     */
     private Boolean hotelServices;
-    /** Тип стационара */
+    /**
+     * Тип стационара
+     */
     private String stacType;
-    /** ЛПУ прикрепления */
+    /**
+     * ЛПУ прикрепления
+     */
     private String attachedLpu;
     /** Профиль помощи */
     private String helpKind;
@@ -494,23 +518,41 @@ public class E2EntryForm extends IdEntityForm {
 
     @Comment("Талон ВМП - дата выдачи талона")
     @Persist
-    public String getVmpTicketDate() {return vmpTicketDate;}
+    public String getVmpTicketDate() {
+        return vmpTicketDate;
+    }
 
     @Comment("Талон ВМП - дата плановой госпитализации")
-    @Persist @DateString @DoDateString
-    public String getVmpPlanHospDate() {return vmpPlanHospDate;}
+    @Persist
+    @DateString
+    @DoDateString
+    public String getVmpPlanHospDate() {
+        return vmpPlanHospDate;
+    }
 
     @Comment("Вид ВМП")
     @Persist
-    public String getVmpKind() {return vmpKind;}
+    public String getVmpKind() {
+        return vmpKind;
+    }
 
     @Comment("Метод ВМП")
     @Persist
-    public String getVmpMethod() {return vmpMethod;}
+    public String getVmpMethod() {
+        return vmpMethod;
+    }
+
+    @Comment("Модель пациента")
+    @Persist
+    public Long getVmpPatientModelId() {
+        return vmpPatientModelId;
+    }
 
     @Comment("Поток обслуживания")
     @Persist
-    public String getServiceStream() {return serviceStream;}
+    public String getServiceStream() {
+        return serviceStream;
+    }
 
     @Comment("Были сообщения в полицию")
     @Persist

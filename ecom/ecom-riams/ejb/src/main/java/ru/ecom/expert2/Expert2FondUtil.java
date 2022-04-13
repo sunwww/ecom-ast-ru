@@ -1,14 +1,8 @@
 package ru.ecom.expert2;
 
-import ru.ecom.expert2.domain.E2CoefficientPatientDifficultyEntryLink;
 import ru.ecom.expert2.domain.E2Entry;
-import ru.ecom.expert2.domain.voc.E2Enumerator;
-
-import java.util.List;
 
 import static ru.nuzmsh.util.BooleanUtils.isTrue;
-import static ru.nuzmsh.util.CollectionUtil.isNotEmpty;
-import static ru.nuzmsh.util.EqualsUtil.isOneOf;
 import static ru.nuzmsh.util.StringUtil.isNotEmpty;
 import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
 
@@ -53,24 +47,6 @@ public class Expert2FondUtil {
         if ((isNotEmpty(entry.getKinsmanLastname()) && isNullOrEmpty(entry.getKinsmanMiddlename())) || isNullOrEmpty(entry.getMiddlename())) {
             ret.append("2;");
         }
-        if (isTrue(entry.getIsCriminalMessage())) {
-            ret.append("9;");
-        }
-        if (isTrue(entry.getMedicalAbort())) {
-            ret.append("10;");
-        }
-        if (isOneOf(entry.getEntryType(), E2Enumerator.HOSPITALTYPE, E2Enumerator.VMPTYPE)) { //Только для стац
-            List<E2CoefficientPatientDifficultyEntryLink> list = entry.getPatientDifficulty();
-            if (isNotEmpty(list)) {
-                for (E2CoefficientPatientDifficultyEntryLink diff : list) {
-                    if (diff.getDifficulty().getCode().equals("11")) {
-                        ret.append("21;22;");
-                        break;
-                    }
-                }
-            }
-        }
-        //TODO сделать признак ДТП
         return ret.length() > 0 ? ret.substring(0, ret.length() - 1) : null;
     }
 }

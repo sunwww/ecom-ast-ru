@@ -852,6 +852,11 @@ public class E2Entry extends BaseEntity {
     private String vmpMethod;
 
     /**
+     * модель пациента ВМП
+     */
+    private Long vmpPatientModelId;
+
+    /**
      * Поток обслуживания
      */
     private String serviceStream;
