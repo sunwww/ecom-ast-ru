@@ -379,6 +379,7 @@ then -1 else 0 end)
  ,list(mkb.code||' '||mkb.name) as f15_diag
  ,${dateSql}-p.birthday as f16_days
  ,p.newbornWeight as f17_w
+ ,ss.height as f18_height
 from MedCase sls
 left join VocHospType vht on sls.sourceHospType_id=vht.id
 left join patient p on p.id=sls.patient_id
@@ -403,7 +404,7 @@ group by sls.id ,ss.code ,p.id
 ,p.birthday,sls.dateStart,sls.dateFinish,${dateSql}
 , ml.name , dep.name ,of_.name , vss.name 
  ,vht.name ,sls.emergency , vlf.name ,vr.name, p.lastname, p.firstname , p.middlename
-,p.newbornweight
+,p.newbornweight, ss.height
 order by p.lastname,p.firstname,p.middlename " />
     <msh:table name="journal_surOperation"  printToExcelButton="Сохранить в excel"
     viewUrl="entityShortView-stac_ssl.do" 
@@ -425,6 +426,7 @@ order by p.lastname,p.firstname,p.middlename " />
       <msh:tableColumn columnName="Выписной диагноз" property="15"/>
       <msh:tableColumn columnName="возраст (дней)" property="16"/>
       <msh:tableColumn columnName="Вес" property="17"/>
+      <msh:tableColumn columnName="Рост" property="18"/>
     </msh:table>
     </msh:sectionContent>
     </msh:section>    		
