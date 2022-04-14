@@ -37,7 +37,7 @@ public class TicketServiceJs {
         return result == null ? "Отправок не было" : result;
     }
 
-    public String showSimpleServiceBySpecialist(Long aWorkfunctionId, HttpServletRequest aRequest) throws SQLException, NamingException {
+    public String showSimpleServiceBySpecialist(Long aWorkfunctionId, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         String sql = "select ms.id as serviceid, ms.code||' '||ms.name as servicename, case when link.isDefault='1' then 'true' else 'false' end as isDefault " +
                 " from workfunction wf" +
@@ -635,8 +635,8 @@ public class TicketServiceJs {
             list = service.executeNativeSql(sql, 1);
             if (!list.isEmpty()) {
                 WebQueryResult wqr = list.iterator().next();
-                return new StringBuilder().append(wqr.get1()).append("-")
-                        .append(wqr.get2() != null ? wqr.get2() : "по наст. время").toString();
+                return wqr.get1() + "-" +
+                        (wqr.get2() != null ? wqr.get2() : "по наст. время");
             }
         }
         return null;
@@ -662,10 +662,11 @@ public class TicketServiceJs {
         IScriptService service = (IScriptService) Injection.find(aRequest).getService("ScriptService");
         IWebQueryService serviceWQ = Injection.find(aRequest).getService(IWebQueryService.class);
         String userCur = TemplateProtocolJs.getUsername(aRequest);
-        StringBuilder sql = new StringBuilder().append("select wf.id from WorkFunction wf " +
+        String sql = "select wf.id from WorkFunction wf " +
                 "left join Worker w on w.id=wf.worker_id " +
-                "left join SecUser su on su.id=wf.secuser_id where su.login='").append(userCur).append("'");
-        Collection<WebQueryResult> workFunctions = serviceWQ.executeNativeSql(sql.toString());
+                "left join SecUser su on su.id=wf.secuser_id where su.login='" +
+                userCur + "'";
+        Collection<WebQueryResult> workFunctions = serviceWQ.executeNativeSql(sql);
         boolean isEditUser = !RolesHelper.checkRoles("/Policy/Poly/Ticket/IsDoctorEdit", aRequest);
         if (!isEditUser) {
             for (WebQueryResult work : workFunctions) {

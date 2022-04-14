@@ -14,6 +14,10 @@
         <create creator="new" javascript="Expert2Service" scope="application">
             <param name="class" value="ru.ecom.mis.web.dwr.expert2.Expert2ServiceJs"/>
         </create>
+        <!-- Сервис для взаимодействия с REST API сервисами -->
+        <create creator="new" javascript="ExternalService" scope="application">
+            <param name="class" value="ru.ecom.mis.web.dwr.external.ExternalServiceJs"/>
+        </create>
         <!-- Сервис для архива -->
         <create creator="new" javascript="ArchiveService" scope="application">
             <param name="class" value="ru.ecom.mis.web.dwr.medcase.ArchiveServiceJs"/>
