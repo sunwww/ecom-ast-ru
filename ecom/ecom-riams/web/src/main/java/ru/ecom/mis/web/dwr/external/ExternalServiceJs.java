@@ -35,7 +35,6 @@ public class ExternalServiceJs {
         Response response = client.target(url).resolveTemplates(params)
                         .request()
                         .post(Entity.entity(Object.class, MediaType.APPLICATION_JSON_TYPE));
-        System.out.println("KUKUKU: "+response.getEntity());
         return response.getEntity();
     }
 
@@ -47,15 +46,11 @@ public class ExternalServiceJs {
         WebTarget t  = client.target(url);
         if (params !=null && !params.isEmpty()) {
             for (Map.Entry<String, Object> e: params.entrySet()) {
-                System.out.println(e.getKey()+" <<<<>>> "+e.getValue());
                 t = t.queryParam(e.getKey(), e.getValue());
             }
         }
-        Object response = t.request(MediaType.APPLICATION_JSON)
-                .get(Object.class);
 
-        System.out.println(url+", KUKUKU: "+response.getClass());
-        System.out.println("Hello!!!");
-        return  response;
+        return t.request(MediaType.APPLICATION_JSON)
+                .get(Object.class);
     }
 }
