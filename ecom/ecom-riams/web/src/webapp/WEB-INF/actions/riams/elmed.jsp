@@ -92,7 +92,7 @@
                 frm.append("file", $('file').files[0]);
                 jQuery.ajax({ //создаем сущность
                     type: "POST"
-                    , url: elmedUrl + "uploadFile"
+                    , url: elmedUrl + "/uploadFile"
                     , data: frm
                     , processData: false
                     , dataType: 'json'
