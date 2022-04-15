@@ -3130,8 +3130,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                 List<Long> uniqueSpecList = new ArrayList<>();
                 for (EntryMedService service : services) {
                     VocE2FondV021 spec = service.getDoctorSpeciality();
-                    if (service.getCost().compareTo(BigDecimal.ZERO) > 0) { //если цена услуги больше нуля - подает услугу отдельно
-                        E2Entry serviceEntry = cloneEntity(entry);
+                    if (service.getCost().compareTo(BigDecimal.ZERO) > 0) { //если цена услуги больше нуля - подает услугу отдельно (с апреля 2022 года не подаем?)
+                       /* E2Entry serviceEntry = cloneEntity(entry);
                         serviceEntry.setSubType(serviceSubType);
                         serviceEntry.setVidSluch(serviceSubType.getVidSluch());
                         serviceEntry.setVisitPurpose(serviceSubType.getVisitPurpose());
@@ -3156,7 +3156,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                         manager.persist(serviceEntry);
                         makeCheckEntry(serviceEntry, false, true);
                         service.setEntry(serviceEntry);
-                        manager.persist(service);
+                        manager.persist(service);*/
 
                     } else {
                         if (!isAnyIsNull(service.getMkb(), spec)) { //Если в услуге есть врач и диагноз
