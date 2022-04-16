@@ -20,7 +20,6 @@ import java.util.List;
 @Entity
 @AIndexes({
     @AIndex(properties= ("login"))
-    ,@AIndex(properties= ("fullname"))
     ,@AIndex(properties="disable")
     ,@AIndex(properties="isRemoteUser")
 })

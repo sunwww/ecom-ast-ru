@@ -1184,7 +1184,6 @@ public class PatientServiceBean implements IPatientService {
         builder.addLike("oldFondNumber", aOldNumber);
         builder.addLike("fondNumber", aNewNumber);
         builder.addLike("name", aName);
-        //	Query query = builder.build(theManager, "from VocOrg where"," order by name,fondNumber,oldFondNumber");
         List<VocOrgForm> ret = new LinkedList<>();
         StringBuilder sql = new StringBuilder();
         sql.append("from VocOrg");

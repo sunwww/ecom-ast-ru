@@ -63,12 +63,6 @@ public class SyncServiceBean implements ISyncService {
                 return (ISync) classLoaderHelper.loadClass("ru.ecom.mis.ejb.service.lpu.LpuSync").newInstance();
             case "ru.ecom.expomc.ejb.domain.registry.RegistryEntry":
                 return (ISync) classLoaderHelper.loadClass("ru.ecom.mis.ejb.service.synclpufond.LpuFondSync").newInstance();
-            case "ru.ecom.mis.ejb.domain.patient.LpuAttachmentFomcDetach":   //кажися, нах
-                throw new IllegalArgumentException("Ошибка инициализации LpuAttachmentDetach. Сообщите программисту ");
-                //return (ISync) classLoaderHelper.loadClass("ru.ecom.mis.ejb.service.sync.lpuattachment.LpuAttachmentDetach").newInstance() ;
-            case "ru.ecom.mis.ejb.domain.patient.LpuAttachmentFomcDefect":  //кажися, нах
-                throw new IllegalArgumentException("Ошибка инициализации LpuAttachmentFomcDefect. Сообщите программисту ");
-                //return (ISync) classLoaderHelper.loadClass("ru.ecom.mis.ejb.service.sync.lpuattachment.LpuAttachmentDefect").newInstance() ;
             case "ru.ecom.expomc.ejb.domain.omcvoc.OmcSprSmo":
                 return (ISync) classLoaderHelper.loadClass("ru.ecom.mis.ejb.service.sync.vocomc_sprsmo.VocSprSmo").newInstance();
             case "ru.ecom.address.ejb.domain.kladr.AltNames":

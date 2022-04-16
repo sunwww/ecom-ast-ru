@@ -32,7 +32,7 @@ import java.sql.Time;
 @Table(schema = "SQLUser")
 @Getter
 @Setter
-abstract public class WorkFunction extends BaseEntity {
+public abstract class WorkFunction extends BaseEntity {
 
     /**
      * Дата начала работы

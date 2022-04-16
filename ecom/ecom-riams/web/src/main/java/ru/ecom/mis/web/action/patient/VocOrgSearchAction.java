@@ -15,7 +15,6 @@ public class VocOrgSearchAction extends BaseAction{
         VocOrgSearchForm form = (VocOrgSearchForm) aForm;
         form.validate(aMapping, aRequest) ;
         IPatientService service = Injection.find(aRequest).getService(IPatientService.class);
-//        IEntityFormService entityService = EntityInjection.find(aRequest).getEntityFormService();
         aRequest.setAttribute("list"
                 , service.findOrg(form.getFondNumber().toUpperCase(), form.getOldFondNumber().toUpperCase(), form.getName().toUpperCase()));
         return aMapping.findForward(SUCCESS);

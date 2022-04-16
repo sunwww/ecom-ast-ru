@@ -9,17 +9,16 @@ import ru.ecom.mis.ejb.form.disability.DisabilityDocumentForm;
 
 import javax.persistence.EntityManager;
 
-public class DocumentPreCreate implements IParentFormInterceptor{
+public class DocumentPreCreate implements IParentFormInterceptor {
     public void intercept(IEntityForm aForm, Object aEntity, Object aParentId, InterceptorContext aContext) {
-    	EntityManager manager = aContext.getEntityManager();
-    	DisabilityDocumentForm form = (DisabilityDocumentForm) aForm ;
-    	DisabilityCase dcase = manager.find(DisabilityCase.class, aParentId) ;
-    	Patient pat = dcase!=null ?dcase.getPatient():null ;
-    	if (pat!=null) {
-    		//String org = DocumentByPatientPreCreate.getShortNameByOrg() ;
-    		form.setJob(pat.getWorks()) ;
-    	} else {
-    		throw new IllegalStateException("Невозможно добавить случай. Сначала надо определить пациента") ;
-    	}
+        EntityManager manager = aContext.getEntityManager();
+        DisabilityDocumentForm form = (DisabilityDocumentForm) aForm;
+        DisabilityCase dcase = manager.find(DisabilityCase.class, aParentId);
+        Patient pat = dcase != null ? dcase.getPatient() : null;
+        if (pat != null) {
+            form.setJob(pat.getWorks());
+        } else {
+            throw new IllegalStateException("Невозможно добавить случай. Сначала надо определить пациента");
+        }
     }
 }

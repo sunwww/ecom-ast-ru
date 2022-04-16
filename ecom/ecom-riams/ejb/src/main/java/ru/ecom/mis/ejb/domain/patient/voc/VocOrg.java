@@ -15,12 +15,6 @@ import javax.persistence.Table;
  */
 @Entity
 @Comment("Предприятие")
-@AIndexes({
-        @AIndex(properties="oldFondNumber"),
-        @AIndex(properties="fondNumber"),
-        @AIndex(properties="name", name="vocOrg_name"),
-        @AIndex(properties = {"oldFondNumber","name","fondNumber"},name="vocOrg_oldFondNumber_name_fondNumber")
-        }) 
 @Table(schema="SQLUser")
 @Getter
 @Setter
