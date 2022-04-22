@@ -45,6 +45,7 @@ public class PromedExportServiceBean implements IPromedExportService {
 
     private static final Logger LOG = Logger.getLogger(PromedExportServiceBean.class);
     private static final String POL_EXPORT_URL = "ambulatory/epicrisis-export"; //отправка пол. случая
+    private static final String PARACLINICS_EXPORT_URL = "par/par-export"; //отправка параклиники
     private static final String STAC_EXPORT_URL = "hospital/hosp-export"; //отправка стац. случая
     private static final String GET_BY_GUID_URL = "ambulatory/get-by-guid"; //получение информации по отправке СМО
     private static String PROMEDATOR_URL = null;
@@ -69,6 +70,10 @@ public class PromedExportServiceBean implements IPromedExportService {
             } else if (medCase instanceof PolyclinicMedCase) {
                 formString = toString(getPolyclinicCase((PolyclinicMedCase) medCase));
                 methodUrl = POL_EXPORT_URL;
+            } else if (medCase instanceof Visit) { //выгружаем диагностический визит
+                //TODO если сюда попадет визит к врачу - не диагносту, всё равно выгрузим как диагноста. Поправить!
+                formString = toString(getParaclinicCase((Visit) medCase));
+                methodUrl = PARACLINICS_EXPORT_URL;
             } else {
                 throw new IllegalArgumentException("Невозможно выгрузить случай с типом " + medCase.getClass().getSimpleName());
             }
@@ -76,6 +81,37 @@ public class PromedExportServiceBean implements IPromedExportService {
             return processExportMedCaseToPromed(formString, methodUrl, medCase.getId());
         }
         return null;
+    }
+
+    private PromedParaclinicForm getParaclinicCase(Visit visit) {
+        try {
+            String startDateTime = getDateTime(visit.getDateStart(), visit.getTimeExecute(), null);
+            Patient pat = visit.getPatient();
+            PromedParaclinicForm tap = PromedParaclinicForm.builder()
+                    .patient(buildPatient(pat))
+                    .startDate(startDateTime)
+                    .internalSpoId(String.valueOf(visit.getParent().getId()))
+                    .diary(getDiaryInVisit(visit.getId()))
+                    .medServices(mapServices(visit.getId(), mapDoctor(visit.getWorkFunctionExecute()), startDateTime))
+                    .build();
+            tap.setPromedCode(visit.getPromedCode());
+            tap.setMedosId(visit.getId());
+            tap.setServiceStream(visit.getServiceStream() == null ? null : visit.getServiceStream().getPromedCode());
+            return tap;
+        } catch (Exception e) {
+            LOG.error("Ошибка создания ДТО:" + e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private PromedPatientForm buildPatient(Patient pat) {
+        return PromedPatientForm.builder()
+                .lastName(pat.getLastname())
+                .firstName(pat.getFirstname())
+                .middleName(pat.getMiddlename())
+                .snils(pat.getSnils())
+                .birthDate(pat.getBirthday())
+                .build();
     }
 
     private boolean isEnabled() {
@@ -89,7 +125,7 @@ public class PromedExportServiceBean implements IPromedExportService {
 
     @Override
     public String exportPolyclinicById(Long medCaseId) throws ValidateException {
-        return exportMedCase(manager.find(PolyclinicMedCase.class, medCaseId));
+        return exportMedCase(manager.find(MedCase.class, medCaseId));
     }
 
     @Override
@@ -140,8 +176,7 @@ public class PromedExportServiceBean implements IPromedExportService {
         }
         PromedHospitalForm.PromedHospitalFormBuilder form = PromedHospitalForm.builder();
         Patient pat = sls.getPatient();
-        form.patient(PromedPatientForm.builder().lastName(pat.getLastname()).firstName(pat.getFirstname()).middleName(pat.getMiddlename())
-                .snils(pat.getSnils()).birthDate(pat.getBirthday()).build());
+        form.patient(buildPatient(pat));
         form.statStubNumber(sls.getStatCardNumber());
         form.isFinished(true); //только закрытые СЛС!
         form.dischargeResultCode(sls.getResult() == null ? null : sls.getResult().getCode())
@@ -305,8 +340,7 @@ public class PromedExportServiceBean implements IPromedExportService {
             }
             PromedPolyclinicTapForm.PromedPolyclinicTapFormBuilder tap = PromedPolyclinicTapForm.builder();
             Patient pat = polyclinicCase.getPatient();
-            tap.patient(PromedPatientForm.builder().lastName(pat.getLastname()).firstName(pat.getFirstname()).middleName(pat.getMiddlename())
-                    .snils(pat.getSnils()).birthDate(pat.getBirthday()).build());
+            tap.patient(buildPatient(pat));
             tap.isFinished(polyclinicCase.getDateFinish() != null);
             tap.ticketNumber(String.valueOf(polyclinicCaseId));
             tap.promedCode(polyclinicCase.getPromedCode());

@@ -187,7 +187,7 @@
                 </msh:row>
                 <msh:ifInRole roles="/Policy/Mis/Worker/WorkFunction/UpdatePromedCodes">
                     <msh:row>
-                        <msh:label property="promedCode" label="Код в промеде" />
+                        <msh:label property="promedCode" label="Код в промеде"/>
                     </msh:row>
                 </msh:ifInRole>
                 <msh:row>
@@ -439,6 +439,8 @@
                                     hiddenNewSpo="0" service="TicketService" name="moveVisit"
                                     roles="/Policy/Mis/MedCase/Visit/MoveVisitOtherSpo"
                                     title="Перевести визит в другой СПО"/>
+                <msh:sideLink action="/javascript:exportToPromed()" roles="/Policy/Promed/ExportVisit"
+                              name='Отправить в промед' title="Отправить в промед"/>
                 <tags:pres_newPrescriptList name="Create" parentID="${param.id}"/>
             </msh:sideMenu>
             <msh:sideMenu title="Показать">
@@ -515,6 +517,15 @@
         <script type="text/javascript" src="./dwr/interface/TicketService.js"></script>
         <script type="text/javascript" src="./dwr/interface/Expert2Service.js"></script>
         <script type="text/javascript">
+            function exportToPromed() {
+                if (confirm("Уверены что это параклинический визит?")) {
+                    TicketService.exportToPromed(${param.id}, {
+                        callback: function (ret) {
+                            alert(ret);
+                        }
+                    })
+                }
+            }
 
             function printAgree() {
                 window.location = "print-agreement.do?s=PatientPrintService&m=printAgreement&id=" + $('patient').value;
@@ -585,7 +596,7 @@
                     function setPayed() {
                         TicketService.setMedcasePayed(${param.id}, {
                             callback: function () {
-                               showToastMessage("Выполнено",null,true,false,3000);
+                                showToastMessage("Выполнено", null, true, false, 3000);
                             }
                         });
                     }
