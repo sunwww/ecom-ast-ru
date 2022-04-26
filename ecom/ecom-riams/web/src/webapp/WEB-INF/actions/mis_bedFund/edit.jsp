@@ -51,7 +51,7 @@
                     <msh:textField property="timeFinish" label="Время окончания актуальности"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="departmentAddressCode" label="Код F100 для выгрузки в ФОМС"/>
+                    <msh:textField property="departmentAddressCode" label="Код F100 для выгрузки в ФОМС" fieldColSpan="3" size="50"/>
                 </msh:row>
                 <msh:submitCancelButtonsRow colSpan="4"/>
             </msh:panel>
