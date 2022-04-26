@@ -62,7 +62,7 @@
                                       horizontalFill="true" fieldColSpan="1"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="codeDepartment" fieldColSpan="3"/>
+                    <msh:textField property="codeDepartment" fieldColSpan="3" size="50"/>
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete property="director" label="Начальник" horizontalFill="true" fieldColSpan="3"
