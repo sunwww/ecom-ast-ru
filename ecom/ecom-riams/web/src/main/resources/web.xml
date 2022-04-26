@@ -8,21 +8,6 @@
     <display-name>EkoM OMC Exp</display-name>
     <description>Экспертиза реестров ОМС</description>
 
-    <!-- config servlet -->
-    <servlet>
-        <servlet-name>Config</servlet-name>
-        <servlet-class>ru.ecom.web.servlet.ConfigServlet</servlet-class>
-        <init-param>
-            <param-name>ejb-app-name</param-name>
-            <param-value>expomc-app</param-value>
-        </init-param>
-        <init-param>
-            <param-name>java.naming.provider.url</param-name>
-            <param-value>jnp://localhost:1099/</param-value>
-        </init-param>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-
     <!-- Struts servlet -->
     <servlet>
         <servlet-name>action</servlet-name>
@@ -74,12 +59,6 @@
     <servlet>
         <servlet-name>dwr-invoker</servlet-name>
         <servlet-class>uk.ltd.getahead.dwr.DWRServlet</servlet-class>
-        <!--
-        <init-param>
-          <param-name>config</param-name>
-          <param-value>WEB-INF/dwr.xml</param-value>
-        </init-param>
-        -->
         <init-param>
             <param-name>debug</param-name>
             <param-value>true</param-value>

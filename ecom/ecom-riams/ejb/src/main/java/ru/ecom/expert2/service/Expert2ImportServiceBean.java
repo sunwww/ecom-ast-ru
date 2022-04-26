@@ -277,12 +277,9 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             String lpuCode = getSoftConfig("DEFAULT_LPU_OMCCODE");
             for (Element zap : zaps) {
                 if (isEquals(lpuCode, zap.getChildText("N_REESTR"))) {
-                    List<Element> profiles = zap.getChildren("PROF");
-                    for (Element profil : profiles) {
-                        String key = zap.getChildText("LPU_1") + "#" + profil.getChildText("PROFIL");
-                        if (!addresses.containsKey(key)) {
-                            addresses.put(key, zap.getChildText("PODR"));
-                        }
+                    String key = zap.getChildText("LPU_1") + "#" + zap.getChildText("PROF");
+                    if (!addresses.containsKey(key)) {
+                        addresses.put(key, zap.getChildText("PODR"));
                     }
                 }
             }
@@ -294,8 +291,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             for (E2Entry entry : entries) {
                 if (entry.getMedHelpProfile() != null && StringUtil.isNullOrEmpty(entry.getDepartmentAddressCode())
                         && isOneOf(entry.getServiceStream(), "OBLIGATORYINSURANCE", "COMPLEXCASE")) {
-                    String key = entry.getDepartmentCode() + "#" + entry.getMedHelpProfile().getCode();
-                    entry.setDepartmentAddressCode(addresses.get(key));
+                    entry.setDepartmentAddressCode(addresses.get(entry.getDepartmentCode() + "#" + entry.getMedHelpProfile().getCode()));
                     manager.persist(entry);
                     found++;
                 }
@@ -304,7 +300,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 }
                 cnt++;
             }
-
+            LOG.info("Проставлено длинных кодов подразделений: " + found);
         } catch (JDOMException | IOException e) {
             LOG.error("some error :" + e.getMessage(), e);
             e.printStackTrace();

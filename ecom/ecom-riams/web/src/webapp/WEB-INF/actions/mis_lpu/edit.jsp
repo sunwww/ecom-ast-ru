@@ -62,14 +62,14 @@
                                       horizontalFill="true" fieldColSpan="1"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="codeDepartment"/>
+                    <msh:textField property="codeDepartment" fieldColSpan="3"/>
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete property="director" label="Начальник" horizontalFill="true" fieldColSpan="3"
                                       vocName="workFunctionByDirect" parentId="mis_lpuForm.id"/>
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete property="accessEnterOperation" label="Доступ на создание опреаций"
+                    <msh:autoComplete property="accessEnterOperation" label="Доступ на создание операций"
                                       horizontalFill="true" fieldColSpan="3" vocName="vocLpuAccessEnterOperation"
                                       parentId="mis_lpuForm.id"/>
                 </msh:row>
