@@ -19,7 +19,6 @@ import ru.ecom.jaas.ejb.service.ISoftConfigService;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
-import ru.nuzmsh.util.StringUtil;
 
 import javax.annotation.EJB;
 import javax.ejb.Local;
@@ -277,7 +276,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             String lpuCode = getSoftConfig("DEFAULT_LPU_OMCCODE");
             for (Element zap : zaps) {
                 if (isEquals(lpuCode, zap.getChildText("N_REESTR"))) {
-                    String key = zap.getChildText("LPU_1") + "#" + zap.getChildText("PROF");
+                    String key = zap.getChildText("LPU_1") + "#" + zap.getChildText("PROF") + "#" + zap.getChildText("USL_OK");
                     if (!addresses.containsKey(key)) {
                         addresses.put(key, zap.getChildText("PODR"));
                     }
@@ -289,9 +288,9 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             int found = 0;
             LOG.info("start addressing entries: " + entries.size() + ", map: " + addresses.size());
             for (E2Entry entry : entries) {
-                if (entry.getMedHelpProfile() != null && StringUtil.isNullOrEmpty(entry.getDepartmentAddressCode())
+                if (entry.getMedHelpProfile() != null
                         && isOneOf(entry.getServiceStream(), "OBLIGATORYINSURANCE", "COMPLEXCASE")) {
-                    entry.setDepartmentAddressCode(addresses.get(entry.getDepartmentCode() + "#" + entry.getMedHelpProfile().getCode()));
+                    entry.setDepartmentAddressCode(addresses.get(entry.getDepartmentCode() + "#" + entry.getMedHelpProfile().getCode() + "#" + (entry.getMedHelpUsl() == null ? "0" : entry.getMedHelpUsl().getCode())));
                     manager.persist(entry);
                     found++;
                 }
