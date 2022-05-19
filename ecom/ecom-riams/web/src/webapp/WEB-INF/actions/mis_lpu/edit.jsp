@@ -396,9 +396,12 @@
                     <msh:sectionTitle>Коды подразделений по профилю помощи <a
                             href='entityParentPrepareCreate-mis_departmentAddressCode.do?id=${param.id}'>Добавить</a></msh:sectionTitle>
                     <msh:sectionContent>
-                        <ecom:webQuery name="departmentCodes" nativeSql="select id, p.code||' '||p.name, departmentAddressCode
-        from LpuDepartmentAddressCode where department_id=${param.id}"/>
-                        <msh:table name="departmentCodes" action="entityParentView-mis_departmentAddressCode.do" idField="1">
+                        <ecom:webQuery name="departmentCodes" nativeSql="select v.id, p.code||' '||p.name, v.departmentAddressCode
+        from LpuDepartmentAddressCode v
+        left join VocE2MedHelpProfile p on p.id=v.profile_id
+        where v.department_id=${param.id}"/>
+                        <msh:table name="departmentCodes" action="entityParentView-mis_departmentAddressCode.do"
+                                   idField="1">
                             <msh:tableColumn columnName="Профиль помощи" property="2"/>
                             <msh:tableColumn columnName="Код адреса подразделения" property="3"/>
                         </msh:table>

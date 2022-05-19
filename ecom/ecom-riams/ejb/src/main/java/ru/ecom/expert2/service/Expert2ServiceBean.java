@@ -41,7 +41,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Transient;
 import javax.sql.DataSource;
-import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -2916,7 +2915,6 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     //максимальные УЕТ по случаю
     @Override
-    @Transactional
     public BigDecimal getSumKuet(E2Entry entry) {
         try {
             if (isNotTrue(entry.getIsDentalCase()) || isEmpty(entry.getMedServices())) {
@@ -3641,7 +3639,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                 if (!resultMap.containsKey(key)) {
                     resultMap.put(key, getActualVocByCode(VocE2FondV012.class, actualDate, ishodCode));
                 }
-                1
                 entry.setFondIshod((VocE2FondV012) resultMap.get(key));
             }
 
