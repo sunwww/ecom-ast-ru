@@ -398,7 +398,7 @@
                     <msh:sectionContent>
                         <ecom:webQuery name="departmentCodes" nativeSql="select v.id, p.code||' '||p.name, v.departmentAddressCode
         from LpuDepartmentAddressCode v
-        left join VocE2MedHelpProfile p on p.id=v.profile_id
+        left join VocE2FondV021 p on p.id=v.profile_id
         where v.department_id=${param.id}"/>
                         <msh:table name="departmentCodes" action="entityParentView-mis_departmentAddressCode.do"
                                    idField="1">

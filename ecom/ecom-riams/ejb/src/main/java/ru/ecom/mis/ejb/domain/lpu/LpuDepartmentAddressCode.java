@@ -1,10 +1,9 @@
 package ru.ecom.mis.ejb.domain.lpu;
 
 
-import lombok.Getter;
 import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
-import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
+import ru.ecom.expert2.domain.voc.federal.VocE2FondV021;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -22,11 +21,7 @@ public class LpuDepartmentAddressCode extends BaseEntity {
         return department;
     }
 
-    @OneToOne
-    @Comment("Профиль медицинской помощи")
-    public VocE2MedHelpProfile getProfile() {
-        return profile;
-    }
+    private VocE2FondV021 profile;
 
     @Comment("Код департамента")
     public String getDepartmentAddressCode() {
@@ -35,7 +30,11 @@ public class LpuDepartmentAddressCode extends BaseEntity {
 
     private MisLpu department;
 
-    private VocE2MedHelpProfile profile;
+    @OneToOne
+    @Comment("Профиль специальности V021")
+    public VocE2FondV021 getProfile() {
+        return profile;
+    }
 
     /**
      * Код адреса подразделения

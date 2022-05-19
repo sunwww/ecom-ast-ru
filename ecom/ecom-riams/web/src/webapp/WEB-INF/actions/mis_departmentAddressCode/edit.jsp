@@ -12,7 +12,7 @@
             <msh:hidden property="department"/>
             <msh:panel>
                 <msh:row>
-                    <msh:autoComplete vocName="vocE2MedHelpProfile" property="profile" horizontalFill="true"
+                    <msh:autoComplete vocName="vocE2FondV021" property="profile" horizontalFill="true"
                                       fieldColSpan="3"/>
                 </msh:row>
                 <msh:row>
