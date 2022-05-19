@@ -391,6 +391,20 @@
                         <msh:tableColumn columnName="Значение" property="4"/>
                     </msh:table>
                 </msh:sectionContent></msh:section>
+            <msh:ifInRole roles="/Policy/Mis/MisLpu/Edit">
+                <msh:section>
+                    <msh:sectionTitle>Коды подразделений по профилю помощи <a
+                            href='entityParentPrepareCreate-mis_departmentAddressCode.do?id=${param.id}'>Добавить</a></msh:sectionTitle>
+                    <msh:sectionContent>
+                        <ecom:webQuery name="departmentCodes" nativeSql="select id, p.code||' '||p.name, departmentAddressCode
+        from LpuDepartmentAddressCode where department_id=${param.id}"/>
+                        <msh:table name="departmentCodes" action="entityParentView-mis_departmentAddressCode.do" idField="1">
+                            <msh:tableColumn columnName="Профиль помощи" property="2"/>
+                            <msh:tableColumn columnName="Код адреса подразделения" property="3"/>
+                        </msh:table>
+                    </msh:sectionContent></msh:section>
+            </msh:ifInRole>
+
         </msh:ifFormTypeIsView>
         <tags:addressTag/>
     </tiles:put>

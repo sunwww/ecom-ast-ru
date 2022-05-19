@@ -50,6 +50,7 @@ public class BedFundForm extends IdEntityForm {
     private Boolean isRehab;
     private String snilsDoctorDirect263;
     private String departmentAddressCode;
+    private String vmpDepartmentAddressCode;
 
     @Comment("Количество коек")
     @Persist
@@ -201,6 +202,11 @@ public class BedFundForm extends IdEntityForm {
     @Comment("Код адреса отделения")
     public String getDepartmentAddressCode() {
         return departmentAddressCode;
+    }
+    @Persist
+    @Comment("Код адреса отделения для ВМП случаев")
+    public String getVmpDepartmentAddressCode() {
+        return vmpDepartmentAddressCode;
     }
 
 }
