@@ -19,6 +19,11 @@ public class SurgicalImplant extends BaseEntity {
 
     private SurgicalOperation operation;
     private String serialNumber;
+
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
     private VocSurgicalImplant type;
 
     @ManyToOne
