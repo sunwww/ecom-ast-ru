@@ -2566,7 +2566,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                                     " from vockindhighcare vkhc " +
                                     " left join vocmethodhighcare vmhc on vmhc.kindhighcare = vkhc.code " +
                                     "   and vmhc.code=:methodCode " +
-                                    "   and (vmhc.patientmodelid is null" + (entry.getVmpPatientModelId() == null ? ")" : " or vmhc.patientmodelid = :patientModelId)") +
+                                    "   and (vmhc.patientmodelid is null" + (entry.getVmpPatientModelId() == null ? ")" : " or vmhc.patientmodelid = " + entry.getVmpPatientModelId() + ")") +
                                     "   and :vmpDate between vmhc.dateFrom and coalesce(vmhc.dateTo,current_date)" +
                                     " where vkhc.code=:code" +
                                     " and :vmpDate between vkhc.dateFrom and coalesce(vkhc.dateTo,current_date) and vkhc.cost is not null")

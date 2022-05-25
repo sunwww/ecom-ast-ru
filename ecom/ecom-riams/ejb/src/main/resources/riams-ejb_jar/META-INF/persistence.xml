@@ -13,7 +13,7 @@
         <class>ru.ecom.ejb.services.live.domain.CustomMessage</class>
 
         <properties>
-            <!--            <property name="hibernate.hbm2ddl.auto" value="update"/>-->
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.ejb.classcache.ru.ecom.mis.ejb.domain.lpu.LpuArea" value="transactional"/>
             <property name="hibernate.ejb.classcache.ru.ecom.mis.ejb.domain.lpu.LpuAreaAddressPoint"
                       value="transactional"/>
