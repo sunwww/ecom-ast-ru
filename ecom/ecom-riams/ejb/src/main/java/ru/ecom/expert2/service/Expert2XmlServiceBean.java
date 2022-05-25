@@ -859,12 +859,12 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         add(usl, "IDSERV", id);
         add(usl, "LPU", lpu);
         if (StringUtil.isNotEmpty(implantIdsString)) {
-            List<EntryMedServiceMedImplant> implants = manager.createNativeQuery("select * from EntryMedServiceMedImplant where id in ("+implantIdsString+")").getResultList();
-            for (EntryMedServiceMedImplant implant: implants) {
+            List<EntryMedServiceMedImplant> implants = manager.createNativeQuery("select * from EntryMedServiceMedImplant where id in (" + implantIdsString + ")").getResultList();
+            for (EntryMedServiceMedImplant implant : implants) {
                 Element medDev = new Element("MED_DEV");
-                add(medDev,"CODE_MEDDEV", implant.getTypeCode());
-                add(medDev,"NUMBER_SER", implant.getSerialNumber());
-                add(medDev,"DATE_MED", startDate);
+                add(medDev, "CODE_MEDDEV", implant.getTypeCode());
+                add(medDev, "NUMBER_SER", implant.getSerialNumber());
+                add(medDev, "DATE_MED", startDate);
                 usl.addContent(medDev);
             }
         }

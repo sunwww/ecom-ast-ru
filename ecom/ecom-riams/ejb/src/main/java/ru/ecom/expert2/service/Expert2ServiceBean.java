@@ -1403,6 +1403,10 @@ public class Expert2ServiceBean implements IExpert2Service {
         }
         try {
             setEntrySubType(entry);
+            if (StringUtil.isNotEmpty(entry.getDepartmentAddressCode())) {
+                entry.setDepartmentCode(entry.getDepartmentAddressCode().substring(0, Math.max(0,entry.getDepartmentAddressCode().length() - 3)));
+            }
+
             entry.setIsForeign(isNotLogicalNull(entry.getInsuranceCompanyCode()) && !entry.getInsuranceCompanyCode().startsWith("30"));
             entry.setBedDays(Math.max(bedDays, 1L));
             try {
