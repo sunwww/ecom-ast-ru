@@ -681,11 +681,13 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         }
                     }
                 } else if (!isVmp) { //стационар //нах все услуги с ВМП
-                    List<Object[]> list = manager.createNativeQuery("select vms.code as ms, cast(count(ems.id) as varchar) as cnt" +
-                                    ", coalesce(cast(case when ems.serviceDate>e.finishdate then e.finishdate else ems.servicedate end as varchar(10)),'') as serviceDate" +
+                    List<Object[]> list = manager.createNativeQuery("select vms.code as f0_ms, cast(count(ems.id) as varchar) as cnt" +
+                                    ", coalesce(cast(case when ems.serviceDate>e.finishdate then e.finishdate else ems.servicedate end as varchar(10)),'') as f2_serviceDate" +
+                                    ", list(emsmi.id||'') as f3_medImplants" +
                                     " from EntryMedService ems" +
                                     " left join e2entry e on ems.entry_id = e.id" +
                                     " left join vocMedService vms on vms.id=ems.medService_id" +
+                                    " left join EntryMedServiceMedImplant emsmi on emsmi.medservice_id=ems.id" +
                                     " where (e.id=:id or e.parententry_id=:id) and ems.serviceDate>=:entryDate" + //выгружаем только услуги
                                     " group by vms.code, case when ems.serviceDate>e.finishdate then e.finishdate else ems.servicedate end")
                             .setParameter("id", currentEntry.getId()).setParameter("entryDate", currentEntry.getStartDate()).getResultList();
@@ -694,7 +696,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         for (Object[] ms : list) {
                             sl.addContent(createUsl(a3, "" + (++uslCnt), lpuRegNumber, profileK, ms[0].toString(), isChild, ms[2].toString()
                                     , ms[2].toString(), sl.getChildText("DS1"), ms[1].toString()
-                                    , prvs, currentEntry.getDoctorSnils(), BigDecimal.ZERO, currentEntry.getDepartmentAddressCode())); //в стационаре КТ-МРТ не оплачивается
+                                    , prvs, currentEntry.getDoctorSnils(), BigDecimal.ZERO, currentEntry.getDepartmentAddressCode(), ms[3].toString())); //в стационаре КТ-МРТ не оплачивается
 
                         }
                     }
@@ -844,13 +846,28 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         return null;
 
     }
+    private Element createUsl(boolean isDD, String id, String lpu, String profile, String vidVme, String isChild, String startDate
+            , String finishDate, String ds, String kolUsl, String prvs, String codeMd, BigDecimal cost, String departmentAddressCode) {
+        return createUsl(isDD, id, lpu, profile, vidVme, isChild, startDate, finishDate, ds, kolUsl, prvs, codeMd, cost, departmentAddressCode, null);
+    }
 
     /*Создаем тэг USL по формату 2020 года*/
     private Element createUsl(boolean isDD, String id, String lpu, String profile, String vidVme, String isChild, String startDate
-            , String finishDate, String ds, String kolUsl, String prvs, String codeMd, BigDecimal cost, String departmentAddressCode) {
+            , String finishDate, String ds, String kolUsl, String prvs, String codeMd, BigDecimal cost, String departmentAddressCode,
+                              String implantIdsString) {
         Element usl = new Element("USL");
         add(usl, "IDSERV", id);
         add(usl, "LPU", lpu);
+        if (StringUtil.isNotEmpty(implantIdsString)) {
+            List<EntryMedServiceMedImplant> implants = manager.createNativeQuery("select * from EntryMedServiceMedImplant where id in ("+implantIdsString+")").getResultList();
+            for (EntryMedServiceMedImplant implant: implants) {
+                Element medDev = new Element("MED_DEV");
+                add(medDev,"CODE_MEDDEV", implant.getTypeCode());
+                add(medDev,"NUMBER_SER", implant.getSerialNumber());
+                add(medDev,"DATE_MED", startDate);
+                usl.addContent(medDev);
+            }
+        }
         if (!isDD) {
             addIfNotNull(usl, "PODR", departmentAddressCode);
             add(usl, "PROFIL", profile);

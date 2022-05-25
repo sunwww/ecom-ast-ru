@@ -2016,6 +2016,13 @@ public class Expert2ServiceBean implements IExpert2Service {
                         if (service.has("lpuCode")) {
                             ms.setLpuCode(service.getString("lpuCode"));
                         }
+                        if (service.has("medImplant") && isNotLogicalNull(service.getString("medImplant"))) {
+                            String[] implants = service.getString("medImplant").split(";");
+                            for (String implant: implants) {
+                                String[] dta = implant.split(":");
+                                manager.persist(new EntryMedServiceMedImplant(ms, dta[0], dta[1]));
+                            }
+                        }
                         manager.persist(ms);
                     }
                 }
