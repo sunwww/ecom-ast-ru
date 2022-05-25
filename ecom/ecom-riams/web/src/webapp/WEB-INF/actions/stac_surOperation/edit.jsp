@@ -352,7 +352,7 @@
                               name="Анестезию" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Anesthesia/View"
                               title="Добавить анестезию"/>
                 <msh:sideLink params="id" action="/entityParentPrepareCreate-stac_surImplant"
-                              name="Мед. изделие" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/SurOper/Create"
+                              name="Мед. изделие" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create"
                               title="Добавить мед. изделие"/>
             </msh:sideMenu>
             <msh:sideMenu title="Печать">

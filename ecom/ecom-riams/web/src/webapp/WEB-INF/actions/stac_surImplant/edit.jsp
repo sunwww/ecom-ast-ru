@@ -24,6 +24,7 @@
                     <msh:autoComplete property="type" fieldColSpan="3"
                                       horizontalFill="true" vocName="vocSurgicalImplant"/>
                 </msh:row>
+                <msh:submitCancelButtonsRow colSpan="4" />
             </msh:panel>
         </msh:form>
      
