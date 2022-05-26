@@ -3,18 +3,10 @@ package ru.ecom.mis.ejb.form.medcase.hospital;
 import lombok.Setter;
 import ru.ecom.ejb.form.simple.IdEntityForm;
 import ru.ecom.ejb.services.entityform.WebTrail;
-import ru.ecom.ejb.services.entityform.interceptors.*;
 import ru.ecom.mis.ejb.domain.medcase.SurgicalImplant;
-import ru.ecom.mis.ejb.domain.medcase.SurgicalOperation;
-import ru.ecom.mis.ejb.domain.medcase.voc.VocSurgicalImplant;
-import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
-import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SurgicalOperationCreateInterceptor;
-import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SurgicalOperationSaveInterceptor;
-import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SurgicalOperationViewInterceptor;
 import ru.nuzmsh.commons.formpersistence.annotation.*;
 import ru.nuzmsh.ejb.formpersistence.annotation.EntityFormPersistance;
-
-import javax.persistence.ManyToOne;
+import ru.nuzmsh.forms.validator.validators.Required;
 
 @Comment("Медицинское изделие в операции")
 @EntityForm
@@ -31,18 +23,21 @@ public class SurgicalImplantForm extends IdEntityForm {
 
     @Persist
     @Comment("Серийный номер")
+    @Required
     public String getSerialNumber() {
         return serialNumber;
     }
 
     @Persist
     @Comment("Операция")
+    @Required
     public Long getOperation() {
         return operation;
     }
 
     @Persist
     @Comment("Вид медицинского изделия")
+    @Required
     public Long getType() {
         return type;
     }
