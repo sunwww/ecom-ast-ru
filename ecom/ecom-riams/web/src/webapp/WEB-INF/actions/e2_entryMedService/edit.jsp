@@ -43,9 +43,10 @@
       left join VocSurgicalImplant vmi on vmi.code = mi.typeCode
       where mi.medService_id=${param.id} "/>
             <msh:tableNotEmpty name="medImplants">
-                <msh:table idField="1" name="medImplants" styleRow="3" action="/entityParentEdit-e2_entryMedServiceMedImplant.do">
-                    <msh:tableColumn columnName="Серийный номер" property="1"/>
-                    <msh:tableColumn columnName="Тип" property="2"/>
+                <msh:table idField="1" name="medImplants" styleRow="3"
+                           action="entityParentEdit-e2_entryMedServiceMedImplant.do">
+                    <msh:tableColumn columnName="Серийный номер" property="2"/>
+                    <msh:tableColumn columnName="Тип" property="3"/>
                 </msh:table>
             </msh:tableNotEmpty>
         </msh:section>

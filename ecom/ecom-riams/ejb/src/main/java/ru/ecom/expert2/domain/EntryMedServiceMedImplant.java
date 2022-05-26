@@ -1,6 +1,7 @@
 package ru.ecom.expert2.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -12,6 +13,7 @@ import javax.persistence.ManyToOne;
 @Entity
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @AIndexes({
         @AIndex(properties = {"medService"})
 })

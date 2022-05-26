@@ -28,11 +28,15 @@ public class EntryMedServiceMedImplantForm extends IdEntityForm {
     }
 
     @Required
+    @Persist
+    @Comment("Серийный номер")
     public String getSerialNumber() {
         return serialNumber;
     }
 
     @Required
+    @Persist
+    @Comment("Тип мед. импланта")
     public String getTypeCode() {
         return typeCode;
     }
