@@ -101,6 +101,15 @@
                 queried="upper(voc.name) like upper(:query) or voc.code like :query"
         />
     </voc>
+    <voc id="vocDispanseryRegistrationCode" type="NativeVocService">
+        <NativeVocService
+                from="VocDispanseryRegistration voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+                queried="upper(voc.name) like upper(:query) or voc.code like :query"
+        />
+    </voc>
     <voc id="vocPassportTypeCode" type="NativeVocService">
         <NativeVocService
                 from="vocidentitycard voc"

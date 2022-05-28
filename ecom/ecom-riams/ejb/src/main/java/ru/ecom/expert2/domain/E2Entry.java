@@ -1131,6 +1131,11 @@ public class E2Entry extends BaseEntity {
 
     private String covidPrescriptions;
 
+    /**
+     * Данные дисп. учета (поставлен, снят, состоит)
+     */
+    private String dn;
+
     public E2Entry() {
         addGroupFld = "";
         setIsDeleted(false);

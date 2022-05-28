@@ -436,9 +436,14 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     return null;
                 }
                 if (!a1) add(sl, "DS_ONK", (cancerEntry != null && isTrue(cancerEntry.getMaybeCancer())) ? "1" : "0");
-                if (isPoliclinic && !DISP_LIST.contains(currentEntry.getMainMkb())) {
-                    //*DN дисп. наблюдение !! только для терр.
-                    add(sl, "DN", "1");
+                if (isPoliclinic ) {
+                    if (isNotNull(currentEntry.getDn())) {
+                        add(sl, "DN", currentEntry.getDn());
+                    } else if (DISP_LIST.contains(currentEntry.getMainMkb())) {
+                        //*DN дисп. наблюдение !! только для терр.
+                        add(sl, "DN", "1"); //todo
+                    }
+
                 }
                 if (a3) add(sl, "PR_D_N", "1"); // взят-состоит
                 //if (a3) *DS2_N

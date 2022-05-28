@@ -200,6 +200,9 @@
                     <msh:textField property="result" size="30"/>
                     <msh:checkBox property="isCancer"/>
                 </msh:row>
+                <msh:row>
+                    <msh:autoComplete property="dn" vocName="vocDispanseryRegistrationCode"/>
+                </msh:row>
 
                 <msh:separator colSpan="8" label="ВМП"/>
                 <msh:row>
