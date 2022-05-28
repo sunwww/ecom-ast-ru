@@ -863,16 +863,6 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         Element usl = new Element("USL");
         add(usl, "IDSERV", id);
         add(usl, "LPU", lpu);
-        if (StringUtil.isNotEmpty(implantIdsString)) {
-            List<EntryMedServiceMedImplant> implants = manager.createQuery(" from EntryMedServiceMedImplant where id in (" + implantIdsString + ")").getResultList();
-            for (EntryMedServiceMedImplant implant : implants) {
-                Element medDev = new Element("MED_DEV");
-                add(medDev, "CODE_MEDDEV", implant.getTypeCode());
-                add(medDev, "NUMBER_SER", implant.getSerialNumber());
-                add(medDev, "DATE_MED", startDate);
-                usl.addContent(medDev);
-            }
-        }
         if (!isDD) {
             addIfNotNull(usl, "PODR", departmentAddressCode);
             add(usl, "PROFIL", profile);
@@ -893,6 +883,16 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         add(usl, "SUMV_USL", cost != null ? cost : BigDecimal.ZERO);
         addUslDoctor(usl, prvs, codeMd);
         //   add(usl,"NPL","0");
+        if (StringUtil.isNotEmpty(implantIdsString)) {
+            List<EntryMedServiceMedImplant> implants = manager.createQuery(" from EntryMedServiceMedImplant where id in (" + implantIdsString + ")").getResultList();
+            for (EntryMedServiceMedImplant implant : implants) {
+                Element medDev = new Element("MED_DEV");
+                add(medDev, "CODE_MEDDEV", implant.getTypeCode());
+                add(medDev, "NUMBER_SER", implant.getSerialNumber());
+                add(medDev, "DATE_MED", startDate);
+                usl.addContent(medDev);
+            }
+        }
         return usl;
     }
 
