@@ -21,6 +21,8 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 public class E2EntryForm extends IdEntityForm {
 
 //----------все поля ниже добавлены на jsp!!!
+
+    private Boolean firstTimeDiagnosis;
     private String dn;
     /** Реабилитационная койка*/
     private Boolean isRehabBed;
@@ -952,7 +954,12 @@ public class E2EntryForm extends IdEntityForm {
         return dn;
     }
 
-    //Ниже идут Нехранимые поля!!!
+    @Persist
+    @Comment("Диагноз выявлен впервые")
+    public Boolean getFirstTimeDiagnosis() {
+        return firstTimeDiagnosis;
+    }
+//Ниже идут Нехранимые поля!!!
 
     /** Добавить услугу к случаю */
     @Comment("Добавить услугу к случаю")

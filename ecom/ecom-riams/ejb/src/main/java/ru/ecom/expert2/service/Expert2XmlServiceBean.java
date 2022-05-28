@@ -78,6 +78,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     ILocalMonitorService monitorService;
     private @EJB
     IExpert2Service expertService;
+    private boolean isConsultativePolyclinic = true;
 
     /**
      * Экспорт запроса в центральный сегмент
@@ -436,8 +437,10 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     return null;
                 }
                 if (!a1) add(sl, "DS_ONK", (cancerEntry != null && isTrue(cancerEntry.getMaybeCancer())) ? "1" : "0");
-                if (isPoliclinic ) {
-                    if (isNotNull(currentEntry.getDn())) {
+                if (isPoliclinic && !isConsultativePolyclinic) {
+                    if ("2".equals(sl.getChildText("C_ZAB"))) {
+                        add(sl, "DN", "2");
+                    } else if (isNotNull(currentEntry.getDn())) {
                         add(sl, "DN", currentEntry.getDn());
                     } else if (DISP_LIST.contains(currentEntry.getMainMkb())) {
                         //*DN дисп. наблюдение !! только для терр.
@@ -445,7 +448,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     }
 
                 }
-                if (a3) add(sl, "PR_D_N", "1"); // взят-состоит
+                if (a3) {
+                    add(sl, "PR_D_N", isNotNull(currentEntry.getDn()) ? currentEntry.getDn() : "1"); // взят-состоит
+                }
                 //if (a3) *DS2_N
                 //CODE_MES1
                 if (isTrue(entry.getIsDentalCase())) {
@@ -851,6 +856,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         return null;
 
     }
+
     private Element createUsl(boolean isDD, String id, String lpu, String profile, String vidVme, String isChild, String startDate
             , String finishDate, String ds, String kolUsl, String prvs, String codeMd, BigDecimal cost, String departmentAddressCode) {
         return createUsl(isDD, id, lpu, profile, vidVme, isChild, startDate, finishDate, ds, kolUsl, prvs, codeMd, cost, departmentAddressCode, null);
@@ -1084,6 +1090,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 isDisp = true;
                 exportDispServiceNoDate = "1".equals(getExpertConfigValue(Expert2Config.EXPORT_DISP_SERVICE_NO_DATE, "0"));
             }
+            isConsultativePolyclinic = "1".equals(getExpertConfigValue("CONSULTATIVE_LPU", "0"));
             boolean dontSendDefets = "1".equals(getExpertConfigValue(Expert2Config.DONT_EXPORT_DEFECTS, "0"));
             String sql;
             if (entryId == null) { //формируем файл по заполнению
@@ -1395,6 +1402,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
          */
         if (a3) {
             add(element, "DS1", entry.getMainMkb());
+            addIfNotNull(element, "DS1_PR", entry.getFirstTimeDiagnosis());
             return;
         }
         List<EntryDiagnosis> list = entry.getDiagnosis();

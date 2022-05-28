@@ -144,6 +144,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     Element sl = zap.getChild("SL");
                     entry.setListEntry(le);
                     entry.setEntryType("EXTDISP");
+                    entry.setFirstTimeDiagnosis("1".equals(sl.getChildText("DS1_PR")));
                     entry.setLpuCode(lpuCode);
                     entry.setExternalPatientId(Long.parseLong(zap.getChildText("ID_PAC")));
                     entry.setMedPolicyType(zap.getChildText("VPOLIS"));

@@ -1136,6 +1136,9 @@ public class E2Entry extends BaseEntity {
      */
     private String dn;
 
+    /**Диагноз выявлен впервые */
+    private Boolean firstTimeDiagnosis;
+
     public E2Entry() {
         addGroupFld = "";
         setIsDeleted(false);
