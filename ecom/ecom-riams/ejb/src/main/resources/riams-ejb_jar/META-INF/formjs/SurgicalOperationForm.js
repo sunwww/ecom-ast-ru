@@ -35,6 +35,14 @@ function onCreate(aForm, aSurgOper, aCtx) {
             }
         }
     }
+    if (+aForm.medImplantType>0) { //создаем мед. имплант
+        var medImplant = new Packages.ru.ecom.mis.ejb.domain.medcase.SurgicalImplant();
+        medImplant.setOperation(aSurgOper);
+        medImplant.setSerialNumber(aForm.getMedImplantSerialNumber());
+        medImplant.setType(aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.voc.VocSurgicalImplant, aForm.medImplantType));
+        aCtx.manager.persist(medImplant);
+
+    }
     checkParent(aSurgOper, aCtx); //Находим родителя по дате и времени операции
     saveComplications(aForm, aSurgOper, aCtx);
     createBraceletIfNeed(aForm, aSurgOper, aCtx);

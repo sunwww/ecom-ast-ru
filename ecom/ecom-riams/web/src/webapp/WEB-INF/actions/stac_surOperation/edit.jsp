@@ -219,6 +219,11 @@
                     <msh:row>
                         <msh:checkBox property="cryogenicUse" label="Криогенная аппаратура" fieldColSpan="3"/>
                     </msh:row>
+                    <msh:separator label="Сведения об установленных мед. имплантах" colSpan="5"/>
+                    <msh:row>
+                        <msh:textField property="medImplantSerialNumber"/>
+                        <msh:autoComplete property="medImplantType" vocName="vocSurgicalImplant"/>
+                    </msh:row>
                     <msh:separator label="Сведения после операции" colSpan="5"/>
                     <msh:row>
                         <msh:textArea hideLabel="false" property="histologicalStudy" viewOnlyField="false"
@@ -772,6 +777,7 @@
                     });
                 } catch (e) {
                 }
+                medServiceAutocomplete
 
                 //Обязательны ли дата-время окончания операции
                 function checkIfDateTimeRequired() {
@@ -795,8 +801,25 @@
                     }
                 }
 
+                function checkMedImplantRequired() {
+                    HospitalMedCaseService.checkMedImplantRequired($('medService').value), {
+                        callback: function (ret) {
+                            var implantFlds = ['medImplantTypeName', 'medImplantSerialNumber'];
+                            for (var fld in implantFlds) {
+                                if (ret) {
+                                    $(fld).className += " required";
+                                } else {
+                                    $(fld).className = $(fld).className.replace(new RegExp("required", "g"), "");
+                                }
+                            }
+                        }
+                    }
+                }
+
+
                 medServiceAutocomplete.addOnChangeCallback(function () {
                     checkIfDateTimeRequired();
+                    checkMedImplantRequired();
                     HospitalMedCaseService.isAbortRequiredByOperation($('medService').value, {
                         callback: function (isAbort) {
                             jQuery('#abortionName').css('background-color', true == isAbort ? '#FFFFA0' : '#FFFFFF');
