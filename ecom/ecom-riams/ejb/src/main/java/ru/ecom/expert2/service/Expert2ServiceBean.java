@@ -1786,10 +1786,11 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     //на 02.07.2021 - С* || DS1<D11 || D45<=DS1<=D47
+    //30.05.2022 - Да, вот так:  «С» или код основного диагноза входит в диапазон D00-D09 или D45-D47
     private boolean isCancerMkb(String mkb, String priority) {
         return priority.equals("1") &&
                 (mkb.startsWith("C")
-                        || mkb.startsWith("D") && (parseInt(mkb.substring(1, 3)) < 11 || inRange(parseInt(mkb.substring(1, 3)), 45, 47)));
+                        || mkb.startsWith("D") && (parseInt(mkb.substring(1, 3)) < 10 || inRange(parseInt(mkb.substring(1, 3)), 45, 47)));
     }
 
     //входит ли номер в промежуток
