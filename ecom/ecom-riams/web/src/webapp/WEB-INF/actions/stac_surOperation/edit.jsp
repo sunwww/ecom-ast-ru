@@ -802,18 +802,19 @@
                 }
 
                 function checkMedImplantRequired() {
-                    HospitalMedCaseService.checkMedImplantRequired($('medService').value), {
+                    HospitalMedCaseService.checkMedImplantRequired($('medService').value, {
                         callback: function (ret) {
                             var implantFlds = ['medImplantTypeName', 'medImplantSerialNumber'];
-                            for (var fld in implantFlds) {
-                                if (ret) {
+                            for (var i = 0; i < implantFlds.length; i++) {
+                                var fld = implantFlds[i];
+                                if (ret === true) {
                                     $(fld).className += " required";
                                 } else {
                                     $(fld).className = $(fld).className.replace(new RegExp("required", "g"), "");
                                 }
                             }
                         }
-                    }
+                    });
                 }
 
 
