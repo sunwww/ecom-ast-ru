@@ -92,7 +92,7 @@ public class Expert2ServiceJs {
     }
 
     public String fixSomeErrors(Long listEntryId, String errorCode, HttpServletRequest request) throws NamingException {
-        if ("223".equals(errorCode)) { //TODO enum!
+        if ("223".equals(errorCode) || "1087".equals(errorCode)) { //TODO enum!
             LOG.info("Проверяем по базе ТФОМС и проставляем действующие полиса на дату начала случая");
             return Injection.find(request).getService(IExpert2Service.class)
                     .fixFondAnswerError(listEntryId, errorCode);

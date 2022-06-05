@@ -82,13 +82,11 @@ public class Expert2ServiceBean implements IExpert2Service {
     private static final String SERVICETYPE = "SERVICE";
     private static final String COMPLEXSERVICESTREAM = "COMPLEXCASE";
     private static final String OMC_SERVICE_STREAM = "OBLIGATORYINSURANCE";
-    private static BigDecimal DAY_TIME_HOSP_KSLP = BigDecimal.ZERO; //КСЛП для дневного стационара
     private static final List<String> CHILD_BIRTH_MKB = Arrays.asList("O14.1", "O34.2", "O36.3", "O36.4", "O42.2"); //Список диагнозов, с которыми разрешена подача обсервационного отделения менее 5 дней
     private static final List<String> politravmaMainList = Arrays.asList("S02.7", "S12.7", "S22.1", "S27.7", "S29.7", "S31.7", "S32.7", "S36.7", "S38.1", "S39.6", "S39.7", "S37.7", "S42.7", "S49.7", "T01.1", "T01.8", "T01.9", "T02.0", "T02.1", "T02.2", "T02.3", "T02.4", "T02.5", "T02.6", "T02.7", "T02.8", "T02.9", "T04.0", "T04.1", "T04.2", "T04.3", "T04.4", "T04.7", "T04.8", "T04.9", "T05.0", "T05.1", "T05.2", "T05.3", "T05.4", "T05.5", "T05.6", "T05.8", "T05.9", "T06.0", "T06.1", "T06.2", "T06.3", "T06.4", "T06.5", "T06.8", "T07");
     private static final List<String> politravmaSeconaryList = Arrays.asList("J94.2", "J94.8", "J94.9", "J93", "J93.0", "J93.1", "J93.8", "J93.9", "J96.0", "N17", "T79.4", "R57.1", "R57.8");
     private static final List<String> ksgExceptions = Arrays.asList("st02.008#st02.010", "st02.008#st02.011", "st02.009#st02.010", "st04.002#st14.001", "st04.002#st14.002", "st21.007#st21.001"
             , "st34.001#st34.002", "st26.001#st34.002", "st30.003#st34.006", "st30.005#st09.001", "st31.017#st31.002"); //терапевтическая#Хирургическая
-
     private static final List<Long> serviceDepartments = Arrays.asList(224L, 416L); //визиты в этих департаментах подаем как услуги
     /**
      * Создаем список диагнозов из строки с диагнозами +устанавливаем основной диагноз
@@ -106,6 +104,7 @@ public class Expert2ServiceBean implements IExpert2Service {
      * Нахождение КСГ с бОльшим коэффициентом трудозатрат для случая
      */
     private static final Map<String, List<BigInteger>> ksgMap = new HashMap<>();
+    private static BigDecimal DAY_TIME_HOSP_KSLP = BigDecimal.ZERO; //КСЛП для дневного стационара
     private static boolean isBillCreating = false;
     private static boolean isCheckIsRunning = false;
     private final SimpleDateFormat SQLDATE = new SimpleDateFormat("yyyy-MM-dd");
@@ -113,14 +112,13 @@ public class Expert2ServiceBean implements IExpert2Service {
     private final Map<String, Object> diagnosisMap = new HashMap<>();
     private final Map<String, VocMedService> SERVICELIST = new HashMap<>();
     private final Map<String, BigDecimal> hospitalCostMap = new HashMap<>();
-    private boolean isConsultativePolyclinic = true;
-    private boolean isNeedSplitDayTimeHosp = false;
     private final Map<String, VocE2EntrySubType> entrySubTypeHashMap = new HashMap<>();
     private final Map<String, BigDecimal> tariffMap = new HashMap<>();
-
     private final Map<String, BigDecimal> cusmoMap = new HashMap<>();
     private final Map<String, VocE2CoefficientPatientDifficulty> difficultyHashMap = new HashMap<>();
     private final Map<String, VocE2PolyclinicCoefficient> polyclinicCasePrice = new HashMap<>();
+    private boolean isConsultativePolyclinic = true;
+    private boolean isNeedSplitDayTimeHosp = false;
     private @PersistenceContext
     EntityManager manager;
     private @EJB
@@ -1404,7 +1402,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         try {
             setEntrySubType(entry);
             if (StringUtil.isNotEmpty(entry.getDepartmentAddressCode())) {
-                entry.setDepartmentCode(entry.getDepartmentAddressCode().substring(0, Math.max(0,entry.getDepartmentAddressCode().length() - 3)));
+                entry.setDepartmentCode(entry.getDepartmentAddressCode().substring(0, Math.max(0, entry.getDepartmentAddressCode().length() - 3)));
             }
 
             entry.setIsForeign(isNotLogicalNull(entry.getInsuranceCompanyCode()) && !entry.getInsuranceCompanyCode().startsWith("30"));
@@ -2024,7 +2022,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                         manager.persist(ms);
                         if (service.has("medImplant") && isNotLogicalNull(service.getString("medImplant"))) {
                             String[] implants = service.getString("medImplant").split(";");
-                            for (String implant: implants) {
+                            for (String implant : implants) {
                                 String[] dta = implant.split(":");
                                 manager.persist(new EntryMedServiceMedImplant(ms, dta[0], dta[1]));
                             }
@@ -4026,61 +4024,86 @@ public class Expert2ServiceBean implements IExpert2Service {
     public String fixFondAnswerError(Long listEntryId, String sanctionCode) {
         List<E2EntrySanction> errorEntries = manager.createQuery("from E2EntrySanction es where es.dopCode=:errorCode and entry.listEntry.id=:listId  ")
                 .setParameter("errorCode", sanctionCode).setParameter("listId", listEntryId).getResultList();
-        //if ("223".equals(aSanctionCode)) {
-        // пока только 223 - полиса
-        E2Entry entry;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        DisabilityServiceBean httpBean = new DisabilityServiceBean();
-        String restFondApiAddress = "http://127.0.0.1:8080/riams/api/foncCheck"; //TODO переделать
-        LOG.info("check " + sanctionCode + ">" + errorEntries.size());
-        int good = 0;
-        for (E2EntrySanction sanction : errorEntries) {
-            entry = sanction.getEntry();
-            long serviceDate = entry.getStartDate().getTime();
-            String series = entry.getMedPolicySeries();
-            String polnumber = entry.getMedPolicyNumber();
-            try {
-                String appendUrl = "check?number=" + URLEncoder.encode(polnumber, "utf-8") + (isNotLogicalNull(series) ? "&series=" + URLEncoder.encode(series, "utf-8") : "");
-                String answer = httpBean.makeHttpGetRequest(restFondApiAddress, appendUrl);
-                JSONObject fond = new JSONObject(answer);
-                JSONArray policies = fond.getJSONArray("Polis");
-                boolean policyFound = false;
-                for (int i = 0; i < policies.length(); i++) {
-                    JSONObject policy = policies.getJSONObject(i);
-                    long polStartDate = sdf.parse(policy.getString("dateStart").substring(0, 10)).getTime();
-                    long polFinishDate = sdf.parse(policy.getString("dateEarlyEnd").substring(0, 10)).getTime();
-                    if (polStartDate < serviceDate && serviceDate < polFinishDate) {
-                        good++;
-                        policyFound = true;
-                        String fondPolType = policy.getString("typePolicy");
-                        String fondPolNumber = policy.getString("seriesAndNumber");
+        int good;
+        if ("223".equals(sanctionCode)) { //223 - полиса
+            E2Entry entry;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            DisabilityServiceBean httpBean = new DisabilityServiceBean();
+            String restFondApiAddress = "http://127.0.0.1:8080/riams/api/foncCheck"; //TODO переделать
+            LOG.info("check " + sanctionCode + ">" + errorEntries.size());
+            good = 0;
+            for (E2EntrySanction sanction : errorEntries) {
+                entry = sanction.getEntry();
+                long serviceDate = entry.getStartDate().getTime();
+                String series = entry.getMedPolicySeries();
+                String polnumber = entry.getMedPolicyNumber();
+                try {
+                    String appendUrl = "check?number=" + URLEncoder.encode(polnumber, "utf-8") + (isNotLogicalNull(series) ? "&series=" + URLEncoder.encode(series, "utf-8") : "");
+                    String answer = httpBean.makeHttpGetRequest(restFondApiAddress, appendUrl);
+                    JSONObject fond = new JSONObject(answer);
+                    JSONArray policies = fond.getJSONArray("Polis");
+                    boolean policyFound = false;
+                    for (int i = 0; i < policies.length(); i++) {
+                        JSONObject policy = policies.getJSONObject(i);
+                        long polStartDate = sdf.parse(policy.getString("dateStart").substring(0, 10)).getTime();
+                        long polFinishDate = sdf.parse(policy.getString("dateEarlyEnd").substring(0, 10)).getTime();
+                        if (polStartDate < serviceDate && serviceDate < polFinishDate) {
+                            good++;
+                            policyFound = true;
+                            String fondPolType = policy.getString("typePolicy");
+                            String fondPolNumber = policy.getString("seriesAndNumber");
 
-                        boolean isNew = fondPolType.length() == 5;
-                        if (isNew) { //новый
-                            entry.setMedPolicySeries("");
-                            entry.setMedPolicyNumber(fondPolNumber);
-                            entry.setMedPolicyType("3");
+                            boolean isNew = fondPolType.length() == 5;
+                            if (isNew) { //новый
+                                entry.setMedPolicySeries("");
+                                entry.setMedPolicyNumber(fondPolNumber);
+                                entry.setMedPolicyType("3");
 
-                        } else { //временный
-                            String[] fondPolNumberData = fondPolNumber.split(" ");
-                            entry.setMedPolicySeries(fondPolNumberData[0]);
-                            entry.setMedPolicyNumber(fondPolNumberData[1]);
-                            entry.setMedPolicyType("2");
+                            } else { //временный
+                                String[] fondPolNumberData = fondPolNumber.split(" ");
+                                entry.setMedPolicySeries(fondPolNumberData[0]);
+                                entry.setMedPolicyNumber(fondPolNumberData[1]);
+                                entry.setMedPolicyType("2");
+                            }
+                            manager.persist(entry);
+                            sanction.setDopCode("FIX_" + sanction.getDopCode());
+                            manager.persist(sanction);
                         }
-                        manager.persist(entry);
-                        sanction.setDopCode("FIX_" + sanction.getDopCode());
-                        manager.persist(sanction);
                     }
+                    LOG.info((policyFound ? "" : "NOT ") + "found actual policy " + entry.getLastname());
+                } catch (Exception e) {
+                    LOG.error(e.getMessage(), e);
                 }
-                LOG.info((policyFound ? "" : "NOT ") + "found actual policy " + entry.getLastname());
-            } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
             }
+        } else if ("1087".equals(sanctionCode)) { //Добавляем лек. назначение для лечения ковида
+            good = 0;
+            E2DrugEntry original = createCovidDrugEntry();
+            for (E2EntrySanction sanction : errorEntries) {
+                E2Entry entry = sanction.getEntry();
+                E2DrugEntry drugEntry = new E2DrugEntry(original, entry);
+                drugEntry.setInjectDate(entry.getStartDate());
+                sanction.setDopCode("FIX_" + sanction.getDopCode());
+                manager.persist(drugEntry);
+                good++;
+            }
+        } else {
+            LOG.warn("Не понимаю что вы хотите: " + sanctionCode);
+            good = -1;
         }
 
         return "Всего найдено: " + errorEntries.size() + ", исправлено: " + good;
     }
 
+    private E2DrugEntry createCovidDrugEntry() {
+        E2DrugEntry drugEntry = new E2DrugEntry();
+        drugEntry.setDrug(getActualVocByCode(VocE2FondN020.class, "002983")); //Фавипиравир
+        drugEntry.setInjectMethod(getActualVocByCode(VocE2FondV035.class, "118")); //внутрь (перорально)
+        drugEntry.setInjectUnit(getActualVocByCode(VocE2FondV034.class, "24")); //День
+        drugEntry.setDrugGroupSchema(getActualVocByCode(VocE2FondV032.class, "4-3-1")); //todo узнать у Олега
+        drugEntry.setInjectAmount("200");
+        drugEntry.setInjectNumber(10);
+        return drugEntry;
+    }
 
     @Override
     @Transient

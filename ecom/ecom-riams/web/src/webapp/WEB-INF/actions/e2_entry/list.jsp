@@ -176,6 +176,7 @@
                         <input type="button" onclick="fixSomeError('CV_DEATH')" value="Поправить смерь от ковида">
                         <input type="button" onclick="fixSomeError('AUTOSMO')" value="Сделать согаз всем безполисным">
                         <input type="button" onclick="fixSomeError('COST_1_RUB')" value="1 руб">
+                        <input type="button" onclick="fixSomeError('1087')" value="Назначить фавипиравир">
                     </td>
                 </tr>
             </table>
