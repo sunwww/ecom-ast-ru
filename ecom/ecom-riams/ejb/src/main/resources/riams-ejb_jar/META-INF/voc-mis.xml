@@ -1302,6 +1302,19 @@
 
         />
     </voc>
+    <voc id='priceGroup' type='NativeVocService'>
+        <NativeVocService
+                from='PriceGroup'
+                parent="priceList"
+                names="name"
+                nameId="id"
+                queryAppend=''
+                join=''
+                order=''
+                queried="(id like :query or name like UPPER(:query))"
+
+        />
+    </voc>
     <voc id='contractPerson' type='NativeVocService'>
         <NativeVocService
                 from='ContractPerson cp'

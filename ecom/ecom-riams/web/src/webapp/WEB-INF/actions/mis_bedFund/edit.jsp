@@ -6,7 +6,7 @@
 <tiles:insert page="/WEB-INF/tiles/mainLayout.jsp" flush="true">
 
     <tiles:put name="body" type="string">
-        <msh:form action="/entityParentSaveGoView-mis_bedFund.do" defaultField="hello">
+        <msh:form action="/entityParentSaveGoView-mis_bedFund.do" defaultField="amount">
             <msh:hidden property="id"/>
             <msh:hidden property="saveType"/>
             <msh:hidden property="lpu"/>
@@ -51,8 +51,12 @@
                     <msh:textField property="timeFinish" label="Время окончания актуальности"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="departmentAddressCode" label="Код F100 для выгрузки в ФОМС"/>
-                </msh:row>
+                    <msh:textField property="departmentAddressCode" label="Код F100 для выгрузки в ФОМС"
+                                   fieldColSpan="3" size="50"/>
+                </msh:row><msh:row>
+                <msh:textField property="vmpDepartmentAddressCode" label="Код F100 для выгрузки в ФОМС ВМП"
+                               fieldColSpan="3" size="50"/>
+            </msh:row>
                 <msh:submitCancelButtonsRow colSpan="4"/>
             </msh:panel>
         </msh:form>

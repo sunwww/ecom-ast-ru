@@ -92,7 +92,7 @@ public class Expert2ServiceJs {
     }
 
     public String fixSomeErrors(Long listEntryId, String errorCode, HttpServletRequest request) throws NamingException {
-        if ("223".equals(errorCode)) { //TODO enum!
+        if ("223".equals(errorCode) || "1087".equals(errorCode)) { //TODO enum!
             LOG.info("Проверяем по базе ТФОМС и проставляем действующие полиса на дату начала случая");
             return Injection.find(request).getService(IExpert2Service.class)
                     .fixFondAnswerError(listEntryId, errorCode);
@@ -114,7 +114,7 @@ public class Expert2ServiceJs {
             return "Страховая компания заменена на " + insuranceCode;
         } else if ("COST_1_RUB".equals(errorCode)) { //установить цену 1 руб случаям без цены (цена = 0 руб)
             Injection.find(request).getService(IWebQueryService.class)
-                    .executeNativeSql("update e2entry set cost ='1' where listentry_id="+listEntryId+" and coalesce(isDeleted, false) = false and cost = '0'");
+                    .executeUpdateNativeSql("update e2entry set cost ='1' where listentry_id=" + listEntryId + " and coalesce(isDeleted, false) = false and cost = '0'");
             return "Установлена цена = 1 руб";
         } else {
             return "Я не понял что мне делать!";
@@ -356,7 +356,7 @@ public class Expert2ServiceJs {
                         String oldDepartmentCode = triple.length > 2 ? triple[2] : null;
                         service.executeUpdateNativeSql("update e2entry e set departmentCode = '" +
                                 newDepartmentCode + "' where listEntry_id=" +
-                                entryListId + " and medhelpprofile_id=(select max(id) from voce2medhelpprofile where code ='" +
+                                entryListId + " and medhelpprofile_id in (select id from voce2medhelpprofile where code ='" +
                                 profileCode + "')" + (oldDepartmentCode == null ? "" : " and departmentCode='" + oldDepartmentCode + "'"));
                     }
                     return "Всё заменено согласно настройкам: " + con;
@@ -373,8 +373,9 @@ public class Expert2ServiceJs {
                         String profileCode = triple[0];
                         String newDepartmentAddressCode = triple[1];
                         String oldDepartmentAddressCode = triple.length > 2 ? triple[2] : null;
+                        String departmentCode = newDepartmentAddressCode.substring(0, newDepartmentAddressCode.length() - 3);
                         service.executeUpdateNativeSql("update e2entry e set departmentCode = '" +
-                                newDepartmentAddressCode.substring(0, 8) + "', departmentAddressCode='" + newDepartmentAddressCode + "' where listEntry_id=" +
+                                departmentCode + "', departmentAddressCode='" + newDepartmentAddressCode + "' where listEntry_id=" +
                                 entryListId + " and medhelpprofile_id in (select id from voce2medhelpprofile where code ='" +
                                 profileCode + "')" + (oldDepartmentAddressCode == null ? "" : " and departmentAddressCode='" + oldDepartmentAddressCode + "'"));
                     }

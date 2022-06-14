@@ -219,6 +219,11 @@
                     <msh:row>
                         <msh:checkBox property="cryogenicUse" label="Криогенная аппаратура" fieldColSpan="3"/>
                     </msh:row>
+                    <msh:separator label="Сведения об установленных мед. имплантах" colSpan="5"/>
+                    <msh:row>
+                        <msh:textField property="medImplantSerialNumber"/>
+                        <msh:autoComplete property="medImplantType" vocName="vocSurgicalImplant"/>
+                    </msh:row>
                     <msh:separator label="Сведения после операции" colSpan="5"/>
                     <msh:row>
                         <msh:textArea hideLabel="false" property="histologicalStudy" viewOnlyField="false"
@@ -323,6 +328,22 @@
                     </msh:section>
                 </msh:tableNotEmpty>
             </msh:ifInRole>
+            <msh:section>
+                <ecom:webQuery name="surgicalImplants" nativeSql="select si.id
+                ,si.serialNumber
+                ,vsi.code||' '||vsi.name
+                from SurgicalImplant si
+                left join VocSurgicalImplant vsi on vsi.id=si.type_id
+                 where si.operation_id=${param.id}"/>
+                <msh:table
+                        idField="1" name="surgicalImplants" action="entityParentView-stac_surImplant.do"
+                        deleteUrl="entityParentDeleteGoParentView-stac_surImplant.do"
+
+                        noDataMessage="Нет имплантов">
+                    <msh:tableColumn columnName="Тип импланта" property="3"/>
+                    <msh:tableColumn columnName="Номер" property="2"/>
+                </msh:table>
+            </msh:section>
         </msh:ifFormTypeIsView>
         <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
             <tags:mis_double name='MedService' title='Данная операция оказана:'
@@ -351,6 +372,9 @@
                 <msh:sideLink key="CTRT+1" params="id" action="/entityParentPrepareCreate-stac_anesthesia"
                               name="Анестезию" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Anesthesia/View"
                               title="Добавить анестезию"/>
+                <msh:sideLink params="id" action="/entityParentPrepareCreate-stac_surImplant"
+                              name="Мед. изделие" roles="/Policy/Mis/MedCase/Stac/Ssl/SurOper/Create"
+                              title="Добавить мед. изделие"/>
             </msh:sideMenu>
             <msh:sideMenu title="Печать">
                 <msh:sideLink key="CTRL+2" params="id"
@@ -753,6 +777,7 @@
                     });
                 } catch (e) {
                 }
+                medServiceAutocomplete
 
                 //Обязательны ли дата-время окончания операции
                 function checkIfDateTimeRequired() {
@@ -776,8 +801,26 @@
                     }
                 }
 
+                function checkMedImplantRequired() {
+                    HospitalMedCaseService.checkMedImplantRequired($('medService').value, {
+                        callback: function (ret) {
+                            var implantFlds = ['medImplantTypeName', 'medImplantSerialNumber'];
+                            for (var i = 0; i < implantFlds.length; i++) {
+                                var fld = implantFlds[i];
+                                if (ret === true) {
+                                    $(fld).className += " required";
+                                } else {
+                                    $(fld).className = $(fld).className.replace(new RegExp("required", "g"), "");
+                                }
+                            }
+                        }
+                    });
+                }
+
+
                 medServiceAutocomplete.addOnChangeCallback(function () {
                     checkIfDateTimeRequired();
+                    checkMedImplantRequired();
                     HospitalMedCaseService.isAbortRequiredByOperation($('medService').value, {
                         callback: function (isAbort) {
                             jQuery('#abortionName').css('background-color', true == isAbort ? '#FFFFA0' : '#FFFFFF');

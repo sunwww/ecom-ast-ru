@@ -177,4 +177,9 @@ public class BedFund extends BaseEntity{
 	 * Код адреса отделения
 	 */
 	private String departmentAddressCode;
+
+	/**
+	 * Код адреса отделения для ВМП случаев
+	 */
+	private String vmpDepartmentAddressCode;
 }

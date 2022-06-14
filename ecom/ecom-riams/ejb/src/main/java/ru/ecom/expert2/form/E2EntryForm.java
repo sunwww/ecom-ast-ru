@@ -21,6 +21,9 @@ import ru.nuzmsh.forms.validator.validators.TimeString;
 public class E2EntryForm extends IdEntityForm {
 
 //----------все поля ниже добавлены на jsp!!!
+
+    private Boolean firstTimeDiagnosis;
+    private String dn;
     /** Реабилитационная койка*/
     private Boolean isRehabBed;
     /** Стоматологический случай*/
@@ -932,18 +935,6 @@ public class E2EntryForm extends IdEntityForm {
     /** Список  выполненных назначений */
     private String prescriptionList ;
 
-    //Ниже идут Нехранимые поля!!!
-
-    /** Добавить услугу к случаю */
-    @Comment("Добавить услугу к случаю")
-    public Long getNewMedService() {return newMedService;}
-    private Long newMedService ;
-
-    /** Особенность случая */
-    @Comment("Особенность случая")
-    public Long getNewFactor() {return newFactor;}
-    private Long newFactor ;
-
     /** Место рождения */
     @Comment("Место рождения")
     @Persist
@@ -956,5 +947,28 @@ public class E2EntryForm extends IdEntityForm {
     public Long getDispResult() {return dispResult;}
     /** результат диспансеризации */
     private Long dispResult ;
+
+    @Persist
+    @Comment("Состояние дисп учета")
+    public String getDn() {
+        return dn;
+    }
+
+    @Persist
+    @Comment("Диагноз выявлен впервые")
+    public Boolean getFirstTimeDiagnosis() {
+        return firstTimeDiagnosis;
+    }
+//Ниже идут Нехранимые поля!!!
+
+    /** Добавить услугу к случаю */
+    @Comment("Добавить услугу к случаю")
+    public Long getNewMedService() {return newMedService;}
+    private Long newMedService ;
+
+    /** Особенность случая */
+    @Comment("Особенность случая")
+    public Long getNewFactor() {return newFactor;}
+    private Long newFactor ;
 
 }

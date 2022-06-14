@@ -62,14 +62,14 @@
                                       horizontalFill="true" fieldColSpan="1"/>
                 </msh:row>
                 <msh:row>
-                    <msh:textField property="codeDepartment"/>
+                    <msh:textField property="codeDepartment" fieldColSpan="3" size="50"/>
                 </msh:row>
                 <msh:row>
                     <msh:autoComplete property="director" label="Начальник" horizontalFill="true" fieldColSpan="3"
                                       vocName="workFunctionByDirect" parentId="mis_lpuForm.id"/>
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete property="accessEnterOperation" label="Доступ на создание опреаций"
+                    <msh:autoComplete property="accessEnterOperation" label="Доступ на создание операций"
                                       horizontalFill="true" fieldColSpan="3" vocName="vocLpuAccessEnterOperation"
                                       parentId="mis_lpuForm.id"/>
                 </msh:row>
@@ -391,6 +391,23 @@
                         <msh:tableColumn columnName="Значение" property="4"/>
                     </msh:table>
                 </msh:sectionContent></msh:section>
+            <msh:ifInRole roles="/Policy/Mis/MisLpu/Edit">
+                <msh:section>
+                    <msh:sectionTitle>Коды подразделений по профилю помощи <a
+                            href='entityParentPrepareCreate-mis_departmentAddressCode.do?id=${param.id}'>Добавить</a></msh:sectionTitle>
+                    <msh:sectionContent>
+                        <ecom:webQuery name="departmentCodes" nativeSql="select v.id, p.code||' '||p.name, v.departmentAddressCode
+        from LpuDepartmentAddressCode v
+        left join VocE2FondV021 p on p.id=v.profile_id
+        where v.department_id=${param.id}"/>
+                        <msh:table name="departmentCodes" action="entityParentView-mis_departmentAddressCode.do"
+                                   idField="1">
+                            <msh:tableColumn columnName="Профиль помощи" property="2"/>
+                            <msh:tableColumn columnName="Код адреса подразделения" property="3"/>
+                        </msh:table>
+                    </msh:sectionContent></msh:section>
+            </msh:ifInRole>
+
         </msh:ifFormTypeIsView>
         <tags:addressTag/>
     </tiles:put>

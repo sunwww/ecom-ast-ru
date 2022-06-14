@@ -39,7 +39,7 @@
              left join VocE2BaseTariffType vest on vest.id=coef.tarifftype_id
              where coef.dtype='VocE2PolyclinicCoefficient' and coef.profile_id=${param.id} order by coef.startDate desc"/>
         <msh:table idField="1" name="polyclinicCoefficientList" action="entityParentEdit-e2_polyclinicCoefficient.do"
-                   noDataMessage="Нет коэфцициентов" styleRow="8">
+                   noDataMessage="Нет коэффициентов" styleRow="8">
             <msh:tableColumn columnName="Тип тарифа" property="5"/>
             <msh:tableColumn columnName="КДО" property="6"/>
             <msh:tableColumn columnName="Консультативное" property="7"/>

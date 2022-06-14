@@ -12,9 +12,11 @@ import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.List;
 
 @Entity
 @AIndexes({
@@ -102,5 +104,12 @@ public class EntryMedService extends BaseEntity {
     @Comment("Диагноз, выявленный при оказании услуги")
     @OneToOne
     public VocIdc10 getMkb() {return mkb;}
+
+    @OneToMany(mappedBy = "medService")
+    public List<EntryMedServiceMedImplant> getImplants() {
+        return implants;
+    }
+
+    private List<EntryMedServiceMedImplant> implants;
 
 }

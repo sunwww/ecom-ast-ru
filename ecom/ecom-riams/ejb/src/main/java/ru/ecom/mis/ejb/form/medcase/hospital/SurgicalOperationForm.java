@@ -36,6 +36,19 @@ import javax.persistence.Id;
 )
 @Setter
 public class SurgicalOperationForm extends IdEntityForm{
+
+	@Comment("Серийный номер мед. импланта")
+	public String getMedImplantSerialNumber() {
+		return medImplantSerialNumber;
+	}
+
+	@Comment("Тип мед. импланта")
+	public Long getMedImplantType() {
+		return medImplantType;
+	}
+
+	private String medImplantSerialNumber;
+	private Long medImplantType;
 	/** Дата операции */
 	@Comment("Дата операции")
 	@Persist @Required

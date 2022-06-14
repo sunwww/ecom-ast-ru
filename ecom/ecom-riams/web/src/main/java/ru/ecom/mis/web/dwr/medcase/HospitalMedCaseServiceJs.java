@@ -34,6 +34,17 @@ import java.util.List;
  */
 public class HospitalMedCaseServiceJs {
 
+    /**
+     * Требуется ли заполнение информации об установленных мед. имплантах
+     * @param medServiceId ИД мед. услуги
+     * @param request
+     * @return true в случае если для операции необходимо заполнить информацию о мед. имплантах
+     */
+    public Boolean checkMedImplantRequired(Long medServiceId, HttpServletRequest request) throws NamingException {
+        return !Injection.find(request).getService(IWebQueryService.class)
+                .executeNativeSql("select id from medservice where id="+medServiceId+" and needMedImplant is true").isEmpty();
+    }
+
     public String exportToPromed(Long slsId, HttpServletRequest aRequest) throws NamingException, ValidateException {
         String guid = Injection.find(aRequest).getService(IPromedExportService.class).exportHospitalById(slsId);
         return guid == null ? "Отправка выключена" : "success: " + guid;

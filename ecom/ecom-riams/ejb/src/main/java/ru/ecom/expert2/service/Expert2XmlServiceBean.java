@@ -78,6 +78,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     ILocalMonitorService monitorService;
     private @EJB
     IExpert2Service expertService;
+    private boolean isConsultativePolyclinic = true;
 
     /**
      * Экспорт запроса в центральный сегмент
@@ -436,11 +437,20 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     return null;
                 }
                 if (!a1) add(sl, "DS_ONK", (cancerEntry != null && isTrue(cancerEntry.getMaybeCancer())) ? "1" : "0");
-                if (isPoliclinic && !DISP_LIST.contains(currentEntry.getMainMkb())) {
-                    //*DN дисп. наблюдение !! только для терр.
-                    add(sl, "DN", "1");
+                if (isPoliclinic && !isConsultativePolyclinic) {
+                    if ("2".equals(sl.getChildText("C_ZAB"))) {
+                        add(sl, "DN", "2");
+                    } else if (isNotNull(currentEntry.getDn())) {
+                        add(sl, "DN", currentEntry.getDn());
+                    } else if (DISP_LIST.contains(currentEntry.getMainMkb())) {
+                        //*DN дисп. наблюдение !! только для терр.
+                        add(sl, "DN", "1"); //todo
+                    }
+
                 }
-                if (a3) add(sl, "PR_D_N", "1"); // взят-состоит
+                if (a3) {
+                    add(sl, "PR_D_N", isNotNull(currentEntry.getDn()) ? currentEntry.getDn() : "1"); // взят-состоит
+                }
                 //if (a3) *DS2_N
                 //CODE_MES1
                 if (isTrue(entry.getIsDentalCase())) {
@@ -681,11 +691,13 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         }
                     }
                 } else if (!isVmp) { //стационар //нах все услуги с ВМП
-                    List<Object[]> list = manager.createNativeQuery("select vms.code as ms, cast(count(ems.id) as varchar) as cnt" +
-                                    ", coalesce(cast(case when ems.serviceDate>e.finishdate then e.finishdate else ems.servicedate end as varchar(10)),'') as serviceDate" +
+                    List<Object[]> list = manager.createNativeQuery("select vms.code as f0_ms, cast(count(ems.id) as varchar) as cnt" +
+                                    ", coalesce(cast(case when ems.serviceDate>e.finishdate then e.finishdate else ems.servicedate end as varchar(10)),'') as f2_serviceDate" +
+                                    ", list(emsmi.id||'') as f3_medImplants" +
                                     " from EntryMedService ems" +
                                     " left join e2entry e on ems.entry_id = e.id" +
                                     " left join vocMedService vms on vms.id=ems.medService_id" +
+                                    " left join EntryMedServiceMedImplant emsmi on emsmi.medservice_id=ems.id" +
                                     " where (e.id=:id or e.parententry_id=:id) and ems.serviceDate>=:entryDate" + //выгружаем только услуги
                                     " group by vms.code, case when ems.serviceDate>e.finishdate then e.finishdate else ems.servicedate end")
                             .setParameter("id", currentEntry.getId()).setParameter("entryDate", currentEntry.getStartDate()).getResultList();
@@ -694,7 +706,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         for (Object[] ms : list) {
                             sl.addContent(createUsl(a3, "" + (++uslCnt), lpuRegNumber, profileK, ms[0].toString(), isChild, ms[2].toString()
                                     , ms[2].toString(), sl.getChildText("DS1"), ms[1].toString()
-                                    , prvs, currentEntry.getDoctorSnils(), BigDecimal.ZERO, currentEntry.getDepartmentAddressCode())); //в стационаре КТ-МРТ не оплачивается
+                                    , prvs, currentEntry.getDoctorSnils(), BigDecimal.ZERO, currentEntry.getDepartmentAddressCode(), ms[3].toString())); //в стационаре КТ-МРТ не оплачивается
 
                         }
                     }
@@ -845,9 +857,15 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
 
     }
 
-    /*Создаем тэг USL по формату 2020 года*/
     private Element createUsl(boolean isDD, String id, String lpu, String profile, String vidVme, String isChild, String startDate
             , String finishDate, String ds, String kolUsl, String prvs, String codeMd, BigDecimal cost, String departmentAddressCode) {
+        return createUsl(isDD, id, lpu, profile, vidVme, isChild, startDate, finishDate, ds, kolUsl, prvs, codeMd, cost, departmentAddressCode, null);
+    }
+
+    /*Создаем тэг USL по формату 2020 года*/
+    private Element createUsl(boolean isDD, String id, String lpu, String profile, String vidVme, String isChild, String startDate
+            , String finishDate, String ds, String kolUsl, String prvs, String codeMd, BigDecimal cost, String departmentAddressCode,
+                              String implantIdsString) {
         Element usl = new Element("USL");
         add(usl, "IDSERV", id);
         add(usl, "LPU", lpu);
@@ -871,6 +889,16 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         add(usl, "SUMV_USL", cost != null ? cost : BigDecimal.ZERO);
         addUslDoctor(usl, prvs, codeMd);
         //   add(usl,"NPL","0");
+        if (StringUtil.isNotEmpty(implantIdsString)) {
+            List<EntryMedServiceMedImplant> implants = manager.createQuery(" from EntryMedServiceMedImplant where id in (" + implantIdsString + ")").getResultList();
+            for (EntryMedServiceMedImplant implant : implants) {
+                Element medDev = new Element("MED_DEV");
+                add(medDev, "DATE_MED", startDate);
+                add(medDev, "CODE_MEDDEV", implant.getTypeCode());
+                add(medDev, "NUMBER_SER", implant.getSerialNumber());
+                usl.addContent(medDev);
+            }
+        }
         return usl;
     }
 
@@ -1062,6 +1090,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 isDisp = true;
                 exportDispServiceNoDate = "1".equals(getExpertConfigValue(Expert2Config.EXPORT_DISP_SERVICE_NO_DATE, "0"));
             }
+            isConsultativePolyclinic = "1".equals(getExpertConfigValue("CONSULTATIVE_LPU", "0"));
             boolean dontSendDefets = "1".equals(getExpertConfigValue(Expert2Config.DONT_EXPORT_DEFECTS, "0"));
             String sql;
             if (entryId == null) { //формируем файл по заполнению
@@ -1373,6 +1402,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
          */
         if (a3) {
             add(element, "DS1", entry.getMainMkb());
+            addIfNotNull(element, "DS1_PR", entry.getFirstTimeDiagnosis());
             return;
         }
         List<EntryDiagnosis> list = entry.getDiagnosis();

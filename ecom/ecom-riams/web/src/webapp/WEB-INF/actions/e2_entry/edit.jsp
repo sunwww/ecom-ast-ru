@@ -200,7 +200,6 @@
                     <msh:textField property="result" size="30"/>
                     <msh:checkBox property="isCancer"/>
                 </msh:row>
-
                 <msh:separator colSpan="8" label="ВМП"/>
                 <msh:row>
                     <msh:textField property="vmpKind" size="30"/>
@@ -302,6 +301,10 @@
                 <msh:textField property="extDispAppointments" size="30"/>
                 <msh:checkBox property="extDispNextStage"/>
             </msh:row>
+                <msh:row>
+                    <msh:autoComplete property="dn" vocName="vocDispanseryRegistrationCode"/>
+                    <msh:checkBox property="firstTimeDiagnosis"/>
+                </msh:row>
                 <msh:row>
                     <msh:autoComplete property="dispResult" vocName="vocE2FondV017" fieldColSpan="6" size="100"/>
                 </msh:row>

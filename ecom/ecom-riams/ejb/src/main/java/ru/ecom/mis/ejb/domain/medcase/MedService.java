@@ -321,4 +321,6 @@ public class MedService extends BaseEntity {
      * Обязательно указывать рост, вес и возраст?
      */
     private Boolean isAskHWA;
+
+    private Boolean needMedImplant;
 }

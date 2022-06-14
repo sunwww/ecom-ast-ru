@@ -10,7 +10,7 @@
 
     <tiles:put name="body" type="string">
         <tags:E2ServiceAdd name="Diagnosis"/>
-        <msh:form action="/entityParentSaveGoParentView-e2_entryMedService.do" defaultField="lastname">
+        <msh:form action="/entityParentSaveGoParentView-e2_entryMedService.do" defaultField="serviceDate">
             <msh:hidden property="id" />
             <msh:hidden property="saveType" />
             <msh:hidden property="entry" />
@@ -37,7 +37,19 @@
                 <msh:submitCancelButtonsRow colSpan="1" />
             </msh:panel>
         </msh:form>
-
+        <msh:section title="Мед. импланты">
+            <ecom:webQuery name="medImplants" nativeSql="select mi.id, mi.serialNumber, mi.typeCode||'' ||vmi.name
+      from EntryMedServiceMedImplant mi
+      left join VocSurgicalImplant vmi on vmi.code = mi.typeCode
+      where mi.medService_id=${param.id} "/>
+            <msh:tableNotEmpty name="medImplants">
+                <msh:table idField="1" name="medImplants" styleRow="3"
+                           action="entityParentEdit-e2_entryMedServiceMedImplant.do">
+                    <msh:tableColumn columnName="Серийный номер" property="2"/>
+                    <msh:tableColumn columnName="Тип" property="3"/>
+                </msh:table>
+            </msh:tableNotEmpty>
+        </msh:section>
 
     </tiles:put>
 
@@ -65,13 +77,14 @@
     </tiles:put>
 
     <tiles:put name="side" type="string">
-        <msh:ifFormTypeIsView formName="e2_entryMedServiceForm">
+<%--        <msh:ifFormTypeIsView formName="e2_entryMedServiceForm">--%>
             <msh:sideMenu>
                 <msh:sideLink params="id" action="/entityParentEdit-e2_entryMedService" name="Изменить" roles="/Policy/E2/Edit" />
                 <msh:sideLink key="ALT+DEL" confirm="Удалить?" params="id" action="/entityParentDeleteGoParentView-e2_entryMedService" name="Удалить" roles="/Policy/E2/Delete" />
+                <msh:sideLink params="id" action="/entityParentPrepareCreate-e2_entryMedServiceMedImplant" name="Создать мед. имплант" roles="/Policy/E2/Create" />
 
             </msh:sideMenu>
-        </msh:ifFormTypeIsView>
+<%--        </msh:ifFormTypeIsView>--%>
     </tiles:put>
 </tiles:insert>
 
