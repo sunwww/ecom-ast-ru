@@ -5,8 +5,10 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import ru.ecom.api.entity.export.ExportType;
 import ru.ecom.api.entity.export.MedCaseExportJournal;
+import ru.ecom.api.form.PromedParaclinicForm;
 import ru.ecom.api.form.PromedPolyclinicTapForm;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
+import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.ecom.mis.ejb.service.promed.IPromedExportService;
 
 import javax.annotation.EJB;
@@ -52,6 +54,27 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
     public List<PromedPolyclinicTapForm> getPolyclinicCaseByVisitDateStart(LocalDate dateStart, String[] serviceStreams) {
         LOG.info("Export for day " + dateStart);
         return mapSpoList(getAllSPOByVisitCreateDate(dateStart, Arrays.asList(serviceStreams)));
+    }
+
+
+    @Override
+    public List<PromedParaclinicForm> getParaclinicCaseByVisitDateStart(LocalDate dateStart, String[] serviceStreams) {
+        LOG.info("Export paraclinic for day " + dateStart);
+        return mapParaclinicList(getAllParaclinicVisitByCreateDate(dateStart, Arrays.asList(serviceStreams)));
+    }
+
+
+    private List<PromedParaclinicForm> mapParaclinicList(List<BigInteger> visitIds) {
+        List<PromedParaclinicForm> list = new ArrayList<>();
+        for (BigInteger bi : visitIds) {
+            PromedParaclinicForm form = promedExportService.getParaclinicCase(manager.find(Visit.class, bi.longValue()));
+            if (form == null) {
+                LOG.error("Не удалось сконвертировать параклинику с ИД " + bi + "в правильный случай");
+            } else {
+                list.add(form);
+            }
+        }
+        return list;
     }
 
     private List<PromedPolyclinicTapForm> mapSpoList(List<BigInteger> spoIds) {
@@ -116,6 +139,29 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
                         " and (vwf.isnodiagnosis is null or vwf.isnodiagnosis='0') and (vwf.isFuncDiag is null or vwf.isFuncDiag='0')" +
                         " and (vwf.isLab is null or vwf.isLab ='0')" +
                         " and visit.visitResult_id!=11"
+                )
+                .setParameter("dateTo", Date.valueOf(createDate))
+                .setParameter("sstream", serviceStreams)
+                .getResultList();
+    }
+
+    /**
+     * Получить ID всех СПО, в которых есть визиты, созданные за указанную дату
+     *
+     * @param createDate     MedCase.createDate
+     * @param serviceStreams VocServiceStream.name
+     * @return List<BigInteger> ИД СПО
+     */
+    private List<BigInteger> getAllParaclinicVisitByCreateDate(LocalDate createDate, List<String> serviceStreams) {
+        return manager.createNativeQuery("select visit.id from medcase visit" +
+                        " left join workfunction wf on visit.workfunctionexecute_id = wf.id" +
+                        " left join vocservicestream vss on vss.id=visit.servicestream_id" +
+                        " where visit.datestart = :dateTo " +
+                        " and visit.dtype in ('ShortMedCase', 'Visit')" +
+                        " and visit.timeexecute is not null" +
+                        " and wf.promedExport is true " +
+                        " and (visit.noactuality is null or visit.noactuality='0')" +
+                        " and (vss.code in (:sstream))"
                 )
                 .setParameter("dateTo", Date.valueOf(createDate))
                 .setParameter("sstream", serviceStreams)
@@ -228,7 +274,7 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
     @Override
     public String setDepInfo(Long departmentId, String promedcodeLpuSection) {
         JSONObject res = new JSONObject();
-        if (departmentId!=null) {
+        if (departmentId != null) {
             manager.createNativeQuery("update mislpu set promedlpusectionid = :promedLpuSection where id = :id")
                     .setParameter("id", departmentId)
                     .setParameter("promedLpuSection", promedcodeLpuSection)

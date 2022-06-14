@@ -22,4 +22,11 @@ public class PromedParaclinicForm extends PromedEntityForm {
     private String finishDate; //Дата и время окончания выполнения услуги
     private List<PromedMedService> medServices;
     private String diary;
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TapList {
+        private List<PromedParaclinicForm> taps;
+    }
 }

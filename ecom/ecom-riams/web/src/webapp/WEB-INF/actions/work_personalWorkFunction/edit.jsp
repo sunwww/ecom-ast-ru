@@ -56,6 +56,9 @@
                     <msh:checkBox property="isNoP7Sync" label="Не синхронизировать с \"Парус-7\""/>
                 </msh:row>
                 <msh:row>
+                    <msh:checkBox property="promedExport"/>
+                </msh:row>
+                <msh:row>
                     <msh:checkBox property="isNoDirectSelf" label="Запрет на создание направление к самому себе"
                                   fieldColSpan="3" horizontalFill="true"/>
                 </msh:row>

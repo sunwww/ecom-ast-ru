@@ -1,7 +1,9 @@
 package ru.ecom.mis.ejb.service.promed;
 
+import ru.ecom.api.form.PromedParaclinicForm;
 import ru.ecom.api.form.PromedPolyclinicTapForm;
 import ru.ecom.mis.ejb.domain.medcase.PolyclinicMedCase;
+import ru.ecom.mis.ejb.domain.medcase.Visit;
 import ru.nuzmsh.forms.validator.ValidateException;
 
 public interface IPromedExportService {
@@ -37,4 +39,6 @@ public interface IPromedExportService {
      * @return
      */
     String getJournalToPromed(Long spoId);
+
+    PromedParaclinicForm getParaclinicCase(Visit shortMedCase);
 }

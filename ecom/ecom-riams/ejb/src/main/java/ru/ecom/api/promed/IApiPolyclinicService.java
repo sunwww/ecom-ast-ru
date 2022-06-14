@@ -1,6 +1,7 @@
 package ru.ecom.api.promed;
 
 import ru.ecom.api.entity.export.ExportType;
+import ru.ecom.api.form.PromedParaclinicForm;
 import ru.ecom.api.form.PromedPolyclinicTapForm;
 
 import java.sql.Date;
@@ -50,9 +51,12 @@ public interface IApiPolyclinicService {
 
     /**
      * Обновить промедовский код департамента
-     * @param departmentId ИД отделения (mislpu)
+     *
+     * @param departmentId         ИД отделения (mislpu)
      * @param promedcodeLpuSection Код отделения по в промеде
      * @return гут/не гут
      */
     String setDepInfo(Long departmentId, String promedcodeLpuSection);
+
+    List<PromedParaclinicForm> getParaclinicCaseByVisitDateStart(LocalDate dateStart, String[] serviceStreams);
 }

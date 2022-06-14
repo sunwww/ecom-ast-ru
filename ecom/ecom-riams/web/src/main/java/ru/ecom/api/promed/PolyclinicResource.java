@@ -2,6 +2,7 @@ package ru.ecom.api.promed;
 
 
 import com.google.gson.GsonBuilder;
+import ru.ecom.api.form.PromedParaclinicForm;
 import ru.ecom.api.form.PromedPolyclinicTapForm;
 import ru.ecom.api.util.ApiUtil;
 import ru.ecom.web.util.Injection;
@@ -85,6 +86,31 @@ public class PolyclinicResource {
         String[] serviceStream = {"OBLIGATORYINSURANCE", "BUDGET"}; //выгружаем только ОМС + все виды бюджета
         List<PromedPolyclinicTapForm> forms = Injection.find(aRequest).getService(IApiPolyclinicService.class).getPolyclinicCaseByVisitDateStart(ld, serviceStream);
         return new GsonBuilder().setDateFormat("yyyy-MM-dd").create().toJson(new PromedPolyclinicTapForm.TapList(forms));
+    }
+
+    /**
+     * Выгрузка в промед диагностических визитов с потоком (ОМС, военкомат, бюджет), в которых есть посещения, созданные за вчерашний день
+     *
+     * @return пусто
+     */
+    @GET
+    @Path("/exportParaclinicYesterdayOmc")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String autoExportParaclinicOmcYesterday(@Context HttpServletRequest aRequest,
+                                                   @QueryParam("daysAgo") Integer daysAgo,
+                                                   @WebParam(name = "token") String aToken) throws NamingException {
+        if (aToken != null) {
+            ApiUtil.login(aToken, aRequest);
+        }
+        ApiUtil.init(aRequest, aToken);
+        LocalDate ld = LocalDate.now();
+        if (daysAgo != null) {
+            ld = ld.minus(daysAgo, DAYS);
+        }
+
+        String[] serviceStream = {"OBLIGATORYINSURANCE", "BUDGET"}; //выгружаем только ОМС + все виды бюджета
+        List<PromedParaclinicForm> forms = Injection.find(aRequest).getService(IApiPolyclinicService.class).getParaclinicCaseByVisitDateStart(ld, serviceStream);
+        return new GsonBuilder().setDateFormat("yyyy-MM-dd").create().toJson(new PromedParaclinicForm.TapList(forms));
     }
 
 

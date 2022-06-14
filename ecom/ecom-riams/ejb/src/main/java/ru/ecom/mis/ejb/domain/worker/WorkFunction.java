@@ -374,4 +374,7 @@ public abstract class WorkFunction extends BaseEntity {
      * ККМ по умолчанию
      */
     private KkmEquipment kkmEquipmentDefault;
+
+    //Визиты к врачу выгружается в промед
+    private Boolean promedExport;
 }

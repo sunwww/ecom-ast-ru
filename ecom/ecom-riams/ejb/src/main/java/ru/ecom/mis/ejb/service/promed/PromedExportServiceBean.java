@@ -83,7 +83,8 @@ public class PromedExportServiceBean implements IPromedExportService {
         return null;
     }
 
-    private PromedParaclinicForm getParaclinicCase(Visit visit) {
+    @Override
+    public PromedParaclinicForm getParaclinicCase(Visit visit) {
         try {
             String startDateTime = getDateTime(visit.getDateStart(), visit.getTimeExecute(), null);
             Patient pat = visit.getPatient();
