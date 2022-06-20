@@ -49,7 +49,7 @@ public class ImportEntity {
     }
 
     public void load(Element entity) {
-        entity = entity;
+        this.entity = entity;
     }
 
     

@@ -128,6 +128,17 @@
                 queried="upper(voc.name) like upper(:query) or voc.code like :query"
         />
     </voc>
+
+    <voc id="vocSurgicalImplant" type="NativeVocService">
+        <NativeVocService
+                from="VocSurgicalImplant voc"
+                nameId="voc.code"
+                order="voc.name"
+                names="voc.code||' '||voc.name"
+                queried="upper(voc.name) like upper(:query) or voc.code like :query"
+                queryAppend="actual is true"
+        />
+    </voc>
     <voc id="vocSurgicalImplantCode" type="NativeVocService">
         <NativeVocService
                 from="VocSurgicalImplant voc"
