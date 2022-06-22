@@ -1,6 +1,6 @@
 <%@page import="ru.ecom.ejb.services.query.WebQueryResult"%>
 <%@page import="java.util.List"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -18,16 +18,19 @@
   <ecom:webQuery name="patinfoQ" nativeSql="select m.patient_id,to_char(m.datestart,'dd.mm.yyyy') as dstart
   ,to_char(coalesce(m.datefinish,current_date),'dd.mm.yyyy') as dfinish,m.serviceStream_id as servstream from medcase m where m.id=${param.id}
   "/>
+    <ecom:webQuery name="defaultPriceListIds" nativeSql="select max(id) from priceList where isdefault is true"/>
   <%
-  request.setAttribute("priceList", "5");
-  request.setAttribute("idsertypebed","11") ;
-  List l = (List)request.getAttribute("patinfoQ") ;
-  if (!l.isEmpty()) {
-      WebQueryResult p = (WebQueryResult) l.get(0) ;
+    List<WebQueryResult> actualPrice = (List<WebQueryResult>) request.getAttribute("defaultPriceListIds");
+
+    request.setAttribute("priceList", actualPrice != null && !actualPrice.isEmpty() ? actualPrice.get(0).get1().toString() : "1");
+    request.setAttribute("idsertypebed", "11");
+    List l = (List) request.getAttribute("patinfoQ");
+    if (!l.isEmpty()) {
+      WebQueryResult p = (WebQueryResult) l.get(0);
       request.setAttribute("patient_id", p.get1());
       request.setAttribute("datestart", p.get2());
       request.setAttribute("datefinish", p.get3());
-    request.setAttribute("serStreamId",p.get4()) ;
+      request.setAttribute("serStreamId", p.get4());
   %>
   <msh:section>
   <msh:sectionTitle>
