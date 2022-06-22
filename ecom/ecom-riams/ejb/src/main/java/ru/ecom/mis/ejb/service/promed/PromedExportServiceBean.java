@@ -341,13 +341,14 @@ public class PromedExportServiceBean implements IPromedExportService {
             }
             PromedPolyclinicTapForm.PromedPolyclinicTapFormBuilder tap = PromedPolyclinicTapForm.builder();
             Patient pat = polyclinicCase.getPatient();
-            tap.patient(buildPatient(pat));
-            tap.isFinished(polyclinicCase.getDateFinish() != null);
-            tap.ticketNumber(String.valueOf(polyclinicCaseId));
-            tap.promedCode(polyclinicCase.getPromedCode());
-            tap.isEmergency(polyclinicCase.getEmergency());
-            tap.serviceStream(polyclinicCase.getServiceStream() == null ? null : polyclinicCase.getServiceStream().getPromedCode());
-            tap.directLpuCode(findDirectLpu(allVisits));
+            tap.patient(buildPatient(pat))
+                    .isFinished(polyclinicCase.getDateFinish() != null)
+                    .ticketNumber(String.valueOf(polyclinicCaseId))
+                    .medosId(polyclinicCaseId)
+                    .promedCode(polyclinicCase.getPromedCode())
+                    .isEmergency(polyclinicCase.getEmergency())
+                    .serviceStream(polyclinicCase.getServiceStream() == null ? null : polyclinicCase.getServiceStream().getPromedCode())
+                    .directLpuCode(findDirectLpu(allVisits));
 
             ShortMedCase lastVisit = allVisits.get(allVisits.size() - 1);
             List<PromedPolyclinicVisitForm> visitForms = mapVisits(allVisits);

@@ -21,6 +21,7 @@ public class PromedPolyclinicTapForm extends BasePromedForm {
     private Boolean isEmergency;
     private String promedCode; //ИД ТАП в промеде
     private String serviceStream; //поток обслуживания
+    private Long medosId;
     /**
      * Код направившей ЛПУ (6 значный код ОМС)
      */

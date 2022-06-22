@@ -41,41 +41,42 @@ public class ImportServiceBean implements IImportService {
 
      private static final Logger LOG = Logger.getLogger(ImportServiceBean.class) ;
 
-     public ImportFileResult importFile(String aOriginalFilename, long aMonitorId, String aFilename, ImportFileForm aImportForm) {
-    	 IMonitor monitor = monitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
-    	 try {
-             Format format = manager.find(Format.class, aImportForm.getImportFormat()) ;
-             File file = new File(aFilename) ;
-             ImportTime time = createImportTime(aImportForm, format, aOriginalFilename, file.length()) ;
-        	 
-        	 if(aOriginalFilename!=null && aOriginalFilename.toLowerCase().endsWith(".zip")) {
-        		 File tempDir = new File("/tmp/import_"+System.currentTimeMillis()) ;
-        		 tempDir.mkdirs() ;
-        		 ExtractJar extractJar = new ExtractJar() ;
-        		 extractJar.extract(tempDir, file) ;
-        		 //File tempDir =  ;
-        		 File[] files = tempDir.listFiles() ;
-        		 monitor = monitorService.startMonitor(aMonitorId, "Импорт файлов из архива "+aOriginalFilename, files.length) ;
-        		 ImportFileResult result = null ;
-        		 for( File f : files) {
-        			 monitor.setText(f.getName()) ;
-        			 long subMonitorId = System.currentTimeMillis() ; // FIXME
-        			 result = importFileDbf(subMonitorId, f.getAbsolutePath(), time, format) ;
-        			 monitor.advice(1) ;
-        		 }
-        		 if(result!=null) {
-            		 monitor.finish(String.valueOf(result.getTimeId())) ;
-        		 }
-        		 tempDir.delete() ;
-        		 return result ;
-        	 } else {
-        		 return importFileDbf(aMonitorId, aFilename, time, format) ;
-        	 }
-    	 } catch (Exception e) {
-    		 monitor.error(e.getMessage(), e) ;
-    		 throw new IllegalStateException(e) ;
-    	 }
-     } 
+    @Override
+    public ImportFileResult importFile(String aOriginalFilename, long aMonitorId, String aFilename, ImportFileForm aImportForm) {
+        IMonitor monitor = monitorService.acceptMonitor(aMonitorId, "Подготовка к импорту") ;
+        try {
+            Format format = manager.find(Format.class, aImportForm.getImportFormat()) ;
+            File file = new File(aFilename) ;
+            ImportTime time = createImportTime(aImportForm, format, aOriginalFilename, file.length()) ;
+
+            if(aOriginalFilename!=null && aOriginalFilename.toLowerCase().endsWith(".zip")) {
+                File tempDir = new File("/tmp/import_"+System.currentTimeMillis()) ;
+                tempDir.mkdirs() ;
+                ExtractJar extractJar = new ExtractJar() ;
+                extractJar.extract(tempDir, file) ;
+                //File tempDir =  ;
+                File[] files = tempDir.listFiles() ;
+                monitor = monitorService.startMonitor(aMonitorId, "Импорт файлов из архива "+aOriginalFilename, files.length) ;
+                ImportFileResult result = null ;
+                for( File f : files) {
+                    monitor.setText(f.getName()) ;
+                    long subMonitorId = System.currentTimeMillis() ; // FIXME
+                    result = importFileDbf(subMonitorId, f.getAbsolutePath(), time, format) ;
+                    monitor.advice(1) ;
+                }
+                if(result!=null) {
+                    monitor.finish(String.valueOf(result.getTimeId())) ;
+                }
+                tempDir.delete() ;
+                return result ;
+            } else {
+                return importFileDbf(aMonitorId, aFilename, time, format) ;
+            }
+        } catch (Exception e) {
+            monitor.error(e.getMessage(), e) ;
+            throw new IllegalStateException(e) ;
+        }
+    }
      
      private ImportTime createImportTime(ImportFileForm aImportForm, Format aFormat, String aOriginalFilename, long aFileLength) throws ParseException {
          ImportTime time = new ImportTime();
