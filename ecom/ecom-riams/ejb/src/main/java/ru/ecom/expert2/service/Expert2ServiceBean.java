@@ -4098,10 +4098,10 @@ public class Expert2ServiceBean implements IExpert2Service {
         E2DrugEntry drugEntry = new E2DrugEntry();
         drugEntry.setDrug(getActualVocByCode(VocE2FondN020.class, "002983")); //Фавипиравир
         drugEntry.setInjectMethod(getActualVocByCode(VocE2FondV035.class, "118")); //внутрь (перорально)
-        drugEntry.setInjectUnit(getActualVocByCode(VocE2FondV034.class, "24")); //День
-        drugEntry.setDrugGroupSchema(getActualVocByCode(VocE2FondV032.class, "4-3-1")); //todo узнать у Олега
+        drugEntry.setInjectUnit(getActualVocByCode(VocE2FondV034.class, "10")); //миллиграм
+        drugEntry.setDrugGroupSchema(getActualVocByCode(VocE2FondV032.class, "1-1-1"));
         drugEntry.setInjectAmount("200");
-        drugEntry.setInjectNumber(10);
+        drugEntry.setInjectNumber(2);
         return drugEntry;
     }
 
