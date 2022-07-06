@@ -4077,7 +4077,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
         } else if ("1087".equals(sanctionCode)) { //Добавляем лек. назначение для лечения ковида
             good = 0;
-            E2DrugEntry original = createCovidDrugEntry();
+            E2DrugEntry original = createCovidDrugEntry(getExpertConfigValue(Expert2Config.DEFAULT_COVID_DRUG_CODE, "002983:2:10:1-1-1:200:2"));
             for (E2EntrySanction sanction : errorEntries) {
                 E2Entry entry = sanction.getEntry();
                 E2DrugEntry drugEntry = new E2DrugEntry(original, entry);
@@ -4094,14 +4094,19 @@ public class Expert2ServiceBean implements IExpert2Service {
         return "Всего найдено: " + errorEntries.size() + ", исправлено: " + good;
     }
 
-    private E2DrugEntry createCovidDrugEntry() {
+    /*
+    drugCode:injectMetod:injectUnit:groupSchema:injectAmount:injectBumber
+     */
+
+    private E2DrugEntry createCovidDrugEntry(String covidString) {
+        String[] codes = covidString.split(":");
         E2DrugEntry drugEntry = new E2DrugEntry();
-        drugEntry.setDrug(getActualVocByCode(VocE2FondN020.class, "002983")); //Фавипиравир
-        drugEntry.setInjectMethod(getActualVocByCode(VocE2FondV035.class, "118")); //внутрь (перорально)
-        drugEntry.setInjectUnit(getActualVocByCode(VocE2FondV034.class, "10")); //миллиграм
-        drugEntry.setDrugGroupSchema(getActualVocByCode(VocE2FondV032.class, "1-1-1"));
-        drugEntry.setInjectAmount("200");
-        drugEntry.setInjectNumber(2);
+        drugEntry.setDrug(getActualVocByCode(VocE2FondN020.class, codes[0])); //Фавипиравир
+        drugEntry.setInjectMethod(getActualVocByCode(VocE2FondV035.class, codes[1])); //внутрь (перорально)
+        drugEntry.setInjectUnit(getActualVocByCode(VocE2FondV034.class, codes[2])); //миллиграм
+        drugEntry.setDrugGroupSchema(getActualVocByCode(VocE2FondV032.class, codes[3]));
+        drugEntry.setInjectAmount(codes[4]);
+        drugEntry.setInjectNumber(Integer.parseInt(codes[5]));
         return drugEntry;
     }
 

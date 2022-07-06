@@ -21,6 +21,7 @@ public class Expert2Config extends VocBaseEntity {
     public static final String EXPORT_DISP_SERVICE_NO_DATE = "EXPORT_DISP_SERVICE_NO_DATE"; //выгружать услуги ДД без даты
     public static final String DONT_EXPORT_DEFECTS = "DONT_EXPORT_DEFECTS"; //не выгружать дефектные случаи (для теста в амокб)
     public static final String DISP_DIAGNOSIS_LIST = "DISP_DIAGNOSIS_LIST"; //Список диагнозов, по которым нужно формировать информацию о дисп. наблюдении
+    public static final String DEFAULT_COVID_DRUG_CODE = "DEFAULT_COVID_DRUG_CODE";  //Список диагнозов, по которым нужно формировать информацию о дисп. наблюдении
 
     /**
      * Значение параметра
