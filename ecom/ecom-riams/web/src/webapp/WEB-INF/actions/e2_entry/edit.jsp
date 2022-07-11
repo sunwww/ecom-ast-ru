@@ -428,7 +428,7 @@ where cancer.entry_id=${param.id}"/>
                 ,ms.doctorsnils as dsnils
                 ,ms.cost ||case when ms.uet is not null then ' ('||ms.uet||')' else '' end as f5_cost
                 ,case when ms.medservice_id is null then 'color: red'
-                  when when count(implant.id)>0 then 'color:#FFAEEC'
+                  when count(implant.id)>0 then 'color:#FFAEEC'
                   when ms.comment!='' then 'color: #8B4513' else '' end as f6_styleRow
                   ,v021.code as f7_doctorWf
                 from entryMedService ms
