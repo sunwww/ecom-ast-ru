@@ -108,8 +108,8 @@ public class Expert2ServiceJs {
             int insuranceCode = 30002; //СОГАЗ
             LOG.info("Заменяем пустой код страховой компании на СОГАЗ " + insuranceCode);
             Injection.find(request).getService(IWebQueryService.class)
-                    .executeUpdateNativeSql("update e2entry set smocode = '" + insuranceCode + "' where listentry_id=" + listEntryId + " and (smocode is null or smocode='')" +
-                            " and (isDeleted is null or e.isDeleted='0') " +
+                    .executeUpdateNativeSql("update e2entry set insurancecompanycode = '" + insuranceCode + "' where listentry_id=" + listEntryId + " and (insurancecompanycode is null or insurancecompanycode='')" +
+                            " and (isDeleted is null or isDeleted is false) " +
                             " and (isForeign is null or isForeign is false) ");
             return "Страховая компания заменена на " + insuranceCode;
         } else if ("COST_1_RUB".equals(errorCode)) { //установить цену 1 руб случаям без цены (цена = 0 руб)

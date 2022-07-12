@@ -428,12 +428,16 @@ where cancer.entry_id=${param.id}"/>
                 ,ms.doctorsnils as dsnils
                 ,ms.cost ||case when ms.uet is not null then ' ('||ms.uet||')' else '' end as f5_cost
                 ,case when ms.medservice_id is null then 'color: red'
+                  when count(implant.id)>0 then 'color:#FFAEEC'
                   when ms.comment!='' then 'color: #8B4513' else '' end as f6_styleRow
                   ,v021.code as f7_doctorWf
                 from entryMedService ms
                 left join VocMedService vms on vms.id=ms.medservice_id
                 left join voce2fondv021 v021 on v021.id=ms.doctorspeciality_id
-                     where ms.entry_id=${param.id}"/>
+                left join entrymedservicemedimplant implant on implant.medservice_id = ms.id
+                where ms.entry_id=${param.id}
+                group by ms.id, vms.code, vms.name, ms.comment, ms.serviceDate, ms.cost, ms.uet, ms.medservice_id, v021.code
+            "/>
             <msh:table idField="1" styleRow="6" name="servicesList" action="entityParentEdit-e2_entryMedService.do"
                        noDataMessage="Нет услуг по случаю"
                        deleteUrl="entityParentDeleteGoParentView-e2_entryMedService.do">
