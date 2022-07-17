@@ -1537,7 +1537,7 @@ left join StatisticStub ss on ss.id=sls.statisticStub_id
 where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')
 and ms.id='${param.medService}'
-${paramSql} ${age_sql} 
+${paramSql} ${age_sql}
 group by so.id
 ,ss.code,p.lastname,p.firstname,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
 ,ms.id,ms.code ,ms.name,ms.additioncode
@@ -1628,17 +1628,17 @@ order by vrspt.strCode
                 <msh:table printToExcelButton="Сохранить в excel" name="report14swod"
                            viewUrl="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&short=Short&period=${dateBegin}-${dateEnd}"
                            action="stac_report_14.do?${paramHref}&typeAge=${typeAge}&typeView=${typeView}${departmentsUrlId}&additionStatus=${param.additionStatus}&typeAge=${typeAge}&noViewForm=1&period=${dateBegin}-${dateEnd}"
-                           idField="1">
+                           idField="1" cellFunction="true">
                     <msh:tableColumn columnName="Наименование" property="2"/>
                     <msh:tableColumn columnName="№ строки" property="3"/>
                     <msh:tableColumn columnName="Кол-во операций" property="4"/>
                     <msh:tableColumn columnName="Кол-во пациентов" property="5"/>
-                    <msh:tableColumn columnName="кол-во операций с испол. ВМТ" property="6"/>
-                    <msh:tableColumn columnName="Кол-во умерших пациентов" property="7"/>
-                    <msh:tableColumn columnName="Отмечено исход операции летальный" property="8"/>
-                    <msh:tableColumn columnName="Отмечено исход операции летальный с испол. ВМТ" property="9"/>
-                    <msh:tableColumn columnName="Экстренные" property="10"/>
-                    <msh:tableColumn columnName="Эндоскопические" property="11"/>
+                    <msh:tableColumn columnName="кол-во операций с испол. ВМТ" property="6" addParam="&addSql=6"/>
+                    <msh:tableColumn columnName="Кол-во умерших пациентов" property="7" addParam="&addSql=7"/>
+                    <msh:tableColumn columnName="Отмечено исход операции летальный" property="8" addParam="&addSql=8"/>
+                    <msh:tableColumn columnName="Отмечено исход операции летальный с испол. ВМТ" property="9" addParam="&addSql=9"/>
+                    <msh:tableColumn columnName="Экстренные" property="10" addParam="&addSql=10"/>
+                    <msh:tableColumn columnName="Эндоскопические" property="11" addParam="&addSql=11"/>
                 </msh:table>
 
             </msh:sectionContent>
@@ -1652,6 +1652,7 @@ order by vrspt.strCode
             request.setAttribute("dateBegin", dateBegin);
             request.setAttribute("dateEnd", dateEnd);
             request.setAttribute("isReportBase", ActionUtil.isReportBase(dateBegin, dateEnd, request));
+            request.setAttribute("addSql", request.getParameter("addSql"));
         %>
         <msh:section>
             <msh:sectionTitle>Результаты поиска за период с ${dateBegin} по ${dateEnd}.</msh:sectionTitle>
@@ -1689,11 +1690,21 @@ left join BedFund bf on bf.id=sloa.bedFund_id
 left join patient p on p.id=sloa.patient_id
 left join MedCase sls on sls.id=sloa.parent_id
 left join StatisticStub ss on ss.id=sls.statisticStub_id
+left join VocOperationTechnology vot on vot.id=so.technology_id
+left join VocOperationOutcome voo on voo.id=so.outcome_id
+left join VocHospitalAspect vha on vha.id=so.aspect_id
 where sls.dtype='HospitalMedCase' and sls.dateFinish between to_date('${dateBegin}','dd.mm.yyyy') 
     and to_date('${dateEnd}','dd.mm.yyyy')
 and vrspt.id='${param.strcode}'
 and vrspt1.classname='F14_OPER'
-${paramSql} ${age_sql} 
+${paramSql} ${age_sql}
+and case when ${addSql}=6 then vot.code='1'
+else case when ${addSql}=7 then sls.result_id='${result_death}'
+else case when ${addSql}=8 then voo.code='2'
+else case when ${addSql}=9 then sls.result_id='${result_death}' and vot.code='1'
+else case when ${addSql}=10 then vha.code='EMERGENCY'
+else case when ${addSql}=11 then so.endoscopyUse='1'
+end end end end end end
 group by so.id
 ,ss.code,p.lastname,p.firstname,p.middlename,p.birthday,sls.dateStart,sls.dateFinish
 ,ms.code ,ms.name,ms.additioncode
