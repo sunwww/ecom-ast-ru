@@ -436,7 +436,7 @@ where cancer.entry_id=${param.id}"/>
                 left join voce2fondv021 v021 on v021.id=ms.doctorspeciality_id
                 left join entrymedservicemedimplant implant on implant.medservice_id = ms.id
                 where ms.entry_id=${param.id}
-                group by ms.id, vms.code, vms.name, ms.comment, ms.serviceDate, ms.cost, ms.uet, ms.medservice_id, v021.code
+                group by ms.id, vms.code, vms.name, ms.comment, ms.serviceDate, ms.cost, ms.uet, ms.medservice_id, v021.code, ms.doctorsnils
             "/>
             <msh:table idField="1" styleRow="6" name="servicesList" action="entityParentEdit-e2_entryMedService.do"
                        noDataMessage="Нет услуг по случаю"
