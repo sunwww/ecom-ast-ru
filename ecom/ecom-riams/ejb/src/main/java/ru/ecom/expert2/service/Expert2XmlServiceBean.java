@@ -352,6 +352,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             final int firstIndSl = indSl;
             Date startHospitalDate = null;
             Date finishHospitalDate = null;
+            long kdz = 0;
 
             /* Вот тут создаем Sl*/
             boolean isDiagnosisFill = false;
@@ -430,6 +431,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 add(sl, "DATE_2", finishDate); //Дата окончания случая
                 if (isHosp) {
                     add(sl, "KD", currentEntry.getBedDays()); //Продолжительность госпитализации
+                    kdz +=currentEntry.getBedDays();
                 }
                 setSluchDiagnosis(sl, currentEntry, a3);
                 if (sl == null) {
@@ -732,8 +734,8 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             /* Закончили создавать Sl*/
             zSl.getChild("DATE_Z_1").setText(dateToString(startHospitalDate));
             zSl.getChild("DATE_Z_2").setText(dateToString(finishHospitalDate));
-            if (zSl.getChild("KD_Z") != null) {
-                zSl.getChild("KD_Z").setText("" + Math.max(1, AgeUtil.calculateDays(startHospitalDate, finishHospitalDate)));
+            if (zSl.getChild("KD_Z") != null) { //сумма KD всех SL
+                zSl.getChild("KD_Z").setText(""+kdz);
             }
             if (isHosp && entry.havePrevMedCase()) {
                 add(firstIndSl, zSl, "VB_P", "1");
