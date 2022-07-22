@@ -55,4 +55,10 @@ public class CalculatorForm extends IdEntityForm{
 	@Persist
 	public String getTag() {return tag;}
 	private String tag;
+
+	/** Устарел? */
+	@Comment("Устарел?")
+	@Persist
+	public Boolean getOld() {return old;}
+	private Boolean old;
 }
