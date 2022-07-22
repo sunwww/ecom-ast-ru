@@ -99,12 +99,15 @@ public class ContractServiceBean implements IContractService {
                 " left join pricemedservice pms on pms.id=cams.medservice_id" +
                 " left join medservice ms on ms.id=pms.medservice_id" +
                 " left join VocServiceType vms on vms.id=ms.servicetype_id" +
+                " left join priceposition prp on prp.id=pms.priceposition_id" +
+                " left join pricelist pl on pl.id = prp.pricelist_id" +
                 " where pat.id=:patientId and cao.dtype='OperationAccrual' and cao.repealoperation_id is null" +
                 (aMedserviceCode != null && !aMedserviceCode.equals("") ? " and ms.code='" + aMedserviceCode + "'" : "") +
                 " and (caos.medcase_id is null " + (aMedCaseId != null ? " or caos.medcase_id=" + aMedCaseId : "") + ")" +
                 " and (caos.serviceId is null " + (aServiceId != null ? " or caos.serviceId=" + aServiceId : "") + ")" +
                 (aMedServiceType != null && !aMedServiceType.equals("") ? " and vms.code='" + aMedServiceType + "'" : "") +
                 " and (cao.isdeleted is null or cao.isdeleted='0') " +
+                " and pl.isdefault = true " +
                 " order by caos.medcase_id, caos.serviceId";
         return manager.createNativeQuery(sql)
                 .setParameter("patientId", aPatientId).getResultList();
