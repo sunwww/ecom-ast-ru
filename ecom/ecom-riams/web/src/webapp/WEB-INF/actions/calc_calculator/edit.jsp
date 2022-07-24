@@ -32,7 +32,10 @@
 					<msh:checkBox property="createDiary" label="Создавать дневник при вычислении?" horizontalFill="true" fieldColSpan="3" />
 				</msh:row>
 				<msh:row>
-					<msh:checkBox property="old" label="Устарел?" horizontalFill="true" fieldColSpan="3" />
+					<msh:checkBox property="noActual" label="Устарел?" horizontalFill="true" fieldColSpan="3" />
+				</msh:row>
+				<msh:row>
+					<msh:checkBox property="vteo" label="ВТЭО?" horizontalFill="true" fieldColSpan="3" />
 				</msh:row>
 				<msh:row>
 				<msh:label property="username" label="пол-ль"/>

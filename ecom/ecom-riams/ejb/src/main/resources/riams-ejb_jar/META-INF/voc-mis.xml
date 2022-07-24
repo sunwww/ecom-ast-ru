@@ -161,7 +161,7 @@
                 from="calculator c"
                 nameId="c.id"
                 names="c.name"
-                queryAppend="c.old is null or c.old=false"
+                queryAppend="c.noActual is null or c.noActual=false"
         >
         </NativeVocService>
     </voc>

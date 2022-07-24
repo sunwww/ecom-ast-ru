@@ -360,7 +360,7 @@ public class PregnancyServiceJs {
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
         service.executeUpdateNativeSql("update childbirth set medcase_id=" + sloTo + " where medcase_id=" + sloFrom); //роды
         service.executeUpdateNativeSql("update robsonclass set medcase_id=" + sloTo + " where medcase_id=" + sloFrom); //робсона
-        service.executeUpdateNativeSql("update calculationsresult set departmentmedcase_id=" + sloTo + " where calculator_id=15 and departmentmedcase_id=" + sloFrom); //риск ВТЭО
+        service.executeUpdateNativeSql("update calculationsresult set departmentmedcase_id=" + sloTo + " where calculator_id=(select id from calculator where vteo=true limit 1) and departmentmedcase_id=" + sloFrom); //риск ВТЭО
         service.executeUpdateNativeSql("update newborn set medcase_id=" + sloTo + " where medcase_id=" + sloFrom); //новорождённый
         HospitalMedCaseServiceJs.createAdminChangeMessageBySmo(sloFrom, "HOSP_MOVE_CHILDBIRTH_FROM", "Перенос родов в другое СЛО", aRequest);
     }

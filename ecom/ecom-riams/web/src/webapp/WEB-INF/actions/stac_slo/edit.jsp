@@ -789,7 +789,7 @@ where m.id ='${param.id}'"/>
                     <msh:sectionTitle>
                         Расчеты
                         <msh:ifInRole roles="/Policy/Mis/Calc/Calculation/Create">
-                            <a href="entityParentPrepareCreate-calc_calculationsResult.do?id=${param.id}&calculator=15">Добавить
+                            <a href="entityParentPrepareCreate-calc_calculationsResult.do?id=${param.id}&calculator=16">Добавить
                                 вычисление риска ВТЭО</a>
                         </msh:ifInRole>
                         <msh:ifInRole roles="/Policy/Mis/Calc/Calculation/Create">

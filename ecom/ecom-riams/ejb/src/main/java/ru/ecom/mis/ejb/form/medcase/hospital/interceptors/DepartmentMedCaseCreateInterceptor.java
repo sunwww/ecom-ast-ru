@@ -110,7 +110,7 @@ public class DepartmentMedCaseCreateInterceptor implements IParentFormIntercepto
 				" left join medcase dmc on dmc.id=cr.departmentmedcase_id" +
 				" left join medcase hmc on hmc.id=dmc.parent_id" +
 				" where hmc.id=(select parent_id from medcase where id=:medcaseId)" +
-				" and calculator_id=15";
+				" and calculator_id=(select id from calculator where vteo=true limit 1)";
 		Object list = aManager.createNativeQuery(sql).setParameter("medcaseId",aMedCase.getId()).getSingleResult();
 		return Long.valueOf(list.toString())>0;
 

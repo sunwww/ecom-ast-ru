@@ -47,5 +47,8 @@ public class Calculator extends BaseEntity{
 	private String tag;
 
 	/** Устарел? */
-	private Boolean old;
+	private Boolean noActual;
+
+	/** ВТЭО? */
+	private Boolean vteo;
 }

@@ -59,6 +59,12 @@ public class CalculatorForm extends IdEntityForm{
 	/** Устарел? */
 	@Comment("Устарел?")
 	@Persist
-	public Boolean getOld() {return old;}
-	private Boolean old;
+	public Boolean getNoActual() {return noActual;}
+	private Boolean noActual;
+
+	/** ВТЭО? */
+	@Comment("ВТЭО?")
+	@Persist
+	public Boolean getVteo() {return vteo;}
+	private Boolean vteo;
 }
