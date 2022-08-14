@@ -687,6 +687,7 @@ select smo.id , wcd.calendarDate , wct.timeFrom
 , owp.lastname || ' ' || owp.firstname || ' ' || owp.middlename as workerOrder
 , vr.name as reasonName
 , case when pwf.dtype='PersonalWorkFunction' then pvwf.name||' '||ppw.lastname || ' ' || ppw.firstname || ' ' || ppw.middlename else pwf.groupname end as workerPlan
+,list(coalesce(ms.code||' '||substring(ms.name,0,30),'')) as msss
 from MedCase smo
 left join WorkCalendarDay wcd on smo.datePlan_id = wcd.id
 left join WorkCalendarTime wct on smo.timePlan_id = wct.id
@@ -698,8 +699,13 @@ left join WorkFunction pwf on smo.workFunctionPlan_id = pwf.id
 left join Worker pw on pwf.worker_id = pw.id
 left join Patient ppw on pw.person_id = ppw.id
 left join VocWorkFunction pvwf on pwf.workFunction_id = pvwf.id
+left join medcase mssmo on mssmo.parent_id=smo.id and mssmo.dtype='ServiceMedCase'
+left join medservice ms on ms.id=mssmo.medservice_id
 where smo.patient_id='${param.id}' and UPPER(smo.DTYPE)='VISIT' and smo.dateStart is null
 and (smo.noActuality is null or smo.noActuality='0')
+group by smo.id , wcd.calendarDate , wct.timeFrom
+, owp.lastname || ' ' || owp.firstname || ' ' || owp.middlename
+, vr.name,pwf.dtype,pvwf.name||' '||ppw.lastname || ' ' || ppw.firstname || ' ' || ppw.middlename,pwf.groupname
 order by wcd.calendarDate, wct.timeFrom" />
           <msh:table name="directions" action="entityParentEdit-smo_visit.do" idField="1">
             <msh:tableColumn columnName="№" identificator="false" property="sn" />
@@ -709,6 +715,7 @@ order by wcd.calendarDate, wct.timeFrom" />
             <msh:tableColumn columnName="Кто направил" property="4" />
             <msh:tableColumn columnName="Цель визита" property="5" />
             <msh:tableColumn columnName="Куда" identificator="false" property="6" />
+            <msh:tableColumn columnName="Услуги" identificator="false" property="7" />
           </msh:table>
         </msh:section>
       </msh:ifInRole>
