@@ -278,6 +278,8 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 			action="/entityParentDeleteGoSubclassView-contract_medContract_person" name="Удалить" title="Удалить" roles="/Policy/Mis/Contract/MedContract/Delete"/>
 			<msh:sideLink action="/javascript:showCContractPerson()" name="Изменить обслуживаемую персону по договору"
 						  title="Изменить обслуживаемую персону по договору" roles="/Policy/Mis/Contract/MedContract/Edit"/>
+			<msh:sideLink params="" action="/javascript:printAgreementContract()"
+						  name="Печать согласия" title="Печать согласия" roles="/Policy/Mis/Patient/View"/>
 		</msh:sideMenu>
 		<msh:sideMenu title="Добавить" >
 			<msh:sideLink key="ALT+3" params="id" action="/entityParentPrepareCreate-contract_servedPerson" name="Обслуживаемые персоны" title="Обслуживаемые персоны" roles="/Policy/Mis/Contract/MedContract/ServedPerson/Create"/>
@@ -317,6 +319,9 @@ document.location.href = "entityView-contract_juridicalContract.do?id=${param.id
 				window.document.location='print-ambcard.do?s=PatientPrintService&m=printInfo&id='+aPatientId;
 			}
 
+			function printAgreementContract() {
+				window.document.location='print-agreement_pay_contract.do?s=PatientPrintService&m=printAgreementContract&customerId='+$('customer').value + "&id=" + $('id').value;
+			}
 		</script>
 	</tiles:put>
 </tiles:insert>

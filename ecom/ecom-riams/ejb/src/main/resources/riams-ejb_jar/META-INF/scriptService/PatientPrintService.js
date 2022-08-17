@@ -182,6 +182,32 @@ function printInfoByPatient(aPatient, aCtx) {
     return map;
 }
 
+function printAgreementContract(aCtx, aParams) {
+    var customerId = new java.lang.Long(aParams.get("customerId"));
+    var customerPatientRes = aCtx.manager.createNativeQuery(
+        "select patient_id from contractperson where id=" + customerId).getResultList();
+    var customerPatientId =  new java.lang.Long(+customerPatientRes.get(0));
+    var customerPatient = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient
+        , customerPatientId);
+
+    var contractId = new java.lang.Long(aParams.get("id"));
+    var patientIdRes = aCtx.manager.createNativeQuery("select p.id" +
+        " from ContractAccount ca" +
+        " left join ServedPerson sp on ca.id = sp.account_id" +
+        " left join ContractPerson cp on cp.id=sp.person_id" +
+        " left join patient p on p.id=cp.patient_id" +
+        " where ca.contract_id='" + contractId + "'").getResultList();
+    var patientId =  new java.lang.Long(+patientIdRes.get(0));
+
+
+    var pat2 = +customerPatientId==+patientId ?
+        null : aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient
+    , patientId);
+    var map = printInfoByPatient(customerPatient, aCtx);
+    map.put("pat2", pat2);
+    return map;
+}
+
 function printInfo(aCtx, aParams) {
 
     var patient = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.patient.Patient
