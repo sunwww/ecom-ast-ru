@@ -132,7 +132,7 @@
     <voc id="vocSurgicalImplant" type="NativeVocService">
         <NativeVocService
                 from="VocSurgicalImplant voc"
-                nameId="voc.code"
+                nameId="voc.id"
                 order="voc.name"
                 names="voc.code||' '||voc.name"
                 queried="upper(voc.name) like upper(:query) or voc.code like :query"
