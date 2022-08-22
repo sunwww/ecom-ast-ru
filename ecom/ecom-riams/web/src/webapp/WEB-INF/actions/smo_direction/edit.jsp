@@ -147,9 +147,16 @@
                                       viewAction="entitySubclassView-mis_medCase.do" vocName="vocOpenedSpoByPatient"
                                       property="parent" label="СПО" fieldColSpan="3" horizontalFill="true"/>
                 </msh:row>
-                <msh:row>
-                    <msh:checkBox property="isPaid"/>
-                </msh:row>
+                <msh:ifInRole roles="/Policy/Mis/MedCase/MedService/SetPaid">
+                    <msh:row>
+                        <msh:checkBox property="isPaid"/>
+                    </msh:row>
+                </msh:ifInRole>
+                <msh:ifNotInRole roles="/Policy/Mis/MedCase/MedService/SetPaid">
+                    <msh:row>
+                        <msh:checkBox property="isPaid" viewOnlyField="true"/>
+                    </msh:row>
+                </msh:ifNotInRole>
                 <msh:row>
                     <msh:separator label="Дополнительно" colSpan="4"/>
                 </msh:row>
