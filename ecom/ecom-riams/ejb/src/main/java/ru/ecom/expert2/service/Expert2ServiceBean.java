@@ -294,7 +294,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     makeCheckEntry(entity, false, false);
                 }
             }
-            LOG.info("Success!");
+            LOG.info("Success creating entry list!");
             monitor.finish("Законцено формирование нового заполнения");
         } catch (Exception e) {
             monitor.error("Ошибка формирования нового заполнения: " + e.getLocalizedMessage(), e);
