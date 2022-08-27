@@ -840,9 +840,9 @@ public class Expert2ServiceBean implements IExpert2Service {
         if (!list.isEmpty()) {
             StringBuilder ids = new StringBuilder();
             int cnt = 0;
-            for (Object[] o : list) {
+            for (Object o : list) {
                 cnt++;
-                ids.append(o[0].toString()).append(",");
+                ids.append(o.toString()).append(",");
             }
             LOG.warn("В цикле я бы сделал " + cnt + " апдейтов, но сделал всего 1");
             manager.createNativeQuery("update e2entry set isDeleted='1' where id in (" + ids.toString() + "0)").executeUpdate();
@@ -1661,11 +1661,11 @@ public class Expert2ServiceBean implements IExpert2Service {
     private Map<Long, OncologyCase> findOncologyCasesMyMedcaseId(List<Long> medcaseIds) {
         List<OncologyCase> oncologyCases = (List<OncologyCase>) manager.createQuery("" +
                         " select oc from OncologyCase oc" +
-                        " left join fetch oc.directions" +
-                        " left join fetch oc.drugs" +
-                        " left join fetch oc.diagnostics" +
-                        " where oc.medCase_id in (:ids)")
-                .setParameter("id", medcaseIds)
+//                        " left join fetch oc.directions" +
+//                        " left join fetch oc.drugs" +
+//                        " left join fetch oc.diagnostics" +
+                        " where oc.medCaseId in (:ids)")
+                .setParameter("ids", medcaseIds)
                 .getResultList();
         return oncologyCases.stream().collect(Collectors.toMap(k -> k.getMedCaseId(), v -> v, (val1, val2) -> val1));
 
