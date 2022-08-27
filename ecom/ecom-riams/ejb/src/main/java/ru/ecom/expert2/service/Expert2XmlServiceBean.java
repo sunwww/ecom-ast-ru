@@ -14,6 +14,7 @@ import ru.ecom.expert2.Expert2FondUtil;
 import ru.ecom.expert2.domain.*;
 import ru.ecom.expert2.domain.voc.VocE2BillStatus;
 import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
+import ru.ecom.expert2.domain.voc.enums.VocListEntryTypeCode;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV021;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV027;
 import ru.ecom.expomc.ejb.domain.format.Format;
@@ -59,13 +60,6 @@ import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
 @Remote(IExpert2XmlService.class)
 public class Expert2XmlServiceBean implements IExpert2XmlService {
     private static final Logger LOG = Logger.getLogger(Expert2XmlServiceBean.class);
-    private static final String HOSPITAL_TYPE = "HOSPITAL";
-    private static final String HOSPITAL_PEREVOD_TYPE = "HOSPITALPEREVOD";
-    private static final String POLYCLINIC_TYPE = "POLYCLINIC";
-    private static final String VMP_TYPE = "VMP";
-    private static final String EXTDISP_TYPE = "EXTDISP";
-    private static final String KDP_TYPE = "POL_KDP";
-    private static final String SERVICE_TYPE = "SERVICE";
     private static final String CENTRAL_SEGMENT_DOC = "CENTRAL_SEGMENT";
     private final static String EXPORT_DIR = "/rtf/expert2xml/";
     private List<String> DISP_LIST = new ArrayList<>();
@@ -263,7 +257,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             ZSL, SL = информация об обращении. визиты переносятся в USL
             * */
         try {
-            String entryType = entry.getEntryType();
+            VocListEntryTypeCode entryType = entry.getEntryType();
             boolean a1, a2, a3, a4;
             switch (fileType) {
                 case "H":
@@ -287,26 +281,26 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             }
             boolean isHosp, isVmp, isPoliclinic, isExtDisp, isPoliclinicKdp, isNedonosh;
             switch (entryType) {
-                case HOSPITAL_TYPE:
+                case HOSPITAL:
                     isHosp = true;
                     isVmp = isPoliclinic = isExtDisp = isPoliclinicKdp = false;
                     isNedonosh = isTrue(entry.getIsNedonosh()) || isNedonoshKsg(entry.getKsg());
                     break;
-                case VMP_TYPE:
+                case VMP:
                     isVmp = true;
                     isHosp = isPoliclinic = isExtDisp = isPoliclinicKdp = false;
                     isNedonosh = isTrue(entry.getIsChild());
                     break;
-                case POLYCLINIC_TYPE:
-                case SERVICE_TYPE:
+                case POLYCLINIC:
+                case SERVICE:
                     isPoliclinic = true;
                     isHosp = isVmp = isExtDisp = isPoliclinicKdp = isNedonosh = false;
                     break;
-                case KDP_TYPE:
+                case POL_KDP:
                     isPoliclinic = isPoliclinicKdp = true;
                     isHosp = isVmp = isExtDisp = isNedonosh = false;
                     break;
-                case EXTDISP_TYPE:
+                case EXTDISP:
                     isExtDisp = true;
                     isHosp = isVmp = isPoliclinic = isPoliclinicKdp = isNedonosh = false;
                     break;
@@ -990,7 +984,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
      * Создаем MP файл с данными по стационару/поликлинике
      */
     @Override
-    public String makeMPFIle(Long entryListId, String type, String billNumber, Date billDate, Long entryId
+    public String makeMPFIle(Long entryListId, VocListEntryTypeCode type, String billNumber, Date billDate, Long entryId
             , Boolean calcAllListEntry, long monitorId, String version, String fileType) {
         LOG.info("Формирование файла версии " + version);
         IMonitor monitor = monitorService.startMonitor(monitorId, "Формирование xml файла. Размер: ", 999);
@@ -1036,16 +1030,15 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 packetType = fileType;
             } else {
                 switch (type) {
-                    case HOSPITAL_TYPE:
-                    case POLYCLINIC_TYPE:
-                    case HOSPITAL_PEREVOD_TYPE:
-                    case KDP_TYPE:
+                    case HOSPITAL:
+                    case POLYCLINIC:
+                    case POL_KDP:
                         packetType = "Z";
                         break;
-                    case VMP_TYPE:
+                    case VMP:
                         packetType = "T";
                         break;
-                    case EXTDISP_TYPE:
+                    case EXTDISP:
                         //Пока сделаем заглушку
                         packetType = "SomeDisp";
                         break;
@@ -1077,14 +1070,14 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             boolean isHosp;
             boolean isPolic;
             boolean isDisp;
-            if (isOneOf(type, HOSPITAL_TYPE, HOSPITAL_PEREVOD_TYPE, VMP_TYPE)) {
+            if (isOneOf(type, VocListEntryTypeCode.HOSPITAL, VocListEntryTypeCode.VMP)) {
 //                selectSqlAdd = " list(''||e.id) as ids, e.id, count(distinct e.id) as cnt";//Ищем все СЛО *список ИД, ИД госпитализации,кол-во СЛО
                 selectSqlAdd = " list(''||e.id) as ids, e.externalparentid, count(distinct e.id) as cnt";//Ищем все СЛО *список ИД, ИД госпитализации,кол-во СЛО
                 isDisp = isPolic = false;
                 isHosp = true;
                 exchangeCovidDs = "1".equals(getExpertConfigValue(Expert2Config.EXCHANGE_COVID_DS, "0"));
                 groupSqlAdd = "e.externalparentid";
-            } else if (isOneOf(type, POLYCLINIC_TYPE, SERVICE_TYPE)) {
+            } else if (isOneOf(type, VocListEntryTypeCode.POLYCLINIC, VocListEntryTypeCode.SERVICE)) {
 //                selectSqlAdd = " list(''||e.id) as ids, e.id, count(distinct e.id) as cnt";//Ищем все комплексные случаи
                 isDisp = isHosp = false;
                 isPolic = true;
@@ -1246,7 +1239,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             hospital.setFondIshod(lastEntry.getFondIshod());
             long bedDays = AgeUtil.calculateDays(hospital.getHospitalStartDate(), hospital.getHospitalFinishDate() != null ? hospital.getHospitalFinishDate() : lastEntry.getFinishDate());
             long calendarDays = bedDays > 0 ? bedDays + 1 : 1;
-            if (hospital.getEntryType().equals(HOSPITAL_TYPE) && "2".equals(hospital.getBedSubType())) {
+            if (hospital.getEntryType().equals(VocListEntryTypeCode.HOSPITAL) && "2".equals(hospital.getBedSubType())) {
                 bedDays++;
             }
             hospital.setBedDays(bedDays);
@@ -1413,8 +1406,8 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         List<EntryDiagnosis> list = entry.getDiagnosis();
         String mainDiagnosisSqlAdd;
         List<EntryDiagnosis> mainDiagnosisList = new ArrayList<>();
-        String entryType = entry.getEntryType();
-        if (isOneOf(entryType, POLYCLINIC_TYPE, KDP_TYPE, SERVICE_TYPE)) {
+        VocListEntryTypeCode entryType = entry.getEntryType();
+        if (isOneOf(entryType, VocListEntryTypeCode.POLYCLINIC, VocListEntryTypeCode.POL_KDP, VocListEntryTypeCode.SERVICE)) {
             mainDiagnosisSqlAdd = "priority.code='1'";
         } else { //клинический или выписной (для стационара)
             mainDiagnosisSqlAdd = " registrationType.code='3' and priority.code='1'";

@@ -10,6 +10,7 @@ import ru.ecom.expert2.domain.voc.VocE2EntryFactor;
 import ru.ecom.expert2.domain.voc.VocE2EntrySubType;
 import ru.ecom.expert2.domain.voc.VocE2MedHelpProfile;
 import ru.ecom.expert2.domain.voc.VocE2VidSluch;
+import ru.ecom.expert2.domain.voc.enums.VocListEntryTypeCode;
 import ru.ecom.expert2.domain.voc.federal.*;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -486,10 +487,15 @@ public class E2Entry extends BaseEntity {
 
     private VocE2FondV010 idsp;
 
+    @Enumerated(EnumType.STRING)
+    public VocListEntryTypeCode getEntryType() {
+        return entryType;
+    }
+
     /**
      * Тип записи
      */ //стационар, ВМП, пол-ка, подушевка, ДД
-    private String entryType;
+    private VocListEntryTypeCode entryType;
 
     /**
      * Тип файла
@@ -501,7 +507,7 @@ public class E2Entry extends BaseEntity {
      */
     @Comment("Тип заполнения")
     @Transient
-    public String getEntryListType() {
+    public VocListEntryTypeCode getEntryListType() {
         return listEntry != null ? listEntry.getEntryType().getCode() : null;
     }
 

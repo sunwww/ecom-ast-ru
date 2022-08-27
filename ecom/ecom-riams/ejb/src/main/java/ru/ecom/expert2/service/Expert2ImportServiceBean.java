@@ -14,6 +14,7 @@ import ru.ecom.expert2.domain.voc.VocE2BillStatus;
 import ru.ecom.expert2.domain.voc.VocE2EntrySubType;
 import ru.ecom.expert2.domain.voc.VocE2Sanction;
 import ru.ecom.expert2.domain.voc.VocOmcMedServiceCost;
+import ru.ecom.expert2.domain.voc.enums.VocListEntryTypeCode;
 import ru.ecom.expert2.domain.voc.federal.*;
 import ru.ecom.jaas.ejb.service.ISoftConfigService;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
@@ -143,7 +144,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     E2Entry entry = new E2Entry();
                     Element sl = zap.getChild("SL");
                     entry.setListEntry(le);
-                    entry.setEntryType("EXTDISP");
+                    entry.setEntryType(VocListEntryTypeCode.EXTDISP);
                     entry.setFirstTimeDiagnosis("1".equals(sl.getChildText("DS1_PR")));
                     entry.setLpuCode(lpuCode);
                     entry.setExternalPatientId(Long.parseLong(zap.getChildText("ID_PAC")));

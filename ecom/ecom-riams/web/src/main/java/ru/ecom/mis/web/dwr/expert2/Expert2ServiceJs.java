@@ -5,6 +5,7 @@ import ru.ecom.ejb.services.monitor.IRemoteMonitorService;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.expert2.domain.E2Bill;
+import ru.ecom.expert2.domain.voc.enums.VocListEntryTypeCode;
 import ru.ecom.expert2.service.IExpert2AlkonaService;
 import ru.ecom.expert2.service.IExpert2Service;
 import ru.ecom.expert2.service.IExpert2XmlService;
@@ -429,7 +430,7 @@ public class Expert2ServiceJs {
         }
         final Date finalBillDate = dateBillDate;
         final long monitorId = createMonitor(request);
-        new Thread(() -> service.makeMPFIle(entryListId, type, finalBillNumber, finalBillDate, entryId, calcAllListEntry, monitorId, version, fileType)).start();
+        new Thread(() -> service.makeMPFIle(entryListId, VocListEntryTypeCode.valueOf(type), finalBillNumber, finalBillDate, entryId, calcAllListEntry, monitorId, version, fileType)).start();
 
         return monitorId;
     }

@@ -14,6 +14,7 @@ import ru.ecom.expert2.domain.*;
 import ru.ecom.expert2.domain.price.ExtDispPrice;
 import ru.ecom.expert2.domain.price.ExtDispPriceMedService;
 import ru.ecom.expert2.domain.voc.*;
+import ru.ecom.expert2.domain.voc.enums.VocListEntryTypeCode;
 import ru.ecom.expert2.domain.voc.federal.*;
 import ru.ecom.expomc.ejb.domain.med.VocIdc10;
 import ru.ecom.expomc.ejb.domain.med.VocKsg;
@@ -60,6 +61,7 @@ import static java.lang.Integer.parseInt;
 import static java.util.Objects.nonNull;
 import static ru.ecom.expert2.domain.voc.E2Enumerator.ALLTIMEHOSP;
 import static ru.ecom.expert2.domain.voc.E2Enumerator.DAYTIMEHOSP;
+import static ru.ecom.expert2.domain.voc.enums.VocListEntryTypeCode.*;
 import static ru.nuzmsh.util.BooleanUtils.isNotTrue;
 import static ru.nuzmsh.util.BooleanUtils.isTrue;
 import static ru.nuzmsh.util.CollectionUtil.isEmpty;
@@ -72,14 +74,6 @@ import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
 @Remote(IExpert2Service.class)
 public class Expert2ServiceBean implements IExpert2Service {
     private static final Logger LOG = Logger.getLogger(Expert2ServiceBean.class);
-    private static final String KDPTYPE = "POL_KDP"; //КДП более нету, теперь всё - неотложка. Передалеть на поликлинику
-    private static final String HOSPITALTYPE = "HOSPITAL";
-    private static final String HOSPITALPEREVODTYPE = "HOSPITALPEREVOD";
-    private static final String POLYCLINICTYPE = "POLYCLINIC";
-    private static final String VMPTYPE = "VMP";
-    private static final String EXTDISPTYPE = "EXTDISP";
-    private static final String POLYCLINICCOVIDTYPE = "POLYCLINICCOVIDTYPE";
-    private static final String SERVICETYPE = "SERVICE";
     private static final String COMPLEXSERVICESTREAM = "COMPLEXCASE";
     private static final String OMC_SERVICE_STREAM = "OBLIGATORYINSURANCE";
     private static final List<String> CHILD_BIRTH_MKB = Arrays.asList("O14.1", "O34.2", "O36.3", "O36.4", "O42.2"); //Список диагнозов, с которыми разрешена подача обсервационного отделения менее 5 дней
@@ -138,15 +132,20 @@ public class Expert2ServiceBean implements IExpert2Service {
      */
     @Override
     public void fillListEntry(E2ListEntry listEntry, String historyNumbers, long monitorId) {
-        String listEntryType = listEntry.getEntryType() != null ? listEntry.getEntryType().getCode() : null;
+        VocListEntryType type = listEntry.getEntryType();
 
-        if (listEntryType == null) {
+        if (type == null) {
             LOG.error("Не указан тип заполнения NO_ENTRYLIST_TYPE");
             return;
         }
+        VocListEntryTypeCode listEntryTypeCode = type.getCode() ;
 
-        String resourceName;
-        switch (listEntryType) {
+
+        String resourceName = type.getSqlFileName();
+        if (resourceName==null) {
+            throw new IllegalStateException("Не указан файл для формирования запроса в заполнении с типом "+type);
+        }
+       /* switch (listEntryTypeCode) {
             case POLYCLINICCOVIDTYPE:
                 resourceName = "VisitCovid.sql";
                 break;
@@ -174,12 +173,12 @@ public class Expert2ServiceBean implements IExpert2Service {
             default:
                 LOG.error("Неизвесный тип заполнения");
                 throw new IllegalStateException("Неизвестный тип заполнения!!");
-        }
+        }*/
 
         StringBuilder sqlHistory = new StringBuilder();
         if (isNotLogicalNull(historyNumbers)) {
             String[] histories = historyNumbers.split(",");
-            sqlHistory.append(HOSPITALTYPE.equals(listEntryType) ? " and ss.code" : " and p.patientSync").append(" in (");
+            sqlHistory.append(HOSPITAL.equals(listEntryTypeCode) ? " and ss.code" : " and p.patientSync").append(" in (");
             boolean isFirst = true;
             for (String history : histories) {
                 if (!isFirst) {
@@ -205,7 +204,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         manager.persist(listEntry);
         try (Statement statement = createStatement()) {
             ResultSet foundCases = statement.executeQuery(searchSql);
-            createEntriesByEntryList(foundCases, paramMap, listEntryType, monitorId); //Создаем записи по заполнению
+            createEntriesByEntryList(foundCases, paramMap, listEntryTypeCode, monitorId); //Создаем записи по заполнению
         } catch (Exception e) {
             LOG.error("can't parse data", e);
         }
@@ -223,7 +222,7 @@ public class Expert2ServiceBean implements IExpert2Service {
      * @param entryListCode
      * @param monitorId
      */
-    private void createEntriesByEntryList(ResultSet resultSet, Map<String, Object> paramMap, String entryListCode, long monitorId) { //Сохраняем сущности
+    private void createEntriesByEntryList(ResultSet resultSet, Map<String, Object> paramMap, VocListEntryTypeCode entryListCode, long monitorId) { //Сохраняем сущности
         if (monitorId == 0L) {
             monitorId = remoteMonitorService.createMonitor();
         }
@@ -291,7 +290,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 createDiagnosis(entity); //Запускаем один лишь раз
                 createServices(entity); //Запускаем один лишь раз
                 manager.persist(entity);
-                if (isEquals(entity.getEntryType(), POLYCLINICTYPE)) {
+                if (isEquals(entity.getEntryType(), POLYCLINIC)) {
                     makeCheckEntry(entity, false, false);
                 }
             }
@@ -319,12 +318,11 @@ public class Expert2ServiceBean implements IExpert2Service {
                 return;
             }
 
-            String listEntryCode = listEntry.getEntryType().getCode();
+            VocListEntryTypeCode listEntryCode = listEntry.getEntryType().getCode();
             IMonitor monitor = monitorService.startMonitor(monitorId, "Пересчет случаев в заполнении", e2Entries.size());
             monitor.advice(1);
             switch (listEntryCode) {
-                case HOSPITALTYPE:
-                case HOSPITALPEREVODTYPE: {
+                case HOSPITAL: {
                     int i = 0;
                     LOG.info("Приступаем к нахождению лучшего КСГ. START_FIND_BESK_KSG. list_size=" + e2Entries.size());
                     monitor.setText("Приступаем к нахождению лучшего КСГ. START_FIND_BESK_KSG. list_size=" + e2Entries.size());
@@ -368,7 +366,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     break;
                 }
                 case POLYCLINICCOVIDTYPE:
-                case POLYCLINICTYPE: {
+                case POLYCLINIC: {
                     //Проверка поликлинических случаев
                     monitor.setText("Удаляем дубли в поликлинике");
                     deletePolyclinicDoubles(listEntryId); //Удалим дубли при первой проверке
@@ -391,10 +389,10 @@ public class Expert2ServiceBean implements IExpert2Service {
                     monitor.setText("Закончили проверять поликлинику.");
                     break;
                 }
-                case KDPTYPE:  //неотложку
+                case POL_KDP:  //неотложку
                     makeEmergencyEntry(e2Entries);
                     break;
-                case EXTDISPTYPE: {
+                case EXTDISP: {
                     LOG.info("Create DD");
                     int i = 0;
                     for (E2Entry entry : e2Entries) {
@@ -405,7 +403,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     }
                     break;
                 }
-                case SERVICETYPE:
+                case SERVICE:
                     monitor.setText("Находим несколько услуг в одном визите в УСЛУГах");
                     LOG.info("finding doubleService");
                     for (E2Entry entry : e2Entries) {
@@ -1009,7 +1007,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 //Цикл только для ВМП
                 E2Entry vmpEntry = null;
                 for (E2Entry entry : entriesList) {
-                    if (VMPTYPE.equals(entry.getEntryType())) { //Если в госпитализации есть случай ВМП, делаем его главным, остальные - неглавные.
+                    if (VMP.equals(entry.getEntryType())) { //Если в госпитализации есть случай ВМП, делаем его главным, остальные - неглавные.
                         mainEntry = entry;
                         mainEntry.setStartDate(entry.getHospitalStartDate());
                         mainEntry.setFinishDate(entry.getHospitalFinishDate());
@@ -1299,10 +1297,9 @@ public class Expert2ServiceBean implements IExpert2Service {
             /* сначала найдем КСГ (для правильного объединения
             потом  производим объединение случаев, потом (только для ОМС) расчитываем поля фонда, считаем цену
             */
-            String listEntryCode = listEntry.getEntryType().getCode();
+            VocListEntryTypeCode listEntryCode = listEntry.getEntryType().getCode();
             switch (listEntryCode) {
-                case HOSPITALTYPE:
-                case HOSPITALPEREVODTYPE: {
+                case HOSPITAL:{
                     int i = 0;
                     for (BigInteger bi : list) {
                         i++;
@@ -1316,11 +1313,11 @@ public class Expert2ServiceBean implements IExpert2Service {
                     checkDoubles(listEntry);
                     break;
                 }
-                case POLYCLINICTYPE:
-                case KDPTYPE:
-                case SERVICETYPE: {
+                case POLYCLINIC:
+                case POL_KDP:
+                case SERVICE: {
                     Long listEntryId = listEntry.getId();
-                    if (listEntryCode.equals(POLYCLINICTYPE)) {
+                    if (listEntryCode.equals(POLYCLINIC)) {
                         boolean isGroupSpo = getExpertConfigValue("ISGROUPSPO", "0").equals("1");
                         monitor.setText("Удаление дублей в поликлинике");
                         deletePolyclinicDoubles(listEntryId);
@@ -1343,12 +1340,12 @@ public class Expert2ServiceBean implements IExpert2Service {
                         makeCheckEntry(manager.find(E2Entry.class, bi.longValue()), updateKsgIfExist, true);
                     }
                     monitor.setText("Приступаем к проверке перекрестных случаев.");
-                    if (!KDPTYPE.equals(listEntryCode)) {
+                    if (!POL_KDP.equals(listEntryCode)) {
                         deleteCrossSpo(listEntry);
                     }
                     break;
                 }
-                case EXTDISPTYPE: {
+                case EXTDISP: {
                     int i = 0;
                     for (BigInteger bi : list) {
                         i++;
@@ -1396,7 +1393,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     private void makeCheckEntry(E2Entry entry, boolean updateKsgIfExist, boolean checkErrors) {
         long bedDays = AgeUtil.calculateDays(entry.getStartDate(), entry.getFinishDate());
         long calendarDays = bedDays > 0 ? bedDays + 1 : 1;
-        if (HOSPITALTYPE.equals(entry.getEntryType()) && "2".equals(entry.getBedSubType())) { //Для дневного стационара день поступления и день выписки - 2 дня
+        if (HOSPITAL.equals(entry.getEntryType()) && "2".equals(entry.getBedSubType())) { //Для дневного стационара день поступления и день выписки - 2 дня
             bedDays++;
         }
         try {
@@ -1437,8 +1434,8 @@ public class Expert2ServiceBean implements IExpert2Service {
     private void setEntrySubType(E2Entry entry) {
         String code;
         String fileType;
-        String entryType = entry.getEntryType();
-        if (isNullOrEmpty(entryType) && entry.getListEntry() != null) {
+        VocListEntryTypeCode entryType = entry.getEntryType();
+        if (entryType==null && entry.getListEntry() != null) {
             entryType = entry.getListEntry().getEntryType().getCode();
             entry.setEntryType(entryType);
         }
@@ -1446,7 +1443,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             return;
         }
         switch (entryType) {
-            case HOSPITALTYPE:
+            case HOSPITAL:
                 if (isNeedSplitDayTimeHosp) {
                     entry.setAddGroupFld("1".equals(entry.getBedSubType()) ? "КС" : "ДС");
                 }
@@ -1469,15 +1466,15 @@ public class Expert2ServiceBean implements IExpert2Service {
                     code = "UNKNOWNTIMEHOSP";
                 }
                 break;
-            case POLYCLINICTYPE:
-            case SERVICETYPE:
+            case POLYCLINIC:
+            case SERVICE:
                 fileType = "H";
                 String workPlace = entry.getWorkPlace();
-                if (SERVICETYPE.equals(entryType)) { //КТ-МРТ подаем типом записи УСЛУГА //TODO говнокод
+                if (SERVICE.equals(entryType)) { //КТ-МРТ подаем типом записи УСЛУГА //TODO говнокод
                     if (entry.getDepartmentId().equals(416L)) {
                         code = "TELEMED_" + entry.getMainService();
                     } else {
-                        code = SERVICETYPE;
+                        code = SERVICE.name();
                     }
 
                 } else if (isTrue(entry.getIsDiagnosticSpo())) {
@@ -1521,20 +1518,20 @@ public class Expert2ServiceBean implements IExpert2Service {
                     entry.setIsDentalCase(entry.getFondDoctorSpecV021() != null && isTrue(entry.getFondDoctorSpecV021().getIsDentalDoctor()));
                 }
                 break;
-            case VMPTYPE:
+            case VMP:
                 code = "STAC_VMP";
                 fileType = "T";
                 break;
-            case EXTDISPTYPE:
+            case EXTDISP:
                 //определяемся что ДД будем получать только с элмеда, VIDSLUCH уже есть
                 code = (entry.getSubType() != null
                         ? entry.getSubType().getCode()
-                        : EXTDISPTYPE + "_" + (entry.getVidSluch() != null ? entry.getVidSluch().getCode() : "VIDSLUCH"));
+                        : EXTDISP + "_" + (entry.getVidSluch() != null ? entry.getVidSluch().getCode() : "VIDSLUCH"));
                 fileType = "SomeDisp";
 
                 break;
-            case KDPTYPE:
-                code = KDPTYPE;
+            case POL_KDP:
+                code = POL_KDP.name();
                 fileType = "H";
                 break;
             default:
@@ -1605,7 +1602,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     || entry.getFinishDate().getTime() < entry.getListEntry().getStartDate().getTime()) {
                 errors.add(new E2EntryError(entry, E2EntryErrorCode.DISCHARGE_DATE_NOT_IN_PERIOD));
             }
-            if (HOSPITALTYPE.equals(entry.getEntryType()) && entry.getKsg() == null) {
+            if (HOSPITAL.equals(entry.getEntryType()) && entry.getKsg() == null) {
                 errors.add(new E2EntryError(entry, E2EntryErrorCode.NO_KSG));
             }
             if (isTrue(entry.getIsForeign()) && (isLogicalNull(entry.getPassportDateIssued()) || isLogicalNull(entry.getPassportNumber())
@@ -1625,21 +1622,20 @@ public class Expert2ServiceBean implements IExpert2Service {
      */
     @Override
     public E2Entry calculateEntryPrice(E2Entry entry) {
-        String entryType = entry.getEntryType() != null ? entry.getEntryType() : entry.getEntryListType();
+        VocListEntryTypeCode entryType = entry.getEntryType() != null ? entry.getEntryType() : entry.getEntryListType();
         switch (entryType) {
-            case HOSPITALTYPE:
-            case HOSPITALPEREVODTYPE:
-            case "VMP":
+            case HOSPITAL:
+            case VMP:
                 calculateHospitalEntryPrice(entry);
                 break;
-            case POLYCLINICTYPE:
-            case KDPTYPE:
+            case POLYCLINIC:
+            case POL_KDP:
                 calculatePolyclinicEntryPrice(entry);
                 break;
-            case EXTDISPTYPE:
+            case EXTDISP:
                 calculateExtDispEntryPrice(entry);
                 break;
-            case SERVICETYPE:
+            case SERVICE:
                 calculateServiceEntryPrice(entry);
                 break;
             default:
@@ -1855,7 +1851,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     if (isLogicalNull(entry.getMainMkb())
                             && diagnosis.getRegistrationType() != null && diagnosis.getRegistrationType().getCode().equals("4")
                             && diagnosis.getPriority() != null && diagnosis.getPriority().getCode().equals("1") ||
-                            isOneOf(entry.getEntryType(), POLYCLINICTYPE, SERVICETYPE) && diagnosis.getPriority() != null && diagnosis.getPriority().getCode().equals("1")) {
+                            isOneOf(entry.getEntryType(), POLYCLINIC, SERVICE) && diagnosis.getPriority() != null && diagnosis.getPriority().getCode().equals("1")) {
                         entry.setMainMkb(mkb);
                         manager.persist(entry);
                     }
@@ -2151,7 +2147,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     private VocKsg getBestKSG(E2Entry entry, boolean updateKsgIfExist) {
-        if (!isEquals(entry.getEntryType(), HOSPITALTYPE)) {
+        if (!isEquals(entry.getEntryType(), HOSPITAL)) {
             return null;
         }
         if (!updateKsgIfExist && entry.getKsg() != null || isTrue(entry.getIsManualKsg())) {
@@ -2484,12 +2480,12 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     private BigDecimal calculateTariff(E2Entry entry) {
         String key, sqlAdd;
-        String entryType = entry.getEntryType();
+        VocListEntryTypeCode entryType = entry.getEntryType();
         String mmYYYY = new SimpleDateFormat("MMyyyy").format(entry.getFinishDate());
         if (isNotLogicalNull(entry.getVmpKind())) { //Если в СЛО есть ВМП, цена = ВМП
             return entry.getCost();
         }
-        if (isOneOf(entryType, POLYCLINICTYPE, KDPTYPE, HOSPITALTYPE)) {
+        if (isOneOf(entryType, POLYCLINIC, POL_KDP, HOSPITAL)) {
 
             String tariffCode = entry.getSubType() != null ? entry.getSubType().getTariffCodeString() : "_NULLENTRYSUBTYPE_";
             if (isTrue(entry.getIsDentalCase())) tariffCode = "DENTAL_CASE";
@@ -2665,12 +2661,12 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     private void calculatePatientDifficulty(E2Entry entry) {
-        String entryType = entry.getEntryType();
+        VocListEntryTypeCode entryType = entry.getEntryType();
         VocKsg ksg = entry.getKsg();
-        if (ksg == null || VMPTYPE.equals(entryType)) {
+        if (ksg == null || VMP.equals(entryType)) {
             return;
         }
-        if (HOSPITALTYPE.equals(entryType) && !entry.getBedSubType().equals("1")) {
+        if (HOSPITAL.equals(entryType) && !entry.getBedSubType().equals("1")) {
             return;
         }
 
@@ -2782,7 +2778,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     @Override
     public BigDecimal calculateResultDifficultyCoefficient(E2Entry entry) {
         final BigDecimal one = BigDecimal.ONE;
-        if (entry.getEntryType().equals(HOSPITALTYPE) && !entry.getBedSubType().equals("1")) {
+        if (entry.getEntryType().equals(HOSPITAL) && !entry.getBedSubType().equals("1")) {
             return getDayTimeHospKslpValue();
         }
         List<E2CoefficientPatientDifficultyEntryLink> list = entry.getPatientDifficulty();
@@ -3117,7 +3113,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     private void makeEmergencyEntry(List<E2Entry> entries) {
         LOG.info("Создаем НМП, всего случаев = " + entries.size());
         VocE2EntrySubType subType = getEntityByCode("CONS_POL_EMERG_POLYCLINIC", VocE2EntrySubType.class, false);
-        VocE2EntrySubType serviceSubType = getEntityByCode(SERVICETYPE, VocE2EntrySubType.class, false);
+        VocE2EntrySubType serviceSubType = getEntityByCode("SERVICE", VocE2EntrySubType.class, false);
         if (!isAnyIsNull(subType, serviceSubType)) {
             VocE2FondV006 medHelpUsl = subType.getUslOk();
             VocE2VidSluch vidSluch = subType.getVidSluch();
@@ -3191,14 +3187,14 @@ public class Expert2ServiceBean implements IExpert2Service {
                                 }
                                 entry.setDoNotSend(ed.getMkb().getCode().startsWith("Z"));
                                 entry.setIsEmergency(true);
-                                entry.setWorkPlace(POLYCLINICTYPE);
+                                entry.setWorkPlace("POLYCLINIC");
                                 entry.setSubType(subType);
                                 entry.setMedHelpUsl(medHelpUsl);
                                 entry.setVidSluch(vidSluch);
                                 entry.setVisitPurpose(visitPurpose);
                                 entry.setIdsp(idsp);
                                 entry.setMainMkb(service.getMkb().getCode());
-                                entry.setEntryType(POLYCLINICTYPE);
+                                entry.setEntryType(POLYCLINIC);
                                 entry.setDoctorSnils(service.getDoctorSnils());
                                 entry.setFondDoctorSpecV021(spec);
                                 entry.setMedHelpProfile(spec.getPolicProfile());
@@ -3236,16 +3232,15 @@ public class Expert2ServiceBean implements IExpert2Service {
     /**
      * Проставляем тип записи (стационар, ВМП, поликлиника, подушевое финансирование, __ИНОГОРОДНИЕ__
      */
-    private void setEntryType(E2Entry entry, String entryCode) {
-        if (entryCode.equals(HOSPITALTYPE) && isNotLogicalNull(entry.getVmpKind())) {
-            entryCode = VMPTYPE;
-        } else if (entryCode.equals(HOSPITALPEREVODTYPE)) {
-            entryCode = HOSPITALTYPE;
-        } else if (entryCode.equals(POLYCLINICCOVIDTYPE) || entryCode.equals(POLYCLINICTYPE) && serviceDepartments.contains(entry.getDepartmentId())) { //телемедицина+лаборатория амокб
-            entryCode = SERVICETYPE;
+    private void setEntryType(E2Entry entry, VocListEntryTypeCode entryCode) {
+        if (entryCode.equals(HOSPITAL) && isNotLogicalNull(entry.getVmpKind())) {
+            entryCode = VMP;
+        }  else if (entryCode.equals(VocListEntryTypeCode.POLYCLINICCOVIDTYPE) || entryCode.equals(POLYCLINIC) && serviceDepartments.contains(entry.getDepartmentId())) { //телемедицина+лаборатория амокб
+            entryCode = SERVICE;
         }
         if (isNotLogicalNull(entry.getInsuranceCompanyCode())) {
-            entryCode += "_INOG";
+//            entryCode += "_INOG"; //todo check and delete
+            entry.setIsForeign(true);
         } //Если код страх. компании не пустой - иногородний.
         entry.setEntryType(entryCode);
         manager.persist(entry);
@@ -3473,14 +3468,14 @@ public class Expert2ServiceBean implements IExpert2Service {
     private void calculateFondField(E2Entry entry, boolean forceUpdate) { //Расчитываем поля для подачи в ОМС RSLT, ISHOD, PRVS
         String key;
         StringBuilder sb;
-        String entryType = entry.getEntryType();
+        VocListEntryTypeCode entryType = entry.getEntryType();
         String bedSubType = entry.getBedSubType();
         List<BigInteger> list;
         Date actualDate = entry.getFinishDate();
-        boolean stacCase = isOneOf(entryType, HOSPITALTYPE, VMPTYPE);
-        boolean vmpCase = entryType.equals(VMPTYPE);
-        boolean polyclinicCase = isOneOf(entryType, POLYCLINICTYPE, SERVICETYPE);
-        boolean extDispCase = entryType.equals(EXTDISPTYPE);
+        boolean stacCase = isOneOf(entryType, HOSPITAL, VMP);
+        boolean vmpCase = entryType.equals(VMP);
+        boolean polyclinicCase = isOneOf(entryType, POLYCLINIC, SERVICE);
+        boolean extDispCase = entryType.equals(EXTDISP);
 
         if (stacCase) {   //Расчет профиля мед. помощи по профилю коек для стационара
             if (entry.getBedProfile() == null) {
@@ -3829,7 +3824,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                         ret.put("errorName1", "Не удалось посчитать цену");
                         return ret.toString();
                     }
-                    sloEntry.setEntryType(POLYCLINICTYPE);
+                    sloEntry.setEntryType(POLYCLINIC);
                     sloEntry.setIsEmergency(visit.getEmergency());
                     sloEntry.setStartDate(spo.getDateStart());
                     sloEntry.setFinishDate(spo.getDateFinish() != null ? spo.getDateFinish() : new Date(System.currentTimeMillis())); //если открытое СПО - будет разовый визит, не должно произойти.
@@ -3855,7 +3850,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                                 .setParameter("parent", medCase).getResultList().get(0);
                     }
                     sloEntry.setFinishDate(finishDate);
-                    sloEntry.setEntryType(HOSPITALTYPE);
+                    sloEntry.setEntryType(HOSPITAL);
                     sloEntry.setDepartmentId(departmentMedCase.getDepartment().getId());
                     sloEntry.setHelpKind(departmentMedCase.getBedFund().getBedType().getCodeF());
                     sloEntry.setBedSubType(departmentMedCase.getBedFund().getBedSubType().getCode()); //дневные/круглосуточные
