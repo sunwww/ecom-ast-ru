@@ -56,6 +56,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
 import static java.util.Objects.nonNull;
@@ -138,43 +139,11 @@ public class Expert2ServiceBean implements IExpert2Service {
             LOG.error("Не указан тип заполнения NO_ENTRYLIST_TYPE");
             return;
         }
-        VocListEntryTypeCode listEntryTypeCode = type.getCode() ;
-
-
+        VocListEntryTypeCode listEntryTypeCode = type.getCode();
         String resourceName = type.getSqlFileName();
-        if (resourceName==null) {
-            throw new IllegalStateException("Не указан файл для формирования запроса в заполнении с типом "+type);
+        if (resourceName == null) {
+            throw new IllegalStateException("Не указан файл для формирования запроса в заполнении с типом " + type);
         }
-       /* switch (listEntryTypeCode) {
-            case POLYCLINICCOVIDTYPE:
-                resourceName = "VisitCovid.sql";
-                break;
-            case EXTDISPTYPE:
-                resourceName = "ExtDisp.sql";
-                break;
-            case HOSPITALTYPE:
-                resourceName = "Hospital.sql";
-                break;
-            case POLYCLINICTYPE:
-                resourceName = "Visit.sql";
-                break;
-            case HOSPITALPEREVODTYPE:
-                resourceName = "HospitalPerevod.sql";
-                break;
-            case KDPTYPE:
-                resourceName = "StacKdp.sql";
-                break;
-            case SERVICETYPE:
-                resourceName = "Service.sql";
-                break;
-            case "COVID_TEMP": //временно, состоящие в отделениях ковид
-                resourceName = "HospitalCovid.sql";
-                break;
-            default:
-                LOG.error("Неизвесный тип заполнения");
-                throw new IllegalStateException("Неизвестный тип заполнения!!");
-        }*/
-
         StringBuilder sqlHistory = new StringBuilder();
         if (isNotLogicalNull(historyNumbers)) {
             String[] histories = historyNumbers.split(",");
@@ -359,10 +328,10 @@ public class Expert2ServiceBean implements IExpert2Service {
                             return;
                         //Теперь снова находим КСГ, расчитываем цену и коэффициенты
                         if (!COMPLEXSERVICESTREAM.equals(entry.getServiceStream())) {
-                            findCancerEntry(entry);
                             makeCheckEntry(entry, true, true);
                         }
                     }
+                    findCancerEntry(e2Entries);
                     break;
                 }
                 case POLYCLINICCOVIDTYPE:
@@ -378,14 +347,14 @@ public class Expert2ServiceBean implements IExpert2Service {
                         i++;
                         if (i % 100 == 0 && isMonitorCancel(monitor, "Проверяем записи по поликлинике: " + i)) return;
                         makeCheckEntry(entry, false, true);// оченьььь долго
-                        findCancerEntry(entry);
                     }
+                    findCancerEntry(e2Entries);//todo порефачить
                     if (isMonitorCancel(monitor, "Поликлиника. Закончили нахождение цены и проставление полей фонда, приступаем к объединению случаев. прошло минут - " + (System.currentTimeMillis() - startStartDate.getTime()) / 60000))
                         return;
                     boolean isGroupSpo = getExpertConfigValue("ISGROUPSPO", "0").equals("1");
                     unionPolyclinicMedCase(listEntryId, isGroupSpo);
                     monitor.setText("Приступаем к проверке перекрестных случаев.");
-                    deleteCrossSpo(listEntry);
+                    markErrorForCrossSpo(listEntry);
                     monitor.setText("Закончили проверять поликлинику.");
                     break;
                 }
@@ -410,7 +379,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                         checkServiceEntryFirst(entry);
                     }
                     monitor.setText("Запускаем поиск перекрестных случаев/дублей с другими заполнениями");
-                    deleteCrossSpo(listEntry);
+                    markErrorForCrossSpo(listEntry);
                     break;
                 default:
                     LOG.error("Невозможно выполнить проверку заполнения, неизвестный тип '" + listEntryCode + "'");
@@ -843,7 +812,7 @@ public class Expert2ServiceBean implements IExpert2Service {
 
     /**
      * Удаляем дубли по поликлинике
-     * дублем считаем повторное посещение про оодному профилю мед. помощи за исключением мобильной поликлиники, НМП и КДО
+     * дублем считаем повторное посещение про одному профилю мед. помощи за исключением мобильной поликлиники, НМП и КДО
      */
     private void deletePolyclinicDoubles(Long listEntryId) {
         deletePolyclinicDoubles(listEntryId, false);
@@ -851,29 +820,39 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     /**
-     * Удаляем дубли по поликлинике
+     * Удаляем дубли по поликлинике (в рамках одного заполнения
      */
     private void deletePolyclinicDoubles(Long listEntryId, boolean deleteEmergency) {
-        LOG.info(listEntryId + " deletingDoubles... emergency=" + deleteEmergency);
-        List<Object[]> list = manager.createNativeQuery("select max(e2.id), e2.externalpatientid , medhelpprofile_id,startdate, servicestream from e2entry e2 where e2.listentry_id =:listId" +
-                " and e2.entryType='POLYCLINIC' and coalesce(e2.isDeleted, false) = false and coalesce(e2.isUnion, false) = false and e2.serviceStream!='COMPLEXCASE'" +
-                " and coalesce(e2.isMobilePolyclinic, false) = false and coalesce(e2.isEmergency, false) = false" +
-                (deleteEmergency ? " and e2.isEmergency ='1'" : " and coalesce(e2.isEmergency, false) = false") +
-                " and coalesce(e2.isDiagnosticSpo, false) = false and medhelpprofile_id is not null " +
-                " group by e2.externalpatientid , medhelpprofile_id, startdate, servicestream" +
-                " having count(e2.id)>1").setParameter("listId", listEntryId).getResultList();
+        LOG.info("Starting deleting doubles in [" + listEntryId + "], emergency=" + deleteEmergency);
+        List<Object[]> list = manager.createNativeQuery("select max(e2.id) from e2entry e2 where e2.listentry_id =:listId" +
+                        " and e2.entryType='POLYCLINIC' and coalesce(e2.isDeleted, false) = false and coalesce(e2.isUnion, false) = false and e2.serviceStream!='COMPLEXCASE'" +
+                        " and coalesce(e2.isMobilePolyclinic, false) = false and coalesce(e2.isEmergency, false) = false" +
+                        (deleteEmergency ? " and e2.isEmergency ='1'" : " and coalesce(e2.isEmergency, false) = false") +
+                        " and coalesce(e2.isDiagnosticSpo, false) = false and medhelpprofile_id is not null " +
+                        " group by e2.externalpatientid , medhelpprofile_id, startdate, servicestream" +
+                        " having count(e2.id)>1")
+                .setParameter("listId", listEntryId)
+                .getResultList();
         if (!list.isEmpty()) {
+            StringBuilder ids = new StringBuilder();
+            int cnt = 0;
             for (Object[] o : list) {
-                manager.createNativeQuery("update e2entry set isDeleted='1' where id=" + o[0].toString()).executeUpdate();
+                cnt++;
+                ids.append(o[0].toString()).append(",");
             }
+            LOG.warn("В цикле я бы сделал " + cnt + " апдейтов, но сделал всего 1");
+            manager.createNativeQuery("update e2entry set isDeleted='1' where id in (" + ids.toString() + "0)").executeUpdate();
             deletePolyclinicDoubles(listEntryId, deleteEmergency);
         }
+        LOG.info("Finished deleting doubles in [" + listEntryId + "], emergency=" + deleteEmergency);
     }
 
     /**
      * Проверяем поликлинические случаи на пересечение
      */
-    private void deleteCrossSpo(E2ListEntry listEntry) {
+    private void markErrorForCrossSpo(E2ListEntry listEntry) {
+        long startTime = System.currentTimeMillis();
+        LOG.warn("Начали поиск перекрестных случаев");
         String sql = "select e.id as eid" +
                 " from e2entry e " +
                 " left join e2entry olde on olde.externalpatientid=e.externalpatientid" +
@@ -896,6 +875,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 saveError(manager.find(E2Entry.class, id.longValue()), E2EntryErrorCode.CROSS_SPO);
             }
         }
+        LOG.warn("Закончили поиск перекрестных случаев (" + list.size() + ") за " + (System.currentTimeMillis() - startTime) / 1000);
     }
 
     /**
@@ -1299,7 +1279,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             */
             VocListEntryTypeCode listEntryCode = listEntry.getEntryType().getCode();
             switch (listEntryCode) {
-                case HOSPITAL:{
+                case HOSPITAL: {
                     int i = 0;
                     for (BigInteger bi : list) {
                         i++;
@@ -1341,7 +1321,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     }
                     monitor.setText("Приступаем к проверке перекрестных случаев.");
                     if (!POL_KDP.equals(listEntryCode)) {
-                        deleteCrossSpo(listEntry);
+                        markErrorForCrossSpo(listEntry);
                     }
                     break;
                 }
@@ -1435,7 +1415,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         String code;
         String fileType;
         VocListEntryTypeCode entryType = entry.getEntryType();
-        if (entryType==null && entry.getListEntry() != null) {
+        if (entryType == null && entry.getListEntry() != null) {
             entryType = entry.getListEntry().getEntryType().getCode();
             entry.setEntryType(entryType);
         }
@@ -1595,8 +1575,8 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     private void checkErrors(E2Entry entry) {
-        List<E2EntryError> errors = new ArrayList<>();
         if (OMC_SERVICE_STREAM.equals(entry.getServiceStream())) { //Проверка только для ОМС *05.06.2018
+            List<E2EntryError> errors = new ArrayList<>();
             //Дата выписки не входит в период
             if (entry.getFinishDate().getTime() > entry.getListEntry().getFinishDate().getTime()
                     || entry.getFinishDate().getTime() < entry.getListEntry().getStartDate().getTime()) {
@@ -1674,105 +1654,125 @@ public class Expert2ServiceBean implements IExpert2Service {
         return ret;
     }
 
-    /*Находим онкологический случай по СЛС */
-    private void findCancerEntry(E2Entry entry) {
-        if (COMPLEXSERVICESTREAM.equals(entry.getServiceStream())) return;
-        List<OncologyCase> oncologyCases = manager.createQuery("from OncologyCase where medCase_id=:id").setParameter("id", entry.getExternalParentId()).getResultList();
-        List<E2CancerEntry> cancerEntryList = new ArrayList<>();
-        if (!oncologyCases.isEmpty()) {
-            try {
-                OncologyCase oncologyCase = oncologyCases.get(0);
-                E2CancerEntry cancerEntry = new E2CancerEntry(entry);
-                cancerEntry.setMaybeCancer(oncologyCase.getSuspicionOncologist());
-                if (isTrue(cancerEntry.getMaybeCancer())) { //Подозрение на онкологию, ищем только направления
-                    List<OncologyDirection> directions = oncologyCase.getDirections();
-                    if (!directions.isEmpty()) {
-                        List<E2CancerDirection> list = new ArrayList<>();
-                        for (OncologyDirection direction : directions) {
-                            E2CancerDirection cancerDirection = new E2CancerDirection(cancerEntry);
-                            cancerDirection.setDate(direction.getDate());
-                            cancerDirection.setType(direction.getTypeDirection() != null ? direction.getTypeDirection().getCode() : "");
-                            cancerDirection.setMedService(direction.getMedService() != null ? direction.getMedService().getCode() : "");
-                            cancerDirection.setSurveyMethod(direction.getMethodDiagTreat() != null ? direction.getMethodDiagTreat().getCode() : "");
-                            cancerDirection.setDirectLpu(direction.getDirectLpu() != null ? direction.getDirectLpu().getCodef() : "");
-                            list.add(cancerDirection);
-                        }
-                        cancerEntry.setDirections(list);
-                    }
-                } else { //Случай онкологического лечения
-                    cancerEntry.setOccasion(oncologyCase.getVocOncologyReasonTreat() != null ? oncologyCase.getVocOncologyReasonTreat().getCode() : "");
-                    cancerEntry.setStage(oncologyCase.getStad() != null ? oncologyCase.getStad().getCode() : "");
-                    cancerEntry.setTumor(oncologyCase.getTumor() != null ? oncologyCase.getTumor().getCode() : "");
-                    cancerEntry.setNodus(oncologyCase.getNodus() != null ? oncologyCase.getNodus().getCode() : "");
-                    cancerEntry.setMetastasis(oncologyCase.getMetastasis() != null ? oncologyCase.getMetastasis().getCode() : "");
-                    cancerEntry.setIsMetastasisFound(oncologyCase.getDistantMetastasis());
-                    cancerEntry.setSod(oncologyCase.getSumDose());
-                    cancerEntry.setConsiliumResult(oncologyCase.getConsilium() != null ? oncologyCase.getConsilium().getCode() : "");
-                    cancerEntry.setConsiliumDate(oncologyCase.getDateCons());
-                    cancerEntry.setServiceType(oncologyCase.getTypeTreatment() != null ? oncologyCase.getTypeTreatment().getCode() : "");
-                    cancerEntry.setSurgicalType(oncologyCase.getSurgTreatment() != null ? oncologyCase.getSurgTreatment().getCode() : "");
-                    cancerEntry.setDrugLine(oncologyCase.getLineDrugTherapy() != null ? oncologyCase.getLineDrugTherapy().getCode() : "");
-                    cancerEntry.setDrugCycle(oncologyCase.getCycleDrugTherapy() != null ? oncologyCase.getCycleDrugTherapy().getCode() : "");
-                    cancerEntry.setRadiationTherapy(oncologyCase.getTypeRadTherapy() != null ? oncologyCase.getTypeRadTherapy().getCode() : "");
-                    List<OncologyContra> prots = oncologyCase.getContras();
-                    if (!prots.isEmpty()) {
-                        List<E2CancerRefusal> list = new ArrayList<>();
-                        for (OncologyContra prot : prots) {
-                            E2CancerRefusal refusal = new E2CancerRefusal(cancerEntry);
-                            refusal.setCode(prot.getContraindicationAndRejection().getCode());
-                            refusal.setDate(prot.getDate());
-                            list.add(refusal);
-                        }
-                        cancerEntry.setRefusals(list);
-                    }
-                    try {
-                        List<OncologyDrug> drugList = oncologyCase.getDrugs();
-                        for (OncologyDrug drug : drugList) {
-                            E2CancerDrug cancerDrug = new E2CancerDrug(cancerEntry);
-                            cancerDrug.setDrug(drug.getDrug());
-                            List<E2CancerDrugDate> drugDates = new ArrayList<>();
-                            for (OncologyDrugDate oncologyDrugDate : drug.getDates()) {
-                                E2CancerDrugDate drugDate = new E2CancerDrugDate(cancerDrug);
-                                drugDate.setDate(oncologyDrugDate.getDate());
-                                drugDates.add(drugDate);
-                            }
-                            cancerDrug.setDates(drugDates);
-                            manager.persist(cancerDrug);
-                        }
+    private Map<Long, OncologyCase> findOncologyCasesMyMedcaseId(List<Long> medcaseIds) {
+        List<OncologyCase> oncologyCases = (List<OncologyCase>) manager.createQuery("" +
+                        " select oc from OncologyCase oc" +
+                        " left join fetch oc.directions" +
+                        " left join fetch oc.drugs" +
+                        " left join fetch oc.diagnostics" +
+                        " where oc.medCase_id in (:ids)")
+                .setParameter("id", medcaseIds)
+                .getResultList();
+        return oncologyCases.stream().collect(Collectors.toMap(k -> k.getMedCaseId(), v -> v, (val1, val2) -> val1));
 
-                        List<OncologyDiagnostic> diags = oncologyCase.getDiagnostics();
-                        if (!diags.isEmpty()) {
-                            List<E2CancerDiagnostic> list = new ArrayList<>();
-                            for (OncologyDiagnostic diag : diags) {
-                                E2CancerDiagnostic cancerDiagnostic = new E2CancerDiagnostic(cancerEntry);
-                                String diagnosticType = diag.getVocOncologyDiagType() != null ? diag.getVocOncologyDiagType().getCode() : null;
-                                if (diagnosticType != null) {
-                                    cancerDiagnostic.setBiopsyDate(oncologyCase.getDateBiops());
-                                    cancerDiagnostic.setType(diagnosticType);
-                                    if (diagnosticType.equals("1")) {
-                                        cancerDiagnostic.setCode(diag.getHistiology().getCode());
-                                        cancerDiagnostic.setResult(diag.getResultHistiology().getCode());
-                                    } else if (diagnosticType.equals("2")) {
-                                        cancerDiagnostic.setCode(diag.getMarkers() != null ? diag.getMarkers().getCode() : "");
-                                        cancerDiagnostic.setResult(diag.getValueMarkers() != null ? diag.getValueMarkers().getCode() : "");
-                                    }
-                                    list.add(cancerDiagnostic);
-                                }
-                            }
-                            cancerEntry.setDiagnostics(list);
-                        }
-                    } catch (Exception e) {
-                        LOG.error("Ошибка при заполнении диагностиеческого блока! ", e);
-                    }
-                }
-                manager.persist(cancerEntry);
-                cancerEntryList.add(cancerEntry);
-            } catch (Exception e) {
-                LOG.error("Не смог создать раковый случай ", e);
-            }
-            entry.setFileType("C");
+    }
+
+    /*Находим онкологический случай по СЛС */
+    private void findCancerEntry(List<E2Entry> entryies) {
+        List<Long> medcaseIds = new ArrayList<>();
+        for (E2Entry entry : entryies) {
+            medcaseIds.add(entry.getExternalParentId());
         }
-        entry.setCancerEntries(cancerEntryList);
+        Map<Long, OncologyCase> oncologyCaseMap = findOncologyCasesMyMedcaseId(medcaseIds);
+        for (E2Entry entry : entryies) {
+            if (COMPLEXSERVICESTREAM.equals(entry.getServiceStream())) return;
+
+            OncologyCase oncologyCase = oncologyCaseMap.get(entry.getExternalParentId());
+            if (oncologyCase != null) {
+                List<E2CancerEntry> cancerEntryList = new ArrayList<>();
+                try {
+                    E2CancerEntry cancerEntry = new E2CancerEntry(entry);
+                    cancerEntry.setMaybeCancer(oncologyCase.getSuspicionOncologist());
+                    if (isTrue(cancerEntry.getMaybeCancer())) { //Подозрение на онкологию, ищем только направления
+                        List<OncologyDirection> directions = oncologyCase.getDirections();
+                        if (!directions.isEmpty()) {
+                            List<E2CancerDirection> list = new ArrayList<>();
+                            for (OncologyDirection direction : directions) {
+                                E2CancerDirection cancerDirection = new E2CancerDirection(cancerEntry);
+                                cancerDirection.setDate(direction.getDate());
+                                cancerDirection.setType(direction.getTypeDirection() != null ? direction.getTypeDirection().getCode() : "");
+                                cancerDirection.setMedService(direction.getMedService() != null ? direction.getMedService().getCode() : "");
+                                cancerDirection.setSurveyMethod(direction.getMethodDiagTreat() != null ? direction.getMethodDiagTreat().getCode() : "");
+                                cancerDirection.setDirectLpu(direction.getDirectLpu() != null ? direction.getDirectLpu().getCodef() : "");
+                                list.add(cancerDirection);
+                            }
+                            cancerEntry.setDirections(list);
+                        }
+                    } else { //Случай онкологического лечения
+                        cancerEntry.setOccasion(oncologyCase.getVocOncologyReasonTreat() != null ? oncologyCase.getVocOncologyReasonTreat().getCode() : "");
+                        cancerEntry.setStage(oncologyCase.getStad() != null ? oncologyCase.getStad().getCode() : "");
+                        cancerEntry.setTumor(oncologyCase.getTumor() != null ? oncologyCase.getTumor().getCode() : "");
+                        cancerEntry.setNodus(oncologyCase.getNodus() != null ? oncologyCase.getNodus().getCode() : "");
+                        cancerEntry.setMetastasis(oncologyCase.getMetastasis() != null ? oncologyCase.getMetastasis().getCode() : "");
+                        cancerEntry.setIsMetastasisFound(oncologyCase.getDistantMetastasis());
+                        cancerEntry.setSod(oncologyCase.getSumDose());
+                        cancerEntry.setConsiliumResult(oncologyCase.getConsilium() != null ? oncologyCase.getConsilium().getCode() : "");
+                        cancerEntry.setConsiliumDate(oncologyCase.getDateCons());
+                        cancerEntry.setServiceType(oncologyCase.getTypeTreatment() != null ? oncologyCase.getTypeTreatment().getCode() : "");
+                        cancerEntry.setSurgicalType(oncologyCase.getSurgTreatment() != null ? oncologyCase.getSurgTreatment().getCode() : "");
+                        cancerEntry.setDrugLine(oncologyCase.getLineDrugTherapy() != null ? oncologyCase.getLineDrugTherapy().getCode() : "");
+                        cancerEntry.setDrugCycle(oncologyCase.getCycleDrugTherapy() != null ? oncologyCase.getCycleDrugTherapy().getCode() : "");
+                        cancerEntry.setRadiationTherapy(oncologyCase.getTypeRadTherapy() != null ? oncologyCase.getTypeRadTherapy().getCode() : "");
+                        List<OncologyContra> prots = oncologyCase.getContras();
+                        if (!prots.isEmpty()) {
+                            List<E2CancerRefusal> list = new ArrayList<>();
+                            for (OncologyContra prot : prots) {
+                                E2CancerRefusal refusal = new E2CancerRefusal(cancerEntry);
+                                refusal.setCode(prot.getContraindicationAndRejection().getCode());
+                                refusal.setDate(prot.getDate());
+                                list.add(refusal);
+                            }
+                            cancerEntry.setRefusals(list);
+                        }
+                        try {
+                            List<OncologyDrug> drugList = oncologyCase.getDrugs();
+                            for (OncologyDrug drug : drugList) {
+                                E2CancerDrug cancerDrug = new E2CancerDrug(cancerEntry);
+                                cancerDrug.setDrug(drug.getDrug());
+                                List<E2CancerDrugDate> drugDates = new ArrayList<>();
+                                for (OncologyDrugDate oncologyDrugDate : drug.getDates()) {
+                                    E2CancerDrugDate drugDate = new E2CancerDrugDate(cancerDrug);
+                                    drugDate.setDate(oncologyDrugDate.getDate());
+                                    drugDates.add(drugDate);
+                                }
+                                cancerDrug.setDates(drugDates);
+                                manager.persist(cancerDrug);
+                            }
+
+                            List<OncologyDiagnostic> diags = oncologyCase.getDiagnostics();
+                            if (!diags.isEmpty()) {
+                                List<E2CancerDiagnostic> list = new ArrayList<>();
+                                for (OncologyDiagnostic diag : diags) {
+                                    E2CancerDiagnostic cancerDiagnostic = new E2CancerDiagnostic(cancerEntry);
+                                    String diagnosticType = diag.getVocOncologyDiagType() != null ? diag.getVocOncologyDiagType().getCode() : null;
+                                    if (diagnosticType != null) {
+                                        cancerDiagnostic.setBiopsyDate(oncologyCase.getDateBiops());
+                                        cancerDiagnostic.setType(diagnosticType);
+                                        if (diagnosticType.equals("1")) {
+                                            cancerDiagnostic.setCode(diag.getHistiology().getCode());
+                                            cancerDiagnostic.setResult(diag.getResultHistiology().getCode());
+                                        } else if (diagnosticType.equals("2")) {
+                                            cancerDiagnostic.setCode(diag.getMarkers() != null ? diag.getMarkers().getCode() : "");
+                                            cancerDiagnostic.setResult(diag.getValueMarkers() != null ? diag.getValueMarkers().getCode() : "");
+                                        }
+                                        list.add(cancerDiagnostic);
+                                    }
+                                }
+                                cancerEntry.setDiagnostics(list);
+                            }
+                        } catch (Exception e) {
+                            LOG.error("Ошибка при заполнении диагностиеческого блока! ", e);
+                        }
+                    }
+                    manager.persist(cancerEntry);
+                    cancerEntryList.add(cancerEntry);
+                } catch (Exception e) {
+                    LOG.error("Не смог создать раковый случай ", e);
+                }
+                entry.setFileType("C");
+                entry.setCancerEntries(cancerEntryList);
+            }
+        }
     }
 
     private List<EntryDiagnosis> getDiagnosis(E2Entry entry) {
@@ -2147,7 +2147,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     }
 
     private VocKsg getBestKSG(E2Entry entry, boolean updateKsgIfExist) {
-        if (!isEquals(entry.getEntryType(), HOSPITAL)) {
+        if (!HOSPITAL.equals(entry.getEntryType())) {
             return null;
         }
         if (!updateKsgIfExist && entry.getKsg() != null || isTrue(entry.getIsManualKsg())) {
@@ -3235,7 +3235,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     private void setEntryType(E2Entry entry, VocListEntryTypeCode entryCode) {
         if (entryCode.equals(HOSPITAL) && isNotLogicalNull(entry.getVmpKind())) {
             entryCode = VMP;
-        }  else if (entryCode.equals(VocListEntryTypeCode.POLYCLINICCOVIDTYPE) || entryCode.equals(POLYCLINIC) && serviceDepartments.contains(entry.getDepartmentId())) { //телемедицина+лаборатория амокб
+        } else if (entryCode.equals(VocListEntryTypeCode.POLYCLINICCOVIDTYPE) || entryCode.equals(POLYCLINIC) && serviceDepartments.contains(entry.getDepartmentId())) { //телемедицина+лаборатория амокб
             entryCode = SERVICE;
         }
         if (isNotLogicalNull(entry.getInsuranceCompanyCode())) {

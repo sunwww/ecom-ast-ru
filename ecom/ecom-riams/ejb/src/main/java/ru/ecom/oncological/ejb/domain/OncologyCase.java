@@ -3,6 +3,8 @@ package ru.ecom.oncological.ejb.domain;
 import lombok.Getter;
 import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.medcase.MedCase;
 import ru.ecom.oncological.ejb.domain.voc.*;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
@@ -21,6 +23,9 @@ import java.util.List;
 @Table(schema="SQLUser")
 @Getter
 @Setter
+@AIndexes({
+        @AIndex(properties = {"medCase"})
+})
 public class OncologyCase extends BaseEntity {
 
     private MedCase medCase;
@@ -71,6 +76,13 @@ public class OncologyCase extends BaseEntity {
     @OneToOne
     public MedCase getMedCase() {
         return medCase;
+    }
+
+    private Long medCaseId;
+
+    @Column(name = "medcase_id", updatable = false, insertable = false)
+    public Long getMedCaseId() {
+        return medCaseId;
     }
 
     @Comment("Повод обращения")

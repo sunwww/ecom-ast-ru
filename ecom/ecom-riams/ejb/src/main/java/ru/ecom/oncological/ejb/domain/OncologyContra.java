@@ -2,6 +2,8 @@ package ru.ecom.oncological.ejb.domain;
 
 
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.oncological.ejb.domain.voc.VocOncologyN001;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -14,6 +16,9 @@ import java.sql.Date;
  */
 @Entity
 @Table(schema="SQLUser")
+@AIndexes({
+        @AIndex(properties = {"oncologyCase"})
+})
 public class OncologyContra extends BaseEntity {
 
     /**Случай онкологического лечения */

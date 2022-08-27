@@ -3,6 +3,8 @@ package ru.ecom.oncological.ejb.domain;
 import lombok.Getter;
 import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -12,7 +14,9 @@ import java.sql.Date;
 
 @Entity
 @Getter
-@Setter
+@Setter@AIndexes({
+        @AIndex(properties = {"oncologyDrug"})
+})
 /** Использование лекарственного препарата в онкологическом случае*/
 public class OncologyDrugDate extends BaseEntity {
 

@@ -1164,7 +1164,7 @@ public class PatientServiceBean implements IPatientService {
         manager.createNativeQuery("	update Kinsman set person_id =:idnew where person_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
         manager.createNativeQuery("	update PsychiatricCareCard set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
         manager.createNativeQuery("	update WorkCalendarTime set prepatient_id =:idnew where prepatient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
-        manager.createNativeQuery("	update WorkCalendarTime set PersonReserve_id =:idnew where PersonReserve_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
+//        manager.createNativeQuery("	update WorkCalendarTime set PersonReserve_id =:idnew where PersonReserve_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate(); //выпилить, нет такого поля в сущности
         manager.createNativeQuery("	update Document set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
         manager.createNativeQuery("	update ContractPerson set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();
         manager.createNativeQuery("	update WorkCalendarHospitalBed set patient_id =:idnew where patient_id =:idold	").setParameter("idnew", aIdNew).setParameter("idold", aIdOld).executeUpdate();

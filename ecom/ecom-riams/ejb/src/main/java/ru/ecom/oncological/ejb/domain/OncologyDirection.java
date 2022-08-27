@@ -4,6 +4,8 @@ package ru.ecom.oncological.ejb.domain;
 import lombok.Getter;
 import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.ecom.oncological.ejb.domain.voc.VocOncologyMethodDiagTreat;
@@ -21,6 +23,9 @@ import java.sql.Date;
 @Table(schema="SQLUser")
 @Getter
 @Setter
+@AIndexes({
+        @AIndex(properties = {"oncologyCase"})
+})
 public class OncologyDirection extends BaseEntity {
 
     /** Случай окологического лечения */
