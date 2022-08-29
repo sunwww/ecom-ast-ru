@@ -7,10 +7,7 @@ import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -27,7 +24,7 @@ public class E2CancerEntry extends BaseEntity {
 
     /** Запись */
     @Comment("Запись")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     public E2Entry getEntry() {return entry;}
     private E2Entry entry;
 

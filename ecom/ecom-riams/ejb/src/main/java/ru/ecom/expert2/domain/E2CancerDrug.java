@@ -3,6 +3,8 @@ package ru.ecom.expert2.domain;
 import lombok.Getter;
 import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.oncological.ejb.domain.voc.VocOncologyN020;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
@@ -13,6 +15,9 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@AIndexes({
+        @AIndex(properties = {"cancerEntry"})
+})
 /** Использование лекарственного препарата в онкологическом случае*/
 public class E2CancerDrug extends BaseEntity {
 

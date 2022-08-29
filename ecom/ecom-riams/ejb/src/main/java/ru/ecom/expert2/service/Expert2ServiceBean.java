@@ -883,27 +883,40 @@ public class Expert2ServiceBean implements IExpert2Service {
         /** Объединяем
          * Считаем по профилю мед. помощи, потоку обслуживания, классу МКБ
          * */
-        List<Object[]> list = manager.createNativeQuery("select " +
-                (isGroupBySpo ? "e2.externalparentid as f1, cast('' as varchar) as f2_empty, cast('' as varchar) as f3_empty" : "e2.externalpatientid as f1 , e2.medhelpprofile_id as f2, e2.servicestream as f3") +
-                ",cast('' as varchar) as f4_empty, list(e2.id||'') as f5_children from e2entry e2 where e2.listentry_id =:listId" + //Не учитываем диагноз *06.08.2018
+        List<Object> list = manager.createNativeQuery("select " +
+                " list(e2.id||'') as f5_spo_visits from e2entry e2 where e2.listentry_id =:listId" + //Не учитываем диагноз *06.08.2018
                 " and e2.entryType='POLYCLINIC'" +
                 " and (e2.isDeleted is null or e2.isDeleted='0') and (e2.isUnion is null or e2.isUnion='0') and e2.serviceStream!='COMPLEXCASE'" +
                 " and (e2.isMobilePolyclinic is null or e2.isMobilePolyclinic='0') and (e2.isEmergency is null or e2.isEmergency='0')" +
                 " and (e2.isDiagnosticSpo is null or e2.isDiagnosticSpo='0') " +
                 " and e2.medhelpprofile_id is not null" +
-                " group by " + (isGroupBySpo ? "e2.externalparentid" : "e2.externalpatientid , e2.medhelpprofile_id, e2.servicestream") +
+                " group by " + (
+                isGroupBySpo
+                        ? "e2.externalparentid"
+                        : "e2.externalpatientid , e2.medhelpprofile_id, e2.servicestream"
+        ) +
                 " having count(e2.id)>1 " + (isGroupBySpo ? "" : "and count(case when substring(e2.mainmkb,1,1)='Z' then 1 else null end)<count(e2.id)")).setParameter("listId", listEntryId).getResultList();
         //   LOG.info("sql = "+searchSql+", size = "+list.size());
+        LOG.info("Найдено " + list.size() + " обращений для склеивания в СПО");
         int i = 0;
-        for (Object[] spo : list) {
+        List<Long> allIds = list.stream()
+                .map(Object::toString)
+                .map(str -> str.split(","))
+                .map(Arrays::asList)
+                .flatMap(Collection::stream)
+                .map(String::trim)
+                .map(Long::parseLong)
+                .collect(Collectors.toList());
+        List<E2Entry> allEntries = manager.createNamedQuery("E2Entry.allByIds")
+                .setParameter("ids", allIds)
+                .getResultList();
+        Map<Object, List<E2Entry>> entryMap = mapUnionSpo(allEntries, isGroupBySpo);
+        LOG.info("Количество " + entryMap.values().size() + " должно быть равно " + list.size());
+        for (List<E2Entry> spoEntries : entryMap.values()) {
             i++;
             if (i % 100 == 0) LOG.info("Объединение случаев - " + i);
-            //Создаем новую запись, все существущие помечаем как COMPLEXCASE
-            String subList = (String) manager.createNativeQuery("select (select list(id||'') from (select ee.id from e2entry ee where ee.id in (" + spo[4].toString() + ") order by ee.startdate ) as chi ) ").getSingleResult();
-            String[] ids = subList.split(",");
             E2Entry mainEntry = null;
-            for (String idd : ids) {
-                E2Entry entry = manager.find(E2Entry.class, Long.valueOf(idd.trim()));
+            for (E2Entry entry : spoEntries) {
                 if ("109".equals(entry.getDoctorWorkfunction())) {
                     saveError(entry, E2EntryErrorCode.LONG_CHLX);
                 }
@@ -924,10 +937,22 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
 
             if (mainEntry != null) {
-                createDiagnosis(mainEntry);
+                cloneDiagnosis(mainEntry, spoEntries.get(0));
+//                createDiagnosis(mainEntry);
                 makeCheckEntry(mainEntry, false, true);
             }
         }
+    }
+//получаем все записи, которые необходимо объединить. Нужно сгруппировать по
+//    isGroupBySpo
+//   ? "e2.externalparentid"
+//   : "e2.externalpatientid , e2.medhelpprofile_id, e2.servicestream"
+
+    private Map<Object, List<E2Entry>> mapUnionSpo(List<E2Entry> allEntries, boolean isGroupBySpo) {
+        if (isGroupBySpo) {
+            return allEntries.stream().collect(Collectors.groupingBy(e2 -> e2.getExternalParentId()));
+        }
+        return allEntries.stream().collect(Collectors.groupingBy(e2 -> new SomeGroupDto(e2)));
     }
 
     /**
@@ -951,11 +976,15 @@ public class Expert2ServiceBean implements IExpert2Service {
         slaveEntry.setServiceStream(COMPLEXSERVICESTREAM);
         masterEntry.setIsUnion(true);
         slaveEntry.setIsUnion(true);
-        List<E2Entry> childList = manager.createQuery(" from E2Entry where parentEntry=:entry").setParameter("entry", slaveEntry).getResultList();
-        for (E2Entry child : childList) {
+        /* List<E2Entry> childList =*/
+        manager.createNativeQuery(" update E2Entry set parententry_id=:newParent where parententry_id=:oldParent")
+                .setParameter("oldParent", slaveEntry.getId())
+                .setParameter("newParent", masterEntry.getId())
+                .executeUpdate();
+       /* for (E2Entry child : childList) {
             child.setParentEntry(masterEntry);
             manager.persist(child);
-        }
+        }*/
         if (isTrue(masterEntry.getIsDentalCase())) {
             moveMedServiceToMainEntry(slaveEntry, masterEntry);
         }
@@ -1556,7 +1585,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         return !manager.createQuery("" +
                         " select ed from EntryDiagnosis ed " +
                         " left join ed.mkb mkb" +
-                        " where ed.entry_id=:id" +
+                        " where ed.entryId=:id" +
                         " and mkb.code like 'Z%'")
                 .setParameter("id", entry.getId()).getResultList()
                 .isEmpty();
@@ -1826,9 +1855,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                         saveError(entry, E2EntryErrorCode.COVID_NO_CARD);
                     }
                     boolean isClinical = false;
-                    if (!diagnosisMap.containsKey("MKB_" + mkb)) {
-                        diagnosisMap.put("MKB_" + mkb, getEntityByCode(mkb, VocIdc10.class, false));
-                    }
+                    diagnosisMap.putIfAbsent("MKB_" + mkb, getEntityByCode(mkb, VocIdc10.class, false));
+
                     if (!diagnosisMap.containsKey("REGTYPE_" + regType)) {
                         diagnosisMap.put("REGTYPE_" + regType, getEntityByCode(regType, VocDiagnosisRegistrationType.class, false));
                         if (regType.equals("3")) {
@@ -1838,9 +1866,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                             isClinical = true;
                         }
                     }
-                    if (!diagnosisMap.containsKey("PRIORITY_" + priority)) {
-                        diagnosisMap.put("PRIORITY_" + priority, getEntityByCode(priority, VocPriorityDiagnosis.class, false));
-                    }
+                    diagnosisMap.putIfAbsent("PRIORITY_" + priority, getEntityByCode(priority, VocPriorityDiagnosis.class, false));
                     if (foundDischarge && isClinical) {
                         foundClinical = false;
                         continue;
@@ -2714,7 +2740,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         //Пришло время сохранять все сложности пациента
         if (!codes.isEmpty()) {
             for (String code : codes) {
-                VocE2CoefficientPatientDifficulty difficulty = difficultyHashMap.computeIfAbsent(code,val-> getActualVocByCode(VocE2CoefficientPatientDifficulty.class, code));
+                VocE2CoefficientPatientDifficulty difficulty = difficultyHashMap.computeIfAbsent(code, val -> getActualVocByCode(VocE2CoefficientPatientDifficulty.class, code));
                 E2CoefficientPatientDifficultyEntryLink link = new E2CoefficientPatientDifficultyEntryLink();
                 link.setEntry(entry);
                 link.setDifficulty(difficulty);

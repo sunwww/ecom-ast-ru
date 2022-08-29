@@ -2,6 +2,8 @@ package ru.ecom.expert2.domain;
 
 import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondN020;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV032;
 import ru.ecom.expert2.domain.voc.federal.VocE2FondV034;
@@ -13,6 +15,9 @@ import java.sql.Date;
 
 @Entity
 @Setter
+@AIndexes({
+        @AIndex(properties = {"entry"})
+})
 /**
  * Сведения о введенном лекарственном препарате
  */
