@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static ru.nuzmsh.util.EqualsUtil.isEquals;
 import static ru.nuzmsh.util.EqualsUtil.isOneOf;
@@ -411,7 +412,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                         if (isComplexCase) break;
                         Element slId = sl.getChild("SL_ID");
                         Long entryId = Long.parseLong(slId.getText());
-                        E2Entry entry = entryMap.get(entryId); // manager.find(E2Entry.class, entryId);
+                        E2Entry entry = entryMap.get(entryId);
                         if (entry == null || isTrue(entry.getIsDeleted())) {
                             LOG.warn("Ошибка при импорте ответа от фонда - не найдена запись с ИД = " + entryId);
                             continue;
@@ -506,11 +507,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
     }
 
     private Map<Long, E2Entry> getEntryMap(List<E2Entry> allEntries) {
-        Map<Long, E2Entry> map = new HashMap<>();
-        for (E2Entry e : allEntries) {
-            map.put(e.getId(), e);
-        }
-        return map;
+        return allEntries.stream().collect(Collectors.toMap(k->k.getId(), v->v));
     }
 
     private boolean isDefect(Element zsl) {

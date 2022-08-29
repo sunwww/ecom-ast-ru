@@ -6,6 +6,7 @@ import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.domain.simple.VocBaseEntity;
+import ru.ecom.ejb.domain.simple.VocIdCodeName;
 import ru.ecom.ejb.sequence.service.SequenceHelper;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
@@ -47,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Optional.ofNullable;
 import static ru.nuzmsh.util.BooleanUtils.isNotTrue;
 import static ru.nuzmsh.util.BooleanUtils.isTrue;
 import static ru.nuzmsh.util.CollectionUtil.isEmpty;
@@ -83,14 +85,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         if (isNullOrEmpty(historyNumbers)) {
             sqlAdd.append("isForeign='1' and serviceStream='OBLIGATORYINSURANCE'"); // по умолчанию - иногородние омс
         } else {
-            boolean first = true;
-            for (String h : historyNumbers.split(",")) {
-                if (!first) sqlAdd.append(",");
-                else first = false;
-                sqlAdd.append("'").append(h).append("'");
-            }
-            sqlAdd.insert(0, "historyNumber in (");
-            sqlAdd.append(") ");
+            sqlAdd.insert(0, "historyNumber in ('")
+                    .append(String.join("','",  historyNumbers.split(",")))
+            .append("') ");
         }
 
         String sql = "from E2Entry where listEntry_id=:listId and " + sqlAdd.toString() + " and  coalesce(isDeleted, false) = false";
@@ -215,7 +212,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         if (a3) add(z, "P_OTK", "0");
         if (!isPolyclinic && !a3) add(z, "KD_Z", entry.getBedDays() + ""); // Продолжительность госпитализации
         if (a3)
-            add(z, "RSLT_D", entry.getDispResult() != null ? entry.getDispResult().getCode() : "___"); // Результат диспансеризации
+            add(z, "RSLT_D", ofNullable(entry.getDispResult()).map(VocIdCodeName::getCode).orElse("___")); // Результат диспансеризации
         if (!a3) {
             add(z, "RSLT", entry.getFondResult().getCode()); // Результат обращения
             add(z, "ISHOD", entry.getFondIshod().getCode()); // Исход случая.
@@ -236,14 +233,14 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
      * Добавляем в Element значение
      */
     private void add(Element el, String fieldName, Object value) {
-        el.addContent(new Element(fieldName).setText(value != null ? value.toString() : ""));
+        el.addContent(new Element(fieldName).setText(ofNullable(value).map(Object::toString).orElse("")));
     }
 
     /**
      * Добавляем в Element значение
      */
     private void add(int index, Element el, String fieldName, Object value) {
-        el.addContent(index, new Element(fieldName).setText(value != null ? value.toString() : ""));
+        el.addContent(index, new Element(fieldName).setText(ofNullable(value).map(Object::toString).orElse("")));
     }
 
     /**
@@ -396,7 +393,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(sl, "VID_HMP", currentEntry.getVmpKind()); // Вид ВМП
                     add(sl, "METOD_HMP", currentEntry.getVmpMethod()); // Метод ВМП
                 }
-                add(sl, "LPU_1", currentEntry.getDepartmentCode() != null ? currentEntry.getDepartmentCode() : "30000101");
+                add(sl, "LPU_1", ofNullable(currentEntry.getDepartmentCode()).orElse("30000101"));
                 addIfNotNull(sl, "PODR", currentEntry.getDepartmentAddressCode());
                 if (!a3) add(sl, "PROFIL", profile.getCode()); //Профиль специальностей V002 * 12.12.2018
                 if (isHosp || isVmp) {
@@ -588,7 +585,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 if (isHosp && isTrue(entry.getIsRehabBed())) {
                     add(sl, "REAB", "1");
                 }
-                String prvs = currentEntry.getFondDoctorSpecV021() != null ? currentEntry.getFondDoctorSpecV021().getCode() : "ERROR_" + currentEntry.getDoctorWorkfunction();
+                String prvs = ofNullable(currentEntry.getFondDoctorSpecV021())
+                        .map(VocIdCodeName::getCode)
+                        .orElse("ERROR_" + currentEntry.getDoctorWorkfunction());
                 if (!a3) {
                     add(sl, "PRVS", prvs); //Специальность лечащего врача
                     add(sl, "VERS_SPEC", version);
@@ -750,67 +749,52 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     //валидация случая на основные поля
     private boolean validateEntry(E2Entry entry, boolean isPolic, boolean isDisp) {
         StringBuilder err = new StringBuilder();
-        boolean isError = false;
         if (null == entry.getFondResult()) {
             err.append("НЕ РАСЧИТАН РЕЗУЛЬТАТ СЛУЧАЯ;");
-            isError = true;
         }
         if (null == entry.getFondIshod()) {
             err.append("НЕ РАСЧИТАН ИСХОД СЛУЧАЯ;");
-            isError = true;
         }
         if (null == entry.getMedHelpProfile()) {
             err.append("НЕ УКАЗАН ПРОФИЛЬ МЕД. ПОМОЩИ;");
-            isError = true;
         }
         if (null == entry.getFondDoctorSpecV021()) {
             err.append("НЕ РАСЧИТАНА СПЕЦИАЛЬНОСТЬ ВРАЧА;");
-            isError = true;
         }
         if (null == entry.getCost()) {
             err.append("НЕ РАСЧИТАНА ЦЕНА СЛУЧАЯ;");
-            isError = true;
         }
         if (null == entry.getBaseTarif()) {
             err.append("НЕ РАСЧИТАН БАЗОВЫЙ ТАРИФ;");
-            isError = true;
         }
         if (null == entry.getIdsp()) {
             err.append("НЕ РАСЧИТАН СПОСОБ ОПЛАТЫ МЕД. ПОМОЩИ;");
-            isError = true;
         }
         if (isNullOrEmpty(entry.getMedPolicyType())) {
             err.append("НЕ УКАЗАН ВИД ПОЛИСА;");
-            isError = true;
         }
         if (isNullOrEmpty(entry.getMedPolicyNumber())) {
             err.append("НЕ УКАЗАН НОМЕР ПОЛИСА;");
-            isError = true;
         }
         if (isNullOrEmpty(entry.getInsuranceCompanyCode())) {
             err.append("НЕ УКАЗАН КОД СТРАХ КОМПАНИИ;");
-            isError = true;
         }
         if (isPolic && isNullOrEmpty(entry.getMainMkb())) {
             err.append("НЕ УКАЗАН ОСНОВНОЙ ДИАГНОЗ");
-            isError = true;
         }
         if (isNullOrEmpty(entry.getHistoryNumber())) {
             err.append("НЕ ЗАПОЛНЕН НОМЕР ИСТОРИИ БОЛЕЗНИ");
-            isError = true;
         }
         if (null == entry.getVidSluch()) {
             err.append("НЕ ЗАПОЛНЕН ВИД СЛУЧАЯ");
-            isError = true;
         }
         if (!isDisp && isNullOrEmpty(entry.getDoctorSnils())) {
             err.append("НЕ УКАЗАН СНИЛС ВРАЧА");
-            isError = true;
         }
         if (entry.getMedHelpKind() == null) {
             err.append("НЕ УКАЗАН ВИД МП");
-            isError = true;
         }
+        boolean isError = err.length()>0;
         if (isError) {
             manager.persist(new E2EntryError(entry, "NO_FOND_FIELDS:" + err));
             LOG.error("Запись с ИД " + entry.getId() + " не будет выгружена в xml: " + err);
@@ -838,7 +822,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     }
 
     private <T extends VocBaseEntity> String getVocCode(T voc) {
-        return voc == null ? null : voc.getCode();
+        return ofNullable(voc)
+                .map(VocBaseEntity::getCode)
+                .orElse(null);
     }
 
     private String calculateDentalEdcol(E2Entry entry) {
@@ -1127,19 +1113,12 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                 int cntSlo = Integer.parseInt(sluch[2].toString());
                 String sluchId = sluch[1].toString().trim();
                 String sls = sluch[0].toString().trim();
-//                if (isHosp) {
                 E2Entry entry;
                 if (isHosp && cntSlo > 1) {
                     entry = calculateHospitalEntry(Long.valueOf(sluchId), sls);
                 } else {
                     entry = manager.find(E2Entry.class, Long.valueOf(sls));
                 }
-//                } else {
-//                    entry = manager.find(E2Entry.class, Long.valueOf(sls));
-//                    if (cntSlo == 0) {
-//                        sls = sluchId;
-//                    }
-//                }
                 if (entry == null) {
                     throw new IllegalStateException("Не найден случай с ИД: " + sls);
                 }
@@ -1339,7 +1318,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             LOG.warn("it seems Windows");
             exec = "\"C:\\Program Files\\7-Zip\\7z.exe\" a -tZIP ";
             try {
-                Runtime.getRuntime().exec(exec + sb.toString());//arraCmd);
+                Runtime.getRuntime().exec(exec + sb.toString());
             } catch (IOException e1) {
                 LOG.error(e1);
             }
