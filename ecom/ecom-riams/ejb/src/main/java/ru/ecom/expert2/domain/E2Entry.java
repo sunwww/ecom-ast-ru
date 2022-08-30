@@ -139,7 +139,7 @@ public class E2Entry extends BaseEntity {
         return totalCoefficient;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     public E2Entry getParentEntry() {
         return parentEntry;
     }
