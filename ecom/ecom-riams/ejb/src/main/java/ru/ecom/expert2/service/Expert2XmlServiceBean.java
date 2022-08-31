@@ -24,7 +24,6 @@ import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.ecom.expomc.ejb.services.exportservice.ExportServiceBean;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.nuzmsh.util.CollectionUtil;
-import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.date.AgeUtil;
 
@@ -33,13 +32,11 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.sql.Date;
@@ -86,8 +83,8 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             sqlAdd.append("isForeign='1' and serviceStream='OBLIGATORYINSURANCE'"); // по умолчанию - иногородние омс
         } else {
             sqlAdd.insert(0, "historyNumber in ('")
-                    .append(String.join("','",  historyNumbers.split(",")))
-            .append("') ");
+                    .append(String.join("','", historyNumbers.split(",")))
+                    .append("') ");
         }
 
         String sql = "from E2Entry where listEntry_id=:listId and " + sqlAdd.toString() + " and  coalesce(isDeleted, false) = false";
@@ -350,13 +347,13 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             String version = "V021";
             for (String slId : slIds) {
                 Element sl = new Element("SL");
-                E2Entry currentEntry = manager.find(E2Entry.class, Long.valueOf(slId.trim()));
+                E2Entry currentEntry = manager.find(E2Entry.class, Long.valueOf(slId.trim()));//todo запрос в цикле
                 if (validateEntry(currentEntry, isPoliclinic, isExtDisp)) {
                     return null;
                 }
                 String edCol = isTrue(entry.getIsDentalCase()) ? calculateDentalEdcol(entry) : "1";
 
-                if (isPoliclinic) {
+                if (isPoliclinic) { //todo запрос в цикле
                     children = manager.createQuery("from E2Entry where parentEntry_id=:id and coalesce(isDeleted, false) = false and coalesce(doNotSend, false) = false order by startDate").setParameter("id", currentEntry.getId()).getResultList();
                 } else {
                     children = new ArrayList<>();
@@ -794,7 +791,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
         if (entry.getMedHelpKind() == null) {
             err.append("НЕ УКАЗАН ВИД МП");
         }
-        boolean isError = err.length()>0;
+        boolean isError = err.length() > 0;
         if (isError) {
             manager.persist(new E2EntryError(entry, "NO_FOND_FIELDS:" + err));
             LOG.error("Запись с ИД " + entry.getId() + " не будет выгружена в xml: " + err);
@@ -1247,29 +1244,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     }
 
     private E2Entry cloneEntity(E2Entry source) {
-        try {
-            Method[] methodList = source.getClass().getMethods();
-            E2Entry newEntity = new E2Entry();
-            for (Method setterMethod : methodList) {
-                String methodName = setterMethod.getName();
-                if (methodName.startsWith("set")) {
-                    if (methodName.equals("setId") || setterMethod.isAnnotationPresent(OneToMany.class)) {
-                        continue;
-                    }
-                    String propertyName = PropertyUtil.getPropertyName(setterMethod);
-                    try {
-                        Object val = PropertyUtil.getPropertyValue(source, propertyName);
-                        PropertyUtil.setPropertyValue(newEntity, propertyName, val);
-                    } catch (Exception e) {
-                    }
-                }
-            }
-            return newEntity;
-        } catch (Exception e) {
-            LOG.error(e);
-            return null;
-        }
-
+        return expertService.cloneEntity(source);
     }
 
     private String getWorkDir() {

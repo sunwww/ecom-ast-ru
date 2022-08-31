@@ -466,7 +466,7 @@ public class Expert2ServiceBean implements IExpert2Service {
         isBillCreating = true;
         E2Bill bill;
         try {
-            String sql = "select bill from E2Bill where billNumber=:number and billDate=:date ";
+            String sql = "select bill from E2Bill bill where bill.billNumber=:number and bill.billDate=:date ";
             List<E2Bill> list = manager.createQuery(sql).setParameter("number", billNumber).setParameter("date", billDate).getResultList();
             if (list.isEmpty()) { //Создаем новый счет. статус - черновик
                 bill = new E2Bill();
@@ -937,7 +937,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
 
             if (mainEntry != null) {
-                cloneDiagnosis(mainEntry, spoEntries.get(0));
+                cloneDiagnosis(mainEntry, spoEntries.get(0)); //todo перенести диагнозы из комплексных в главное
 //                createDiagnosis(mainEntry);
                 makeCheckEntry(mainEntry, false, true);
             }
@@ -977,10 +977,10 @@ public class Expert2ServiceBean implements IExpert2Service {
         masterEntry.setIsUnion(true);
         slaveEntry.setIsUnion(true);
         /* List<E2Entry> childList =*/
-        manager.createNativeQuery(" update E2Entry set parententry_id=:newParent where parententry_id=:oldParent")
+   /*     manager.createNativeQuery(" update E2Entry set parententry_id=:newParent where parententry_id=:oldParent")
                 .setParameter("oldParent", slaveEntry.getId())
                 .setParameter("newParent", masterEntry.getId())
-                .executeUpdate();
+                .executeUpdate();*/
        /* for (E2Entry child : childList) {
             child.setParentEntry(masterEntry);
             manager.persist(child);
@@ -988,8 +988,8 @@ public class Expert2ServiceBean implements IExpert2Service {
         if (isTrue(masterEntry.getIsDentalCase())) {
             moveMedServiceToMainEntry(slaveEntry, masterEntry);
         }
-        manager.persist(masterEntry);
-        manager.persist(slaveEntry);
+//        manager.persist(masterEntry);
+//        manager.persist(slaveEntry);
     }
 
     /**

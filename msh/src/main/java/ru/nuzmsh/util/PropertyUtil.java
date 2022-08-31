@@ -183,6 +183,10 @@ public class PropertyUtil {
             return String.valueOf(aValue);
         } else if (aInClass.equals(Integer.class) && aOutClass.equals(Long.class)) {
             return Long.valueOf((Integer) aValue);
+        } else if (aInClass.isEnum() && aOutClass.equals(String.class)) {
+            return aValue.toString();
+        } else if (aOutClass.isEnum() && aInClass.equals(String.class)) {
+            return Enum.valueOf(aOutClass, aValue.toString());
         }
         throw new IllegalArgumentException("Нет преобразования из " + aInClass + " в " + aOutClass + " для значения " + aValue);
 
