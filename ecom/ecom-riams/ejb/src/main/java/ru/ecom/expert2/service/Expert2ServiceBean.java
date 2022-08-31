@@ -937,7 +937,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
 
             if (mainEntry != null) {
-                cloneDiagnosis(mainEntry, spoEntries.get(0)); //todo перенести диагнозы из комплексных в главное
+                cloneDiagnosis(spoEntries.get(0), mainEntry); //todo перенести диагнозы из комплексных в главное
 //                createDiagnosis(mainEntry);
                 makeCheckEntry(mainEntry, false, true);
             }
