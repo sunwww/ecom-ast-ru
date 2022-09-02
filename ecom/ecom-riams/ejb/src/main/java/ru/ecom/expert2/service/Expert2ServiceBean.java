@@ -529,64 +529,45 @@ public class Expert2ServiceBean implements IExpert2Service {
      * Переносим записи с ошибками из одного заполнения в новое
      */
     @Override
-    public void exportErrorsNewListEntry(Long listEntryId, String[] errorCodes, String[] sanctionCodes) {
+    public void exportErrorsNewListEntry(Long listEntryId, Long newListEntryId, String[] errorCodes, String[] sanctionCodes) {
         try {
-            E2ListEntry currentListEntry = manager.find(E2ListEntry.class, listEntryId);
-            E2ListEntry newListEntry = new E2ListEntry(currentListEntry, "Ошибки_" + currentListEntry.getName());
-            newListEntry.setCheckDate(currentListEntry.getCheckDate());
-            newListEntry.setCheckTime(currentListEntry.getCheckTime());
-            manager.persist(newListEntry);
             for (String errorCode : errorCodes) {
-                List<Long> listIds = ((List<BigInteger>) manager.createNativeQuery("select err.entry_id from E2EntryError err " +
-                                " where err.listEntry_id=:id and err.errorCode=:errorCode")
-                        .setParameter("id", listEntryId).setParameter("errorCode", errorCode.trim()).getResultList())
-                        .stream().map(BigInteger::longValue).collect(Collectors.toList());
-                LOG.info("creating errors in new listEntry(id" + newListEntry.getId() + ") [" + errorCode + "]... defect list size = " + listIds.size());
-                String sql = "update e2entry set listEntry_id = :newListId where id in (:ids) or parent_id in (:ids)";
-                manager.createNativeQuery(sql)
-                        .setParameter("ids", listIds)
-                        .setParameter("newListId", newListEntry.getId())
-                        .executeUpdate();
-            /*    for (BigInteger entryId : list) {
-                    E2Entry newEntry = manager.find(E2Entry.class, entryId.longValue());
-                    if (newEntry == null) {
-                        continue;
+                if (StringUtil.isNotEmpty(errorCode)) {
+                    List<Long> listIds = ((List<BigInteger>) manager.createNativeQuery("select err.entry_id from E2EntryError err " +
+                                    " where err.listEntry_id=:id and err.errorCode=:errorCode")
+                            .setParameter("id", listEntryId)
+                            .setParameter("errorCode", errorCode.trim())
+                            .getResultList())
+                            .stream().map(BigInteger::longValue).collect(Collectors.toList());
+                    if (!listIds.isEmpty()) {
+
+                        LOG.info("creating errors in new listEntry(id" + newListEntryId + ") [" + errorCode + "]... defect list size = " + listIds.size());
+                        String sql = "update e2entry set listEntry_id = :newListId where id in (:ids) or parententry_id in (:ids)";
+                        manager.createNativeQuery(sql)
+                                .setParameter("ids", listIds)
+                                .setParameter("newListId", newListEntryId)
+                                .executeUpdate();
                     }
-                    newEntry.setListEntry(newListEntry);
-                    List<E2Entry> children = manager.createQuery("from E2Entry where parentEntry=:e").setParameter("e", newEntry).getResultList();
-                    for (E2Entry child : children) {
-                        child.setListEntry(newListEntry);
-                        manager.persist(child);
-                    }
-                    manager.persist(newEntry);
-                }*/
+                }
             }
             for (String dopCode : sanctionCodes) {
-                List<BigInteger> list = manager.createNativeQuery("select es.entry_id from e2entrysanction es" +
-                                " left join e2entry ee on es.entry_id=ee.id " +
-                                " where ee.listEntry_id=:id and es.dopcode=:dopCode")
-                        .setParameter("id", listEntryId)
-                        .setParameter("dopCode", dopCode.trim())
-                        .getResultList();
-                LOG.info("creating sanctions [" + dopCode + "]... defect list size = " + list.size());
-                String sql = "update e2entry set listEntry_id = :newListId where id in (:ids) or parent_id in (:ids)";
-                manager.createNativeQuery(sql)
-                        .setParameter("ids", list.stream().map(BigInteger::longValue).collect(Collectors.toList()))
-                        .setParameter("newListId", newListEntry.getId())
-                        .executeUpdate();
-           /*     for (BigInteger entryId : list) {
-                    E2Entry newEntry = manager.find(E2Entry.class, entryId.longValue());
-                    if (newEntry == null) {
-                        continue;
+                if (StringUtil.isNotEmpty(dopCode)) {
+                    List<Long> list = ((List<BigInteger>) manager.createNativeQuery("select es.entry_id from e2entrysanction es" +
+                                    " left join e2entry ee on es.entry_id=ee.id " +
+                                    " where ee.listEntry_id=:id and es.dopcode=:dopCode")
+                            .setParameter("id", listEntryId)
+                            .setParameter("dopCode", dopCode.trim())
+                            .getResultList())
+                            .stream().map(BigInteger::longValue).collect(Collectors.toList());
+                    if (!list.isEmpty()) {
+                        LOG.info("creating sanctions [" + dopCode + "]... defect list size = " + list.size());
+                        String sql = "update e2entry set listEntry_id = :newListId where id in (:ids) or parent_id in (:ids)";
+                        manager.createNativeQuery(sql)
+                                .setParameter("ids", list)
+                                .setParameter("newListId", newListEntryId)
+                                .executeUpdate();
                     }
-                    newEntry.setListEntry(newListEntry);
-                    List<E2Entry> children = manager.createQuery("from E2Entry where parentEntry=:e").setParameter("e", newEntry).getResultList();
-                    for (E2Entry child : children) {
-                        child.setListEntry(newListEntry);
-                        manager.persist(child);
-                    }
-                    manager.persist(newEntry);
-                }*/
+                }
             }
 
             LOG.info("Finish create defects!");
@@ -4075,5 +4056,15 @@ public class Expert2ServiceBean implements IExpert2Service {
         jso.addProperty("schemaId", schema.getId());
         jso.addProperty("schemaName", schema.getName());
         return jso.toString();
+    }
+
+    @Override
+    public Long createDefectListEntry(Long listEntryId) {
+        E2ListEntry currentListEntry = manager.find(E2ListEntry.class, listEntryId);
+        E2ListEntry newListEntry = new E2ListEntry(currentListEntry, "Ошибки_" + currentListEntry.getName());
+        newListEntry.setCheckDate(currentListEntry.getCheckDate());
+        newListEntry.setCheckTime(currentListEntry.getCheckTime());
+        manager.persist(newListEntry);
+        return newListEntry.getId();
     }
 }

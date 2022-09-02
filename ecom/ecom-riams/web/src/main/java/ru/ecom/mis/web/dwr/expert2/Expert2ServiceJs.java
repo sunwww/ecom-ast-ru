@@ -265,9 +265,10 @@ public class Expert2ServiceJs {
     }
 
     public void exportErrorsNewListEntry(Long listEntryId, String errorCodes, String sanctionDopCodes, HttpServletRequest request) throws NamingException {
-        Injection.find(request).getService(IExpert2Service.class)
-                .exportErrorsNewListEntry(listEntryId, errorCodes != null ? errorCodes.split(",") : new String[0]
-                        , sanctionDopCodes != null ? sanctionDopCodes.split(",") : new String[0]);
+        IExpert2Service service = Injection.find(request).getService(IExpert2Service.class);
+        Long newListEntryId = service.createDefectListEntry(listEntryId);
+        service.exportErrorsNewListEntry(listEntryId, newListEntryId, errorCodes != null ? errorCodes.split(",") : new String[0]
+                , sanctionDopCodes != null ? sanctionDopCodes.split(",") : new String[0]);
     }
 
     /**

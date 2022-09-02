@@ -22,7 +22,9 @@ public interface IExpert2Service {
 
     E2Bill getBillEntryByDateAndNumber(String aBillNumber, Date aBillDate, String aComment);
     boolean exportDefectNewListEntry(Long aListEntryId);
-    void exportErrorsNewListEntry(Long aListEntryId, String[] aErrorCodes, String[] aSanctionCodes);
+
+    void exportErrorsNewListEntry(Long listEntryId, Long newListEntryId, String[] aErrorCodes, String[] aSanctionCodes);
+
     void checkListEntry(Long aListEntryId, boolean updateKsgIfExist, String aParams, long aMonitorId);
     void makeCheckEntry (Long aEntryId, boolean updateKsgIfExist);
     E2Entry calculateEntryPrice(E2Entry  aEntry);
@@ -49,8 +51,17 @@ public interface IExpert2Service {
 
     /**
      * Находим схему лечения по V033
+     *
      * @param groupSchemaId
      * @return
      */
     String loadDrugSchemaByDrugGroupSchemaId(Long groupSchemaId);
+
+    /**
+     * Создаем копию заполнения с префиксом "ошибки"
+     *
+     * @param listEntryId
+     * @return
+     */
+    Long createDefectListEntry(Long listEntryId);
 }
