@@ -358,6 +358,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             } else {
                 String dir = unZip(mpFileName);
                 String hFilename = "H" + mpFileName.substring(mpFileName.indexOf('M')).replace(".MP", ".XML");
+                boolean isUnidentified = mpFileName.contains("S00000"); //файл с неидентифицированными
                 File hFile = new File(dir + File.separator + hFilename);
                 Element root;
                 try {
@@ -399,8 +400,15 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     LOG.info(hFilename + " Не найдено ни одной entryId, что странно, выходим");
                     return;
                 }
-                List<E2Entry> allEntries = manager.createNamedQuery("E2Entry.allByIds").setParameter("ids", entryIds).getResultList();
+                List<E2Entry> allEntries = manager.createNamedQuery("E2Entry.allByIds")
+                        .setParameter("ids", entryIds)
+                        .getResultList();
                 Map<Long, E2Entry> entryMap = getEntryMap(allEntries);
+                if (isUnidentified) {
+                    //у файла с неидентифицироваными не проверяем наличие ошибок, все записи помечаем как бракованные
+                    entryMap.values().forEach(entry->
+                            manager.persist(new E2EntrySanction(entry, null, "NOT_IDENTIFIED", true, "Пациент неиндентифицирован")));
+                }  else {
                 manager.createNativeQuery("delete from E2EntrySanction where entry_id in (:entryIds)").setParameter("entryIds", entryIds).executeUpdate();
                 BigDecimal totalSum = BigDecimal.ZERO;
                 for (Element zap : zaps) {
@@ -498,6 +506,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 monitor.setText("По счету №" + savedBill.getBillNumber() + " сумма = " + totalSum);
                 savedBill.setSum(totalSum);
                 manager.persist(savedBill);
+                }
                 LOG.info("Обновление MP закончено!");
             }
         } catch (Exception e) {
