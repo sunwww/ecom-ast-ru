@@ -16,17 +16,13 @@ public class PsychCareCardByAreaAction extends BaseAction {
 
 	@Override
 	public ActionForward myExecute(ActionMapping aMapping, ActionForm aForm, HttpServletRequest aRequest, HttpServletResponse aResponse) throws Exception {
-		//String typePat =ActionUtil.updateParameter("PsychCareCardByArea","typePatient","3", aRequest) ;
-		//ActionUtil.updateParameter("PsychCareCardByArea","period","2", aRequest) ;
 		String typeDate = ActionUtil.updateParameter("PsychCareCardByArea","typeDate","1", aRequest) ;
-		//String typeFirst = ActionUtil.updateParameter("PsychCareCardByArea","typeFirst","1", aRequest) ;
 		String typeInv = ActionUtil.updateParameter("PsychCareCardByArea","typeInv","1", aRequest) ;
 		String typeAge = ActionUtil.updateParameter("PsychCareCardByArea","typeAge","2", aRequest) ;
 		String typeSuicide = ActionUtil.updateParameter("PsychCareCardByArea","typeSuicide","1", aRequest) ;
 		String typeDateSuicide = ActionUtil.updateParameter("PsychCareCardByArea","typeDateSuicide","1", aRequest) ;
 		String typeCare = ActionUtil.updateParameter("PsychCareCardByArea","typeCare","1", aRequest) ;
 		String typeAddress = ActionUtil.updateParameter("PsychCareCardByArea","typeAddress","1", aRequest) ;
-		String typeDiag = ActionUtil.updateParameter("PsychCareCardByArea","typeDiag","1", aRequest) ;
 		String style = "" ;
 		AreaReportForm form = (AreaReportForm)aForm ;
 		String addressAdd="" ;

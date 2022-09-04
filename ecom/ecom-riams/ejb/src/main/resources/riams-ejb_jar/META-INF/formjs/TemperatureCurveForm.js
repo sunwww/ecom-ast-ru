@@ -1,14 +1,4 @@
 function onPreSave(aForm, aEntity, aCtx) {
-    // var takingDate = '' + aForm.getTakingDate();
-    //
-    // if (takingDate == getNowDateWithoutTimeAndTimezone(new java.text.SimpleDateFormat("dd.MM.yyyy"))
-    //     && checkIsLast(aEntity.id, aCtx)) {
-    //     var date = new java.util.Date();
-    //     aForm.setEditDate(Packages.ru.nuzmsh.util.format.DateFormat.formatToDate(date));
-    //     aForm.setEditTime(new java.sql.Time(date.getTime()));
-    //     aForm.setEditUsername(aCtx.getSessionContext().getCallerPrincipal().toString());
-    // } else
-    //     throw("Можно редактировать только последний температурный лист за текущий день!");
     throw "Редактирование запрещено";
 }
 
@@ -16,9 +6,10 @@ function onPreDelete(aEntityId, aCtx) {
     var temp = aCtx.manager.find(Packages.ru.ecom.mis.ejb.domain.medcase.hospital.TemperatureCurve, new java.lang.Long(aEntityId));
     var takingDate = '' + temp.takingDate;
 
-    if (takingDate != getNowDateWithoutTimeAndTimezone(new java.text.SimpleDateFormat("yyyy-MM-dd"))
-        || !checkIsLast(aEntityId, aCtx))
-        throw("Можно удалять только последний температурный лист за текущий день!");
+    if (!aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/DeleteAdmin") &&
+        (takingDate != getNowDateWithoutTimeAndTimezone(new java.text.SimpleDateFormat("yyyy-MM-dd"))
+        || !checkIsLast(aEntityId, aCtx)))
+        throw("Можно удалять только последний температурный лист за текущий день! Только администраторы системы могут удалить этот лист.");
     else
         checkBraceleteAndClose(aEntityId, aCtx);
 }

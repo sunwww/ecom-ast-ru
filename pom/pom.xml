@@ -13,10 +13,35 @@
     <packaging>pom</packaging>
     <properties>
         <jdk.version>1.8</jdk.version>
-        <libdir>C:/Users/vtsybulin/IdeaProjects/MedOS_libs/</libdir>
+        <libdir>${medos.libdir}</libdir>
+        <!-- Разработчику необходимо добавить в файл $HOME/.m/settings.xml профиль с указанием верного пути к папке с либами для медоса. Пример:
+        <profile>
+            <id>dev</id>
+            <properties>
+                <medos.libdir>P:/medos/MedOS_libs/</medos.libdir>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        -->
     </properties>
-
+<profiles>
+    <profile>
+        <id>gitlab</id>
+        <properties>
+            <medos.libdir>/home/build/medos/libs</medos.libdir>
+        </properties>
+    </profile>
+</profiles>
     <dependencies>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.24</version>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>http</artifactId>

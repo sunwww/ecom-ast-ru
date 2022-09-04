@@ -70,7 +70,7 @@ public class EntityFormServiceBean extends AbstractFormServiceBeanHelper impleme
             UnDeletable a = (UnDeletable) entityClass.getAnnotation(UnDeletable.class);
             sql.append(" where ").append(a.fieldName()).append(" is null or ").append(a.fieldName()).append(" is false");
         }
-        Collection results = manager.createQuery(sql.toString() + " order by id")
+        Collection results = manager.createQuery(sql + " order by id")
                 .setMaxResults(300).getResultList();
 
         if (CAN_DEBUG) LOG.debug("listAll: copying ...");

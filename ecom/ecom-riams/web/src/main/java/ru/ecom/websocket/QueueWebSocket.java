@@ -201,17 +201,19 @@ private QueueTicket getTicketById(Long aTicketId) {
 }
     /**Находим свободного оператора по коду очереди */
 private OperatorSession getFreeOperator (String aQueueCode) {
-    OperatorSession os = null;
+
     try {
-        os = sessions.entrySet().stream().filter(
+        return sessions.entrySet().stream().filter(
                 e-> !e.getValue().getIsOffline() && !e.getValue().getIsBusy()
                         && aQueueCode.equals(e.getValue().getQueueCode())
                         && OPERATORROLE.equals(e.getValue().getRole())
-        ).findAny().get().getValue();
+        ).findAny()
+                .map(Map.Entry::getValue)
+                .orElse(null);
     } catch (Exception e) {
         LOG.info("can't find free operator");
     }
-        return os;
+        return null;
 }
 
     /** При получении талона пациентов находим для него свободного оператора*/

@@ -59,6 +59,8 @@ import static ru.nuzmsh.util.StringUtil.isNullOrEmpty;
 @Remote(IExpert2XmlService.class)
 public class Expert2XmlServiceBean implements IExpert2XmlService {
     private static final Logger LOG = Logger.getLogger(Expert2XmlServiceBean.class);
+
+    private static final SimpleDateFormat novorDateFormat = new SimpleDateFormat("ddMMyy");
     private static final String CENTRAL_SEGMENT_DOC = "CENTRAL_SEGMENT";
     private final static String EXPORT_DIR = "/rtf/expert2xml/";
     private List<String> DISP_LIST = new ArrayList<>();
@@ -175,8 +177,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
      */
     private String makeNovorString(E2Entry entry) {
         if (isNotNull(entry.getKinsmanLastname())) {
-            SimpleDateFormat format = new SimpleDateFormat("ddMMyy");
-            return entry.getSex() + "" + format.format(entry.getBirthDate()) + "" + (isNotNull(entry.getBirthOrder()) ? entry.getBirthOrder() : 1);
+            return entry.getSex() + "" + novorDateFormat.format(entry.getBirthDate()) + "" + (isNotNull(entry.getBirthOrder()) ? entry.getBirthOrder() : 1);
         } else {
             return "0";
         }
@@ -420,7 +421,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     add(sl, "KD", currentEntry.getBedDays()); //Продолжительность госпитализации
                 }
                 setSluchDiagnosis(sl, currentEntry, a3);
-                if (sl == null) {
+                if (sl.getChild("DS_ERROR") != null) {
                     manager.persist(new E2EntryError(currentEntry, "NO_MAIN_DIAGNOSIS"));
                     return null;
                 }
@@ -1248,8 +1249,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     }
 
     private String getWorkDir() {
-        EjbEcomConfig config = EjbEcomConfig.getInstance();
-        return config.get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
+        return EjbEcomConfig.getInstance().get("tomcat.data.dir", "/opt/tomcat/webapps/rtf");
     }
 
     /**
@@ -1325,7 +1325,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     }
 
     private String getExpertConfigValue(String parameterName, String defaultValue) {
-        List<Object> ret = manager.createNativeQuery("select value from Expert2Config where code=:code AND coalesce(isDeleted, false) = false").setParameter("code", parameterName).getResultList();
+        List<Object> ret = manager.createNativeQuery("select value from Expert2Config where code=:code AND coalesce(isDeleted, false) = false")
+                .setParameter("code", parameterName)
+                .getResultList();
         if (ret.isEmpty()) {
             LOG.warn("Не удалось найти настройку с ключем " + parameterName + ", возвращаю значение по умолчанию");
             return defaultValue;
@@ -1365,13 +1367,17 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             mainDiagnosisSqlAdd = "priority.code='1'";
         } else { //клинический или выписной (для стационара)
             mainDiagnosisSqlAdd = " registrationType.code='3' and priority.code='1'";
-            mainDiagnosisList = manager.createQuery(" from EntryDiagnosis where entry_id=:id and " + mainDiagnosisSqlAdd).setParameter("id", entry.getId()).getResultList(); //выписные основные диагнозы
+            mainDiagnosisList = manager.createQuery(" from EntryDiagnosis where entry_id=:id and " + mainDiagnosisSqlAdd)
+                    .setParameter("id", entry.getId())
+                    .getResultList(); //выписные основные диагнозы
             if (mainDiagnosisList.isEmpty()) {
                 mainDiagnosisSqlAdd = " registrationType.code='4' and priority.code='1'";
             }
         }
         if (isEmpty(mainDiagnosisList)) {
-            mainDiagnosisList = manager.createQuery(" from EntryDiagnosis where entry_id=:id and " + mainDiagnosisSqlAdd).setParameter("id", entry.getId()).getResultList(); //клинические основные диагнозы
+            mainDiagnosisList = manager.createQuery(" from EntryDiagnosis where entry_id=:id and " + mainDiagnosisSqlAdd)
+                    .setParameter("id", entry.getId())
+                    .getResultList(); //клинические основные диагнозы
         }
 
         List<String> otherDiagnosis = findDiagnosisCodes(list, null, "3"); // Сопутствующие
@@ -1418,11 +1424,10 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             if (!mainMkb.startsWith("Z")) { //C_ZAB * Характер заболевания, если USL_OK!=4 || DS1!=Z*
                 VocE2FondV027 vip = ds.getVocIllnessPrimary();
                 if (vip == null) {
-                    manager.persist(new E2EntryError(entry, "NO_HARAKTER"));
-                    element = null;
-                    return;
+                    add(element, "DS_ERROR","");
+                } else {
+                    add(element, "C_ZAB", vip.getCode());
                 }
-                add(element, "C_ZAB", vip.getCode());
             }
         }
     }

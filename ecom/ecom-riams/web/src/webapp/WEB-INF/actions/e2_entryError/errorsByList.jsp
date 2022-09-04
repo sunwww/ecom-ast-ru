@@ -60,7 +60,7 @@ if (listId!=null) {
                 where err.listentry_id=${param.id} and (err.isdeleted='0' or err.isdeleted='0') group by err.errorcode"/>
             <msh:table idField="1" name="entriesList" action="entityParentList-e2_entry.do" noDataMessage="Нет ошибок по заполнению">
                 <msh:tableColumn columnName="Ошибка" property="2" />
-                <msh:tableColumn columnName="Кол-во записей с ощшибкой" property="3"/>
+                <msh:tableColumn columnName="Кол-во записей с ошибкой" property="3"/>
             </msh:table>
 
     <% }} %>

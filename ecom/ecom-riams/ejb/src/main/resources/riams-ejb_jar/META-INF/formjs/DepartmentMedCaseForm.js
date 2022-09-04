@@ -333,6 +333,8 @@ function onPreDelete(aMedCaseId, aContext) {
             , "беременности, прикрепленных к случаю"
             , "данные обменной карты"
             , "предыдущие случаи лечения в отделении"
+            , "данные скрининга новорожденных"
+            , "карт ВК"
         ];
         var err_list = aContext.manager.createNativeQuery("select"
             + " (select count(*) from Diagnosis as d where d.medCase_id=ms.id) as cnt1"
@@ -350,6 +352,8 @@ function onPreDelete(aMedCaseId, aContext) {
             + " ,(select count(*) from PregnancyHistory as ph where ph.medCase_id=ms.id) as cnt15"
             + " ,(select count(*) from PregnanExchangeCard as pec where pec.medCase_id=ms.id) as cnt16"
             + " ,(select count(*) from MedCase as ms2 where ms2.prevMedCase_id=ms.id) as cnt17"
+            + " ,(select count(*) from screeningcardiac as sc where sc.medCase_id=ms.id) as cnt19"
+            + " ,(select count(*) from clinicexpertcard as ccd where ccd.medCase_id=ms.id) as cnt20"
             + " ,(select max(ms2.id) from MedCase as ms2 where ms2.id=ms.prevMedCase_id) as revmed"
             + " from MedCase as ms where ms.DTYPE='DepartmentMedCase' and ms.id=:id")
             .setParameter("id", aMedCaseId).getSingleResult();

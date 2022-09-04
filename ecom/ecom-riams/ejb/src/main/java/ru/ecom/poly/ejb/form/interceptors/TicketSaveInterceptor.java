@@ -16,12 +16,12 @@ public class TicketSaveInterceptor implements IFormInterceptor {
 	public void intercept(IEntityForm aForm, Object aEntity, InterceptorContext aContext) {
 		TicketForm form = (TicketForm)aForm ;
 		Ticket ticket = (Ticket)aEntity ;
-		if (ticket.getStatus()!=Ticket.STATUS_CLOSED && form.getIsTicketClosed()!=null && Boolean.TRUE.equals(form.getIsTicketClosed().toString())) {
+		if (ticket.getStatus()!=Ticket.STATUS_CLOSED && Boolean.TRUE.equals(form.getIsTicketClosed())) {
 			if (CAN_DEBUG) LOG.debug("Закрытие талона...") ;
 			ticket.setStatus(Ticket.STATUS_CLOSED) ;
 		} else {
 			if (aContext.getSessionContext().isCallerInRole("/Policy/Poly/Ticket/Reopen")
-					&& (form.getIsTicketClosed()==null || form.getIsTicketClosed()==false)		
+					&& !Boolean.TRUE.equals(form.getIsTicketClosed())
 			) {
 				if (CAN_DEBUG) LOG.debug("Открытие талона...") ;
 				ticket.setStatus(Ticket.STATUS_INPROCESS) ;
