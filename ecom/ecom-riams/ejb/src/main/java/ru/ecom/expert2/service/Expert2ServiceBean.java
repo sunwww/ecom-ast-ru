@@ -2760,7 +2760,6 @@ public class Expert2ServiceBean implements IExpert2Service {
      */
     @Override
     public BigDecimal calculateResultDifficultyCoefficient(E2Entry entry) {
-        final BigDecimal one = BigDecimal.ONE;
         if (entry.getEntryType().equals(HOSPITAL) && !entry.getBedSubType().equals("1")) {
             return getDayTimeHospKslpValue();
         }
@@ -3083,8 +3082,6 @@ public class Expert2ServiceBean implements IExpert2Service {
 
             VocE2FondV009 fondResult = getEntityByCode("301", VocE2FondV009.class, false); // ЛЕЧЕНИЕ ЗАВЕРШЕНО
             VocE2FondV012 fondIshod = getEntityByCode("303", VocE2FondV012.class, false); // УЛУЧШЕНИЕ
-            VocIdc10 healthMkb = getEntityByCode("Z02.9", VocIdc10.class, false);
-            VocPriorityDiagnosis prior = getEntityByCode("1", VocPriorityDiagnosis.class, false);
 
             for (E2Entry entry : entries) { // запись = 1 отказ в госпитализации //TODO делать правильное проставление услуг
                 entry.setMedHelpKind(medHelpMap.get(calculateHelpKindPol(entry)));
