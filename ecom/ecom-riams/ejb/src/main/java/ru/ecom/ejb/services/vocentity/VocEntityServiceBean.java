@@ -125,13 +125,12 @@ public class VocEntityServiceBean implements IVocEntityService {
 				ids.append(",").append(list1.get(i)) ;
 			}
 		}
-		StringBuilder sql = new StringBuilder() ;
-		
 
-		sql.append("from ").append(entityHelper.getEntityName(clazz))
-		.append(" where id in (").append(ids.length()>0?ids.substring(1):"").append(")")
-		.append(" order by ").append(aOrderBy).append(" ").append((aAscending?"asc":"desc")).append(", id ").append((aAscending?"asc":"desc"));
-		List  list = manager.createQuery(sql.toString())
+
+		String sql = "from " + entityHelper.getEntityName(clazz) +
+				" where id in (" + (ids.length() > 0 ? ids.substring(1) : "") + ")" +
+				" order by " + aOrderBy + " " + (aAscending ? "asc" : "desc") + ", id " + (aAscending ? "asc" : "desc");
+		List  list = manager.createQuery(sql)
 				.setMaxResults(aCount)
 				.getResultList();
 		

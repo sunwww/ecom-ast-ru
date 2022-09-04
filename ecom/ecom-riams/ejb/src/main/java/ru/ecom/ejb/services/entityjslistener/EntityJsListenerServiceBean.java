@@ -12,6 +12,7 @@ import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 
 @Local(IEntityJsListenerService.class)
 @Stateless
@@ -39,12 +40,12 @@ public class EntityJsListenerServiceBean implements IEntityJsListenerService {
 
 		if(aEntity==null) throw new IllegalArgumentException("Нет параметра aEntity") ;
 		try {
-			File jsDir = new File("/tmp/test.js") ; //EjbInjection.getInstance().getEntityListenerJsDir() ;
+			File jsDir = new File("/tmp/test.js") ;
 			File file = new File(jsDir, aEntity.getClass().getSimpleName()+".js");
 			if(file.exists()) {
 				Context jsContext = Context.enter() ;
 				Scriptable scope = jsContext.initStandardObjects();
-				try (InputStreamReader in = new InputStreamReader(new FileInputStream(file),"utf-8")) {
+				try (InputStreamReader in = new InputStreamReader(Files.newInputStream(file.toPath()),"utf-8")) {
 					Script script = jsContext.compileReader(in, file.getName(), 0, null);
 					script.exec(jsContext, scope);
 					Object finded = scope.get(aFunctionName, scope) ;

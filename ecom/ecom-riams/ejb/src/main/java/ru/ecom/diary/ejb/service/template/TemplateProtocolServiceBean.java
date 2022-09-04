@@ -197,9 +197,8 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 		aManager.persist(d) ;
 			if (m instanceof Visit)  {
 				Visit vis = (Visit) m;
-				if (wf!=null && wf>0L) {
-					WorkFunction wfo = aManager.find(WorkFunction.class, wf) ;
-					vis.setWorkFunctionExecute(wfo) ;
+				if ( wf>0L) {
+					vis.setWorkFunctionExecute(aManager.find(WorkFunction.class, wf)) ;
 				} else {
 					vis.setWorkFunctionExecute(vis.getWorkFunctionPlan()) ;
 					aManager.persist(vis) ;
@@ -208,12 +207,14 @@ public class TemplateProtocolServiceBean implements ITemplateProtocolService {
 		aManager.persist(m) ;
 		return ""+d.getId() ;
 	}
-	
+
+	@Override
 	public String getTextByProtocol(long aProtocolId) {
         Protocol tempprot = manager.find(Protocol.class, aProtocolId) ;
         if(tempprot==null) throw new IllegalArgumentException("Нет шаблона протокола с таким ИД "+aProtocolId) ;
         return tempprot.getRecord() ;		
 	}
+	@Override
     public String getTextTemplate(long aId) {
         TemplateProtocol tempprot = manager.find(TemplateProtocol.class, aId) ;
         if(tempprot==null) throw new IllegalArgumentException("Нет шаблона протокола с таким ИД "+aId) ;

@@ -6,6 +6,8 @@ import java.math.RoundingMode;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 
+import static java.util.Optional.ofNullable;
+
 public class DbfField  {
     /** Строка */
     public static final byte CHAR = 'C';
@@ -200,13 +202,11 @@ public class DbfField  {
     }
 
     public String toString() {
-        return new StringBuilder()
-                .append("name='").append(theName)
-                .append("', type=").append((char) theType)
-                .append(", fieldOffset=").append(theFieldOffset)
-                .append(", length=").append(theLength)
-                .append(", decimalLength=").append(theDecimalLength)
-                .toString();
+        return "name='" + theName +
+                "', type=" + (char) theType +
+                ", fieldOffset=" + theFieldOffset +
+                ", length=" + theLength +
+                ", decimalLength=" + theDecimalLength;
 
     }
 
@@ -240,7 +240,7 @@ public class DbfField  {
                 writeDate(buf, aValue);
                 break;
             case NUMERIC:
-            	writeNumeric(buf, aValue, theLength, theDecimalLength);
+            	writeNumeric(buf, aValue, theLength);
             	break;
             case BOOLEAN:
                 writeChar(buf, aValue, 1);
@@ -250,16 +250,9 @@ public class DbfField  {
 
 
     private static void writeChar(ByteBuffer buf, Object aObject, int aLength) throws UnsupportedEncodingException {
-        String str;
-        if (aObject != null) {
-         //   if (aObject instanceof String) {
-                str = aObject.toString();
-          /*  } else {
-                str = aObject.toString();
-            }*/
-        } else {
-            str = "";
-        }
+        String str = ofNullable(aObject)
+                .map(Object::toString)
+                .orElse("");
 
         if (str.length() > aLength) {
             buf.put(str.substring(0, aLength).getBytes("Cp866"));
@@ -283,18 +276,14 @@ public class DbfField  {
     }
 
 
-    private static void writeNumeric(ByteBuffer buf, Object aObject, int aLength, int aDecimalLength) {
-        //ru.nuzmsh.log.SystemLog.TRACE("aObject = " + aObject);
-//        ru.nuzmsh.log.SystemLog.TRACE("aObject.getClass() = " + aObject.getClass());
-        String numberString = getNumberString(aObject, aDecimalLength) ;
+    private static void writeNumeric(ByteBuffer buf, Object aObject, int aLength) {
+        String numberString = getNumberString(aObject) ;
         if (numberString!=null) {
             String str = numberString ;
             int strLength = str.length();
             if (strLength > aLength) {
                 buf.put(str.substring(0, aLength).getBytes());
-                //ru.nuzmsh.log.SystemLog.TRACE("1");
             } else {
-                //ru.nuzmsh.log.SystemLog.TRACE("2");
                 int counts = aLength - str.length();
                 for (int i = 0; i < counts; i++) {
                     buf.put(SPACE);
@@ -302,20 +291,17 @@ public class DbfField  {
                 buf.put(str.getBytes());
             }
         } else {
-            //ru.nuzmsh.log.SystemLog.TRACE("3");
             for(int i=0; i<aLength; i++) {
-                //ru.nuzmsh.log.SystemLog.TRACE("i = " + i);
                 buf.put(SPACE) ;
             }
         }
     }
 
-    private static String getNumberString(Object aObject, int aDecimalLength) {
+    private static String getNumberString(Object aObject) {
         if(aObject != null) {
             if(aObject instanceof BigDecimal) {
                 BigDecimal number = (BigDecimal) aObject ;
                 number = number.setScale(2, RoundingMode.HALF_UP) ;
-                //ru.nuzmsh.log.SystemLog.TRACE("number = " + number);
                 return number.toString() ;
             } else {
                 try {

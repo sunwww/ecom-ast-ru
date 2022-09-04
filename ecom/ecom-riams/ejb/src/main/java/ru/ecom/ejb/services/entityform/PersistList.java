@@ -76,9 +76,7 @@ public class PersistList {
 
 			j.key("childs").array();
 			if (aIdEntity>0) {
-				StringBuilder sql = new StringBuilder() ;
-				sql.append("select ").append(aFieldChildren).append(",").append(aFieldParent).append(" from ").append(aTableName).append(" where ").append(aFieldParent).append("='").append(aIdEntity).append("'") ;
-				List<Object[]> list = aManager.createNativeQuery(sql.toString()).getResultList();
+				List<Object[]> list = aManager.createNativeQuery("select " + aFieldChildren + "," + aFieldParent + " from " + aTableName + " where " + aFieldParent + "='" + aIdEntity + "'").getResultList();
 				for (Object[] child : list) {
 					j.object().key("value").value(parseLong(child[0]));
 					j.endObject();

@@ -73,9 +73,7 @@ public class ScriptServiceBean  implements IScriptService {
 		ScriptServiceContext ctx = new ScriptServiceContext(manager, context, ejbInjection) ;
 		Object[] args = new Object[aInputArguments.length+1] ;
 		args[0] = ctx ;
-		for(int i=0; i<aInputArguments.length; i++) {
-			args[i+1] = aInputArguments[i];
-		}
+		System.arraycopy(aInputArguments, 0, args, 1, aInputArguments.length);
 		return args ;
 		
 	}
