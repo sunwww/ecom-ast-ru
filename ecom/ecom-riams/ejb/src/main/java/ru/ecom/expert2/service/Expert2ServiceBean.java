@@ -4014,7 +4014,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                 E2DrugEntry drugEntry = new E2DrugEntry(original, entry);
                 drugEntry.setInjectDate(entry.getStartDate());
                 sanction.setDopCode("FIX_" + sanction.getDopCode());
-                if (entry.getWeigth() == null && entry.getWeigth().equals(0)) {
+                if (entry.getWeigth() == null || entry.getWeigth().equals(0)) {
                     entry.setWeigth(70);
                     manager.persist(entry);
                 }
