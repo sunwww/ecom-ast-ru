@@ -406,8 +406,12 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 Map<Long, E2Entry> entryMap = getEntryMap(allEntries);
                 if (isUnidentified) {
                     //у файла с неидентифицироваными не проверяем наличие ошибок, все записи помечаем как бракованные
-                    entryMap.values().forEach(entry->
-                            manager.persist(new E2EntrySanction(entry, null, "NOT_IDENTIFIED", true, "Пациент неиндентифицирован")));
+                    entryMap.values().forEach(entry ->
+                            {
+                                entry.setIsDefect(true);
+                                manager.persist(new E2EntrySanction(entry, null, "NOT_IDENTIFIED", true, "Пациент неиндентифицирован"));
+                            }
+                    );
                 }  else {
                 manager.createNativeQuery("delete from E2EntrySanction where entry_id in (:entryIds)").setParameter("entryIds", entryIds).executeUpdate();
                 BigDecimal totalSum = BigDecimal.ZERO;
