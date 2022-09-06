@@ -1856,7 +1856,7 @@ public class Expert2ServiceBean implements IExpert2Service {
                     EntryDiagnosis diagnosis = new EntryDiagnosis();
                     diagnosis.setEntry(entry);
                     VocIdc10 vocIdc10 = (VocIdc10) diagnosisMap.get("MKB_" + mkb);
-                    if (vocIdc10.getCode().indexOf('.') == -1 && (vocIdc10.getIsPermitWithoutDot() == null || !vocIdc10.getIsPermitWithoutDot())) { //Если диагноз без расшифровки и он не разрешен к использованию без уточнения
+                    if (!vocIdc10.getCode().contains(".") && !Boolean.TRUE.equals(vocIdc10.getIsPermitWithoutDot())) { //Если диагноз без расшифровки и он не разрешен к использованию без уточнения
                         saveError(entry, E2EntryErrorCode.DIAGNOSIS_WITHOUT_UTOCHNENIE);
                     }
                     diagnosis.setMkb(vocIdc10);
