@@ -26,5 +26,6 @@ public class E2EntryErrorCode {
     public static final String LONG_CHLX = "LONG_CHLX"; //Обращение у врача ЧЛХ
     public static final String RAZNYE_POLIC_PROFILE = "RAZNYE_POLIC_PROFILE"; //Различные профиля мед. помощи в одном обращении
     public static final String BAD_SERVICE_CODE = "BAD_SERVICE_CODE"; //Неизвестный код услуги
+    public static final String ERROR_SERVICE_CREATION = "ERROR_SERVICE_CREATION"; //Ошибка при формировании услуги
 
 }

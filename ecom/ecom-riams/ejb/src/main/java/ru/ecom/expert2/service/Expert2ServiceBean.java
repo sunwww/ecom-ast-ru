@@ -1998,13 +1998,8 @@ public class Expert2ServiceBean implements IExpert2Service {
                         Date medServiceDate = serviceDate != null ? DateFormat.parseSqlDate(serviceDate, dateFrormat) : null;
                         ms.setServiceDate(medServiceDate);
                         String costKey = "SERVICECOST#" + code;
-                        BigDecimal cost;
-                        if (!resultMap.containsKey(costKey)) {
-                            cost = getMedServiceCost(vms, medServiceDate);
-                            resultMap.put(costKey, cost);
-                        } else {
-                            cost = (BigDecimal) resultMap.get(costKey);
-                        }
+                        BigDecimal cost = (BigDecimal) resultMap.computeIfAbsent(costKey, v -> getMedServiceCost(vms, medServiceDate));
+
                         if (service.has("uet")) {
                             BigDecimal uet = BigDecimal.valueOf(service.getDouble("uet"));
                             ms.setUet(uet);
@@ -2039,11 +2034,14 @@ public class Expert2ServiceBean implements IExpert2Service {
                                 manager.persist(new EntryMedServiceMedImplant(ms, dta[0], dta[1]));
                             }
                         }
+                    } else {
+                        saveError(entry, E2EntryErrorCode.ERROR_SERVICE_CREATION, "Не найдена услуга с кодом " + code);
                     }
                 }
             }
             makeDrugEntry(entry);
         } catch (Exception e) {
+            saveError(entry, E2EntryErrorCode.ERROR_SERVICE_CREATION);
             LOG.error("error creating service = " + entry.getOperationList() + "<>" + entry.getServices() + "<>" + entry.getPrescriptionList(), e);
         }
     }
