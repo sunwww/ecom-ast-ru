@@ -5,7 +5,6 @@ import lombok.Setter;
 import ru.ecom.ejb.domain.simple.VocIdCodeName;
 import ru.ecom.ejb.services.index.annotation.AIndex;
 import ru.ecom.ejb.services.index.annotation.AIndexes;
-import ru.ecom.expomc.ejb.domain.med.voc.VocSexPermission;
 import ru.nuzmsh.commons.formpersistence.annotation.Comment;
 
 import javax.persistence.Entity;
@@ -23,25 +22,6 @@ import java.sql.Date;
 @Getter
 @Setter
 public class VocIdc10 extends VocIdCodeName {
-
-    /**
-     * Разрешен по полу
-     */
-    @Comment("Разрешен по полу")
-    @OneToOne
-    public VocSexPermission getSexPermission() {
-        return sexPermission;
-    }
-
-    /**
-     * Разрешен по полу
-     */
-    private VocSexPermission sexPermission;
-
-    /**
-     * Разрешен в ОМС
-     */
-    private Boolean omcPermission;
 
     /**
      * Начальный возраст
@@ -83,8 +63,6 @@ public class VocIdc10 extends VocIdCodeName {
     /**
      * Используется в ОМС
      */
-    private Boolean useOmc;
-
     /**
      * Код в промеде
      **/

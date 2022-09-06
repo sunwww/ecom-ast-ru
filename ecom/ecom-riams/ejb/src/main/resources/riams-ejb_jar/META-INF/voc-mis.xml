@@ -2527,16 +2527,6 @@ left join patient wp on wp.id=w.person_id "
         />
     </voc>
 
-
-    <!--unused
-    <voc id='vocSexPermission' type='EntityVocService'>
-        <EntityVocService
-                entity  = 'ru.ecom.expomc.ejb.domain.med.voc.VocSexPermission'
-                names   = 'name'
-                queried = 'name'
-        />
-    </voc>  -->
-
     <voc id='vocWorkPlaceType' type='EntityVocService'>
         <EntityVocService
                 entity='ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType'
