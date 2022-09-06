@@ -307,15 +307,22 @@ public class Expert2ServiceBean implements IExpert2Service {
 
                     //теперь объединим все случаи объединим все случаи (только для стационара)
                     List<BigInteger> hospitalIds = manager.createNativeQuery("select externalparentid from e2entry" +
-                            " where id in (" + entriesId.substring(1) + ") and listentry_id=" + listEntryId + " and coalesce(isDeleted, false) = false and coalesce(isUnion, false) = false group by externalparentid having count(externalparentid)>1").getResultList();//Находис все СЛС, в которых больше 1 СЛО
+                                    " where id in (" + entriesId.substring(1) + ") and listentry_id=:listEntryId and coalesce(isDeleted, false) = false " +
+                                    " and coalesce(isUnion, false) = false " +
+                                    " group by externalparentid having count(externalparentid)>1")
+                            .setParameter("listEntryId", listEntryId)
+                            .getResultList();//Находис все СЛС, в которых больше 1 СЛО
 
                     i = 0;
                     isMonitorCancel(monitor, "Приступаем к объединению случаев. START_UNION");
-                    for (BigInteger hospId : hospitalIds) {
+                    if (isNotEmpty(hospitalIds)) {
+                        unionHospitalMedCases(listEntryId, hospitalIds);
+                    }
+                   /* for (BigInteger hospId : hospitalIds) {
                         i++;
                         if (i % 100 == 0 && isMonitorCancel(monitor, "Идет объединение случаев: " + i)) return;
                         unionHospitalMedCase(listEntryId, hospId.longValue()); //todo вынести запросы из цикла
-                    }
+                    }*/
                     LOG.info("Объединение случаев завершено.FINISH_UNION");
                     isMonitorCancel(monitor, "Проверяем КСГ после объединения случаев.2ND_CHECK_KSG");
                     i = 0;
@@ -394,6 +401,108 @@ public class Expert2ServiceBean implements IExpert2Service {
             LOG.error(e.getMessage(), e);
         }
         isCheckIsRunning = false;
+    }
+
+    private void unionHospitalMedCases(Long listEntryId, List<BigInteger> hospitalIds) {
+
+        /*
+         * Если у двух случаев равный КЗ, берем данным (врач, отделение, койки) последнего случая
+         * Если классы МКБ совпадают, берем СЛО с наибольшим КЗ, из второго СЛО добавляем дни и услуги.
+         *      Второе СЛО помечаем как "200 входит в комплексный случай и ставим у него parentEntry  главного случая
+         */
+        //объединяем все СЛО внутри СЛС
+        try {
+            List<E2Entry> allEntries = manager.createQuery("from E2Entry where listEntry_id=:listEntryId and externalParentId in (:externalParentIds) " +
+                            "and (isDeleted is null or isDeleted='0')")
+                    .setParameter("listEntryId", listEntryId)
+                    .setParameter("externalParentIds", hospitalIds.stream()
+                            .map(BigInteger::longValue)
+                            .collect(Collectors.toSet()))
+                    .getResultList(); //Все СЛО по госпитализации, кроме уже объединенных
+            Map<Long, List<E2Entry>> hospitalMap = allEntries.stream()
+                    .collect(Collectors.groupingBy(e2 -> e2.getExternalParentId()));
+            for (Map.Entry<Long, List<E2Entry>> es: hospitalMap.entrySet()) {
+                List<E2Entry> entriesList = es.getValue();
+                if (entriesList.size()<2) {
+                    LOG.warn("Случилось то, чего не должно случиться, unionHospitalMedCases.size<2");
+                    //проверить, не должно произойти
+                    continue;
+                }
+                entriesList.sort(E2Entry.oldFirst.reversed());
+                E2Entry mainEntry = null;
+                //Цикл только для ВМП
+                E2Entry vmpEntry = null;
+                boolean pregnancyFound = false;
+                for (E2Entry entry : entriesList) {
+                    if (VMP.equals(entry.getEntryType())) { //Если в госпитализации есть случай ВМП, делаем его главным, остальные - неглавные.
+                        mainEntry = entry;
+                        mainEntry.setStartDate(entry.getHospitalStartDate());
+                        mainEntry.setFinishDate(entry.getHospitalFinishDate());
+                        mainEntry.setIsUnion(true);
+                        vmpEntry = mainEntry;
+                        LOG.info("Найден случай в ВМП, помечаем его как главный " + mainEntry.getId());
+                        manager.persist(mainEntry);
+                    }
+                    if ("4".equals(entry.getHelpKind())) { //В СЛС есть обсервационное отделение - запускаем функция по объединению родов! *27-12-2018
+                        //При склеивании родов склеиваем с конца
+                        entriesList.sort(E2Entry.oldFirst);
+                        unionChildBirthHospital(entriesList);
+                        pregnancyFound = true;
+                        break;
+                    }
+                }
+                if (vmpEntry != null) {
+                    for (E2Entry entry : entriesList) {
+                        if (entry.getId() == mainEntry.getId()) {
+                            continue;
+                        }
+                        entry.setParentEntry(vmpEntry);
+                        entry.setServiceStream(COMPLEXSERVICESTREAM);
+                        entry.setIsUnion(true);
+                        manager.persist(entry);
+                    }
+                    continue;
+                }
+                if (pregnancyFound) {
+                    continue;
+                }
+                //На этом этапе мы уверены, что ВМП в случае у нас нет, случай не содержит родов
+                for (E2Entry entry : entriesList) {
+                    if (mainEntry == null) { //находим первую запись, считаем её главной
+                        mainEntry = entry;
+                    } else if (isTrue(entry.getNoOmcDepartment())) { //Если реанимация - смело объединаем с главным случаем.
+                        mainEntry.setReanimationEntry(entry);
+                        unionEntries(mainEntry, entry);
+                    } else { //например - кардиология - сосуд. хирургия (вторая - главная
+                        if (isEquals(mainEntry.getDepartmentId(), entry.getDepartmentId())) { //Если ИД отделения равны - не учитываем цену
+                            entry.setExternalPrevMedcaseId(mainEntry.getExternalPrevMedcaseId());
+                            unionEntries(entry, mainEntry); //последнее отделение - главное
+                            mainEntry = entry;
+                        } else if (isDiagnosisGroupAreEquals(mainEntry, entry)) { //Если классы МКБ сходятся
+                            if (mainEntry.getCost() == null && entry.getCost() == null) {
+                                LOG.error("Невозможно объеинить случаи: нет цены ни в одном из случаев");
+                            } else {
+                                if (entry.getCost() == null || (mainEntry.getCost() != null && mainEntry.getCost().compareTo(entry.getCost()) > 0)) { //Если у первого случая цена больше второго, первый - главный.
+                                    unionEntries(mainEntry, entry);
+                                } else {
+                                    unionEntries(entry, mainEntry); //Если цена текущего случая больше или равно главному случаю, то текущий случай становится главный
+                                    mainEntry = entry;
+                                }
+                            }
+                        } else { //Если классы МКБ не сходятся, текущее СЛО становится главным *01.03.2020 исход случая - без перемен, ТФОМС
+                            String ss = mainEntry.getBedSubType(); //Текущему случаю ставим результат - перевод на другой профиль коек
+                            mainEntry.setFondResult(getActualVocByCode(VocE2FondV009.class, mainEntry.getFinishDate(), ss + "04"));
+                            mainEntry.setFondIshod(getActualVocByCode(VocE2FondV012.class, mainEntry.getFinishDate(), ss + "03"));
+                            manager.persist(mainEntry);
+                            mainEntry = entry;
+                        }
+                    }
+                }
+            }
+        } catch (IllegalStateException e) {
+            LOG.error("Какая-то непонятная ошибка при объединении случаев: " + e.getMessage(), e);
+        }
+
     }
 
     /* Если в 1 визите было оказано несколько услуг - для каждой услуги делаем отдельный случай
@@ -919,7 +1028,6 @@ public class Expert2ServiceBean implements IExpert2Service {
 
             if (mainEntry != null) {
                 cloneDiagnosis(spoEntries.get(0), mainEntry); //todo перенести диагнозы из комплексных в главное
-//                createDiagnosis(mainEntry);
                 makeCheckEntry(mainEntry, false, true);
             }
         }
@@ -957,111 +1065,11 @@ public class Expert2ServiceBean implements IExpert2Service {
         slaveEntry.setServiceStream(COMPLEXSERVICESTREAM);
         masterEntry.setIsUnion(true);
         slaveEntry.setIsUnion(true);
-        /* List<E2Entry> childList =*/
-   /*     manager.createNativeQuery(" update E2Entry set parententry_id=:newParent where parententry_id=:oldParent")
-                .setParameter("oldParent", slaveEntry.getId())
-                .setParameter("newParent", masterEntry.getId())
-                .executeUpdate();*/
-       /* for (E2Entry child : childList) {
-            child.setParentEntry(masterEntry);
-            manager.persist(child);
-        }*/
         if (isTrue(masterEntry.getIsDentalCase())) {
             moveMedServiceToMainEntry(slaveEntry, masterEntry);
         }
-//        manager.persist(masterEntry);
-//        manager.persist(slaveEntry);
     }
 
-    /**
-     * Объединеяем все записи по СЛС *Логика объединения тут
-     */
-    private void unionHospitalMedCase(Long listEntryId, Long hospitalMedcaseId) {
-        /*
-         * Если у двух случаев равный КЗ, берем данным (врач, отделение, койки) последнего случая
-         * Если классы МКБ совпадают, берем СЛО с наибольшим КЗ, из второго СЛО добавляем дни и услуги.
-         *      Второе СЛО помечаем как "200 входит в комплексный случай и ставим у него parentEntry  главного случая
-         */
-        //объединяем все СЛО внутри СЛС
-        try {
-            if (listEntryId == null || hospitalMedcaseId == null) {
-                throw new IllegalStateException("Необходимо указать ИД заполнения и ИД госпитализации");
-            }
-            List<E2Entry> entriesList = manager.createQuery("from E2Entry where listEntry_id=:listEntryId and externalParentId=:externalParentId " +
-                            "and (isDeleted is null or isDeleted='0') order by startdate, starttime")
-                    .setParameter("listEntryId", listEntryId).setParameter("externalParentId", hospitalMedcaseId).getResultList(); //Все СЛО по госпитализации, кроме уже объединенных
-            if (entriesList.size() > 1) { //Работаем если только найдено больше 1 СЛО
-                E2Entry mainEntry = null;
-                //Цикл только для ВМП
-                E2Entry vmpEntry = null;
-                for (E2Entry entry : entriesList) {
-                    if (VMP.equals(entry.getEntryType())) { //Если в госпитализации есть случай ВМП, делаем его главным, остальные - неглавные.
-                        mainEntry = entry;
-                        mainEntry.setStartDate(entry.getHospitalStartDate());
-                        mainEntry.setFinishDate(entry.getHospitalFinishDate());
-                        mainEntry.setIsUnion(true);
-                        vmpEntry = mainEntry;
-
-                        LOG.info("Найден случай в ВМП, помечаем его как главный " + mainEntry.getId());
-                        manager.persist(mainEntry);
-                    }
-                    if ("4".equals(entry.getHelpKind())) { //В СЛС есть обсервационное отделение - запускаем функция по объединению родов! *27-12-2018
-                        entriesList = manager.createQuery("from E2Entry where listEntry_id=:listEntryId and externalParentId=:externalParentId" +
-                                        " and (isDeleted is null or isDeleted='0') order by startdate desc , starttime desc")
-                                .setParameter("listEntryId", listEntryId).setParameter("externalParentId", hospitalMedcaseId).getResultList(); //При склеивании родов склеиваем с конца
-                        unionChildBirthHospital(entriesList);
-                        return;
-                    }
-                }
-                if (vmpEntry != null) {
-                    for (E2Entry entry : entriesList) {
-                        if (entry.getId() == mainEntry.getId()) {
-                            continue;
-                        }
-                        entry.setParentEntry(vmpEntry);
-                        entry.setServiceStream(COMPLEXSERVICESTREAM);
-                        entry.setIsUnion(true);
-                        manager.persist(entry);
-                    }
-                    return;
-                }
-                //На этом этапе мы уверены, что ВМП в случае у нас нет, случай не содержит родов
-                for (E2Entry entry : entriesList) {
-                    if (mainEntry == null) { //находим первую запись, считаем её главной
-                        mainEntry = entry;
-                    } else if (isTrue(entry.getNoOmcDepartment())) { //Если реанимация - смело объединаем с главным случаем.
-                        mainEntry.setReanimationEntry(entry);
-                        unionEntries(mainEntry, entry);
-                    } else { //например - кардиология - сосуд. хирургия (вторая - главная
-                        if (isEquals(mainEntry.getDepartmentId(), entry.getDepartmentId())) { //Если ИД отделения равны - не учитываем цену
-                            entry.setExternalPrevMedcaseId(mainEntry.getExternalPrevMedcaseId());
-                            unionEntries(entry, mainEntry); //последнее отделение - главное
-                            mainEntry = entry;
-                        } else if (isDiagnosisGroupAreEquals(mainEntry, entry)) { //Если классы МКБ сходятся
-                            if (mainEntry.getCost() == null && entry.getCost() == null) {
-                                LOG.error("Невозможно объеинить случаи: нет цены ни в одном из случаев");
-                            } else {
-                                if (entry.getCost() == null || (mainEntry.getCost() != null && mainEntry.getCost().compareTo(entry.getCost()) > 0)) { //Если у первого случая цена больше второго, первый - главный.
-                                    unionEntries(mainEntry, entry);
-                                } else {
-                                    unionEntries(entry, mainEntry); //Если цена текущего случая больше или равно главному случаю, то текущий случай становится главный
-                                    mainEntry = entry;
-                                }
-                            }
-                        } else { //Если классы МКБ не сходятся, текущее СЛО становится главным *01.03.2020 исход случая - без перемен, ТФОМС
-                            String ss = mainEntry.getBedSubType(); //Текущему случаю ставим результат - перевод на другой профиль коек
-                            mainEntry.setFondResult(getActualVocByCode(VocE2FondV009.class, mainEntry.getFinishDate(), ss + "04"));
-                            mainEntry.setFondIshod(getActualVocByCode(VocE2FondV012.class, mainEntry.getFinishDate(), ss + "03"));
-                            manager.persist(mainEntry);
-                            mainEntry = entry;
-                        }
-                    }
-                }
-            }
-        } catch (IllegalStateException e) {
-            LOG.error(">>" + listEntryId + "<><>" + hospitalMedcaseId, e);
-        }
-    }
 
     /**
      * переносим информацию об услугах из комплексного случая в главный
