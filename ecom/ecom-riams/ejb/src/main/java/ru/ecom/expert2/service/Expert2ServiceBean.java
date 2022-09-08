@@ -346,10 +346,12 @@ public class Expert2ServiceBean implements IExpert2Service {
                         makeCheckEntry(entry, false, true);// оченьььь долго
                     }
                     findCancerEntry(e2Entries);//todo порефачить
-                    if (isMonitorCancel(monitor, "Поликлиника. Закончили нахождение цены и проставление полей фонда, приступаем к объединению случаев. прошло минут - " + (System.currentTimeMillis() - startStartDate.getTime()) / 60000))
-                        return;
-                    boolean isGroupSpo = getExpertConfigValue("ISGROUPSPO", "0").equals("1");
-                    unionPolyclinicMedCase(listEntryId, isGroupSpo);
+                    if (listEntryCode==POLYCLINIC) {
+                        if (isMonitorCancel(monitor, "Поликлиника. Закончили нахождение цены и проставление полей фонда, приступаем к объединению случаев. прошло минут - " + (System.currentTimeMillis() - startStartDate.getTime()) / 60000))
+                            return;
+                        boolean isGroupSpo = getExpertConfigValue("ISGROUPSPO", "0").equals("1");
+                        unionPolyclinicMedCase(listEntryId, isGroupSpo);
+                    }
                     monitor.setText("Приступаем к проверке перекрестных случаев.");
                     markErrorForCrossSpo(listEntry);
                     monitor.setText("Закончили проверять поликлинику.");
@@ -888,39 +890,40 @@ public class Expert2ServiceBean implements IExpert2Service {
                 .map(String::trim)
                 .map(Long::parseLong)
                 .collect(Collectors.toList());
-        List<E2Entry> allEntries = manager.createNamedQuery("E2Entry.allByIds")
-                .setParameter("ids", allIds)
-                .getResultList();
-        Map<Object, List<E2Entry>> entryMap = mapUnionSpo(allEntries, isGroupBySpo);
-        LOG.info("Количество " + entryMap.values().size() + " должно быть равно " + list.size());
-        for (List<E2Entry> spoEntries : entryMap.values()) {
-            i++;
-            if (i % 100 == 0) LOG.info("Объединение случаев - " + i);
-            E2Entry mainEntry = null;
-            for (E2Entry entry : spoEntries) {
-                if ("109".equals(entry.getDoctorWorkfunction())) {
-                    saveError(entry, E2EntryErrorCode.LONG_CHLX);
-                }
-                if (mainEntry == null) {
-                    mainEntry = cloneEntity(entry, true);
-                }
-                unionPolyclinic(mainEntry, entry);
-                if (isGroupBySpo && !isEquals(mainEntry.getMedHelpProfile(), entry.getMedHelpProfile())) {
-                    saveError(entry, E2EntryErrorCode.RAZNYE_POLIC_PROFILE);
+        if (!allIds.isEmpty()) {
+            List<E2Entry> allEntries = manager.createNamedQuery("E2Entry.allByIds")
+                    .setParameter("ids", allIds)
+                    .getResultList();
+            Map<Object, List<E2Entry>> entryMap = mapUnionSpo(allEntries, isGroupBySpo);
+            LOG.info("Количество " + entryMap.values().size() + " должно быть равно " + list.size());
+            for (List<E2Entry> spoEntries : entryMap.values()) {
+                i++;
+                if (i % 100 == 0) LOG.info("Объединение случаев - " + i);
+                E2Entry mainEntry = null;
+                for (E2Entry entry : spoEntries) {
+                    if ("109".equals(entry.getDoctorWorkfunction())) {
+                        saveError(entry, E2EntryErrorCode.LONG_CHLX);
+                    }
+                    if (mainEntry == null) {
+                        mainEntry = cloneEntity(entry, true);
+                    }
+                    unionPolyclinic(mainEntry, entry);
+                    if (isGroupBySpo && !isEquals(mainEntry.getMedHelpProfile(), entry.getMedHelpProfile())) {
+                        saveError(entry, E2EntryErrorCode.RAZNYE_POLIC_PROFILE);
+                    }
+
+                    String result = mainEntry.getFondResult().getCode();
+                    if (isOneOf(result, "305", "306")) {
+                        createDiagnosis(mainEntry);
+                        makeCheckEntry(mainEntry, false, true);
+                        mainEntry = null; //Если перевод в стационар - заканчиваем случай.
+                    }
                 }
 
-                String result = mainEntry.getFondResult().getCode();
-                if (isOneOf(result, "305", "306")) {
-                    createDiagnosis(mainEntry);
+                if (mainEntry != null) {
+                    cloneDiagnosis(spoEntries.get(0), mainEntry); //todo перенести диагнозы из комплексных в главное
                     makeCheckEntry(mainEntry, false, true);
-                    mainEntry = null; //Если перевод в стационар - заканчиваем случай.
                 }
-            }
-
-            if (mainEntry != null) {
-                cloneDiagnosis(spoEntries.get(0), mainEntry); //todo перенести диагнозы из комплексных в главное
-//                createDiagnosis(mainEntry);
-                makeCheckEntry(mainEntry, false, true);
             }
         }
     }
