@@ -53,7 +53,7 @@
                   name="Журнал предварительной госпитализации" action="/smo_report_plan_hospital_by_visit.do"
                   styleId="reportPlanHospital"/>
     <msh:sideLink name="Планирование госпитализаций"
-                  action="/poly_directOtherSpecialist.do"
+                  action="/stac_planning_hospitalizations.do"
                   styleId="reportDirectOtherSpec" roles="/Policy/Mis/MedCase/Stac/Journal/PlanningHospitalizations"/>
     <msh:sideLink roles="/Policy/Mis/MedCase/Direction/Journal"
                   name="Журнал направленных" action="/visit_journal_direction.do" styleId="reportDirect"/>
