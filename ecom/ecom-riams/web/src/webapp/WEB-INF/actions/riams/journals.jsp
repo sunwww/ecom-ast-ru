@@ -253,6 +253,10 @@
                                           roles="/Policy/Mis/MedCase/Visit/ReportService">
                                 Отчет по услугам
                             </msh:link></li>
+                            <li><msh:link isReport="true" action="visit_report_service_charged.do"
+                                          roles="/Policy/Mis/MedCase/Visit/ReportService">
+                                Учёт направлений платных пациентов
+                            </msh:link></li>
                             <li><msh:link isReport="true" action="smo_journal_closeSpo.do"
                                           roles="/Policy/Mis/MedCase/Visit/CloseSpo">
                                 Закрытые СПО

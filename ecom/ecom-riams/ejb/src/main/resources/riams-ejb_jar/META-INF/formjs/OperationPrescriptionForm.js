@@ -18,7 +18,7 @@ function onPreCreate(aForm, aCtx) {
         var manager = aCtx.manager;
         var startTime = aForm.planStartTime;
         //есть длительность операции, проверяем, есть ли свободное время на столько минут.
-        var sql = " select list(''||wct.id) as f1_list , count(wct.id) as cntAll, count(case when wct.rest='1' or wct.medcase_id is not null " +
+        var sql = " select list(''||wct.id) as f1_list , count(wct.id) as cntAll, count(case when wct.rest='1'  and (wct.isdeleted is null or wct.isdeleted=false) or wct.medcase_id is not null " +
             " or (wct.prepatientInfo is not null and wct.prepatientInfo!='') or wct.prepatient_id is not null or wct.prescription is not null then wct.id end ) as f2_cntBusy" +
             ", cast(max('" + startTime + "'+interval '" + duration + " minutes') as varchar(5)) as f3_endTime" +
             "  from workcalendartime wct " +

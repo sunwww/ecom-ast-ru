@@ -38,7 +38,7 @@
             </msh:panel>
         </msh:form>
         <msh:section title="Мед. импланты">
-            <ecom:webQuery name="medImplants" nativeSql="select mi.id, mi.serialNumber, mi.typeCode||'' ||vmi.name
+            <ecom:webQuery name="medImplants" nativeSql="select mi.id, mi.serialNumber, mi.typeCode||' '||vmi.name
       from EntryMedServiceMedImplant mi
       left join VocSurgicalImplant vmi on vmi.code = mi.typeCode
       where mi.medService_id=${param.id} "/>

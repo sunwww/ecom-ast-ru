@@ -102,6 +102,11 @@
                   title="Отчет по поликлинике"
     />
     <msh:sideLink styleId="analisisMedServices"
+                  action="/visit_report_service_charged"
+                  name="Учёт направлений платных пациентов" roles="/Policy/Mis/Contract/Journals/ContractPolicRender"
+                  title="Учёт направлений платных пациентов"
+    />
+    <msh:sideLink styleId="analisisMedServices"
                   action="/contact_analisis_by_medServices.do"
                   name="Анализ услуг " roles="/Policy/Mis/Contract/Journals/AnalisisMedServices"
                   title="Анализ услуг "
