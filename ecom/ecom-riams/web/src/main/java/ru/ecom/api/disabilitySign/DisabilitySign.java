@@ -26,28 +26,30 @@ import static ru.ecom.api.util.ApiUtil.login;
 
 @Path("/disabilitySign")
 public class DisabilitySign {
+    private final DisabilityServiceJs serviceJs = new DisabilityServiceJs();
 
     private static String usename;
 
     @GET
     @Path("exportDisabilityDocument")
     @Produces("application/json")
-    public String exportDisabilityDocument(@Context HttpServletRequest aRequest,
-                                           @WebParam(name = "token") String aToken,
+    public String exportDisabilityDocument(@Context HttpServletRequest request,
+                                           @WebParam(name = "token") String token,
+                                           @WebParam(name = "confirmPersonalData") Boolean confirmPersonalData, //Подтверждение правильности перс. данных пациента
                                            @QueryParam("disDoc") String disDoc)
             throws SQLException, NamingException {
 
-        ApiUtil.init(aRequest, aToken);
-        DisabilityServiceJs serviceJs = new DisabilityServiceJs();
-        return serviceJs.exportDisabilityDoc(disDoc, aRequest);
+        ApiUtil.init(request, token);
+
+        return serviceJs.exportDisabilityDoc(disDoc, confirmPersonalData,  request);
     }
 
     @POST
     @Path("getJson")
-    public void getJson(@Context HttpServletRequest aRequest, String json) {
+    public void getJson(@Context HttpServletRequest request, String json) {
 
         try {
-            login("66405d38-a173-4cb7-a1b6-3ada51c16ac5", aRequest);
+            login("66405d38-a173-4cb7-a1b6-3ada51c16ac5", request);
             JsonParser parser = new JsonParser();
             JsonObject jparse = parser.parse(json).getAsJsonObject();
 
@@ -70,7 +72,7 @@ public class DisabilitySign {
             }
 
             try {
-                Injection.find(aRequest).getService(IApiService.class).persistEntity(disabilitySign);
+                Injection.find(request).getService(IApiService.class).persistEntity(disabilitySign);
             } catch (Exception e) {
                 e.printStackTrace();
             }

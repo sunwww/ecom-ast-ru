@@ -44,18 +44,20 @@
 <script type="text/javascript">
     var theIs${name}fssExportInitialized = false;
     var the${name}fssExport = new msh.widget.Dialog($('${name}fssExport'));
+    var the${name}confirmPersonalData = false; //Пользователь подтверждает правильность персональных данных пациента
 
     function show${name}fssExport() {
-        DisabilityService.getIfDisDocHasVK('${documentId}', {
+        DisabilityService.getIfDisDocHasVK('${documentId}', the${name}confirmPersonalData, {
             callback: function (resultVK) {
                 if ($('anotherLpu').value != '' || resultVK || $('issueDate').value != '' && $('hospitalizedTo').value != ''
                     && $('issueDate').value == $('hospitalizedTo').value != ''
                     || $('issueDate').value == '' || $('hospitalizedTo').value == '') {
                     $('${name}fssExportResultDiv').innerHTML = "Подождите, идет отправка больничного листа на сервер";
                     the${name}fssExport.show();
-                    DisabilityService.exportDisabilityDoc('${documentId}', {
+                    DisabilityService.exportDisabilityDoc('${documentId}',the${name}confirmPersonalData, {
 
                         callback: function (json) {
+                            console.log(">>>>"+json+"<<<")
                             json = JSON.parse(json);
                             if (json.error != null && json.code != null) {
                                 $('${name}fssExportResultDiv').innerHTML = json.error + "<br> Обновите страницу и попробуйте еще раз";

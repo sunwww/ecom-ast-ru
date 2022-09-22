@@ -15,7 +15,7 @@ public interface IDisabilityService {
 
     String annulDisabilityDocument(Long aDocumentId, String aReasonAnnulId, String textReason, String snils);
 
-    String exportDisabilityDocument(Long aDocumentId);
+    String exportDisabilityDocument(Long aDocumentId, Boolean confirmPersonalData);
 
     void createF16vn(String aDateStart, String aDateEnd);
 

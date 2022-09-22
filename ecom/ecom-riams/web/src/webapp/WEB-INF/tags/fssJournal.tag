@@ -53,10 +53,11 @@
     var theIs${name}FSSJournalInitialized = false;
     var the${name}FSSJournal = new msh.widget.Dialog($('${name}FSSJournal'));
     var the${name}FSSProgress = new msh.widget.Dialog($('${name}FSSProgress'));
+    var the${name}confirmPersonalData = false; //Пользователь подтверждает правильность персональных данных пациента
 
     function show${name}FSSProgress() {
 
-        DisabilityService.getIfDisDocHasVK('${documentId}', {
+        DisabilityService.getIfDisDocHasVK('${documentId}', the${name}confirmPersonalData, {
             callback: function (resultVK) {
                 if ($('anotherLpu').value != '' || resultVK || $('issueDate').value != '' && $('hospitalizedTo').value != ''
                     && $('issueDate').value == $('hospitalizedTo').value != ''

@@ -148,9 +148,9 @@ public class DisabilityServiceJs {
      * @throws NamingException
      */
     @Deprecated
-    public String exportDisabilityDocument(Long aDocumentId, HttpServletRequest aRequest) throws NamingException {
+    public String exportDisabilityDocument(Long aDocumentId, Boolean confirmPersonalData, HttpServletRequest aRequest) throws NamingException {
         IDisabilityService service = Injection.find(aRequest).getService(IDisabilityService.class);
-        return service.exportDisabilityDocument(aDocumentId);
+        return service.exportDisabilityDocument(aDocumentId, confirmPersonalData);
     }
 
     /**
@@ -163,7 +163,7 @@ public class DisabilityServiceJs {
      * @throws SQLException
      * @throws JSONException
      */
-    public String exportDisabilityDoc(String aDocumentId, HttpServletRequest aRequest) throws NamingException, SQLException, JSONException {
+    public String exportDisabilityDoc(String aDocumentId, Boolean confirmPersonalData, HttpServletRequest aRequest) throws NamingException, SQLException, JSONException {
 
         IWebQueryService service = Injection.find(aRequest).getService(IWebQueryService.class);
 
@@ -258,9 +258,9 @@ public class DisabilityServiceJs {
                 " left join mislpu lpu on lpu.id=1" +
                 " left join mislpu anlpu on anlpu.id = dd.anotherlpu_id" +
                 " left join mislpu anlpuprev on anlpuprev.id = dd4.anotherlpu_id" +
-                " where" +
-                " p.snils is not null and p.snils != ''" +
-                " and dd.id =" + aDocumentId;
+                " where dd.id =" + aDocumentId+
+                " and p.snils is not null and p.snils != ''"
+                ;
 
         String sql2 = "select" +
                 " dd.id as DDID" +
@@ -294,7 +294,7 @@ public class DisabilityServiceJs {
                 " left join VocWorkFunction vwf2 on vwf2.id = wf2.workFunction_id" +
                 " left join disabilitysign dsvk on dsvk.externalid = disrec.id and dsvk.noactual = '0' and dsvk.code = 'vk'" +
                 " left join disabilitysign dsdoc on dsdoc.externalid = disrec.id and dsdoc.noactual = '0' and dsdoc.code = 'doc'" +
-                " where dd.id = " + aDocumentId + "" +
+                " where dd.id = " + aDocumentId +
                 " order by treat_dt1 asc";
 
         String close = " select " +
@@ -341,14 +341,19 @@ public class DisabilityServiceJs {
         if (isclose.equals("1") && closes.size() == 0) {
             code = 3;
         }
-        String json = "";
+        String json;
 
         if (code == 0) {
 
             IDisabilityService service1 = Injection.find(aRequest).getService(IDisabilityService.class);
-            String endpoint = service1.getSoftConfigValue("FSS_PROXY_SERVICE", "null");
+            String endpoint = service1.getSoftConfigValue("FSS_PROXY_SERVICE", null);
+            if (endpoint==null) {
+                throw new IllegalStateException("Не указан адрес сервиса SignAndCrypt");
+            }
 
-            json = cretePostRequest(endpoint, "api/export/exportDisabilityDocument", body.toString(), "application/json");
+            json = cretePostRequest(endpoint,
+                    "api/export/exportDisabilityDocument?confirmPersonalData="+Boolean.TRUE.equals(confirmPersonalData),
+                    body.toString(), "application/json");
             saveLog(json, aRequest);
         } else if (code == 1) {
             json = new JSONObject()
@@ -362,6 +367,8 @@ public class DisabilityServiceJs {
             json = new JSONObject()
                     .put("code", "3")
                     .put("error", "Не найдена подпись врача в закрытии").toString();
+        } else {
+            json="";
         }
 
         return json;
@@ -384,7 +391,7 @@ public class DisabilityServiceJs {
         String elnumber = obj.get("lncode").getAsString();
 
         Collection<WebQueryResult> list = service.executeNativeSql("select dd.id from disabilitydocument dd where dd.number = '" + elnumber + "'");
-        if (!list.isEmpty() && list.size() == 1) {
+        if (list.size() == 1) {
             String disdocId = list.iterator().next().get1().toString();
             ExportFSSLog exportFSSLog = new ExportFSSLog();
             exportFSSLog.setDisabilityDocument(Long.valueOf((disdocId)));
