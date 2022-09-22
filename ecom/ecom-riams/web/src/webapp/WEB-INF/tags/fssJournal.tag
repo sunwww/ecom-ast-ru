@@ -57,14 +57,14 @@
 
     function show${name}FSSProgress() {
 
-        DisabilityService.getIfDisDocHasVK('${documentId}', the${name}confirmPersonalData, {
+        DisabilityService.getIfDisDocHasVK('${documentId}', {
             callback: function (resultVK) {
                 if ($('anotherLpu').value != '' || resultVK || $('issueDate').value != '' && $('hospitalizedTo').value != ''
                     && $('issueDate').value == $('hospitalizedTo').value != ''
                     || $('issueDate').value == '' || $('hospitalizedTo').value == '') {
                     $('${name}FSSProgressResultDiv').innerHTML = "Подождите, идет отправка больничного листа на сервер";
                     the${name}FSSProgress.show();
-                    DisabilityService.exportDisabilityDocument('${documentId}', {
+                    DisabilityService.exportDisabilityDocument('${documentId}', the${name}confirmPersonalData,{
                         callback: function (a) {
                             $('${name}FSSProgressResultDiv').innerHTML = a;
 

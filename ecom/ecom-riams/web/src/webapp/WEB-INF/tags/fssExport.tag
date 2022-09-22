@@ -47,7 +47,7 @@
     var the${name}confirmPersonalData = false; //Пользователь подтверждает правильность персональных данных пациента
 
     function show${name}fssExport() {
-        DisabilityService.getIfDisDocHasVK('${documentId}', the${name}confirmPersonalData, {
+        DisabilityService.getIfDisDocHasVK('${documentId}', {
             callback: function (resultVK) {
                 if ($('anotherLpu').value != '' || resultVK || $('issueDate').value != '' && $('hospitalizedTo').value != ''
                     && $('issueDate').value == $('hospitalizedTo').value != ''
