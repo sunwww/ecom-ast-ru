@@ -369,7 +369,7 @@ left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') and (MC.isDeleted is null or MC.isDeleted='0') and (CA.isDeleted is null or CA.isDeleted='0')
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn') and (CAO.isDeleted is null or CAO.isDeleted='0') ${operatorSql} ${nationalitySql} ${paymentSql}
-and (pp.isVat='0' or pp.isVat is null) 
+and (pp.isVat='0' or pp.isVat is null) ${sqlAdd}
 group by cao.id,mc.id,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO.name,MC.contractnumber,mc.dateFrom
 ,wp.lastname,wp.firstname,wp.middlename,cao.operationDate,cao.operationTime
 order by cao.operationDate,cao.operationTime
@@ -399,7 +399,7 @@ left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 WHERE	CAo.operationdate between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy') and (MC.isDeleted is null or MC.isDeleted='0') and (CA.isDeleted is null or CA.isDeleted='0')
 and (cao.dtype='OperationAccrual' or cao.dtype='OperationReturn') and (CAo.isDeleted is null or CAo.isDeleted='0') ${operatorSql} ${nationalitySql} ${paymentSql}
-and (pp.isVat='1')
+and (pp.isVat='1') ${sqlAdd}
 group by cao.id,mc.id,CCP.lastname,CCP.firstname,CCP.middlename,CCP.birthday,CCO.name,MC.contractnumber,mc.dateFrom
 ,wp.lastname,wp.firstname,wp.middlename,cao.operationDate,cao.operationTime
 order by cao.operationDate,cao.operationTime
