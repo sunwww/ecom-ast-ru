@@ -2,7 +2,6 @@ package ru.ecom.api.disabilitySign;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.json.JSONException;
 import ru.ecom.api.IApiService;
 import ru.ecom.api.util.ApiUtil;
 import ru.ecom.ejb.services.query.IWebQueryService;
@@ -20,7 +19,7 @@ import javax.ws.rs.core.Context;
 import java.sql.SQLException;
 import java.util.Collection;
 
-import static ru.ecom.api.util.ApiUtil.cretePostRequest;
+import static ru.ecom.api.util.ApiUtil.createPostRequest;
 import static ru.ecom.api.util.ApiUtil.login;
 
 
@@ -149,7 +148,7 @@ public class DisabilitySign {
 
         String json = service.executeSqlGetJson(sql, 10, "data");
         usename = username;
-        return cretePostRequest(getEndpoint(request), "api/sign/getJSON", json, "text/html");
+        return createPostRequest(getEndpoint(request), "api/sign/getJSON", json, "text/html");
     }
 
     private String getEndpoint(@Context HttpServletRequest aRequest) throws NamingException {

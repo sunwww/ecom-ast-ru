@@ -34,9 +34,6 @@
             <msh:row>
                 <td colspan="6">
                     <input type="button" value='Закрыть окно' onclick='javascript:cancel${name}FSSJournal()'/>
-                    <div style="display: none" id="${name}confirmPersonalDataDiv">
-                        <input type="button" value='Подтверждаю данные пациента (отправить ЭЛН повторно)' onclick='javascript:show${name}FSSProgress(true)'/>
-                    </div>
                 </td>
             </msh:row>
         </form>
@@ -49,6 +46,10 @@
 
     </div>
     <input type="button" value='Закрыть окно' onclick='javascript:cancel${name}FSSProgress()'/>
+    <div style="display: none" id="${name}confirmPersonalDataDiv">
+        <input type="button" value='Подтверждаю данные пациента (отправить ЭЛН повторно)'
+               onclick='javascript:show${name}FSSProgress(true)'/>
+    </div>
 </div>
 
 <script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
@@ -57,7 +58,7 @@
     var the${name}FSSJournal = new msh.widget.Dialog($('${name}FSSJournal'));
     var the${name}FSSProgress = new msh.widget.Dialog($('${name}FSSProgress'));
 
-     //Пользователь подтверждает правильность персональных данных пациента
+    //Пользователь подтверждает правильность персональных данных пациента
     function show${name}FSSProgress(the${name}confirmPersonalData) {
 
         if (true !==the${name}confirmPersonalData || confirm("Вы подтверждаете отправку ЭЛН с проверенными данными пациента?")) {
@@ -71,13 +72,11 @@
                         DisabilityService.exportDisabilityDocument('${documentId}', the${name}confirmPersonalData, {
                             callback: function (a) { //возвращается html страница
                                 $('${name}FSSProgressResultDiv').innerHTML = a;
-                                if (a.contains("Подтверждение данных застрахованного")) {
+                                if (a.indexOf("Подтверждение данных застрахованного") !== -1) {
                                     $('${name}confirmPersonalDataDiv').style = 'display: block';
-
-
+                                } else {
+                                    $('${name}confirmPersonalDataDiv').style = 'display: none';
                                 }
-
-
                             }
                         });
                     } else showToastMessage('Проверьте дату выдачи и дату госпитализации! Они непустые, следовательно, должны совпадать!', null, true);

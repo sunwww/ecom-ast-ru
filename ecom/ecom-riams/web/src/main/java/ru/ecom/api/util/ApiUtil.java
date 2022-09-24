@@ -90,18 +90,26 @@ public class ApiUtil {
      * @param json
      * @return JSON response
      */
-    public static String cretePostRequest(String endpoint, String path, String json, String mediaType) {
-        Client client = ClientBuilder.newClient();
-        WebTarget target = client.target(endpoint);
-        target = target.path(path);
-        Response response = target.request(mediaType)
+    public static String createPostRequest(String endpoint, String path, String json, String mediaType) {
+        return createPostRequest(endpoint, path, json, mediaType, null);
+    }
+
+    public static String createPostRequest(String endpoint, String path, String json, String mediaType, Map<String, Object> paramMap) {
+        WebTarget webTarget = ClientBuilder.newClient()
+                .target(endpoint)
+                .path(path);
+        if (paramMap != null && !paramMap.isEmpty()) {
+            for (Map.Entry<String, Object> entry : paramMap.entrySet()) {
+                webTarget = webTarget.queryParam(entry.getKey(), entry.getValue());
+            }
+        }
+        return webTarget
+                .request(mediaType)
                 .header("Access-Control-Allow-Headers", "X-Requested-With, content-type")
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                .post(Entity.json(json));
-
-        System.out.println(response);
-        return response.readEntity(String.class);
+                .post(Entity.json(json))
+                .readEntity(String.class);
     }
 
 

@@ -14,6 +14,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import ru.ecom.api.IApiService;
+import ru.ecom.api.util.ApiUtil;
 import ru.ecom.ejb.services.query.IWebQueryService;
 import ru.ecom.ejb.services.query.WebQueryResult;
 import ru.ecom.mis.ejb.domain.disability.ExportFSSLog;
@@ -33,7 +34,6 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.*;
 
-import static ru.ecom.api.util.ApiUtil.cretePostRequest;
 import static ru.ecom.api.util.ApiUtil.creteGetRequest;
 
 /**
@@ -347,13 +347,15 @@ public class DisabilityServiceJs {
 
             IDisabilityService service1 = Injection.find(aRequest).getService(IDisabilityService.class);
             String endpoint = service1.getSoftConfigValue("FSS_PROXY_SERVICE", null);
-            if (endpoint==null) {
+            if (endpoint == null) {
                 throw new IllegalStateException("Не указан адрес сервиса SignAndCrypt");
             }
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("confirmPersonalData", Boolean.TRUE.equals(confirmPersonalData));
 
-            json = cretePostRequest(endpoint,
-                    "api/export/exportDisabilityDocument?confirmPersonalData="+Boolean.TRUE.equals(confirmPersonalData),
-                    body.toString(), "application/json");
+            json = ApiUtil.createPostRequest(endpoint,
+                    "api/export/exportDisabilityDocument",
+                    body.toString(), "application/json", paramMap);
             saveLog(json, aRequest);
         } else if (code == 1) {
             json = new JSONObject()
