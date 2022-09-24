@@ -34,6 +34,9 @@
             <msh:row>
                 <td colspan="6">
                     <input type="button" value='Закрыть окно' onclick='javascript:cancel${name}FSSJournal()'/>
+                    <div style="display: none" id="${name}confirmPersonalDataDiv">
+                        <input type="button" value='Подтверждаю данные пациента (отправить ЭЛН повторно)' onclick='javascript:show${name}FSSProgress(true)'/>
+                    </div>
                 </td>
             </msh:row>
         </form>
@@ -53,26 +56,36 @@
     var theIs${name}FSSJournalInitialized = false;
     var the${name}FSSJournal = new msh.widget.Dialog($('${name}FSSJournal'));
     var the${name}FSSProgress = new msh.widget.Dialog($('${name}FSSProgress'));
-    var the${name}confirmPersonalData = false; //Пользователь подтверждает правильность персональных данных пациента
 
-    function show${name}FSSProgress() {
+     //Пользователь подтверждает правильность персональных данных пациента
+    function show${name}FSSProgress(the${name}confirmPersonalData) {
 
-        DisabilityService.getIfDisDocHasVK('${documentId}', {
-            callback: function (resultVK) {
-                if ($('anotherLpu').value != '' || resultVK || $('issueDate').value != '' && $('hospitalizedTo').value != ''
-                    && $('issueDate').value == $('hospitalizedTo').value != ''
-                    || $('issueDate').value == '' || $('hospitalizedTo').value == '') {
-                    $('${name}FSSProgressResultDiv').innerHTML = "Подождите, идет отправка больничного листа на сервер";
-                    the${name}FSSProgress.show();
-                    DisabilityService.exportDisabilityDocument('${documentId}', the${name}confirmPersonalData,{
-                        callback: function (a) {
-                            $('${name}FSSProgressResultDiv').innerHTML = a;
+        if (true !==the${name}confirmPersonalData || confirm("Вы подтверждаете отправку ЭЛН с проверенными данными пациента?")) {
+            DisabilityService.getIfDisDocHasVK('${documentId}', {
+                callback: function (resultVK) {
+                    if ($('anotherLpu').value != '' || resultVK || $('issueDate').value != '' && $('hospitalizedTo').value != ''
+                        && $('issueDate').value == $('hospitalizedTo').value != ''
+                        || $('issueDate').value == '' || $('hospitalizedTo').value == '') {
+                        $('${name}FSSProgressResultDiv').innerHTML = "Подождите, идет отправка больничного листа на сервер";
+                        the${name}FSSProgress.show();
+                        DisabilityService.exportDisabilityDocument('${documentId}', the${name}confirmPersonalData, {
+                            callback: function (a) { //возвращается html страница
+                                $('${name}FSSProgressResultDiv').innerHTML = a;
+                                if (a.contains("Подтверждение данных застрахованного")) {
+                                    $('${name}confirmPersonalDataDiv').style = 'display: block';
 
-                        }
-                    });
-                } else showToastMessage('Проверьте дату выдачи и дату госпитализации! Они непустые, следовательно, должны совпадать!', null, true);
-            }
-        });
+
+                                }
+
+
+                            }
+                        });
+                    } else showToastMessage('Проверьте дату выдачи и дату госпитализации! Они непустые, следовательно, должны совпадать!', null, true);
+                }
+            });
+        } else {
+            cancel${name}FSSProgress();
+        }
     }
 
     // Показать
