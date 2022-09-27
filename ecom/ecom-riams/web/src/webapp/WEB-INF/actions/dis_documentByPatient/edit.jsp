@@ -38,7 +38,7 @@
           <msh:textField property="number" label="Номер" size="30" />
           <msh:ifFormTypeIsCreate formName="dis_documentByPatientForm">
             <td><input id="getFreeNumberButton" type="button" onclick="getFreeNumber(this)" value="Получить номер"></td>
-            <msh:checkBox property="ELN" label="Электронный"/>
+            <msh:checkBox property="eln" label="Электронный"/>
           </msh:ifFormTypeIsCreate>
         </msh:row>
 

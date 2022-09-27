@@ -13,7 +13,6 @@ import ru.ecom.ejb.util.injection.EjbEcomConfig;
 import ru.ecom.mis.ejb.domain.disability.*;
 import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityDocumentCloseReason;
 import ru.ecom.mis.ejb.domain.disability.voc.VocDisabilityStatus;
-import ru.ecom.mis.ejb.domain.patient.Patient;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.domain.worker.voc.VocCombo;
 import ru.ecom.mis.ejb.form.disability.DisabilityDocumentForm;
@@ -39,6 +38,10 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static java.util.Optional.ofNullable;
+import static ru.nuzmsh.util.BooleanUtils.isNotTrue;
+import static ru.nuzmsh.util.BooleanUtils.isTrue;
 
 /**
  * Сервис для работы с нетрудоспобностью
@@ -179,9 +182,9 @@ public class DisabilityServiceBean implements IDisabilityService {
     /**
      * Выгружаем ЭЛН на сервис экспорта в ФСС, отправляем запрос на получения списка номеров электронных ЛН. Получаем ИД документа нетрудоспособности, возвращаем ответ сервиса
      *
-     * @param aDocumentId - ИД документа
-     * @param aRangeCount - Количество номеров для импорта
-     * @param aMethod-    Метод, на который отправляется запрос
+     * @param aDocumentId         - ИД документа
+     * @param aRangeCount         - Количество номеров для импорта
+     * @param aMethod-            Метод, на который отправляется запрос
      * @param confirmPersonalData - Подтверждение правильности персональных данных пациента
      * @return Результат экспорта
      */
@@ -217,7 +220,7 @@ public class DisabilityServiceBean implements IDisabilityService {
             }
             if ("exportDocument".equals(aMethod)) {
                 if (aDocumentId != null && aDocumentId > 0) {
-                    method = "SetLnData?id=" + aDocumentId + "&ogrn=" + ogrn+"&confirmPersonalData="+Boolean.TRUE.equals(confirmPersonalData);
+                    method = "SetLnData?id=" + aDocumentId + "&ogrn=" + ogrn + "&confirmPersonalData=" + Boolean.TRUE.equals(confirmPersonalData);
                 } else {
                     return "Ошибка! При экспорте документа не указан ИД документа";
                 }
@@ -238,7 +241,7 @@ public class DisabilityServiceBean implements IDisabilityService {
                 return "Ошибка! Не указана функция для работы с ЭЛН";
             }
             String ret = makeHttpGetRequest(address, method);
-            LOG.info("Получен ответ от сервиса ФСС: [ "+ret+" ]");
+            LOG.info("Получен ответ от сервиса ФСС: [ " + ret + " ]");
             return ret;
         }
 
@@ -701,37 +704,46 @@ public class DisabilityServiceBean implements IDisabilityService {
 
     public Long createDuplicateDocument(Long aDocId, Long aReasonId, String aSeries, String aNumber, Long aWorkFunction2
             , String aJob, Boolean aUpdateJob) {
-        DisabilityDocument doc = manager.find(DisabilityDocument.class, aDocId);
-        boolean isPaperDocument = manager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id=:docId").setParameter("docId", doc.getId()).getResultList().isEmpty();
+        DisabilityDocument oldDocument = manager.find(DisabilityDocument.class, aDocId);
+        boolean isPaperDocument = manager.createNativeQuery("select id from electronicdisabilitydocumentnumber where disabilitydocument_id=:docId")
+                .setParameter("docId", oldDocument.getId())
+                .getResultList()
+                .isEmpty();
 
-        if (isPaperDocument && (doc.getIsClose() == null || !doc.getIsClose())) {
+        if (isPaperDocument && isNotTrue(oldDocument.getIsClose())) {
             throw new IllegalDataException("ДУБЛИКАТ МОЖНО СДЕЛАТЬ ТОЛЬКО ЗАКРЫТОГО ДОКУМЕНТА!!!");
         }
-        if (isPaperDocument && (doc.getStatus() == null || !doc.getStatus().getCode().equals("0"))) {
+        if (isPaperDocument && (oldDocument.getStatus() == null || !oldDocument.getStatus().getCode().equals("0"))) {
             throw new IllegalDataException("ДУБЛИКАТ МОЖНО СДЕЛАТЬ ТОЛЬКО ДЕЙСТВУЮЩЕГО ДОКУМЕНТА!!!");
         }
 
         VocDisabilityStatus stat = manager.find(VocDisabilityStatus.class, aReasonId);
-        DisabilityDocument newDoc = copyDocument(doc, aSeries, aNumber, new java.sql.Date(new java.util.Date().getTime()), aWorkFunction2, true);
+        DisabilityDocument newDoc = copyDocument(oldDocument, aSeries, aNumber, new java.sql.Date(new java.util.Date().getTime()), aWorkFunction2, true);
         if (aJob != null && !aJob.equals("")) {
-            aJob = aJob.trim().toUpperCase();
-            newDoc.setJob(aJob);
-            if (aUpdateJob != null && aUpdateJob) {
-                Patient pat = doc.getDisabilityCase() != null && doc.getDisabilityCase().getPatient() != null ? doc.getDisabilityCase().getPatient() : null;
-                if (pat != null) {
-                    pat.setWorks(aJob);
-                    manager.persist(pat);
-                }
+            final String newJob = aJob.trim().toUpperCase();
+            newDoc.setJob(newJob);
+            if (isTrue(aUpdateJob)) {
+                ofNullable(oldDocument.getDisabilityCase())
+                        .map(DisabilityCase::getPatient)
+                        .ifPresent(pat -> {
+                            pat.setWorks(newJob);
+                            manager.persist(pat);
+                        });
             }
         }
-        doc.setStatus(stat);
-        doc.setNoActuality(true);
-        doc.setDuplicate(newDoc);
-        manager.persist(doc);
+        oldDocument.setStatus(stat);
+        oldDocument.setNoActuality(true);
+        oldDocument.setDuplicate(newDoc);
+        manager.persist(oldDocument);
         return newDoc.getId();
 
     }
 
+    /**
+     * Документ по совместительству
+     *
+     * @return
+     */
     public Long createWorkComboDocument(Long aDocId, String aJob, String aSeries, String aNumber, Long aVocCombo, Long aPrevDocument) {
         DisabilityDocument doc = manager.find(DisabilityDocument.class, aDocId);
         DisabilityDocument docPrev = aPrevDocument != null && !aPrevDocument.equals(0L) ? manager.find(DisabilityDocument.class, aPrevDocument) : null;
@@ -767,6 +779,7 @@ public class DisabilityServiceBean implements IDisabilityService {
         WorkFunction wf2 = aWorkFunction2 != null ? manager.find(WorkFunction.class, aWorkFunction2) : null;
         String username = context.getCallerPrincipal().toString();
         DisabilityDocument newDoc = new DisabilityDocument();
+        newDoc.setEln(aDocument.getEln());
         newDoc.setAnotherLpu(aDocument.getAnotherLpu());
         newDoc.setBeginWorkDate(aDocument.getBeginWorkDate());
         newDoc.setCloseReason(aDocument.getCloseReason());
@@ -778,23 +791,15 @@ public class DisabilityServiceBean implements IDisabilityService {
         newDoc.setDisabilityReason2(aDocument.getDisabilityReason2());
         newDoc.setDisabilityReasonChange(aDocument.getDisabilityReasonChange());
         newDoc.setOtherCloseDate(aDocument.getOtherCloseDate());
-        //TODO newDoc.setDisabilityRecords(doc.getDisabilityRecords()) ;
         newDoc.setDisabilityRegime(aDocument.getDisabilityRegime());
         newDoc.setDocumentType(aDocument.getDocumentType());
-        //newDoc.setEditDate(doc.getEditDate()) ;
-        //newDoc.setEditUsername(doc.getEditUsername()) ;
         newDoc.setHospitalizedFrom(aDocument.getHospitalizedFrom());
         newDoc.setHospitalizedNumber(aDocument.getHospitalizedNumber());
         newDoc.setHospitalizedTo(aDocument.getHospitalizedTo());
         newDoc.setHospitalizedNumber(aDocument.getHospitalizedNumber());
         newDoc.setIdc10(aDocument.getIdc10());
         newDoc.setIsClose(aDocument.getIsClose());
-        if (aIssuedDate != null) {
-            newDoc.setIssueDate(aIssuedDate);
-        } else {
-            newDoc.setIssueDate(aDocument.getIssueDate());
-        }
-
+        newDoc.setIssueDate(ofNullable(aIssuedDate).orElse(aDocument.getIssueDate()));
         newDoc.setJob(aDocument.getJob());
         newDoc.setMainWorkDocumentNumber(aDocument.getMainWorkDocumentNumber());
         newDoc.setMainWorkDocumentSeries(aDocument.getMainWorkDocumentSeries());
@@ -804,7 +809,6 @@ public class DisabilityServiceBean implements IDisabilityService {
         newDoc.setPatient(aDocument.getPatient());
         newDoc.setPrevDocument(aDocument.getPrevDocument());
         newDoc.setPrimarity(aDocument.getPrimarity());
-        // newDoc.setRegimeViolationRecords(doc.getRegimeViolationRecords()) ;
         newDoc.setSanatoriumDateFrom(aDocument.getSanatoriumDateFrom());
         newDoc.setSanatoriumDateTo(aDocument.getSanatoriumDateTo());
         newDoc.setSanatoriumOgrn(aDocument.getSanatoriumOgrn());
@@ -816,8 +820,6 @@ public class DisabilityServiceBean implements IDisabilityService {
         newDoc.setWorkComboType(aDocument.getWorkComboType());
         newDoc.setWorks(aDocument.getWorks());
         manager.persist(newDoc);
-        //newDoc.set(doc.get) ;
-        //newDoc.set(doc.get) ;
         List<DisabilityRecord> list1 = new ArrayList<>();
         Date startRecordDate = null;
         Date finishRecordDate = null;
@@ -841,8 +843,6 @@ public class DisabilityServiceBean implements IDisabilityService {
                 record.setWorkFunctionAdd(wf2);
             }
             record.setCreateMedCase(old.getCreateMedCase());
-            //record.set(old.get) ;
-            //record.set(old.get) ;
             list1.add(record);
         }
         List<RegimeViolationRecord> list2 = new ArrayList<>();
@@ -854,7 +854,6 @@ public class DisabilityServiceBean implements IDisabilityService {
             record.setDateTo(old.getDateTo());
             record.setDisabilityDocument(old.getDisabilityDocument());
             record.setRegimeViolationType(old.getRegimeViolationType());
-            //record.set(old.get) ;
             list2.add(record);
         }
         if (isDuplicate && !list1.isEmpty()) {
@@ -937,11 +936,9 @@ public class DisabilityServiceBean implements IDisabilityService {
             doc.setOtherCloseDate(null);
         }
 
-        if (reason.getCodeF() != null) {
+        if (reason.getCodeF() != null && aOtherCloseDate.equals("")) {
             if (!reason.getCodeF().equals("31") && !reason.getCodeF().equals("37")) {
-                if (aOtherCloseDate.equals("")) {
-                    doc.setBeginWorkDate(Date.valueOf(dateGoToWork));
-                }
+                doc.setBeginWorkDate(Date.valueOf(dateGoToWork));
             }
         }
 

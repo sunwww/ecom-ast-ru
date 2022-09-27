@@ -189,7 +189,7 @@ public class DisabilityServiceJs {
                 " ,dd.number as LN_CODE" +
                 " ,case when dd.pervelnnumber is not null then dd.pervelnnumber else (select dd2.number from disabilitydocument dd2 where dd2.id = dd.prevdocument_id) end as PREV_LN" +
                 " ,case when (vddp.code ='2') then '0' else '1' end as PRIMARY_FLAG" +
-                " ,case when dd.elnduplicate is not null or dd.elnduplicate = '1' then '1' else case when (select count(a.id) from disabilitydocument a where a.duplicate_id=dd.id) >0 then '1' else '0'end  end as DUPLICATE_FLAG" +
+                " ,case when dd.elnduplicate = '1' then '1' when (select count(a.id) from disabilitydocument a where a.duplicate_id=dd.id) >0 then '1' else '0' end as DUPLICATE_FLAG" +
                 " ,dd.issuedate as LN_DATE" +
                 " ,case when dd.anotherlpu_id is not null then dd.anotherlpuname else lpu.name end as LPU_NAME" +
                 " ,case when dd.anotherlpu_id is not null then dd.anotherlpuaddress else lpu.printaddress end as LPU_ADDRESS" +
@@ -831,7 +831,7 @@ public class DisabilityServiceJs {
      * @throws NamingException
      * @throws SQLException
      */
-    public String getDisCasesInJson(String documentId, HttpServletRequest aRequest) throws NamingException, SQLException {
+    public String getDisCasesInJson(String documentId, HttpServletRequest aRequest) throws NamingException {
         IWebQueryService service = Injection.find(aRequest, null).getService(IWebQueryService.class);
         return service.executeSqlGetJson("select dc.id" +
                 " , to_char(min(dr.datefrom),'dd.mm.yyyy') as mindatefrom" +

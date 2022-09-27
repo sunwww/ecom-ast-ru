@@ -1,5 +1,4 @@
-<%@page import="ru.ecom.web.util.ActionUtil"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -308,6 +307,31 @@
     <tiles:put name="javascript" type="string">
         <script type='text/javascript' src='./dwr/interface/DisabilityService.js'></script>
         <script type="text/javascript">
+            function getFreeNumber (aField, aButton){
+                if (""+aField=="") {
+                    aField="number";
+                }
+                if ($(aField).value!="") {
+                    alert ("Поле \"Номер\" уже заполнено");
+                    return;
+                }
+                DisabilityService.getFreeNumberForDisabilityDocument({
+                    callback: function (num) {
+                        if (num!=null&&num!="") {
+                            $(aField).value=num;
+                            $(aField).className="viewOnly";
+                            aButton.style.display="none";
+                            var a = document.getElementById('eln');
+                            if (a) {
+                                a.checked=true;
+                            }
+                        } else {
+                            alert ("Не удалось получить номер больничного листа");
+                        }
+
+                    }
+                });
+            }
 
             function unattachEln() {
                 DisabilityService.unattachEln(${param.id},{
@@ -362,61 +386,9 @@
                 }
             </script>
         </msh:ifFormTypeIsView>
-        <msh:ifFormTypeIsView formName="dis_documentForm">
-            <script type="text/javascript">
-                function getFreeNumber (aField, aButton){
-                    if (""+aField=="") {
-                        aField="number";
-                    }
-                    if ($(aField).value!="") {
-                        alert ("Поле \"Номер\" уже заполнено");
-                        return;
-                    }
-                    aButton.value="Подождите...";
-                    aButton.disabled=true;
-                    DisabilityService.getFreeNumberForDisabilityDocument({
-                        callback: function (num) {
-                            if (num!=null&&num!="") {
-                                $(aField).value=num;
-                                $(aField).className="viewOnly";
-                                $(aField).disabled=true;
-                                aButton.style.display="none";
-                                var a = document.getElementById('ELN');
-                                a.checked=true;
-                            } else {
-                                alert ("Не удалось получить номер больничного листа");
-                            }
-
-                        }
-                    });
-                }
-            </script>
-        </msh:ifFormTypeIsView>
         <msh:ifFormTypeIsCreate formName="dis_documentForm">
             <script type="text/javascript">
-                function getFreeNumber (aField, aButton){
-                    if (""+aField=="") {
-                        aField="number";
-                    }
-                    if ($(aField).value!="") {
-                        alert ("Поле \"Номер\" уже заполнено");
-                        return;
-                    }
-                    DisabilityService.getFreeNumberForDisabilityDocument({
-                        callback: function (num) {
-                            if (num!=null&&num!="") {
-                                $(aField).value=num;
-                                $(aField).className="viewOnly";
-                                aButton.style.display="none";
-                                var a = document.getElementById('ELN');
-                                a.checked=true;
-                            } else {
-                                alert ("Не удалось получить номер больничного листа");
-                            }
 
-                        }
-                    });
-                }
             </script>
         </msh:ifFormTypeIsCreate>
         <msh:ifFormTypeIsNotView formName="dis_documentForm">
