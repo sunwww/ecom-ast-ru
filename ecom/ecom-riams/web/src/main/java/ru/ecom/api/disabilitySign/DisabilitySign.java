@@ -34,7 +34,7 @@ public class DisabilitySign {
     @Produces("application/json")
     public String exportDisabilityDocument(@Context HttpServletRequest request,
                                            @WebParam(name = "token") String token,
-                                           @WebParam(name = "confirmPersonalData") Boolean confirmPersonalData, //Подтверждение правильности перс. данных пациента
+                                           @QueryParam("confirmPersonalData") Boolean confirmPersonalData, //Подтверждение правильности перс. данных пациента
                                            @QueryParam("disDoc") String disDoc)
             throws SQLException, NamingException {
 
