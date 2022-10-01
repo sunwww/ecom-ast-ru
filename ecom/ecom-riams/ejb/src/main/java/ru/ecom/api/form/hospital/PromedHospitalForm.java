@@ -41,5 +41,6 @@ public class PromedHospitalForm extends PromedEntityForm {
     private String dischargeOutcomeCode; //Исход, VocHospitalizationOutcome
     private String dischargeResultCode; //Результат, VocHospitalizationResult
     private String dischargeReasonCode; //Причина выписки, VocReasonDischarge
+    private String bedTypeId; //1 - круглосуточный, 2 - дневной. считаем что нельзя перевести пациента с дневного в круглосуточный стационар в пределах СЛС
 
 }

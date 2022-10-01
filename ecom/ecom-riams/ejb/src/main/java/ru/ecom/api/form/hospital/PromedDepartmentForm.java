@@ -16,5 +16,6 @@ public class PromedDepartmentForm extends PromedEntityForm {
     private PromedDoctor doctor; //Лечащий врач
     private PromedDiagnosis mainDiagnosis;//Основной (клинический) диагноз
     private List<PromedDiagnosis> diagnoses; //сопутствующие, осложнения, фоновые,..
+    private String bedTypeId; //1 - круглосуточный, 2 - дневной
 
 }
