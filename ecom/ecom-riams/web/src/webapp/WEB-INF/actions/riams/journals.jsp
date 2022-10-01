@@ -255,7 +255,7 @@
                             </msh:link></li>
 
                             <li><msh:link isReport="true" action="visit_report_service_promed.do"
-                                          roles="/Policy/Mis/MedCase/Visit/ReportServicePromed">
+                                          roles="/Policy/Promed">
                                 Отчет по услугам ПРОМЕД
                             </msh:link></li>
                             <li><msh:link isReport="true" action="visit_report_service_charged.do"

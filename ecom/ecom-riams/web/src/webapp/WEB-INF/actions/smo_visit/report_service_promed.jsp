@@ -33,7 +33,7 @@
 		request.setAttribute("personClear", "<input type='button' name='clearPerson' value='Очистить инф. о сотруднике' onclick=\"$('person').value='';this.style.display='none'\">") ;
 	}
   %>
-    <msh:form action="/visit_report_service.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
+    <msh:form action="/visit_report_service_promed.do" defaultField="beginDate" disableFormDataConfirm="true" method="GET">
     <input type="hidden" name="m" id="m" value="f039"/>
     <input type="hidden" name="s" id="s" value="TicketService"/>
     <input type="hidden" name="id" id="id"/>
@@ -138,7 +138,7 @@
 	        	<input type="radio" name="typePromed" value="2" >  нет
 	        </td>
 			<td onclick="this.childNodes[1].checked='checked';" colspan="2">
-				<input type="radio" name="typePromed" value="2" >  Не важно
+				<input type="radio" name="typePromed" value="3" >  Не важно
 			</td>
 
         </msh:row>
@@ -176,7 +176,7 @@
 	        	<input type="radio" name="typeDtype" value="3">  Все
 	        </td>
 	        <td colspan="2">
-	        	<input type="button" title="Найти" onclick="this.value=&quot;Поиск...&quot;;  this.form.action=&quot;visit_report_service.do&quot;;this.form.target=&quot;&quot; ; this.form.submit(); return true ;" value="Найти" class="default" id="submitButton" autocomplete="off">
+	        	<input type="button" title="Найти" onclick="this.value=&quot;Поиск...&quot;;  this.form.action=&quot;visit_report_service_promed.do&quot;;this.form.target=&quot;&quot; ; this.form.submit(); return true ;" value="Найти" class="default" id="submitButton" autocomplete="off">
 	        	${personClear}
 	        </td>
         </msh:row>
@@ -409,7 +409,7 @@ WHERE  ${dtypeSql}
 and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finishDate}','dd.mm.yyyy') 
 and (smo.noActuality is null or smo.noActuality='0')  
 ${specialistSql} ${workFunctionSql} ${workFunctionGroupSql} ${lpuSql} ${serviceStreamSql} ${medServiceSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
-${personSql}  and smo.dateStart is not null ${emergencySql} ${is039Sql} ${promedExportSql}
+${personSql}  and smo.dateStart is not null ${emergencySql} ${is039Sql} ${typePromedSql}
 group by ${groupOrder},smo.id,smo.dateStart,p.lastname,p.middlename,p.firstname,p.birthday,ad1.addressisvillage,vr.name,vwpt.name,vss.name
 ,olpu.name,ovwf.name,owp.lastname,owp.firstname,owp.middlename,smo.patient_id,vss.code,owflpu.name
 
@@ -494,7 +494,7 @@ and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finis
 and smc.medservice_id is not null
 and (smo.noActuality is null or smo.noActuality='0')
 ${specialistSql} ${workFunctionSql} ${workFunctionGroupSql} ${lpuSql} ${serviceStreamSql} ${medServiceSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
-${personSql}  and smo.dateStart is not null ${emergencySql} ${is039Sql} ${promedExportSql}
+${personSql}  and smo.dateStart is not null ${emergencySql} ${is039Sql} ${typePromedSql}
 GROUP BY ms.id,ms.code,ms.name,${groupGroup} ORDER BY ${groupOrder}
 " /> 
     <msh:sectionTitle>
@@ -511,7 +511,7 @@ GROUP BY ms.id,ms.code,ms.name,${groupGroup} ORDER BY ${groupOrder}
     <msh:sectionContent>
   
         <msh:table printToExcelButton="Сохранить в excel"
-         name="journal_ticket" action="visit_report_service.do?typeReestr=1&typeDiag=${typeDiag}&typeView=${typeView}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}&typeGroup=${typeGroup}" 
+         name="journal_ticket" action="visit_report_service_promed.do?typeReestr=1&typePromed=${typePromed}&typeDiag=${typeDiag}&typeView=${typeView}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}&typeGroup=${typeGroup}"
          idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          	<tr>
@@ -606,7 +606,7 @@ and ${dateSql} BETWEEN TO_DATE('${beginDate}','dd.mm.yyyy') and TO_DATE('${finis
 and smc.medservice_id is not null
 and (smo.noActuality is null or smo.noActuality='0')
 ${specialistSql} ${workFunctionSql} ${workFunctionGroupSql} ${lpuSql} ${serviceStreamSql} ${medServiceSql} ${workPlaceTypeSql} ${additionStatusSql} ${socialStatusSql}
-${personSql}  and smo.dateStart is not null ${emergencySql} ${is039Sql} ${promedExportSql}
+${personSql}  and smo.dateStart is not null ${emergencySql} ${is039Sql} ${typePromedSql}
 GROUP BY wfg.id,wfg.groupname,${groupGroup} ORDER BY ${groupOrder}
 " /> 
     <msh:sectionTitle>
@@ -623,7 +623,7 @@ GROUP BY wfg.id,wfg.groupname,${groupGroup} ORDER BY ${groupOrder}
     <msh:sectionContent>
   
         <msh:table printToExcelButton="Сохранить в excel"
-         name="journal_ticket" action="visit_report_service.do?typeReestr=1&typeDiag=${typeDiag}&typeView=${typeView}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}&typeGroup=${typeGroup}"
+         name="journal_ticket" action="visit_report_service_promed.do?typeReestr=1&typePromed=${typePromed}&typeDiag=${typeDiag}&typeView=${typeView}&typeDtype=${typeDtype}&typeEmergency=${typeEmergency}&typeDate=${typeDate}&typeGroup=${typeGroup}"
          idField="1" noDataMessage="Не найдено">
          <msh:tableNotEmpty>
          	<tr>
@@ -669,7 +669,6 @@ GROUP BY wfg.id,wfg.groupname,${groupGroup} ORDER BY ${groupOrder}
 
     checkFieldUpdate('typeGroup','${typeGroup}',1) ;
     checkFieldUpdate('typeAgeWork','${typeAgeWork}',1) ;
-    checkFieldUpdate('typeView','${typeView}',1) ;
     checkFieldUpdate('typeDtype','${typeDtype}',3) ;
     checkFieldUpdate('typeDate','${typeDate}',2) ;
     checkFieldUpdate('typeDiag','${typeDiag}',2) ;
