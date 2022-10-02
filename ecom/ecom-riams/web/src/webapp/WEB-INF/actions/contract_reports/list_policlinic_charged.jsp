@@ -57,13 +57,18 @@ left join Patient p on cp.patient_id=p.id
 left join pricemedservice pms on cams.medService_id=pms.id
 left join priceposition pp on pms.priceposition_id=pp.id
 left join priceposition ppG on ppG.id=pp.parent_id
-left join mislpu ml on ml.id=wf.lpu_id
+left join mislpu ml on ml.id=w.lpu_id
 left join medservice ms on pms.medservice_id=ms.id
 left join vocservicestream sstr on sstr.id=mc.servicestream_id
+left join workfunction wfex on wfex.id=mc.workfunctionexecute_id
+left join worker wex on wex.id=wfex.worker_id
+left join mislpu mlex on mlex.id=wex.lpu_id
 where cao.operationdate
 between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy')
 and sstr.code='CHARGED'
 and vwf.name like 'Врач%'
+and ml.id in (180,409,246)
+and mlex.isforreportcharged=true
 group by ppG.lpu_id,pp.id,pp.code,pp.name,wp.lastname,wp.firstname,wp.middlename,vwf.name
 order by pp.name
 			"/>

@@ -136,6 +136,7 @@
                 </msh:row>
                 <msh:row>
                     <msh:checkBox property="isCreateCardiacScreening" label="Создают кардиоскрининги новорожд."/>
+                    <msh:checkBox property="isForReportCharged" label="Учитывать в отчёте направлений платных пациентов"/>
                 </msh:row>
                 <msh:row>
                     <msh:separator label="Дополнительная информация" colSpan="4"/>

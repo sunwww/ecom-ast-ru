@@ -256,6 +256,11 @@ public class MisLpuForm extends IdNameEntityForm {
 
     private Long promedLpuSectionId;
 
+    /**
+     * Учитывать в отчёте направлений платных пациентов?
+     */
+    private Boolean isForReportCharged;
+
     @Persist
     @Comment("ИД отделения в Промеде")
     public Long getPromedLpuSectionId() {
@@ -767,5 +772,14 @@ public class MisLpuForm extends IdNameEntityForm {
     @Persist
     public Boolean getIsOperBlock() {
         return isOperBlock;
+    }
+
+    /**
+     * Учитывать в отчёте направлений платных пациентов?
+     */
+    @Comment("Учитывать в отчёте направлений платных пациентов?")
+    @Persist
+    public Boolean getIsForReportCharged() {
+        return isForReportCharged;
     }
 }

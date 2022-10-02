@@ -431,4 +431,9 @@ public class MisLpu extends BaseEntity {
     public VocKiliProfile getKiliProfile() {
         return kiliProfile;
     }
+
+    /**
+     * Учитывать в отчёте направлений платных пациентов?
+     */
+    private Boolean isForReportCharged;
 }
