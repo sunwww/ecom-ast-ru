@@ -253,6 +253,11 @@
                                           roles="/Policy/Mis/MedCase/Visit/ReportService">
                                 Отчет по услугам
                             </msh:link></li>
+
+                            <li><msh:link isReport="true" action="visit_report_service_promed.do"
+                                          roles="/Policy/Promed">
+                                Отчет по услугам ПРОМЕД
+                            </msh:link></li>
                             <li><msh:link isReport="true" action="visit_report_service_charged.do"
                                           roles="/Policy/Mis/MedCase/Visit/ReportService">
                                 Учёт направлений платных пациентов

@@ -9,16 +9,21 @@ import ru.ecom.api.form.*;
 import ru.ecom.api.form.hospital.PromedDepartmentForm;
 import ru.ecom.api.form.hospital.PromedHospitalForm;
 import ru.ecom.api.webclient.IWebClientService;
+import ru.ecom.ejb.domain.simple.VocIdCodeName;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
+import ru.ecom.mis.ejb.domain.lpu.BedFund;
 import ru.ecom.mis.ejb.domain.lpu.MisLpu;
 import ru.ecom.mis.ejb.domain.medcase.*;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocPreAdmissionTime;
 import ru.ecom.mis.ejb.domain.patient.Patient;
+import ru.ecom.mis.ejb.domain.patient.voc.VocIdNameOmcCode;
 import ru.ecom.mis.ejb.domain.patient.voc.VocWorkPlaceType;
 import ru.ecom.mis.ejb.domain.workcalendar.voc.VocServiceStream;
 import ru.ecom.mis.ejb.domain.worker.PersonalWorkFunction;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
+import ru.ecom.mis.ejb.domain.worker.voc.VocWorkFunction;
 import ru.ecom.poly.ejb.domain.voc.VocReason;
+import ru.ecom.poly.ejb.domain.voc.VocVisitResult;
 import ru.nuzmsh.forms.validator.ValidateException;
 
 import javax.annotation.EJB;
@@ -28,11 +33,10 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import static java.util.Optional.ofNullable;
 import static ru.nuzmsh.util.EqualsUtil.isEquals;
 
 /**
@@ -86,7 +90,7 @@ public class PromedExportServiceBean implements IPromedExportService {
     @Override
     public PromedParaclinicForm getParaclinicCase(Visit visit) {
         try {
-            String startDateTime = getDateTime(visit.getDateStart(), visit.getTimeExecute(), null);
+            String startDateTime = getDateTime(visit.getDateStart(), visit.getTimeExecute());
             Patient pat = visit.getPatient();
             PromedParaclinicForm tap = PromedParaclinicForm.builder()
                     .patient(buildPatient(pat))
@@ -97,7 +101,7 @@ public class PromedExportServiceBean implements IPromedExportService {
                     .build();
             tap.setPromedCode(visit.getPromedCode());
             tap.setMedosId(visit.getId());
-            tap.setServiceStream(visit.getServiceStream() == null ? null : visit.getServiceStream().getPromedCode());
+            tap.setServiceStream(ofNullable(visit.getServiceStream()).map(VocServiceStream::getPromedCode).orElse(null));
             return tap;
         } catch (Exception e) {
             LOG.error("Ошибка создания ДТО:" + e.getMessage(), e);
@@ -140,9 +144,7 @@ public class PromedExportServiceBean implements IPromedExportService {
             Map.Entry<Integer, JSONObject> responseMap = webService.makePOSTRequestExt(formString, PROMEDATOR_URL, promedMethodUrl, new HashMap<>());
 
             if (responseMap != null) {
-                LOG.info(">>" + responseMap + "<<");
                 JSONObject jso = responseMap.getValue();
-
                 if (isEquals(responseMap.getKey(), 200) && jso.getBoolean("success")) { //success
                     MedCaseExportJournal journal = new MedCaseExportJournal();
                     journal.setMedCase(medcaseId);
@@ -173,39 +175,39 @@ public class PromedExportServiceBean implements IPromedExportService {
         List<DepartmentMedCase> deps = getDepartmentCases(slsId);
         if (deps.isEmpty()) {
             LOG.error("Не найдено случаев лечения в отделении, а отказ от госпитализации мы не выгружаем");
-            return null;
+            throw new IllegalArgumentException("Не найдено случаев лечения в отделении, а отказ от госпитализации мы не выгружаем");
         }
         PromedHospitalForm.PromedHospitalFormBuilder form = PromedHospitalForm.builder();
         Patient pat = sls.getPatient();
         form.patient(buildPatient(pat));
         form.statStubNumber(sls.getStatCardNumber());
         form.isFinished(true); //только закрытые СЛС!
-        form.dischargeResultCode(sls.getResult() == null ? null : sls.getResult().getCode())
-                .dischargeOutcomeCode(sls.getOutcome() == null ? null : sls.getOutcome().getCode())
-                .dischargeReasonCode(sls.getStatisticStub().getReasonDischarge() == null
-                        ? null
-                        : sls.getStatisticStub().getReasonDischarge().getCode());
+        form.dischargeResultCode(getVocCode(sls.getResult()))
+                .dischargeOutcomeCode(getVocCode(sls.getOutcome()))
+                .dischargeReasonCode(getVocCode(sls.getStatisticStub().getReasonDischarge()));
         form.isEmergency(sls.getEmergency());
+
         if (!Boolean.TRUE.equals(sls.getEmergency())) {
             form.directDate(sls.getOrderDate());
-            form.directLpuCode(sls.getOrderLpu() == null ? null : sls.getOrderLpu().getCodef());
+            form.directLpuCode(ofNullable(sls.getOrderLpu()).map(MisLpu::getCodef).orElse(null));
             form.directNumber(sls.getOrderNumber());
             form.directDiagnosis(mapDiagnosis(sls.getDiagnoses(), "2", slsId)); //направительные диагноз
         }
-        form.entranceDate(getDateTime(sls.getDateStart(), sls.getEntranceTime(), null));
+        form.entranceDate(getDateTime(sls.getDateStart(), sls.getEntranceTime()));
         form.preAdmissionHour(mapAdmissionHour(sls.getPreAdmissionTime()));
         form.isUnLawTrauma(wasCrimeMessages(slsId));
         MisLpu entranceDepartment = sls.getDepartment();
         form.departmentPromedId(entranceDepartment.getPromedLpuSectionId());
         form.isAmbulanceTreatment(sls.getAmbulanceTreatment());
-        form.transferLpuCode(sls.getMoveToAnotherLPU() == null ? null : sls.getMoveToAnotherLPU().getCodef());
+        form.transferLpuCode(ofNullable(sls.getMoveToAnotherLPU()).map(MisLpu::getCodef).orElse(null));
         List<PromedDepartmentForm> cases = mapDepartmentCases(deps);
         form.departmentCases(cases);
         form.priemDischargeDate(cases.get(0).getEntranceDate().substring(0, 10));//TODO сделать красиво //дата выбытия из приемного отделения = дата поступления в первое отделение
+        form.bedTypeId(cases.get(0).getBedTypeId());
         PromedHospitalForm hosp = form.build();
         hosp.setMedosId(sls.getId());
         hosp.setPromedCode(sls.getPromedCode());
-        hosp.setServiceStream(sls.getServiceStream() != null ? sls.getServiceStream().getPromedCode() : null);
+        hosp.setServiceStream(ofNullable(sls.getServiceStream()).map(VocServiceStream::getPromedCode).orElse(null));
         return hosp;
     }
 
@@ -213,11 +215,11 @@ public class PromedExportServiceBean implements IPromedExportService {
         List<PromedDepartmentForm> cases = new ArrayList<>();
         for (DepartmentMedCase slo : deps) {
             PromedDepartmentForm form = new PromedDepartmentForm();
-            form.setEntranceDate(getDateTime(slo.getDateStart(), slo.getEntranceTime(), null));
+            form.setEntranceDate(getDateTime(slo.getDateStart(), slo.getEntranceTime()));
             if (slo.getDateFinish() != null) { //пациент выписан из этого отделения
-                form.setDischargeDate(getDateTime(slo.getDateFinish(), slo.getDischargeTime(), null));
+                form.setDischargeDate(getDateTime(slo.getDateFinish(), slo.getDischargeTime()));
             } else if (slo.getTransferDate() != null) {
-                form.setTransferDate(getDateTime(slo.getTransferDate(), slo.getTransferTime(), null));
+                form.setTransferDate(getDateTime(slo.getTransferDate(), slo.getTransferTime()));
             } else {
                 LOG.error("Что ты такое?!?!?!?!" + slo.getId());
             }
@@ -226,8 +228,9 @@ public class PromedExportServiceBean implements IPromedExportService {
             form.setMainDiagnosis(mapDiagnosis(slo.getMainDiagnosis(), slo.getId()));
             form.setDiagnoses(mapDiagnosis(slo.getDiagnoses(), slo.getId()));
             form.setPromedCode(slo.getPromedCode());
-            form.setServiceStream(slo.getServiceStream() != null ? slo.getServiceStream().getPromedCode() : null);
+            form.setServiceStream(ofNullable(slo.getServiceStream()).map(VocServiceStream::getPromedCode).orElse(null));
             form.setMedosId(slo.getId());
+            form.setBedTypeId(ofNullable(slo.getBedFund()).map(BedFund::getBedSubType).map(VocIdCodeName::getCode).orElse(null));
             cases.add(form);
         }
         return cases;
@@ -250,11 +253,10 @@ public class PromedExportServiceBean implements IPromedExportService {
     }
 
     private List<PromedDiagnosis> mapDiagnosis(List<Diagnosis> diagnoses, Long medcaseId) {
-        List<PromedDiagnosis> list = new ArrayList<>();
-        for (Diagnosis d : diagnoses) {
-            list.add(mapDiagnosis(d, medcaseId));
-        }
-        return list;
+        return diagnoses.stream()
+                .map(d -> mapDiagnosis(d, medcaseId))
+                .collect(Collectors.toList());
+
     }
 
     //были ли сообщения в полицию
@@ -288,7 +290,8 @@ public class PromedExportServiceBean implements IPromedExportService {
 
     private List<DepartmentMedCase> getDepartmentCases(Long hospitalMedCaseId) {
         return manager.createQuery("from DepartmentMedCase where parent_id  = :parentId and (noActuality is null or noActuality='0') and dateStart is not null order by dateStart , timeExecute ")
-                .setParameter("parentId", hospitalMedCaseId).getResultList();
+                .setParameter("parentId", hospitalMedCaseId)
+                .getResultList();
     }
 
     @Override
@@ -297,11 +300,10 @@ public class PromedExportServiceBean implements IPromedExportService {
             List<MedCaseExportJournal> journals = manager.createQuery(" from MedCaseExportJournal j where medcase = :spoId")
                     .setParameter("spoId", spoId).getResultList();
             if (!journals.isEmpty()) {
-                StringBuilder guids = new StringBuilder();
-                for (MedCaseExportJournal j : journals) {
-                    guids.append(",").append(j.getPacketGuid());
-                }
-                Map.Entry<Integer, JSONObject> ret = webService.makeGetRequest(PROMEDATOR_URL, GET_BY_GUID_URL + "?guids=" + guids.substring(1));
+                String guids = journals.stream()
+                        .map(MedCaseExportJournal::getPacketGuid)
+                        .collect(Collectors.joining(","));
+                Map.Entry<Integer, JSONObject> ret = webService.makeGetRequest(PROMEDATOR_URL, GET_BY_GUID_URL + "?guids=" + guids);
                 if (ret == null || ret.getKey() != 200) {
                     LOG.error("ERROR: " + ret);
                 } else {
@@ -347,7 +349,7 @@ public class PromedExportServiceBean implements IPromedExportService {
                     .medosId(polyclinicCaseId)
                     .promedCode(polyclinicCase.getPromedCode())
                     .isEmergency(polyclinicCase.getEmergency())
-                    .serviceStream(polyclinicCase.getServiceStream() == null ? null : polyclinicCase.getServiceStream().getPromedCode())
+                    .serviceStream(ofNullable(polyclinicCase.getServiceStream()).map(VocServiceStream::getPromedCode).orElse(null))
                     .directLpuCode(findDirectLpu(allVisits));
 
             ShortMedCase lastVisit = allVisits.get(allVisits.size() - 1);
@@ -373,18 +375,25 @@ public class PromedExportServiceBean implements IPromedExportService {
     }
 
     private String findDirectLpu(List<ShortMedCase> visits) {
-        for (ShortMedCase visit : visits) {
-            if (visit.getOrderLpu() != null) {
-                return visit.getOrderLpu().getCodef();
-            }
-        }
-        return null;
+        return visits.stream()
+                .map(ShortMedCase::getOrderLpu)
+                .filter(Objects::nonNull)
+                .map(MisLpu::getCodef)
+                .findFirst().orElse(null);
     }
 
     private String getDateTime(java.sql.Date date, Time time, String defaultDateTime) {
         return date == null || time == null
                 ? defaultDateTime
                 : date + " " + time;
+    }
+
+    private String getDateTime(java.sql.Date date, Time time) {
+        return getDateTime(date, time, null);
+    }
+
+    private String getVocCode(VocIdCodeName voc) {
+        return ofNullable(voc).map(VocIdCodeName::getCode).orElse(null);
     }
 
     private List<PromedPolyclinicVisitForm> mapVisits(List<ShortMedCase> visits) {
@@ -396,7 +405,7 @@ public class PromedExportServiceBean implements IPromedExportService {
             VocWorkPlaceType vwr = visit.getWorkPlaceType();
             VocServiceStream vss = visit.getServiceStream();
             PromedDoctor doc = mapDoctor(wf);
-            String startDateTime = getDateTime(visit.getDateStart(), visit.getTimeExecute(), null);
+            String startDateTime = getDateTime(visit.getDateStart(), visit.getTimeExecute());
             PromedDiagnosis diagnosis;
             if (Boolean.TRUE.equals(visit.getWorkFunctionExecute().getWorkFunction().getIsNoDiagnosis())) {
                 //диагностика - диагноз Z
@@ -411,11 +420,11 @@ public class PromedExportServiceBean implements IPromedExportService {
                     .internalId(String.valueOf(visit.getId()))
                     .diagnosis(diagnosis)
                     .doctor(doc)
-                    .workPlaceCode(vwr == null ? null : vwr.getOmcCode())
+                    .workPlaceCode(ofNullable(vwr).map(VocWorkPlaceType::getOmcCode).orElse(null))
                     .diary(getDiaryInVisit(visit.getId()))
-                    .serviceStream(vss == null ? null : vss.getCode()) //unused
-                    .visitPurpose(vr == null ? null : vr.getOmcCode()) //1,2,3,4
-                    .ishodCode(visit.getVisitResult() == null ? null : visit.getVisitResult().getCodefpl())
+                    .serviceStream(getVocCode(vss)) //unused
+                    .visitPurpose(ofNullable(vr).map(VocIdNameOmcCode::getOmcCode).orElse(null)) //1,2,3,4
+                    .ishodCode(ofNullable(visit.getVisitResult()).map(VocVisitResult::getCodefpl).orElse(null))
                     .medicalCareKindCode(mapMedicalCare(wf))
                     .promedCode(visit.getPromedCode())
                     .services(mapServices(visit.getId(), doc, startDateTime))
@@ -427,18 +436,19 @@ public class PromedExportServiceBean implements IPromedExportService {
 
     private List<PromedMedService> mapServices(long visitId, PromedDoctor visitDoctor, String defaultDateStart) {
         List<ServiceMedCase> serviceList = manager.createQuery("from ServiceMedCase where parent_id=:visitId")
-                .setParameter("visitId", visitId).getResultList();
-        List<PromedMedService> promedMedServices = new ArrayList<>();
-        for (ServiceMedCase ms : serviceList) {
-            PromedMedService pms = new PromedMedService();
-            pms.setAmount(ms.getMedServiceAmount() == null ? 1 : ms.getMedServiceAmount());
-            pms.setFinishTime(getDateTime(ms.getDateStart(), ms.getTimeExecute(), defaultDateStart));
-            pms.setMedserviceCode(ms.getMedService().getCode());
-            pms.setStartTime(pms.getFinishTime());
-            pms.setDoctor(ms.getWorkFunctionExecute() == null ? visitDoctor : mapDoctor(ms.getWorkFunctionExecute()));
-            promedMedServices.add(pms);
-        }
-        return promedMedServices;
+                .setParameter("visitId", visitId)
+                .getResultList();
+        return serviceList.stream().map(ms -> {
+                    PromedMedService pms = new PromedMedService();
+                    pms.setAmount(ofNullable(ms.getMedServiceAmount()).orElse(1));
+                    pms.setFinishTime(getDateTime(ms.getDateStart(), ms.getTimeExecute(), defaultDateStart));
+                    pms.setMedserviceCode(ms.getMedService().getCode());
+                    pms.setStartTime(pms.getFinishTime());
+                    pms.setDoctor(ofNullable(ms.getWorkFunctionExecute()).map(this::mapDoctor).orElse(visitDoctor));
+                    return pms;
+                })
+                .collect(Collectors.toList());
+
     }
 
     //TODO check, скопипащено с экспертизы
@@ -468,7 +478,8 @@ public class PromedExportServiceBean implements IPromedExportService {
 
     private String getDiaryInVisit(Long visitId) {
         List<String> diary = manager.createNativeQuery("select record from Diary where medcase_id=:visitId")
-                .setParameter("visitId", visitId).getResultList();
+                .setParameter("visitId", visitId)
+                .getResultList();
         return diary.isEmpty() ? "" : diary.get(0);
     }
 
@@ -481,8 +492,14 @@ public class PromedExportServiceBean implements IPromedExportService {
                     .firstName(person.getFirstname())
                     .middleName(person.getMiddlename())
                     .snils(person.getSnils())
-                    .workfunctionCode(doctor.getWorkFunction() != null && doctor.getWorkFunction().getFondSpeciality() != null ? doctor.getWorkFunction().getFondSpeciality().getCode() : null)
-                    .promedWorkstaffId(doctor.getPromedCodeWorkstaff() == null || doctor.getPromedCodeWorkstaff().isEmpty() ? null : Long.valueOf(doctor.getPromedCodeWorkstaff()))
+                    .workfunctionCode(ofNullable(doctor.getWorkFunction())
+                            .map(VocWorkFunction::getFondSpeciality)
+                            .map(VocIdCodeName::getCode)
+                            .orElse(null))
+                    .promedWorkstaffId(ofNullable(doctor.getPromedCodeWorkstaff())
+                            .filter(code -> !code.isEmpty())
+                            .map(Long::valueOf)
+                            .orElse(null))
                     .build();
         } else {
             LOG.error("Рабочая функция для экспорта в промед - неперсональная!!! " + (wf == null ? "NULL" : wf.getId()));
@@ -493,18 +510,17 @@ public class PromedExportServiceBean implements IPromedExportService {
 
     private List<ShortMedCase> getAllVisitsInSpo(Long polyclinicCaseId) {
         return manager.createQuery("from ShortMedCase where parent_id  = :parentId and (noActuality is null or noActuality='0') and dateStart is not null order by dateStart , timeExecute ")
-                .setParameter("parentId", polyclinicCaseId).getResultList();
+                .setParameter("parentId", polyclinicCaseId)
+                .getResultList();
     }
 
     private Diagnosis getPrioryDiagnosis(List<Diagnosis> diagnoses) {
-        if (diagnoses != null && !diagnoses.isEmpty()) {
-            for (Diagnosis d : diagnoses) {
-                if (d.getPriority() != null && isEquals(d.getPriority().getCode(), "1")) {
-                    return d;
-                }
-            }
-        }
-        return null;
+        return diagnoses == null || diagnoses.isEmpty()
+                ? null
+                : diagnoses.stream()
+                .filter(d -> d.getPriority() != null && "1".equals(d.getPriority().getCode()))
+                .findFirst().orElse(null);
+
     }
 
     private PromedDiagnosis mapDiagnosis(Diagnosis diagnosis, Long medcaseId) {
@@ -516,8 +532,8 @@ public class PromedExportServiceBean implements IPromedExportService {
                     .promedId(diagnosis.getIdc10().getPromedCode())
                     .mkbCode(diagnosis.getIdc10().getCode())
                     .comment(diagnosis.getName())
-                    .acuity(diagnosis.getIllnesPrimary() == null ? null : diagnosis.getIllnesPrimary().getCode())
-                    .diagReasonMkb(diagnosis.getIdc10Reason() == null ? null : diagnosis.getIdc10Reason().getCode())
+                    .acuity(getVocCode(diagnosis.getIllnesPrimary()))
+                    .diagReasonMkb(getVocCode(diagnosis.getIdc10Reason()))
                     .build();
         }
 

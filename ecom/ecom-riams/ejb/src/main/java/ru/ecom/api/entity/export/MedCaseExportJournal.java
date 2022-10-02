@@ -2,6 +2,8 @@ package ru.ecom.api.entity.export;
 
 import lombok.Setter;
 import ru.ecom.ejb.domain.simple.BaseEntity;
+import ru.ecom.ejb.services.index.annotation.AIndex;
+import ru.ecom.ejb.services.index.annotation.AIndexes;
 import ru.ecom.ejb.services.util.ColumnConstants;
 
 import javax.persistence.Column;
@@ -12,6 +14,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Setter
+@AIndexes(@AIndex( properties = "medCase"))
 public class MedCaseExportJournal extends BaseEntity {
 
     private Long medCase;
