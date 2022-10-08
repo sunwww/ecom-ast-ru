@@ -512,7 +512,7 @@ public class Expert2ServiceBean implements IExpert2Service {
     /* Если в 1 визите было оказано несколько услуг - для каждой услуги делаем отдельный случай
      * */
     private void checkServiceEntryFirst(E2Entry entry) {
-        List<EntryMedService> serviceList = entry.getMedServices();
+        Set<EntryMedService> serviceList = entry.getMedServices();
         if (serviceList != null && serviceList.size() > 1) {
             for (EntryMedService medService : serviceList) {
                 if (medService.getCost().longValue() > 0L) {
