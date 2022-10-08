@@ -693,7 +693,7 @@ public class E2EntryForm extends IdEntityForm {
     @Persist
     public String getCost() {return cost;}
 
-    @Comment("Ручное редактирование цены")
+    @Comment("Ручное редактирование КСГ")
     @Persist
     public Boolean getIsManualKsg() {return isManualKsg;}
 

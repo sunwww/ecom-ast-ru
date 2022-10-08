@@ -2,6 +2,8 @@ package ru.ecom.expert2.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.entityform.annotation.UnDeletable;
 import ru.ecom.ejb.services.index.annotation.AIndex;
@@ -19,10 +21,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @UnDeletable
@@ -79,11 +78,11 @@ public class E2Entry extends BaseEntity {
      * Онкологические случаи
      */
 
-    private List<E2CancerEntry> cancerEntries;
+    private Set<E2CancerEntry> cancerEntries;
     /**
      * Случаи введения лекарственного препарата (пока только covid-19)
      */
-    private List<E2DrugEntry> drugEntries;
+    private Set<E2DrugEntry> drugEntries;
     /**
      * Онкологический случай
      */
@@ -252,7 +251,7 @@ public class E2Entry extends BaseEntity {
      * Сложность лечения пациента
      */
 
-    private List<E2CoefficientPatientDifficultyEntryLink> patientDifficulty;
+    private Set<E2CoefficientPatientDifficultyEntryLink> patientDifficulty;
     /**
      * Причины неполной оплаты
      */
@@ -370,12 +369,12 @@ public class E2Entry extends BaseEntity {
      * Услуги по случаю
      */
 
-    private List<EntryMedService> medServices;
+    private Set<EntryMedService> medServices;
     /**
      * Список диагнозов по случаю
      */
 
-    private List<EntryDiagnosis> diagnosis;
+    private Set<EntryDiagnosis> diagnosis;
     /**
      * Полис представителя
      */
@@ -680,12 +679,12 @@ public class E2Entry extends BaseEntity {
      * Санкции
      */
 
-    private List<E2EntrySanction> sanctionList;
+    private Set<E2EntrySanction> sanctionList;
     /**
      * Ошибки проверки
      */
 
-    private List<E2EntryError> errorList;
+    private Set<E2EntryError> errorList;
     /**
      * Профиль койки
      */
@@ -706,7 +705,7 @@ public class E2Entry extends BaseEntity {
     /**
      * Особенности подачи
      */
-    private List<VocE2EntryFactor> factorList;
+    private Set<VocE2EntryFactor> factorList;
     /**
      * Место рождения
      */
@@ -739,7 +738,7 @@ public class E2Entry extends BaseEntity {
     @Transient
     /* Вычисляем основной диагноз по записи */
     public EntryDiagnosis getMainEntryDiagnosis() {
-        List<EntryDiagnosis> list = getDiagnosis();
+        Set<EntryDiagnosis> list = getDiagnosis();
         for (EntryDiagnosis d : list) {
             if (d.getRegistrationType() != null && d.getRegistrationType().getCode().equals("3")
                     && d.getPriority() != null && d.getPriority().getCode().equals("1")) {
@@ -752,16 +751,18 @@ public class E2Entry extends BaseEntity {
                 return d;
             }
         }
-        return list.get(0);
+        return list.iterator().next();
     }
 
     @OneToMany(mappedBy = "entry")
-    public List<E2CancerEntry> getCancerEntries() {
+    @LazyCollection(LazyCollectionOption.FALSE)
+    public Set<E2CancerEntry> getCancerEntries() {
         return cancerEntries;
     }
 
     @OneToMany(mappedBy = "entry")
-    public List<E2DrugEntry> getDrugEntries() {
+    @LazyCollection(LazyCollectionOption.FALSE)
+    public Set<E2DrugEntry> getDrugEntries() {
         return drugEntries;
     }
 
@@ -825,8 +826,9 @@ public class E2Entry extends BaseEntity {
         return parentEntry;
     }
 
-    @OneToMany(mappedBy = "entry", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    public List<E2CoefficientPatientDifficultyEntryLink> getPatientDifficulty() {
+    @OneToMany(mappedBy = "entry")
+    @LazyCollection(LazyCollectionOption.FALSE)
+    public Set<E2CoefficientPatientDifficultyEntryLink> getPatientDifficulty() {
         return patientDifficulty;
     }
 
@@ -875,13 +877,15 @@ public class E2Entry extends BaseEntity {
         return insuranceCompanyName;
     }
 
-    @OneToMany(mappedBy = "entry", cascade = CascadeType.ALL)
-    public List<EntryMedService> getMedServices() {
+    @OneToMany(mappedBy = "entry")
+    @LazyCollection(LazyCollectionOption.FALSE)
+    public Set<EntryMedService> getMedServices() {
         return medServices;
     }
 
-    @OneToMany(mappedBy = "entry", cascade = CascadeType.ALL)
-    public List<EntryDiagnosis> getDiagnosis() {
+    @OneToMany(mappedBy = "entry")
+    @LazyCollection(LazyCollectionOption.FALSE)
+    public Set<EntryDiagnosis> getDiagnosis() {
         return diagnosis;
     }
 
@@ -910,13 +914,15 @@ public class E2Entry extends BaseEntity {
         return listEntry;
     }
 
-    @OneToMany(mappedBy = "entry", fetch = FetchType.LAZY)
-    public List<E2EntrySanction> getSanctionList() {
+    @OneToMany(mappedBy = "entry")
+    @LazyCollection(LazyCollectionOption.FALSE)
+    public Set<E2EntrySanction> getSanctionList() {
         return sanctionList;
     }
 
-    @OneToMany(mappedBy = "entry", fetch = FetchType.LAZY)
-    public List<E2EntryError> getErrorList() {
+    @OneToMany(mappedBy = "entry")
+    @LazyCollection(LazyCollectionOption.FALSE)
+    public Set<E2EntryError> getErrorList() {
         return errorList;
     }
 
@@ -928,7 +934,7 @@ public class E2Entry extends BaseEntity {
     @ManyToMany
     @JoinTable(name = "e2entry_factor", joinColumns = @JoinColumn(name = "entry_id")
             , inverseJoinColumns = @JoinColumn(name = "factor_id"))
-    public List<VocE2EntryFactor> getFactorList() {
+    public Set<VocE2EntryFactor> getFactorList() {
         return factorList;
     }
 
