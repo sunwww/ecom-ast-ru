@@ -108,8 +108,7 @@ public class WebClientServiceBean implements IWebClientService {
             if (connection != null) {
                 connection.disconnect();
             }
-            LOG.error("in thread happens exception" + e);
-            e.printStackTrace();
+            LOG.error("in thread happens exception" + e, e);
         }
         return null;
     }

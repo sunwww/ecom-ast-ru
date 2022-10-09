@@ -8,7 +8,7 @@
 
 <msh:section>
     <ecom:webQuery name="pres" nativeSql="select p.id as pid
-    	,pl.id as plid,vmp.name as vmpname,to_char(p.planStartDate,'dd.mm.yyyy')||cast(p.planStartTime as varchar(5)) as startDate
+    	,pl.id as plid,vmp.name as vmpname,to_char(p.planStartDate,'dd.mm.yyyy')||' '||cast(p.planStartTime as varchar(5)) as startDate
     	,to_char(p.planEndDate,'dd.mm.yyyy')||' '||cast(p.planEndTime as varchar(5)) as endDate from Prescription p
     	left join PrescriptionList pl on pl.id=p.prescriptionList_id
     	left join VocModePrescription as vmp on vmp.id=p.modePrescription_id where ${field } and p.DTYPE='ModePrescription'
@@ -24,7 +24,7 @@
 </msh:section>
 <msh:section>
     <ecom:webQuery name="pres" nativeSql="select p.id as pid
-    	,pl.id as plid,d.name as dname,to_char(p.planStartDate,'dd.mm.yyyy')||cast(p.planStartTime as varchar(5)) as startDate
+    	,pl.id as plid,d.name as dname,to_char(p.planStartDate,'dd.mm.yyyy')||' '||cast(p.planStartTime as varchar(5)) as startDate
     	,to_char(p.planEndDate,'dd.mm.yyyy')||' '||cast(p.planEndTime as varchar(5)) as endDate from Prescription p
     	left join PrescriptionList pl on pl.id=p.prescriptionList_id
     	left join diet as d on d.id=p.diet_id where ${field } and p.DTYPE='DietPrescription'

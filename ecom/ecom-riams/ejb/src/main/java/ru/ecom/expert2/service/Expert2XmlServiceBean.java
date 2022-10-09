@@ -24,6 +24,7 @@ import ru.ecom.expomc.ejb.domain.med.VocKsg;
 import ru.ecom.expomc.ejb.services.exportservice.ExportServiceBean;
 import ru.ecom.mis.ejb.domain.medcase.voc.VocMedService;
 import ru.nuzmsh.util.CollectionUtil;
+import ru.nuzmsh.util.PropertyUtil;
 import ru.nuzmsh.util.StringUtil;
 import ru.nuzmsh.util.date.AgeUtil;
 
@@ -32,18 +33,18 @@ import javax.ejb.Local;
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static java.util.Optional.ofNullable;
 import static ru.nuzmsh.util.BooleanUtils.isNotTrue;
@@ -89,7 +90,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     .append("') ");
         }
 
-        String sql = "from E2Entry where listEntry_id=:listId and " + sqlAdd.toString() + " and  coalesce(isDeleted, false) = false";
+        String sql = "from E2Entry where listEntry_id=:listId and " + sqlAdd + " and  coalesce(isDeleted, false) = false";
         List<Object> list = manager.createQuery(sql).setParameter("listId", listEntryId).getResultList();
         File dbfFile = new File(getWorkDir() + "/expert2xml/" + listEntryId + "_flyToFond.dbf");
         List<ImportDocument> documents = manager.createNamedQuery("ImportDocument.findByKey").setParameter("key", CENTRAL_SEGMENT_DOC).getResultList();
@@ -364,7 +365,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
 
                 E2CancerEntry cancerEntry;
                 if (isCancer && !currentEntry.getCancerEntries().isEmpty()) {
-                    cancerEntry = currentEntry.getCancerEntries().get(0); //Считаем что не может быть больше 1 онкослучая
+                    cancerEntry = getFirst(currentEntry.getCancerEntries()); //Считаем что не может быть больше 1 онкослучая
                 } else {
                     cancerEntry = null;
                 }
@@ -565,7 +566,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                         addIfNotNull(ksgKpg, "CRIT", currentEntry.getKsgPosition().getDopPriznak());
                     }
                     //DKK2
-                    List<E2CoefficientPatientDifficultyEntryLink> difficultyEntryLinks = currentEntry.getPatientDifficulty();
+                    Set<E2CoefficientPatientDifficultyEntryLink> difficultyEntryLinks = currentEntry.getPatientDifficulty();
                     if (!difficultyEntryLinks.isEmpty()) {
                         add(ksgKpg, "SL_K", "1");
                         add(ksgKpg, "IT_SL", expertService.calculateResultDifficultyCoefficient(currentEntry));
@@ -647,7 +648,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                             visitService = null;
                             //LOG.error(" У врача "+spec.getCode()+" нет услуги по умолчанию");
                         }
-                        List<EntryMedService> serviceList = child.getMedServices();
+                        Set<EntryMedService> serviceList = child.getMedServices();
                         for (EntryMedService service : serviceList) { //простые услуги в пол-ке
                             if (!service.getMedService().getCode().startsWith("T")) {
                                 String serviceCode = service.getMedService().getCode();
@@ -667,7 +668,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     }
 
                 } else if (isExtDisp) {
-                    List<EntryMedService> serviceList = entry.getMedServices();
+                    Set<EntryMedService> serviceList = entry.getMedServices();
                     for (EntryMedService ms : serviceList) {
                         if (ms.getServiceDate() != null || exportDispServiceNoDate) {
                             try {
@@ -802,7 +803,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     }
 
     //TODO refactor with cancer drug?
-    private void addDrug(Element sl, List<E2DrugEntry> drugEntries) {
+    private void addDrug(Element sl, Collection<E2DrugEntry> drugEntries) {
         for (E2DrugEntry drug : drugEntries) {
             Element d = new Element("LEK_PR");
             addIfNotNull(d, "DATA_INJ", drug.getInjectDate());
@@ -1044,7 +1045,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             Element hRoot = new Element("ZL_LIST");  // данные о мед. помощи
             Element lRoot = new Element("PERS_LIST");  // данные о пациенте
             List<Long> patientIdsList = new ArrayList<>();
-            BigDecimal totalSum = new BigDecimal(0);
+            BigDecimal totalSum = BigDecimal.ZERO;
             List<Element> zaps = new ArrayList<>();
             List<Element> perss = new ArrayList<>();
             int cnt = 0;
@@ -1201,13 +1202,23 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
 
     /*Формируем случай с госпитализацией (не сохраняя в БД)*/
     private E2Entry calculateHospitalEntry(Long hospitalMedcaseId, String ids) {
-        E2Entry hospital = null;
-        List<E2Entry> slo = manager.createQuery("from E2Entry where id in (" + ids + ") and externalParentId=:parent and serviceStream!='COMPLEXCASE' " +
-                        "and coalesce(isDeleted, false) = false and coalesce(doNotSend, false) = false order by startDate")
+        E2Entry hospital = null; //порефачить, выглядит говно
+        List<E2Entry> slo = manager.createQuery("select distinct e " +
+                        " from E2Entry e " +
+                        " left join fetch e.cancerEntries ce" +
+                        " left join fetch e.sanctionList sl " +
+                        " left join fetch e.errorList" +
+                        " left join fetch e.factorList" +
+                        " left join fetch e.patientDifficulty" +
+                        " left join fetch e.diagnosis" +
+                        " left join fetch e.medServices" +
+                        " left join fetch e.drugEntries" +
+                        " where e.id in (" + ids + ") and e.externalParentId=:parent and e.serviceStream!='COMPLEXCASE' " +
+                        " and coalesce(e.isDeleted, false) = false and coalesce(e.doNotSend, false) = false order by e.startDate")
                 .setParameter("parent", hospitalMedcaseId)
                 .getResultList();
         if (!slo.isEmpty()) {
-            hospital = cloneEntity(slo.get(0));
+            hospital = cloneEntity(getFirst(slo));
             if (hospital == null) {
                 return null;
             }
@@ -1245,7 +1256,29 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     }
 
     private E2Entry cloneEntity(E2Entry source) {
-        return expertService.cloneEntity(source);
+        try {
+            Method[] methodList = source.getClass().getMethods();
+            E2Entry newEntity = new E2Entry();
+            for (Method setterMethod : methodList) {
+                String methodName = setterMethod.getName();
+                if (methodName.startsWith("set")) {
+                    if (methodName.equals("setId") || setterMethod.isAnnotationPresent(OneToMany.class)) {
+                        continue;
+                    }
+                    String propertyName = PropertyUtil.getPropertyName(setterMethod);
+                    try {
+                        Object val = PropertyUtil.getPropertyValue(source, propertyName);
+                        PropertyUtil.setPropertyValue(newEntity, propertyName, val);
+                    } catch (Exception e) {
+                    }
+                }
+            }
+            return newEntity;
+        } catch (Exception e) {
+            LOG.error(e);
+            return null;
+        }
+//        return expertService.cloneEntity(source); //lazy exception
     }
 
     private String getWorkDir() {
@@ -1288,12 +1321,12 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             } catch (Exception ignored) {
             }//Не удалось очистить архив, т.к. его нету. Ничего страшного)
 
-            Runtime.getRuntime().exec(exec + sb.toString());//arraCmd);
+            Runtime.getRuntime().exec(exec + sb);//arraCmd);
         } catch (IOException e) {
             LOG.warn("it seems Windows");
             exec = "\"C:\\Program Files\\7-Zip\\7z.exe\" a -tZIP ";
             try {
-                Runtime.getRuntime().exec(exec + sb.toString());
+                Runtime.getRuntime().exec(exec + sb);
             } catch (IOException e1) {
                 LOG.error(e1);
             }
@@ -1304,7 +1337,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     /**
      * Получение всех диагнозов из списка по коду регистрации
      */
-    private List<String> findDiagnosisCodes(List<EntryDiagnosis> diagnoses, String regType, String priority) {
+    private List<String> findDiagnosisCodes(Collection<EntryDiagnosis> diagnoses, String regType, String priority) {
         //Тип регистрации - направительный(2), выписной(3), клинический(4)
         // Приорите - основной(1), сопутствующий(3)
         if (diagnoses.isEmpty()) {
@@ -1359,7 +1392,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             addIfNotNull(element, "DS1_PR", entry.getFirstTimeDiagnosis());
             return;
         }
-        List<EntryDiagnosis> list = entry.getDiagnosis();
+        Set<EntryDiagnosis> list = entry.getDiagnosis();
         String mainDiagnosisSqlAdd;
         List<EntryDiagnosis> mainDiagnosisList = new ArrayList<>();
         VocListEntryTypeCode entryType = entry.getEntryType();
@@ -1424,7 +1457,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             if (!mainMkb.startsWith("Z")) { //C_ZAB * Характер заболевания, если USL_OK!=4 || DS1!=Z*
                 VocE2FondV027 vip = ds.getVocIllnessPrimary();
                 if (vip == null) {
-                    add(element, "DS_ERROR","");
+                    add(element, "DS_ERROR", "");
                 } else {
                     add(element, "C_ZAB", vip.getCode());
                 }
@@ -1462,5 +1495,9 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
             }
         }
         return null;
+    }
+
+    private <T> T getFirst(Collection<T> collection) {
+        return collection == null ? null : collection.iterator().next();
     }
 }
