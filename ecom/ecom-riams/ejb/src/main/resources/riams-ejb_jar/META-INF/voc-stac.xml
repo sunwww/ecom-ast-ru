@@ -572,6 +572,18 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 queried=" (cast(ml.id as varchar(10)) like upper(:querId) or upper(ml.name) like upper(:query)) "
         />
     </voc>
+    <voc id='vocChargedDirectDoctor' type='NativeVocService'>
+        <NativeVocService
+                from="Patient wp"
+                names="wp.lastname||' '||wp.firstname||' '||wp.middlename"
+                parent=''
+                nameId=" wp.id"
+                queryAppend=" ml.id in (180,409,246) and vwf.name like 'Врач%' and wf.secuser_id is not null"
+                join=" left join Worker w on wp.id=w.person_id left join mislpu ml on ml.id=w.lpu_id left join WorkFunction wf on w.id=wf.worker_id left join VocWorkFunction vwf on vwf.id=wf.workFunction_id"
+                order=""
+                queried=" (cast(wp.id as varchar(10)) like upper(:querId) or upper(wp.lastname) like upper(:query) or upper(wp.firstname) like upper(:query) or upper(wp.middlename) like upper(:query)) "
+        />
+    </voc>
 
     <voc id='vocLpuHospOtdOnlyKMP' type='NativeVocService'>
         <NativeVocService
