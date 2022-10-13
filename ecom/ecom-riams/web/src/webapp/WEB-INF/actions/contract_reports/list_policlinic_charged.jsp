@@ -35,7 +35,7 @@
                     </td>
                 </msh:row>
                 <msh:row>
-                    <msh:autoComplete property="workFunction" fieldColSpan="7" horizontalFill="true" label="Направитель" vocName="vocChargedDirectDoctor"/>
+                    <msh:autoComplete property="workFunction" fieldColSpan="7" horizontalFill="true" label="Направитель" vocName="workFunctionByDirect"/>
                 </msh:row>
             </msh:panel>
         </msh:form>
@@ -57,7 +57,7 @@
         <%
             String workFunctionDirect = request.getParameter("workFunction") ;
             if (workFunctionDirect!=null && !workFunctionDirect.equals("") && !workFunctionDirect.equals("0"))
-               request.setAttribute("workFunctionDirectSql", " and wp.id=" + workFunctionDirect);
+               request.setAttribute("workFunctionDirectSql", " and wf.id=" + workFunctionDirect);
             else
                 request.setAttribute("workFunctionDirectSql", "");
             String dateFrom = request.getParameter("dateFrom") ;
