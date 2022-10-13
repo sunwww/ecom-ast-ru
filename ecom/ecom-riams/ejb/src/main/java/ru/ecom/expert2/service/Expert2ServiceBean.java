@@ -3439,7 +3439,7 @@ public class Expert2ServiceBean implements IExpert2Service {
             }
         }
         String result;
-        if (StringUtil.isNotEmpty(entry.getResult())) {
+        if (StringUtil.isNullOrEmpty(entry.getResult())) {
             if (extDispCase) {
                 result = "1#1#1";
             } else {
@@ -3780,7 +3780,6 @@ public class Expert2ServiceBean implements IExpert2Service {
                     Set<EntryDiagnosis> entryDiagnoses = new HashSet<>();
                     for (Diagnosis d : diagnoses) {
                         EntryDiagnosis savedDiagnosis = new EntryDiagnosis(sloEntry, d.getIdc10(), d.getRegistrationType(), d.getPriority(), d.getMkbAdc(), d.getIllnesPrimary() != null ? d.getIllnesPrimary().getOmcCode() : null);
-                        manager.persist(savedDiagnosis);
                         entryDiagnoses.add(savedDiagnosis);
                     }
                     sloEntry.setDiagnosis(entryDiagnoses);
@@ -3794,9 +3793,11 @@ public class Expert2ServiceBean implements IExpert2Service {
                                     " LEFT JOIN VocMedService vmssrv ON mssrv.vocmedservice_id=vmssrv.id WHERE mcsrv.parent_id=:id AND mcsrv.DTYPE = 'ServiceMedCase' and vmssrv.isOmc='1'")
                             .setParameter("id", medCase.getId()).getResultList();
                     if (!list.isEmpty()) {
-                        for (BigInteger bi : list) {
-                            medServiceList.add(new EntryMedService(sloEntry, manager.find(VocMedService.class, bi.longValue())));
-                        }
+
+                        List<EntryMedService> emsList = manager.createQuery("select ems from EntryMedService ems where id in (:ids)")
+                                .setParameter("ids", list.stream().map(BigInteger::longValue).collect(Collectors.toSet()))
+                                .getResultList();
+                        medServiceList.addAll(emsList);
                     }
                     sloEntry.setBirthDate(departmentMedCase.getPatient().getBirthday());
                     long bedDays = AgeUtil.calculateDays(sloEntry.getStartDate(), sloEntry.getFinishDate());

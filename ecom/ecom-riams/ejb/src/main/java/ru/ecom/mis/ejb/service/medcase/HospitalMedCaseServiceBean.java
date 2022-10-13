@@ -786,7 +786,7 @@ public class HospitalMedCaseServiceBean implements IHospitalMedCaseService {
                         try {
                             totalSum = Double.parseDouble(toString(row[5]));
                         } catch (NumberFormatException e) {
-                            LOG.error("Не удалось посчитать цену поликлинического случая: " + toString(row[5]));
+                            LOG.error("Не удалось посчитать цену поликлинического случая (" + toString(row[5]) + "): " + e.getMessage());
                             totalSum = 0.0;
                         }
                     }
