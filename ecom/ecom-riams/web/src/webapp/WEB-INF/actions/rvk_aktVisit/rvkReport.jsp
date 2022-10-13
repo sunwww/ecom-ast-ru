@@ -21,6 +21,10 @@
                     <msh:autoComplete property="department" fieldColSpan="16" horizontalFill="true" label="Отделение" vocName="vocLpuHospOtdAll"/>
                 </msh:row>
                 <msh:row>
+                    <msh:autoComplete property="serviceStream" fieldColSpan="4" horizontalFill="true"
+                                      label="Поток обслуживания" vocName="vocServiceStream"/>
+                </msh:row>
+                <msh:row>
                     <td class="label" title="Показать  (typeGroup)" colspan="1"><label for="typeGroupName" id="typeGroupLabel">Показать:</label></td>
                     <td onclick="this.childNodes[1].checked='checked';" colspan="1">
                         <input type="radio" name="typeGroup" value="1" checked> все
@@ -75,6 +79,8 @@
             }
             String department = request.getParameter("department") ;
             if (department!=null && !department.equals("")) request.setAttribute("department"," and dep.id="+department);
+            String serviceStream = request.getParameter("serviceStream") ;
+            if (serviceStream!=null && !serviceStream.equals("")) request.setAttribute("serviceStream"," and sstr.id="+serviceStream);
             request.setAttribute("typeSql", typeSql.toString());
             request.setAttribute("typeGroup",type1);
             request.setAttribute("typeGroup2",type2);
@@ -92,6 +98,7 @@ select a.id||'!'||mc.dtype,pat.lastname ||' ' ||pat.firstname|| ' ' || pat.middl
 ,dep.name as depname
 ,vwf.name||' '||wpat.lastname||' '||wpat.firstname||' '||wpat.middlename as w
 ,a.comment as cmnt
+,sstr.name as sstream
 from actrvk a
 left join patient pat on pat.id=a.patient_id
 left join address2 adr on adr.addressid=pat.address_addressid
@@ -102,7 +109,8 @@ left join vocworkfunction vwf on vwf.id=wf.workfunction_id
 left join worker w on w.id=wf.worker_id
 left join patient wpat on wpat.id=w.person_id
 left join medcase mc on mc.id=a.medcase_id
-where 1=1 ${typeSql} ${department}"/>
+left join VocServiceStream sstr on sstr.id=mc.serviceStream_id
+where 1=1 ${typeSql} ${department} ${serviceStream}"/>
                 <form action="javascript:void(0)" method="post" target="_blank"></form>
             </msh:sectionTitle>
             <msh:sectionContent>
@@ -117,6 +125,7 @@ where 1=1 ${typeSql} ${department}"/>
                     <msh:tableColumn columnName="Отделение" property="8"/>
                     <msh:tableColumn columnName="Открыл акт" property="9"/>
                     <msh:tableColumn columnName="Примечание" property="10"/>
+                    <msh:tableColumn columnName="Поток обслуживания" property="11"/>
                 </msh:table>
             </msh:sectionContent>
         </msh:section>
