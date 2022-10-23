@@ -82,7 +82,8 @@ select pp.id as ppid,pp.code as ppcode,pp.name as ppname
 from ContractAccountOperationByService caos
 left join ContractAccountOperation cao on caos.accountOperation_id=cao.id and cao.dtype='OperationAccrual' and cao.repealOperation_id is null
 left join medcase mc on mc.id=caos.medcase_id
-left join WorkFunction wf on wf.id=mc.orderworkfunction_id
+left join medcase parentmc on parentmc.id=mc.parent_id
+left join WorkFunction wf on wf.id=mc.orderworkfunction_id or wf.id=parentmc.startfunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
@@ -99,13 +100,19 @@ left join vocservicestream sstr on sstr.id=mc.servicestream_id
 left join workfunction wfex on wfex.id=mc.workfunctionexecute_id
 left join worker wex on wex.id=wfex.worker_id
 left join mislpu mlex on mlex.id=wex.lpu_id
+left join vocservicestream parsstr on parsstr.id=parentmc.servicestream_id
+left join vocservicestream firstsstr on firstsstr.id=
+(select servicestream_id from medcase where parent_id=parentmc.id order by id limit 1)
+left join vocservicetype vsts on vsts.id=ms.servicetype_id
 where cao.operationdate
 between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy')
-and sstr.code='CHARGED'
+and (sstr.code='CHARGED' or (sstr.id is null and parsstr.code='CHARGED')
+or firstsstr.code='CHARGED')
 and vwf.name like 'Врач%'
 and ml.id in (180,409,246)
 and mlex.isforreportcharged=true
 ${workFunctionDirectSql}
+and case when (wf.id<>mc.orderworkfunction_id) then vsts.code='LABSURVEY' else 1=1 end
 group by ppG.lpu_id,pp.id,pp.code,pp.name,wp.lastname,wp.firstname,wp.middlename,vwf.name
 order by pp.name
 			"/>
@@ -163,7 +170,8 @@ select list(cast (pp.id as varchar)) as ppid,list(pp.code) as ppcode,list(pp.nam
 from ContractAccountOperationByService caos
 left join ContractAccountOperation cao on caos.accountOperation_id=cao.id and cao.dtype='OperationAccrual' and cao.repealOperation_id is null
 left join medcase mc on mc.id=caos.medcase_id
-left join WorkFunction wf on wf.id=mc.orderworkfunction_id
+left join medcase parentmc on parentmc.id=mc.parent_id
+left join WorkFunction wf on wf.id=mc.orderworkfunction_id or wf.id=parentmc.startfunction_id
 left join Worker w on w.id=wf.worker_id
 left join Patient wp on wp.id=w.person_id
 left join VocWorkFunction vwf on vwf.id=wf.workFunction_id
@@ -180,13 +188,19 @@ left join vocservicestream sstr on sstr.id=mc.servicestream_id
 left join workfunction wfex on wfex.id=mc.workfunctionexecute_id
 left join worker wex on wex.id=wfex.worker_id
 left join mislpu mlex on mlex.id=wex.lpu_id
+left join vocservicestream parsstr on parsstr.id=parentmc.servicestream_id
+left join vocservicestream firstsstr on firstsstr.id=
+(select servicestream_id from medcase where parent_id=parentmc.id order by id limit 1)
+left join vocservicetype vsts on vsts.id=ms.servicetype_id
 where cao.operationdate
 between to_date('${param.dateFrom}', 'dd.mm.yyyy') AND to_date('${param.dateTo}', 'dd.mm.yyyy')
-and sstr.code='CHARGED'
+and (sstr.code='CHARGED' or (sstr.id is null and parsstr.code='CHARGED')
+or firstsstr.code='CHARGED')
 and vwf.name like 'Врач%'
 and ml.id in (180,409,246)
 and mlex.isforreportcharged=true
 ${workFunctionDirectSql}
+and case when (wf.id<>mc.orderworkfunction_id) then vsts.code='LABSURVEY' else 1=1 end
 group by wp.id
 			"/>
             <msh:sectionContent>
