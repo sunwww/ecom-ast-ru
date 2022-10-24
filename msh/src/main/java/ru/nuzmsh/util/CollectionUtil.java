@@ -14,5 +14,9 @@ public class CollectionUtil {
         return !isEmpty(collection);
     }
 
+    public static <T> T getFirst(Collection<T> collection) {
+        return isEmpty(collection) ? null : collection.iterator().next();
+    }
+
 
 }

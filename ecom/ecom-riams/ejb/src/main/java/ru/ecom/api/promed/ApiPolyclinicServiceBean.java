@@ -21,6 +21,7 @@ import java.math.BigInteger;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Сервис для выгрузки в промед поликлинических случаев
@@ -66,10 +67,13 @@ public class ApiPolyclinicServiceBean implements IApiPolyclinicService {
 
     private List<PromedParaclinicForm> mapParaclinicList(List<BigInteger> visitIds) {
         List<PromedParaclinicForm> list = new ArrayList<>();
-        for (BigInteger bi : visitIds) {
-            PromedParaclinicForm form = promedExportService.getParaclinicCase(manager.find(Visit.class, bi.longValue()));
+        List<Visit> visitList = manager.createQuery("select m from Visit m where id in (:ids)")
+                .setParameter("ids", visitIds.stream().map(BigInteger::longValue).collect(Collectors.toSet()))
+                .getResultList();
+        for (Visit visit : visitList) {
+            PromedParaclinicForm form = promedExportService.getParaclinicCase(visit);
             if (form == null) {
-                LOG.error("Не удалось сконвертировать параклинику с ИД " + bi + "в правильный случай");
+                LOG.error("Не удалось сконвертировать параклинику с ИД " + visit.getId() + "в правильный случай");
             } else {
                 list.add(form);
             }

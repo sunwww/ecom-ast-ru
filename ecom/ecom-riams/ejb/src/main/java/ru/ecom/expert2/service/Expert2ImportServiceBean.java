@@ -6,6 +6,7 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
+import ru.ecom.ejb.domain.simple.BaseEntity;
 import ru.ecom.ejb.services.monitor.ILocalMonitorService;
 import ru.ecom.ejb.services.monitor.IMonitor;
 import ru.ecom.ejb.util.injection.EjbEcomConfig;
@@ -33,12 +34,10 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static ru.nuzmsh.util.CollectionUtil.getFirst;
 import static ru.nuzmsh.util.EqualsUtil.isEquals;
 import static ru.nuzmsh.util.EqualsUtil.isOneOf;
 
@@ -102,17 +101,19 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         LOG.info("clean defect before flk " + defs.size());
         monitor.setText("ФЛК " + filename + ", записей для расчета: " + defs.size());
         int cnt = 0;
+        Set<Long> entryIds = defs.stream().map(el -> el.getChildText("Z_NAP"))
+                .map(Long::parseLong)
+                .collect(Collectors.toSet());
+        Map<Long, E2Entry> entryMap = getEntryMap(entryIds);
         for (Element el : defs) {
-            String entryId = el.getChildText("N_ZAP");
+            Long entryId = Long.parseLong(el.getChildText("N_ZAP"));
             if (cnt % 100 == 0 && isMonitorCancel(monitor, "Импортировано записей: " + cnt)) return;
-            if (isNotNull(entryId)) {
-                E2Entry entry = manager.find(E2Entry.class, Long.parseLong(entryId));
-                entry.setFondComment(out.outputString(el));
-                entry.setIsDefect(true);
-                manager.persist(entry);
-                manager.persist(new E2EntrySanction(entry, null, "FLK_ERR", true, "ФЛК"));
-                cnt++;
-            }
+            E2Entry entry = entryMap.get(entryId);
+            entry.setFondComment(out.outputString(el));
+            entry.setIsDefect(true);
+            manager.persist(entry);
+            manager.persist(new E2EntrySanction(entry, null, "FLK_ERR", true, "ФЛК"));
+            cnt++;
         }
         monitor.finish("Импорт ФЛК закончен: " + cnt + " записей из " + defs.size());
     }
@@ -134,7 +135,6 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
             manager.persist(le);
             Element root = doc.getRootElement();
             int i = 0;
-            serviceCost.clear();
             List<Element> zaps = root.getChildren("ZAP");
             LOG.info("start import elmed " + xmlFilename + ", found " + zaps.size() + " records");
             IMonitor monitor = startMonitor(monitorId, "Импортируем записи с ЭлМед-а {" + xmlFilename + "}. Всего записей: " + zaps.size());
@@ -256,17 +256,25 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
+        cleanMaps();
+    }
+
+    private void cleanMaps() {
+        serviceCost.clear();
+        DOCTORLIST.clear();
+        sanctionMap.clear();
+
     }
 
     private VocOmcMedServiceCost getMedServiceCost(String medServiceCode, Date finishDate) {
         if (medServiceCode == null || finishDate == null) return null;
         String key = medServiceCode + "#" + mmYYYY.format(finishDate);
-        if (!serviceCost.containsKey(key)) {
-            List<VocOmcMedServiceCost> costs = manager.createNamedQuery("VocOmcMedServiceCost.getByCodeAndDate").setParameter("code", medServiceCode)
+        return serviceCost.computeIfAbsent(key, k -> {
+            List<VocOmcMedServiceCost> costs = manager.createNamedQuery("VocOmcMedServiceCost.getByCodeAndDate")
+                    .setParameter("code", medServiceCode)
                     .setParameter("finishDate", finishDate).getResultList();
-            serviceCost.put(key, costs.isEmpty() ? null : costs.get(0));
-        }
-        return serviceCost.get(key);
+            return getFirst(costs);
+        });
     }
 
     @Override
@@ -312,14 +320,15 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
 
     private PersonalWorkFunction getWorkFuntionByDoctorCode(String tabnom) {
         //находим рабочую функцию по табельному номеру
-        if (DOCTORLIST.containsKey(tabnom)) {
-            return DOCTORLIST.get(tabnom);
-        }
-        List<PersonalWorkFunction> personalWorkFunctions = manager.createQuery("from PersonalWorkFunction where code=:code").setParameter("code", tabnom).getResultList();
-        PersonalWorkFunction workFunction = personalWorkFunctions.isEmpty() ? null : personalWorkFunctions.get(0);
-        DOCTORLIST.put(tabnom, workFunction);
-        return workFunction;
+        return DOCTORLIST.computeIfAbsent(tabnom, k -> {
+            List<PersonalWorkFunction> personalWorkFunctions = manager.createQuery("from PersonalWorkFunction where code=:code")
+                    .setParameter("code", tabnom)
+                    .getResultList();
+            return getFirst(personalWorkFunctions);
+        });
+
     }
+
 
     @Override
     public String getConfigValue(String keyName, String defaultName) {
@@ -335,6 +344,7 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         needImportFondPrice = "1".equals(getExpertConfigValue(Expert2Config.NEED_IMPORT_PRICE_FROM_DEFECT, "0"));
         importFondMPAnswer(mpFileName, monitor);
         monitor.finish("Закончили импорт дефектов");
+        cleanMaps();
     }
 
     private boolean isTrue(Boolean value) {
@@ -377,11 +387,10 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 String billDateString = schet.getChildText("DSCHET");
                 SimpleDateFormat fromFormat = new SimpleDateFormat("yyyy-MM-dd");
                 java.sql.Date billDate = new java.sql.Date(fromFormat.parse(billDateString).getTime());
-                E2Bill bill = expertService.getBillEntryByDateAndNumber(billNumber, billDate, null);
-                if (bill == null) {
+                E2Bill savedBill = expertService.getBillEntryByDateAndNumber(billNumber, billDate, null);
+                if (savedBill == null) {
                     throw new IllegalStateException("Невозможно определить счет с №" + billNumber + " от " + billDateString);
                 }
-                E2Bill savedBill = manager.find(E2Bill.class, bill.getId());
                 savedBill.setStatus(getActualVocByCode(VocE2BillStatus.class, null, "code='PAID'"));
 
                 int i = 0;
@@ -390,20 +399,18 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                     LOG.info("Прерван импорт файла (пустой файл либо отмена пользователем");
                     return;
                 }
-                List<Long> entryIds = new ArrayList<>();
-                for (Element zap : zaps) {
-                    for (Element sl : (List<Element>) zap.getChild("Z_SL").getChildren("SL")) {
-                        entryIds.add(Long.parseLong(sl.getChildText("SL_ID")));
-                    }
-                }
+                Set<Long> entryIds = zaps.stream()
+                        .map(zap -> (List<Element>) zap.getChild("Z_SL").getChildren("SL"))
+                        .flatMap(Collection::stream)
+                        .map(sl -> sl.getChildText("SL_ID"))
+                        .map(Long::parseLong)
+                        .collect(Collectors.toSet());
+
                 if (entryIds.isEmpty()) {
                     LOG.info(hFilename + " Не найдено ни одной entryId, что странно, выходим");
                     return;
                 }
-                List<E2Entry> allEntries = manager.createNamedQuery("E2Entry.allByIds")
-                        .setParameter("ids", entryIds)
-                        .getResultList();
-                Map<Long, E2Entry> entryMap = getEntryMap(allEntries);
+                Map<Long, E2Entry> entryMap = getEntryMap(entryIds);
                 if (isUnidentified) {
                     //у файла с неидентифицироваными не проверяем наличие ошибок, все записи помечаем как бракованные
                     entryMap.values().forEach(entry ->
@@ -412,104 +419,100 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                                 manager.persist(new E2EntrySanction(entry, null, "NOT_IDENTIFIED", true, "Пациент неиндентифицирован"));
                             }
                     );
-                }  else {
-                manager.createNativeQuery("delete from E2EntrySanction where entry_id in (:entryIds)").setParameter("entryIds", entryIds).executeUpdate();
-                BigDecimal totalSum = BigDecimal.ZERO;
-                for (Element zap : zaps) {
-                    i++;
-                    if (i % 100 == 0 && isMonitorCancel(monitor, "Загружено записей: " + i)) break;
-                    Element zsl = zap.getChild("Z_SL");
-                    boolean isComplexCase = false;
-                    for (Element sl : (List<Element>) zsl.getChildren("SL")) {
-                        if (isComplexCase) break;
-                        Element slId = sl.getChild("SL_ID");
-                        Long entryId = Long.parseLong(slId.getText());
-                        E2Entry entry = entryMap.get(entryId);
-                        if (entry == null || isTrue(entry.getIsDeleted())) {
-                            LOG.warn("Ошибка при импорте ответа от фонда - не найдена запись с ИД = " + entryId);
-                            continue;
-                        }
-                        if (entry.getParentEntry() != null) {
-                            entry = entry.getParentEntry();
-                            isComplexCase = true;
-                        }
-                        entry.setBillNumber(billNumber);
-                        entry.setBillDate(billDate);
-                        entry.setBill(savedBill);
+                } else {
+                    manager.createNativeQuery("delete from E2EntrySanction where entry_id in (:entryIds)").setParameter("entryIds", entryIds).executeUpdate();
+                    BigDecimal totalSum = BigDecimal.ZERO;
+                    for (Element zap : zaps) {
+                        i++;
+                        if (i % 100 == 0 && isMonitorCancel(monitor, "Загружено записей: " + i)) break;
+                        Element zsl = zap.getChild("Z_SL");
+                        boolean isComplexCase = false;
+                        for (Element sl : (List<Element>) zsl.getChildren("SL")) {
+                            if (isComplexCase) break;
+                            Long entryId = Long.parseLong(sl.getChild("SL_ID").getText());
+                            E2Entry entry = entryMap.get(entryId);
+                            if (entry == null || isTrue(entry.getIsDeleted())) {
+                                LOG.warn("Ошибка при импорте ответа от фонда - не найдена запись с ИД = " + entryId);
+                                continue;
+                            }
+                            if (entry.getParentEntry() != null) {
+                                entry = entry.getParentEntry();
+                                isComplexCase = true;
+                            }
+                            entry.setBillNumber(billNumber);
+                            entry.setBillDate(billDate);
+                            entry.setBill(savedBill);
 
-                        //Расчет цены случая ФОМС
-                        Element commentCalc = sl.getChild("D_COMMENT_CALC");
-                        BigDecimal costFromDefect = BigDecimal.ZERO;
-                        if (commentCalc != null && commentCalc.getChild("root") != null) {
+                            //Расчет цены случая ФОМС
+                            Element commentCalc = sl.getChild("D_COMMENT_CALC");
+                            BigDecimal costFromDefect = BigDecimal.ZERO;
+                            if (commentCalc != null && commentCalc.getChild("root") != null) {
 
-                            Element commentRoot = commentCalc.getChild("root");
-                            List<Element> ерт = commentRoot.getChildren();
-                            StringBuilder commentError = new StringBuilder();
+                                Element commentRoot = commentCalc.getChild("root");
+                                List<Element> ерт = commentRoot.getChildren();
+                                StringBuilder commentError = new StringBuilder();
 
-                            for (Element еб : ерт) {
-                                if (needImportFondPrice && "Цена_случая".equals(еб.getName())) {
-                                    try {
-                                        costFromDefect = new BigDecimal(еб.getText());
-                                    } catch (Exception ignored) {
-                                        LOG.warn("Не смог распознать цену, хотя должен был: " + еб);
+                                for (Element еб : ерт) {
+                                    if (needImportFondPrice && "Цена_случая".equals(еб.getName())) {
+                                        try {
+                                            costFromDefect = new BigDecimal(еб.getText());
+                                        } catch (Exception ignored) {
+                                            LOG.warn("Не смог распознать цену, хотя должен был: " + еб);
+                                        }
+                                    }
+                                    commentError.append(еб.getName()).append(": ").append(еб.getText()).append("\n");
+                                }
+                                entry.setFondComment(commentError.toString());
+
+                            } else {
+                                entry.setFondComment("");
+                            }
+
+                            //Добавляем сведения о санкциях
+                            if (isDefect(zsl)) {
+                                List<Element> sanks = zsl.getChildren("SANK");
+                                ArrayList<String> sanks1 = new ArrayList<>();
+                                boolean foundWrongCost = false;
+                                for (Element sank : sanks) {
+                                    String key = sank.getChildText("S_OSN");
+                                    String dopCode = sank.getChildText("S_DOP");
+                                    if (needImportFondPrice && ("2013".equals(key) || "2013".equals(dopCode))) { //если есть ошибка расчета цены
+                                        foundWrongCost = true;
+                                    }
+                                    if (!sanks1.contains(dopCode)) {
+                                        sanctionMap.putIfAbsent(key, getActualVocByCode(VocE2Sanction.class, null, "osn='" + key + "'"));
+                                        String comment = sank.getChildText("SL_ID") + " " + sank.getChildText("S_COM");
+                                        manager.persist(new E2EntrySanction(entry, sanctionMap.get(key), dopCode, false, comment));
+                                        sanks1.add(dopCode);
                                     }
                                 }
-                                commentError.append(еб.getName()).append(": ").append(еб.getText()).append("\n");
-                            }
-                            entry.setFondComment(commentError.toString());
-
-                        } else {
-                            entry.setFondComment("");
-                        }
-
-                        //Добавляем сведения о санкциях
-                        if (isDefect(zsl)) {
-                            List<Element> sanks = zsl.getChildren("SANK");
-                            ArrayList<String> sanks1 = new ArrayList<>();
-                            boolean foundWrongCost = false;
-                            for (Element sank : sanks) {
-                                String key = sank.getChildText("S_OSN");
-                                String dopCode = sank.getChildText("S_DOP");
-                                if (needImportFondPrice && ("2013".equals(key) || "2013".equals(dopCode))) { //если есть ошибка расчета цены
-                                    foundWrongCost = true;
+                                entry.setIsDefect(true);
+                                if (foundWrongCost && costFromDefect.compareTo(BigDecimal.ZERO) > 0) {
+                                    entry.setCost(costFromDefect);
                                 }
-                                if (!sanks1.contains(dopCode)) {
-                                    if (!sanctionMap.containsKey(key)) {
-                                        sanctionMap.put(key, getActualVocByCode(VocE2Sanction.class, null, "osn='" + key + "'"));
-                                    }
-                                    String comment = sank.getChildText("SL_ID") + " " + sank.getChildText("S_COM");
-                                    manager.persist(new E2EntrySanction(entry, sanctionMap.get(key), dopCode, false, comment));
-                                    sanks1.add(dopCode);
-                                }
+                            } else {
+                                entry.setIsDefect(false);
+                                entry.setFondComment(null);
                             }
-                            entry.setIsDefect(true);
-                            if (foundWrongCost && costFromDefect.compareTo(BigDecimal.ZERO) > 0) {
-                                entry.setCost(costFromDefect);
+                            if (entry.getCost() != null) {
+                                totalSum = totalSum.add(entry.getCost());
+                            } else {
+                                LOG.error("Нет цены в случае " + entryId + " в ответе фонда");
                             }
-                        } else {
-                            entry.setIsDefect(false);
-                            entry.setFondComment(null);
+                            String prikMo = zsl.getChildText("D_PRIK_MO");
+                            if (isNotNull(prikMo)) { //Проставляем информацию о прик. ЛПУ для формирования МУР
+                                entry.setAttachedLpu(prikMo);
+                                entry.setAddGroupFld("МУР");
+                            } else {
+                                entry.setAttachedLpu("");
+                            }
+                            manager.persist(entry);
                         }
-                        if (entry.getCost() != null) {
-                            totalSum = totalSum.add(entry.getCost());
-                        } else {
-                            LOG.error("Нет цены в случае " + entryId + " в ответе фонда");
-                        }
-                        Element prikMo = zsl.getChild("D_PRIK_MO");
-                        if (prikMo != null && isNotNull(prikMo.getText())) { //Проставляем информацию о прик. ЛПУ для формирования МУР
-                            entry.setAttachedLpu(prikMo.getText());
-                            entry.setAddGroupFld("МУР");
-                        } else {
-                            entry.setAttachedLpu("");
-//                            entry.setAddGroupFld("");
-                        }
-                        manager.persist(entry);
                     }
-                }
-                LOG.info(i + " По счету №" + savedBill.getBillNumber() + " сумма = " + totalSum);
-                monitor.setText("По счету №" + savedBill.getBillNumber() + " сумма = " + totalSum);
-                savedBill.setSum(totalSum);
-                manager.persist(savedBill);
+                    LOG.info(i + " По счету №" + savedBill.getBillNumber() + " сумма = " + totalSum);
+                    monitor.setText("По счету №" + savedBill.getBillNumber() + " сумма = " + totalSum);
+                    savedBill.setSum(totalSum);
+                    manager.persist(savedBill);
                 }
                 LOG.info("Обновление MP закончено!");
             }
@@ -519,8 +522,10 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         }
     }
 
-    private Map<Long, E2Entry> getEntryMap(List<E2Entry> allEntries) {
-        return allEntries.stream().collect(Collectors.toMap(k->k.getId(), v->v));
+    private Map<Long, E2Entry> getEntryMap(Collection<Long> allEntriesIds) {
+        return ((List<E2Entry>) manager.createNamedQuery("E2Entry.allByIds")
+                .setParameter("ids", allEntriesIds)
+                .getResultList()).stream().collect(Collectors.toMap(BaseEntity::getId, v -> v));
     }
 
     private boolean isDefect(Element zsl) {
