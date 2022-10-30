@@ -68,6 +68,7 @@ compile-riams-ejb:
   script:
     - printf "ant-support.prefix.dir=${CI_PROJECT_DIR}/ecom\n" >> deploy/config.properties
     - printf "libdir=${CI_PROJECT_DIR}/MedosLibs\n" >> deploy/config.properties
+    - printf "jboss_deploy=/tmp/lalala\n" >> deploy/config.properties
     - cat deploy/config.properties
     - cp deploy/config.properties ecom/ant-support/
     - cd ecom/ecom-riams/ejb
