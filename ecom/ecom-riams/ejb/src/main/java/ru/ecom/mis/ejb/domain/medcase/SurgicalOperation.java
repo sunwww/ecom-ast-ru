@@ -330,4 +330,19 @@ public class SurgicalOperation extends BaseEntity {
 
 	/** Время повторной (при необходимости) дозы */
 	private Time secondDoseTime;
+
+	/** Препарат контраста */
+	@Comment("Препарат контраста")
+	@OneToOne
+	public VocContrastDrug getContrastDrug() {return contrastDrug;}
+	private VocContrastDrug contrastDrug ;
+
+	/** Кол-во препарата контраста */
+	@Comment("Кол-во препарата контраста")
+	@OneToOne
+	public VocContrastNumDrug getContrastNumDrug() {return contrastNumDrug;}
+	private VocContrastNumDrug contrastNumDrug ;
+
+	/** Вводился ли контраст?contrastDrug  */
+	private Boolean isContrast;
 }

@@ -6,6 +6,7 @@ import ru.ecom.ejb.services.entityform.WebTrail;
 import ru.ecom.ejb.services.entityform.annotation.PersistManyToManyOneProperty;
 import ru.ecom.ejb.services.entityform.interceptors.*;
 import ru.ecom.mis.ejb.domain.medcase.SurgicalOperation;
+import ru.ecom.mis.ejb.domain.medcase.voc.VocContrastDrug;
 import ru.ecom.mis.ejb.domain.worker.WorkFunction;
 import ru.ecom.mis.ejb.form.medcase.MedCaseForm;
 import ru.ecom.mis.ejb.form.medcase.hospital.interceptors.SurgicalOperationCreateInterceptor;
@@ -487,4 +488,22 @@ public class SurgicalOperationForm extends IdEntityForm{
 	}
 	/** данные для сохранения осложнений*/
 	private String allComps;
+
+	/** Препарат контраста */
+	@Comment("Препарат контраста")
+	@Persist
+	public Long getContrastDrug() {return contrastDrug;}
+	private Long contrastDrug ;
+
+	/** Кол-во препарата контраста */
+	@Comment("Кол-во препарата контраста")
+	@Persist
+	public Long getContrastNumDrug() {return contrastNumDrug;}
+	private Long contrastNumDrug ;
+
+	/** Вводился ли контраст? */
+	@Comment("Вводился ли контраст?")
+	@Persist
+	public Boolean getIsContrast() {return isContrast;}
+	private Boolean isContrast;
 }

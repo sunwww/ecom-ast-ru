@@ -46,6 +46,7 @@
                 <msh:hidden property="medCase"/>
                 <msh:hidden property="lpu"/>
                 <msh:hidden property="allComps"/>
+                <msh:hidden property="isContrast"/>
                 <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
                     <msh:row>
                         <msh:textField property="numberInJournal" label="Номер протокола" labelColSpan="1"
@@ -142,6 +143,24 @@
                 <msh:row>
                     <msh:textField property="firstDoseTime" label="Время первой дозы"/>
                     <msh:textField property="secondDoseTime" label="Время повторной дозы (при необходимости)"/>
+                </msh:row>
+                <msh:separator label="Введение контраста" colSpan="5"/>
+                <msh:row>
+                    <td class="label" title="Поиск по промежутку  (contrastGroup)" colspan="1"><label for="contrastGroupName" id="tcontrastGroupGroupLabel">Введение контраста:</label></td>
+                    <td onclick="this.childNodes[1].checked='checked'; checkContrast();" colspan="1">
+                        <input type="radio" name="contrastGroup" value="1"> да
+                    </td>
+                    <td onclick="this.childNodes[1].checked='checked'; checkContrast();" colspan="3">
+                        <input type="radio" name="contrastGroup" value="2"> нет
+                    </td>
+                </msh:row>
+                <msh:row>
+                    <msh:autoComplete property="contrastDrug" label="" horizontalFill="true"
+                                      vocName="vocContrastDrug"/>
+                </msh:row>
+                <msh:row>
+                    <msh:autoComplete property="contrastNumDrug" label="" horizontalFill="true"
+                                      vocName="vocContrastNumDrug"/>
                 </msh:row>
                 <msh:separator label="Протокол" colSpan="5"/>
                 <msh:ifNotInRole roles="/Policy/Mis/MedCase/Stac/Ssl/ShortEnter">
@@ -425,6 +444,38 @@
                 }
             }
 
+            //проверка контраста
+            function checkContrast() {
+                if (document.getElementsByName("contrastGroup") && document.getElementsByName("contrastGroup")[0]) {
+                    if (document.getElementsByName("contrastGroup")[0].checked) {
+                        setRequired('contrastDrug');
+                        setRequired('contrastNumDrug');
+                    }
+                    else {
+                        setDisabled('contrastDrug');
+                        setDisabled('contrastNumDrug');
+                    }
+                }
+            }
+
+            function setRequired(elemDiv) {
+                document.getElementById(elemDiv).removeAttribute('disabled');
+                document.getElementById(elemDiv+'Name').removeAttribute('disabled');
+                // document.getElementById(elemDiv).value='';
+                // document.getElementById(elemDiv+'Name').value='';
+                document.getElementById(elemDiv+'Name').className = "autocomplete horizontalFill required";
+            }
+
+            function setDisabled(elemDiv) {
+                document.getElementById(elemDiv).setAttribute('disabled', true);
+                document.getElementById(elemDiv+'Name').setAttribute('disabled', true);
+                document.getElementById(elemDiv).value='';
+                document.getElementById(elemDiv+'Name').value='';
+                document.getElementById(elemDiv+'Name').className = 'autocomplete horizontalFill';
+            }
+
+
+
             //показать/скрыть примечание
             function showNote() {
                 var note = document.getElementById("note");
@@ -458,6 +509,10 @@
         <msh:ifFormTypeAreViewOrEdit formName="stac_surOperationForm">
             <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
             <script type="text/javascript">
+                //контраст
+                if ($('isContrast').value=='true') document.getElementsByName("contrastGroup")[0].checked=true; else document.getElementsByName("contrastGroup")[1].checked=true;
+                checkContrast();
+
                 //проставить радиобаттоны Да-нет в операции при просмотре/редактировании
                 function checkOnloadRb() {
                     var el = null;
@@ -483,6 +538,8 @@
         <msh:ifFormTypeIsNotView formName="stac_surOperationForm">
             <script type="text/javascript" src="./dwr/interface/HospitalMedCaseService.js"></script>
             <script type="text/javascript">
+                checkContrast();
+
                 checkDrugRequired();
                 var isChangeSizeEpicrisis = 1;
                 var isChangeSizeHist = 1;
@@ -622,19 +679,38 @@
                         } else
                             document.forms["mainForm"].submit();
                     } else if (jQuery('[name="antibio"]')[0].checked)
-                        document.forms["mainForm"].submit();
+                        return true;
                     else {
                         $('submitButton').disabled = false;
                         showToastMessage('Выберите, проводилась ли периоперационная антибиотикопрофилактика!', null, true, false, 6000);
                     }
                 }
 
+                //проверка заполнения контраста
+                function checkContrastDrug() {
+                    if (checkSaveContrastDrug('contrastDrug') && checkSaveContrastDrug('contrastNumDrug')) {
+                        $('isContrast').value=document.getElementsByName("contrastGroup")[0].checked;
+                        document.forms["mainForm"].submit();
+                    }
+                    else {
+                        $('submitButton').disabled = false;
+                        showToastMessage('Выберите, проводилось ли введение контраста и заполните обязательные поля!', null, true, false, 6000);
+                    }
+                }
+
+                function checkSaveContrastDrug(elemDiv) {
+                    return document.getElementsByName("contrastGroup") && document.getElementsByName("contrastGroup")[0] && document.getElementsByName("contrastGroup")[0].checked && $(elemDiv).value != ''
+                        || document.getElementsByName("contrastGroup") && document.getElementsByName("contrastGroup")[1] && document.getElementsByName("contrastGroup")[1].checked && $(elemDiv).value == '';
+                }
+
                 function save() {
                     <msh:ifInRole roles="/Policy/Mis/MedCase/QualityEstimationCard/View">
                     saveAllComps();
                     </msh:ifInRole>
-                    if (checkDateTime())
-                        checkAntibioticSave();
+                    if (checkDateTime()) {
+                       if (checkAntibioticSave())
+                           checkContrastDrug();
+                    }
                 }
 
                 <msh:ifInRole roles="/Policy/Mis/MedCase/QualityEstimationCard/View">

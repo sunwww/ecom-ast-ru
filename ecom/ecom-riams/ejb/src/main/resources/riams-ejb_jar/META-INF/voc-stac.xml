@@ -988,6 +988,20 @@ left join vocBedSubType vbst on vbst.id=bf.bedSubType_id "
                 queried='name'
         />
     </voc>
+    <voc id='vocContrastDrug' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocContrastDrug'
+                names='name'
+                queried='name'
+        />
+    </voc>
+    <voc id='vocContrastNumDrug' type='EntityVocService'>
+        <EntityVocService
+                entity='ru.ecom.mis.ejb.domain.medcase.voc.VocContrastNumDrug'
+                names='name'
+                queried='name'
+        />
+    </voc>
     <voc id='vocMethodsDrugAdm' type='EntityVocService'>
         <EntityVocService
                 entity='ru.ecom.mis.ejb.domain.medcase.voc.VocMethodsDrugAdm'
