@@ -1,0 +1,91 @@
+# ==================================================================================================
+# Замечания
+# ---------
+# - Переменные с префиксом GL_ являются GitLab-переменными, определенными с помощью Web-интерфейса
+#   GitLab'а у проекта (GL_PROJECT_), группы проектов (GL_GROUP_), глобально для всего экземпляра
+#   GitLab (GL_INSTANCE_) и при запуске пайплайна вручную (GL_MANUAL_):
+#
+#     GL_INSTANCE_DOCKER_REGISTRY - host:port для записи в корпоративный Docker-registry
+#     GL_PROJECT_ANSIBLE_VAULT_PASSWORD - пароль для расшифровки секретов в Ansible, если они
+#                                         встречаются при выполнении плейбука
+#     GL_MANUAL_PROD_PASSWORD - пароль для запуска деплоя на production-стенды
+#
+# - Деплой на production-стенды добавляется в пайплайн только если пайплайн запущен вручную на
+#   ветке, название которой начинается с "release/" и определена переменная GL_MANUAL_PROD_PASSWORD,
+#   SHA256-хэш которой совпадает с парметром PROD_PASSWORD_SHA.
+#
+# - В пайплайне сборки-деплоя принята схема, когда все Docker-образы на этапе сборки тэгируются
+#   коротким хэшем коммита пайплайна, а на этапе деплоя по этому тэгу происходит их вытягивание на
+#   стенд из Docker-репозитория (pull) и запуск.
+#   Поэтому важно следить за тем, чтобы заданию деплоя предшествовали задания по сборке ВСЕХ
+#   Docker-образов. Лишней работы происходить не будет благодаря механизму кэшированию
+#   Docker-образов при их сборке - у неизмененных образов просто сменится тэг.
+#
+# - Если в пайплайне используется прогреваемый по расписанию кэш, то необходимо следить чтобы
+#   очистка раннеров имеющих тип "Docker executor", и хранящих кэш локально, происходила перед
+#   прогревом кэша. В противном случае кэш будет удалён.
+#   https://docs.gitlab.com/ee/ci/caching/#where-the-caches-are-stored
+#
+# - Для выполнения некоторых тестов Java-проектов требуются установленные в CI/CD-системах шрифты.
+#   Для их установки необходимо выполнить следующую команду:
+#     CentOS: sudo yum install -y dejavu-sans-fonts fontconfig
+#     Debian: sudo apt-get install -y fontconfig fonts-dejavu
+# ==================================================================================================
+
+variables:
+  POSTGRES_USER: user
+  POSTGRES_PASSWORD: password
+  POSTGRES_DB: db
+
+
+stages:
+  - prepare
+  - build
+  - test
+  - check
+
+compile-msh:
+  stage: prepare
+  cache: {}
+  script:
+    - cd msh
+    - ant compile
+  only:
+    refs:
+      - merge_requests
+    changes:
+      - msh/**/*
+  tags:
+    - shell
+compile-riams-ejb:
+  stage: prepare
+  cache: {}
+  script:
+    - cd ecom/ecom-riams/ejb
+    - ant compile
+  only:
+    refs:
+      - merge_requests
+    changes:
+      - msh/**/*
+      - ecom/ecom-riams/ejb/**/*
+  tags:
+    - shell
+
+#build-openjdk-image:
+#  stage: prepare
+#  cache: {}
+#  script:
+#    - cd dockers/openjdk
+#    - docker build -t $CI_REGISTRY/oog/oog-dsp/openjdk:11-slim .
+#    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#    - docker push $CI_REGISTRY/oog/oog-dsp/openjdk:11-slim
+#  only:
+#    refs:
+#      - merge_requests
+#    changes:
+#      - backend/**/*
+#  tags:
+#    - shell
+
+# Внимание! Это не сборка, а проверка собираемости и выполнение тестов.
