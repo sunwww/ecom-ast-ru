@@ -19,7 +19,7 @@
     </target>
 
     <target name="clean">
-        <ant antfile="lib-support.xml" target="clean"/>
+        <ant antfile="${ant-support.prefix.dir}/ant-support/lib-support.xml" target="clean"/>
     </target>
 
     <target name="all" depends="clean,compile,package,deploy" />
