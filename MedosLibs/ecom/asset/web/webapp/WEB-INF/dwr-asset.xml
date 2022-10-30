@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 1.0//EN" "http://www.getahead.ltd.uk/dwr/dwr10.dtd">
+
+<dwr>
+
+    <init>
+    </init>
+
+    <allow>
+
+        <create creator="new" javascript="KeyWordService" scope="application">
+            <param name="class" value="ru.ecom.template.web.dwr.KeyWordServiceJs"/>
+        </create>
+        
+        <create creator="new" javascript="TemplateProtocolService" scope="application">
+            <param name="class" value="ru.ecom.template.web.dwr.TemplateProtocolJs"/>
+        </create>
+
+        <create creator="new" javascript="CategoryTreeService" scope="application">
+            <param name="class" value="ru.ecom.template.web.dwr.CategoryTreeServiceJs"/>
+        </create>
+
+        <create creator="new" javascript="HospitalMedCaseService" scope="application">
+            <param name="class" value="ru.ecom.mis.web.dwr.medcase.HospitalMedCaseServiceJs"/>
+        </create>
+		<create creator="new" javascript="PrescriptionService" scope="application">
+			<param name="class" value="ru.ecom.mis.web.dwr.prescription.PrescriptionServiceJs"/>
+		</create>
+		<create creator="new" javascript="DietService" scope="application">
+			<param name="class" value="ru.ecom.mis.web.dwr.diet.DietServiceJs"/>
+		</create>
+		<create creator="new" javascript="WorkCalendarService" scope="application">
+			<param name="class" value="ru.ecom.mis.web.dwr.medcase.WorkCalendarServiceJs"/>
+		</create>
+		<create creator="new" javascript="PatientService" scope="application">
+			<param name="class" value="ru.ecom.mis.web.dwr.medcase.PatientServiceJs"/>
+		</create>
+		
+    </allow>
+
+    <signatures>
+    </signatures>
+
+</dwr>

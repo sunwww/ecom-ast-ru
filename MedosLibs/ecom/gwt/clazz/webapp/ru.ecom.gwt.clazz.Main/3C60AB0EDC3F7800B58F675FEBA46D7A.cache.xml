@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cache-entry>
+	<generated-type-hash class="com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException_FieldSerializer" hash="FF198044879E67E1ACF2E0C29CC58CB5"/>
+	<generated-type-hash class="ru.ecom.gwt.clazz.client.service.ICommandService_Proxy" hash="28AFDE1543D4A4A586EC66CCFE234F7D"/>
+	<generated-type-hash class="ru.ecom.gwt.clazz.client.service.command.AddClassCommand_FieldSerializer" hash="E8610A4B499472C8EEF690DA865A934E"/>
+	<generated-type-hash class="ru.ecom.gwt.clazz.client.service.CommandsHolder_FieldSerializer" hash="2A87E5532F76AA8C9B226EA0A2867153"/>
+	<generated-type-hash class="ru.ecom.gwt.clazz.client.service.command.AbstractCommand_FieldSerializer" hash="64D717A05880B97B0E3D27CD1DD95BD8"/>
+	<generated-type-hash class="ru.ecom.gwt.clazz.client.service.ICommandService_TypeSerializer" hash="7662A3175543B1832BEC3745E4334EE6"/>
+	<generated-type-hash class="ru.ecom.gwt.clazz.client.service.command.AbstractClassCommand_FieldSerializer" hash="94654C22034B55FCB5AD66178A14E284"/>
+	<generated-type-hash class="ru.ecom.gwt.clazz.client.service.command.AddPropertyCommand_FieldSerializer" hash="75E3514CC7D57A21D0ACD257D8AD66F2"/>
+	<generated-type-hash class="ru.ecom.gwt.clazz.client.service.command.SetClassCommentCommand_FieldSerializer" hash="220574557CF1CAE5DC8BC8D5583E1776"/>
+	<rebind-decision in="com.google.gwt.user.client.ui.impl.TextBoxImpl" out="com.google.gwt.user.client.ui.impl.TextBoxImpl"/>
+	<rebind-decision in="com.google.gwt.user.client.ui.impl.FocusImpl" out="com.google.gwt.user.client.ui.impl.FocusImplOld"/>
+	<rebind-decision in="ru.ecom.gwt.clazz.client.service.ICommandService" out="ru.ecom.gwt.clazz.client.service.ICommandService_Proxy"/>
+	<rebind-decision in="com.google.gwt.user.client.ui.impl.FormPanelImpl" out="com.google.gwt.user.client.ui.impl.FormPanelImpl"/>
+	<rebind-decision in="com.google.gwt.user.client.impl.HistoryImpl" out="com.google.gwt.user.client.impl.HistoryImplStandard"/>
+	<rebind-decision in="ru.ecom.gwt.clazz.client.Main" out="ru.ecom.gwt.clazz.client.Main"/>
+	<rebind-decision in="com.google.gwt.user.client.impl.HTTPRequestImpl" out="com.google.gwt.user.client.impl.HTTPRequestImpl"/>
+	<rebind-decision in="com.google.gwt.user.client.impl.DOMImpl" out="com.google.gwt.user.client.impl.DOMImplOpera"/>
+	<rebind-decision in="com.google.gwt.user.client.ui.impl.PopupImpl" out="com.google.gwt.user.client.ui.impl.PopupImpl"/>
+</cache-entry>

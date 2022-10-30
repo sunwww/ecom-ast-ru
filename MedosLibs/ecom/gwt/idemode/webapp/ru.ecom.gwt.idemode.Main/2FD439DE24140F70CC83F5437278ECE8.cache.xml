@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cache-entry>
+	<generated-type-hash class="ru.ecom.gwt.idemode.client.service.IdeModeException_FieldSerializer" hash="B95223C3ACAA39436665B5060B3F663D"/>
+	<generated-type-hash class="com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException_FieldSerializer" hash="FF198044879E67E1ACF2E0C29CC58CB5"/>
+	<generated-type-hash class="ru.ecom.gwt.idemode.client.service.IIdeModeService_TypeSerializer" hash="C988B989A0A926409AA21D149280D73C"/>
+	<generated-type-hash class="ru.ecom.gwt.idemode.client.service.IIdeModeService_Proxy" hash="66BCAA76D13A9CE9F0EF1741180B5E40"/>
+	<generated-type-hash class="ru.ecom.gwt.idemode.client.service.TagInfoAdapter_FieldSerializer" hash="FBA2B202AA367794E48339FDB38C8E81"/>
+	<generated-type-hash class="ru.ecom.gwt.idemode.client.service.EditTagMessage_FieldSerializer" hash="F676AC9BCDCAB17D93CE7ABBFC438D80"/>
+	<generated-type-hash class="ru.ecom.gwt.idemode.client.service.TagValues_FieldSerializer" hash="3181A7470A404B90ED8EB113CB66A564"/>
+	<generated-type-hash class="ru.ecom.gwt.idemode.client.service.TagAttributeInfoAdapter_FieldSerializer" hash="7799CEA54652790ABA087D32B14B7041"/>
+	<rebind-decision in="ru.ecom.gwt.idemode.client.Main" out="ru.ecom.gwt.idemode.client.Main"/>
+	<rebind-decision in="com.google.gwt.user.client.ui.impl.TextBoxImpl" out="com.google.gwt.user.client.ui.impl.TextBoxImpl"/>
+	<rebind-decision in="com.google.gwt.user.client.ui.impl.FocusImpl" out="com.google.gwt.user.client.ui.impl.FocusImplOld"/>
+	<rebind-decision in="com.google.gwt.user.client.ui.impl.FormPanelImpl" out="com.google.gwt.user.client.ui.impl.FormPanelImpl"/>
+	<rebind-decision in="com.google.gwt.user.client.impl.HistoryImpl" out="com.google.gwt.user.client.impl.HistoryImplMozilla"/>
+	<rebind-decision in="ru.ecom.gwt.idemode.client.service.IIdeModeService" out="ru.ecom.gwt.idemode.client.service.IIdeModeService_Proxy"/>
+	<rebind-decision in="com.google.gwt.user.client.impl.HTTPRequestImpl" out="com.google.gwt.user.client.impl.HTTPRequestImpl"/>
+	<rebind-decision in="com.google.gwt.user.client.impl.DOMImpl" out="com.google.gwt.user.client.impl.DOMImplMozillaOld"/>
+	<rebind-decision in="com.google.gwt.user.client.ui.impl.PopupImpl" out="com.google.gwt.user.client.ui.impl.PopupImplMozilla"/>
+</cache-entry>

@@ -1,0 +1,40 @@
+.im-IdeMenuWidget {
+	margin: 1px ;
+	padding: 1px ;
+	border: 1px solid gray ;
+	border-bottom: 1px solid #eee ;
+	display: inline;
+	font-size: 9px ;
+	cursor: pointer;
+	background-color: white ;
+	-moz-border-radius-topleft: 4px ;
+	-moz-border-radius-topright: 4px ;
+	text-decoration: none ;
+}
+
+.im-IdeMenuWidget a {
+	text-decoration: none ;
+	color: black ;
+}
+.im-IdeMenuWidget-popup {
+	background-color: white ;
+	border: 1px solid gray ;
+}
+
+.im-IdeMenuWidget-popup a {
+	text-decoration: none ;
+	color: blue ;
+	padding: 3px ;
+	margin-bottom: 4px ;
+}
+
+
+.im-EditDialog {
+	background-color: white ;
+	border: 1px solid gray ;
+	padding: 1em ;
+}
+
+
+
+
