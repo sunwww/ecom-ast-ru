@@ -66,8 +66,8 @@ compile-riams-ejb:
   stage: prepare
   cache: { }
   script:
-    - echo "ant-support.prefix.dir=${CI_PROJECT_DIR}/ecom\n\t" >> deploy/config.properties
-    - echo "libdir=${CI_PROJECT_DIR}/MedosLibs\n\t" >> deploy/config.properties
+    - printf "ant-support.prefix.dir=${CI_PROJECT_DIR}/ecom\n" >> deploy/config.properties
+    - printf "libdir=${CI_PROJECT_DIR}/MedosLibs\n" >> deploy/config.properties
     - cat deploy/config.properties
     - cp deploy/config.properties ecom/ant-support/
     - cd ecom/ecom-riams/ejb
@@ -87,8 +87,8 @@ compile-riams-web:
   stage: prepare
   cache: { }
   script:
-    - echo "ant-support.prefix.dir=${CI_PROJECT_DIR}/ecom\n\t" >> deploy/config.properties
-    - echo "libdir=${CI_PROJECT_DIR}/MedosLibs\n\t" >> deploy/config.properties
+    - printf "ant-support.prefix.dir=${CI_PROJECT_DIR}/ecom\n" >> deploy/config.properties
+    - printf "libdir=${CI_PROJECT_DIR}/MedosLibs\n" >> deploy/config.properties
     - cat deploy/config.properties
     - cp deploy/config.properties ecom/ant-support/
     - cd ecom/ecom-riams/web
