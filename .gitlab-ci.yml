@@ -47,50 +47,57 @@ stages:
 compile-msh:
   image: frekele/ant:1.10.0-jdk8u172 #docker image to run job
   stage: prepare
-  cache: {}
+  cache: { }
   script:
     - echo "libdir=${CI_PROJECT_DIR}/MedosLibs" >> deploy/config.properties
     - cat deploy/config.properties
     - cp deploy/config.properties ecom/ant-support/
     - cd msh
     - ant compile
-#  only:
-#    refs:
-#      - merge_requests
-#    changes:
-#      - msh/**/*
+  #  only:
+  #    refs:
+  #      - merge_requests
+  #    changes:
+  #      - msh/**/*
   tags:
     - shell
 compile-riams-ejb:
   image: frekele/ant:1.10.0-jdk8u172 #docker image to run job
   stage: prepare
-  cache: {}
+  cache: { }
   script:
+    - echo "ant-support.prefix.dir=${CI_PROJECT_DIR}/ecom\n\t" >> deploy/config.properties
+    - echo "libdir=${CI_PROJECT_DIR}/MedosLibs\n\t" >> deploy/config.properties
+    - cat deploy/config.properties
+    - cp deploy/config.properties ecom/ant-support/
     - cd ecom/ecom-riams/ejb
     - ant compile
-  only:
-    refs:
-      - merge_requests
-    changes:
-      - msh/**/*
-      - ecom/ecom-riams/ejb/**/*
+  #  only:
+  #    refs:
+  #      - merge_requests
+  #    changes:
+  #      - msh/**/*
+  #      - ecom/ecom-riams/ejb/**/*
   tags:
     - shell
 
-#build-openjdk-image:
-#  stage: prepare
-#  cache: {}
-#  script:
-#    - cd dockers/openjdk
-#    - docker build -t $CI_REGISTRY/oog/oog-dsp/openjdk:11-slim .
-#    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-#    - docker push $CI_REGISTRY/oog/oog-dsp/openjdk:11-slim
-#  only:
-#    refs:
-#      - merge_requests
-#    changes:
-#      - backend/**/*
-#  tags:
-#    - shell
 
-# Внимание! Это не сборка, а проверка собираемости и выполнение тестов.
+compile-riams-web:
+  image: frekele/ant:1.10.0-jdk8u172 #docker image to run job
+  stage: prepare
+  cache: { }
+  script:
+    - echo "ant-support.prefix.dir=${CI_PROJECT_DIR}/ecom\n\t" >> deploy/config.properties
+    - echo "libdir=${CI_PROJECT_DIR}/MedosLibs\n\t" >> deploy/config.properties
+    - cat deploy/config.properties
+    - cp deploy/config.properties ecom/ant-support/
+    - cd ecom/ecom-riams/web
+    - ant compile
+  #  only:
+  #    refs:
+  #      - merge_requests
+  #    changes:
+  #      - msh/**/*
+  #      - ecom/ecom-riams/ejb/**/*
+  tags:
+    - shell
