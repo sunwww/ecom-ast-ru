@@ -50,11 +50,11 @@ compile-msh:
   script:
     - cd msh
     - ant compile
-  only:
-    refs:
-      - merge_requests
-    changes:
-      - msh/**/*
+#  only:
+#    refs:
+#      - merge_requests
+#    changes:
+#      - msh/**/*
   tags:
     - shell
 compile-riams-ejb:
