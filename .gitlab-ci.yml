@@ -45,6 +45,7 @@ stages:
   - check
 
 compile-msh:
+  image: frekele/ant:1.10.0-jdk8u172 #docker image to run job
   stage: prepare
   cache: {}
   script:
@@ -58,6 +59,7 @@ compile-msh:
   tags:
     - shell
 compile-riams-ejb:
+  image: frekele/ant:1.10.0-jdk8u172 #docker image to run job
   stage: prepare
   cache: {}
   script:
