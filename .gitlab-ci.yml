@@ -49,6 +49,7 @@ compile-msh:
   stage: prepare
   cache: {}
   script:
+    - echo "libdir=${CI_PROJECT_DIR}/MedosLibs" >> deploy/config.properties
     - cp deploy/config.properties ecom/ant-support/
     - cd msh
     - ant compile
