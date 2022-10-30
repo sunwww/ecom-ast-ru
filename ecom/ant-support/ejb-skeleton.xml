@@ -56,15 +56,18 @@
     <import file="ejbweb-libs.xml" />
 
     <target name="compile" description="Компиляция">
-        <ant inheritrefs="true" inheritall="true" antfile="ejb-support.xml" target="compile"/>
+        <ant inheritrefs="true" inheritall="true" antfile="${ant-support.prefix.dir}/ant-support/ejb-support.xml"
+             target="compile"/>
     </target>
 
     <target name="package" depends="compile">
-        <ant inheritrefs="true" inheritall="true" antfile="ejb-support.xml" target="package"/>
+        <ant inheritrefs="true" inheritall="true" antfile="${ant-support.prefix.dir}/ant-support/ejb-support.xml"
+             target="package"/>
     </target>
 
     <target name="deploy" depends="package">
-        <ant inheritrefs="true" inheritall="true" antfile="ejb-support.xml" target="deploy"/>
+        <ant inheritrefs="true" inheritall="true" antfile="${ant-support.prefix.dir}/ant-support/ejb-support.xml"
+             target="deploy"/>
     </target>
 
     <target name="clean">

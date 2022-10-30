@@ -6,15 +6,16 @@
   -->
 <project name="lib-skeleton" default="" basedir=".">
     <target name="package">
-        <ant antfile="lib-support.xml" target="package"/>
+        <ant antfile="${ant-support.prefix.dir}/ant-support/lib-support.xml" target="package"/>
     </target>
 
     <target name="deploy" depends="package">
-        <ant antfile="lib-support.xml" target="deploy"/>
+        <ant antfile="${ant-support.prefix.dir}/ant-support/lib-support.xml" target="deploy"/>
     </target>
 
     <target name="compile">
-        <ant inheritrefs="true" inheritall="true" antfile="lib-support.xml" target="compile"/>
+        <ant inheritrefs="true" inheritall="true" antfile="${ant-support.prefix.dir}/ant-support/lib-support.xml"
+             target="compile"/>
     </target>
 
     <target name="clean">
