@@ -96,7 +96,7 @@
 
 	<import file="../../ant-support/web-skeleton.xml"/>
 	<target name="build-war">
-		<war destfile="target/${appname}.war" webxml="./src/main/resources/web.xml">
+		<war destfile="target/${appname}.war">
 			<fileset dir="./target/webapp">
 				<include name="**/*.*"/>
 			</fileset>
