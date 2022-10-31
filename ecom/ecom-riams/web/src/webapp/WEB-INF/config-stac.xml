@@ -70,7 +70,7 @@
                 validate='false'
                 scope="session"
         >
-            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/leanСlinicReport.jsp"/>
+            <forward name="success" redirect="false" path="/WEB-INF/actions/smo_visit/leanClinicReport.jsp"/>
         </action>
 
         <action path='/recordReport' type='ru.ecom.web.actions.base.ForwardAction'
