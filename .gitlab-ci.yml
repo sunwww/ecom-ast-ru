@@ -47,7 +47,7 @@ stages:
   - build
   - check
 
-compile-msh:
+.compile-msh:
   inherit:
     default: true
   stage: compile
@@ -64,7 +64,7 @@ compile-msh:
   #      - msh/**/*
   tags:
     - shell
-compile-riams-ejb:
+.compile-riams-ejb:
   inherit:
     default: true
   stage: compile
@@ -84,7 +84,7 @@ compile-riams-ejb:
     - shell
 
 
-compile-riams-web:
+.compile-riams-web:
   inherit:
     default: true
   stage: compile
@@ -103,7 +103,7 @@ compile-riams-web:
   tags:
     - shell
 
-compile-skin:
+.compile-skin:
   inherit:
     default: true
   before_script:
@@ -134,7 +134,7 @@ build-medos-artifact:
   before_script:
     - export CURRENT_DATE=%date:~6,4%%date:~3,2%%date:~0,2%
   script:
-    - apt install 7z
+    - apt install p7zip-full
     - chmod +x deploy/fix_config.sh
     - ./deploy/fix_config.sh ${CI_PROJECT_DIR}
     - cd ${CI_PROJECT_DIR}/ecom/ecom-report
