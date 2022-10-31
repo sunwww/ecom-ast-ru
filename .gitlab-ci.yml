@@ -114,7 +114,7 @@ compile-skin:
   script:
     - chmod +x deploy/fix_config.sh
     - ./deploy/fix_config.sh ${CI_PROJECT_DIR}
-    - cd skin
+    - cd ecom/skin
     - ant compile
   #  only:
   #    refs:
@@ -125,6 +125,30 @@ compile-skin:
   tags:
     - shell
 
-#build-ejb-artifact:
-#  stage:
-#    -
+#собираем архив с текущей датой
+build-medos-artifact:
+  when: manual
+#  variables:
+#    current_date:
+  stage: build
+  before_script:
+    - export CURRENT_DATE=%date:~6,4%%date:~3,2%%date:~0,2%
+  script:
+    - apt install 7z
+    - chmod +x deploy/fix_config.sh
+    - ./deploy/fix_config.sh ${CI_PROJECT_DIR}
+    - cd ${CI_PROJECT_DIR}/ecom/ecom-report
+    - ant package
+    - cd ${CI_PROJECT_DIR}/msh
+    - ant package
+    - cd ${CI_PROJECT_DIR}/ecom/ecom-riams/ejb
+    - ant package
+    - cd ${CI_PROJECT_DIR}/ecom/ecom-riams/web
+    - ant clean compile build-war
+    - cd ${CI_PROJECT_DIR}/ecom/skin
+    - ant all build-war
+    - 7z a -sdel -mx=9 $CURRENT_DATE.tar ${CI_PROJECT_DIR}/ecom/ecom-riams/ejb/target/riams-app.ear ${CI_PROJECT_DIR}/ecom/ecom-riams/web/target/riams.war ${CI_PROJECT_DIR}/ecom/skin/target/skin.war
+  artifacts:
+    name: 'current date tar file'
+    paths:
+      - '${current_date}.tar'

@@ -84,16 +84,23 @@
 		<copy overwrite="true" todir='./target/webapp'>
 			<fileset dir='${libdir}/ecom/gwt/clazz/webapp' />
 		</copy>
-		
-		<mkdir dir="./target/webapp/WEB-INF/classes/META-INF" />
+
+		<mkdir dir="./target/webapp/WEB-INF/classes/META-INF"/>
 		<copy file="../ejb/src/main/resources/riams-ejb_jar/META-INF/mapforms.xml"
-				todir='./target/webapp/WEB-INF/classes/META-INF' overwrite="true">
+			  todir='./target/webapp/WEB-INF/classes/META-INF' overwrite="true">
 			<fileset dir="./src/main/resources/META-INF">
-				<include name='*.tld*' />
+				<include name='*.tld*'/>
 			</fileset>
 		</copy>
 	</target>
 
-	<import file="../../ant-support/web-skeleton.xml" />
+	<import file="../../ant-support/web-skeleton.xml"/>
+	<target name="build-war">
+		<war destfile="target/${appname}.war" webxml="./src/main/resources/web.xml">
+			<fileset dir="./target/webapp">
+				<include name="**/*.*"/>
+			</fileset>
 
+		</war>
+	</target>
 </project>

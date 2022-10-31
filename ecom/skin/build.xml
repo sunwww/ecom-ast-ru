@@ -2,6 +2,7 @@
 <project name="skin" basedir="." default='all' >
 
 	<property file="../ant-support/config.properties" />
+	<property name="appname" value="skin"/>
 	<target name='all' depends="prepare, shrink">
 		
 	</target>
@@ -43,14 +44,22 @@
 		<fileset file='skin/js/main/keysupport.js' />
 		<fileset file='skin/js/main/tabbedpane.js' />
 		<fileset file='skin/js/main/autocomplete.js' />
-		<fileset file='skin/js/main/treeautocomplete.js' />
-		<fileset file='skin/js/main/widget/VocValueEdit.js' />
-		<fileset file='skin/js/main/form.js' />
-		<fileset file='skin/js/main/widget/OneToManyAutocompletes.js' />
-		<fileset file='skin/js/main/ws/websocket.js' />
-		<fileset file='skin/js/main/capture/html2canvas.js' />
-		<fileset file='skin/js/main/capture/promise-6.1.0.js' />
+		<fileset file='skin/js/main/treeautocomplete.js'/>
+		<fileset file='skin/js/main/widget/VocValueEdit.js'/>
+		<fileset file='skin/js/main/form.js'/>
+		<fileset file='skin/js/main/widget/OneToManyAutocompletes.js'/>
+		<fileset file='skin/js/main/ws/websocket.js'/>
+		<fileset file='skin/js/main/capture/html2canvas.js'/>
+		<fileset file='skin/js/main/capture/promise-6.1.0.js'/>
 
 	</concat>
   </target>
+	<target name="build-war">
+		<war destfile="target/${appname}.war" webxml="./skin/WEB-INF/web.xml">
+			<fileset dir="./skin">
+				<include name="**/*.*"/>
+			</fileset>
+
+		</war>
+	</target>
 </project>
