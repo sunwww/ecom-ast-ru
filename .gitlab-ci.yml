@@ -147,13 +147,11 @@ build-medos-artifact:
     - ant clean compile build-war
     - cd ${CI_PROJECT_DIR}/ecom/skin
     - ant all build-war
-    - echo 'current_date = ${CURRENT_DATE} '
-    - cd ${CI_PROJECT_DIR}
-    - tar -cf ${CI_PROJECT_DIR}/CURRENT_DATE.tar -C ${CI_PROJECT_DIR}/ecom/ecom-riams/ejb/target/ riams-app.ear -C ${CI_PROJECT_DIR}/ecom/ecom-riams/web/target/ riams.war -C ${CI_PROJECT_DIR}/ecom/skin/target/ skin.war
-    - ls -al
+    - echo 'current_date = ${CURRENT_DATE} >> %CURRENT_DATE%'
+    - tar -cf ${CI_PROJECT_DIR}/%CURRENT_DATE%.tar -C ${CI_PROJECT_DIR}/ecom/ecom-riams/ejb/target/ riams-app.ear -C ${CI_PROJECT_DIR}/ecom/ecom-riams/web/target/ riams.war -C ${CI_PROJECT_DIR}/ecom/skin/target/ skin.war
   artifacts:
     name: 'current date tar file'
     paths:
-      - 'CURRENT_DATE.tar'
+      - '*.tar'
   tags:
     - shell
