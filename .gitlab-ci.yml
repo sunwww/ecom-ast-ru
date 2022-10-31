@@ -144,7 +144,7 @@ build-medos-artifact:
     - cd ${CI_PROJECT_DIR}/ecom/ecom-riams/ejb
     - ant clean compile package
     - cd ${CI_PROJECT_DIR}/ecom/ecom-riams/web
-    - ant all build-war
+    - ant clean all build-war
     - cd ${CI_PROJECT_DIR}/ecom/skin
     - ant all build-war
     - echo 'current_date = ${CURRENT_DATE} >> %CURRENT_DATE%'
