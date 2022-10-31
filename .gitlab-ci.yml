@@ -53,7 +53,8 @@ compile-msh:
   stage: compile
   cache: { }
   script:
-    - deploy/fix_config.sh ${CI_PROJECT_DIR}
+    - chmod +x deploy/fix_config.sh
+    - ./deploy/fix_config.sh ${CI_PROJECT_DIR}
     - cd msh
     - ant compile
   #  only:
@@ -69,7 +70,8 @@ compile-riams-ejb:
   stage: compile
   cache: { }
   script:
-    - deploy/fix_config.sh ${CI_PROJECT_DIR}
+    - chmod +x deploy/fix_config.sh
+    - ./deploy/fix_config.sh ${CI_PROJECT_DIR}
     - cd ecom/ecom-riams/ejb
     - ant compile
   #  only:
@@ -88,7 +90,8 @@ compile-riams-web:
   stage: compile
   cache: { }
   script:
-    - deploy/fix_config.sh ${CI_PROJECT_DIR}
+    - chmod +x deploy/fix_config.sh
+    - ./deploy/fix_config.sh ${CI_PROJECT_DIR}
     - cd ecom/ecom-riams/web
     - ant compile
   #  only:
@@ -109,7 +112,8 @@ compile-skin:
   stage: compile
   cache: { }
   script:
-    - deploy/fix_config.sh ${CI_PROJECT_DIR}
+    - chmod +x deploy/fix_config.sh
+    - ./deploy/fix_config.sh ${CI_PROJECT_DIR}
     - cd skin
     - ant compile
   #  only:
