@@ -121,6 +121,6 @@ compile-skin:
   tags:
     - shell
 
-build-ejb-artifact:
-  stage:
-    -
+#build-ejb-artifact:
+#  stage:
+#    -
