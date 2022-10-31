@@ -153,6 +153,6 @@ build-medos-artifact:
   artifacts:
     name: 'current date tar file'
     paths:
-      - '${CURRENT_DATE}.tar'
+      - 'CURRENT_DATE.tar'
   tags:
     - shell
