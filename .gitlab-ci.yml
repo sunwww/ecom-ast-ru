@@ -138,9 +138,9 @@ build-medos-artifact:
     - chmod +x deploy/fix_config.sh
     - ./deploy/fix_config.sh ${CI_PROJECT_DIR}
     - cd ${CI_PROJECT_DIR}/ecom/ecom-report
-    - ant package
+    - ant all
     - cd ${CI_PROJECT_DIR}/msh
-    - ant package
+    - ant all
     - cd ${CI_PROJECT_DIR}/ecom/ecom-riams/ejb
     - ant package
     - cd ${CI_PROJECT_DIR}/ecom/ecom-riams/web
