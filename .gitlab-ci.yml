@@ -134,7 +134,7 @@ build-medos-artifact:
   before_script:
     - export CURRENT_DATE=%date:~6,4%%date:~3,2%%date:~0,2%
   script:
-    - apt install p7zip-full
+    - apt install p7zip
     - chmod +x deploy/fix_config.sh
     - ./deploy/fix_config.sh ${CI_PROJECT_DIR}
     - cd ${CI_PROJECT_DIR}/ecom/ecom-report
