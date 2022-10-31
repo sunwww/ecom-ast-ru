@@ -31,6 +31,9 @@
 #     CentOS: sudo yum install -y dejavu-sans-fonts fontconfig
 #     Debian: sudo apt-get install -y fontconfig fonts-dejavu
 # ==================================================================================================
+default:
+  image: frekele/ant:1.10.0-jdk8u172 #docker image to run job
+
 
 variables:
   POSTGRES_USER: user
@@ -39,20 +42,18 @@ variables:
 
 
 stages:
-  - prepare
-  - build
+  - compile
   - test
+  - build
   - check
 
 compile-msh:
-  image: frekele/ant:1.10.0-jdk8u172 #docker image to run job
-  stage: prepare
+  inherit:
+    default: true
+  stage: compile
   cache: { }
   script:
-    - printf "ant-support.prefix.dir=${CI_PROJECT_DIR}/ecom\n" >> deploy/config.properties
-    - printf "libdir=${CI_PROJECT_DIR}/MedosLibs\n" >> deploy/config.properties
-    - cat deploy/config.properties
-    - cp deploy/config.properties ecom/ant-support/
+    - deploy/fix_config.sh ${CI_PROJECT_DIR}
     - cd msh
     - ant compile
   #  only:
@@ -63,15 +64,12 @@ compile-msh:
   tags:
     - shell
 compile-riams-ejb:
-  image: frekele/ant:1.10.0-jdk8u172 #docker image to run job
-  stage: prepare
+  inherit:
+    default: true
+  stage: compile
   cache: { }
   script:
-    - printf "ant-support.prefix.dir=${CI_PROJECT_DIR}/ecom\n" >> deploy/config.properties
-    - printf "libdir=${CI_PROJECT_DIR}/MedosLibs\n" >> deploy/config.properties
-    - printf "jboss_deploy=/tmp/lalala\n" >> deploy/config.properties
-    - cat deploy/config.properties
-    - cp deploy/config.properties ecom/ant-support/
+    - deploy/fix_config.sh ${CI_PROJECT_DIR}
     - cd ecom/ecom-riams/ejb
     - ant compile
   #  only:
@@ -85,14 +83,12 @@ compile-riams-ejb:
 
 
 compile-riams-web:
-  image: frekele/ant:1.10.0-jdk8u172 #docker image to run job
-  stage: prepare
+  inherit:
+    default: true
+  stage: compile
   cache: { }
   script:
-    - printf "ant-support.prefix.dir=${CI_PROJECT_DIR}/ecom\n" >> deploy/config.properties
-    - printf "libdir=${CI_PROJECT_DIR}/MedosLibs\n" >> deploy/config.properties
-    - cat deploy/config.properties
-    - cp deploy/config.properties ecom/ant-support/
+    - deploy/fix_config.sh ${CI_PROJECT_DIR}
     - cd ecom/ecom-riams/web
     - ant compile
   #  only:
@@ -103,3 +99,28 @@ compile-riams-web:
   #      - ecom/ecom-riams/ejb/**/*
   tags:
     - shell
+
+compile-skin:
+  inherit:
+    default: true
+  before_script:
+    - echo 'compile ecom-skin module'
+
+  stage: compile
+  cache: { }
+  script:
+    - deploy/fix_config.sh ${CI_PROJECT_DIR}
+    - cd skin
+    - ant compile
+  #  only:
+  #    refs:
+  #      - merge_requests
+  #    changes:
+  #      - msh/**/*
+  #      - ecom/ecom-riams/ejb/**/*
+  tags:
+    - shell
+
+build-ejb-artifact:
+  stage:
+    -
