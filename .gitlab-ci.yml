@@ -158,8 +158,7 @@ build-medos-artifact:
     - shell
 
 deploy-s13:
-  stage:
-    - deploy
+  stage: deploy
   environment:
     name: prod
   variables:
