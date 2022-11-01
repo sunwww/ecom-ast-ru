@@ -39,13 +39,14 @@ variables:
   POSTGRES_USER: user
   POSTGRES_PASSWORD: password
   POSTGRES_DB: db
+  ARTIFACT_NAME: current_date.tar
 
 
 stages:
   - compile
   - test
   - build
-  - check
+  - deploy
 
 .compile-msh:
   inherit:
@@ -132,7 +133,7 @@ build-medos-artifact:
 #    current_date:
   stage: build
   before_script:
-    - export CURRENT_DATE=%date:~6,4%%date:~3,2%%date:~0,2%
+    - export CURRENT_DATE=`date +%Y%m%d`
   script:
 #    - apt-get -y install p7zip
     - chmod +x deploy/fix_config.sh
@@ -147,11 +148,28 @@ build-medos-artifact:
     - ant clean all build-war
     - cd ${CI_PROJECT_DIR}/ecom/skin
     - ant all build-war
-    - echo 'current_date = ${CURRENT_DATE} >> %CURRENT_DATE%'
-    - tar -cf ${CI_PROJECT_DIR}/CURRENT_DATE.tar -C ${CI_PROJECT_DIR}/ecom/ecom-riams/ejb/target/ riams-app.ear -C ${CI_PROJECT_DIR}/ecom/ecom-riams/web/target/ riams.war -C ${CI_PROJECT_DIR}/ecom/skin/target/ skin.war
+    - echo 'current_date >> $CURRENT_DATE >> ${CURRENT_DATE} >> %CURRENT_DATE%'
+    - tar -cf ${CI_PROJECT_DIR}/${ARTIFACT_NAME} -C ${CI_PROJECT_DIR}/ecom/ecom-riams/ejb/target/ riams-app.ear -C ${CI_PROJECT_DIR}/ecom/ecom-riams/web/target/ riams.war -C ${CI_PROJECT_DIR}/ecom/skin/target/ skin.war
   artifacts:
     name: 'current date tar file'
     paths:
       - '*.tar'
+  tags:
+    - shell
+
+deploy-s13:
+  stage:
+    - deploy
+  environment:
+    name: prod
+  variables:
+    server: 192.168.10.13
+    username: gitlab
+    password: gitlab
+  needs:
+    - build-medos-artifact
+  script:
+    - /usr/bin/scp ${CI_PROJECT_DIR}/${ARTIFACT_NAME} ${server}:/home/update/%date:~6,4%%date:~3,2%%date:~0,2%.tar
+    - ssh ${username}:${password}@${server} 'bash -s' < /root/scripts/update_riams_tar.sh
   tags:
     - shell
