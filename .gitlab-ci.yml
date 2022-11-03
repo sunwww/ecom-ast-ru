@@ -163,14 +163,14 @@ deploy-s13:
     name: prod13
   variables:
     server: 192.168.10.16
-    username: gitlab
-    password: gitlab
+    username: proguser
+    password: proguser
   when: manual
   needs:
     - build-medos-artifact
   script:
-    - apt update && apt install openssh-client
-    - /usr/bin/scp ${CI_PROJECT_DIR}/${ARTIFACT_NAME} ${server}:/home/update/%date:~6,4%%date:~3,2%%date:~0,2%.tar
+    - apt update && apt-get install openssh-client
+    - /usr/bin/scp ${CI_PROJECT_DIR}/${ARTIFACT_NAME} ${username}@${server}:/home/update/%date:~6,4%%date:~3,2%%date:~0,2%.tar
     - ssh ${username}@${server} 'bash -s' < /root/scripts/hello.sh
   tags:
     - shell
