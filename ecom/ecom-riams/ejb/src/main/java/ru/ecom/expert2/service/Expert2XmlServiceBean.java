@@ -75,6 +75,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     private @EJB
     IExpert2Service expertService;
     private boolean isConsultativePolyclinic = true;
+    private static final List<String> oldVersionNumFIleTypes = Arrays.asList("C", "T", "DA", "DF", "DO", "DP", "DU", "PC"); //типы файлов с версией 3.1
 
     /**
      * Экспорт запроса в центральный сегмент
@@ -915,7 +916,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
     private void makeHTitle(Element root, Date documentDate, String filename, int count, String billNumber
             , Date billDate, BigDecimal totalSum, String lpu, String dispType
             , String fileType) {
-        String version = isOneOf(fileType, "C", "T", "DA", "DF", "DO", "DP") ? "3.1" : "3.2";//долбанные уроды со своей логикой
+        String version = oldVersionNumFIleTypes.contains(fileType) ? "3.1" : "3.2";//долбанные уроды со своей логикой
         Element zglv = new Element("ZGLV");
         add(zglv, "VERSION", version);
         add(zglv, "DATA", dateToString(documentDate));
