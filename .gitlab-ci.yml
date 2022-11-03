@@ -160,11 +160,12 @@ build-medos-artifact:
 deploy-s13:
   stage: deploy
   environment:
-    name: prod
+    name: prod13
   variables:
     server: 192.168.10.13
     username: gitlab
     password: gitlab
+  when: manual
   needs:
     - build-medos-artifact
   script:
