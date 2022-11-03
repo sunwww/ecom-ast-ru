@@ -162,7 +162,7 @@ deploy-s13:
   environment:
     name: prod13
   variables:
-    server: 192.168.10.13
+    server: 192.168.10.16
     username: gitlab
     password: gitlab
   when: manual
@@ -170,6 +170,6 @@ deploy-s13:
     - build-medos-artifact
   script:
     - /usr/bin/scp ${CI_PROJECT_DIR}/${ARTIFACT_NAME} ${server}:/home/update/%date:~6,4%%date:~3,2%%date:~0,2%.tar
-    - ssh ${username}:${password}@${server} 'bash -s' < /root/scripts/update_riams_tar.sh
+    - ssh ${username}@${server} 'bash -s' < /root/scripts/hello.sh
   tags:
     - shell
