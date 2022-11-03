@@ -135,7 +135,6 @@ build-medos-artifact:
   before_script:
     - export CURRENT_DATE=`date +%Y%m%d`
   script:
-#    - apt-get -y install p7zip
     - chmod +x deploy/fix_config.sh
     - ./deploy/fix_config.sh ${CI_PROJECT_DIR}
     - cd ${CI_PROJECT_DIR}/ecom/ecom-report
@@ -158,6 +157,7 @@ build-medos-artifact:
     - shell
 
 deploy-s13:
+  image: ubuntu:latest
   stage: deploy
   environment:
     name: prod13
@@ -169,6 +169,7 @@ deploy-s13:
   needs:
     - build-medos-artifact
   script:
+    - apt update && apt install openssh-client
     - /usr/bin/scp ${CI_PROJECT_DIR}/${ARTIFACT_NAME} ${server}:/home/update/%date:~6,4%%date:~3,2%%date:~0,2%.tar
     - ssh ${username}@${server} 'bash -s' < /root/scripts/hello.sh
   tags:
