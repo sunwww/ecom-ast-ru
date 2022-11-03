@@ -169,7 +169,7 @@ deploy-s13:
   needs:
     - build-medos-artifact
   script:
-    - apt update && apt-get install openssh-client
+    - apt update && apt-get -y install openssh-client
     - /usr/bin/scp ${CI_PROJECT_DIR}/${ARTIFACT_NAME} ${username}@${server}:/home/update/%date:~6,4%%date:~3,2%%date:~0,2%.tar
     - ssh ${username}@${server} 'bash -s' < /root/scripts/hello.sh
   tags:
