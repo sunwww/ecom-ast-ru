@@ -45,6 +45,7 @@ import static ru.nuzmsh.util.EqualsUtil.isOneOf;
 @Local(IExpert2ImportService.class)
 @Remote(IExpert2ImportService.class)
 public class Expert2ImportServiceBean implements IExpert2ImportService {
+    private static final String N_ZAP = "N_ZAP";
     private static final Logger LOG = Logger.getLogger(Expert2ImportServiceBean.class);
     private static final EjbEcomConfig CONFIG = EjbEcomConfig.getInstance();
     private static final String XMLDIR = CONFIG.get("expert2.input.folder", "/opt/jboss-4.0.4.GAi/server/default/riams/expert2xml");
@@ -101,12 +102,13 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
         LOG.info("clean defect before flk " + defs.size());
         monitor.setText("ФЛК " + filename + ", записей для расчета: " + defs.size());
         int cnt = 0;
-        Set<Long> entryIds = defs.stream().map(el -> el.getChildText("Z_NAP"))
+        Set<Long> entryIds = defs.stream().map(el -> el.getChildText(N_ZAP))
+                .filter(Objects::nonNull)
                 .map(Long::parseLong)
                 .collect(Collectors.toSet());
         Map<Long, E2Entry> entryMap = getEntryMap(entryIds);
-        for (Element el : defs) {
-            Long entryId = Long.parseLong(el.getChildText("N_ZAP"));
+        for (Element el : defs) { //todo change to stream !!!
+            Long entryId = Long.parseLong(el.getChildText(N_ZAP));
             if (cnt % 100 == 0 && isMonitorCancel(monitor, "Импортировано записей: " + cnt)) return;
             E2Entry entry = entryMap.get(entryId);
             entry.setFondComment(out.outputString(el));
@@ -387,10 +389,12 @@ public class Expert2ImportServiceBean implements IExpert2ImportService {
                 String billDateString = schet.getChildText("DSCHET");
                 SimpleDateFormat fromFormat = new SimpleDateFormat("yyyy-MM-dd");
                 java.sql.Date billDate = new java.sql.Date(fromFormat.parse(billDateString).getTime());
-                E2Bill savedBill = expertService.getBillEntryByDateAndNumber(billNumber, billDate, null);
-                if (savedBill == null) {
+                E2Bill bill = expertService.getBillEntryByDateAndNumber(billNumber, billDate, null); //detached entity
+                if (bill == null) {
                     throw new IllegalStateException("Невозможно определить счет с №" + billNumber + " от " + billDateString);
                 }
+                E2Bill savedBill = manager.find(E2Bill.class, bill.getId());
+
                 savedBill.setStatus(getActualVocByCode(VocE2BillStatus.class, null, "code='PAID'"));
 
                 int i = 0;
