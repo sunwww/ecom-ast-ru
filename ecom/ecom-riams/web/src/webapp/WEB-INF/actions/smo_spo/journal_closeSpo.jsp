@@ -3,7 +3,7 @@
 <%@page import="ru.ecom.web.util.ActionUtil"%>
 <%@page import="ru.nuzmsh.web.tags.helper.RolesHelper"%>
 <%@page import="java.util.List"%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.nuzmsh.ru/tags/msh" prefix="msh" %>
 <%@ taglib uri="http://www.ecom-ast.ru/tags/ecom" prefix="ecom" %>
@@ -195,6 +195,7 @@
 	and spo.dateFinish between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
 	${additionWhereSql} ${serviceStreamSql}
 	${typeCntVisitSql}
+	and coalesce(spo.noactuality, false) = false
 	group by ml.id,ml.name order by ml.name"  nameFldSql="datelist_sql"
 	/>
     <msh:table name="datelist" 
@@ -236,6 +237,7 @@ where spo.dtype='PolyclinicMedCase'
 and spo.dateFinish  between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
  ${departmentSql}
  ${additionWhereSql}  ${typeCntVisitSql}
+and coalesce(spo.noactuality, false) = false
 group by owf.id,ovwf.name,owp.lastname,owp.middlename,owp.firstname 
 order by owp.lastname,owp.middlename,owp.firstname
     " nameFldSql="datelist_sql" />
@@ -282,7 +284,7 @@ select spo.id,spo.dateStart,spo.dateFinish
 	${additionJoinSql}
     where spo.ownerFunction_id='${curator}' 
  and spo.dateFinish  between to_date('${beginDate}','dd.mm.yyyy') and to_date('${finishDate}','dd.mm.yyyy')
-     and spo.DTYPE='PolyclinicMedCase' 
+     and spo.DTYPE='PolyclinicMedCase' and coalesce(spo.noactuality, false) = false
      ${departmentSql} and (vis.DTYPE='Visit' or vis.DTYPE='ShortMedCase')
  ${additionWhereSql} ${typeCntVisitSql}
     group by  spo.id,spo.dateStart,spo.dateFinish,pat.lastname,pat.firstname
