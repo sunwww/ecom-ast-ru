@@ -26,3 +26,26 @@ function onPreDelete(aEntityId, aCtx) {
     var pat = entity.patient;
     entity.patient = null;
 }
+
+function getSoftConfigValueOrDefault(aCtx, key, defaultValue) {
+    var valueList = aCtx.manager
+        .createNativeQuery("select keyvalue from softconfig  where key='" + key + "'")
+        .getResultList();
+    return valueList.isEmpty() ? defaultValue : +valueList.get(0);
+}
+
+function heightWeightValidate(height, weight, aCtx) {
+    //Валидация роста и веса
+    if (height != 0 && weight != 0) {
+        var maxHeight = getSoftConfigValueOrDefault(aCtx, "maxHeightNewBorn", 70);
+        var maxWeight = getSoftConfigValueOrDefault(aCtx, "maxWeightNewBorn", 7000);
+        if (height > maxHeight)
+            throw "Введено значение роста, которое превышает максимальное (" + maxHeight + ")!";
+        if (weight > maxWeight)
+            throw "Введено значение веса, которое превышает максимальное (" + maxWeight + ")!";
+    }
+}
+
+function onSave(aForm, aEntity, aCtx) {
+    heightWeightValidate(+aForm.birthHeight, +aForm.birthWeight, aCtx);
+}
