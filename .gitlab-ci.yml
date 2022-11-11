@@ -39,13 +39,14 @@ variables:
   POSTGRES_USER: user
   POSTGRES_PASSWORD: password
   POSTGRES_DB: db
+  ARTIFACT_NAME: current_date.tar
 
 
 stages:
   - compile
   - test
   - build
-  - check
+  - deploy
 
 .compile-msh:
   inherit:
@@ -132,9 +133,8 @@ build-medos-artifact:
 #    current_date:
   stage: build
   before_script:
-    - export CURRENT_DATE=%date:~6,4%%date:~3,2%%date:~0,2%
+    - export CURRENT_DATE=`date +%Y%m%d`
   script:
-#    - apt-get -y install p7zip
     - chmod +x deploy/fix_config.sh
     - ./deploy/fix_config.sh ${CI_PROJECT_DIR}
     - cd ${CI_PROJECT_DIR}/ecom/ecom-report
@@ -147,11 +147,30 @@ build-medos-artifact:
     - ant clean all build-war
     - cd ${CI_PROJECT_DIR}/ecom/skin
     - ant all build-war
-    - echo 'current_date = ${CURRENT_DATE} >> %CURRENT_DATE%'
-    - tar -cf ${CI_PROJECT_DIR}/CURRENT_DATE.tar -C ${CI_PROJECT_DIR}/ecom/ecom-riams/ejb/target/ riams-app.ear -C ${CI_PROJECT_DIR}/ecom/ecom-riams/web/target/ riams.war -C ${CI_PROJECT_DIR}/ecom/skin/target/ skin.war
+    - echo 'current_date >> $CURRENT_DATE >> ${CURRENT_DATE} >> %CURRENT_DATE%'
+    - tar -cf ${CI_PROJECT_DIR}/${ARTIFACT_NAME} -C ${CI_PROJECT_DIR}/ecom/ecom-riams/ejb/target/ riams-app.ear -C ${CI_PROJECT_DIR}/ecom/ecom-riams/web/target/ riams.war -C ${CI_PROJECT_DIR}/ecom/skin/target/ skin.war
   artifacts:
     name: 'current date tar file'
     paths:
       - '*.tar'
+  tags:
+    - shell
+
+deploy-s13:
+  image: ubuntu:latest
+  stage: deploy
+  environment:
+    name: prod13
+  variables:
+    server: 192.168.10.16
+    username: proguser
+    password: proguser
+  when: manual
+  needs:
+    - build-medos-artifact
+  script:
+    - apt update && apt-get -y install openssh-client
+    - /usr/bin/scp -oKexAlgorithms=+diffie-hellman-group-exchange-sha1 -oHostKeyAlgorithms=+ssh-rsa ${CI_PROJECT_DIR}/${ARTIFACT_NAME} ${username}@${server}:/home/update/%date:~6,4%%date:~3,2%%date:~0,2%.tar
+    - ssh ${username}@${server} 'bash -s' < /root/scripts/hello.sh
   tags:
     - shell
