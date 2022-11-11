@@ -425,7 +425,7 @@ public class Expert2ServiceJs {
         try {
             dateBillDate = new Date(format.parse(billDate + "15:00").getTime());
         } catch (ParseException e) {
-            e.printStackTrace();
+            LOG.error("Error parse bill date: [" + billDate + "]", e);
             dateBillDate = null;
 
         }

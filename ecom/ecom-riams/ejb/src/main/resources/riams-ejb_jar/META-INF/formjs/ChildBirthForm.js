@@ -28,6 +28,25 @@ function onPreSave(aForm, aEntity, aCtx) {
     }
 }
 
+function getSoftConfigValueOrDefault(aCtx, key, defaultValue) {
+    var valueList = aCtx.manager
+        .createNativeQuery("select keyvalue from softconfig  where key='" + key + "'")
+        .getResultList();
+    return valueList.isEmpty() ? defaultValue : +valueList.get(0);
+}
+
+function heightWeightValidate(height, weight, aCtx) {
+    //Валидация роста и веса
+    if (height != 0 && weight != 0) {
+        var maxHeight = getSoftConfigValueOrDefault(aCtx, "maxHeightNewBorn", 70);
+        var maxWeight = getSoftConfigValueOrDefault(aCtx, "maxWeightNewBorn", 7000);
+        if (height > maxHeight)
+            throw "Введено значение роста, которое превышает максимальное (" + maxHeight + ")!";
+        if (weight > maxWeight)
+            throw "Введено значение веса, которое превышает максимальное (" + maxWeight + ")!";
+    }
+}
+
 /**
  * Перед сохранением
  */
@@ -90,6 +109,16 @@ function onCreate(aForm, aEntity, aCtx) {
                     childBT = "" + child[j];
                 }
             }
+            var height = 0;
+            var weight = 0;
+            for (var j = 0; j < theFld.length; j++) {
+                if (theFld[j][3] == 'BirthHeight') {
+                    height = + child[j];;
+                } else if (theFld[j][3] == 'BirthWeight') {
+                    weight = + child[j];
+                }
+            }
+            heightWeightValidate(height, weight, aCtx);
             if (childBD != null && childBT != null) {
                 var birthDateTime = Packages.ru.nuzmsh.util.format.DateConverter.createDateTime(childBD, childBT);
                 if (startDateTime > birthDateTime) {
