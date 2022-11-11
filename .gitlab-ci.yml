@@ -129,8 +129,8 @@ stages:
 #собираем архив с текущей датой
 build-medos-artifact:
   when: manual
-#  variables:
-#    current_date:
+  #  variables:
+  #    current_date:
   stage: build
   before_script:
     - export CURRENT_DATE=`date +%Y%m%d`
@@ -162,14 +162,14 @@ deploy-s13:
   environment:
     name: prod13
   variables:
-    server: 192.168.10.16
+    server: 192.168.10.13
     username: proguser
     password: proguser
   when: manual
   needs:
     - build-medos-artifact
   script:
-    - apt update && apt-get -y install openssh-client
+#    - apt update && apt-get -y install openssh-client
     - /usr/bin/scp -oKexAlgorithms=+diffie-hellman-group-exchange-sha1 -oHostKeyAlgorithms=+ssh-rsa ${CI_PROJECT_DIR}/${ARTIFACT_NAME} ${username}@${server}:/home/update/%date:~6,4%%date:~3,2%%date:~0,2%.tar
     - ssh ${username}@${server} 'bash -s' < /root/scripts/hello.sh
   tags:
