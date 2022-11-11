@@ -175,6 +175,8 @@ deploy-s13:
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
   script:
 #    - apt update && apt-get -y install openssh-client
     - /usr/bin/scp -oKexAlgorithms=+diffie-hellman-group-exchange-sha1 -oHostKeyAlgorithms=+ssh-rsa ${CI_PROJECT_DIR}/${ARTIFACT_NAME} root@192.168.10.13:/home/update/%date:~6,4%%date:~3,2%%date:~0,2%.tar
