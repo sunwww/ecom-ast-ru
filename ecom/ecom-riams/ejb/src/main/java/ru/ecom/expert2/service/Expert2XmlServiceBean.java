@@ -362,7 +362,7 @@ public class Expert2XmlServiceBean implements IExpert2XmlService {
                     children = new ArrayList<>();
                 }
 
-                boolean isCancer = isTrue(currentEntry.getIsCancer()) && (currentEntry.getVisitPurpose() == null || !"1.3".equals(currentEntry.getVisitPurpose().getCode()));
+                boolean isCancer = isTrue(currentEntry.getIsCancer()) /*&& (currentEntry.getVisitPurpose() == null || !"1.3".equals(currentEntry.getVisitPurpose().getCode()))*/;
 
                 E2CancerEntry cancerEntry;
                 if (isCancer && !currentEntry.getCancerEntries().isEmpty()) {

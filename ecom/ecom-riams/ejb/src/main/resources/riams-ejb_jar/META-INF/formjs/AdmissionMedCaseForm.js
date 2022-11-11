@@ -234,11 +234,14 @@ function onPreSave(aForm, aEntity, aCtx) {
             }
         }
         //Рост и вес - обязательные поля
+        var height = +aForm.height;
+        var weight = +aForm.weight;
         if (aCtx.getSessionContext().isCallerInRole("/Policy/Mis/MedCase/Stac/Ssl/Admission/MustFillHeigthAndWeigth")) {
-            if (+aForm.height == 0 || +aForm.weight == 0) {
+            if (height == 0 || weight == 0) {
                 throw "При плановой госпитализации поля \"рост\", \"вес\" являются обязательными";
             }
         }
+        heightWeightValidate(height, weight, aCtx);
     } else {
         if (+aForm.orderType > 0) {
         } else {
@@ -368,6 +371,25 @@ function onPreSave(aForm, aEntity, aCtx) {
     }
     sendMsg(aForm, aEntity, aCtx, "dzaharov");
     sendMsg(aForm, aEntity, aCtx, "nkostenko");
+}
+
+function getSoftConfigValueOrDefault(aCtx, key, defaultValue) {
+    var valueList = aCtx.manager
+        .createNativeQuery("select keyvalue from softconfig  where key='" + key + "'")
+        .getResultList();
+    return valueList.isEmpty() ? defaultValue : +valueList.get(0);
+}
+
+function heightWeightValidate(height, weight, aCtx) {
+    //Валидация роста и веса
+    if (height != 0 && weight != 0) {
+        var maxHeight = getSoftConfigValueOrDefault(aCtx, "maxHeight", 230);
+        var maxWeight = getSoftConfigValueOrDefault(aCtx, "maxWeight", 200);
+        if (height > maxHeight)
+            throw "Введено значение роста, которое превышает максимальное (" + maxHeight + ")!";
+        if (weight > maxWeight)
+            throw "Введено значение веса, которое превышает максимальное (" + maxWeight + ")!";
+    }
 }
 
 function sendMsg(aForm, aEntity, aCtx, user) {
