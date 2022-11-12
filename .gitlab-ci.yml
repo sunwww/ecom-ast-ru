@@ -172,7 +172,7 @@ deploy-s13:
   before_script:
     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+#    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
@@ -180,11 +180,12 @@ deploy-s13:
     - echo "$SSH_CONFIG" >> /etc/ssh/ssh_config.d/prod13.conf
     - cat ~/.ssh/id_rsa
     - cat ~/.ssh/known_hosts
+    - cat /etc/ssh/ssh_config.d/prod13.conf
     - chmod 644 ~/.ssh/known_hosts
     - chmod 600 ~/.ssh/id_rsa
   script:
 #    - apt update && apt-get -y install openssh-client
-    - /usr/bin/scp -v -oPubkeyAcceptedKeyTypes=+ssh-dss -oKexAlgorithms=+diffie-hellman-group-exchange-sha1 -oHostKeyAlgorithms=+ssh-rsa ${CI_PROJECT_DIR}/${ARTIFACT_NAME} $CI_PROD_USER@$CI_PROD_HOST:/home/update/%date:~6,4%%date:~3,2%%date:~0,2%.tar
-    - ssh -v $CI_PROD_USER@$CI_PROD_HOST 'bash -s' < /root/scripts/hello.sh
+    - /usr/bin/scp -v -oPubkeyAcceptedKeyTypes=+ssh-dss -oKexAlgorithms=+diffie-hellman-group-exchange-sha1 ${CI_PROJECT_DIR}/${ARTIFACT_NAME} $CI_PROD_USER@$CI_PROD_HOST:/home/update/%date:~6,4%%date:~3,2%%date:~0,2%.tar
+    - ssh -v $CI_PROD_USER@$CI_PROD_HOST ' /root/scripts/hello.sh'
   tags:
     - shell
