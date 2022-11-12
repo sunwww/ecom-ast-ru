@@ -184,7 +184,7 @@ deploy-s13:
     - chmod 644 ~/.ssh/known_hosts
     - chmod 600 ~/.ssh/id_rsa
   script:
-    - /usr/bin/scp -vv {CI_PROJECT_DIR}/${ARTIFACT_NAME} $CI_PROD_USER@$CI_PROD_HOST:/home/update/`date +%Y%m%d`.tar
+    - /usr/bin/scp ${CI_PROJECT_DIR}/${ARTIFACT_NAME} $CI_PROD_USER@$CI_PROD_HOST:/home/update/`date +%Y%m%d`.tar
 #    - ssh -v $CI_PROD_USER@$CI_PROD_HOST ' /root/scripts/hello.sh'
   tags:
     - shell
