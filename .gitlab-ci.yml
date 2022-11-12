@@ -155,8 +155,8 @@ build-medos-artifact:
       - '*.tar'
   tags:
     - shell
-  only:
-    - master
+#  only:
+#    - master
 
 deploy-prod:
   extends: .deploy-server
