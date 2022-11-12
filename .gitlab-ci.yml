@@ -184,8 +184,7 @@ deploy-s13:
     - chmod 644 ~/.ssh/known_hosts
     - chmod 600 ~/.ssh/id_rsa
   script:
-#    - apt update && apt-get -y install openssh-client
-    - /usr/bin/scp -vvvv -oPubkeyAcceptedKeyTypes=+ssh-rsa -oKexAlgorithms=+diffie-hellman-group-exchange-sha256 ${CI_PROJECT_DIR}/${ARTIFACT_NAME} $CI_PROD_USER@$CI_PROD_HOST:/home/update/%date:~6,4%%date:~3,2%%date:~0,2%.tar
+    - /usr/bin/scp -vv {CI_PROJECT_DIR}/${ARTIFACT_NAME} $CI_PROD_USER@$CI_PROD_HOST:/home/update/`date +%Y%m%d`.tar
 #    - ssh -v $CI_PROD_USER@$CI_PROD_HOST ' /root/scripts/hello.sh'
   tags:
     - shell
