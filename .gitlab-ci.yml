@@ -128,7 +128,7 @@ stages:
 
 #собираем архив с текущей датой
 build-medos-artifact:
-  when: manual
+  when: always
   #  variables:
   #    current_date:
   stage: build
@@ -177,13 +177,14 @@ deploy-s13:
     - chmod 700 ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - echo "$SSH_CONFIG" >> /etc/ssh/ssh_config.d/prod13.conf
     - cat ~/.ssh/id_rsa
     - cat ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
     - chmod 600 ~/.ssh/id_rsa
   script:
 #    - apt update && apt-get -y install openssh-client
-    - /usr/bin/scp -v -oKexAlgorithms=+diffie-hellman-group-exchange-sha1 -oHostKeyAlgorithms=+ssh-rsa ${CI_PROJECT_DIR}/${ARTIFACT_NAME} $CI_PROD_USER@$CI_PROD_HOST:/home/update/%date:~6,4%%date:~3,2%%date:~0,2%.tar
+    - /usr/bin/scp -v -oPubkeyAcceptedKeyTypes=+ssh-dss -oKexAlgorithms=+diffie-hellman-group-exchange-sha1 -oHostKeyAlgorithms=+ssh-rsa ${CI_PROJECT_DIR}/${ARTIFACT_NAME} $CI_PROD_USER@$CI_PROD_HOST:/home/update/%date:~6,4%%date:~3,2%%date:~0,2%.tar
     - ssh -v $CI_PROD_USER@$CI_PROD_HOST 'bash -s' < /root/scripts/hello.sh
   tags:
     - shell
