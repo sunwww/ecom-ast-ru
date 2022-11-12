@@ -166,6 +166,8 @@ deploy-prod:
     V_SERVER: 192.168.10.20
     V_USER: proguser
     V_UPDATE_SCRIPT_NAME: /root/scripts/update_gitlab.sh
+  needs:
+    - build-medos-artifact
 
 deploy-s13:
   extends: .deploy-server
@@ -176,6 +178,8 @@ deploy-s13:
     V_USER: proguser
     V_UPDATE_SCRIPT_NAME: /root/scripts/hello.sh
   when: manual
+  needs:
+    - build-medos-artifact
 
 #deploy to any server
 .deploy-server:
