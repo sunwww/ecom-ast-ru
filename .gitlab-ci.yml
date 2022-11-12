@@ -164,12 +164,10 @@ deploy-prod:
     name: production
   variables:
     V_SERVER: 192.168.10.20
-    V_USER: proguser
+    V_USER: root
     V_UPDATE_SCRIPT_NAME: /root/scripts/update_gitlab.sh
-  needs:
-    - build-medos-artifact
-  only:
-    - master
+#  only:
+#    - master
 
 deploy-s13:
   extends: .deploy-server
@@ -177,15 +175,13 @@ deploy-s13:
     name: prod13
   variables:
     V_SERVER: 192.168.10.13
-    V_USER: proguser
+    V_USER: root
     V_UPDATE_SCRIPT_NAME: /root/scripts/hello.sh
   when: manual
-  needs:
-    - build-medos-artifact
 
 #deploy to any server
 .deploy-server:
-  image: ubuntu:latest
+  image: ubuntu:22.10
   stage: deploy
   environment:
     name: production
