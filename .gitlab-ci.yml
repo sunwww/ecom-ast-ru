@@ -179,6 +179,16 @@ deploy-s13:
     V_UPDATE_SCRIPT_NAME: /root/scripts/hello.sh
   when: manual
 
+deploy-s16:
+  extends: .deploy-server
+  environment:
+    name: prod13
+  variables:
+    V_SERVER: 192.168.10.16
+    V_USER: root
+    V_UPDATE_SCRIPT_NAME: /root/scripts/hello.sh
+  when: manual
+
 #deploy to any server
 .deploy-server:
   image: ubuntu:22.10
