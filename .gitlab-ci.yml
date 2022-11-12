@@ -155,36 +155,52 @@ build-medos-artifact:
       - '*.tar'
   tags:
     - shell
+  only:
+    - master
+
+deploy-prod:
+  extends: .deploy-server
+  environment:
+    name: production
+  variables:
+    V_SERVER: 192.168.10.20
+    V_USER: proguser
+    V_UPDATE_SCRIPT_NAME: /root/scripts/update_gitlab.sh
 
 deploy-s13:
-  image: ubuntu:latest
-  stage: deploy
+  extends: .deploy-server
   environment:
     name: prod13
   variables:
-    server: 192.168.10.13
-    username: proguser
-    password: proguser
+    V_SERVER: 192.168.10.13
+    V_USER: proguser
+    V_UPDATE_SCRIPT_NAME: /root/scripts/hello.sh
+  when: manual
+
+#deploy to any server
+.deploy-server:
+  image: ubuntu:latest
+  stage: deploy
+  environment:
+    name: production
   when: manual
   needs:
     - build-medos-artifact
-
   before_script:
     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
-#    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-    - echo "$SSH_CONFIG" >> /etc/ssh/ssh_config.d/prod13.conf
+    - echo "$SSH_CONFIG" >> /etc/ssh/ssh_config.d/prod.conf
     - cat ~/.ssh/id_rsa
     - cat ~/.ssh/known_hosts
     - cat /etc/ssh/ssh_config.d/prod13.conf
     - chmod 644 ~/.ssh/known_hosts
     - chmod 600 ~/.ssh/id_rsa
   script:
-    - /usr/bin/scp ${CI_PROJECT_DIR}/${ARTIFACT_NAME} $CI_PROD_USER@$CI_PROD_HOST:/home/update/`date +%Y%m%d`.tar
-#    - ssh -v $CI_PROD_USER@$CI_PROD_HOST ' /root/scripts/hello.sh'
+    - /usr/bin/scp ${CI_PROJECT_DIR}/${ARTIFACT_NAME} $V_USER@$V_SERVER:/home/update/`date +%Y%m%d`.tar
+    - ssh $V_USER@$V_SERVER $V_UPDATE_SCRIPT_NAME
   tags:
     - shell
