@@ -202,16 +202,12 @@ deploy-production:
     - build-medos-artifact
   before_script:
     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
-    - echo 'env name = ${CI_ENVIRONMENT_NAME}'
     - eval $(ssh-agent -s)
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - echo "$SSH_CONFIG" >> /etc/ssh/ssh_config.d/${CI_ENVIRONMENT_NAME}.conf
-    - cat ~/.ssh/id_rsa
-    - cat ~/.ssh/known_hosts
-    - cat /etc/ssh/ssh_config.d/${CI_ENVIRONMENT_NAME}.conf
     - chmod 644 ~/.ssh/known_hosts
     - chmod 600 ~/.ssh/id_rsa
   script:
