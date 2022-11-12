@@ -31,61 +31,187 @@
 #     CentOS: sudo yum install -y dejavu-sans-fonts fontconfig
 #     Debian: sudo apt-get install -y fontconfig fonts-dejavu
 # ==================================================================================================
+default:
+  image: frekele/ant:1.10.0-jdk8u172 #docker image to run job
+
 
 variables:
   POSTGRES_USER: user
   POSTGRES_PASSWORD: password
   POSTGRES_DB: db
+  ARTIFACT_NAME: current_date.tar
 
 
 stages:
-  - prepare
-  - build
+  - compile
   - test
-  - check
+  - build
+  - deploy
 
-compile-msh:
-  stage: prepare
-  cache: {}
+.compile-msh:
+  inherit:
+    default: true
+  stage: compile
+  cache: { }
   script:
+    - chmod +x deploy/fix_config.sh
+    - ./deploy/fix_config.sh ${CI_PROJECT_DIR}
     - cd msh
     - ant compile
-#  only:
-#    refs:
-#      - merge_requests
-#    changes:
-#      - msh/**/*
+  #  only:
+  #    refs:
+  #      - merge_requests
+  #    changes:
+  #      - msh/**/*
   tags:
     - shell
-compile-riams-ejb:
-  stage: prepare
-  cache: {}
+.compile-riams-ejb:
+  inherit:
+    default: true
+  stage: compile
+  cache: { }
   script:
+    - chmod +x deploy/fix_config.sh
+    - ./deploy/fix_config.sh ${CI_PROJECT_DIR}
     - cd ecom/ecom-riams/ejb
     - ant compile
-  only:
-    refs:
-      - merge_requests
-    changes:
-      - msh/**/*
-      - ecom/ecom-riams/ejb/**/*
+  #  only:
+  #    refs:
+  #      - merge_requests
+  #    changes:
+  #      - msh/**/*
+  #      - ecom/ecom-riams/ejb/**/*
   tags:
     - shell
 
-#build-openjdk-image:
-#  stage: prepare
-#  cache: {}
-#  script:
-#    - cd dockers/openjdk
-#    - docker build -t $CI_REGISTRY/oog/oog-dsp/openjdk:11-slim .
-#    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-#    - docker push $CI_REGISTRY/oog/oog-dsp/openjdk:11-slim
-#  only:
-#    refs:
-#      - merge_requests
-#    changes:
-#      - backend/**/*
-#  tags:
-#    - shell
 
-# Внимание! Это не сборка, а проверка собираемости и выполнение тестов.
+.compile-riams-web:
+  inherit:
+    default: true
+  stage: compile
+  cache: { }
+  script:
+    - chmod +x deploy/fix_config.sh
+    - ./deploy/fix_config.sh ${CI_PROJECT_DIR}
+    - cd ecom/ecom-riams/web
+    - ant compile
+  #  only:
+  #    refs:
+  #      - merge_requests
+  #    changes:
+  #      - msh/**/*
+  #      - ecom/ecom-riams/ejb/**/*
+  tags:
+    - shell
+
+.compile-skin:
+  inherit:
+    default: true
+  before_script:
+    - echo 'compile ecom-skin module'
+
+  stage: compile
+  cache: { }
+  script:
+    - chmod +x deploy/fix_config.sh
+    - ./deploy/fix_config.sh ${CI_PROJECT_DIR}
+    - cd ecom/skin
+    - ant all
+  #  only:
+  #    refs:
+  #      - merge_requests
+  #    changes:
+  #      - msh/**/*
+  #      - ecom/ecom-riams/ejb/**/*
+  tags:
+    - shell
+
+#собираем архив с текущей датой
+build-medos-artifact:
+  when: always
+  #  variables:
+  #    current_date:
+  stage: build
+  before_script:
+    - export CURRENT_DATE=`date +%Y%m%d`
+  script:
+    - chmod +x deploy/fix_config.sh
+    - ./deploy/fix_config.sh ${CI_PROJECT_DIR}
+    - cd ${CI_PROJECT_DIR}/ecom/ecom-report
+    - ant all
+    - cd ${CI_PROJECT_DIR}/msh
+    - ant all
+    - cd ${CI_PROJECT_DIR}/ecom/ecom-riams/ejb
+    - ant clean compile package
+    - cd ${CI_PROJECT_DIR}/ecom/ecom-riams/web
+    - ant clean all build-war
+    - cd ${CI_PROJECT_DIR}/ecom/skin
+    - ant all build-war
+    - echo 'current_date >> $CURRENT_DATE >> ${CURRENT_DATE} >> %CURRENT_DATE%'
+    - tar -cf ${CI_PROJECT_DIR}/${ARTIFACT_NAME} -C ${CI_PROJECT_DIR}/ecom/ecom-riams/ejb/target/ riams-app.ear -C ${CI_PROJECT_DIR}/ecom/ecom-riams/web/target/ riams.war -C ${CI_PROJECT_DIR}/ecom/skin/target/ skin.war
+  artifacts:
+    name: 'current date tar file'
+    paths:
+      - '*.tar'
+  tags:
+    - shell
+#  only:
+#    - master
+
+.deploy-prod:
+  extends: .deploy-server
+  environment:
+    name: production
+  variables:
+    V_SERVER: 192.168.10.20
+    V_USER: root
+    V_UPDATE_SCRIPT_NAME: /root/scripts/update_gitlab.sh
+#  only:
+#    - master
+
+deploy-s13:
+  extends: .deploy-server
+  environment:
+    name: prod13
+  variables:
+    V_SERVER: 192.168.10.13
+    V_USER: root
+    V_UPDATE_SCRIPT_NAME: /root/scripts/update_gitlab.sh
+  when: manual
+
+deploy-production:
+  extends: .deploy-server
+  environment:
+    name: prod13
+  variables:
+    V_SERVER: 192.168.10.16
+    V_USER: root
+    V_UPDATE_SCRIPT_NAME: /root/scripts/update_gitlab.sh
+  when: manual
+  only:
+    - master
+
+#deploy to any server
+.deploy-server:
+  image: ubuntu:22.10
+  stage: deploy
+  environment:
+    name: production
+  when: manual
+  needs:
+    - build-medos-artifact
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - echo "$SSH_CONFIG" >> /etc/ssh/ssh_config.d/${CI_ENVIRONMENT_NAME}.conf
+    - chmod 644 ~/.ssh/known_hosts
+    - chmod 600 ~/.ssh/id_rsa
+  script:
+    - /usr/bin/scp ${CI_PROJECT_DIR}/${ARTIFACT_NAME} $V_USER@$V_SERVER:/home/update/`date +%Y%m%d`.tar
+    - ssh $V_USER@$V_SERVER $V_UPDATE_SCRIPT_NAME
+  tags:
+    - shell
