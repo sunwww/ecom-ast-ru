@@ -158,7 +158,7 @@ build-medos-artifact:
 #  only:
 #    - master
 
-deploy-prod:
+.deploy-prod:
   extends: .deploy-server
   environment:
     name: production
@@ -176,18 +176,20 @@ deploy-s13:
   variables:
     V_SERVER: 192.168.10.13
     V_USER: root
-    V_UPDATE_SCRIPT_NAME: /root/scripts/hello.sh
+    V_UPDATE_SCRIPT_NAME: /root/scripts/update_gitlab.sh
   when: manual
 
-deploy-s16:
+deploy-production:
   extends: .deploy-server
   environment:
     name: prod13
   variables:
     V_SERVER: 192.168.10.16
     V_USER: root
-    V_UPDATE_SCRIPT_NAME: /root/scripts/hello.sh
+    V_UPDATE_SCRIPT_NAME: /root/scripts/update_gitlab.sh
   when: manual
+  only:
+    - master
 
 #deploy to any server
 .deploy-server:
