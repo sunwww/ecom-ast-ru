@@ -1,11 +1,3 @@
-#build jboss app
-docker build -t gbuz_amokb/medos_jboss .
-
-#run jboss 
-docker run --name d_jboss gbuz_amokb/medos_jboss
-
-#build tomcat app
-docker build -t gbuz_amokb/medos_tomcat .
-
-#run tomcat
-docker run --name d_tomcat gbuz_amokb/medos_tomcat
+МИС МедОС - свободная медицинская система. Работает под jboss & tomcat.
+В настоящее время разработка перенесена в приватный репозиторий по требованию компетентных органов.
+По всем интересующим вопросам обращаться varamila.it СОБАКА gmail.com
